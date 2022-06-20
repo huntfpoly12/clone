@@ -394,6 +394,12 @@ export default defineComponent({
 
               if (val.imputedMonth == (dayjs().month() + 1)) {
                 statusButton.value = val.status
+                if(actionSave.value == 0){
+                    store.state.common.processKeyPA620.imputedYear = val.imputedYear
+                    store.state.common.processKeyPA620.imputedMonth = val.imputedMonth
+                    store.state.common.processKeyPA620.paymentYear = val.paymentYear
+                    store.state.common.processKeyPA620.paymentMonth = val.paymentMonth
+                }          
               }
             })
 

@@ -1,7 +1,6 @@
 <template>
   <a-col :span="24">
       <div class="header-detail-main">
-     {{ dataActionUtils }}
           <div class="table-detail-left d-flex-center">
               <div class="text-box-1">귀 {{ processKey.imputedYear }}-{{
                       processKey.imputedMonth
@@ -85,7 +84,6 @@
       </a-spin>
   </a-col>
   <a-col :span="10" class="custom-layout form-action">
-    {{ dataAction }}
       <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit)" size="large">
           <a-form-item label="사업소득자" label-align="right">
               <employ-type-select :disabled="disabledInput" :arrayValue="arrayEmploySelect"
@@ -263,9 +261,7 @@ export default defineComponent({
       }));
     resIncomeProcessBusinessesDetail(res => {
           dataSourceDetail.value = res.data.getIncomeBusinesses
-      triggerDetail.value = false
-      console.log({ ...dataActionUtils },'fgfgfgfgf');
-      //Object.assign(dataAction, dataActionUtils );
+           triggerDetail.value = false
       })
       errorGetIncomeProcessBusinessesDetail(res => {
           notification('error', res.message)
