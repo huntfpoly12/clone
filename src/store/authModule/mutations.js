@@ -1,6 +1,6 @@
 const mutations = {
   setAuthData: (state, authData) => {
-    localStorage.setItem("token", authData.token);
+    localStorage.setItem("token", authData);
     state.authData = authData;
   },
   logout: (state) => {
