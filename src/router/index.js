@@ -3,9 +3,12 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 const routes = [
   { path: "/", component: Home, meta: {
-    needAuth: true
+    needAuth: true,
+    title: 'Home'
   } },
-  { path: "/login", component: Login },
+  { path: "/login", component: Login, meta: {
+    title: 'Login'
+  } },
  
 ];
 
@@ -25,4 +28,5 @@ router.beforeEach((to, from, next) => {
   }
  
 })
+
 export default router;
