@@ -34,6 +34,11 @@
             <a-menu-item key="11">인증</a-menu-item>
             <a-menu-item key="12">개인정보관리</a-menu-item>
           </a-sub-menu>
+          <a-sub-menu key="sub4" title="회원관리">
+            <a-menu-item key="11">회원등록</a-menu-item>
+            <a-menu-item key="12">권한그룹</a-menu-item>
+            <a-menu-item key="12">기초정보설정</a-menu-item>
+          </a-sub-menu>
         </a-sub-menu>
           </a-menu>
         </a-layout-sider>
