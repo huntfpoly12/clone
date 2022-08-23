@@ -22,24 +22,21 @@
     <a-layout>
       <a-layout-sider width="250" >
         <a-menu
-        v-model:openKeys="openKeys"
-        v-model:selectedKeys="selectedKeys"
+      
         mode="inline"
         theme="dark"
         :inline-collapsed="collapsed"
       >
-        <a-sub-menu key="sub2">
-          <template #title>Back Office</template>
-          <a-sub-menu key="sub3" title="서비스가입">
-            <a-menu-item key="11">인증</a-menu-item>
-            <a-menu-item key="12">개인정보관리</a-menu-item>
+        <a-sub-menu v-for="(menuItem, index) in menuItems" :key="`sub${index}`">
+          <template #title>{{menuItem.title}}</template>
+            <a-sub-menu v-for="(subMenu, index) in menuItem.subMenus" :key="`submenu${index}`" :title="subMenu.title">
+              <a-menu-item v-for="(item, index) in subMenu.items" :key="index">
+                <router-link :to="item.url">{{item.name}}</router-link>
+              </a-menu-item>
+              
+            </a-sub-menu>
+          
           </a-sub-menu>
-          <a-sub-menu key="sub4" title="회원관리">
-            <a-menu-item key="11">회원등록</a-menu-item>
-            <a-menu-item key="12">권한그룹</a-menu-item>
-            <a-menu-item key="12">기초정보설정</a-menu-item>
-          </a-sub-menu>
-        </a-sub-menu>
           </a-menu>
         </a-layout-sider>
         <a-layout style="padding: 0 24px 24px">
@@ -60,6 +57,67 @@ export default defineComponent({
   data() {
     return {
       user: null,
+      menuItems: [{
+        title: 'Back Office',
+        subMenus: [
+          {
+            title: '서비스가입',
+            items: [
+              {name: '인증', url: '#'},
+              {name: '개인정보관리', url: '#'}
+             ]
+          },
+          {
+            title: '회원관리',
+            items: [
+              {name: '회원등록', url: '#'}, 
+              {name: '권한그룹', url: '#'}, 
+              {name: '기초정보설정', url: '#'}
+              ]
+          },
+          {
+            title: '계약관리',
+            items: [
+              {name: '계약정보관리,심사', url: '#'}, 
+              {name: '사업자관리', url: '#'}, 
+              {name: '서비스관리', url: '#'},
+              {name: '영업자관리', url: '#'}
+            ]
+          },
+          {
+            title: '수납관리',
+            items: [
+              {name: '요금청구,심사', url: '#'}, 
+              {name: '서비스해지', url: '#'}, 
+              {name: '미납관리', url: '#'},
+              {name: '수납관리', url: '#'}
+            ]
+          },
+          {
+            title: '업무마감',
+            items: [
+              {name: '회계업무마감관리', url: '#'}, 
+              {name: '원천업무마감관리', url: '#'}, 
+              {name: '4대보험업무관리', url: '#'},
+              {name: '제본/배송관리', url: '#'}
+            ]
+          }
+        ]
+      },
+      {
+        title: '공통모듈',
+        subMenus: [
+          {
+            title: '사용자업무설정',
+            items: [
+              {name: '기초정보설정', url: '#'},
+              {name: '회계설정', url: '#'},
+              {name: '원천설정', url: '#'}
+             ]
+          },
+        ]
+      },
+      ]
     };
   },
   created() {
@@ -87,7 +145,7 @@ export default defineComponent({
    setup() {
     const state = reactive({
       collapsed: false,
-      selectedKeys: ['1'],
+      selectedKeys: ['sub0'],
       openKeys: ['sub1'],
       preOpenKeys: ['sub1'],
     });
