@@ -5,7 +5,8 @@ const mutations = {
   },
   logout: (state) => {
     state.authData = null;
-    localStorage.clear();
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
   },
 };
 

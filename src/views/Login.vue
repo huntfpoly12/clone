@@ -68,6 +68,7 @@ export default {
     const submitForm = (e) => {
       e.preventDefault();
       signinData();
+      localStorage.setItem('username', form.username)
     };
 
 

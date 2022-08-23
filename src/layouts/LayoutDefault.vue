@@ -1,17 +1,23 @@
 <template>
   <a-layout>
     <a-layout-header class="header">
-      <div class="logo" />
-      <a-menu
-        v-model:selectedKeys="selectedKeys1"
-        theme="dark"
-        mode="horizontal"
-        :style="{ lineHeight: '64px' }"
-      >
-        <a-menu-item key="1">nav 1</a-menu-item>
-        <a-menu-item key="2">nav 2</a-menu-item>
-        <a-menu-item key="3">nav 3</a-menu-item>
-      </a-menu>
+      <div class="nav-logo">BankDa</div>
+      <div class="user-info" v-if="username">
+        <a-dropdown>
+          <a class="ant-dropdown-link" @click.prevent>
+           {{username}}
+            <DownOutlined />
+          </a>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item>
+                <p @click="logout()">Logout</p>
+              </a-menu-item>
+             
+            </a-menu>
+          </template>
+        </a-dropdown>
+      </div>
     </a-layout-header>
     <a-layout>
       <a-layout-sider width="200" style="background: #fff">
@@ -84,11 +90,30 @@ export default {
       this.user = { name: `John Doe` };
     }, 2000);
   },
+  computed: {
+    username() {
+      if(localStorage.getItem('username')) {
+        return localStorage.getItem('username')
+      } else {
+        return ''
+      }
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.commit("auth/logout");
+    }
+  }
 };
 </script>
 
 <style scoped>
 .ant-layout.ant-layout-has-sider {
   height: calc(100vh - 64px);
+}
+.ant-layout-header {
+  display: flex;
+  justify-content: space-between;
+  background: none;
 }
 </style>
