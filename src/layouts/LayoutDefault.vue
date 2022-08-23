@@ -11,7 +11,7 @@
           <template #overlay>
             <a-menu>
               <a-menu-item>
-                <p @click="logout()">Logout</p>
+                <p @click="logout">Logout</p>
               </a-menu-item>
              
             </a-menu>
@@ -101,6 +101,8 @@ export default {
   },
   methods: {
     logout() {
+      this.$router.push("/login")
+      location.reload()
       this.$store.commit("auth/logout");
     }
   }
