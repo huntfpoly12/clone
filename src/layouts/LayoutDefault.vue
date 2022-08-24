@@ -39,7 +39,7 @@
           </a-sub-menu>
           </a-menu>
         </a-layout-sider>
-        <a-layout style="padding: 0 24px 24px">
+        <a-layout style="padding: 24px">
         <a-layout-content
           :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
@@ -320,6 +320,10 @@ export default defineComponent({
 .ant-layout-header {
   display: flex;
   justify-content: space-between;
-  background: none;
+  background: #7dbcea;
+  color: #fff;
+}
+.ant-layout-header a {
+  color: #fff;
 }
 </style>

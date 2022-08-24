@@ -43,6 +43,12 @@
         }}
       </button>
     </form>
+    <div class="request-contract">
+      <router-link to="/request-contract">
+        신규고객 서비스가입신청!!!
+      </router-link>
+      
+    </div>
   </div>
 </template>
 
@@ -121,6 +127,9 @@ export default {
 [required]::after {
   content: "*";
   color: red;
+}
+.request-contract {
+  margin-top: 40px;
 }
 .form-control {
   margin: 8px 0;
