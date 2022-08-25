@@ -80,7 +80,7 @@
                             <a-input placeholder="ADDR2" />
                         </div>
                         <div class="form-item">
-                            <label class="red">상 호 :</label>
+                            <label class="red">연럭처 :</label>
                             <a-input class="width-auto" placeholder="0298765432" />
                         </div>
                          <div class="form-item">
@@ -114,8 +114,8 @@
             <template v-if="step===2">
                 <label>1. 회계서비스 신청</label>
                 <div class="list-checkbox">
-                    <a-radio v-model:checked="checked">신청합니다</a-radio>
-                    <a-radio v-model:checked="checked">신청하지 않습니다.</a-radio>
+                    <a-radio v-model:value="value1">신청합니다</a-radio>
+                    <a-radio v-model:value="value2">신청하지 않습니다.</a-radio>
                 </div>
                 <div class="group-title">
                      <p class="red">⁙ 운영사업</p>
@@ -194,7 +194,7 @@
                 </div>
                 
                 <div class="form-item">
-                    <label class="red">장기요양기관등록번호 :</label>
+                    <label class="red">직원수 :</label>
                     <a-input placeholder="10" />
                 </div>
                 <div class="form-item">
@@ -203,7 +203,7 @@
                 </div>
                 <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                 <div class="form-item">
-                    <label class="red">서비스 시작년월 :</label>
+                    <label class="red">출금은행 :</label>
                     <a-select v-model:value="value1">
                         <a-select-option value="은행선택">은행선택</a-select-option>
                         <a-select-option value="농협">농협</a-select-option>
