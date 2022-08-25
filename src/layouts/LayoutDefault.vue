@@ -27,10 +27,10 @@
         theme="dark"
         :inline-collapsed="collapsed"
       >
-        <a-sub-menu v-for="(menuItem, i) in menuItems" :key="`sub${i}`">
+        <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
           <template #title>{{menuItem.title}}</template>
-            <a-sub-menu v-for="(subMenu, j) in menuItem.subMenus" :key="`submenu${j}`" :title="subMenu.title">
-              <a-menu-item v-for="(item, k) in subMenu.items" :key="`${j}${k}`">
+            <a-sub-menu v-for="subMenu in menuItem.subMenus" :key="subMenu.id" :title="subMenu.title">
+              <a-menu-item v-for="item in subMenu.items" :key="item.id">
                 <router-link :to="item.url">{{item.name}}</router-link>
               </a-menu-item>
               
