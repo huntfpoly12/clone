@@ -188,10 +188,11 @@
                     <a-radio v-model:checked="checked">신청합니다</a-radio>
                     <a-radio v-model:checked="checked">신청하지 않습니다</a-radio>
                 </div>
-                <div class="form-item">
+                <div class="date-picker">
                     <label class="red">서비스 시작년월 :</label>
                     <a-date-picker />
                 </div>
+                
                 <div class="form-item">
                     <label class="red">장기요양기관등록번호 :</label>
                     <a-input placeholder="10" />
@@ -509,6 +510,9 @@ export default {
         width: 20px;
         cursor: pointer;
     }
+    .date-picker label {
+        width: 165px;
+    }
     .editable-cell .editable-cell-icon {
         margin-top: 4px;
         display: none;
@@ -541,5 +545,8 @@ export default {
     }
     :v-deep .ant-modal-footer .ant-btn.ant-btn-primary {
         display: block;
+    }
+    .list-checkbox {
+        margin-top: 10px;
     }
 </style>
