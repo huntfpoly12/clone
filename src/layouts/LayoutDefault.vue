@@ -59,12 +59,14 @@ export default defineComponent({
       user: null,
       menuItems: [{
         title: 'Back Office',
+        id: 'bf-000',
         subMenus: [
           {
             title: '서비스가입',
+            id: 'bf-100',
             items: [
-              {name: '인증', url: '#'},
-              {name: '개인정보관리', url: '#'}
+              {name: '인증', url: '#', id: 'bf-110'},
+              {name: '개인정보관리', url: '#', id: 'bf-120'}
              ]
           },
           {
