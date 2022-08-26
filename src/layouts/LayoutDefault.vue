@@ -340,7 +340,7 @@ export default defineComponent({
 
 <style scoped>
 .ant-layout.ant-layout-has-sider {
-  height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px);
 }
 .ant-layout-header {
   display: flex;

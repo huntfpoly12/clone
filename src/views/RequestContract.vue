@@ -14,32 +14,40 @@
                     <label>1. 서비스약관 동의</label>
                     <a-textarea v-model:value="value2" placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
-                        <a-radio v-model:checked="checked">미동의</a-radio>
-                        <a-radio v-model:checked="checked">동의함</a-radio>
+                        <a-radio-group v-model:value="radio">
+                            <a-radio :value="'미동의'">미동의</a-radio>
+                            <a-radio :value="'동의함'">동의함</a-radio>
+                        </a-radio-group>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>2. 개인정보제공 및 활용동의</label>
                     <a-textarea v-model:value="value2" placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
-                        <a-radio v-model:checked="checked">미동의</a-radio>
-                        <a-radio v-model:checked="checked">동의함</a-radio>
+                        <a-radio-group v-model:value="radio1">
+                            <a-radio :value="'미동의'">미동의</a-radio>
+                            <a-radio :value="'동의함'">동의함</a-radio>
+                        </a-radio-group>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>3. 회계서비스약관 동의</label>
                     <a-textarea v-model:value="value2" placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
-                        <a-radio v-model:checked="checked">미동의</a-radio>
-                        <a-radio v-model:checked="checked">동의함</a-radio>
+                        <a-radio-group v-model:value="radio2">
+                            <a-radio :value="'미동의'">미동의</a-radio>
+                            <a-radio :value="'동의함'">동의함</a-radio>
+                        </a-radio-group>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>4. 원천서비스약관 동의</label>
                     <a-textarea v-model:value="value2" placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
-                        <a-radio v-model:checked="checked">미동의</a-radio>
-                        <a-radio v-model:checked="checked">동의함</a-radio>
+                        <a-radio-group v-model:value="radio3">
+                            <a-radio :value="'미동의'">미동의</a-radio>
+                            <a-radio :value="'동의함'">동의함</a-radio>
+                        </a-radio-group>
                     </div>
                 </div>
             </template>
@@ -57,8 +65,10 @@
                         </div>
                         <div class="form-item">
                             <label class="red">사업자유형 :</label>
-                            <a-radio v-model:checked="checked">법인사업자</a-radio>
-                            <a-radio v-model:checked="checked">개인사업자</a-radio>
+                            <a-radio-group v-model:value="radio4">
+                                <a-radio :value="'법인사업자'">법인사업자</a-radio>
+                                <a-radio :value="'개인사업자'">개인사업자</a-radio>
+                            </a-radio-group>
                             <div class="group-label">
                                 <p>{ $id no } :</p>
                                 <a-input class="width-auto" placeholder="800123-1234567" />
@@ -112,140 +122,143 @@
                 </div>
             </template>
             <template v-if="step===2">
-                <label>1. 회계서비스 신청</label>
-                <div class="list-checkbox">
-                    <a-radio v-model:checked="checked">신청합니다</a-radio>
-                    <a-radio v-model:checked="checked">신청하지 않습니다.</a-radio>
-                </div>
-                <div class="group-title">
-                     <p class="red">⁙ 운영사업</p>
-                    <a-button class="editable-add-btn" style="margin-bottom: 8px" @click="handleAdd">추 가</a-button>
-                </div>
-                <a-table bordered :data-source="dataSource" :columns="columns" pagination= false >
-                    <template #bodyCell="{ column, text, record }">
-                    <template v-if="column.dataIndex === 'name'">
-                        <div class="editable-cell">
-                        <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                            <a-input v-model:value="editableData[record.key].name" @pressEnter="save(record.key)" />
-                            <check-outlined class="editable-cell-icon-check" @click="save(record.key)" />
-                        </div>
-                        <div v-else class="editable-cell-text-wrapper">
-                            {{ text || ' ' }}
-                            <edit-outlined class="editable-cell-icon" @click="edit(record.key)" />
-                        </div>
-                        </div>
-                    </template>
-                    <template v-else-if="column.dataIndex === 'select'">
-                        <a-select
-                            ref="select"
-                            v-model:value="value1"
-                            style="width: 120px"
+                <div class="form-group">
+                    <label>1. 회계서비스 신청</label>
+                    <div class="list-checkbox">
+                        <a-radio-group v-model:value="radio5">
+                            <a-radio :value="'신청합니다'">신청합니다</a-radio>
+                            <a-radio :value="'신청하지 않습니다'">신청하지 않습니다.</a-radio>
+                        </a-radio-group>
+
+                    </div>
+                    <div class="group-title">
+                        <p class="red">⁙ 운영사업</p>
+                        <a-button class="editable-add-btn" style="margin-bottom: 8px" @click="handleAdd">추 가</a-button>
+                    </div>
+                    <a-table bordered :data-source="dataSource" :columns="columns" pagination= false >
+                        <template #bodyCell="{ column, text, record }">
+                        <template  v-if="column.dataIndex === 'name'">
+                            <div class="editable-cell">
+                            <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
+                                <a-input v-model:value="editableData[record.key].name" @pressEnter="save(record.key)" />
+                                <check-outlined class="editable-cell-icon-check" @click="save(record.key)" />
+                            </div>
+                            <div v-else class="editable-cell-text-wrapper">
+                                {{ text || ' ' }}
+                                <edit-outlined class="editable-cell-icon" @click="edit(record.key)" />
+                            </div>
+                            </div>
+                        </template>
+                        <template v-else-if="column.dataIndex === 'select'">
+                            <a-select
+                                ref="select"
+                                v-model:value="value1"
+                                style="width: 120px"
+                                >
+                                <a-select-option value="주•야간보호">주•야간보호</a-select-option>
+                                <a-select-option value="방문요양">방문요양</a-select-option>
+                                <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
+                                <a-select-option value="방문간호" >방문간호</a-select-option>
+                                <a-select-option value="단기보호">단기보호</a-select-option>
+                                <a-select-option value="복지용구">복지용구</a-select-option>
+                            </a-select>
+                        </template>
+                        <template v-else-if="column.dataIndex === 'date'">
+                            <a-date-picker />
+                        </template>
+                        <template v-else-if="column.dataIndex === 'operation'">
+                            <a-popconfirm
+                            v-if="dataSource.length"
+                            title="정말 삭제 하시겠습니까?"
+                            @confirm="onDelete(record.key)"
                             >
-                            <a-select-option value="주•야간보호">주•야간보호</a-select-option>
-                            <a-select-option value="방문요양">방문요양</a-select-option>
-                            <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
-                            <a-select-option value="방문간호" >방문간호</a-select-option>
-                            <a-select-option value="단기보호">단기보호</a-select-option>
-                            <a-select-option value="복지용구">복지용구</a-select-option>
-                        </a-select>
-                    </template>
-                    <template v-else-if="column.dataIndex === 'date'">
+                            <a>삭 제</a>
+                            </a-popconfirm>
+                        </template>
+                        </template>
+                    </a-table>
+                    <div class="form-item">
+                        <label class="red">장기요양기관등록번호 :</label>
+                        <a-input placeholder="0123456789" />
+                    </div>
+                    <div class="form-item">
+                        <label class="red">부가서비스</label>
+                        <a-checkbox v-model:checked="checked">회계입력대행서비스</a-checkbox>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>2. 원천서비스 신청</label>
+                    <div class="list-checkbox">
+                        <a-radio-group v-model:value="radio6">
+                            <a-radio :value="'신청합니다'">신청합니다</a-radio>
+                            <a-radio :value="'신청하지 않습니다'">신청하지 않습니다</a-radio>
+                        </a-radio-group>
+                    </div>
+                    <div class="date-picker">
+                        <label class="red">서비스 시작년월 :</label>
                         <a-date-picker />
-                    </template>
-                    <template v-if="column.dataIndex === 'number'">
-                        <div class="editable-cell">
-                        <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                            <a-input v-model:value="editableData[record.key].number" @pressEnter="save(record.key)" />
-                            <check-outlined class="editable-cell-icon-check" @click="save(record.key)" />
-                        </div>
-                        <div v-else class="editable-cell-text-wrapper">
-                            {{ text || ' ' }}
-                            <edit-outlined class="editable-cell-icon" @click="edit(record.key)" />
-                        </div>
-                        </div>
-                    </template>
-                    <template v-else-if="column.dataIndex === 'operation'">
-                        <a-popconfirm
-                        v-if="dataSource.length"
-                        title="정말 삭제 하시겠습니까?"
-                        @confirm="onDelete(record.key)"
-                        >
-                        <a>삭 제</a>
-                        </a-popconfirm>
-                    </template>
-                    </template>
-                </a-table>
-                <div class="form-item">
-                    <label class="red">장기요양기관등록번호 :</label>
-                    <a-input placeholder="0123456789" />
+                    </div>
+                    
+                    <div class="form-item">
+                        <label class="red">장기요양기관등록번호 :</label>
+                        <a-input placeholder="10" />
+                    </div>
+                    <div class="form-item">
+                        <label>부가서비스</label>
+                        <a-checkbox v-model:checked="checked">4대보험신고서비스</a-checkbox>
+                    </div>
                 </div>
-                <div class="form-item">
-                    <label class="red">부가서비스</label>
-                    <a-checkbox v-model:checked="checked">회계입력대행서비스</a-checkbox>
+                <div class="form-group">
+                    <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
+                    <div class="form-item">
+                        <label class="red">서비스 시작년월 :</label>
+                        <a-select v-model:value="value1">
+                            <a-select-option value="은행선택">은행선택</a-select-option>
+                            <a-select-option value="농협">농협</a-select-option>
+                            <a-select-option value="신한은행">신한은행</a-select-option>
+                            <a-select-option value="우리은행">우리은행</a-select-option>
+                            <a-select-option value="기업은행">기업은행</a-select-option>
+                            <a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
+                        </a-select>
+                    </div>
+                    <div class="form-item">
+                        <label class="red">출금계좌번호 :</label>
+                        <a-input placeholder="100100056489011" />
+                    </div>
+                    <div class="form-item">
+                        <label class="red">예금주명 :</label>
+                        <a-input placeholder="주식회사 타운소프트비나" />
+                    </div>
+                    <div class="form-item">
+                        <label class="red">사업자(주민)등록번호:</label>
+                        <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다" />
+                        <p>예금주의 사업자등록번호 또는 주민등록번호입니다</p>
+                    </div>
+                    <div class="form-item">
+                        <label class="red">자동이체출금일자 :</label>
+                        <a-radio-group v-model:value="radio7">
+                            <a-radio :value="'매월 5일'">매월 5일</a-radio>
+                            <a-radio :value="'매월 12일'">매월 12일</a-radio>
+                            <a-radio :value="'매월 19일'">매월 19일</a-radio>
+                        </a-radio-group>
+                    </div>
                 </div>
-                <label>2. 원천서비스 신청</label>
-                <div class="list-checkbox">
-                    <a-radio v-model:checked="checked">신청합니다</a-radio>
-                    <a-radio v-model:checked="checked">신청하지 않습니다</a-radio>
-                </div>
-                <div class="date-picker">
-                    <label class="red">서비스 시작년월 :</label>
-                    <a-date-picker />
-                </div>
-                
-                <div class="form-item">
-                    <label class="red">장기요양기관등록번호 :</label>
-                    <a-input placeholder="10" />
-                </div>
-                <div class="form-item">
-                    <label>부가서비스</label>
-                    <a-checkbox v-model:checked="checked">4대보험신고서비스</a-checkbox>
-                </div>
-                <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
-                <div class="form-item">
-                    <label class="red">서비스 시작년월 :</label>
-                    <a-select v-model:value="value1">
-                        <a-select-option value="은행선택">은행선택</a-select-option>
-                        <a-select-option value="농협">농협</a-select-option>
-                        <a-select-option value="신한은행">신한은행</a-select-option>
-                        <a-select-option value="우리은행">우리은행</a-select-option>
-                        <a-select-option value="기업은행">기업은행</a-select-option>
-                        <a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
-                    </a-select>
-                </div>
-                <div class="form-item">
-                    <label class="red">출금계좌번호 :</label>
-                    <a-input placeholder="100100056489011" />
-                </div>
-                <div class="form-item">
-                    <label class="red">예금주명 :</label>
-                    <a-input placeholder="주식회사 타운소프트비나" />
-                </div>
-                <div class="form-item">
-                    <label class="red">사업자(주민)등록번호:</label>
-                    <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다" />
-                    <p>예금주의 사업자등록번호 또는 주민등록번호입니다</p>
-                </div>
-                 <div class="form-item">
-                    <label class="red">자동이체출금일자 :</label>
-                    <a-radio v-model:checked="checked">매월 5일</a-radio>
-                    <a-radio v-model:checked="checked">매월 12일</a-radio>
-                    <a-radio v-model:checked="checked">매월 19일</a-radio>
-                </div>
-                <label>4. 기타</label>
-                 <div class="form-item">
-                    <label>영업관리담당 :</label>
-                    <a-select v-model:value="value1">
-                        <a-select-option value="은행선택">A 대리점</a-select-option>
-                        <a-select-option value="농협">농협</a-select-option>
-                        <a-select-option value="신한은행">C 영업사원</a-select-option>
-                        <a-select-option value="우리은행">D 영업사원</a-select-option>
-                        <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
-                    </a-select>
-                </div>
-                <div class="form-item">
-                    <label>전달사항 :</label>
-                     <a-textarea v-model:value="value2" placeholder="//전달사항입력" allow-clear />
+                <div class="form-group">
+                    <label>4. 기타</label>
+                    <div class="form-item">
+                        <label>영업관리담당 :</label>
+                        <a-select v-model:value="value1">
+                            <a-select-option value="은행선택">A 대리점</a-select-option>
+                            <a-select-option value="농협">농협</a-select-option>
+                            <a-select-option value="신한은행">C 영업사원</a-select-option>
+                            <a-select-option value="우리은행">D 영업사원</a-select-option>
+                            <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                        </a-select>
+                    </div>
+                    <div class="form-item">
+                        <label>전달사항 :</label>
+                        <a-textarea v-model:value="value2" placeholder="//전달사항입력" allow-clear />
+                    </div>
                 </div>
             </template>
             <template v-if="step===3">
@@ -286,7 +299,15 @@ export default {
         return {
             step: 0,
             value1: '주•야간보호',
-            visible: false
+            visible: false,
+            radio: '',
+            radio1: '',
+            radio2: '',
+            radio3: '',
+            radio4: '',
+            radio5: '',
+            radio6: '',
+            radio7: ''
         }
     },
     computed: {
@@ -398,9 +419,9 @@ export default {
     const handleAdd = () => {
       const newData = {
         key: `${count.value}`,
-        name: `Edward King ${count.value}`,
+        name: '사하자차카타파하 사업',
         select: 32,
-        date: `London, Park Lane no. ${count.value}`,
+        date: '',
         number: '10',
       };
       dataSource.value.push(newData);
@@ -512,10 +533,14 @@ export default {
     }
     .date-picker label {
         width: 165px;
+        display: inline-block;
     }
     .editable-cell .editable-cell-icon {
         margin-top: 4px;
         display: none;
+    }
+    ::v-deep .ant-radio-group {
+        display: flex;
     }
     .editable-cell .editable-cell-icon-check {
         line-height: 28px;
