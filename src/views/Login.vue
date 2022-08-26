@@ -93,7 +93,7 @@ export default {
     signinDone((res) => {
       console.log(res)
       store.commit("auth/setAuthData", res.data.login.accessToken);
-      router.push("/");
+      router.push("/dashboard");
     });
     onError((error) => {
       errors.value = error.message;

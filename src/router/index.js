@@ -1,23 +1,51 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
+import LoginLayout from '../layouts/LoginLayout.vue'
+import DefaultLayout from '../layouts/DefaultLayout.vue'
 import RquestContract from "../views/RequestContract.vue"
+import BF310 from "../views/BF/BF3/BF310.vue"
 const routes = [
   { path: "/", component: Home, meta: {
     needAuth: true,
     title: 'Home'
     } 
   },
-  { path: "/login", component: Login, 
-    meta: {
-      title: 'Login'
-    } 
+  {
+    path: "/login",
+    component: LoginLayout,
+    children: [
+      {
+        path: "",
+        component: Login
+      }
+    ]
   },
-  { path: "/request-contract", component: RquestContract, 
+  { path: "/request-contract", 
+  component: LoginLayout, 
     meta: {
       title: 'Request Contract'
-    } 
+    },
+    children: [
+      {
+        path: "",
+        component: RquestContract
+      },
+    ]
   },
+  {
+    path: "/dashboard",
+    component: DefaultLayout,
+    meta: {
+      needAuth: true
+    },
+    children: [
+      {
+        path: "bf-310",
+        component: BF310
+      }
+    ]
+  }
 ];
 
 const router = createRouter({

@@ -3,7 +3,7 @@
     <div>Home</div>
 </template>
 <script>
-import LayoutDefault from '../layouts/LayoutDefault.vue';
+import LayoutDefault from '../layouts/DefaultLayout.vue';
 export default {
    name: `Home`,
   created() {

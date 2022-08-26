@@ -1,31 +1,38 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <nav class="navbar">
-    <div class="brand">BankDa</div>
-    <div class="profile"><a-dropdown>
-    <a class="ant-dropdown-link" @click.prevent>
-      Profile
-      <DownOutlined />
-    </a>
-    <template #overlay>
-      <a-menu>
-        <a-menu-item>
-          <a href="javascript:;">Info</a>
-        </a-menu-item>
-        <a-menu-item>
-          <a href="javascript:;">Edit Profile</a>
-        </a-menu-item>
-        <a-menu-item>
-          <a href="javascript:;">Logout</a>
-        </a-menu-item>
-      </a-menu>
-    </template>
-  </a-dropdown></div>
-  </nav>
+  <a-layout-header class="header">
+      <div class="nav-logo">BankDa</div>
+      <div class="user-info" v-if="username">
+        <a-dropdown>
+          <a class="ant-dropdown-link" @click.prevent>
+           {{username}}
+            <DownOutlined />
+          </a>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item>
+                <p @click="logout">Logout</p>
+              </a-menu-item>
+             
+            </a-menu>
+          </template>
+        </a-dropdown>
+      </div>
+    </a-layout-header>
 </template>
 
 <script>
-
+  export default {
+    computed: {
+      username() {
+        if(localStorage.getItem('username')) {
+          return localStorage.getItem('username')
+        } else {
+          return ''
+        }
+      }
+    },
+  }
 </script>
 
 <style scoped>

@@ -43,7 +43,7 @@
         <a-layout-content
           :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
-          Content
+          <router-view></router-view>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -82,7 +82,7 @@ export default defineComponent({
             title: '계약관리',
             id: 'bf-300',
             items: [
-              {name: '계약정보관리,심사', url: '#',id: 'bf-310'}, 
+              {name: '계약정보관리,심사', url: '/dashboard/bf-310',id: 'bf-310'}, 
               {name: '사업자관리', url: '#',id: 'bf-320'}, 
               {name: '서비스관리', url: '#',id: 'bf-330'},
               {name: '영업자관리', url: '#',id: 'bf-340'}
@@ -288,12 +288,6 @@ export default defineComponent({
       },
       ]
     };
-  },
-  created() {
-    // Simulate fetching user data.
-    setTimeout(() => {
-      this.user = { name: `John Doe` };
-    }, 2000);
   },
   computed: {
     username() {
