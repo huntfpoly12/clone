@@ -152,8 +152,7 @@
                         <template v-else-if="column.dataIndex === 'select'">
                             <a-select
                                 ref="select"
-                                v-model:value="value1"
-                                style="width: 120px"
+                                v-model:value="select1"
                                 >
                                 <a-select-option value="주•야간보호">주•야간보호</a-select-option>
                                 <a-select-option value="방문요양">방문요양</a-select-option>
@@ -212,7 +211,7 @@
                     <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                     <div class="form-item">
                         <label class="red">서비스 시작년월 :</label>
-                        <a-select v-model:value="value1">
+                        <a-select v-model:value="select2">
                             <a-select-option value="은행선택">은행선택</a-select-option>
                             <a-select-option value="농협">농협</a-select-option>
                             <a-select-option value="신한은행">신한은행</a-select-option>
@@ -247,7 +246,7 @@
                     <label>4. 기타</label>
                     <div class="form-item">
                         <label>영업관리담당 :</label>
-                        <a-select v-model:value="value1">
+                        <a-select v-model:value="select3">
                             <a-select-option value="은행선택">A 대리점</a-select-option>
                             <a-select-option value="농협">농협</a-select-option>
                             <a-select-option value="신한은행">C 영업사원</a-select-option>
@@ -298,7 +297,9 @@ export default {
     data() {
         return {
             step: 0,
-            value1: '주•야간보호',
+            select1: '주•야간보호',
+            select2: '은행선택',
+            select3: '은행선택',
             visible: false,
             radio: '',
             radio1: '',
@@ -571,6 +572,9 @@ export default {
     }
     ::v-deep .ant-checkbox-wrapper {
         display: flex;
+    }
+    ::v-deep .ant-select {
+        width: 180px;
     }
     .list-checkbox {
         margin-top: 10px;
