@@ -152,7 +152,7 @@
                         <template v-else-if="column.dataIndex === 'select'">
                             <a-select
                                 ref="select"
-                                v-model:value="select1"
+                                placeholder="주•야간보호"
                                 >
                                 <a-select-option value="주•야간보호">주•야간보호</a-select-option>
                                 <a-select-option value="방문요양">방문요양</a-select-option>
