@@ -187,78 +187,74 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>2. 원천서비스 신청</label>
-                    <div class="list-checkbox">
-                        <a-radio-group v-model:value="radio6">
-                            <a-radio :value="'신청합니다'">신청합니다</a-radio>
-                            <a-radio :value="'신청하지 않습니다'">신청하지 않습니다</a-radio>
-                        </a-radio-group>
-                    </div>
-                    <div class="date-picker">
-                        <label class="red">서비스 시작년월 :</label>
-                        <a-date-picker />
-                    </div>
-                    
-                    <div class="form-item">
-                        <label class="red">장기요양기관등록번호 :</label>
-                        <a-input placeholder="10" />
-                    </div>
-                    <div class="form-item">
-                        <label>부가서비스</label>
-                        <a-checkbox v-model:checked="checked">4대보험신고서비스</a-checkbox>
-                    </div>
+                <label>2. 원천서비스 신청</label>
+                <div class="list-checkbox">
+                    <a-radio-group v-model:value="radio6">
+                        <a-radio :value="'신청합니다'">신청합니다</a-radio>
+                        <a-radio :value="'신청하지 않습니다'">신청하지 않습니다</a-radio>
+                    </a-radio-group>
                 </div>
-                <div class="form-group">
-                    <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
-                    <div class="form-item">
-                        <label class="red">서비스 시작년월 :</label>
-                        <a-select v-model:value="value1">
-                            <a-select-option value="은행선택">은행선택</a-select-option>
-                            <a-select-option value="농협">농협</a-select-option>
-                            <a-select-option value="신한은행">신한은행</a-select-option>
-                            <a-select-option value="우리은행">우리은행</a-select-option>
-                            <a-select-option value="기업은행">기업은행</a-select-option>
-                            <a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
-                        </a-select>
-                    </div>
-                    <div class="form-item">
-                        <label class="red">출금계좌번호 :</label>
-                        <a-input placeholder="100100056489011" />
-                    </div>
-                    <div class="form-item">
-                        <label class="red">예금주명 :</label>
-                        <a-input placeholder="주식회사 타운소프트비나" />
-                    </div>
-                    <div class="form-item">
-                        <label class="red">사업자(주민)등록번호:</label>
-                        <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다" />
-                        <p>예금주의 사업자등록번호 또는 주민등록번호입니다</p>
-                    </div>
-                    <div class="form-item">
-                        <label class="red">자동이체출금일자 :</label>
-                        <a-radio-group v-model:value="radio7">
-                            <a-radio :value="'매월 5일'">매월 5일</a-radio>
-                            <a-radio :value="'매월 12일'">매월 12일</a-radio>
-                            <a-radio :value="'매월 19일'">매월 19일</a-radio>
-                        </a-radio-group>
-                    </div>
+                <div class="date-picker">
+                    <label class="red">서비스 시작년월 :</label>
+                    <a-date-picker />
                 </div>
-                <div class="form-group">
-                    <label>4. 기타</label>
-                    <div class="form-item">
-                        <label>영업관리담당 :</label>
-                        <a-select v-model:value="value1">
-                            <a-select-option value="은행선택">A 대리점</a-select-option>
-                            <a-select-option value="농협">농협</a-select-option>
-                            <a-select-option value="신한은행">C 영업사원</a-select-option>
-                            <a-select-option value="우리은행">D 영업사원</a-select-option>
-                            <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
-                        </a-select>
-                    </div>
-                    <div class="form-item">
-                        <label>전달사항 :</label>
-                        <a-textarea v-model:value="value2" placeholder="//전달사항입력" allow-clear />
-                    </div>
+                
+                <div class="form-item">
+                    <label class="red">장기요양기관등록번호 :</label>
+                    <a-input placeholder="10" />
+                </div>
+                <div class="form-item">
+                    <label>부가서비스</label>
+                    <a-checkbox v-model:checked="checked">4대보험신고서비스</a-checkbox>
+                </div>
+                </div>
+                <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
+                <div class="form-item">
+                    <label class="red">서비스 시작년월 :</label>
+                    <a-select v-model:value="value1">
+                        <a-select-option value="은행선택">은행선택</a-select-option>
+                        <a-select-option value="농협">농협</a-select-option>
+                        <a-select-option value="신한은행">신한은행</a-select-option>
+                        <a-select-option value="우리은행">우리은행</a-select-option>
+                        <a-select-option value="기업은행">기업은행</a-select-option>
+                        <a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
+                    </a-select>
+                </div>
+                <div class="form-item">
+                    <label class="red">출금계좌번호 :</label>
+                    <a-input placeholder="100100056489011" />
+                </div>
+                <div class="form-item">
+                    <label class="red">예금주명 :</label>
+                    <a-input placeholder="주식회사 타운소프트비나" />
+                </div>
+                <div class="form-item">
+                    <label class="red">사업자(주민)등록번호:</label>
+                    <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다" />
+                    <p>예금주의 사업자등록번호 또는 주민등록번호입니다</p>
+                </div>
+                 <div class="form-item">
+                    <label class="red">자동이체출금일자 :</label>
+                    <a-radio-group v-model:value="radio7">
+                        <a-radio :value="'매월 5일'">매월 5일</a-radio>
+                        <a-radio :value="'매월 12일'">매월 12일</a-radio>
+                        <a-radio :value="'매월 19일'">매월 19일</a-radio>
+                    </a-radio-group>
+                </div>
+                <label>4. 기타</label>
+                 <div class="form-item">
+                    <label>영업관리담당 :</label>
+                    <a-select v-model:value="value1">
+                        <a-select-option value="은행선택">A 대리점</a-select-option>
+                        <a-select-option value="농협">농협</a-select-option>
+                        <a-select-option value="신한은행">C 영업사원</a-select-option>
+                        <a-select-option value="우리은행">D 영업사원</a-select-option>
+                        <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                    </a-select>
+                </div>
+                <div class="form-item">
+                    <label>전달사항 :</label>
+                     <a-textarea v-model:value="value2" placeholder="//전달사항입력" allow-clear />
                 </div>
             </template>
             <template v-if="step===3">
