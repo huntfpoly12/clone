@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import LoginLayout from '../layouts/LoginLayout.vue'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import RquestContract from "../views/RequestContract.vue"
 import BF310 from "../views/BF/BF3/BF310.vue"
 const routes = [
-  { path: "/", component: Home, meta: {
+  { path: "/", component: LoginLayout, 
+    meta: {
     needAuth: true,
     title: 'Home'
     } 
