@@ -345,4 +345,7 @@ export default defineComponent({
 .ant-layout-header a {
   color: #fff;
 }
+::v-deep .ant-layout-content {
+    text-align: left;
+  }
 </style>

@@ -1,5 +1,16 @@
 <template>
-    <div id="data-grid-demo">
+    <div id="bf-310">
+      <a-typography-title :level="2">계약정보관리&심사 </a-typography-title>
+      <div class="search-form">
+        <div class="col">
+            <label>
+            서비스종류 :
+            </label>
+            <a-checkbox v-model:checked="checked">회계</a-checkbox>
+            <a-checkbox v-model:checked="checked">원천</a-checkbox>
+        </div>
+        
+      </div>
       <DxDataGrid
         :data-source="dataSource"
         :show-borders="true"
@@ -124,6 +135,9 @@
         states,
       };
     },
+    computed: {
+
+    },
     methods: {
     onExporting(e) {
       const workbook = new Workbook();
@@ -140,10 +154,14 @@
       });
       e.cancel = true;
     },
+    customClass(cellInfo) {
+        return cellInfo.value
+    }
   },
   };
   </script>
   <style>
+
   #data-grid-demo {
     min-height: 700px;
   }
