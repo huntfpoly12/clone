@@ -4,6 +4,7 @@
         :data-source="dataSource"
         :show-borders="true"
         key-expr="ID"
+        @exporting="onExporting"
       >
       <DxSelection mode="multiple"/>
         <DxPaging :enabled="false"/>
@@ -54,6 +55,10 @@
             :visible="true"
             :highlight-case-sensitive="true"
             />
+        <DxExport
+        :enabled="true"
+        :allow-export-selected-data="true"
+      />
         <DxColumn data-field="신청일자"/>
         <DxColumn data-field="신청코드"/>
         <DxColumn
@@ -91,12 +96,15 @@
     DxEditing,
     DxPopup,
     DxForm,
+    DxExport,
     DxSelection,
     DxSearchPanel
   } from 'devextreme-vue/data-grid';
   import { DxItem } from 'devextreme-vue/form';
   import { employees, states } from './data.js';
-  
+  import { Workbook } from 'exceljs';
+  import { saveAs } from 'file-saver-es';
+  import { exportDataGrid } from 'devextreme/excel_exporter';
   export default {
     components: {
       DxDataGrid,
@@ -107,6 +115,7 @@
       DxForm,
       DxItem,
       DxSelection,
+      DxExport,
       DxSearchPanel
     },
     data() {
@@ -115,6 +124,23 @@
         states,
       };
     },
+    methods: {
+    onExporting(e) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet('employees');
+
+      exportDataGrid({
+        component: e.component,
+        worksheet,
+        autoFilterEnabled: true,
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+        });
+      });
+      e.cancel = true;
+    },
+  },
   };
   </script>
   <style>
