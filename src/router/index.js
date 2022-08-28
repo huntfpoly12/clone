@@ -5,7 +5,7 @@ import DefaultLayout from '../layouts/DefaultLayout.vue'
 import RquestContract from "../views/RequestContract.vue"
 import BF310 from "../views/BF/BF3/BF310.vue"
 const routes = [
-  { path: "/", component: LoginLayout, 
+  { path: "/", component: DefaultLayout, 
     meta: {
     needAuth: true,
     title: 'Home'

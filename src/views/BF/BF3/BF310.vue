@@ -7,7 +7,7 @@
         @exporting="onExporting"
       >
       <DxSelection mode="multiple"/>
-        <DxPaging :enabled="false"/>
+      <DxPaging :page-size="5"/>
         <DxEditing
           :allow-updating="true"
           :allow-adding="true"
