@@ -3,13 +3,53 @@
       <a-typography-title :level="2">계약정보관리&심사 </a-typography-title>
       <div class="search-form">
         <div class="col">
-            <label>
+          <div class="item">
+            <label class="lable-item">
             서비스종류 :
             </label>
             <a-checkbox v-model:checked="checked">회계</a-checkbox>
             <a-checkbox v-model:checked="checked">원천</a-checkbox>
+          </div>
+          <div class="item">
+            <label class="lable-item">심사상태/결과 :</label>
+            <a-select
+              ref="select"
+              v-model:value="value1"
+              style="width: 120px"
+              @focus="focus"
+              placeholder="전체"
+              @change="handleChange"
+            >
+              <a-select-option value="신청">신청</a-select-option>
+              <a-select-option value="심사중">심사중</a-select-option>
+              <a-select-option value="승인">승인</a-select-option>
+              <a-select-option value="반려 ">반려</a-select-option>
+            </a-select>
+          </div>
         </div>
-        
+        <div class="col">
+          <div class="item">
+            <label class="lable-item">심사상태/결과 :</label>
+            <a-select
+              ref="select"
+              v-model:value="value2"
+              style="width: 120px"
+              @focus="focus"
+              placeholder="전체"
+              @change="handleChange"
+            >
+              <a-select-option value="A 대리점">A 대리점</a-select-option>
+              <a-select-option value="C 영업사원">C 영업사원</a-select-option>
+              <a-select-option value="D 영업사원">D 영업사원</a-select-option>
+              <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+            </a-select>
+          </div>
+          <div class="item">
+            <label class="lable-item">신청기간 :</label>
+            <a-range-picker v-model:value="value4" :format="dateFormat" />
+          </div>
+        </div>
+        <a-button class="search" type="primary">검색</a-button>
       </div>
       <DxDataGrid
         :data-source="dataSource"
@@ -89,6 +129,10 @@
           data-type="date"
         />
         <DxColumn
+          data-field="주소"
+          data-type="date"
+        />
+        <DxColumn
           data-field="대표자"
         />
         <DxColumn
@@ -137,6 +181,9 @@
       return {
         dataSource: employees,
         states,
+        value1: '신청',
+        value2: 'A 대리점',
+        dateFormat: 'YYYY/MM/DD'
       };
     },
     computed: {
@@ -182,5 +229,22 @@
   }
   .dx-select-checkbox {
     display: inline-block !important;
+  }
+  .search-form .col {
+    display: flex;
+    align-items: center;
+  }
+  .search-form .col  {
+    margin-top: 20px;
+  }
+  .search-form .col .lable-item {
+    width: 110px;
+    display: inline-block;
+  }
+  .search-form .col .item:nth-child(2) {
+    margin-left: 30px;
+  }
+  .search {
+    margin-top: 20px;
   }
   </style>
