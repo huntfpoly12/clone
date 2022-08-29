@@ -75,7 +75,11 @@
         <DxColumn
           data-field="심사상태"
           data-type="date"
+          cell-template="grid-cell"
         />
+         <template #grid-cell="{ data }">
+            <a-tag :color="getColorTag(data.value)">{{data.value}}</a-tag>
+        </template>
         <DxColumn
           :width="170"
           data-field="사업자코드"
@@ -156,6 +160,17 @@
     },
     customClass(cellInfo) {
         return cellInfo.value
+    },
+    getColorTag(data) {
+      if(data === '신청') {
+        return 'red'
+      } else if (data === '심사중') {
+        return 'blue'
+      } else if (data === '승인') {
+        return 'green'
+      } else if (data === '반려') {
+        return 'grey'
+      }
     }
   },
   };
