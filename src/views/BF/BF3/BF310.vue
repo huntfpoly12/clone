@@ -72,35 +72,19 @@
             title="Employee Info"
           />
           <DxForm>
-            <DxItem
-              :col-count="2"
-              :col-span="2"
-              item-type="group"
-            >
-              <DxItem data-field="FirstName"/>
-              <DxItem data-field="LastName"/>
-              <DxItem data-field="Prefix"/>
-              <DxItem data-field="BirthDate"/>
-              <DxItem data-field="Position"/>
-              <DxItem data-field="HireDate"/>
-              <DxItem
-                :col-span="2"
-                :editor-options="{ height: 100 }"
-                data-field="Notes"
-                editor-type="dxTextArea"
-              />
-            </DxItem>
-  
-            <DxItem
-              :col-count="2"
-              :col-span="2"
-              item-type="group"
-              caption="Home Address"
-            >
-              <DxItem data-field="StateID"/>
-              <DxItem data-field="Address"/>
-            </DxItem>
-          </DxForm>
+          <DxItem
+            :col-count="2"
+            :col-span="2"
+            item-type="group"
+          >
+            <DxItem data-field="사업자코드"/>
+            <DxItem data-field="신청코드"/>
+            <DxItem data-field="신청일자"/>
+            <DxItem data-field="심사메모"/>
+            <DxItem data-field="약관동의"/>
+          </DxItem>
+          
+        </DxForm>
         </DxEditing>
         <DxSearchPanel
             :visible="true"
@@ -160,10 +144,12 @@
     DxSearchPanel
   } from 'devextreme-vue/data-grid';
   import { DxItem } from 'devextreme-vue/form';
+
   import { employees, states } from './data.js';
   import { Workbook } from 'exceljs';
   import { saveAs } from 'file-saver-es';
   import { exportDataGrid } from 'devextreme/excel_exporter';
+  
   import dayjs from 'dayjs';
   import weekday from "dayjs/plugin/weekday"
   import localeData from "dayjs/plugin/localeData"
@@ -192,10 +178,12 @@
         checbox1: true,
         checbox2: true,
         value4: [dayjs(), dayjs().add(1, 'year')],
+        activeKey: [],
+        text: 'text',
+        gridColumns: ['심사상태', '사업자코드', '상호'],
+        gridBoxValue: [3],
+        gridDataSource: employees
       };
-    },
-    computed: {
-
     },
     methods: {
     onExporting(e) {
