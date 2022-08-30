@@ -7,8 +7,8 @@
             <label class="lable-item">
             서비스종류 :
             </label>
-            <a-checkbox v-model:checked="checked">회계</a-checkbox>
-            <a-checkbox v-model:checked="checked">원천</a-checkbox>
+            <a-checkbox v-model:checked="checbox1">회계</a-checkbox>
+            <a-checkbox v-model:checked="checbox2">원천</a-checkbox>
           </div>
           <div class="item">
             <label class="lable-item">심사상태/결과 :</label>
@@ -164,6 +164,7 @@
   import { Workbook } from 'exceljs';
   import { saveAs } from 'file-saver-es';
   import { exportDataGrid } from 'devextreme/excel_exporter';
+  import dayjs from 'dayjs';
   export default {
     components: {
       DxDataGrid,
@@ -175,7 +176,7 @@
       DxItem,
       DxSelection,
       DxExport,
-      DxSearchPanel
+      DxSearchPanel,
     },
     data() {
       return {
@@ -183,7 +184,10 @@
         states,
         value1: '신청',
         value2: 'A 대리점',
-        dateFormat: 'YYYY/MM/DD'
+        dateFormat: 'YYYY/MM/DD',
+        checbox1: true,
+        checbox2: true,
+        value4: [dayjs(), dayjs().add(1, 'year')]
       };
     },
     computed: {
