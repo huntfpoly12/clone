@@ -45,7 +45,7 @@
             </a-select>
           </div>
           <div class="item">
-            <label class="lable-item">신청기간 :</label>
+            <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
             <a-range-picker v-model:value="value4" :format="dateFormat" />
           </div>
         </div>
