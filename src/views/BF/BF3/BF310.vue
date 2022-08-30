@@ -165,6 +165,10 @@
   import { saveAs } from 'file-saver-es';
   import { exportDataGrid } from 'devextreme/excel_exporter';
   import dayjs from 'dayjs';
+  import weekday from "dayjs/plugin/weekday"
+  import localeData from "dayjs/plugin/localeData"
+  dayjs.extend(weekday)
+  dayjs.extend(localeData)
   export default {
     components: {
       DxDataGrid,
@@ -187,7 +191,7 @@
         dateFormat: 'YYYY/MM/DD',
         checbox1: true,
         checbox2: true,
-        value4: [dayjs(), dayjs().add(1, 'year')]
+        value4: [dayjs(), dayjs().add(1, 'year')],
       };
     },
     computed: {
