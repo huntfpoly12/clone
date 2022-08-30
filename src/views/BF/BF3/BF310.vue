@@ -69,19 +69,37 @@
             :show-title="true"
             :width="700"
             :height="525"
-            title="Employee Info"
+            title="계약정보관리"
           />
           <DxForm>
           <DxItem
             :col-count="2"
             :col-span="2"
             item-type="group"
-          >
-            <DxItem data-field="사업자코드"/>
-            <DxItem data-field="신청코드"/>
-            <DxItem data-field="신청일자"/>
-            <DxItem data-field="심사메모"/>
-            <DxItem data-field="약관동의"/>
+          >  <a-collapse v-model:activeKey="activeKey" accordion>
+            <a-collapse-panel key="1" header="심사정보">
+              sdfsdfsdf
+            </a-collapse-panel>
+            <a-collapse-panel key="2" header="사업자정보">
+              <p>{{ text }}</p>
+            </a-collapse-panel>
+            <a-collapse-panel key="3" header="대표자정보">
+              <p>{{ text }}</p>
+            </a-collapse-panel>
+            <a-collapse-panel key="4" header="회계서비스신청">
+              <p>{{ text }}</p>
+            </a-collapse-panel>
+            <a-collapse-panel key="5" header="원천서비스신청">
+              <p>{{ text }}</p>
+            </a-collapse-panel>
+            <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
+              <p>{{ text }}</p>
+            </a-collapse-panel>
+            <a-collapse-panel key="7" header="기타">
+              <p>{{ text }}</p>
+            </a-collapse-panel>
+          </a-collapse>
+           
           </DxItem>
           
         </DxForm>
