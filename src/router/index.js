@@ -3,7 +3,6 @@ import Login from "../views/Login.vue";
 import LoginLayout from '../layouts/LoginLayout.vue'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import RquestContract from "../views/RequestContract.vue"
-import BF310 from "../views/BF/BF3/BF310.vue"
 const routes = [
   { path: "/", component: DefaultLayout, 
     meta: {
@@ -42,7 +41,11 @@ const routes = [
     children: [
       {
         path: "bf-310",
-        component: BF310
+        component: () => import('../views/BF/BF3/BF310.vue')
+      },
+      {
+        path: "bf-320",
+        component: () => import('../views/BF/BF3/BF320.vue')
       }
     ]
   }
