@@ -6,7 +6,7 @@
       centered
       okText="저장하고 나가기"
       cancelText="그냥 나가기"
-      @ok="mStatus = false"
+      @ok="modalStatus = false"
       width="50%"
     >
       <a-collapse v-model:activeKey="activeKey" accordion>
@@ -105,11 +105,6 @@ export default {
   props:[
     'modalStatus'
   ],
-  data() {
-    return {
-      mStatus: this.modalStatus
-    }
-  },
   components: {
     DxForm,
     DxSimpleItem,
