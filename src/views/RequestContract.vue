@@ -11,7 +11,7 @@
             <template v-if="step === 0">
                 <div class="form-group">
                     <label>1. 서비스약관 동의</label>
-                    <a-textarea v-model:value="value2" placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                    <a-textarea placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
                         <a-radio-group v-model:value="radio">
                             <a-radio :value="'미동의'">미동의</a-radio>
@@ -21,7 +21,7 @@
                 </div>
                 <div class="form-group">
                     <label>2. 개인정보제공 및 활용동의</label>
-                    <a-textarea v-model:value="value2" placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                    <a-textarea placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
                         <a-radio-group v-model:value="radio1">
                             <a-radio :value="'미동의'">미동의</a-radio>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="form-group">
                     <label>3. 회계서비스약관 동의</label>
-                    <a-textarea v-model:value="value2" placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                    <a-textarea placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
                         <a-radio-group v-model:value="radio2">
                             <a-radio :value="'미동의'">미동의</a-radio>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="form-group">
                     <label>4. 원천서비스약관 동의</label>
-                    <a-textarea v-model:value="value2" placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                    <a-textarea placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
                         <a-radio-group v-model:value="radio3">
                             <a-radio :value="'미동의'">미동의</a-radio>
@@ -128,13 +128,13 @@
                             <a-radio :value="'신청합니다'">신청합니다</a-radio>
                             <a-radio :value="'신청하지 않습니다'">신청하지 않습니다</a-radio>
                         </a-radio-group>
-
                     </div>
 
                     <div class="group-title">
                         <p class="red">⁙ 운영사업</p>
                         <a-button class="editable-add-btn" style="margin-bottom: 8px" @click="handleAdd">추 가</a-button>
                     </div>
+
                     <a-table bordered :data-source="dataSource" :columns="columns" pagination=false>
                         <template #bodyCell="{ column, text, record }">
                             <template v-if="column.dataIndex === 'name'">
@@ -150,10 +150,8 @@
                                     </div>
                                 </div>
                             </template>
-
-
                             <template v-else-if="column.dataIndex === 'select'">
-                                <a-select ref="select" placeholder="주•야간보호">
+                                <a-select ref="select" placeholder="사업분류">
                                     <a-select-option value="주•야간보호">주•야간보호</a-select-option>
                                     <a-select-option value="방문요양">방문요양</a-select-option>
                                     <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
@@ -162,7 +160,6 @@
                                     <a-select-option value="복지용구">복지용구</a-select-option>
                                 </a-select>
                             </template>
-
 
                             <template v-else-if="column.dataIndex === 'date'">
                                 <a-date-picker />
@@ -174,9 +171,9 @@
                                     <a>삭 제</a>
                                 </a-popconfirm>
                             </template>
-
                         </template>
                     </a-table>
+
                     <div class="form-item">
                         <label class="red">장기요양기관등록번호 :</label>
                         <a-input placeholder="09xx-xxx-xxx" v-model:value="dataInputCallApi.numberPhone" />
@@ -197,25 +194,24 @@
 
                     <div class="date-picker">
                         <label class="red">서비스 시작년월 :</label>
-                        <a-date-picker placeholder="날짜 선택" v-model:value="dataInputCallApi.dateStartService"  />
+                        <a-date-picker placeholder="날짜 선택" v-model="dataInputCallApi.dateStartService"
+                            @change="dataInputCallApi.dateStartService = moment($event.$d).format('YYYY-MM-DD')" />
                     </div>
-
-    
 
                     <div class="form-item">
                         <label class="red">장기요양기관등록번호 :</label>
-                        <a-input placeholder="10" />
+                        <a-input placeholder="장기요양기관등록번호" v-model:value="dataInputCallApi.registrationNumber" />
                     </div>
                     <div class="form-item">
                         <label>부가서비스</label>
-                        <a-checkbox v-model:checked="checked">4대보험신고서비스</a-checkbox>
+                        <a-checkbox v-model:checked="dataInputCallApi.declarationService">4대보험신고서비스</a-checkbox>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                     <div class="form-item">
                         <label class="red">서비스 시작년월 :</label>
-                        <a-select v-model:value="select2">
+                        <a-select v-model:value="dataInputCallApi.bankName">
                             <a-select-option value="은행선택">은행선택</a-select-option>
                             <a-select-option value="농협">농협</a-select-option>
                             <a-select-option value="신한은행">신한은행</a-select-option>
@@ -226,20 +222,21 @@
                     </div>
                     <div class="form-item">
                         <label class="red">출금계좌번호 :</label>
-                        <a-input placeholder="100100056489011" />
+                        <a-input placeholder="출금계좌번호" v-model:value="dataInputCallApi.numberAccount" />
                     </div>
                     <div class="form-item">
                         <label class="red">예금주명 :</label>
-                        <a-input placeholder="주식회사 타운소프트비나" />
+                        <a-input placeholder="주식회사 타운소프트비나" v-model:value="dataInputCallApi.accountHolder" />
                     </div>
                     <div class="form-item">
                         <label class="red">사업자(주민)등록번호:</label>
-                        <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다" />
+                        <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다"
+                            v-model:value="dataInputCallApi.numberBusiness" />
                         <p>예금주의 사업자등록번호 또는 주민등록번호입니다</p>
                     </div>
                     <div class="form-item">
                         <label class="red">자동이체출금일자 :</label>
-                        <a-radio-group v-model:value="radio7">
+                        <a-radio-group v-model:value="dataInputCallApi.debtWithdrawalDate">
                             <a-radio :value="'매월 5일'">매월 5일</a-radio>
                             <a-radio :value="'매월 12일'">매월 12일</a-radio>
                             <a-radio :value="'매월 19일'">매월 19일</a-radio>
@@ -250,7 +247,7 @@
                     <label>4. 기타</label>
                     <div class="form-item">
                         <label>영업관리담당 :</label>
-                        <a-select v-model:value="select3">
+                        <a-select v-model:value="dataInputCallApi.salesAgent">
                             <a-select-option value="은행선택">A 대리점</a-select-option>
                             <a-select-option value="농협">농협</a-select-option>
                             <a-select-option value="신한은행">C 영업사원</a-select-option>
@@ -260,7 +257,7 @@
                     </div>
                     <div class="form-item">
                         <label>전달사항 :</label>
-                        <a-textarea v-model:value="value2" placeholder="//전달사항입력" allow-clear />
+                        <a-textarea v-model:value="dataInputCallApi.note" placeholder="전달사항입력" allow-clear />
                     </div>
                 </div>
             </template>
@@ -290,7 +287,7 @@
 import { computed, reactive, ref } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash-es';
-import moment from 'moment';
+import moment from 'moment'
 
 export default {
     components: {
@@ -300,18 +297,12 @@ export default {
     data() {
         return {
             step: 0,
-            select1: '주•야간보호',
-            select2: '은행선택',
-            select3: '은행선택',
             visible: false,
             radio: '',
             radio1: '',
             radio2: '',
             radio3: '',
             radio4: '',
-            radio6: '',
-            radio7: '',
-
             dataInputCallApi: {
                 dossier: '',
                 businessActivities: [
@@ -337,19 +328,20 @@ export default {
                     }
                 ],
                 numberPhone: "",
-                agentService: "",
+                agentService: false,
                 applicationService: '',
-                dateStartService: ref(moment('2022-01-05', this.dateFormat)),
-                registrationNumber: '1234556778',
-                declarationService: true,
+                dateStartService: '2022-10-10',
+                registrationNumber: '',
+                declarationService: false,
                 bankName: '은행선택',
-                numberAccount: '1234567',
-                accountHolder: 'A RAM HAN',
-                numberBusiness: '0987654321',
+                numberAccount: '',
+                accountHolder: '',
+                numberBusiness: '',
                 debtWithdrawalDate: '매월 5일',
                 salesAgent: 'A 대리점',
-                note: '매월 5일'
+                note: ''
             },
+
 
         }
     },
@@ -386,6 +378,7 @@ export default {
         prevStep() {
             this.step--
         },
+
         nextStep() {
             this.step++
         },
@@ -396,10 +389,9 @@ export default {
             this.visible = false
             this.$router.push('/login')
         },
-
     },
+
     setup() {
-        const dateFormat = 'YYYY/MM/DD';
         const columns = [
             {
                 title: '#',
@@ -426,6 +418,7 @@ export default {
                 dataIndex: 'operation',
             }
         ];
+
         const dataSource = ref([{
             key: '0',
             name: '가나다라마바 사업',
@@ -442,6 +435,13 @@ export default {
         {
             key: '2',
             name: '사하자차카타파하 사업',
+            select: '방문간호',
+            date: '2022-08-25',
+            number: '10'
+        },
+        {
+            key: '3',
+            name: '사하자차카타파하 가나다라마바',
             select: '방문간호',
             date: '2022-08-25',
             number: '10'
@@ -485,7 +485,7 @@ export default {
             count,
             edit,
             save,
-            dateFormat
+            moment
         };
     },
 }
