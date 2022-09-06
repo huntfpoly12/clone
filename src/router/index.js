@@ -41,7 +41,7 @@ const routes = [
     children: [
       {
         path: "bf-310",
-        component: () => import('../views/BF/BF3/BF310.vue')
+        component: () => import('../views/BF/BF3/BF310/index.vue')
       },
       {
         path: "bf-320",
