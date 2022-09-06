@@ -83,7 +83,7 @@ export default defineComponent({
             id: 'bf-300',
             items: [
               {name: '계약정보관리,심사', url: '/dashboard/bf-310',id: 'bf-310'}, 
-              {name: '사업자관리', url: '#',id: 'bf-320'}, 
+              {name: '사업자관리', url: '/dashboard/bf-320',id: 'bf-320'}, 
               {name: '서비스관리', url: '#',id: 'bf-330'},
               {name: '영업자관리', url: '#',id: 'bf-340'}
             ]

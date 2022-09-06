@@ -42,6 +42,10 @@ const routes = [
       {
         path: "bf-310",
         component: () => import('../views/BF/BF3/BF310/index.vue')
+      },
+      {
+        path: "bf-320",
+        component: () => import('../views/BF/BF3/BF320.vue')
       }
     ]
   }
