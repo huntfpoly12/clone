@@ -7,45 +7,43 @@
             <label class="lable-item">
             서비스종류 :
             </label>
-            <a-input v-model:value="value" placeholder="Basic usage" />
+            <a-input v-model:value="value" />
           </div>
           <div class="item">
-            <label class="lable-item">심사상태/결과 :</label>
-            <a-select
-              ref="select"
-              v-model:value="value1"
-              style="width: 120px"
-              @focus="focus"
-              placeholder="전체"
-              @change="handleChange"
-            >
-              <a-select-option value="신청">신청</a-select-option>
-              <a-select-option value="심사중">심사중</a-select-option>
-              <a-select-option value="승인">승인</a-select-option>
-              <a-select-option value="반려 ">반려</a-select-option>
-            </a-select>
+            <label class="lable-item">상호:</label>
+            <a-input v-model:value="value" />
+          </div>
+          <div class="item">
+            <label class="lable-item">대표자:</label>
+            <a-input v-model:value="value" />
+          </div>
+          <div class="item">
+            <label class="lable-item">해지:</label>
+            <a-switch v-model:checked="checked1" checked-children="포함" un-checked-children="제외" />
           </div>
         </div>
         <div class="col">
           <div class="item">
-            <label class="lable-item">심사상태/결과 :</label>
-            <a-select
-              ref="select"
-              v-model:value="value2"
-              style="width: 120px"
-              @focus="focus"
-              placeholder="전체"
-              @change="handleChange"
-            >
-              <a-select-option value="A 대리점">A 대리점</a-select-option>
-              <a-select-option value="C 영업사원">C 영업사원</a-select-option>
-              <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-              <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
-            </a-select>
+            <label class="lable-item">주소 :</label>
+            <a-input v-model:value="value" />
           </div>
           <div class="item">
-            <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-            <a-range-picker v-model:value="value4" :format="dateFormat" />
+            <label class="lable-item">매니저명 :</label>
+            <a-select
+                v-model:value="value"
+                show-search
+                placeholder="Select a person"
+                :options="options"
+            ></a-select>
+          </div>
+          <div class="item">
+            <label class="lable-item">영업자명 :</label>
+            <a-select
+                v-model:value="value"
+                show-search
+                placeholder="Select a person"
+                :options="options"
+            ></a-select>
           </div>
         </div>
         <a-button class="search" type="primary">검색</a-button>
@@ -144,7 +142,18 @@
         text: 'text',
         gridColumns: ['심사상태', '사업자코드', '상호'],
         gridBoxValue: [3],
-        gridDataSource: employees
+        gridDataSource: employees,
+        checked1: false,
+        options: [{
+            value: 'jack',
+            label: 'Jack',
+            }, {
+            value: 'lucy',
+            label: 'Lucy',
+            }, {
+            value: 'tom',
+            label: 'Tom',
+            }]
       };
     },
     methods: {
@@ -198,10 +207,10 @@
     }
   }
   .search-form .col .lable-item {
-    width: 110px;
-    display: inline-block;
+    white-space: nowrap;
+    margin-right: 10px;
   }
-  .search-form .col .item:nth-child(2) {
+  .search-form .col .item:not(:first-child) {
     margin-left: 30px;
   }
   .search {
