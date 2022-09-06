@@ -7,46 +7,43 @@
             <label class="lable-item">
             서비스종류 :
             </label>
-            <a-checkbox v-model:checked="checbox1">회계</a-checkbox>
-            <a-checkbox v-model:checked="checbox2">원천</a-checkbox>
+            <a-input v-model:value="value" />
           </div>
           <div class="item">
-            <label class="lable-item">심사상태/결과 :</label>
-            <a-select
-              ref="select"
-              v-model:value="value1"
-              style="width: 120px"
-              @focus="focus"
-              placeholder="전체"
-              @change="handleChange"
-            >
-              <a-select-option value="신청">신청</a-select-option>
-              <a-select-option value="심사중">심사중</a-select-option>
-              <a-select-option value="승인">승인</a-select-option>
-              <a-select-option value="반려 ">반려</a-select-option>
-            </a-select>
+            <label class="lable-item">상호:</label>
+            <a-input v-model:value="value" />
+          </div>
+          <div class="item">
+            <label class="lable-item">대표자:</label>
+            <a-input v-model:value="value" />
+          </div>
+          <div class="item">
+            <label class="lable-item">해지:</label>
+            <a-switch v-model:checked="checked1" checked-children="포함" un-checked-children="제외" />
           </div>
         </div>
         <div class="col">
           <div class="item">
-            <label class="lable-item">심사상태/결과 :</label>
-            <a-select
-              ref="select"
-              v-model:value="value2"
-              style="width: 120px"
-              @focus="focus"
-              placeholder="전체"
-              @change="handleChange"
-            >
-              <a-select-option value="A 대리점">A 대리점</a-select-option>
-              <a-select-option value="C 영업사원">C 영업사원</a-select-option>
-              <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-              <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
-            </a-select>
+            <label class="lable-item">주소 :</label>
+            <a-input v-model:value="value" />
           </div>
           <div class="item">
-            <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-            <a-range-picker v-model:value="value4" :format="dateFormat" />
+            <label class="lable-item">매니저명 :</label>
+            <a-select
+                v-model:value="value"
+                show-search
+                placeholder="Select a person"
+                :options="options"
+            ></a-select>
+          </div>
+          <div class="item">
+            <label class="lable-item">영업자명 :</label>
+            <a-select
+                v-model:value="value"
+                show-search
+                placeholder="Select a person"
+                :options="options"
+            ></a-select>
           </div>
         </div>
         <a-button class="search" type="primary">검색</a-button>
@@ -58,52 +55,7 @@
         @exporting="onExporting"
       >
       <DxSelection mode="multiple"/>
-      <DxPaging :page-size="5"/>
-        <DxEditing
-          :allow-updating="true"
-          :allow-adding="true"
-          :allow-deleting="false"
-          mode="popup"
-        >
-          <DxPopup
-            :show-title="true"
-            :width="700"
-            :height="525"
-            title="계약정보관리"
-          />
-          <DxForm>
-          <DxItem
-            :col-count="2"
-            :col-span="2"
-            item-type="group"
-          >  <a-collapse v-model:activeKey="activeKey" accordion>
-            <a-collapse-panel key="1" header="심사정보">
-              sdfsdfsdf
-            </a-collapse-panel>
-            <a-collapse-panel key="2" header="사업자정보">
-              <p>{{ text }}</p>
-            </a-collapse-panel>
-            <a-collapse-panel key="3" header="대표자정보">
-              <p>{{ text }}</p>
-            </a-collapse-panel>
-            <a-collapse-panel key="4" header="회계서비스신청">
-              <p>{{ text }}</p>
-            </a-collapse-panel>
-            <a-collapse-panel key="5" header="원천서비스신청">
-              <p>{{ text }}</p>
-            </a-collapse-panel>
-            <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
-              <p>{{ text }}</p>
-            </a-collapse-panel>
-            <a-collapse-panel key="7" header="기타">
-              <p>{{ text }}</p>
-            </a-collapse-panel>
-          </a-collapse>
-           
-          </DxItem>
-          
-        </DxForm>
-        </DxEditing>
+      <DxPaging :page-size="20"/>
         <DxSearchPanel
             :visible="true"
             :highlight-case-sensitive="true"
@@ -117,11 +69,8 @@
         <DxColumn
           data-field="심사상태"
           data-type="date"
-          cell-template="grid-cell"
+         
         />
-         <template #grid-cell="{ data }">
-            <a-tag :color="getColorTag(data.value)">{{data.value}}</a-tag>
-        </template>
         <DxColumn
           :width="170"
           data-field="사업자코드"
@@ -154,16 +103,13 @@
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxEditing,
-    DxPopup,
-    DxForm,
     DxExport,
     DxSelection,
     DxSearchPanel
   } from 'devextreme-vue/data-grid';
-  import { DxItem } from 'devextreme-vue/form';
 
-  import { employees, states } from './data.js';
+
+  import { employees, states } from './data2.js';
   import { Workbook } from 'exceljs';
   import { saveAs } from 'file-saver-es';
   import { exportDataGrid } from 'devextreme/excel_exporter';
@@ -178,10 +124,6 @@
       DxDataGrid,
       DxColumn,
       DxPaging,
-      DxEditing,
-      DxPopup,
-      DxForm,
-      DxItem,
       DxSelection,
       DxExport,
       DxSearchPanel,
@@ -200,7 +142,18 @@
         text: 'text',
         gridColumns: ['심사상태', '사업자코드', '상호'],
         gridBoxValue: [3],
-        gridDataSource: employees
+        gridDataSource: employees,
+        checked1: false,
+        options: [{
+            value: 'jack',
+            label: 'Jack',
+            }, {
+            value: 'lucy',
+            label: 'Lucy',
+            }, {
+            value: 'tom',
+            label: 'Tom',
+            }]
       };
     },
     methods: {
@@ -236,7 +189,7 @@
   },
   };
   </script>
-  <style>
+  <style lang="scss">
 
   #data-grid-demo {
     min-height: 700px;
@@ -247,15 +200,17 @@
   .search-form .col {
     display: flex;
     align-items: center;
-  }
-  .search-form .col  {
     margin-top: 20px;
+    .item {
+        display: flex;
+        align-items: center;
+    }
   }
   .search-form .col .lable-item {
-    width: 110px;
-    display: inline-block;
+    white-space: nowrap;
+    margin-right: 10px;
   }
-  .search-form .col .item:nth-child(2) {
+  .search-form .col .item:not(:first-child) {
     margin-left: 30px;
   }
   .search {
