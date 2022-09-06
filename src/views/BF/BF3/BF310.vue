@@ -79,9 +79,9 @@
       <DxColumn data-field="영업자" />
       <DxColumn data-field="신청서비스" />
       <DxColumn data-field="부가서비스" />
-      <DxColumn :width="110"  type="buttons" cell-template="pupop"/>
+      <DxColumn :width="110"  cell-template="pupop"/>
       <template #pupop="{ data }" >
-        <DxButton @click="setModalVisible(data)" text="편집"  type="warning"/>
+        <DxButton @click="setModalVisible(data)" text="편집" />
       </template>
     </DxDataGrid>
     <template>
@@ -192,11 +192,11 @@
 </template>
   <script>
 import DxDropDownBox from "devextreme-vue/drop-down-box";
+import DxButton from 'devextreme-vue/button';
 import { DxForm, DxSimpleItem, DxGroupItem } from "devextreme-vue/form";
 import {
   DxDataGrid,
   DxColumn,
-  DxButton,
   DxPaging,
   DxExport,
   DxSelection,
