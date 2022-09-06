@@ -229,9 +229,19 @@
                         </a-button>
                       </a-upload>
                     </a-form-item>
-                    <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
-                    <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
-                    <p>파일용량 : 최대 5MB</p>
+
+                    <div :style="{fontSize:'12px'}">
+                      <div>
+                        
+                      </div>
+                      <div>      
+                        <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
+                        <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
+                        <p>파일용량 : 최대 5MB</p>
+                      </div>
+                
+                    </div>
+                   
                     
                   </a-col>
                   <a-col :span="12" >
