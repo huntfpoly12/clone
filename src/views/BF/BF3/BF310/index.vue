@@ -100,11 +100,11 @@
     <DxDateBox
             :show-clear-button="true"
             :use-mask-behavior="true"
-            :value="date"
+         
             placeholder="10/16/2018"
-            display-format="shortdate"
+            :display-format="formatter"
             type="date"
-            @focusIn="test2(e)"
+            @focusIn="dateOnFocus"
           />
   </div>
   <!-- dddd -->
@@ -170,6 +170,15 @@ export default {
       },
       popupData:[],
       valueDate: ref<Dayjs>(),
+      formatter:  (date)=>{
+       
+          const day = date.getDate();
+          const month = date.getMonth() + 1;
+          const year = date.getFullYear();
+      
+          return `${day}/${month}/${year}`;
+      },
+
     };
   },
   methods: {
@@ -212,8 +221,8 @@ export default {
     test(){
      
     },
-    test2(e){
-     console.log(e);
+    dateOnFocus(e){
+      e.element.querySelector('.dx-texteditor-input').select();
     }
   },
 };
