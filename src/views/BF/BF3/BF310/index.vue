@@ -60,7 +60,7 @@
             <template #pupop="{ data }">
                 <DxButton @click="setModalVisible(data)" text="편집" />
             </template>
-        </DxDataGrid>
+        </DxDataGrid> 
     </div>
     <!-- dddd -->
 </template>
@@ -99,7 +99,7 @@ export default {
     },
     data() {
         const newVal = this.$store.state.dataSearchBF320
-        console.log(newVal);
+        console.log(newVal); 
 
         const arraySave = {
             typeSevice1: false,
@@ -110,7 +110,7 @@ export default {
             toDate: "",
         }
 
-
+ 
         this.$store.commit("auth/dataSearchBF320", arraySave); //lưu vào store 
 
         return {
@@ -189,7 +189,7 @@ export default {
                 for (const property in newVal) {
                     arraySave.push(`${property}: ${newVal[property]}`)
                 }
-                this.$store.commit("auth/dataSearchBF320", arraySave);
+                this.$store.commit("auth/dataSearchBF320", arraySave); 
             },
             deep: true,
             immediate: true,

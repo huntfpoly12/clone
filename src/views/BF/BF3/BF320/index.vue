@@ -5,38 +5,36 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item">
-                        사업자코드:
+                        서비스종류 :
                     </label>
-                    <a-input v-model:value="dataSearch.typeSevice" />
+                    <a-input v-model:value="value" />
                 </div>
                 <div class="item">
                     <label class="lable-item">상호:</label>
-                    <a-input v-model:value="dataSearch.nameCompany" />
+                    <a-input v-model:value="value" />
                 </div>
                 <div class="item">
                     <label class="lable-item">대표자:</label>
-                    <a-input v-model:value="dataSearch.representative" />
+                    <a-input v-model:value="value" />
                 </div>
                 <div class="item">
                     <label class="lable-item">해지:</label>
-                    <a-switch v-model:checked="dataSearch.typeContract" un-checked-children="제외" />
+                    <a-switch v-model:checked="checked1" checked-children="포함" un-checked-children="제외" />
                 </div>
             </div>
             <div class="col">
                 <div class="item">
                     <label class="lable-item">주소 :</label>
-                    <a-input v-model:value="dataSearch.address" />
+                    <a-input v-model:value="value" />
                 </div>
                 <div class="item">
                     <label class="lable-item">매니저명 :</label>
-                    <a-select v-model:value="dataSearch.nameLeader" show-search placeholder="Select a person"
-                        :options="options">
+                    <a-select v-model:value="value" show-search placeholder="Select a person" :options="options">
                     </a-select>
                 </div>
                 <div class="item">
                     <label class="lable-item">영업자명 :</label>
-                    <a-select v-model:value="dataSearch.companType" show-search placeholder="Select a person"
-                        :options="options">
+                    <a-select v-model:value="value" show-search placeholder="Select a person" :options="options">
                     </a-select>
                 </div>
             </div>
@@ -44,7 +42,7 @@
         </div>
         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
             <DxSelection mode="multiple" />
-            <DxPaging :page-size="20" />
+            <DxPaging :page-size="5" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
             <DxExport :enabled="true" :allow-export-selected-data="true" />
             <DxColumn data-field="신청일자" />
@@ -57,7 +55,12 @@
             <DxColumn data-field="영업자" />
             <DxColumn data-field="신청서비스" />
             <DxColumn data-field="부가서비스" />
+            <DxColumn :width="110" cell-template="pupop" data-field="시장 조작" />
+            <template #pupop="{ data }">
+                <DxButton @click="setModalVisible(data)" text="편집" />
+            </template>
         </DxDataGrid>
+
     </div>
 </template>
 <script>
@@ -69,10 +72,8 @@ import {
     DxSelection,
     DxSearchPanel
 } from 'devextreme-vue/data-grid';
-
-
 import BF320Popup from "./components/BF320Popup.vue";
-
+import DxButton from "devextreme-vue/button";
 import { employees, states } from '../data2.js';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
@@ -83,10 +84,12 @@ import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
 dayjs.extend(weekday)
 dayjs.extend(localeData)
+
 export default {
     components: {
         DxDataGrid,
         DxColumn,
+        DxButton,
         DxPaging,
         DxSelection,
         DxExport,
@@ -119,15 +122,8 @@ export default {
                 value: 'tom',
                 label: 'Tom',
             }],
-            dataSearch: {
-                typeSevice: "",
-                nameCompany: "",
-                representative: "",
-                typeContract: true,
-                address: "",
-                nameLeader: "lucy",
-                companType: "tom",
-            },
+            popupData: [],
+            modalStatus: false,
         };
     },
     methods: {
@@ -159,25 +155,15 @@ export default {
             } else if (data === '반려') {
                 return 'grey'
             }
-        }
+        },
+        setModalVisible(data) {
+            this.popupData = data;
+            this.modalStatus = true;
+        },
     },
-    watch: {
-        dataSearch: {
-            handler(newVal) {
-                this.$store.dispatch('dataSearchBF320', newVal)
-            },
-            deep: true,
-            immediate: true
-        }
-    },
-
-    mounted() {
-        console.log(this.$store);
-    }
-
 };
 </script>
-<style lang="scss">
+<style>
 #data-grid-demo {
     min-height: 700px;
 }
@@ -186,19 +172,16 @@ export default {
     display: inline-block !important;
 }
 
-.search-form>div {
-    display: flex;
-}
-
 .search-form .col {
     display: flex;
     align-items: center;
     margin-top: 20px;
 
-    .item {
-        display: flex;
-        align-items: center;
-    }
+}
+
+.item {
+    display: flex;
+    align-items: center;
 }
 
 .search-form .col .lable-item {
