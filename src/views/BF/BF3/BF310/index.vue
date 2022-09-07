@@ -61,7 +61,6 @@
                 <DxButton @click="setModalVisible(data)" text="편집" />
             </template>
         </DxDataGrid>
-        <BF310Popup :modalStatus="modalStatus" />
     </div>
     <!-- dddd -->
 </template>
@@ -84,7 +83,6 @@ import moment from 'moment'
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-// import { set } from "lodash-es";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -100,6 +98,21 @@ export default {
         BF310Popup,
     },
     data() {
+        const newVal = this.$store.state.dataSearchBF320
+        console.log(newVal);
+
+        const arraySave = {
+            typeSevice1: false,
+            typeSevice2: false,
+            status: "상태 선택",
+            staff: "직원을 선택",
+            fromDate: '',
+            toDate: "",
+        }
+
+
+        this.$store.commit("auth/dataSearchBF320", arraySave); //lưu vào store 
+
         return {
             dataSource: employees,
             states,
@@ -122,14 +135,7 @@ export default {
                 resource: "",
                 desc: "",
             },
-            dataSearch: {
-                typeSevice1: false,
-                typeSevice2: false,
-                status: "상태 선택",
-                staff: "직원을 선택",
-                fromDate: '',
-                toDate: "",
-            },
+            dataSearch: arraySave,
             moment
         };
     },
@@ -184,8 +190,6 @@ export default {
                     arraySave.push(`${property}: ${newVal[property]}`)
                 }
                 this.$store.commit("auth/dataSearchBF320", arraySave);
-
-                console.log(this.$store.state);
             },
             deep: true,
             immediate: true,

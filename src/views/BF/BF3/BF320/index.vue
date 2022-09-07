@@ -5,7 +5,7 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item">
-                        서비스종류 :
+                        사업자코드:
                     </label>
                     <a-input v-model:value="dataSearch.typeSevice" />
                 </div>
@@ -19,8 +19,7 @@
                 </div>
                 <div class="item">
                     <label class="lable-item">해지:</label>
-                    <a-switch v-model:checked="dataSearch.typeContract" checked-children="포함"
-                        un-checked-children="제외" />
+                    <a-switch v-model:checked="dataSearch.typeContract" un-checked-children="제외" />
                 </div>
             </div>
             <div class="col">
@@ -71,7 +70,10 @@ import {
     DxSearchPanel
 } from 'devextreme-vue/data-grid';
 
-import { employees, states } from './data2.js';
+
+import BF320Popup from "./components/BF320Popup.vue";
+
+import { employees, states } from '../data2.js';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
@@ -81,23 +83,7 @@ import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
 dayjs.extend(weekday)
 dayjs.extend(localeData)
-
-
-<<<<<<< HEAD:src/views/BF/BF3/BF320.vue
 export default {
-=======
-  import { employees, states } from '../data2.js';
-  import { Workbook } from 'exceljs';
-  import { saveAs } from 'file-saver-es';
-  import { exportDataGrid } from 'devextreme/excel_exporter';
-  
-  import dayjs from 'dayjs';
-  import weekday from "dayjs/plugin/weekday"
-  import localeData from "dayjs/plugin/localeData"
-  dayjs.extend(weekday)
-  dayjs.extend(localeData)
-  export default {
->>>>>>> main:src/views/BF/BF3/BF320/index.vue
     components: {
         DxDataGrid,
         DxColumn,
@@ -105,6 +91,7 @@ export default {
         DxSelection,
         DxExport,
         DxSearchPanel,
+        BF320Popup
     },
     data() {
         return {
@@ -176,8 +163,8 @@ export default {
     },
     watch: {
         dataSearch: {
-            handler(newVal) { 
-                this.$store.dispatch('dataSearchBF320', newVal)  
+            handler(newVal) {
+                this.$store.dispatch('dataSearchBF320', newVal)
             },
             deep: true,
             immediate: true
@@ -197,6 +184,10 @@ export default {
 
 .dx-select-checkbox {
     display: inline-block !important;
+}
+
+.search-form>div {
+    display: flex;
 }
 
 .search-form .col {
