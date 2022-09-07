@@ -55,7 +55,7 @@
             <DxColumn data-field="영업자" />
             <DxColumn data-field="신청서비스" />
             <DxColumn data-field="부가서비스" />
-            <DxColumn :width="110" cell-template="pupop" data-field="시장 조작" />
+            <DxColumn :width="110" cell-template="pupop" />
             <template #pupop="{ data }">
                 <DxButton @click="setModalVisible(data)" text="편집" />
             </template>
