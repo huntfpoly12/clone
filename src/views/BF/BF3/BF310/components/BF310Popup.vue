@@ -288,28 +288,35 @@
           </div>
         </a-collapse-panel>
         <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
-          <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-item label="Activity name">
-            <a-input v-model:value="formState.name" />
+          <a-form  :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-form-item label="출금은행">
+                <a-select
+                          ref="select"
+                          value="은행선택"
+                          style="width: 200px" >
+                          <a-select-option value="은행선택">은행선택</a-select-option>
+                          <a-select-option value="국민은행">국민은행</a-select-option>
+                          <a-select-option value="신한은행">신한은행</a-select-option>
+                          <a-select-option value="우리은행">우리은행</a-select-option>
+                          <a-select-option value="기업은행">기업은행</a-select-option>
+                          <a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
+                  </a-select>
           </a-form-item>
-          <a-form-item label="Instant delivery">
-            <a-switch v-model:checked="formState.delivery" />
+          <a-form-item label="출금계좌번호">
+            <a-input value="100100056489011"/>
           </a-form-item>
-          <a-form-item label="Activity type">
-            <a-checkbox-group v-model:value="formState.type">
-              <a-checkbox value="1" name="type">Online</a-checkbox>
-              <a-checkbox value="2" name="type">Promotion</a-checkbox>
-              <a-checkbox value="3" name="type">Offline</a-checkbox>
-            </a-checkbox-group>
+          <a-form-item label="예금주명">
+            <a-input value="주식회사 타운소프트비나"/>
           </a-form-item>
-          <a-form-item label="Resources">
-            <a-radio-group v-model:value="formState.resource">
-              <a-radio value="1">Sponsor</a-radio>
-              <a-radio value="2">Venue</a-radio>
-            </a-radio-group>
+          <a-form-item label="사업자(주민)등록번호:">
+            <a-input value="100100056489011"/>
           </a-form-item>
-          <a-form-item label="Activity form">
-            <a-input v-model:value="formState.desc" type="textarea" />
+          <a-form-item label="자동이체출금일자">
+            <a-radio-group v-model:value="value">
+            <a-radio :style="radioStyle" :value="1">매월 5일</a-radio>
+            <a-radio :style="radioStyle" :value="2">매월 12일</a-radio>
+            <a-radio :style="radioStyle" :value="3">매월 19일</a-radio>
+          </a-radio-group>
           </a-form-item>
         </a-form>
         </a-collapse-panel>
@@ -344,6 +351,7 @@
   </div>
 </template>
 <script lang="ts">
+  import { ref } from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
@@ -430,6 +438,13 @@ export default {
         value1: dayjs('2015/01/01',  'YYYY-MM-DD'),
         labelCol: { style: { width: '150px' } },
         wrapperCol: { span: 14 },
+        radioStyle :{
+      display: 'flex',
+      height: '30px',
+      lineHeight: '30px',
+      
+    },
+    value : ref<number>(1)
     }
   },
   computed: {
