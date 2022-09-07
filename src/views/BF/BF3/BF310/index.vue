@@ -57,6 +57,7 @@
       :show-borders="true"
       key-expr="ID"
       @exporting="onExporting"
+      :columns="gridColumns"
     >
       <DxSelection mode="multiple" />
       <DxPaging :page-size="5" />
@@ -85,11 +86,11 @@
         <DxButton @click="setModalVisible(data)" text="편집" />
       </template>
     </DxDataGrid>
-    <BF310Popup :modalStatus="modalStatus"/>
+    <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData"/>
   </div>
   <!-- dddd -->
 </template>
-  <script>
+  <script lang="ts">
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {
@@ -100,7 +101,7 @@ import {
   DxSelection,
   DxSearchPanel,
 } from "devextreme-vue/data-grid";
-import { employees, states } from "../data.js";
+import { employees, states } from "../BF310/data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
@@ -131,7 +132,6 @@ export default {
       checbox1: true,
       checbox2: true,
       value4: [dayjs(), dayjs().add(1, "year")],
-      activeKey: [],
       gridColumns: ["심사상태", "사업자코드", "상호"],
       gridBoxValue: [3],
       gridDataSource: employees,
@@ -144,6 +144,7 @@ export default {
         resource: "",
         desc: "",
       },
+      popupData:[]
     };
   },
   methods: {
@@ -180,7 +181,7 @@ export default {
       }
     },
     setModalVisible(data) {
-      console.log(data);
+      this.popupData = data;
       this.modalStatus = true;
     },
   },
