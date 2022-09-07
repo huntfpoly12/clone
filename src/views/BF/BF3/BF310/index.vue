@@ -6,12 +6,12 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item"> 서비스종류 : </label>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                    <a-checkbox v-model:checked="checbox1">회계</a-checkbox>
+                    <a-checkbox v-model:checked="checbox2">원천</a-checkbox>
                 </div>
                 <div class="item">
                     <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.status" style="width: 120px" @focus="focus"
+                    <a-select ref="select" v-model:value="value1" style="width: 120px" @focus="focus" placeholder="전체"
                         @change="handleChange">
                         <a-select-option value="신청">신청</a-select-option>
                         <a-select-option value="심사중">심사중</a-select-option>
@@ -23,8 +23,8 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" @focus="focus"
-                        placeholder="전체" @change="handleChange">
+                    <a-select ref="select" v-model:value="value2" style="width: 120px" @focus="focus" placeholder="전체"
+                        @change="handleChange">
                         <a-select-option value="A 대리점">A 대리점</a-select-option>
                         <a-select-option value="C 영업사원">C 영업사원</a-select-option>
                         <a-select-option value="D 영업사원">D 영업사원</a-select-option>
@@ -33,7 +33,7 @@
                 </div>
                 <div class="item">
                     <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-                    <a-range-picker @change="changeDate($event)" />
+                    <a-range-picker v-model:value="value4" :format="dateFormat" />
                 </div>
             </div>
             <a-button class="search" type="primary">검색</a-button>
@@ -41,6 +41,7 @@
         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
             <DxSelection mode="multiple" />
             <DxPaging :page-size="5" />
+
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
             <DxExport :enabled="true" :allow-export-selected-data="true" />
             <DxColumn data-field="신청일자" />
@@ -60,7 +61,8 @@
             <template #pupop="{ data }">
                 <DxButton @click="setModalVisible(data)" text="편집" />
             </template>
-        </DxDataGrid> 
+        </DxDataGrid>
+        <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
     </div>
     <!-- dddd -->
 </template>
@@ -79,13 +81,12 @@ import { employees, states } from "../data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-import moment from 'moment'
+
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-
 export default {
     components: {
         DxDataGrid,
@@ -98,21 +99,6 @@ export default {
         BF310Popup,
     },
     data() {
-        const newVal = this.$store.state.dataSearchBF320
-        console.log(newVal); 
-
-        const arraySave = {
-            typeSevice1: false,
-            typeSevice2: false,
-            status: "상태 선택",
-            staff: "직원을 선택",
-            fromDate: '',
-            toDate: "",
-        }
-
- 
-        this.$store.commit("auth/dataSearchBF320", arraySave); //lưu vào store 
-
         return {
             dataSource: employees,
             states,
@@ -135,8 +121,6 @@ export default {
                 resource: "",
                 desc: "",
             },
-            dataSearch: arraySave,
-            moment
         };
     },
     methods: {
@@ -176,28 +160,8 @@ export default {
             console.log(data);
             this.modalStatus = true;
         },
-
-        changeDate(date) {
-            this.dataSearch.fromDate = moment(date[0].$d).format('YYYY-MM-DD')
-            this.dataSearch.toDate = moment(date[1].$d).format('YYYY-MM-DD')
-        }
-    },
-    watch: {
-        dataSearch: {
-            handler(newVal) {
-                const arraySave = [];
-                for (const property in newVal) {
-                    arraySave.push(`${property}: ${newVal[property]}`)
-                }
-                this.$store.commit("auth/dataSearchBF320", arraySave); 
-            },
-            deep: true,
-            immediate: true,
-
-        }
     },
 };
-
 </script>
 <style>
 #data-grid-demo {

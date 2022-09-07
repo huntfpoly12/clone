@@ -60,7 +60,7 @@
                 <DxButton @click="setModalVisible(data)" text="편집" />
             </template>
         </DxDataGrid>
-        <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
+        <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
     </div>
 </template>
 <script>
@@ -157,8 +157,8 @@ export default {
             }
         },
         setModalVisible(data) {
-            this.popupData = data;
             this.modalStatus = true;
+            this.popupData = data;
         },
     },
 };
