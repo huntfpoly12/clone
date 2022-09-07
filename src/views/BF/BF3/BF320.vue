@@ -81,7 +81,7 @@ import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
 dayjs.extend(weekday)
 dayjs.extend(localeData)
- 
+
 
 export default {
     components: {
@@ -165,11 +165,12 @@ export default {
             handler(newVal) { 
                 this.$store.dispatch('dataSearchBF320', newVal)  
             },
+            deep: true,
             immediate: true
         }
     },
 
-    mounted() { 
+    mounted() {
         console.log(this.$store);
     }
 

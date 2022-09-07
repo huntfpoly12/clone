@@ -1,5 +1,5 @@
 const getters = {
-  getAuthData: (state) => state.authData,
+  getAuthData: (state) => state.authData
 };
 
 export default getters;
