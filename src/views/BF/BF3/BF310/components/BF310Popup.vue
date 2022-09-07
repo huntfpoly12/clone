@@ -426,7 +426,6 @@ export default {
         value1: dayjs('2015/01/01',  'YYYY-MM-DD'),
         labelCol: { style: { width: '150px' } },
         wrapperCol: { span: 14 },
-        
     }
   },
   computed: {
