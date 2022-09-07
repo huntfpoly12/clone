@@ -89,105 +89,104 @@
   </div>
   <!-- dddd -->
 </template>
-<script>
-    import BF310Popup from "./components/BF310Popup.vue";
-    import DxButton from "devextreme-vue/button";
-    import {
+  <script>
+import BF310Popup from "./components/BF310Popup.vue";
+import DxButton from "devextreme-vue/button";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxPaging,
+  DxExport,
+  DxSelection,
+  DxSearchPanel,
+} from "devextreme-vue/data-grid";
+import { employees, states } from "../data.js";
+import { Workbook } from "exceljs";
+import { saveAs } from "file-saver-es";
+import { exportDataGrid } from "devextreme/excel_exporter";
+
+import dayjs from "dayjs";
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+export default {
+  components: {
     DxDataGrid,
     DxColumn,
+    DxButton,
     DxPaging,
-    DxExport,
     DxSelection,
+    DxExport,
     DxSearchPanel,
-    } from "devextreme-vue/data-grid";
-    import { employees, states } from "../data.js";
-    import { Workbook } from "exceljs";
-    import { saveAs } from "file-saver-es";
-    import { exportDataGrid } from "devextreme/excel_exporter";
-
-    import dayjs from "dayjs";
-    import weekday from "dayjs/plugin/weekday";
-    import localeData from "dayjs/plugin/localeData";
-    dayjs.extend(weekday);
-    dayjs.extend(localeData);
-
-    export default {
-        components: {
-            DxDataGrid,
-            DxColumn,
-            DxButton,
-            DxPaging,
-            DxSelection,
-            DxExport,
-            DxSearchPanel,
-            BF310Popup,
-        },
-        data() {
-            return {
-            dataSource: employees,
-            states,
-            value1: "신청",
-            value2: "A 대리점",
-            dateFormat: "YYYY/MM/DD",
-            checbox1: true,
-            checbox2: true,
-            value4: [dayjs(), dayjs().add(1, "year")],
-            activeKey: [],
-            gridColumns: ["심사상태", "사업자코드", "상호"],
-            gridBoxValue: [3],
-            gridDataSource: employees,
-            modalStatus: false,
-            text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
-            formState: {
-                name: "",
-                delivery: false,
-                type: [],
-                resource: "",
-                desc: "",
-            },
-            };
-        },
-        methods: {
-            onExporting(e) {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet("employees");
-
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                saveAs(
-                    new Blob([buffer], { type: "application/octet-stream" }),
-                    "DataGrid.xlsx"
-                );
-                });
-            });
-            e.cancel = true;
-            },
-            customClass(cellInfo) {
-            return cellInfo.value;
-            },
-            getColorTag(data) {
-            if (data === "신청") {
-                return "red";
-            } else if (data === "심사중") {
-                return "blue";
-            } else if (data === "승인") {
-                return "green";
-            } else if (data === "반려") {
-                return "grey";
-            }
-            },
-            setModalVisible(data) {
-            console.log(data);
-            this.modalStatus = true;
-            },
-        },
+    BF310Popup,
+  },
+  data() {
+    return {
+      dataSource: employees,
+      states,
+      value1: "신청",
+      value2: "A 대리점",
+      dateFormat: "YYYY/MM/DD",
+      checbox1: true,
+      checbox2: true,
+      value4: [dayjs(), dayjs().add(1, "year")],
+      activeKey: [],
+      gridColumns: ["심사상태", "사업자코드", "상호"],
+      gridBoxValue: [3],
+      gridDataSource: employees,
+      modalStatus: false,
+      text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
+      formState: {
+        name: "",
+        delivery: false,
+        type: [],
+        resource: "",
+        desc: "",
+      },
     };
+  },
+  methods: {
+    onExporting(e) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet("employees");
+
+      exportDataGrid({
+        component: e.component,
+        worksheet,
+        autoFilterEnabled: true,
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(
+            new Blob([buffer], { type: "application/octet-stream" }),
+            "DataGrid.xlsx"
+          );
+        });
+      });
+      e.cancel = true;
+    },
+    customClass(cellInfo) {
+      return cellInfo.value;
+    },
+    getColorTag(data) {
+      if (data === "신청") {
+        return "red";
+      } else if (data === "심사중") {
+        return "blue";
+      } else if (data === "승인") {
+        return "green";
+      } else if (data === "반려") {
+        return "grey";
+      }
+    },
+    setModalVisible(data) {
+      console.log(data);
+      this.modalStatus = true;
+    },
+  },
+};
 </script>
-<style>
+  <style>
 #data-grid-demo {
   min-height: 700px;
 }
