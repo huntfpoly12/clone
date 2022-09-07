@@ -83,7 +83,21 @@ dayjs.extend(weekday)
 dayjs.extend(localeData)
 
 
+<<<<<<< HEAD:src/views/BF/BF3/BF320.vue
 export default {
+=======
+  import { employees, states } from '../data2.js';
+  import { Workbook } from 'exceljs';
+  import { saveAs } from 'file-saver-es';
+  import { exportDataGrid } from 'devextreme/excel_exporter';
+  
+  import dayjs from 'dayjs';
+  import weekday from "dayjs/plugin/weekday"
+  import localeData from "dayjs/plugin/localeData"
+  dayjs.extend(weekday)
+  dayjs.extend(localeData)
+  export default {
+>>>>>>> main:src/views/BF/BF3/BF320/index.vue
     components: {
         DxDataGrid,
         DxColumn,
