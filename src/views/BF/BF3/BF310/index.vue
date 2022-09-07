@@ -90,7 +90,7 @@
   </div>
   <!-- dddd -->
 </template>
-  <script>
+  <script lang="ts">
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {

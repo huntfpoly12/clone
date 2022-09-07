@@ -314,6 +314,9 @@
         </a-form>
         </a-collapse-panel>
         <a-collapse-panel key="7" header="기타">
+          <a-form
+          :label-col="labelCol" :wrapper-col="wrapperCol"
+          >
           <a-form-item label="영업관리담당">
                <a-select
                     ref="select"
@@ -334,12 +337,13 @@
               :auto-size="{ minRows: 3, maxRows: 5 }"
             />
             </a-form-item>
+          </a-form>
         </a-collapse-panel>
       </a-collapse>
     </a-modal>
   </div>
 </template>
-<script>
+<script lang="ts">
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
