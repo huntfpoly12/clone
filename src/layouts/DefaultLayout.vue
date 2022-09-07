@@ -364,7 +364,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .ant-layout.ant-layout-has-sider {
   min-height: calc(100vh - 64px);
 }
@@ -385,19 +385,6 @@ export default defineComponent({
   list-style: none;
   padding-left: 0;
   flex-wrap: wrap;
-  li {
-    margin: 0 10px;
-    cursor: pointer;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    padding: 5px;
-    &.active {
-      background: #40a9ff;
-    }
-    a {
-      color: #2c3e50;
-    }
-  }
 }
 ::v-deep .dx-button-mode-contained {
   border: none;

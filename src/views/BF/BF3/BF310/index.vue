@@ -185,9 +185,7 @@ export default {
                 }
                 this.$store.commit("auth/dataSearchBF320", arraySave);
 
-                setTimeout(() => {
-                    console.log(this.$store.state);
-                }, 500);
+                console.log(this.$store.state);
             },
             deep: true,
             immediate: true,
