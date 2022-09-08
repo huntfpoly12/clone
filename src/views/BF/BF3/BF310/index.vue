@@ -6,12 +6,12 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item"> 서비스종류 : </label>
-                    <a-checkbox v-model:checked="checbox1">회계</a-checkbox>
-                    <a-checkbox v-model:checked="checbox2">원천</a-checkbox>
+                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
+                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
                 </div>
                 <div class="item">
                     <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="value1" style="width: 120px" @focus="focus" placeholder="전체"
+                    <a-select ref="select" v-model:value="dataSearch.status" style="width: 120px" @focus="focus"
                         @change="handleChange">
                         <a-select-option value="신청">신청</a-select-option>
                         <a-select-option value="심사중">심사중</a-select-option>
@@ -23,8 +23,8 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="value2" style="width: 120px" @focus="focus" placeholder="전체"
-                        @change="handleChange">
+                    <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" @focus="focus"
+                        placeholder="전체" @change="handleChange">
                         <a-select-option value="A 대리점">A 대리점</a-select-option>
                         <a-select-option value="C 영업사원">C 영업사원</a-select-option>
                         <a-select-option value="D 영업사원">D 영업사원</a-select-option>
@@ -33,10 +33,10 @@
                 </div>
                 <div class="item">
                     <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-                    <a-range-picker v-model:value="value4" :format="dateFormat" />
+                    <a-range-picker @change="changeDate($event)" />
                 </div>
             </div>
-            <a-button class="search" type="primary">검색</a-button>
+            <a-button class="search" type="primary" @click="checkAll">검색</a-button>
         </div>
         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
             <DxSelection mode="multiple" />
@@ -81,12 +81,14 @@ import { employees, states } from "../data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-
+import moment from 'moment'
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
+
+import { ref, onUpdated, onBeforeUpdate } from 'vue'
 export default {
     components: {
         DxDataGrid,
@@ -99,7 +101,9 @@ export default {
         BF310Popup,
     },
     data() {
-        return {
+
+
+        return { 
             dataSource: employees,
             states,
             value1: "신청",
@@ -121,8 +125,29 @@ export default {
                 resource: "",
                 desc: "",
             },
+            dataSearch: {},
+            moment
+
         };
     },
+    created() {
+        if (!this.$store.getters['auth/dataSearchBF320']) {
+            this.dataSearch = {
+                typeSevice1: false,
+                typeSevice2: false,
+                status: "상태 선택",
+                staff: "직원을 선택",
+                fromDate: '',
+                toDate: "",
+            }
+        } else {
+            let dataVuex = this.$store.getters['auth/dataSearchBF320']
+            this.dataSearch = {
+                ...dataVuex
+            }
+        }
+    },
+
     methods: {
         onExporting(e) {
             const workbook = new Workbook();
@@ -161,6 +186,14 @@ export default {
             this.modalStatus = true;
         },
     },
+
+    beforeUpdate() {
+        console.log(".....");
+        this.$store.commit("auth/dataSearchBF320", this.dataSearch);
+    }, 
+
+
+
 };
 </script>
 <style>
