@@ -357,7 +357,8 @@
 </template>
 <script lang="ts">
 import DxDateBox from 'devextreme-vue/date-box';
-import { ref , defineComponent} from 'vue';
+
+import { ref, defineComponent } from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
@@ -450,10 +451,12 @@ export default defineComponent({
       display: 'flex',
       height: '30px',
       lineHeight: '30px',
-      
+      checked: false
     },
     value : ref<number>(1),
-    formatter:  (date : Date)=>{
+
+    formatter:  (date: { getDate: () => any; getMonth: () => number; getFullYear: () => any; })=>{
+
        const day = date.getDate();
        const customDay = day < 10 ? '0'+day : day;
        const month = date.getMonth() + 1;
@@ -478,7 +481,9 @@ export default defineComponent({
 
       this.$emit('closePopup', false);
     },
-    getColorTag(data: String) {
+
+    getColorTag(data: string) {
+
       if (data === "신청") {
         return "red";
       } else if (data === "심사중") {
@@ -498,7 +503,9 @@ export default defineComponent({
     },
 
     // function 
-    handleChange(info: any) {
+
+    handleChange(info: { file: { status: string; name: any; }; fileList: any; }) {
+
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
@@ -508,11 +515,11 @@ export default defineComponent({
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    dateValue(date: any) {
+
+    dateValue(date: string|number|Date|dayjs.Dayjs|null|undefined) {
       return dayjs(date,this.dateFormat)
     },
-    deleteRow(key: any){
-      
+    deleteRow(key: string){
       for(var i = 0; i < this.dataTable.length; i++) {
         if(this.dataTable[i].key == key) {
           this.dataTable.splice(i, 1);
@@ -521,7 +528,8 @@ export default defineComponent({
       }
       
     },
-    dateOnFocus(e: any){
+
+    dateOnFocus(e: { element: { querySelector: (arg0: string) => { (): any; new(): any; select: { (): void; new(): any; }; }; }; }){
       e.element.querySelector('.dx-texteditor-input').select();
     }
   }

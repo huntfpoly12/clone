@@ -189,7 +189,7 @@
   },
   };
   </script>
-  <style>
+  <style lang="scss">
 
   #data-grid-demo {
     min-height: 700px;

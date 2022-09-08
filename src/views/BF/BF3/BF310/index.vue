@@ -92,9 +92,11 @@
   </div>
 </template>
   <script lang="ts">
-import DxDateBox from "devextreme-vue/date-box";
-import locale from "ant-design-vue/es/date-picker/locale/ko_KR";
-import { ref, defineComponent } from "vue";
+
+    import DxDateBox from 'devextreme-vue/date-box';
+    import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
+    import { ref, defineComponent } from 'vue';
+
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {
@@ -155,7 +157,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onExporting(e: any) {
+    onExporting(e: { component: any; cancel: boolean; }) {
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("employees");
 
@@ -173,6 +175,10 @@ export default defineComponent({
       });
       e.cancel = true;
     },
+
+    customClass(cellInfo: { value: any; }) {
+      return cellInfo.value;
+    },
     getColorTag(data: string) {
       if (data === "신청") {
         return "red";
@@ -184,7 +190,8 @@ export default defineComponent({
         return "grey";
       }
     },
-    setModalVisible(data: object) {
+
+    setModalVisible(data: never[]) {
       this.popupData = data;
       this.modalStatus = true;
     },
