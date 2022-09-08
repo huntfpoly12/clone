@@ -109,7 +109,7 @@ import {
 } from "devextreme-vue/data-grid";
 import { employees, states } from "../BF310/data.js";
 import { Workbook } from "exceljs";
-import { saveAs } from "file-saver-es";
+const saveAs = require('file-saver-es')
 import { exportDataGrid } from "devextreme/excel_exporter";
 
 import dayjs, { Dayjs } from "dayjs";
