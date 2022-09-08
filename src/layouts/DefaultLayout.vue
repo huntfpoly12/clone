@@ -140,7 +140,7 @@ export default defineComponent({
         this.inputSearchText?.length >= 1
       ) {
         this.menuData.forEach((val) => {
-          const searchId = val.name.includes(this.inputSearchText);
+          const searchId = val.name.includes(this.inputSearchText) || val.id.includes(this.inputSearchText);
           if (searchId) {
             this.filteredResult.push(val);
           }
