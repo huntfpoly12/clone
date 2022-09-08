@@ -81,6 +81,9 @@
 
 <script>
 import { defineComponent, reactive, toRefs, watch } from "vue";
+import BF310 from '../views/BF/BF3/BF310/index.vue'
+import BF320 from '../views/BF/BF3/BF320/index.vue'
+import Test from '../views/DefaultComponent.vue'
 import _ from "lodash";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
@@ -100,9 +103,9 @@ export default defineComponent({
     };
   },
   components: {
-    BF310 = () => import('../views/BF/BF3/BF310/index.vue'),
-    BF320 = () => import('../views/BF/BF3/BF320/index.vue'),
-    Test = () => import('../views/DefaultComponent.vue')
+    BF310,
+    BF320,
+    Test
   },
   computed: {
     username() {
@@ -114,11 +117,11 @@ export default defineComponent({
     },
 
     currentComponent() {
-      if (this.activeTab === '') return
-      if (this.activeTab === 'bf-310') return BF310
-      if (this.activeTab === 'bf-320') return BF320; 0
-      return Test
-    }
+    if(this.activeTab === '') return
+    if (this.activeTab === 'bf-310') return BF310
+    if (this.activeTab === 'bf-320') return BF320;
+    return Test
+  }
 
   },
   methods: {
@@ -276,16 +279,12 @@ export default defineComponent({
   display: flex;
   padding-left: 0;
   position: relative;
-  width: 100%;
-
   &::before {
     position: absolute;
+    right: 0;
     left: 0;
     width: 100%;
-    height: 1px;
-    bottom: 0;
-    z-index: 0;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #f0f0f0;
     content: "";
   }
 
@@ -300,7 +299,7 @@ export default defineComponent({
     &.active {
       color: #1890ff;
       background: #fff;
-      border-bottom-color: #fff;
+      border-bottom-color: transparent;
     }
   }
 
