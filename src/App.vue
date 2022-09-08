@@ -7,7 +7,7 @@
 <script lang="ts">
 import { provide } from "vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
-import { client } from "./ApolloClient";
+import { client } from "./ApolloClient.d";
 export default {
   name: "App",
    data() {

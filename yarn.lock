@@ -1333,6 +1333,11 @@
   resolved "https://registry.npmjs.org/@types/mime/-/mime-3.0.1.tgz"
   integrity sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==
 
+"@types/file-saver-es@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/file-saver-es/-/file-saver-es-2.0.1.tgz#51147090299e110e79a9e67df21913e53b4bf484"
+  integrity sha512-ifoocKtUTJCQ4GMKBm+EK8Swk9DzrWfHhxGJ3jdhFijT9UJzA4P97zoq3Qii9QU51pSe3JwbS1i6s0nifOWHwg==
+
 "@types/minimist@^1.2.0":
   version "1.2.2"
   resolved "https://registry.npmjs.org/@types/minimist/-/minimist-1.2.2.tgz"

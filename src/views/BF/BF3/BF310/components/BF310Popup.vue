@@ -10,6 +10,7 @@
                 :display-expr="gridBoxDisplayExpr" :show-clear-button="true" :data-source="gridDataSource"
                 value-expr="ID" placeholder="Select a value...">
                 <template #content>
+
                   <DxDataGrid height="100%" :data-source="gridDataSource" v-model:selected-row-keys="gridBoxValue"
                     @selection-changed="onGridSelectionChanged($event)" :show-borders="true">
                     <DxSelection mode="single" />
@@ -114,8 +115,8 @@
                   <a-input v-model:value="formState.desc" />
                 </a-form-item>
                 <a-form-item label="사업자등록증">
-                  <a-upload v-model:file-list="fileList" name="file" :multiple="false" :headers="headers"
-                    @change="handleChange">
+                  <a-upload v-model:file-list="fileList" name="file"
+                  :multiple="false" @change="handleChange">
                     <a-button>
                       <upload-outlined></upload-outlined>
                       파일선택
@@ -146,7 +147,10 @@
           </a-form>
         </a-collapse-panel>
         <a-collapse-panel key="3" header="대표자정보">
-          <a-form ref="formRef" name="custom-validation" :rules="rules" v-bind="layout">
+          <a-form
+            ref="formRef"
+            name="custom-validation"
+          >
             <a-form-item has-feedback label="대표자명">
               <a-input value="홍길동" autocomplete="off" style="width: 300px" />
             </a-form-item>
@@ -321,7 +325,10 @@
   </div>
 </template>
 <script lang="ts">
-import { ref } from 'vue';
+import DxDateBox from 'devextreme-vue/date-box';
+
+import { ref, defineComponent } from 'vue';
+
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
@@ -335,7 +342,7 @@ import { employees } from "../data.js";
 import { UploadOutlined, MinusCircleOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import dayjs from "dayjs";
-export default {
+export default defineComponent({
   props: [
     'modalStatus',
     'data'
@@ -353,68 +360,80 @@ export default {
       },
       gridDataSource: employees,
       gridBoxValue: [],
+      fileList: [],
       gridColumns: ["심사상태", "사업자코드", "상호"],
       isGridBoxOpened: false,
-      columns: [
-        {
-          name: '사업명 (중복불가)',
-          dataIndex: '사업명',
-          key: '사업명',
-        },
-        {
-          title: '사업분류',
-          dataIndex: '사업분류',
-          key: '사업분류',
-        },
-        {
-          title: '서비스시작년월',
-          dataIndex: '서비스시작년월',
-          key: '서비스시작년월',
-        },
-        {
-          title: '정원수(명)',
-          key: '정원수',
-          dataIndex: '정원수',
-        },
-        {
-          title: '',
-          key: 'action',
-        },
-      ],
-      dataTable: [
-        {
-          key: '1',
-          사업명: '가나다라마바 사업',
-          사업분류: '방문요양',
-          서비스시작년월: '2015/01/01',
-          정원수: 10,
-        },
-        {
-          key: '2',
-          사업명: '가나다라마바 사업',
-          사업분류: '방문간호',
-          서비스시작년월: '2015/01/01',
-          정원수: 10,
-        },
-        {
-          key: '3',
-          사업명: '가나다라마바 사업',
-          사업분류: '단기보호',
-          서비스시작년월: '2015/01/01',
-          정원수: 10,
-        },
-      ],
-      dateFormat: 'YYYY-MM-DD',
-      value1: dayjs('2015/01/01', 'YYYY-MM-DD'),
-      labelCol: { style: { width: '150px' } },
-      wrapperCol: { span: 14 },
-      radioStyle: {
-        display: 'flex',
-        height: '30px',
-        lineHeight: '30px',
+      checked: true,
+      columns : [
+          {
+            name: '사업명 (중복불가)',
+            dataIndex: '사업명',
+            key: '사업명',
+          },
+          {
+            title: '사업분류',
+            dataIndex: '사업분류',
+            key: '사업분류',
+          },
+          {
+            title: '서비스시작년월',
+            dataIndex: '서비스시작년월',
+            key: '서비스시작년월',
+          },
+          {
+            title: '정원수(명)',
+            key: '정원수',
+            dataIndex: '정원수',
+          },
+          {
+            title: '',
+            key: 'action',
+          },
+        ],
+      dataTable : [
+          {
+            key: '1',
+            사업명: '가나다라마바 사업',
+            사업분류: '방문요양',
+            서비스시작년월: '2015/01/01',
+            정원수: 10,
+          },
+          {
+            key: '2',
+            사업명: '가나다라마바 사업',
+            사업분류: '방문간호',
+            서비스시작년월: '2015/01/01',
+            정원수: 10,
+          },
+          {
+            key: '3',
+            사업명: '가나다라마바 사업',
+            사업분류: '단기보호',
+            서비스시작년월: '2015/01/13',
+            정원수: 10,
+          },
+        ],
+        dateFormat : 'YYYY-MM-DD',
+        value1: dayjs('2015/01/01',  'YYYY-MM-DD'),
+        labelCol: { style: { width: '150px' } },
+        wrapperCol: { span: 14 },
+        radioStyle :{
+      display: 'flex',
+      height: '30px',
+      lineHeight: '30px',
+      checked: false
+    },
+    value : ref<number>(1),
 
-      },
-      value: ref<number>(1)
+    formatter:  (date: { getDate: () => any; getMonth: () => number; getFullYear: () => any; })=>{
+
+       const day = date.getDate();
+       const customDay = day < 10 ? '0'+day : day;
+       const month = date.getMonth() + 1;
+       const customMonth = month < 10 ? '0'+month : month;
+       const year = date.getFullYear();
+       return `${year}-${customMonth}-${customDay}`;
+    },
     }
   },
   computed: {
@@ -433,7 +452,9 @@ export default {
     setModalVisible() {
       this.$emit('closePopup', false);
     },
-    getColorTag(data) {
+
+    getColorTag(data: string) {
+
       if (data === "신청") {
         return "red";
       } else if (data === "심사중") {
@@ -453,7 +474,9 @@ export default {
     },
 
     // function 
-    handleChange(info) {
+
+    handleChange(info: { file: { status: string; name: any; }; fileList: any; }) {
+
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
@@ -463,21 +486,26 @@ export default {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    dateValue(date) {
-      return dayjs(date, this.dateFormat)
-    },
-    deleteRow(key) {
 
-      for (var i = 0; i < this.dataTable.length; i++) {
-        if (this.dataTable[i].key == key) {
+    dateValue(date: string|number|Date|dayjs.Dayjs|null|undefined) {
+      return dayjs(date,this.dateFormat)
+    },
+    deleteRow(key: string){
+      for(var i = 0; i < this.dataTable.length; i++) {
+        if(this.dataTable[i].key == key) {
+
           this.dataTable.splice(i, 1);
           break;
         }
       }
+      
+    },
 
+    dateOnFocus(e: { element: { querySelector: (arg0: string) => { (): any; new(): any; select: { (): void; new(): any; }; }; }; }){
+      e.element.querySelector('.dx-texteditor-input').select();
     }
   }
-};
+});
 </script>
 <style lang="">
 </style>

@@ -38,35 +38,93 @@
             </div>
             <a-button class="search" type="primary" @click="checkAll">검색</a-button>
         </div>
-        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
-            <DxSelection mode="multiple" />
-            <DxPaging :page-size="5" />
-
-            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-            <DxExport :enabled="true" :allow-export-selected-data="true" />
-            <DxColumn data-field="신청일자" />
-            <DxColumn data-field="신청코드" />
-            <DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
-            <template #grid-cell="{ data }">
-                <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
-            </template>
-            <DxColumn :width="170" data-field="사업자코드" />
-            <DxColumn data-field="상호" data-type="date" />
-            <DxColumn data-field="주소" data-type="date" />
-            <DxColumn data-field="대표자" />
-            <DxColumn data-field="영업자" />
-            <DxColumn data-field="신청서비스" />
-            <DxColumn data-field="부가서비스" />
-            <DxColumn :width="110" cell-template="pupop" />
-            <template #pupop="{ data }">
-                <DxButton @click="setModalVisible(data)" text="편집" />
-            </template>
-        </DxDataGrid>
-        <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
+        <div class="item">
+          <label class="lable-item">심사상태/결과 :</label>
+          <a-select
+            ref="select"
+            v-model:value="value1"
+            style="width: 120px"
+            placeholder="전체"
+          >
+            <a-select-option value="신청">신청</a-select-option>
+            <a-select-option value="심사중">심사중</a-select-option>
+            <a-select-option value="승인">승인</a-select-option>
+            <a-select-option value="반려 ">반려</a-select-option>
+          </a-select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="item">
+          <label class="lable-item">심사상태/결과 :</label>
+          <a-select
+            ref="select"
+            v-model:value="value2"
+            style="width: 120px"
+            placeholder="전체"
+          >
+            <a-select-option value="A 대리점">A 대리점</a-select-option>
+            <a-select-option value="C 영업사원">C 영업사원</a-select-option>
+            <a-select-option value="D 영업사원">D 영업사원</a-select-option>
+            <a-select-option value="E 본사영업사원"
+              >E 본사영업사원</a-select-option
+            >
+          </a-select>
+        </div>
+        <div class="item">
+          <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
+          <a-range-picker v-model:value="value4" :format="dateFormat" />
+        </div>
+      </div>
+      <a-button class="search" type="primary">검색</a-button>
     </div>
-    <!-- dddd -->
+    <DxDataGrid
+      :data-source="dataSource"
+      :show-borders="true"
+      key-expr="ID"
+      @exporting="onExporting"
+      :columns="gridColumns"
+    >
+      <DxSelection mode="multiple" />
+      <DxPaging :page-size="5" />
+
+      <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+      <DxExport :enabled="true" :allow-export-selected-data="true" />
+      <DxColumn data-field="신청일자" />
+      <DxColumn data-field="신청코드" />
+      <DxColumn
+        data-field="심사상태"
+        data-type="date"
+        cell-template="grid-cell"
+      />
+      <template #grid-cell="{ data }">
+        <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+      </template>
+      <DxColumn :width="170" data-field="사업자코드" />
+      <DxColumn data-field="상호" data-type="date" />
+      <DxColumn data-field="주소" data-type="date" />
+      <DxColumn data-field="대표자" />
+      <DxColumn data-field="영업자" />
+      <DxColumn data-field="신청서비스" />
+      <DxColumn data-field="부가서비스" />
+      <DxColumn :width="110" cell-template="pupop" type="buttons" />
+      <template #pupop="{ data }">
+        <DxButton @click="setModalVisible(data)" style="color: blue"
+          >편집</DxButton
+        >
+      </template>
+    </DxDataGrid>
+    <BF310Popup
+      :modalStatus="modalStatus"
+      @closePopup="modalStatus = false"
+      :data="popupData"
+    />
+  </div>
 </template>
-<script>
+  <script lang="ts">
+
+    import DxDateBox from 'devextreme-vue/date-box';
+    import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
+    import { ref, defineComponent } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {
@@ -79,71 +137,64 @@ import {
 } from "devextreme-vue/data-grid";
 import { employees, states } from "../BF310/data.js";
 import { Workbook } from "exceljs";
-import { saveAs } from "file-saver-es";
+const saveAs = require('file-saver-es')
 import { exportDataGrid } from "devextreme/excel_exporter";
-import moment from 'moment'
-import dayjs from "dayjs";
+
+import dayjs, { Dayjs } from "dayjs";
+
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-
-import { ref, onUpdated, onBeforeUpdate } from 'vue'
-export default {
-    components: {
-        DxDataGrid,
-        DxColumn,
-        DxButton,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        BF310Popup,
-    },
-    data() { 
-        return { 
-            dataSource: employees,
-            states,
-            value1: "신청",
-            value2: "A 대리점",
-            dateFormat: "YYYY/MM/DD",
-            checbox1: true,
-            checbox2: true,
-            value4: [dayjs(), dayjs().add(1, "year")],
-            activeKey: [],
-            gridColumns: ["심사상태", "사업자코드", "상호"],
-            gridBoxValue: [3],
-            gridDataSource: employees,
-            modalStatus: false,
-            text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
-            formState: {
-                name: "",
-                delivery: false,
-                type: [],
-                resource: "",
-                desc: "",
-            },
-            dataSearch: {},
-            moment
+export default defineComponent({
+  components: {
+    DxDataGrid,
+    DxColumn,
+    DxButton,
+    DxPaging,
+    DxSelection,
+    DxExport,
+    DxSearchPanel,
+    BF310Popup,
+    locale,
+    DxDateBox,
+  },
+  data() {
+    return {
+      dataSource: employees,
+      states,
+      value1: "신청",
+      value2: "A 대리점",
+      dateFormat: "YYYY/MM/DD",
+      checbox1: true,
+      checbox2: true,
+      value4: [dayjs(), dayjs().add(1, "year")],
+      gridColumns: ["심사상태", "사업자코드", "상호"],
+      gridBoxValue: [3],
+      gridDataSource: employees,
+      modalStatus: false,
+      text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
+      formState: {
+        name: "",
+        delivery: false,
+        type: [],
+        resource: "",
+        desc: "",
+      },
+      popupData: [] as any,
+      valueDate: ref<Dayjs>(),
+    };
+  },
+  methods: {
+    onExporting(e: { component: any; cancel: boolean; }) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet("employees");
 
         };
     },
-    created() {
-        if (!this.$store.getters['auth/dataSearchBF320']) {
-            this.dataSearch = {
-                typeSevice1: false,
-                typeSevice2: false,
-                status: "상태 선택",
-                staff: "직원을 선택",
-                fromDate: '',
-                toDate: "",
-            }
-        } else {
-            let dataVuex = this.$store.getters['auth/dataSearchBF320']
-            this.dataSearch = {
-                ...dataVuex
-            }
-        }
+
+    customClass(cellInfo: { value: any; }) {
+      return cellInfo.value;
     },
 
     methods: {
@@ -184,14 +235,13 @@ export default {
             this.modalStatus = true;
         },
     },
+    setModalVisible(data: never[]) {
+      this.popupData = data;
+      this.modalStatus = true;
+    },
+  },
+});
 
-    beforeUpdate() { 
-        this.$store.commit("auth/dataSearchBF320", this.dataSearch);
-    }, 
-
-
-
-};
 </script>
 <style>
 #data-grid-demo {
