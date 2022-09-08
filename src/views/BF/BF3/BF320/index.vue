@@ -1,11 +1,11 @@
 <template>
     <div id="bf-310">
-        <a-typography-title :level="2">계약정보관리&심사 </a-typography-title>
+        <a-typography-title :level="2">사업자관리 </a-typography-title>
         <div class="search-form">
             <div class="col">
                 <div class="item">
                     <label class="lable-item">
-                        서비스종류 :
+                        사업자코드 :
                     </label>
                     <a-input v-model:value="dataSearch.typeSevice" />
                 </div>
