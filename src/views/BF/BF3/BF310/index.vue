@@ -93,7 +93,7 @@
   <script lang="ts">
     import DxDateBox from 'devextreme-vue/date-box';
     import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
-    import { ref } from 'vue';
+    import { ref, defineComponent } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {
@@ -114,7 +114,7 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-export default {
+export default defineComponent({
   components: {
     DxDataGrid,
     DxColumn,
@@ -191,7 +191,7 @@ export default {
       this.modalStatus = true;
     }
   },
-};
+});
 </script>
   <style>
 #data-grid-demo {

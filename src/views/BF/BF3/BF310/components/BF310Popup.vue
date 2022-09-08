@@ -124,7 +124,7 @@
                 </a-form-item>
                 <a-form-item label="사업자등록증">
                   <a-upload v-model:file-list="fileList" name="file"
-                  :multiple="false" :headers="headers" @change="handleChange">
+                  :multiple="false" @change="handleChange">
                     <a-button>
                       <upload-outlined></upload-outlined>
                       파일선택
@@ -359,7 +359,7 @@
 </template>
 <script lang="ts">
 import DxDateBox from 'devextreme-vue/date-box';
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
@@ -373,7 +373,7 @@ import { employees } from "../data";
 import { UploadOutlined,MinusCircleOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import dayjs from "dayjs";
-export default {
+export default defineComponent({
   props: [
     'modalStatus',
     'data'
@@ -450,10 +450,10 @@ export default {
       display: 'flex',
       height: '30px',
       lineHeight: '30px',
-      
+      checked: false
     },
     value : ref<number>(1),
-    formatter:  (date)=>{
+    formatter:  (date: { getDate: () => any; getMonth: () => number; getFullYear: () => any; })=>{
        const day = date.getDate();
        const customDay = day < 10 ? '0'+day : day;
        const month = date.getMonth() + 1;
@@ -478,7 +478,7 @@ export default {
 
       this.$emit('closePopup', false);
     },
-    getColorTag(data) {
+    getColorTag(data: string) {
       if (data === "신청") {
         return "red";
       } else if (data === "심사중") {
@@ -498,7 +498,7 @@ export default {
     },
 
     // function 
-    handleChange(info) {
+    handleChange(info: { file: { status: string; name: any; }; fileList: any; }) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
@@ -508,10 +508,10 @@ export default {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    dateValue(date) {
+    dateValue(date: string|number|Date|dayjs.Dayjs|null|undefined) {
       return dayjs(date,this.dateFormat)
     },
-    deleteRow(key){
+    deleteRow(key: string){
       
       for(var i = 0; i < this.dataTable.length; i++) {
         if(this.dataTable[i].key == key) {
@@ -521,11 +521,11 @@ export default {
       }
       
     },
-    dateOnFocus(e){
+    dateOnFocus(e: { element: { querySelector: (arg0: string) => { (): any; new(): any; select: { (): void; new(): any; }; }; }; }){
       e.element.querySelector('.dx-texteditor-input').select();
     }
   }
-};
+});
 </script>
 <style lang="">
 </style>
