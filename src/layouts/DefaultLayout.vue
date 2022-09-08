@@ -91,9 +91,6 @@
 
 <script>
 import { defineComponent, reactive, toRefs, watch } from "vue";
-import BF310 from '../views/BF/BF3/BF310/index.vue'
-import BF320 from '../views/BF/BF3/BF320/index.vue'
-import Test from '../views/DefaultComponent.vue'
 import _ from "lodash";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
@@ -113,9 +110,9 @@ export default defineComponent({
     };
   },
   components: {
-    BF310,
-    BF320,
-    Test
+    BF310 = () => import('../views/BF/BF3/BF310/index.vue'),
+    BF320 = () => import('../views/BF/BF3/BF320/index.vue'),
+    Test = () => import('../views/DefaultComponent.vue')
   },
   computed: {
     username() {
@@ -277,15 +274,29 @@ export default defineComponent({
   list-style: none;
   display: flex;
   padding-left: 0;
+  position: relative;
+  width: 100%;
+  &::before {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    bottom: 0;
+    z-index: 0;
+    border-bottom: 1px solid #ccc;
+    content: "";
+  }
   li {
-    margin: 0;
+    margin: 0 1px;
     padding: 8px 16px;
     background: #fafafa;
-    border: 1px solid #f0f0f0;
+    border: 1px solid #ccc;
     transition: all .3s cubic-bezier(.645,.045,.355,1);
     cursor: pointer;
     &.active {
       color: #1890ff;
+      background: #fff;
+      border-bottom-color: #fff;
     }
   }
 

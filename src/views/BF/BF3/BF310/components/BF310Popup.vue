@@ -1,5 +1,4 @@
 <template>
-  {{gridBoxValue}}
   <div id="components-modal-demo-position">
     <a-modal :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
       @cancel="setModalVisible()" width="50%">
@@ -180,7 +179,7 @@
           <div>
             <a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
             <div>
-              <a-card title="⁙ 운영사업" :bordered="true" style="width: 100%" headStyle="padding: 0px" bodyStyle="padding: 24px 0px">
+              <a-card title="⁙ 운영사업" :bordered="true" style="width: 100%" :headStyle="{padding: '0px',color:'red'}" bodyStyle="padding: 24px 0px">
                 <a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
                   <template #headerCell="{ column }">
                     <template v-if="column.key === '사업명'">
@@ -211,7 +210,15 @@
                     </template>
                     <template v-else-if="column.key === '서비스시작년월'">
                       <span>
-                        <a-date-picker :value="dateValue(record.서비스시작년월)" :format="dateFormat" />
+                        <DxDateBox
+                          :use-mask-behavior="true"
+                          :display-format="formatter"
+                          :value="dateValue(record.서비스시작년월)"
+                          type="date"
+                          @focusIn="dateOnFocus"
+                          width="70%"
+                          :show-clear-button="false"
+                        />
                       </span>
                     </template>
                     <template v-else-if="column.key === 'action'">
@@ -351,7 +358,8 @@
   </div>
 </template>
 <script lang="ts">
-  import { ref } from 'vue';
+import DxDateBox from 'devextreme-vue/date-box';
+import { ref } from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
@@ -430,7 +438,7 @@ export default {
             key: '3',
             사업명: '가나다라마바 사업',
             사업분류: '단기보호',
-            서비스시작년월: '2015/01/01',
+            서비스시작년월: '2015/01/13',
             정원수: 10,
           },
         ],
@@ -444,11 +452,16 @@ export default {
       lineHeight: '30px',
       
     },
-    value : ref<number>(1)
+    value : ref<number>(1),
+    formatter:  (date)=>{
+       const day = date.getDate();
+       const customDay = day < 10 ? '0'+day : day;
+       const month = date.getMonth() + 1;
+       const customMonth = month < 10 ? '0'+month : month;
+       const year = date.getFullYear();
+       return `${year}-${customMonth}-${customDay}`;
+    },
     }
-  },
-  computed: {
-
   },
   components: {
     DxDropDownBox,
@@ -457,7 +470,8 @@ export default {
     DxPaging,
     DxSelection,
     UploadOutlined,
-    MinusCircleOutlined
+    MinusCircleOutlined,
+    DxDateBox
   },
   methods: {
     setModalVisible() {
@@ -506,6 +520,9 @@ export default {
         }
       }
       
+    },
+    dateOnFocus(e){
+      e.element.querySelector('.dx-texteditor-input').select();
     }
   }
 };
