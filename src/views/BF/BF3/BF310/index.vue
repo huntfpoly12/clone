@@ -100,8 +100,8 @@ export default {
         DxSearchPanel,
         BF310Popup,
     },
-    data() { 
-        return { 
+    data() {
+        return {
             dataSource: employees,
             states,
             value1: "신청",
@@ -129,7 +129,7 @@ export default {
         };
     },
     created() {
-        if (!this.$store.getters['auth/dataSearchBF320']) {
+        if (!this.$store.getters['auth/dataSearchBF310']) {
             this.dataSearch = {
                 typeSevice1: false,
                 typeSevice2: false,
@@ -139,7 +139,7 @@ export default {
                 toDate: "",
             }
         } else {
-            let dataVuex = this.$store.getters['auth/dataSearchBF320']
+            let dataVuex = this.$store.getters['auth/dataSearchBF310']
             this.dataSearch = {
                 ...dataVuex
             }
@@ -185,9 +185,9 @@ export default {
         },
     },
 
-    beforeUpdate() { 
-        this.$store.commit("auth/dataSearchBF320", this.dataSearch);
-    }, 
+    beforeUpdate() {
+        this.$store.commit("auth/dataSearchBF310", this.dataSearch);
+    },
 
 
 
@@ -223,4 +223,4 @@ export default {
 .search {
     margin-top: 20px;
 }
-</style>
+</style> 

@@ -7,34 +7,36 @@
                     <label class="lable-item">
                         서비스종류 :
                     </label>
-                    <a-input v-model:value="value" />
+                    <a-input v-model:value="dataSearch.typeSevice" />
                 </div>
                 <div class="item">
                     <label class="lable-item">상호:</label>
-                    <a-input v-model:value="value" />
+                    <a-input v-model:value="dataSearch.nameCompany" />
                 </div>
                 <div class="item">
                     <label class="lable-item">대표자:</label>
-                    <a-input v-model:value="value" />
+                    <a-input v-model:value="dataSearch.surrogate" />
                 </div>
                 <div class="item">
                     <label class="lable-item">해지:</label>
-                    <a-switch v-model:checked="checked1" checked-children="포함" un-checked-children="제외" />
+                    <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
                 </div>
             </div>
             <div class="col">
                 <div class="item">
                     <label class="lable-item">주소 :</label>
-                    <a-input v-model:value="value" />
+                    <a-input v-model:value="dataSearch.address" />
                 </div>
                 <div class="item">
                     <label class="lable-item">매니저명 :</label>
-                    <a-select v-model:value="value" show-search placeholder="Select a person" :options="options">
+                    <a-select style="width: 150px" v-model:value="dataSearch.manager" show-search placeholder="매니저명"
+                        :options="options">
                     </a-select>
                 </div>
                 <div class="item">
                     <label class="lable-item">영업자명 :</label>
-                    <a-select v-model:value="value" show-search placeholder="Select a person" :options="options">
+                    <a-select style="width: 150px" v-model:value="dataSearch.nameSale" show-search placeholder="영업자명"
+                        :options="options">
                     </a-select>
                 </div>
             </div>
@@ -78,6 +80,7 @@ import {
     DxSearchPanel
 } from 'devextreme-vue/data-grid';
 import BF320Popup from "./components/BF320Popup.vue";
+import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees, states } from '../data2.js';
 import { Workbook } from 'exceljs';
@@ -101,24 +104,13 @@ export default {
         DxSearchPanel,
         BF320Popup,
         EditOutlined,
-        HistoryOutlined
+        HistoryOutlined,
+        Style
     },
     data() {
         return {
             dataSource: employees,
-            states,
-            value1: '신청',
-            value2: 'A 대리점',
-            dateFormat: 'YYYY/MM/DD',
-            checbox1: true,
-            checbox2: true,
-            value4: [dayjs(), dayjs().add(1, 'year')],
-            activeKey: [],
-            text: 'text',
-            gridColumns: ['심사상태', '사업자코드', '상호'],
-            gridBoxValue: [3],
-            gridDataSource: employees,
-            checked1: false,
+            states,     
             options: [{
                 value: 'jack',
                 label: 'Jack',
@@ -127,7 +119,7 @@ export default {
                 label: 'Lucy',
             }, {
                 value: 'tom',
-                label: 'Tom',
+                label: 'Tom Halin Sin Han Bank',
             }],
             popupData: [],
             modalStatus: false,
@@ -150,20 +142,6 @@ export default {
             });
             e.cancel = true;
         },
-        customClass(cellInfo) {
-            return cellInfo.value
-        },
-        getColorTag(data) {
-            if (data === '신청') {
-                return 'red'
-            } else if (data === '심사중') {
-                return 'blue'
-            } else if (data === '승인') {
-                return 'green'
-            } else if (data === '반려') {
-                return 'grey'
-            }
-        },
         setModalVisible(data) {
             this.modalStatus = true;
             this.popupData = data;
@@ -173,56 +151,28 @@ export default {
             this.popupData = data;
         },
     },
-    // created() {
-    //     if (!this.$store.getters['auth/dataSearchBF320']) {
-    //         this.dataSearch = {
-    //             typeSevice: '',
-    //             typeSevice2: false,
-    //             status: "상태 선택",
-    //             staff: "직원을 선택",
-    //             fromDate: '',
-    //             toDate: "",
-    //         }
-    //     } else {
-    //         let dataVuex = this.$store.getters['auth/dataSearchBF320']
-    //         this.dataSearch = {
-    //             ...dataVuex
-    //         }
-    //     }
-    // },
+    created() {
+        if (!this.$store.getters['auth/dataSearchBF320']) {
+            this.dataSearch = {
+                typeSevice: '',
+                nameCompany: '',
+                surrogate: '',
+                status: "포함",
+                address: "",
+                manager: 'Lucy',
+                nameSale: 'lucy',
+            }
+        } else {
+            let dataVuex = this.$store.getters['auth/dataSearchBF320']
+            this.dataSearch = {
+                ...dataVuex
+            }
+        }
+    },
+    beforeUpdate() {
+        this.$store.commit("auth/dataSearchBF320", this.dataSearch);
+    },
+
 };
 </script>
-<style>
-#data-grid-demo {
-    min-height: 700px;
-}
-
-.dx-select-checkbox {
-    display: inline-block !important;
-}
-
-.search-form .col {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-
-}
-
-.item {
-    display: flex;
-    align-items: center;
-}
-
-.search-form .col .lable-item {
-    white-space: nowrap;
-    margin-right: 10px;
-}
-
-.search-form .col .item:not(:first-child) {
-    margin-left: 30px;
-}
-
-.search {
-    margin-top: 20px;
-}
-</style>
+ 
