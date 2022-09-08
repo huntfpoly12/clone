@@ -122,6 +122,10 @@ export default defineComponent({
     if (this.activeTab === 'bf-320') return BF320;
     return Test
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1c537ca444de2732e37b7b47f640f978b0cb5a8c
 
   },
   methods: {
@@ -279,6 +283,10 @@ export default defineComponent({
   display: flex;
   padding-left: 0;
   position: relative;
+<<<<<<< HEAD
+=======
+  width: 100%;
+>>>>>>> 1c537ca444de2732e37b7b47f640f978b0cb5a8c
   &::before {
     position: absolute;
     right: 0;
