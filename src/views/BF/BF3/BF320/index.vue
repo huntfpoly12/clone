@@ -110,7 +110,7 @@ export default {
     data() {
         return {
             dataSource: employees,
-            states,     
+            states,
             options: [{
                 value: 'jack',
                 label: 'Jack',

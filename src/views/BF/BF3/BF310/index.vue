@@ -38,7 +38,9 @@
             </div>
             <a-button class="search" type="primary" @click="checkAll">검색</a-button>
         </div>
-        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
+
+        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
+            :columns="gridColumns">
             <DxSelection mode="multiple" />
             <DxPaging :page-size="5" />
 
@@ -57,16 +59,19 @@
             <DxColumn data-field="영업자" />
             <DxColumn data-field="신청서비스" />
             <DxColumn data-field="부가서비스" />
-            <DxColumn :width="110" cell-template="pupop" />
+            <DxColumn :width="110" cell-template="pupop" type="buttons" />
             <template #pupop="{ data }">
-                <DxButton @click="setModalVisible(data)" text="편집" />
+                <DxButton @click="setModalVisible(data)" style="color:blue">편집</DxButton>
             </template>
         </DxDataGrid>
         <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
     </div>
-    <!-- dddd -->
+
 </template>
-<script>
+<script lang="ts">
+import DxDateBox from 'devextreme-vue/date-box';
+import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
+import { ref, defineComponent } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {
@@ -77,18 +82,17 @@ import {
     DxSelection,
     DxSearchPanel,
 } from "devextreme-vue/data-grid";
-import { employees, states } from "../data.js";
+import { employees, states } from "../BF310/data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-import moment from 'moment'
-import dayjs from "dayjs";
+
+import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
- 
-export default {
+export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn,
@@ -98,9 +102,11 @@ export default {
         DxExport,
         DxSearchPanel,
         BF310Popup,
+        locale,
+        DxDateBox
     },
-    data() { 
-        return { 
+    data() {
+        return {
             dataSource: employees,
             states,
             value1: "신청",
@@ -109,7 +115,6 @@ export default {
             checbox1: true,
             checbox2: true,
             value4: [dayjs(), dayjs().add(1, "year")],
-            activeKey: [],
             gridColumns: ["심사상태", "사업자코드", "상호"],
             gridBoxValue: [3],
             gridDataSource: employees,
@@ -122,31 +127,13 @@ export default {
                 resource: "",
                 desc: "",
             },
+            popupData: [],
+            valueDate: ref<Dayjs>(),
             dataSearch: {},
-            moment
-
         };
     },
-    created() {
-        if (!this.$store.getters['auth/dataSearchBF320']) {
-            this.dataSearch = {
-                typeSevice1: false,
-                typeSevice2: false,
-                status: "상태 선택",
-                staff: "직원을 선택",
-                fromDate: '',
-                toDate: "",
-            }
-        } else {
-            let dataVuex = this.$store.getters['auth/dataSearchBF320']
-            this.dataSearch = {
-                ...dataVuex
-            }
-        }
-    },
-
     methods: {
-        onExporting(e) {
+        onExporting(e: { component: any; cancel: boolean; }) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
 
@@ -164,10 +151,10 @@ export default {
             });
             e.cancel = true;
         },
-        customClass(cellInfo) {
+        customClass(cellInfo: { value: any; }) {
             return cellInfo.value;
         },
-        getColorTag(data) {
+        getColorTag(data: string) {
             if (data === "신청") {
                 return "red";
             } else if (data === "심사중") {
@@ -178,19 +165,32 @@ export default {
                 return "grey";
             }
         },
-        setModalVisible(data) {
-            console.log(data);
+        setModalVisible(data: never[]) {
+            this.popupData = data;
             this.modalStatus = true;
-        },
+        }
     },
-
-    beforeUpdate() { 
-        this.$store.commit("auth/dataSearchBF320", this.dataSearch);
-    }, 
-
-
-
-};
+    created() {
+        if (!this.$store.getters['auth/dataSearchBF310']) {
+            this.dataSearch = {
+                typeSevice1: false,
+                typeSevice2: false,
+                status: "상태 선택",
+                staff: "직원을 선택",
+                fromDate: '',
+                toDate: "",
+            }
+        } else {
+            let dataVuex = this.$store.getters['auth/dataSearchBF310']
+            this.dataSearch = {
+                ...dataVuex
+            }
+        }
+    },
+    beforeUpdate() {
+        this.$store.commit("auth/dataSearchBF310", this.dataSearch);
+    },
+});
 </script>
 <style>
 #data-grid-demo {

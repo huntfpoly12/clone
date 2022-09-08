@@ -8,10 +8,10 @@ const mutations = {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
   },
-  dataSearchBF320: (state: { authData: any; }, dataSearchBF320: string) => {
+  dataSearchBF320: (state: { dataSearchBF320: any; }, dataSearchBF320: any) => { 
     state.dataSearchBF320 = dataSearchBF320;
   },
-  dataSearchBF310: (state: { authData: any; }, dataSearchBF310: string) => {
+  dataSearchBF310: (state: { authData: any; }, dataSearchBF310: any) => {
     state.dataSearchBF320 = dataSearchBF310;
   },
 

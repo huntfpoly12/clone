@@ -62,8 +62,7 @@
                                     <a-input v-model:value="formState.desc" />
                                 </a-form-item>
                                 <a-form-item label="사업자등록증">
-                                    <a-upload v-model:file-list="fileList" name="file" :multiple="false"
-                                        :headers="headers" @change="handleChange">
+                                    <a-upload v-model:file-list="fileList" name="file" :multiple="false" @change="handleChange">
                                         <a-button>
                                             <upload-outlined></upload-outlined>
                                             파일선택...
@@ -96,7 +95,7 @@
                     </a-form>
                 </a-collapse-panel>
                 <a-collapse-panel key="2" header="대표자정보">
-                    <a-form :label-col="labelCol" ref="formRef" name="custom-validation" :rules="rules" v-bind="layout">
+                    <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                         <a-form-item has-feedback label="대표자명">
                             <a-input value="홍길동" autocomplete="off" style="width: 300px" />
                         </a-form-item>
@@ -142,8 +141,8 @@
                     </a-form>
                 </a-collapse-panel>
                 <a-collapse-panel key="4" header="메모" class="modal-note">
-                    <a-table bordered :data-source="dataSource" :pagination=false>
-                        <template #bodyCell="{ column, text, record, index }">
+                    <a-table bordered :data-source="dataSource" :pagination="false">
+                        <template #bodyCell="{  text, index }">
                             <div>
                                 <div class="title-note">
                                     <div>
@@ -171,7 +170,7 @@
 
         <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="50%">
             <div style="margin-top: 20px;">
-                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key" @exporting="onExporting">
+                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
                     <DxColumn data-field="기록일시" />
                     <DxColumn data-field="비고" />
                     <DxColumn data-field="생성일시" />
@@ -179,7 +178,7 @@
                     <DxColumn data-field="삭제여부" />
                     <DxColumn data-field="IP주소" />
                     <DxColumn data-field="상세" cell-template="detail" />
-                    <template #detail="{ data }">
+                    <template>
                         <a-space :size="8">
                             <zoom-in-outlined :style="{ fontSize: '15px'}" />
                         </a-space>
@@ -190,7 +189,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
     DxDataGrid,
@@ -204,7 +203,7 @@ import { employees } from '../data.js';
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import dayjs from "dayjs";
-export default {
+export default defineComponent({
     props: [
         'modalStatus',
         'modalStatusHistory',
@@ -297,7 +296,9 @@ export default {
                 '삭제여부': '1',
                 'IP주소': '123.451.342.1'
             }]),
-            keyNumber: 0
+            keyNumber: 0,
+            fileList: [],
+
         }
     },
     computed: {
@@ -323,7 +324,7 @@ export default {
         setModalVisibleHis() {
             this.$emit('closePopupHis', false);
         },
-        getColorTag(data) {
+        getColorTag(data: string) {
             if (data === "신청") {
                 return "red";
             } else if (data === "심사중") {
@@ -337,7 +338,7 @@ export default {
         onGridSelectionChanged() {
             this.isGridBoxOpened = false;
         },
-        handleChange(info) {
+        handleChange(info: { file: { status: string; name: any; }; fileList: any; }) {
             if (info.file.status !== 'uploading') {
                 console.log(info.file, info.fileList);
             }
@@ -355,14 +356,14 @@ export default {
             }
             this.dataSource.push(dataDef)
         },
-        handleDelete(key) {
+        handleDelete(key: number) {
             if (this.dataSource.length > 1) {
                 this.dataSource = this.dataSource.filter(function (obj) {
                     return obj.key != key;
                 });
             }
         },
-        handleCopy(note) {
+        handleCopy(note: any) {
             this.keyNumber++
             let dataDef = {
                 key: this.keyNumber,
@@ -373,7 +374,7 @@ export default {
 
         }
     }
-};
+});
 </script>
 
 <style scoped lang="scss">

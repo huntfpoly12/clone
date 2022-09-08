@@ -71,8 +71,9 @@
               <component v-bind:is="currentComponent" />
             </keep-alive>
           </template>
-          <router-view v-else></router-view>
-
+          <template v-else>
+          <router-view></router-view>
+        </template>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -167,6 +168,7 @@ export default defineComponent({
       for (const key in obj) {
         this.menuTab.push(obj[key]);
       }
+      this.activeTab = ''
     },
     removeItemTab(item) {
       this.menuTab.splice(item, 1)
