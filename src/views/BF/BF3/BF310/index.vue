@@ -100,9 +100,7 @@ export default {
         DxSearchPanel,
         BF310Popup,
     },
-    data() {
-
-
+    data() { 
         return { 
             dataSource: employees,
             states,
@@ -187,8 +185,7 @@ export default {
         },
     },
 
-    beforeUpdate() {
-        console.log(".....");
+    beforeUpdate() { 
         this.$store.commit("auth/dataSearchBF320", this.dataSearch);
     }, 
 
