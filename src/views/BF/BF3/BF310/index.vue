@@ -77,7 +77,7 @@ import {
     DxSelection,
     DxSearchPanel,
 } from "devextreme-vue/data-grid";
-import { employees, states } from "../data.js";
+import { employees, states } from "../BF310/data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";

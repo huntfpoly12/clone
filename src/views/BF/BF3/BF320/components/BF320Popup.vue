@@ -154,7 +154,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.note"/>
+                                    <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.note" />
                                 </div>
                                 <a-space :size="8" style="margin-top: 7px;">
                                     <save-outlined :style="{ fontSize: '20px'}" @click="handleCopy(text.note)" />
@@ -370,7 +370,7 @@ export default {
             }
             this.dataSource.push(dataDef)
             console.log(this.dataSource);
-            
+
         }
     }
 };
