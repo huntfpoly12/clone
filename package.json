@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
+    "@types/file-saver-es": "^2.0.1",
     "@vue/apollo-composable": "^4.0.0-alpha.19",
     "ant-design-vue": "^3.2.11",
     "apollo-link-context": "^1.0.20",
