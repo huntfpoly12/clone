@@ -11,8 +11,8 @@ const mutations = {
   dataSearchBF320: (state: { dataSearchBF320: any; }, dataSearchBF320: string) => { 
     state.dataSearchBF320 = dataSearchBF320;
   },
-  dataSearchBF310: (state: { authData: any; }, dataSearchBF310: string) => {
-    state.dataSearchBF320 = dataSearchBF310;
+  dataSearchBF310: (state: { dataSearchBF310: any; }, dataSearchBF310: string) => {
+    state.dataSearchBF310 = dataSearchBF310;
   },
 
 };
