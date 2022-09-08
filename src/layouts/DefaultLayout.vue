@@ -118,12 +118,11 @@ export default defineComponent({
     },
 
     currentComponent() {
-    if(this.activeTab === '') return
-    if (this.activeTab === 'bf-310') return BF310
-    if (this.activeTab === 'bf-320') return BF320;
-    return Test
-  }
-
+      if (this.activeTab === '') return
+      if (this.activeTab === 'bf-310') return BF310
+      if (this.activeTab === 'bf-320') return BF320;
+      return Test
+    }
 
   },
   methods: {
@@ -282,7 +281,7 @@ export default defineComponent({
   display: flex;
   padding-left: 0;
   position: relative;
-  width: 100%;
+
   &::before {
     position: absolute;
     right: 0;
