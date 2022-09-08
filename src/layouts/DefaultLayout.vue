@@ -76,9 +76,13 @@
             @click="removeItemTab(index)"><svg focusable="false" class="" data-icon="close" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z"></path></svg></DxButton></li>
         </ul>
         <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
+          <template v-if="activeTab">
+            <keep-alive>
+              <component  v-bind:is="currentComponent" />
+            </keep-alive>
+          </template>
+          <router-view v-else></router-view>
 
-
-          <router-view></router-view>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -87,6 +91,9 @@
 
 <script>
 import { defineComponent, reactive, toRefs, watch } from "vue";
+import BF310 from '../views/BF/BF3/BF310/index.vue'
+import BF320 from '../views/BF/BF3/BF320/index.vue'
+import Test from '../views/DefaultComponent.vue'
 import _ from "lodash";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
@@ -103,8 +110,12 @@ export default defineComponent({
       activeKey: 1,
       menuTab: [],
       activeTab: ''
-
     };
+  },
+  components: {
+    BF310,
+    BF320,
+    Test
   },
   computed: {
     username() {
@@ -114,6 +125,14 @@ export default defineComponent({
         return "";
       }
     },
+
+    currentComponent() {
+    if(this.activeTab === '') return
+    if (this.activeTab === 'bf-310') return BF310
+    if (this.activeTab === 'bf-320') return BF320;0
+    return Test
+  }
+
   },
   methods: {
     logout() {
@@ -144,6 +163,27 @@ export default defineComponent({
         this.state = false;
       }
     },
+    addMenuTab(item) {
+      if(this.menuTab.length < 20) {
+        this.menuTab.push(item)
+      }
+      const obj = {};
+        for (let i = 0, len =this.menuTab.length; i < len; i++) {
+          obj[this.menuTab[i]['id']] =this.menuTab[i];
+        }
+
+        this.menuTab = new Array();
+
+        for (const key in obj) { 
+          this.menuTab.push(obj[key]);
+        }
+    },
+    removeItemTab(item) {
+      this.menuTab.splice(item, 1)
+    },
+    changeActiveTab(item) {
+      this.activeTab = item.id
+    }
   },
   mounted() {
     document.addEventListener("click", this.close);
@@ -232,7 +272,7 @@ export default defineComponent({
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
-
+}
 .list-menu-tab {
   list-style: none;
   display: flex;
