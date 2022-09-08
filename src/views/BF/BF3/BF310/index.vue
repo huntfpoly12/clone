@@ -81,16 +81,19 @@
       <DxColumn data-field="영업자" />
       <DxColumn data-field="신청서비스" />
       <DxColumn data-field="부가서비스" />
-      <DxColumn :width="110" cell-template="pupop" />
+      <DxColumn :width="110" cell-template="pupop" type="buttons"/>
       <template #pupop="{ data }">
-        <DxButton @click="setModalVisible(data)" text="편집" />
+        <DxButton @click="setModalVisible(data)" style="color:blue" >편집</DxButton>
       </template>
     </DxDataGrid>
     <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData"/>
   </div>
-  <!-- dddd -->
+
 </template>
   <script lang="ts">
+    import DxDateBox from 'devextreme-vue/date-box';
+    import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
+    import { ref } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {
@@ -106,7 +109,7 @@ import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
 
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
@@ -121,6 +124,8 @@ export default {
     DxExport,
     DxSearchPanel,
     BF310Popup,
+    locale,
+    DxDateBox
   },
   data() {
     return {
@@ -144,7 +149,8 @@ export default {
         resource: "",
         desc: "",
       },
-      popupData:[]
+      popupData:[],
+      valueDate: ref<Dayjs>(),
     };
   },
   methods: {
@@ -183,7 +189,7 @@ export default {
     setModalVisible(data) {
       this.popupData = data;
       this.modalStatus = true;
-    },
+    }
   },
 };
 </script>
