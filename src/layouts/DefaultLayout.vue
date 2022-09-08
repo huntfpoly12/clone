@@ -286,7 +286,8 @@ export default defineComponent({
     right: 0;
     left: 0;
     width: 100%;
-    border-bottom: 1px solid #f0f0f0;
+    bottom: 0;
+    border-bottom: 1px solid #ccc;
     content: "";
   }
 
