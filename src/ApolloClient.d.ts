@@ -5,7 +5,7 @@ import {
 } from "@apollo/client/core";
 import { setContext } from "apollo-link-context";
 
-const httpLink = createHttpLink({
+const httpLink: any = createHttpLink({
   uri: "https://dev-jangbuda-api.bankda.com/graphql/",
 });
 

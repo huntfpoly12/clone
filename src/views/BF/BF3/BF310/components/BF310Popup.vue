@@ -14,7 +14,7 @@
                     height="100%"
                     :data-source="gridDataSource"
                     v-model:selected-row-keys="gridBoxValue"
-                    @selection-changed="onGridSelectionChanged($event)"
+                    @selection-changed="onGridSelectionChanged()"
                     :show-borders="true"
                   >
                     <DxSelection mode="single" />
@@ -124,7 +124,7 @@
                 </a-form-item>
                 <a-form-item label="사업자등록증">
                   <a-upload v-model:file-list="fileList" name="file"
-                  :multiple="false" :headers="headers" @change="handleChange">
+                  :multiple="false" @change="handleChange">
                     <a-button>
                       <upload-outlined></upload-outlined>
                       파일선택
@@ -158,8 +158,6 @@
           <a-form
             ref="formRef"
             name="custom-validation"
-            :rules="rules"
-            v-bind="layout"
           >
             <a-form-item has-feedback label="대표자명">
               <a-input value="홍길동"  autocomplete="off" style="width: 300px"/>
@@ -238,7 +236,7 @@
                   </a-form-item>
                   <a-form-item label="장기요양기관등록증">
                     <a-upload v-model:file-list="fileList" name="file"
-                      :multiple="false" :headers="headers" @change="handleChange">
+                      :multiple="false"  @change="handleChange">
                     <a-button>
                       <upload-outlined></upload-outlined>
                       파일선택
@@ -359,7 +357,7 @@
 </template>
 <script lang="ts">
 import DxDateBox from 'devextreme-vue/date-box';
-import { ref } from 'vue';
+import { ref , defineComponent} from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
@@ -373,7 +371,7 @@ import { employees } from "../data";
 import { UploadOutlined,MinusCircleOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import dayjs from "dayjs";
-export default {
+export default defineComponent({
   props: [
     'modalStatus',
     'data'
@@ -391,8 +389,10 @@ export default {
       },
       gridDataSource: employees,
       gridBoxValue: [],
+      fileList: [],
       gridColumns: ["심사상태", "사업자코드", "상호"],
       isGridBoxOpened: false,
+      checked: true,
       columns : [
           {
             name: '사업명 (중복불가)',
@@ -453,7 +453,7 @@ export default {
       
     },
     value : ref<number>(1),
-    formatter:  (date)=>{
+    formatter:  (date : Date)=>{
        const day = date.getDate();
        const customDay = day < 10 ? '0'+day : day;
        const month = date.getMonth() + 1;
@@ -478,7 +478,7 @@ export default {
 
       this.$emit('closePopup', false);
     },
-    getColorTag(data) {
+    getColorTag(data: String) {
       if (data === "신청") {
         return "red";
       } else if (data === "심사중") {
@@ -498,7 +498,7 @@ export default {
     },
 
     // function 
-    handleChange(info) {
+    handleChange(info: any) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
@@ -508,10 +508,10 @@ export default {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    dateValue(date) {
+    dateValue(date: any) {
       return dayjs(date,this.dateFormat)
     },
-    deleteRow(key){
+    deleteRow(key: any){
       
       for(var i = 0; i < this.dataTable.length; i++) {
         if(this.dataTable[i].key == key) {
@@ -521,11 +521,11 @@ export default {
       }
       
     },
-    dateOnFocus(e){
+    dateOnFocus(e: any){
       e.element.querySelector('.dx-texteditor-input').select();
     }
   }
-};
+});
 </script>
 <style lang="">
 </style>
