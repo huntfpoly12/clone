@@ -1,103 +1,86 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div id="bf-310">
-    <a-typography-title :level="2">계약정보관리&심사 </a-typography-title>
-    <div class="search-form">
-      <div class="col">
-        <div class="item">
-          <label class="lable-item"> 서비스종류 : </label>
-          <a-checkbox v-model:checked="checbox1">회계</a-checkbox>
-          <a-checkbox v-model:checked="checbox2">원천</a-checkbox>
+    <div id="bf-310">
+        <a-typography-title :level="2">계약정보관리&심사 </a-typography-title>
+        <div class="search-form">
+            <div class="col">
+                <div class="item">
+                    <label class="lable-item"> 서비스종류 : </label>
+                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
+                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                </div>
+                <div class="item">
+                    <label class="lable-item">심사상태/결과 :</label>
+                    <a-select ref="select" v-model:value="dataSearch.status" style="width: 120px" @focus="focus"
+                        @change="handleChange">
+                        <a-select-option value="신청">신청</a-select-option>
+                        <a-select-option value="심사중">심사중</a-select-option>
+                        <a-select-option value="승인">승인</a-select-option>
+                        <a-select-option value="반려 ">반려</a-select-option>
+                    </a-select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="item">
+                    <label class="lable-item">심사상태/결과 :</label>
+                    <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" @focus="focus"
+                        placeholder="전체" @change="handleChange">
+                        <a-select-option value="A 대리점">A 대리점</a-select-option>
+                        <a-select-option value="C 영업사원">C 영업사원</a-select-option>
+                        <a-select-option value="D 영업사원">D 영업사원</a-select-option>
+                        <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                    </a-select>
+                </div>
+                <div class="item">
+                    <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
+                    <a-range-picker @change="changeDate($event)" />
+                </div>
+            </div>
+            <a-button class="search" type="primary" @click="checkAll">검색</a-button>
         </div>
-        <div class="item">
-          <label class="lable-item">심사상태/결과 :</label>
-          <a-select
-            ref="select"
-            v-model:value="value1"
-            style="width: 120px"
-            placeholder="전체"
-          >
-            <a-select-option value="신청">신청</a-select-option>
-            <a-select-option value="심사중">심사중</a-select-option>
-            <a-select-option value="승인">승인</a-select-option>
-            <a-select-option value="반려 ">반려</a-select-option>
-          </a-select>
-        </div>
-      </div>
-      <div class="col">
-        <div class="item">
-          <label class="lable-item">심사상태/결과 :</label>
-          <a-select
-            ref="select"
-            v-model:value="value2"
-            style="width: 120px"
-            placeholder="전체"
-          >
-            <a-select-option value="A 대리점">A 대리점</a-select-option>
-            <a-select-option value="C 영업사원">C 영업사원</a-select-option>
-            <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-            <a-select-option value="E 본사영업사원"
-              >E 본사영업사원</a-select-option
-            >
-          </a-select>
-        </div>
-        <div class="item">
-          <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-          <a-range-picker v-model:value="value4" :format="dateFormat" />
-        </div>
-      </div>
-      <a-button class="search" type="primary">검색</a-button>
-    </div>
-    <DxDataGrid
-      :data-source="dataSource"
-      :show-borders="true"
-      key-expr="ID"
-      @exporting="onExporting"
-      :columns="gridColumns"
-    >
-      <DxSelection mode="multiple" />
-      <DxPaging :page-size="5" />
 
-      <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-      <DxExport :enabled="true" :allow-export-selected-data="true" />
-      <DxColumn data-field="신청일자" />
-      <DxColumn data-field="신청코드" />
-      <DxColumn
-        data-field="심사상태"
-        data-type="date"
-        cell-template="grid-cell"
-      />
-      <template #grid-cell="{ data }">
-        <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
-      </template>
-      <DxColumn :width="170" data-field="사업자코드" />
-      <DxColumn data-field="상호" data-type="date" />
-      <DxColumn data-field="주소" data-type="date" />
-      <DxColumn data-field="대표자" />
-      <DxColumn data-field="영업자" />
-      <DxColumn data-field="신청서비스" />
-      <DxColumn data-field="부가서비스" />
-      <DxColumn :width="110" cell-template="pupop" type="buttons"/>
-      <template #pupop="{ data }">
-        <DxButton @click="setModalVisible(data)" style="color:blue" >편집</DxButton>
-      </template>
-    </DxDataGrid>
-    <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData"/>
-  </div>
+        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
+            :columns="gridColumns">
+            <DxSelection mode="multiple" />
+            <DxPaging :page-size="5" />
+
+            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+            <DxExport :enabled="true" :allow-export-selected-data="true" />
+            <DxColumn data-field="신청일자" />
+            <DxColumn data-field="신청코드" />
+            <DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
+            <template #grid-cell="{ data }">
+                <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+            </template>
+            <DxColumn :width="170" data-field="사업자코드" />
+            <DxColumn data-field="상호" data-type="date" />
+            <DxColumn data-field="주소" data-type="date" />
+            <DxColumn data-field="대표자" />
+            <DxColumn data-field="영업자" />
+            <DxColumn data-field="신청서비스" />
+            <DxColumn data-field="부가서비스" />
+            <DxColumn :width="110" cell-template="pupop" type="buttons" />
+            <template #pupop="{ data }">
+                <DxButton @click="setModalVisible(data)" style="color:blue">편집</DxButton>
+            </template>
+        </DxDataGrid>
+        <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
+    </div>
+
 </template>
-  <script lang="ts">
-    import DxDateBox from 'devextreme-vue/date-box';
-    import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
-    import { ref, defineComponent } from 'vue';
+<script lang="ts">
+import DxDateBox from 'devextreme-vue/date-box';
+import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
+import { ref, defineComponent } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {
-  DxDataGrid,
-  DxColumn,
-  DxPaging,
-  DxExport,
-  DxSelection,
-  DxSearchPanel,
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxExport,
+    DxSelection,
+    DxSearchPanel,
 } from "devextreme-vue/data-grid";
 import { employees, states } from "../BF310/data.js";
 import { Workbook } from "exceljs";
@@ -110,112 +93,133 @@ import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
-  components: {
-    DxDataGrid,
-    DxColumn,
-    DxButton,
-    DxPaging,
-    DxSelection,
-    DxExport,
-    DxSearchPanel,
-    BF310Popup,
-    locale,
-    DxDateBox
-  },
-  data() {
-    return {
-      dataSource: employees,
-      states,
-      value1: "신청",
-      value2: "A 대리점",
-      dateFormat: "YYYY/MM/DD",
-      checbox1: true,
-      checbox2: true,
-      value4: [dayjs(), dayjs().add(1, "year")],
-      gridColumns: ["심사상태", "사업자코드", "상호"],
-      gridBoxValue: [3],
-      gridDataSource: employees,
-      modalStatus: false,
-      text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
-      formState: {
-        name: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
-      },
-      popupData:[],
-      valueDate: ref<Dayjs>(),
-    };
-  },
-  methods: {
-    onExporting(e: { component: any; cancel: boolean; }) {
-      const workbook = new Workbook();
-      const worksheet = workbook.addWorksheet("employees");
+    components: {
+        DxDataGrid,
+        DxColumn,
+        DxButton,
+        DxPaging,
+        DxSelection,
+        DxExport,
+        DxSearchPanel,
+        BF310Popup,
+        locale,
+        DxDateBox
+    },
+    data() {
+        return {
+            dataSource: employees,
+            states,
+            value1: "신청",
+            value2: "A 대리점",
+            dateFormat: "YYYY/MM/DD",
+            checbox1: true,
+            checbox2: true,
+            value4: [dayjs(), dayjs().add(1, "year")],
+            gridColumns: ["심사상태", "사업자코드", "상호"],
+            gridBoxValue: [3],
+            gridDataSource: employees,
+            modalStatus: false,
+            text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
+            formState: {
+                name: "",
+                delivery: false,
+                type: [],
+                resource: "",
+                desc: "",
+            },
+            popupData: [],
+            valueDate: ref<Dayjs>(),
+            dataSearch: {},
+        };
+    },
+    methods: {
+        onExporting(e: { component: any; cancel: boolean; }) {
+            const workbook = new Workbook();
+            const worksheet = workbook.addWorksheet("employees");
 
-      exportDataGrid({
-        component: e.component,
-        worksheet,
-        autoFilterEnabled: true,
-      }).then(() => {
-        workbook.xlsx.writeBuffer().then((buffer) => {
-          saveAs(
-            new Blob([buffer], { type: "application/octet-stream" }),
-            "DataGrid.xlsx"
-          );
-        });
-      });
-      e.cancel = true;
+            exportDataGrid({
+                component: e.component,
+                worksheet,
+                autoFilterEnabled: true,
+            }).then(() => {
+                workbook.xlsx.writeBuffer().then((buffer) => {
+                    saveAs(
+                        new Blob([buffer], { type: "application/octet-stream" }),
+                        "DataGrid.xlsx"
+                    );
+                });
+            });
+            e.cancel = true;
+        },
+        customClass(cellInfo: { value: any; }) {
+            return cellInfo.value;
+        },
+        getColorTag(data: string) {
+            if (data === "신청") {
+                return "red";
+            } else if (data === "심사중") {
+                return "blue";
+            } else if (data === "승인") {
+                return "green";
+            } else if (data === "반려") {
+                return "grey";
+            }
+        },
+        setModalVisible(data: never[]) {
+            this.popupData = data;
+            this.modalStatus = true;
+        }
     },
-    customClass(cellInfo: { value: any; }) {
-      return cellInfo.value;
+    created() {
+        if (!this.$store.getters['auth/dataSearchBF310']) {
+            this.dataSearch = {
+                typeSevice1: false,
+                typeSevice2: false,
+                status: "상태 선택",
+                staff: "직원을 선택",
+                fromDate: '',
+                toDate: "",
+            }
+        } else {
+            let dataVuex = this.$store.getters['auth/dataSearchBF310']
+            this.dataSearch = {
+                ...dataVuex
+            }
+        }
     },
-    getColorTag(data: string) {
-      if (data === "신청") {
-        return "red";
-      } else if (data === "심사중") {
-        return "blue";
-      } else if (data === "승인") {
-        return "green";
-      } else if (data === "반려") {
-        return "grey";
-      }
+    beforeUpdate() {
+        this.$store.commit("auth/dataSearchBF310", this.dataSearch);
     },
-    setModalVisible(data: never[]) {
-      this.popupData = data;
-      this.modalStatus = true;
-    }
-  },
 });
 </script>
   <style>
 #data-grid-demo {
-  min-height: 700px;
+    min-height: 700px;
 }
 
 .dx-select-checkbox {
-  display: inline-block !important;
+    display: inline-block !important;
 }
 
 .search-form .col {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .search-form .col {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .search-form .col .lable-item {
-  width: 110px;
-  display: inline-block;
+    width: 110px;
+    display: inline-block;
 }
 
 .search-form .col .item:nth-child(2) {
-  margin-left: 30px;
+    margin-left: 30px;
 }
 
 .search {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 </style>

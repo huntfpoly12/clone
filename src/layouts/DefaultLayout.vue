@@ -71,8 +71,9 @@
               <component v-bind:is="currentComponent" />
             </keep-alive>
           </template>
-          <router-view v-else></router-view>
-
+          <template v-else>
+          <router-view></router-view>
+        </template>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -117,12 +118,11 @@ export default defineComponent({
     },
 
     currentComponent() {
-    if(this.activeTab === '') return
-    if (this.activeTab === 'bf-310') return BF310
-    if (this.activeTab === 'bf-320') return BF320;
-    return Test
-  }
-
+      if (this.activeTab === '') return
+      if (this.activeTab === 'bf-310') return BF310
+      if (this.activeTab === 'bf-320') return BF320;
+      return Test
+    }
 
   },
   methods: {
@@ -132,20 +132,20 @@ export default defineComponent({
       this.$store.commit("auth/logout");
     },
 
-    onSearch: _.debounce(function () {
+    onSearch() {
       this.filteredResult = [];
       if (
         this.menuData?.length > 0 &&
         this.inputSearchText?.length >= 1
       ) {
         this.menuData.forEach((val) => {
-          const searchId = val.name.includes(this.inputSearchText);
+          const searchId = val.name.includes(this.inputSearchText) || val.id.includes(this.inputSearchText);
           if (searchId) {
             this.filteredResult.push(val);
           }
         });
       }
-    }, 300),
+    },
     toggleDropdown() {
       this.state = !this.state;
     },
@@ -168,6 +168,7 @@ export default defineComponent({
       for (const key in obj) {
         this.menuTab.push(obj[key]);
       }
+      this.activeTab = ''
     },
     removeItemTab(item) {
       this.menuTab.splice(item, 1)
@@ -280,7 +281,7 @@ export default defineComponent({
   display: flex;
   padding-left: 0;
   position: relative;
-  width: 100%;
+
   &::before {
     position: absolute;
     right: 0;
