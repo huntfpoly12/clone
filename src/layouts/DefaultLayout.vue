@@ -133,7 +133,7 @@ export default defineComponent({
       this.$store.commit("auth/logout");
     },
 
-    onSearch: _.debounce(function () {
+    onSearch() {
       this.filteredResult = [];
       if (
         this.menuData?.length > 0 &&
@@ -146,7 +146,7 @@ export default defineComponent({
           }
         });
       }
-    }, 300),
+    },
     toggleDropdown() {
       this.state = !this.state;
     },
