@@ -15,7 +15,9 @@
             ref="select"
             v-model:value="value1"
             style="width: 120px"
+            @focus="focus"
             placeholder="전체"
+            @change="handleChange"
           >
             <a-select-option value="신청">신청</a-select-option>
             <a-select-option value="심사중">심사중</a-select-option>
@@ -31,7 +33,9 @@
             ref="select"
             v-model:value="value2"
             style="width: 120px"
+            @focus="focus"
             placeholder="전체"
+            @change="handleChange"
           >
             <a-select-option value="A 대리점">A 대리점</a-select-option>
             <a-select-option value="C 영업사원">C 영업사원</a-select-option>
@@ -77,26 +81,19 @@
       <DxColumn data-field="영업자" />
       <DxColumn data-field="신청서비스" />
       <DxColumn data-field="부가서비스" />
-      <DxColumn :width="110" cell-template="pupop" type="buttons" />
+      <DxColumn :width="110" cell-template="pupop" type="buttons"/>
       <template #pupop="{ data }">
-        <DxButton @click="setModalVisible(data)" style="color: blue"
-          >편집</DxButton
-        >
+        <DxButton @click="setModalVisible(data)" style="color:blue" >편집</DxButton>
       </template>
     </DxDataGrid>
-    <BF310Popup
-      :modalStatus="modalStatus"
-      @closePopup="modalStatus = false"
-      :data="popupData"
-    />
+    <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData"/>
   </div>
+
 </template>
   <script lang="ts">
-
     import DxDateBox from 'devextreme-vue/date-box';
     import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
     import { ref, defineComponent } from 'vue';
-
 import BF310Popup from "./components/BF310Popup.vue";
 import DxButton from "devextreme-vue/button";
 import {
@@ -112,7 +109,7 @@ import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
 
-import dayjs, { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
@@ -128,7 +125,7 @@ export default defineComponent({
     DxSearchPanel,
     BF310Popup,
     locale,
-    DxDateBox,
+    DxDateBox
   },
   data() {
     return {
@@ -152,7 +149,7 @@ export default defineComponent({
         resource: "",
         desc: "",
       },
-      popupData: [] as any,
+      popupData:[],
       valueDate: ref<Dayjs>(),
     };
   },
@@ -175,7 +172,6 @@ export default defineComponent({
       });
       e.cancel = true;
     },
-
     customClass(cellInfo: { value: any; }) {
       return cellInfo.value;
     },
@@ -190,11 +186,10 @@ export default defineComponent({
         return "grey";
       }
     },
-
     setModalVisible(data: never[]) {
       this.popupData = data;
       this.modalStatus = true;
-    },
+    }
   },
 });
 </script>
