@@ -1,15 +1,14 @@
 const mutations = {
-  setAuthData: (state: { authData: any; }, authData: string) => {
+  setAuthData: (state, authData) => {
     localStorage.setItem("token", authData);
     state.authData = authData;
   },
-  logout: (state: { authData: null; }) => {
+  logout: (state) => {
     state.authData = null;
     localStorage.removeItem('token');
     localStorage.removeItem('username');
   },
-  dataSearchBF320: (state, dataSearchBF320) => {
-    // console.log(state);
+  dataSearchBF320: (state, dataSearchBF320) => { 
     state.dataSearchBF320 = dataSearchBF320;
   },
  

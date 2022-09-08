@@ -160,11 +160,9 @@
                                     <a-select-option value="복지용구">복지용구</a-select-option>
                                 </a-select>
                             </template>
-
                             <template v-else-if="column.dataIndex === 'date'">
                                 <a-date-picker />
                             </template>
-
                             <template v-else-if="column.dataIndex === 'operation'">
                                 <a-popconfirm v-if="dataSource.length" title="정말 삭제 하시겠습니까?"
                                     @confirm="onDelete(record.key)">
