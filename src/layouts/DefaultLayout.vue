@@ -63,6 +63,7 @@
               :title="subMenu.title"
             >
               <a-menu-item v-for="item in subMenu.items" :key="item.id"  @click.enter="addMenuTab(item)">
+
                 <router-link :to="item.url">{{ item.name }}</router-link>
               </a-menu-item>
             </a-sub-menu>
@@ -81,6 +82,7 @@
             </keep-alive>
           </template>
           <router-view v-else></router-view>
+
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -107,7 +109,7 @@ export default defineComponent({
       menuItems: menuTree,
       activeKey: 1,
       menuTab: [],
-      activeTab: '',
+      activeTab: ''
     };
   },
   components: {
@@ -286,5 +288,6 @@ export default defineComponent({
       color: #1890ff;
     }
   }
+
 }
 </style>
