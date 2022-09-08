@@ -84,7 +84,6 @@
     </DxDataGrid>
     <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData"/>
   </div>
-
 </template>
   <script lang="ts">
     import DxDateBox from 'devextreme-vue/date-box';
