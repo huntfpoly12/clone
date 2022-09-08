@@ -95,7 +95,7 @@
                     </a-form>
                 </a-collapse-panel>
                 <a-collapse-panel key="2" header="대표자정보">
-                    <a-form :label-col="labelCol" ref="formRef" name="custom-validation" :rules="rules" v-bind="layout">
+                    <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                         <a-form-item has-feedback label="대표자명">
                             <a-input value="홍길동" autocomplete="off" style="width: 300px" />
                         </a-form-item>
@@ -141,7 +141,7 @@
                     </a-form>
                 </a-collapse-panel>
                 <a-collapse-panel key="4" header="메모" class="modal-note">
-                    <a-table bordered :data-source="dataSource" :pagination=false>
+                    <a-table bordered :data-source="dataSource" :pagination="false">
                         <template #bodyCell="{  text, index }">
                             <div>
                                 <div class="title-note">
@@ -296,7 +296,9 @@ export default defineComponent({
                 '삭제여부': '1',
                 'IP주소': '123.451.342.1'
             }]),
-            keyNumber: 0
+            keyNumber: 0,
+            fileList: [],
+
         }
     },
     computed: {

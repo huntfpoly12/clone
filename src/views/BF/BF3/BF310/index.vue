@@ -15,9 +15,7 @@
             ref="select"
             v-model:value="value1"
             style="width: 120px"
-            @focus="focus"
             placeholder="전체"
-            @change="handleChange"
           >
             <a-select-option value="신청">신청</a-select-option>
             <a-select-option value="심사중">심사중</a-select-option>
@@ -33,9 +31,7 @@
             ref="select"
             v-model:value="value2"
             style="width: 120px"
-            @focus="focus"
             placeholder="전체"
-            @change="handleChange"
           >
             <a-select-option value="A 대리점">A 대리점</a-select-option>
             <a-select-option value="C 영업사원">C 영업사원</a-select-option>
