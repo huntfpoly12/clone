@@ -142,9 +142,8 @@
                     </a-form>
                 </a-collapse-panel>
                 <a-collapse-panel key="4" header="메모" class="modal-note">
-
                     <a-table bordered :data-source="dataSource" :pagination=false>
-                        <template #bodyCell="{ column, text, record, index }"> 
+                        <template #bodyCell="{ column, text, record, index }">
                             <div>
                                 <div class="title-note">
                                     <div>
@@ -155,10 +154,10 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a-textarea placeholder="전달사항입력" allow-clear />
+                                    <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.note"/>
                                 </div>
                                 <a-space :size="8" style="margin-top: 7px;">
-                                    <save-outlined :style="{ fontSize: '20px'}" />
+                                    <save-outlined :style="{ fontSize: '20px'}" @click="handleCopy(text.note)" />
                                     <DeleteOutlined :style="{ fontSize: '20px'}" @click="handleDelete(text.key)" />
                                 </a-space>
                             </div>
@@ -167,8 +166,26 @@
                     </a-table>
 
                 </a-collapse-panel>
-
             </a-collapse>
+        </a-modal>
+
+        <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="50%">
+            <div style="margin-top: 20px;">
+                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key" @exporting="onExporting">
+                    <DxColumn data-field="기록일시" />
+                    <DxColumn data-field="비고" />
+                    <DxColumn data-field="생성일시" />
+                    <DxColumn data-field="생성자ID" />
+                    <DxColumn data-field="삭제여부" />
+                    <DxColumn data-field="IP주소" />
+                    <DxColumn data-field="상세" cell-template="detail" />
+                    <template #detail="{ data }">
+                        <a-space :size="8">
+                            <zoom-in-outlined :style="{ fontSize: '15px'}" />
+                        </a-space>
+                    </template>
+                </DxDataGrid>
+            </div>
         </a-modal>
     </div>
 </template>
@@ -190,6 +207,7 @@ import dayjs from "dayjs";
 export default {
     props: [
         'modalStatus',
+        'modalStatusHistory',
         'data'
     ],
     data() {
@@ -269,8 +287,16 @@ export default {
             dataSource: ref([{
                 key: 0,
                 note: '',
-            },
-            ]),
+            }]),
+            dataTableShow: ref([{
+                'key': 0,
+                '기록일시': '2022-09-05 13:52:09',
+                '비고': '승인>사업자등록번호 등록',
+                '생성일시': '2022-09-05 13:52:09',
+                '생성자ID': '@mdo',
+                '삭제여부': '1',
+                'IP주소': '123.451.342.1'
+            }]),
             keyNumber: 0
         }
     },
@@ -293,6 +319,9 @@ export default {
     methods: {
         setModalVisible() {
             this.$emit('closePopup', false);
+        },
+        setModalVisibleHis() {
+            this.$emit('closePopupHis', false);
         },
         getColorTag(data) {
             if (data === "신청") {
@@ -332,6 +361,16 @@ export default {
                     return obj.key != key;
                 });
             }
+        },
+        handleCopy(note) {
+            this.keyNumber++
+            let dataDef = {
+                key: this.keyNumber,
+                note: note,
+            }
+            this.dataSource.push(dataDef)
+            console.log(this.dataSource);
+            
         }
     }
 };
@@ -348,12 +387,12 @@ export default {
         align-items: center;
     }
 
-    .anticon {
-        cursor: pointer;
-    }
-
     th {
         display: none;
     }
+}
+
+.anticon {
+    cursor: pointer;
 }
 </style>

@@ -57,10 +57,15 @@
             <DxColumn data-field="부가서비스" />
             <DxColumn :width="110" cell-template="pupop" />
             <template #pupop="{ data }">
-                <DxButton @click="setModalVisible(data)" text="편집" />
+                <a-space :size="8">
+                    <EditOutlined @click="setModalVisible(data)" />
+                    <HistoryOutlined @click="modalHistory(data)" />
+                </a-space>
             </template>
         </DxDataGrid>
         <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
+        <BF320Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
+            :data="popupData" />
     </div>
 </template>
 <script>
@@ -78,7 +83,7 @@ import { employees, states } from '../data2.js';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
-
+import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
@@ -94,7 +99,9 @@ export default {
         DxSelection,
         DxExport,
         DxSearchPanel,
-        BF320Popup
+        BF320Popup,
+        EditOutlined,
+        HistoryOutlined
     },
     data() {
         return {
@@ -124,13 +131,14 @@ export default {
             }],
             popupData: [],
             modalStatus: false,
+            modalStatusHistory: false,
+            dataSearch: {},
         };
     },
     methods: {
         onExporting(e) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet('employees');
-
             exportDataGrid({
                 component: e.component,
                 worksheet,
@@ -160,7 +168,28 @@ export default {
             this.modalStatus = true;
             this.popupData = data;
         },
+        modalHistory(data) {
+            this.modalStatusHistory = true;
+            this.popupData = data;
+        },
     },
+    // created() {
+    //     if (!this.$store.getters['auth/dataSearchBF320']) {
+    //         this.dataSearch = {
+    //             typeSevice: '',
+    //             typeSevice2: false,
+    //             status: "상태 선택",
+    //             staff: "직원을 선택",
+    //             fromDate: '',
+    //             toDate: "",
+    //         }
+    //     } else {
+    //         let dataVuex = this.$store.getters['auth/dataSearchBF320']
+    //         this.dataSearch = {
+    //             ...dataVuex
+    //         }
+    //     }
+    // },
 };
 </script>
 <style>
