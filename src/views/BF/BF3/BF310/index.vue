@@ -148,7 +148,7 @@ export default {
     };
   },
   methods: {
-    onExporting(e) {
+    onExporting(e: { component: any; cancel: boolean; }) {
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("employees");
 
@@ -166,10 +166,10 @@ export default {
       });
       e.cancel = true;
     },
-    customClass(cellInfo) {
+    customClass(cellInfo: { value: any; }) {
       return cellInfo.value;
     },
-    getColorTag(data) {
+    getColorTag(data: string) {
       if (data === "신청") {
         return "red";
       } else if (data === "심사중") {
@@ -180,7 +180,7 @@ export default {
         return "grey";
       }
     },
-    setModalVisible(data) {
+    setModalVisible(data: never[]) {
       this.popupData = data;
       this.modalStatus = true;
     },
