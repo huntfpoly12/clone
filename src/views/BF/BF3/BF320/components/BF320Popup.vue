@@ -178,7 +178,7 @@
                     <DxColumn data-field="삭제여부" />
                     <DxColumn data-field="IP주소" />
                     <DxColumn data-field="상세" cell-template="detail" />
-                    <template>
+                    <template #detail="{ data }">
                         <a-space :size="8">
                             <zoom-in-outlined :style="{ fontSize: '15px'}" />
                         </a-space>
