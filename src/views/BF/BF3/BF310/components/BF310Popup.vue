@@ -14,7 +14,7 @@
                     height="100%"
                     :data-source="gridDataSource"
                     v-model:selected-row-keys="gridBoxValue"
-                    @selection-changed="onGridSelectionChanged($event)"
+                    @selection-changed="onGridSelectionChanged()"
                     :show-borders="true"
                   >
                     <DxSelection mode="single" />
@@ -158,8 +158,6 @@
           <a-form
             ref="formRef"
             name="custom-validation"
-            :rules="rules"
-            v-bind="layout"
           >
             <a-form-item has-feedback label="대표자명">
               <a-input value="홍길동"  autocomplete="off" style="width: 300px"/>
@@ -238,7 +236,7 @@
                   </a-form-item>
                   <a-form-item label="장기요양기관등록증">
                     <a-upload v-model:file-list="fileList" name="file"
-                      :multiple="false" :headers="headers" @change="handleChange">
+                      :multiple="false"  @change="handleChange">
                     <a-button>
                       <upload-outlined></upload-outlined>
                       파일선택
@@ -359,6 +357,7 @@
 </template>
 <script lang="ts">
 import DxDateBox from 'devextreme-vue/date-box';
+
 import { ref, defineComponent } from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
@@ -391,8 +390,10 @@ export default defineComponent({
       },
       gridDataSource: employees,
       gridBoxValue: [],
+      fileList: [],
       gridColumns: ["심사상태", "사업자코드", "상호"],
       isGridBoxOpened: false,
+      checked: true,
       columns : [
           {
             name: '사업명 (중복불가)',
@@ -453,7 +454,9 @@ export default defineComponent({
       checked: false
     },
     value : ref<number>(1),
+
     formatter:  (date: { getDate: () => any; getMonth: () => number; getFullYear: () => any; })=>{
+
        const day = date.getDate();
        const customDay = day < 10 ? '0'+day : day;
        const month = date.getMonth() + 1;
@@ -478,7 +481,9 @@ export default defineComponent({
 
       this.$emit('closePopup', false);
     },
+
     getColorTag(data: string) {
+
       if (data === "신청") {
         return "red";
       } else if (data === "심사중") {
@@ -498,7 +503,9 @@ export default defineComponent({
     },
 
     // function 
+
     handleChange(info: { file: { status: string; name: any; }; fileList: any; }) {
+
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
@@ -508,11 +515,11 @@ export default defineComponent({
         message.error(`${info.file.name} file upload failed.`);
       }
     },
+
     dateValue(date: string|number|Date|dayjs.Dayjs|null|undefined) {
       return dayjs(date,this.dateFormat)
     },
     deleteRow(key: string){
-      
       for(var i = 0; i < this.dataTable.length; i++) {
         if(this.dataTable[i].key == key) {
           this.dataTable.splice(i, 1);
@@ -521,6 +528,7 @@ export default defineComponent({
       }
       
     },
+
     dateOnFocus(e: { element: { querySelector: (arg0: string) => { (): any; new(): any; select: { (): void; new(): any; }; }; }; }){
       e.element.querySelector('.dx-texteditor-input').select();
     }
