@@ -192,7 +192,7 @@ export default defineComponent({
     },
 });
 </script>
-<style>
+  <style>
 #data-grid-demo {
     min-height: 700px;
 }
