@@ -81,33 +81,14 @@
       <DxColumn data-field="영업자" />
       <DxColumn data-field="신청서비스" />
       <DxColumn data-field="부가서비스" />
-      <DxColumn :width="110" cell-template="pupop" />
+      <DxColumn :width="110" cell-template="pupop" type="buttons"/>
       <template #pupop="{ data }">
-        <DxButton @click="setModalVisible(data)" text="편집" />
+        <DxButton @click="setModalVisible(data)" style="color:blue" >편집</DxButton>
       </template>
     </DxDataGrid>
     <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData"/>
-
-    <a-date-picker
-      v-model:value="valueDate"
-      format="YYYY-MM-DD"
-      :locale="locale"
-      :autofocus="true"
-      :showNow="true"
-      @openChange="test"
-    />
-
-    <DxDateBox
-            :show-clear-button="true"
-            :use-mask-behavior="true"
-         
-            placeholder="10/16/2018"
-            :display-format="formatter"
-            type="date"
-            @focusIn="dateOnFocus"
-          />
   </div>
-  <!-- dddd -->
+
 </template>
   <script lang="ts">
     import DxDateBox from 'devextreme-vue/date-box';
@@ -170,15 +151,6 @@ export default {
       },
       popupData:[],
       valueDate: ref<Dayjs>(),
-      formatter:  (date)=>{
-       
-          const day = date.getDate();
-          const month = date.getMonth() + 1;
-          const year = date.getFullYear();
-      
-          return `${day}/${month}/${year}`;
-      },
-
     };
   },
   methods: {
@@ -217,12 +189,6 @@ export default {
     setModalVisible(data) {
       this.popupData = data;
       this.modalStatus = true;
-    },
-    test(){
-     
-    },
-    dateOnFocus(e){
-      e.element.querySelector('.dx-texteditor-input').select();
     }
   },
 };

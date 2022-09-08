@@ -210,7 +210,15 @@
                     </template>
                     <template v-else-if="column.key === '서비스시작년월'">
                       <span>
-                        <a-date-picker :value="dateValue(record.서비스시작년월)" :format="dateFormat" :allowClear="false" />
+                        <DxDateBox
+                          :use-mask-behavior="true"
+                          :display-format="formatter"
+                          :value="dateValue(record.서비스시작년월)"
+                          type="date"
+                          @focusIn="dateOnFocus"
+                          width="70%"
+                          :show-clear-button="false"
+                        />
                       </span>
                     </template>
                     <template v-else-if="column.key === 'action'">
@@ -350,7 +358,8 @@
   </div>
 </template>
 <script lang="ts">
-  import { ref } from 'vue';
+import DxDateBox from 'devextreme-vue/date-box';
+import { ref } from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
@@ -429,7 +438,7 @@ export default {
             key: '3',
             사업명: '가나다라마바 사업',
             사업분류: '단기보호',
-            서비스시작년월: '2015/01/01',
+            서비스시작년월: '2015/01/13',
             정원수: 10,
           },
         ],
@@ -443,11 +452,16 @@ export default {
       lineHeight: '30px',
       
     },
-    value : ref<number>(1)
+    value : ref<number>(1),
+    formatter:  (date)=>{
+       const day = date.getDate();
+       const customDay = day < 10 ? '0'+day : day;
+       const month = date.getMonth() + 1;
+       const customMonth = month < 10 ? '0'+month : month;
+       const year = date.getFullYear();
+       return `${year}-${customMonth}-${customDay}`;
+    },
     }
-  },
-  computed: {
-
   },
   components: {
     DxDropDownBox,
@@ -456,7 +470,8 @@ export default {
     DxPaging,
     DxSelection,
     UploadOutlined,
-    MinusCircleOutlined
+    MinusCircleOutlined,
+    DxDateBox
   },
   methods: {
     setModalVisible() {
@@ -505,6 +520,9 @@ export default {
         }
       }
       
+    },
+    dateOnFocus(e){
+      e.element.querySelector('.dx-texteditor-input').select();
     }
   }
 };
