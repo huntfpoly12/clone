@@ -405,9 +405,7 @@ export default defineComponent({
                 message.success(`${info.file.name} file uploaded successfully`);
             } else if (info.file.status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);
-            }
-
-            console.log(info.file);
+            } 
 
         },
         handleAdd() {

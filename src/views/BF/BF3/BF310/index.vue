@@ -11,8 +11,7 @@
                 </div>
                 <div class="item">
                     <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.status" style="width: 120px" @focus="focus"
-                        @change="handleChange">
+                    <a-select ref="select" v-model:value="dataSearch.status" style="width: 120px">
                         <a-select-option value="신청">신청</a-select-option>
                         <a-select-option value="심사중">심사중</a-select-option>
                         <a-select-option value="승인">승인</a-select-option>
@@ -23,8 +22,7 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" @focus="focus"
-                        placeholder="전체" @change="handleChange">
+                    <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" placeholder="전체">
                         <a-select-option value="A 대리점">A 대리점</a-select-option>
                         <a-select-option value="C 영업사원">C 영업사원</a-select-option>
                         <a-select-option value="D 영업사원">D 영업사원</a-select-option>
@@ -33,10 +31,10 @@
                 </div>
                 <div class="item">
                     <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-                    <a-range-picker @change="changeDate($event)" />
+                    <a-range-picker />
                 </div>
             </div>
-            <a-button class="search" type="primary" @click="checkAll">검색</a-button>
+            <a-button class="search" type="primary">검색</a-button>
         </div>
 
         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
@@ -90,8 +88,23 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+import { Store } from 'vuex'
+
 dayjs.extend(weekday);
 dayjs.extend(localeData);
+
+declare module '@vue/runtime-core' {
+    // declare your own store states
+    interface State {
+        count: number
+    }
+
+    // provide typings for `this.$store`
+    interface ComponentCustomProperties {
+        $store: Store<State>
+    }
+}
+
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -129,7 +142,14 @@ export default defineComponent({
             },
             popupData: [],
             valueDate: ref<Dayjs>(),
-            dataSearch: {},
+            dataSearch: {
+                typeSevice1: false,
+                typeSevice2: false,
+                status: "상태 선택",
+                staff: "직원을 선택",
+                fromDate: '',
+                toDate: "",
+            },
         };
     },
     methods: {
@@ -192,7 +212,7 @@ export default defineComponent({
     },
 });
 </script>
-  <style>
+<style>
 #data-grid-demo {
     min-height: 700px;
 }
