@@ -143,14 +143,14 @@
                 </a-collapse-panel>
                 <a-collapse-panel key="4" header="메모" class="modal-note">
 
-                    <a-table bordered :data-source="dataSource" pagination=false>
-                        <template #bodyCell="{ column, text, record }">
+                    <a-table bordered :data-source="dataSource" :pagination=false>
+                        <template #bodyCell="{ column, text, record, index }"> 
                             <div>
                                 <div class="title-note">
                                     <div>
                                         Han Aram 수정 2022-09-05 게시 2022-09-05
                                     </div>
-                                    <div v-if="text.key == '0'">
+                                    <div v-if="index == 0">
                                         <PlusSquareOutlined :style="{ fontSize: '25px'}" @click="handleAdd" />
                                     </div>
                                 </div>
@@ -337,23 +337,23 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
 .modal-note {
     max-height: 500px;
     overflow: auto;
-}
 
-.title-note {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    .title-note {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-.anticon {
-    cursor: pointer;
-}
+    .anticon {
+        cursor: pointer;
+    }
 
-th {
-    display: none;
+    th {
+        display: none;
+    }
 }
 </style>
