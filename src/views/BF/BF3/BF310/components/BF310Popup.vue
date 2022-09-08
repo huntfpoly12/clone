@@ -12,7 +12,7 @@
                 <template #content>
 
                   <DxDataGrid height="100%" :data-source="gridDataSource" v-model:selected-row-keys="gridBoxValue"
-                    @selection-changed="onGridSelectionChanged($event)" :show-borders="true">
+                    @selection-changed="onGridSelectionChanged()" :show-borders="true">
                     <DxSelection mode="single" />
                     <DxPaging :page-size="5" />
                     <DxColumn data-field="신청코드" />
@@ -219,7 +219,7 @@
                     <a-input value="01234567898" style="width: 300px" />
                   </a-form-item>
                   <a-form-item label="장기요양기관등록증">
-                    <a-upload v-model:file-list="fileList" name="file" :multiple="false" :headers="headers"
+                    <a-upload v-model:file-list="fileList" name="file" :multiple="false"
                       @change="handleChange">
                       <a-button>
                         <upload-outlined></upload-outlined>
