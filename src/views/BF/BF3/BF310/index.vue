@@ -33,7 +33,7 @@
                 </div>
                 <div class="item">
                     <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-                    <a-range-picker @change="changeDate($event)" />
+                    <a-range-picker v-model:value="value4" @change="changeDate($event)" />
                 </div>
             </div>
             <a-button class="search" type="primary" @click="checkAll">검색</a-button>
