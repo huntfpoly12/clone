@@ -33,7 +33,7 @@
                 </div>
                 <div class="item">
                     <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-                    <a-range-picker  />
+                    <a-range-picker  v-model:value="value4" />
 
                 </div>
             </div>

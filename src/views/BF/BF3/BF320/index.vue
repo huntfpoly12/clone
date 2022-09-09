@@ -128,7 +128,11 @@ export default defineComponent({
             dataSearch: {
                 typeSevice:'',
                 nameCompany:'',
-
+                surrogate: '',
+                status: false,
+                address: '',
+                manager: '',
+                nameSale: ''
             },
         };
     },
