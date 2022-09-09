@@ -54,17 +54,19 @@
         </a-menu>
       </a-layout-sider>
       <a-layout style="padding: 24px">
-        <ul class="list-menu-tab" v-if="menuTab.length > 0">
-          <li v-for="(item, index) in menuTab" :class="activeTab === item.id? 'active': ''" :key="index"
-            @click="changeActiveTab(item)"> {{item.name}} <DxButton @click="removeItemTab(index)"><svg focusable="false"
-                class="" data-icon="close" width="1em" height="1em" fill="currentColor" aria-hidden="true"
-                viewBox="64 64 896 896">
-                <path
-                  d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
-                </path>
-              </svg></DxButton>
-          </li>
-        </ul>
+        <nav class="nav-tabs" v-if="menuTab.length > 0">
+          <ul class="list-menu-tab">
+            <li v-for="(item, index) in menuTab" :class="activeTab === item.id? 'active': ''" :key="index"
+              @click="changeActiveTab(item)"> {{item.name}} <DxButton @click="removeItemTab(index)"><svg focusable="false"
+                  class="" data-icon="close" width="1em" height="1em" fill="currentColor" aria-hidden="true"
+                  viewBox="64 64 896 896">
+                  <path
+                    d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
+                  </path>
+                </svg></DxButton>
+            </li>
+          </ul>
+        </nav>
         <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
           <template v-if="activeTab">
             <keep-alive>
@@ -275,37 +277,41 @@ export default defineComponent({
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
 }
-
-.list-menu-tab {
-  list-style: none;
-  display: flex;
-  padding-left: 0;
-  position: relative;
-
-  &::before {
-    position: absolute;
-    right: 0;
-    left: 0;
-    width: 100%;
-    bottom: 0;
-    border-bottom: 1px solid #ccc;
-    content: "";
-  }
-
-  li {
-    margin: 0 1px;
-    padding: 8px 16px;
-    background: #fafafa;
-    border: 1px solid #ccc;
-    transition: all .3s cubic-bezier(.645, .045, .355, 1);
-    cursor: pointer;
-
-    &.active {
-      color: #1890ff;
-      background: #fff;
-      border-bottom-color: transparent;
+.nav-tabs {
+  display: block;
+  box-shadow: inset 0 -1px 0 #cccccc;
+  height: 50px;
+  margin-bottom: 20px;
+  ul {
+    display: block;
+    text-align: left;
+    padding-left: 0;
+    li {
+      display: inline-block;
+      width: auto;
+      text-align: center;
+      height: 50px;
+      line-height: 50px;
+      padding: 0 5px 0 10px;
+      background-color: #fafafa;
+      border: 1px solid #cccccc;
+      margin: 0 2px;
+      border-radius: 8px 8px 0 0;
+      svg {
+        float: right;
+        margin-top: 17px;
+        margin-left: 10px;
+      }
+      cursor: pointer;
+      &:first-of-type {
+        margin-left: 0;
+      }
+      &.active {
+        background-color: #fff;
+        border-bottom: 1px solid #fff;
+        color: #1890ff;
+      }
     }
   }
-
 }
 </style>
