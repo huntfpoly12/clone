@@ -1,7 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div id="bf-310">
-        <CustomDatepicker width="50%"/>
         <a-typography-title :level="2">계약정보관리&심사 </a-typography-title>
         <div class="search-form">
             <div class="col">
@@ -99,7 +98,6 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-import CustomDatepicker from '../../../../components/CustomDatepicker.vue';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -111,8 +109,7 @@ export default defineComponent({
         DxSearchPanel,
         BF310Popup,
         locale,
-        DxDateBox,
-        CustomDatepicker
+        DxDateBox
     },
     data() {
         return {
