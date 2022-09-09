@@ -70,8 +70,6 @@
                                         </a-button>
                                     </a-upload>
                                 </a-form-item>
-
-
                                 <a-space :size="10" align="start">
                                     <div>
                                         <warning-filled :style="{ fontSize: '15px'}" />
@@ -82,19 +80,9 @@
                                         <p>파일용량 : 최대 5MB</p>
                                     </div>
                                 </a-space>
-                                <a-modal :visible="previewVisible" title="사업자등록증" :footer="null" @cancel="handleCancel">
-                                    <img alt="example" style="width: 100%" :src="imageUrl" />
-                                </a-modal>
-
                             </a-col>
-                            <a-col :span="6">
-                                <img v-if="imageUrl" :width="200" :src="imageUrl" alt="avatar" @click="handlePreview" />
-                                <img v-else="imageUrl" :width="200"
-                                    src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp"
-                                    alt="avatar" />
-                            </a-col>
+                            <imgUpload :title="titleModal" :imageUrl="imageUrl"/>
                         </a-row>
-
                     </a-form>
                 </a-collapse-panel>
                 <a-collapse-panel key="2" header="대표자정보">
@@ -191,21 +179,23 @@
         </a-modal>
     </div>
 </template>
+
 <script lang="ts">
 import { ref, defineComponent } from 'vue';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
+import imgUpload from "../../../../../components/UploadImage.vue";
 import {
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxSelection,
+    DxSelection
 } from "devextreme-vue/data-grid";
 
 import { employees } from '../data.js';
-// for upload image
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled } from '@ant-design/icons-vue';
-import { message, UploadChangeParam, UploadProps } from 'ant-design-vue';
-import dayjs from "dayjs";
+import { message } from 'ant-design-vue';
+import type { UploadProps } from 'ant-design-vue';
+import dayjs from "dayjs"; 
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
     const reader = new FileReader();
@@ -214,11 +204,11 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
 }
 
 export default defineComponent({
-    props: [
-        'modalStatus',
-        'modalStatusHistory',
-        'data'
-    ],
+    props: {
+        modalStatus: Boolean,
+        modalStatusHistory: Boolean,
+    },
+
     data() {
         return {
             activeKey: [],
@@ -307,8 +297,8 @@ export default defineComponent({
                 'IP주소': '123.451.342.1'
             }]),
             keyNumber: 0,
-            fileList: ref([])
-
+            fileList: ref([]),
+            titleModal: "사업자등록증"
         }
     },
     components: {
@@ -323,15 +313,17 @@ export default defineComponent({
         SaveOutlined,
         DeleteOutlined,
         PlusSquareOutlined,
-        WarningFilled
+        WarningFilled,
+        imgUpload
     },
+
     setup() {
         const loading = ref<boolean>(false);
         const imageUrl = ref<string>('');
-        const previewVisible = ref(false);
-        const previewTitle = '';
+        const previewTitle = ref('');
         const fileList = ref<UploadProps['fileList']>([])
-        const handleChange = (info: UploadChangeParam) => {
+
+        const handleChange = (info: any) => {
             if (info.file.status === 'uploading') {
                 loading.value = true;
                 return;
@@ -348,7 +340,7 @@ export default defineComponent({
             }
         };
 
-        const beforeUpload = (file: UploadProps['fileList'][number]) => {
+        const beforeUpload = (file: any) => {
             const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
             if (!isJpgOrPng) {
                 message.error('You can only upload JPG file!');
@@ -360,22 +352,15 @@ export default defineComponent({
             return isJpgOrPng && isLt2M;
         };
 
-        const handleCancel = () => {
-            previewVisible.value = false;
-        }
-
         return {
             fileList,
             loading,
             imageUrl,
             handleChange,
             beforeUpload,
-            previewVisible,
             previewTitle,
-            handleCancel
         };
     },
-
     methods: {
         setModalVisible() {
             this.$emit('closePopup', false);
@@ -396,17 +381,6 @@ export default defineComponent({
         },
         onGridSelectionChanged() {
             this.isGridBoxOpened = false;
-        },
-        handleChange(info: { file: { status: string; name: any; }; fileList: any; }) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            } 
-
         },
         handleAdd() {
             this.keyNumber++
@@ -431,30 +405,8 @@ export default defineComponent({
             }
             this.dataSource.push(dataDef)
         },
-        handlePreview() {
-            this.previewVisible = true
-        }
+
     }
 });
 </script>
-
-<style scoped lang="scss">
-.modal-note {
-    max-height: 500px;
-    overflow: auto;
-
-    .title-note {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    th {
-        display: none;
-    }
-}
-
-.anticon {
-    cursor: pointer;
-}
-</style>
+ 
