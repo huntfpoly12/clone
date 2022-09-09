@@ -28,7 +28,7 @@
               <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex" class="item-search"
                 @click.prevent="toggleDropdown">
                 <router-link :to="result.url">
-                  {{ result.name }}
+                  {{ result.id }} | {{ result.name }}
                 </router-link>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default defineComponent({
       for (const key in obj) {
         this.menuTab.push(obj[key]);
       }
-      this.activeTab = ''
+      this.activeTab = item.id
     },
     removeItemTab(item) {
       this.menuTab.splice(item, 1)
@@ -253,6 +253,7 @@ export default defineComponent({
 .item-search {
   padding: 5px 10px;
   display: flex;
+  text-align: left;
 }
 
 .item-search a {
