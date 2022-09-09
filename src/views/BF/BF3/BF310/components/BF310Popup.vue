@@ -256,8 +256,17 @@
           <div>
             <a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
             <div style="margin-top: 20px;">
+              
               <a-form-item label="서비스 시작년월">
-                <a-date-picker :value="dateValue('2022/08/25')" :format="dateFormat" />
+                <DxDateBox
+                    :show-clear-button="false"
+                    :use-mask-behavior="true"
+                    :value="dateValue('2022/08/25')"
+                    @focusIn="dateOnFocus"
+                    :display-format="formatter"
+                    type="date"
+                    width="30%"
+                  />
               </a-form-item>
               <a-form-item label="직 원 수">
                 <a-input-number value="01234567898" style="width: 100px" />
@@ -436,9 +445,6 @@ export default defineComponent({
     },
     }
   },
-  computed: {
-
-  },
   components: {
     DxDropDownBox,
     DxDataGrid,
@@ -446,7 +452,8 @@ export default defineComponent({
     DxPaging,
     DxSelection,
     UploadOutlined,
-    MinusCircleOutlined
+    MinusCircleOutlined,
+    DxDateBox
   },
   methods: {
     setModalVisible() {
