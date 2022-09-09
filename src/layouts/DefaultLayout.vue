@@ -39,9 +39,13 @@
             No Data
           </div>
         </div>
-        <SearchMenu />
-
-        <a-menu mode="inline" theme="dark" :inline-collapsed="collapsed">
+      
+        
+        <a-menu  v-model:selectedKeys="selectedKeys"
+      theme="dark"
+      mode="inline"
+      :open-keys="openKeys"
+      @openChange="onOpenChange">
           <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
             <template #title>{{ menuItem.title }}</template>
             <a-sub-menu v-for="subMenu in menuItem.subMenus" :key="subMenu.id" :title="subMenu.title">
@@ -184,26 +188,23 @@ export default defineComponent({
   },
   setup() {
     const state = reactive({
-      collapsed: false,
-      selectedKeys: ["sub0"],
-      openKeys: ["sub1"],
-      preOpenKeys: ["sub1"],
+      rootSubmenuKeys: ['bf-000', 'cm-000', 'ac-000', 'pa-000'],
+      openKeys: ['bf-000'],
+      selectedKeys: [],
     });
 
-    watch(
-      () => state.openKeys,
-      (_val, oldVal) => {
-        state.preOpenKeys = oldVal;
+    const onOpenChange = openKeys => {
+      const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
+
+      if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+        state.openKeys = openKeys;
+      } else {
+        state.openKeys = latestOpenKey ? [latestOpenKey] : [];
       }
-    );
-    const toggleCollapsed = () => {
-      state.collapsed = !state.collapsed;
-      state.openKeys = state.collapsed ? [] : state.preOpenKeys;
     };
 
-    return {
-      ...toRefs(state),
-      toggleCollapsed,
+    return { ...toRefs(state),
+      onOpenChange,
     };
   },
 });
