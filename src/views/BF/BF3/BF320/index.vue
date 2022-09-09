@@ -71,6 +71,7 @@
     </div>
 </template>
 <script>
+import { defineComponent } from 'vue';
 import {
     DxDataGrid,
     DxColumn,
@@ -93,7 +94,7 @@ import localeData from "dayjs/plugin/localeData"
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
-export default {
+export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn,
@@ -124,7 +125,11 @@ export default {
             popupData: [],
             modalStatus: false,
             modalStatusHistory: false,
-            dataSearch: {},
+            dataSearch: {
+                typeSevice:'',
+                nameCompany:'',
+
+            },
         };
     },
     methods: {
@@ -151,28 +156,5 @@ export default {
             this.popupData = data;
         },
     },
-    created() {
-        if (!this.$store.getters['auth/dataSearchBF320']) {
-            this.dataSearch = {
-                typeSevice: '',
-                nameCompany: '',
-                surrogate: '',
-                status: "포함",
-                address: "",
-                manager: 'Lucy',
-                nameSale: 'lucy',
-            }
-        } else {
-            let dataVuex = this.$store.getters['auth/dataSearchBF320']
-            this.dataSearch = {
-                ...dataVuex
-            }
-        }
-    },
-    beforeUpdate() {
-        this.$store.commit("auth/dataSearchBF320", this.dataSearch);
-    },
-
-};
+});
 </script>
- 
