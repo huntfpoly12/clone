@@ -33,6 +33,7 @@
                 <div class="item">
                     <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
                     <a-range-picker  />
+
                 </div>
             </div>
             <a-button class="search" type="primary">검색</a-button>
