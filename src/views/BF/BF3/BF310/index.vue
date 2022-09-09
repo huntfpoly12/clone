@@ -61,7 +61,12 @@
             <DxColumn data-field="부가서비스" />
             <DxColumn :width="110" cell-template="pupop" type="buttons" />
             <template #pupop="{ data }">
-                <DxButton @click="setModalVisible(data)" style="color:blue">편집</DxButton>
+                <DxButton
+                            @click="setModalVisible(data)"
+                            text="편집"
+                            type="default"
+                            styling-mode="outlined"
+                            />
             </template>
         </DxDataGrid>
         <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
