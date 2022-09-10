@@ -251,7 +251,7 @@
                     </template>
                     <template v-else-if="column.key === '서비스시작년월'">
                       <span>
-                        <CustomDatepicker :valueDate='record.서비스시작년월'/>
+                        <CustomDatepicker :valueDate="record.서비스시작년월" />
                       </span>
                     </template>
                     <template v-else-if="column.key === 'action'">
@@ -325,8 +325,8 @@
               >회계서비스 신청합니다.</a-checkbox
             >
             <div style="margin-top: 20px">
-              <a-form-item label="서비스 시작년월" >
-                <CustomDatepicker width="30%" valueDate='2022/08/25'/>
+              <a-form-item label="서비스 시작년월">
+                <CustomDatepicker width="30%" valueDate="2022/08/25" />
               </a-form-item>
               <a-form-item label="직 원 수">
                 <a-input-number value="01234567898" style="width: 100px" />
@@ -419,6 +419,9 @@ import { UploadOutlined, MinusCircleOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 export default defineComponent({
+  created(){
+    console.log(this.gridBoxValue);
+  },
   props: ["modalStatus", "data"],
   data() {
     return {
@@ -497,19 +500,6 @@ export default defineComponent({
         checked: false,
       },
       value: ref<number>(1),
-
-      formatter: (date: {
-        getDate: () => any;
-        getMonth: () => number;
-        getFullYear: () => any;
-      }) => {
-        const day = date.getDate();
-        const customDay = day < 10 ? "0" + day : day;
-        const month = date.getMonth() + 1;
-        const customMonth = month < 10 ? "0" + month : month;
-        const year = date.getFullYear();
-        return `${year}-${customMonth}-${customDay}`;
-      },
     };
   },
   components: {
@@ -520,7 +510,7 @@ export default defineComponent({
     DxSelection,
     UploadOutlined,
     MinusCircleOutlined,
-    CustomDatepicker
+    CustomDatepicker,
   },
   methods: {
     setModalVisible() {

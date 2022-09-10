@@ -78,7 +78,6 @@
               <template #title>{{ menuItem.title }}</template>
               <a-sub-menu v-for="subMenu in menuItem.subMenus" :key="subMenu.id" :title="subMenu.title">
                 <a-menu-item v-for="item in subMenu.items" :key="item.id" @click.enter="addMenuTab(item)">
-
                   <router-link :to="item.url">{{ item.name }}</router-link>
                 </a-menu-item>
               </a-sub-menu>
@@ -106,7 +105,6 @@
   </a-layout>
   
 </template>
-
 <script>
 import { defineComponent, reactive, toRefs, ref } from "vue";
 import BF310 from '../views/BF/BF3/BF310/index.vue'
@@ -240,7 +238,8 @@ export default defineComponent({
       }
     };
 
-    return { ...toRefs(state),
+    return {
+      ...toRefs(state),
       onOpenChange,
       collapsed
     };
@@ -333,15 +332,18 @@ export default defineComponent({
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
 }
+
 .nav-tabs {
   display: block;
   box-shadow: inset 0 -1px 0 #cccccc;
   height: 50px;
   margin-bottom: 20px;
+
   ul {
     display: block;
     text-align: left;
     padding-left: 0;
+
     li {
       display: inline-block;
       width: auto;
@@ -353,15 +355,19 @@ export default defineComponent({
       border: 1px solid #cccccc;
       margin: 0 2px;
       border-radius: 8px 8px 0 0;
+
       svg {
         float: right;
         margin-top: 17px;
         margin-left: 10px;
       }
+
       cursor: pointer;
+
       &:first-of-type {
         margin-left: 0;
       }
+
       &.active {
         background-color: #fff;
         border-bottom: 1px solid #fff;
