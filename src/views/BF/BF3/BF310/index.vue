@@ -69,9 +69,10 @@
                             />
             </template>
         </DxDataGrid>
+     
         <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
     </div>
-
+   
 </template>
 <script lang="ts">
 import DxDateBox from 'devextreme-vue/date-box';
@@ -95,8 +96,23 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+import { Store } from 'vuex'
+
 dayjs.extend(weekday);
 dayjs.extend(localeData);
+
+declare module '@vue/runtime-core' {
+    // declare your own store states
+    interface State {
+        count: number
+    }
+
+    // provide typings for `this.$store`
+    interface ComponentCustomProperties {
+        $store: Store<State>
+    }
+}
+
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -135,10 +151,12 @@ export default defineComponent({
             popupData: [],
             valueDate: ref<Dayjs>(),
             dataSearch: {
-                typeSevice1:true,
-                typeSevice2:true,
-                status:'신청',
-                staff:''
+                typeSevice1: false,
+                typeSevice2: false,
+                status: "상태 선택",
+                staff: "직원을 선택",
+                fromDate: '',
+                toDate: "",
             },
         };
     },
@@ -182,7 +200,7 @@ export default defineComponent({
     },
 });
 </script>
-  <style>
+<style>
 #data-grid-demo {
     min-height: 700px;
 }
