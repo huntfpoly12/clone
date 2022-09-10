@@ -22,12 +22,8 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item">심사상태/결과 :</label>
-<<<<<<< HEAD
-                    <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" placeholder="전체">
-=======
                     <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" 
                         placeholder="전체" >
->>>>>>> develop
                         <a-select-option value="A 대리점">A 대리점</a-select-option>
                         <a-select-option value="C 영업사원">C 영업사원</a-select-option>
                         <a-select-option value="D 영업사원">D 영업사원</a-select-option>
@@ -36,12 +32,8 @@
                 </div>
                 <div class="item">
                     <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-<<<<<<< HEAD
-                    <a-range-picker />
-=======
                     <a-range-picker  v-model:value="value4" />
 
->>>>>>> develop
                 </div>
             </div>
             <a-button class="search" type="primary">검색</a-button>
@@ -159,19 +151,10 @@ export default defineComponent({
             popupData: [],
             valueDate: ref<Dayjs>(),
             dataSearch: {
-<<<<<<< HEAD
-                typeSevice1: false,
-                typeSevice2: false,
-                status: "상태 선택",
-                staff: "직원을 선택",
-                fromDate: '',
-                toDate: "",
-=======
                 typeSevice1:true,
                 typeSevice2:true,
                 status:'신청',
                 staff:''
->>>>>>> develop
             },
         };
     },
