@@ -74,7 +74,7 @@
                   </a-radio-group>
                 </a-form-item>
               </a-col>
-              <a-col :span="12">
+              <a-col :span="2">
                 <a-form-item label="{ $id no }">
                   <a-input value="800123-1234567" style="width: 300px" />
                 </a-form-item>
