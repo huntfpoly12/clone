@@ -22,7 +22,12 @@
             <div class="col">
                 <div class="item">
                     <label class="lable-item">심사상태/결과 :</label>
+<<<<<<< HEAD
                     <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" placeholder="전체">
+=======
+                    <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" 
+                        placeholder="전체" >
+>>>>>>> develop
                         <a-select-option value="A 대리점">A 대리점</a-select-option>
                         <a-select-option value="C 영업사원">C 영업사원</a-select-option>
                         <a-select-option value="D 영업사원">D 영업사원</a-select-option>
@@ -31,7 +36,12 @@
                 </div>
                 <div class="item">
                     <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
+<<<<<<< HEAD
                     <a-range-picker />
+=======
+                    <a-range-picker  v-model:value="value4" />
+
+>>>>>>> develop
                 </div>
             </div>
             <a-button class="search" type="primary">검색</a-button>
@@ -59,12 +69,18 @@
             <DxColumn data-field="부가서비스" />
             <DxColumn :width="110" cell-template="pupop" type="buttons" />
             <template #pupop="{ data }">
-                <DxButton @click="setModalVisible(data)" style="color:blue">편집</DxButton>
+                <DxButton
+                            @click="setModalVisible(data)"
+                            text="편집"
+                            type="default"
+                            styling-mode="outlined"
+                            />
             </template>
         </DxDataGrid>
+     
         <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
     </div>
-
+   
 </template>
 <script lang="ts">
 import DxDateBox from 'devextreme-vue/date-box';
@@ -143,12 +159,19 @@ export default defineComponent({
             popupData: [],
             valueDate: ref<Dayjs>(),
             dataSearch: {
+<<<<<<< HEAD
                 typeSevice1: false,
                 typeSevice2: false,
                 status: "상태 선택",
                 staff: "직원을 선택",
                 fromDate: '',
                 toDate: "",
+=======
+                typeSevice1:true,
+                typeSevice2:true,
+                status:'신청',
+                staff:''
+>>>>>>> develop
             },
         };
     },
@@ -189,26 +212,6 @@ export default defineComponent({
             this.popupData = data;
             this.modalStatus = true;
         }
-    },
-    created() {
-        if (!this.$store.getters['auth/dataSearchBF310']) {
-            this.dataSearch = {
-                typeSevice1: false,
-                typeSevice2: false,
-                status: "상태 선택",
-                staff: "직원을 선택",
-                fromDate: '',
-                toDate: "",
-            }
-        } else {
-            let dataVuex = this.$store.getters['auth/dataSearchBF310']
-            this.dataSearch = {
-                ...dataVuex
-            }
-        }
-    },
-    beforeUpdate() {
-        this.$store.commit("auth/dataSearchBF310", this.dataSearch);
     },
 });
 </script>

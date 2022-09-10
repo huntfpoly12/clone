@@ -1,24 +1,48 @@
 <template>
   <div id="components-modal-demo-position">
-    <a-modal :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
-      @cancel="setModalVisible()" width="50%">
+    <a-modal
+      :visible="modalStatus"
+      title="계약정보관리&심사 "
+      centered
+      okText="저장하고 나가기"
+      cancelText="그냥 나가기"
+      @cancel="setModalVisible()"
+      width="50%"
+    >
       <a-collapse v-model:activeKey="activeKey" accordion>
         <a-collapse-panel key="1" header="심사정보">
           <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-form-item label="승인상태">
-              <DxDropDownBox v-model:value="gridBoxValue" v-model:opened="isGridBoxOpened" :defer-rendering="false"
-                :display-expr="gridBoxDisplayExpr" :show-clear-button="true" :data-source="gridDataSource"
-                value-expr="ID" placeholder="Select a value...">
+              <DxDropDownBox
+                v-model:value="gridBoxValue"
+                v-model:opened="isGridBoxOpened"
+                :defer-rendering="false"
+                :display-expr="gridBoxDisplayExpr"
+                :show-clear-button="true"
+                :data-source="gridDataSource"
+                value-expr="ID"
+                placeholder="Select a value..."
+              >
                 <template #content>
-
-                  <DxDataGrid height="100%" :data-source="gridDataSource" v-model:selected-row-keys="gridBoxValue"
-                    @selection-changed="onGridSelectionChanged()" :show-borders="true">
+                  <DxDataGrid
+                    height="100%"
+                    :data-source="gridDataSource"
+                    v-model:selected-row-keys="gridBoxValue"
+                    @selection-changed="onGridSelectionChanged()"
+                    :show-borders="true"
+                  >
                     <DxSelection mode="single" />
                     <DxPaging :page-size="5" />
                     <DxColumn data-field="신청코드" />
-                    <DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
+                    <DxColumn
+                      data-field="심사상태"
+                      data-type="date"
+                      cell-template="grid-cell"
+                    />
                     <template #grid-cell="{ data }">
-                      <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+                      <a-tag :color="getColorTag(data.value)">{{
+                        data.value
+                      }}</a-tag>
                     </template>
                     <DxColumn data-field="상호" data-type="date" />
                   </DxDataGrid>
@@ -52,7 +76,6 @@
               <a-button type="link">회계서비스약관동의</a-button>
               |
               <a-button type="link">원천서비스약관동의</a-button>
-
             </a-form-item>
           </a-form>
         </a-collapse-panel>
@@ -81,11 +104,14 @@
               </a-col>
             </a-row>
             <a-form-item label="주소">
-              <a-row :gutter="[0,16]">
+              <a-row :gutter="[0, 16]">
                 <a-col :span="24">
                   <a-row>
                     <a-col :span="12">
-                      <a-input v-model:value="formState.name" style="width: 300px" />
+                      <a-input
+                        v-model:value="formState.name"
+                        style="width: 300px"
+                      />
                     </a-col>
                     <a-col :span="12">
                       <a-button type="primary">우편번호 검색</a-button>
@@ -103,10 +129,9 @@
                   </a-row>
                 </a-col>
               </a-row>
-              <a-row>
-              </a-row>
+              <a-row> </a-row>
             </a-form-item>
-            <a-row :gutter="[16,16]">
+            <a-row :gutter="[16, 16]">
               <a-col :span="18">
                 <a-form-item label="연락처">
                   <a-input v-model:value="formState.desc" />
@@ -115,8 +140,12 @@
                   <a-input v-model:value="formState.desc" />
                 </a-form-item>
                 <a-form-item label="사업자등록증">
-                  <a-upload v-model:file-list="fileList" name="file"
-                  :multiple="false" @change="handleChange">
+                  <a-upload
+                    v-model:file-list="fileList"
+                    name="file"
+                    :multiple="false"
+                    @change="handleChange"
+                  >
                     <a-button>
                       <upload-outlined></upload-outlined>
                       파일선택
@@ -124,38 +153,38 @@
                   </a-upload>
                 </a-form-item>
 
-                <div :style="{fontSize:'12px'}">
+                <div :style="{ fontSize: '12px' }">
+                  <div></div>
                   <div>
-
-                  </div>
-                  <div>
-                    <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
+                    <p>
+                      아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.
+                    </p>
                     <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
                     <p>파일용량 : 최대 5MB</p>
                   </div>
-
                 </div>
-
-
               </a-col>
               <a-col :span="6">
-                <a-image :preview="false" :width="200"
-                  src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp" />
+                <a-image
+                  :preview="false"
+                  :width="200"
+                  src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp"
+                />
               </a-col>
             </a-row>
-
           </a-form>
         </a-collapse-panel>
         <a-collapse-panel key="3" header="대표자정보">
-          <a-form
-            ref="formRef"
-            name="custom-validation"
-          >
+          <a-form ref="formRef" name="custom-validation">
             <a-form-item has-feedback label="대표자명">
               <a-input value="홍길동" autocomplete="off" style="width: 300px" />
             </a-form-item>
             <a-form-item has-feedback label="생년월일">
-              <a-input value="19620820" autocomplete="off" style="width: 300px" />
+              <a-input
+                value="19620820"
+                autocomplete="off"
+                style="width: 300px"
+              />
             </a-form-item>
             <a-form-item has-feedback label="휴대폰번호">
               <a-input-number value="01098765432" style="width: 200px" />
@@ -167,16 +196,26 @@
         </a-collapse-panel>
         <a-collapse-panel key="4" header="회계서비스신청">
           <div>
-            <a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
+            <a-checkbox v-model:checked="checked"
+              >회계서비스 신청합니다.</a-checkbox
+            >
             <div>
-              <a-card title="⁙ 운영사업" :bordered="true" style="width: 100%" headStyle="padding: 0px"
-                bodyStyle="padding: 24px 0px">
-                <a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
+              <a-card
+                title="⁙ 운영사업"
+                :bordered="true"
+                style="width: 100%"
+                headStyle="padding: 0px"
+                bodyStyle="padding: 24px 0px"
+              >
+                <a-table
+                  :columns="columns"
+                  :data-source="dataTable"
+                  :pagination="false"
+                  :bordered="true"
+                >
                   <template #headerCell="{ column }">
                     <template v-if="column.key === '사업명'">
-                      <span>
-                        사업명 (중복불가)
-                      </span>
+                      <span> 사업명 (중복불가) </span>
                     </template>
                   </template>
                   <template #bodyCell="{ column, record }">
@@ -187,23 +226,41 @@
                     </template>
                     <template v-else-if="column.key === '사업분류'">
                       <span>
-                        <a-select ref="select" v-model:value="record.사업분류" style="width: 200px">
-                          <a-select-option value="방문요양">방문요양</a-select-option>
-                          <a-select-option value="방문간호">방문간호</a-select-option>
-                          <a-select-option value="방문목욕">방문목욕</a-select-option>
-                          <a-select-option value="단기보호">단기보호</a-select-option>
-                          <a-select-option value="복지용구">복지용구</a-select-option>
+                        <a-select
+                          ref="select"
+                          v-model:value="record.사업분류"
+                          style="width: 200px"
+                        >
+                          <a-select-option value="방문요양"
+                            >방문요양</a-select-option
+                          >
+                          <a-select-option value="방문간호"
+                            >방문간호</a-select-option
+                          >
+                          <a-select-option value="방문목욕"
+                            >방문목욕</a-select-option
+                          >
+                          <a-select-option value="단기보호"
+                            >단기보호</a-select-option
+                          >
+                          <a-select-option value="복지용구"
+                            >복지용구</a-select-option
+                          >
                         </a-select>
                       </span>
                     </template>
                     <template v-else-if="column.key === '서비스시작년월'">
                       <span>
-                        <a-date-picker :value="dateValue(record.서비스시작년월)" :format="dateFormat" />
+                        <CustomDatepicker :valueDate='record.서비스시작년월'/>
                       </span>
                     </template>
                     <template v-else-if="column.key === 'action'">
                       <span>
-                        <a-popconfirm title="Are you sure delete this row?" ok-text="Yes" cancel-text="No">
+                        <a-popconfirm
+                          title="Are you sure delete this row?"
+                          ok-text="Yes"
+                          cancel-text="No"
+                        >
                           <a-button type="text" @click="deleteRow(record.key)">
                             <minus-circle-outlined />
                           </a-button>
@@ -213,14 +270,18 @@
                   </template>
                 </a-table>
               </a-card>
-              <a-row :gutter="[0,16]">
+              <a-row :gutter="[0, 16]">
                 <a-col :span="15">
                   <a-form-item label="장기요양기관등록번호">
                     <a-input value="01234567898" style="width: 300px" />
                   </a-form-item>
                   <a-form-item label="장기요양기관등록증">
-                    <a-upload v-model:file-list="fileList" name="file" :multiple="false"
-                      @change="handleChange">
+                    <a-upload
+                      v-model:file-list="fileList"
+                      name="file"
+                      :multiple="false"
+                      @change="handleChange"
+                    >
                       <a-button>
                         <upload-outlined></upload-outlined>
                         파일선택
@@ -228,7 +289,9 @@
                     </a-upload>
                   </a-form-item>
                   <div>
-                    <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
+                    <p>
+                      아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.
+                    </p>
                     <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
                     <p>파일용량 : 최대 5MB</p>
                   </div>
@@ -238,45 +301,44 @@
                         <p>부가서비스</p>
                       </a-col>
                       <a-col :span="12">
-                        <a-checkbox v-model:checked="checked">회계입력대행서비스</a-checkbox>
+                        <a-checkbox v-model:checked="checked"
+                          >회계입력대행서비스</a-checkbox
+                        >
                       </a-col>
                     </a-row>
                   </div>
                 </a-col>
                 <a-col :span="9">
-                  <a-image :preview="false" :width="250"
-                    src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                  <a-image
+                    :preview="false"
+                    :width="250"
+                    src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                  />
                 </a-col>
               </a-row>
             </div>
           </div>
-
         </a-collapse-panel>
         <a-collapse-panel key="5" header="원천서비스신청">
           <div>
-            <a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
-            <div style="margin-top: 20px;">
-              
-              <a-form-item label="서비스 시작년월">
-                <DxDateBox
-                    :show-clear-button="false"
-                    :use-mask-behavior="true"
-                    :value="dateValue('2022/08/25')"
-                    @focusIn="dateOnFocus"
-                    :display-format="formatter"
-                    type="date"
-                    width="30%"
-                  />
+            <a-checkbox v-model:checked="checked"
+              >회계서비스 신청합니다.</a-checkbox
+            >
+            <div style="margin-top: 20px">
+              <a-form-item label="서비스 시작년월" >
+                <CustomDatepicker width="30%" valueDate='2022/08/25'/>
               </a-form-item>
               <a-form-item label="직 원 수">
                 <a-input-number value="01234567898" style="width: 100px" />
               </a-form-item>
-              <a-row :gutter="[0,16]">
+              <a-row :gutter="[0, 16]">
                 <a-col :span="12">
                   <p>부가서비스</p>
                 </a-col>
                 <a-col :span="12">
-                  <a-checkbox v-model:checked="checked">4대보험신고서비스</a-checkbox>
+                  <a-checkbox v-model:checked="checked"
+                    >4대보험신고서비스</a-checkbox
+                  >
                 </a-col>
               </a-row>
             </div>
@@ -321,11 +383,17 @@
                 <a-select-option value="방문목욕">방문목욕</a-select-option>
                 <a-select-option value="C 영업사원">C 영업사원</a-select-option>
                 <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-                <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                <a-select-option value="E 본사영업사원"
+                  >E 본사영업사원</a-select-option
+                >
               </a-select>
             </a-form-item>
             <a-form-item label="전달사항">
-              <a-textarea v-model="value" placeholder="전달사항입력" :auto-size="{ minRows: 3, maxRows: 5 }" />
+              <a-textarea
+                v-model="value"
+                placeholder="전달사항입력"
+                :auto-size="{ minRows: 3, maxRows: 5 }"
+              />
             </a-form-item>
           </a-form>
         </a-collapse-panel>
@@ -334,9 +402,8 @@
   </div>
 </template>
 <script lang="ts">
-import DxDateBox from 'devextreme-vue/date-box';
-
-import { ref, defineComponent } from 'vue';
+import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
+import { ref, defineComponent } from "vue";
 
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
@@ -348,14 +415,11 @@ import {
 
 import { employees } from "../data.js";
 // for upload image
-import { UploadOutlined, MinusCircleOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
+import { UploadOutlined, MinusCircleOutlined } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 export default defineComponent({
-  props: [
-    'modalStatus',
-    'data'
-  ],
+  props: ["modalStatus", "data"],
   data() {
     return {
       activeKey: [],
@@ -373,77 +437,80 @@ export default defineComponent({
       gridColumns: ["심사상태", "사업자코드", "상호"],
       isGridBoxOpened: false,
       checked: true,
-      columns : [
-          {
-            name: '사업명 (중복불가)',
-            dataIndex: '사업명',
-            key: '사업명',
-          },
-          {
-            title: '사업분류',
-            dataIndex: '사업분류',
-            key: '사업분류',
-          },
-          {
-            title: '서비스시작년월',
-            dataIndex: '서비스시작년월',
-            key: '서비스시작년월',
-          },
-          {
-            title: '정원수(명)',
-            key: '정원수',
-            dataIndex: '정원수',
-          },
-          {
-            title: '',
-            key: 'action',
-          },
-        ],
-      dataTable : [
-          {
-            key: '1',
-            사업명: '가나다라마바 사업',
-            사업분류: '방문요양',
-            서비스시작년월: '2015/01/01',
-            정원수: 10,
-          },
-          {
-            key: '2',
-            사업명: '가나다라마바 사업',
-            사업분류: '방문간호',
-            서비스시작년월: '2015/01/01',
-            정원수: 10,
-          },
-          {
-            key: '3',
-            사업명: '가나다라마바 사업',
-            사업분류: '단기보호',
-            서비스시작년월: '2015/01/13',
-            정원수: 10,
-          },
-        ],
-        dateFormat : 'YYYY-MM-DD',
-        value1: dayjs('2015/01/01',  'YYYY-MM-DD'),
-        labelCol: { style: { width: '150px' } },
-        wrapperCol: { span: 14 },
-        radioStyle :{
-      display: 'flex',
-      height: '30px',
-      lineHeight: '30px',
-      checked: false
-    },
-    value : ref<number>(1),
+      columns: [
+        {
+          name: "사업명 (중복불가)",
+          dataIndex: "사업명",
+          key: "사업명",
+        },
+        {
+          title: "사업분류",
+          dataIndex: "사업분류",
+          key: "사업분류",
+        },
+        {
+          title: "서비스시작년월",
+          dataIndex: "서비스시작년월",
+          key: "서비스시작년월",
+        },
+        {
+          title: "정원수(명)",
+          key: "정원수",
+          dataIndex: "정원수",
+        },
+        {
+          title: "",
+          key: "action",
+        },
+      ],
+      dataTable: [
+        {
+          key: "1",
+          사업명: "가나다라마바 사업",
+          사업분류: "방문요양",
+          서비스시작년월: "2015/01/01",
+          정원수: 10,
+        },
+        {
+          key: "2",
+          사업명: "가나다라마바 사업",
+          사업분류: "방문간호",
+          서비스시작년월: "2015/01/01",
+          정원수: 10,
+        },
+        {
+          key: "3",
+          사업명: "가나다라마바 사업",
+          사업분류: "단기보호",
+          서비스시작년월: "2015/01/13",
+          정원수: 10,
+        },
+      ],
+      dateFormat: "YYYY-MM-DD",
+      value1: dayjs("2015/01/01", "YYYY-MM-DD"),
+      labelCol: { style: { width: "150px" } },
+      wrapperCol: { span: 14 },
+      radioStyle: {
+        display: "flex",
+        height: "30px",
+        lineHeight: "30px",
+        checked: false,
+      },
+      value: ref<number>(1),
 
-    formatter:  (date: { getDate: () => any; getMonth: () => number; getFullYear: () => any; })=>{
-
-       const day = date.getDate();
-       const customDay = day < 10 ? '0'+day : day;
-       const month = date.getMonth() + 1;
-       const customMonth = month < 10 ? '0'+month : month;
-       const year = date.getFullYear();
-       return `${year}-${customMonth}-${customDay}`;
-    },
-    }
+      formatter: (date: {
+        getDate: () => any;
+        getMonth: () => number;
+        getFullYear: () => any;
+      }) => {
+        const day = date.getDate();
+        const customDay = day < 10 ? "0" + day : day;
+        const month = date.getMonth() + 1;
+        const customMonth = month < 10 ? "0" + month : month;
+        const year = date.getFullYear();
+        return `${year}-${customMonth}-${customDay}`;
+      },
+    };
   },
   components: {
     DxDropDownBox,
@@ -453,15 +520,14 @@ export default defineComponent({
     DxSelection,
     UploadOutlined,
     MinusCircleOutlined,
-    DxDateBox
+    CustomDatepicker
   },
   methods: {
     setModalVisible() {
-      this.$emit('closePopup', false);
+      this.$emit("closePopup", false);
     },
 
     getColorTag(data: string) {
-
       if (data === "신청") {
         return "red";
       } else if (data === "심사중") {
@@ -480,38 +546,31 @@ export default defineComponent({
       return item && `${item.심사상태}  - ${item.상호} - ${item.사업자코드}`;
     },
 
-    // function 
+    // function
 
-    handleChange(info: { file: { status: string; name: any; }; fileList: any; }) {
-
-      if (info.file.status !== 'uploading') {
+    handleChange(info: { file: { status: string; name: any }; fileList: any }) {
+      if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);
       }
-      if (info.file.status === 'done') {
+      if (info.file.status === "done") {
         message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
+      } else if (info.file.status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
 
-    dateValue(date: string|number|Date|dayjs.Dayjs|null|undefined) {
-      return dayjs(date,this.dateFormat)
+    dateValue(date: string | number | Date | dayjs.Dayjs | null | undefined) {
+      return dayjs(date, this.dateFormat);
     },
-    deleteRow(key: string){
-      for(var i = 0; i < this.dataTable.length; i++) {
-        if(this.dataTable[i].key == key) {
-
+    deleteRow(key: string) {
+      for (var i = 0; i < this.dataTable.length; i++) {
+        if (this.dataTable[i].key == key) {
           this.dataTable.splice(i, 1);
           break;
         }
       }
-      
     },
-
-    dateOnFocus(e: { element: { querySelector: (arg0: string) => { (): any; new(): any; select: { (): void; new(): any; }; }; }; }){
-      e.element.querySelector('.dx-texteditor-input').select();
-    }
-  }
+  },
 });
 </script>
 <style lang="">
