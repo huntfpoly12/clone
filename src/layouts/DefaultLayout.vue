@@ -21,13 +21,12 @@
     <a-layout-content>
       <div class="header-content">
         <div class="left">
-        <a-button type="primary">
+        <a-button type="primary"  @click="() => (collapsed = !collapsed)">
           <menu-unfold-outlined
             v-if="collapsed"
             class="trigger"
-            @click="() => (collapsed = !collapsed)"
           />
-          <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
+          <menu-fold-outlined v-else class="trigger" />
         </a-button>
           <div class="wrap-search">
           <a-input v-model:value="inputSearchText" placeholder="Search Menu" @change="onSearch"
@@ -298,7 +297,7 @@ export default defineComponent({
   overflow: auto;
   position: absolute;
   z-index: 9;
-  width: 86.5%;
+  width: 204px;
   background: #fff;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
