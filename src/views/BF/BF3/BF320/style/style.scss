@@ -30,3 +30,22 @@
 .search {
     margin-top: 20px;
 }
+
+.modal-note {
+    max-height: 500px;
+    overflow: auto;
+
+    .title-note {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    th {
+        display: none;
+    }
+}
+
+.anticon {
+    cursor: pointer;
+}
