@@ -1,6 +1,5 @@
 <template>
     <div id="bf-310">
-        <a-typography-title :level="2">사업자관리 </a-typography-title>
         <div class="search-form">
             <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16,8]">
