@@ -1,41 +1,54 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div id="bf-310">
+        <a-typography-title :level="2">계약정보관리&심사 </a-typography-title>
         <div class="search-form">
-            <div class="col">
-                <div class="item">
-                    <label class="lable-item"> 서비스종류 : </label>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
-                </div>
-                <div class="item">
-                    <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.status" style="width: 120px">
-                        <a-select-option value="신청">신청</a-select-option>
-                        <a-select-option value="심사중">심사중</a-select-option>
-                        <a-select-option value="승인">승인</a-select-option>
-                        <a-select-option value="반려 ">반려</a-select-option>
-                    </a-select>
-                </div>
-            </div>
-            <div class="col">
-                <div class="item">
-                    <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.staff" style="width: 120px" 
-                        placeholder="전체" >
-                        <a-select-option value="A 대리점">A 대리점</a-select-option>
-                        <a-select-option value="C 영업사원">C 영업사원</a-select-option>
-                        <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-                        <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
-                    </a-select>
-                </div>
-                <div class="item">
-                    <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
-                    <a-range-picker  v-model:value="value4" />
+            <a-row>
+                <a-col :span="20">
 
-                </div>
-            </div>
-            <a-button class="search" type="primary">검색</a-button>
+                    <div class="col">
+                        <div class="item">
+                            <label class="lable-item"> 서비스종류 : </label>
+                            <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
+                            <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                        </div>
+                        <div class="item">
+                            <label class="lable-item">심사상태/결과 :</label>
+                            <a-select ref="select" v-model:value="dataSearch.status" style="width: 120px">
+                                <a-select-option value="신청">신청</a-select-option>
+                                <a-select-option value="심사중">심사중</a-select-option>
+                                <a-select-option value="승인">승인</a-select-option>
+                                <a-select-option value="반려 ">반려</a-select-option>
+                            </a-select>
+                        </div>
+                        <div class="item">
+                            <label class="lable-item">심사상태/결과 :</label>
+                            <a-select ref="select" value="A 대리점" style="width: 120px" placeholder="전체">
+                                <a-select-option value="A 대리점">A 대리점</a-select-option>
+                                <a-select-option value="C 영업사원">C 영업사원</a-select-option>
+                                <a-select-option value="D 영업사원">D 영업사원</a-select-option>
+                                <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                            </a-select>
+                        </div>
+                        <div class="item">
+                            <label class="lable-item" style="margin-right: 7px">신청기간 :</label>
+                            <a-range-picker v-model:value="value4" />
+
+                        </div>
+                    </div>
+
+                </a-col>
+                <a-col :span="4">
+                    <div class="col" style="padding-left: 10px;">
+                        <div class="item">
+                            <a-button class="search" type="primary" style="margin: 0px;"> <template #icon>
+                                    <SearchOutlined />
+                                </template>검색</a-button>
+                        </div>
+                    </div>
+
+                </a-col>
+            </a-row>
         </div>
 
         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
@@ -60,20 +73,17 @@
             <DxColumn data-field="부가서비스" />
             <DxColumn :width="110" cell-template="pupop" type="buttons" />
             <template #pupop="{ data }">
-                <DxButton
-                            @click="setModalVisible(data)"
-                            text="편집"
-                            type="default"
-                            styling-mode="outlined"
-                            />
+                <DxButton @click="setModalVisible(data)" text="편집" type="default" styling-mode="outlined"
+                    height="20px" />
             </template>
         </DxDataGrid>
-     
+
         <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
     </div>
-   
+
 </template>
 <script lang="ts">
+import { SearchOutlined } from '@ant-design/icons-vue';
 import DxDateBox from 'devextreme-vue/date-box';
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
 import { ref, defineComponent } from 'vue';
@@ -95,23 +105,8 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { Store } from 'vuex'
-
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-
-declare module '@vue/runtime-core' {
-    // declare your own store states
-    interface State {
-        count: number
-    }
-
-    // provide typings for `this.$store`
-    interface ComponentCustomProperties {
-        $store: Store<State>
-    }
-}
-
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -123,7 +118,8 @@ export default defineComponent({
         DxSearchPanel,
         BF310Popup,
         locale,
-        DxDateBox
+        DxDateBox,
+        SearchOutlined
     },
     data() {
         return {
@@ -134,7 +130,7 @@ export default defineComponent({
             dateFormat: "YYYY/MM/DD",
             checbox1: true,
             checbox2: true,
-            value4: [dayjs(), dayjs().add(1, "year")],
+            value4: [dayjs().subtract(1, 'week'), dayjs()],
             gridColumns: ["심사상태", "사업자코드", "상호"],
             gridBoxValue: [3],
             gridDataSource: employees,
@@ -150,13 +146,12 @@ export default defineComponent({
             popupData: [],
             valueDate: ref<Dayjs>(),
             dataSearch: {
-                typeSevice1: false,
-                typeSevice2: false,
-                status: "상태 선택",
-                staff: "직원을 선택",
-                fromDate: '',
-                toDate: "",
+                typeSevice1: true,
+                typeSevice2: true,
+                status: '신청',
+                staff: ''
             },
+            sizeButton: 'small'
         };
     },
     methods: {
@@ -200,6 +195,17 @@ export default defineComponent({
 });
 </script>
 <style>
+.dx-button-has-text .dx-button-content {
+    padding: 0px 15px !important;
+}
+
+.search-form {
+    border: solid;
+    border-width: 0.1em;
+    margin: 10px 0px;
+    padding: 10px;
+}
+
 #data-grid-demo {
     min-height: 700px;
 }
@@ -226,7 +232,4 @@ export default defineComponent({
     margin-left: 30px;
 }
 
-.search {
-    margin-top: 20px;
-}
 </style>
