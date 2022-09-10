@@ -88,13 +88,16 @@
         <a-layout style="padding: 0 24px 24px 24px">
          
           <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
+            <a-typography-title :level="2">{{activeTab.name}} </a-typography-title>
             <template v-if="activeTab">
               <keep-alive>
                 <component v-bind:is="currentComponent" />
               </keep-alive>
             </template>
             <template v-else>
-            <router-view></router-view>
+              <keep-alive>
+                <router-view></router-view>
+              </keep-alive>
           </template>
           </a-layout-content>
         </a-layout>
@@ -158,9 +161,9 @@ export default defineComponent({
     },
 
     currentComponent() {
-      if (this.activeTab === '') return
-      if (this.activeTab === 'bf-310') return BF310
-      if (this.activeTab === 'bf-320') return BF320;
+      if (this.activeTab.id === '') return
+      if (this.activeTab.id === 'bf-310') return BF310
+      if (this.activeTab.id === 'bf-320') return BF320;
       return Test
     }
 
@@ -208,13 +211,13 @@ export default defineComponent({
       for (const key in obj) {
         this.menuTab.push(obj[key]);
       }
-      this.activeTab = item.id
+      this.activeTab = item
     },
     removeItemTab(item) {
       this.menuTab.splice(item, 1)
     },
     changeActiveTab(item) {
-      this.activeTab = item.id
+      this.activeTab = item
     }
   },
   mounted() {

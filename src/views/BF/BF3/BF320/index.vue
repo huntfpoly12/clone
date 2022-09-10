@@ -1,6 +1,5 @@
 <template>
     <div id="bf-310">
-        <a-typography-title :level="2">사업자관리 </a-typography-title>
         <div class="search-form">
             <div class="col">
                 <div class="item">
