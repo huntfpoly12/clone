@@ -3,38 +3,41 @@
     <div id="bf-310">
         <a-typography-title :level="2">계약정보관리&심사 </a-typography-title>
         <div class="search-form">
-
-            <a-form layout="inline">
-                <a-form-item label="서비스종류">
+            <a-row :gutter="[8,8]">
+                <a-col>
+                    <label class="lable-item">영업자명 :</label>
                     <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
                     <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
-                </a-form-item>
-                <a-form-item label="심사상태/결과">
+                </a-col>
+                <a-col>
+                    <label class="lable-item">심사상태/결과 :</label>
                     <a-select ref="select" v-model:value="dataSearch.status">
                                 <a-select-option value="신청">신청</a-select-option>
                                 <a-select-option value="심사중">심사중</a-select-option>
                                 <a-select-option value="승인">승인</a-select-option>
                                 <a-select-option value="반려 ">반려</a-select-option>
                     </a-select>
-                </a-form-item>
-                <a-form-item label="심사상태/결과">
+                </a-col>
+                <a-col>
+                    <label class="lable-item">심사상태/결과 :</label>
                     <a-select ref="select" value="A 대리점" placeholder="전체">
                                 <a-select-option value="A 대리점">A 대리점</a-select-option>
                                 <a-select-option value="C 영업사원">C 영업사원</a-select-option>
                                 <a-select-option value="D 영업사원">D 영업사원</a-select-option>
                                 <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
                     </a-select>
-                </a-form-item>
-                <a-form-item label="신청기간">
+                </a-col>
+                <a-col>
+                    <label class="lable-item">영업자명 :</label>
                     <a-range-picker v-model:value="value4" width="50%" />
-                </a-form-item>
-                <a-form-item>
+                </a-col>
+                <a-col>
                     <a-button class="search" type="primary" style="margin: 0px;"> <template #icon>
                                     <SearchOutlined />
                     </template>검색</a-button>
-                       
-                </a-form-item>
-            </a-form>
+                </a-col>
+            </a-row>
+       
         </div>
 
         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
