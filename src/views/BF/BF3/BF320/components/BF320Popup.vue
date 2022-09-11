@@ -1,15 +1,15 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :visible="modalStatus" title="사업자관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
                 <a-collapse-panel key="1" header="사업자정보">
-                    <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+                    <a-form :label-col="labelCol">
                         <a-form-item label="상 호">
                             <a-input v-model:value="formState.name" />
                         </a-form-item>
                         <a-form-item label="사업자등록번호">
-                            <a-input v-model:value="formState.name" style="width: 300px" />
+                            <a-input v-model:value="formState.name" style="width: 150px" />
                         </a-form-item>
                         <a-row>
                             <a-col :span="12">
@@ -55,10 +55,10 @@
                         <a-row :gutter="[16,16]">
                             <a-col :span="18">
                                 <a-form-item label="연락처">
-                                    <a-input v-model:value="formState.desc" />
+                                    <a-input v-model:value="formState.desc" style="width: 150px" />
                                 </a-form-item>
                                 <a-form-item label="팩 스">
-                                    <a-input v-model:value="formState.desc" />
+                                    <a-input v-model:value="formState.desc" style="width: 150px" />
                                 </a-form-item>
                                 <a-form-item label="사업자등록증">
                                     <a-upload v-model:file-list="fileList" :show-upload-list="false"
@@ -74,14 +74,14 @@
                                     <div>
                                         <warning-filled :style="{ fontSize: '15px'}" />
                                     </div>
-                                    <div>
+                                    <div class="warring-modal">
                                         <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
                                         <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
                                         <p>파일용량 : 최대 5MB</p>
                                     </div>
                                 </a-space>
                             </a-col>
-                            <imgUpload :title="titleModal" :imageUrl="imageUrl"/>
+                            <imgUpload :title="titleModal" :imageUrl="imageUrl" />
                         </a-row>
                     </a-form>
                 </a-collapse-panel>
@@ -94,10 +94,10 @@
                             <a-input value="19620820" autocomplete="off" style="width: 300px" />
                         </a-form-item>
                         <a-form-item has-feedback label="휴대폰번호">
-                            <a-input-number value="01098765432" style="width: 200px" />
+                            <a-input-number value="01098765432" style="width: 300px" />
                         </a-form-item>
                         <a-form-item has-feedback label="이메일">
-                            <a-input value="abc123@mailaddress.com" />
+                            <a-input value="abc123@mailaddress.com" style="width: 300px" />
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
@@ -146,7 +146,7 @@
                                 <div>
                                     <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.note" />
                                 </div>
-                                <a-space :size="8" style="margin-top: 7px;">
+                                <a-space :size="8" style="margin-top: 7px">
                                     <save-outlined :style="{ fontSize: '20px'}" @click="handleCopy(text.note)" />
                                     <DeleteOutlined :style="{ fontSize: '20px'}" @click="handleDelete(text.key)" />
                                 </a-space>
@@ -160,7 +160,7 @@
         </a-modal>
 
         <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="50%">
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 20px">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
                     <DxColumn data-field="기록일시" />
                     <DxColumn data-field="비고" />
@@ -181,125 +181,30 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from 'vue';
-import DxDropDownBox from "devextreme-vue/drop-down-box";
-import imgUpload from "../../../../../components/UploadImage.vue";
+import { ref, defineComponent } from 'vue'
+import DxDropDownBox from "devextreme-vue/drop-down-box"
+import imgUpload from "../../../../../components/UploadImage.vue"
 import {
     DxDataGrid,
     DxColumn,
     DxPaging,
     DxSelection
-} from "devextreme-vue/data-grid";
+} from "devextreme-vue/data-grid"
 
-import { employees } from '../data.js';
-import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
-import type { UploadProps } from 'ant-design-vue';
-import dayjs from "dayjs"; 
+import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled } from '@ant-design/icons-vue'
+import { message } from 'ant-design-vue'
+import type { UploadProps } from 'ant-design-vue'
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result as string));
-    reader.readAsDataURL(img);
+    const reader = new FileReader()
+    reader.addEventListener('load', () => callback(reader.result as string))
+    reader.readAsDataURL(img)
 }
 
 export default defineComponent({
     props: {
         modalStatus: Boolean,
         modalStatusHistory: Boolean,
-    },
-
-    data() {
-        return {
-            activeKey: [],
-            text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
-            formState: {
-                name: "",
-                delivery: false,
-                type: [],
-                resource: "",
-                desc: "",
-            },
-            gridDataSource: employees,
-            gridBoxValue: [],
-            gridColumns: ["심사상태", "사업자코드", "상호"],
-            isGridBoxOpened: false,
-            columns: [
-                {
-                    name: '사업명 (중복불가)',
-                    dataIndex: '사업명',
-                    key: '사업명',
-                },
-                {
-                    title: '사업분류',
-                    dataIndex: '사업분류',
-                    key: '사업분류',
-                },
-                {
-                    title: '서비스시작년월',
-                    dataIndex: '서비스시작년월',
-                    key: '서비스시작년월',
-                },
-                {
-                    title: '정원수(명)',
-                    key: '정원수',
-                    dataIndex: '정원수',
-                },
-                {
-                    title: '',
-                    key: 'action',
-                },
-            ],
-            dataTable: [
-                {
-                    key: '1',
-                    사업명: '가나다라마바 사업',
-                    사업분류: '방문요양',
-                    서비스시작년월: '2015/01/01',
-                    정원수: 10,
-                },
-                {
-                    key: '2',
-                    사업명: '가나다라마바 사업',
-                    사업분류: '방문간호',
-                    서비스시작년월: '2015/01/01',
-                    정원수: 10,
-                },
-                {
-                    key: '3',
-                    사업명: '가나다라마바 사업',
-                    사업분류: '단기보호',
-                    서비스시작년월: '2015/01/01',
-                    정원수: 10,
-                },
-            ],
-            dateFormat: 'YYYY-MM-DD',
-            value1: dayjs('2015/01/01', 'YYYY-MM-DD'),
-            labelCol: { style: { width: '150px' } },
-            wrapperCol: { span: 14 },
-            radioStyle: {
-                display: 'flex',
-                height: '30px',
-                lineHeight: '30px',
-            },
-            value: ref<number>(1),
-            dataSource: ref([{
-                key: 0,
-                note: '',
-            }]),
-            dataTableShow: ref([{
-                'key': 0,
-                '기록일시': '2022-09-05 13:52:09',
-                '비고': '승인>사업자등록번호 등록',
-                '생성일시': '2022-09-05 13:52:09',
-                '생성자ID': '@mdo',
-                '삭제여부': '1',
-                'IP주소': '123.451.342.1'
-            }]),
-            keyNumber: 0,
-            fileList: ref([]),
-            titleModal: "사업자등록증"
-        }
     },
     components: {
         DxDropDownBox,
@@ -316,41 +221,69 @@ export default defineComponent({
         WarningFilled,
         imgUpload
     },
-
     setup() {
-        const loading = ref<boolean>(false);
-        const imageUrl = ref<string>('');
-        const previewTitle = ref('');
+        const loading = ref<boolean>(false)
+        const imageUrl = ref<string>('')
+        const previewTitle = ref('')
         const fileList = ref<UploadProps['fileList']>([])
-
         const handleChange = (info: any) => {
             if (info.file.status === 'uploading') {
-                loading.value = true;
-                return;
+                loading.value = true
+                return
             }
             if (info.file.status === 'done') {
                 getBase64(info.file.originFileObj, (base64Url: string) => {
-                    imageUrl.value = base64Url;
-                    loading.value = false;
-                });
+                    imageUrl.value = base64Url
+                    loading.value = false
+                })
             }
             if (info.file.status === 'error') {
-                loading.value = false;
-                message.error('upload error');
+                loading.value = false
+                message.error('upload error')
             }
-        };
-
+        }
         const beforeUpload = (file: any) => {
-            const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+            const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
             if (!isJpgOrPng) {
-                message.error('You can only upload JPG file!');
+                message.error('You can only upload JPG file!')
             }
-            const isLt2M = file.size / 1024 / 1024 < 2;
+            const isLt2M = file.size / 1024 / 1024 < 2
             if (!isLt2M) {
-                message.error('Image must smaller than 2MB!');
+                message.error('Image must smaller than 2MB!')
             }
-            return isJpgOrPng && isLt2M;
-        };
+            return isJpgOrPng && isLt2M
+        }
+        const activeKey = ref([])
+        const formState = ref({
+            name: "",
+            delivery: false,
+            type: [],
+            resource: "",
+            desc: "",
+        })
+        const labelCol = ref({ style: { width: '150px' } })
+        const wrapperCol = ref({ span: 14 })
+        const radioStyle = ref({
+            display: 'flex',
+            height: '30px',
+            lineHeight: '30px',
+        })
+        const value = ref<number>(1)
+        const dataSource = ref([{
+            key: 0,
+            note: '',
+        }])
+        const dataTableShow = ref([{
+            'key': 0,
+            '기록일시': '2022-09-05 13:52:09',
+            '비고': '승인>사업자등록번호 등록',
+            '생성일시': '2022-09-05 13:52:09',
+            '생성자ID': '@mdo',
+            '삭제여부': '1',
+            'IP주소': '123.451.342.1'
+        }])
+        const keyNumber = ref(0)
+        const titleModal = "사업자등록증"
 
         return {
             fileList,
@@ -359,29 +292,37 @@ export default defineComponent({
             handleChange,
             beforeUpload,
             previewTitle,
-        };
+            activeKey,
+            formState,
+            labelCol,
+            wrapperCol,
+            radioStyle,
+            value,
+            dataSource,
+            dataTableShow,
+            keyNumber,
+            titleModal
+        }
     },
     methods: {
         setModalVisible() {
-            this.$emit('closePopup', false);
+            this.$emit('closePopup', false)
         },
         setModalVisibleHis() {
-            this.$emit('closePopupHis', false);
+            this.$emit('closePopupHis', false)
         },
         getColorTag(data: string) {
             if (data === "신청") {
-                return "red";
+                return "red"
             } else if (data === "심사중") {
-                return "blue";
+                return "blue"
             } else if (data === "승인") {
-                return "green";
+                return "green"
             } else if (data === "반려") {
-                return "grey";
+                return "grey"
             }
         },
-        onGridSelectionChanged() {
-            this.isGridBoxOpened = false;
-        },
+
         handleAdd() {
             this.keyNumber++
             let dataDef = {
@@ -393,8 +334,8 @@ export default defineComponent({
         handleDelete(key: number) {
             if (this.dataSource.length > 1) {
                 this.dataSource = this.dataSource.filter(function (obj) {
-                    return obj.key != key;
-                });
+                    return obj.key != key
+                })
             }
         },
         handleCopy(note: any) {
@@ -407,6 +348,15 @@ export default defineComponent({
         },
 
     }
-});
+})
 </script>
- 
+<style>
+.warring-modal {
+    font-size: 13px;
+    line-height: 5px;
+}
+
+.ant-form-item-label{
+    text-align: left;
+}
+</style>

@@ -5,32 +5,6 @@
 .dx-select-checkbox {
     display: inline-block !important;
 }
-
-.search-form .col {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-
-}
-
-.item {
-    display: flex;
-    align-items: center;
-}
-
-.search-form .col .lable-item {
-    white-space: nowrap;
-    margin-right: 10px;
-}
-
-.search-form .col .item:not(:first-child) {
-    margin-left: 30px;
-}
-
-.search {
-    margin-top: 20px;
-}
-
 .modal-note {
     max-height: 500px;
     overflow: auto;
@@ -48,4 +22,27 @@
 
 .anticon {
     cursor: pointer;
+}
+
+.custom-action {
+    text-align: center;
+}
+
+.search-form {
+    margin-bottom: 10px;
+
+    >div {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .lable-item {
+        white-space: nowrap;
+        margin-right: 10px;
+        width: auto !important;
+    }
+
+    .col {
+        align-items: center; 
+    }
 }
