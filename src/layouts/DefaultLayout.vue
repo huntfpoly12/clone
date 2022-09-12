@@ -17,7 +17,6 @@
                     </template>
                 </a-dropdown>
             </div>
-
         </a-layout-header>
         <a-layout-content>
             <div class="header-content">
@@ -29,7 +28,7 @@
                     <div class="wrap-search">
                         <a-input v-model:value="inputSearchText" placeholder="메뉴를 입력해보세요"
                             @keyup="onSearch($event.target.value)" :class="{ shown: state }"
-                            @click.prevent="toggleDropdown" />
+                            @click.prevent="toggleDropdown" @blur="focusInput" />
                         <div>
                             <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
                                 <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex"
@@ -50,7 +49,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div v-if="inputSearchText.length === 0">
                             <div class="box-search search-height" v-show="state" @click.prevent="toggleDropdown">
                                 <div v-for="result in menuData" :key="result.id" class="item-search">
@@ -60,14 +58,12 @@
                                 </div>
                             </div>
                         </div>
-
                         <div v-if="filteredResult.length === 0 && inputSearchText.length" v-show="state"
                             class="box-search search-no-data" @click.prevent="toggleDropdown">
                             No Data
                         </div>
                     </div>
                 </div>
-
                 <div class="right">
                     <nav class="nav-tabs" v-if="menuTab.length > 0">
                         <ul class="list-menu-tab">
@@ -153,7 +149,6 @@
             </a-layout>
         </a-layout-content>
     </a-layout>
-
 </template>
 <script>
 import { defineComponent, reactive, toRefs, ref } from "vue";
@@ -161,6 +156,7 @@ import BF310 from '../views/BF/BF3/BF310/index.vue'
 import BF320 from '../views/BF/BF3/BF320/index.vue'
 import BF330 from '../views/BF/BF3/BF330/index.vue'
 import Test from '../views/DefaultComponent.vue'
+import Style from "./style/styleLayout.scss";
 import _ from "lodash";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
@@ -171,8 +167,9 @@ import {
     PrinterOutlined,
     DeleteOutlined,
     SearchOutlined,
-    SaveOutlined
+    SaveOutlined,
 } from '@ant-design/icons-vue';
+
 export default defineComponent({
     name: `LayoutDefault`,
     data() {
@@ -199,7 +196,8 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SearchOutlined,
-        SaveOutlined
+        SaveOutlined,
+        Style
     },
     created() {
         menuData.forEach(item => {
@@ -226,7 +224,6 @@ export default defineComponent({
         }
 
     },
-
     methods: {
         logout() {
             this.$router.push("/login");
@@ -252,9 +249,7 @@ export default defineComponent({
         toggleDropdown() {
             this.state = !this.state;
         },
-        focusInputSearch() {
-            console.log("antu");
-        },
+       
         close(e) {
             if (!this.$el.contains(e.target)) {
                 this.state = false;
@@ -268,9 +263,7 @@ export default defineComponent({
             for (let i = 0, len = this.menuTab.length; i < len; i++) {
                 obj[this.menuTab[i]['id']] = this.menuTab[i];
             }
-
             this.menuTab = new Array();
-
             for (const key in obj) {
                 this.menuTab.push(obj[key]);
             }
@@ -281,9 +274,11 @@ export default defineComponent({
         },
         changeActiveTab(item) {
             this.activeTab = item
+        },
+        focusInput() {
+            this.state = false
         }
     },
-
     mounted() {
         document.addEventListener("click", this.close);
     },
@@ -303,18 +298,15 @@ export default defineComponent({
                 state.openKeys = latestOpenKey ? [latestOpenKey] : [];
             }
         };
-
         return {
             ...toRefs(state),
             onOpenChange,
             collapsed,
-            focus
         };
     },
 
 });
 </script>
-
 <style scoped lang="scss">
 .ant-layout.ant-layout-has-sider {
     min-height: calc(100vh - 64px);
