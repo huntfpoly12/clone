@@ -184,7 +184,7 @@ export default defineComponent({
 }
 
 .search-form {
-    background: #d9d9d9;
+    background: #f1f3f4;
     padding: 10px 24px;
 }
 

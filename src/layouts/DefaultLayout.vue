@@ -294,6 +294,10 @@ export default defineComponent({
 .ant-layout-header a {
   color: #fff;
 }
+.list-action ::v-deep .ant-btn svg {
+    width: 20px;
+    height: 20px;
+}
 .header-content {
   display: flex;
   background: #91d5ff;
