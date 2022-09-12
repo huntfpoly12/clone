@@ -119,6 +119,7 @@
 import { defineComponent, reactive, toRefs, ref } from "vue";
 import BF310 from '../views/BF/BF3/BF310/index.vue'
 import BF320 from '../views/BF/BF3/BF320/index.vue'
+import BF330 from '../views/BF/BF3/BF330/index.vue'
 import Test from '../views/DefaultComponent.vue'
 import _ from "lodash";
 import menuTree from "./menuTree"
@@ -150,6 +151,7 @@ export default defineComponent({
   components: {
     BF310,
     BF320,
+    BF330,
     Test,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -178,7 +180,8 @@ export default defineComponent({
     currentComponent() {
       if (this.activeTab.id === '') return
       if (this.activeTab.id === 'bf-310') return BF310
-      if (this.activeTab.id === 'bf-320') return BF320;
+      if (this.activeTab.id === 'bf-320') return BF320
+      if (this.activeTab.id === 'bf-330') return BF330
       return Test
     }
 
