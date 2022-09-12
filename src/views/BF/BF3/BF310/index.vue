@@ -30,43 +30,39 @@
                     <label class="lable-item">영업자명 :</label>
                     <a-range-picker v-model:value="value4" width="50%" />
                 </a-col>
-                <a-col>
-                    <a-button class="search" type="primary" style="margin: 0px;"> <template #icon>
-                                    <SearchOutlined />
-                    </template>검색</a-button>
-                </a-col>
             </a-row>
        
         </div>
+        <div class="page-content">
+            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
+                :columns="gridColumns">
+                <DxSelection mode="multiple" />
+                <DxPaging :page-size="5" />
 
-        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
-            :columns="gridColumns">
-            <DxSelection mode="multiple" />
-            <DxPaging :page-size="5" />
+                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                <DxExport :enabled="true" :allow-export-selected-data="true" />
+                <DxColumn data-field="신청일자" />
+                <DxColumn data-field="신청코드" />
+                <DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
+                <template #grid-cell="{ data }">
+                    <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+                </template>
+                <DxColumn :width="170" data-field="사업자코드" />
+                <DxColumn data-field="상호" data-type="date" />
+                <DxColumn data-field="주소" data-type="date" />
+                <DxColumn data-field="대표자" />
+                <DxColumn data-field="영업자" />
+                <DxColumn data-field="신청서비스" />
+                <DxColumn data-field="부가서비스" />
+                <DxColumn :width="110" cell-template="pupop" type="buttons" />
+                <template #pupop="{ data }">
+                    <DxButton @click="setModalVisible(data)" text="편집" type="default" styling-mode="outlined"
+                        height="20px" />
+                </template>
+            </DxDataGrid>
 
-            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-            <DxExport :enabled="true" :allow-export-selected-data="true" />
-            <DxColumn data-field="신청일자" />
-            <DxColumn data-field="신청코드" />
-            <DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
-            <template #grid-cell="{ data }">
-                <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
-            </template>
-            <DxColumn :width="170" data-field="사업자코드" />
-            <DxColumn data-field="상호" data-type="date" />
-            <DxColumn data-field="주소" data-type="date" />
-            <DxColumn data-field="대표자" />
-            <DxColumn data-field="영업자" />
-            <DxColumn data-field="신청서비스" />
-            <DxColumn data-field="부가서비스" />
-            <DxColumn :width="110" cell-template="pupop" type="buttons" />
-            <template #pupop="{ data }">
-                <DxButton @click="setModalVisible(data)" text="편집" type="default" styling-mode="outlined"
-                    height="20px" />
-            </template>
-        </DxDataGrid>
-
-        <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
+            <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
+        </div>
     </div>
 
 </template>
@@ -188,10 +184,8 @@ export default defineComponent({
 }
 
 .search-form {
-    border: solid;
-    border-width: 0.1em;
-    margin: 10px 0px;
-    padding: 10px;
+    background: #d9d9d9;
+    padding: 10px 24px;
 }
 
 #data-grid-demo {

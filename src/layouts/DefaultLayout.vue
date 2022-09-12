@@ -84,16 +84,28 @@
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
-        <a-layout style="padding: 0 24px 24px 24px">
+        <a-layout>
          
           <a-layout-content :style="{ background: '#fff',  margin: 0, minHeight: '280px' }">
             <div class="top-content">
               <a-typography-title :level="3">{{activeTab.name}} </a-typography-title>
               <div class="list-action">
-                <a-button><PrinterOutlined /></a-button>
-                <a-button><DeleteOutlined /></a-button>
-                <a-button><SearchOutlined /></a-button>
-                <a-button><SaveOutlined /></a-button>
+                <a-tooltip>
+                    <template #title>조회</template>
+                    <a-button><SearchOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>저장</template>
+                    <a-button><SaveOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>삭제</template>
+                    <a-button><DeleteOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>출력</template>
+                    <a-button><PrinterOutlined /></a-button>
+                </a-tooltip>  
               </div>
             </div>
             <div class="main-content">
@@ -371,8 +383,8 @@ export default defineComponent({
 ::v-deep h3.ant-typography {
   margin-bottom: 0;
 }
-.main-content {
-  padding: 24px;
+::v-deep .page-content {
+    padding: 24px;
 }
 .nav-tabs {
   display: block;
