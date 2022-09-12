@@ -29,7 +29,7 @@
                         <a-input v-model:value="inputSearchText" placeholder="Search Menu"
                             @keyup="onSearch($event.target.value)" :class="{ shown: state }" @click="toggleDropdown" />
 
-                        <div class="test" v-if="inputSearchText.length > 0">
+                        <div v-if="inputSearchText.length > 0">
                             <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
                                 <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex"
                                     class="item-search" @click.prevent="toggleDropdown">
@@ -40,7 +40,7 @@
                             </div>
                         </div>
 
-                        <div class="test" v-if="inputSearchText.length === 0">
+                        <div v-if="inputSearchText.length === 0">
                             <div class="box-search search-height" v-show="state" @click.prevent="toggleDropdown">
                                 <div v-for="(result) in menuData" class="item-search">
                                     <router-link :to="result.url" @click.enter="addMenuTab(result)">
@@ -195,8 +195,11 @@ export default defineComponent({
                 });
             }
         },
-        toggleDropdown() { 
+        toggleDropdown() {
             this.state = !this.state;
+        },
+        focusInputSearch() {
+            console.log("antu");
         },
         close(e) {
             if (!this.$el.contains(e.target)) {
@@ -246,10 +249,15 @@ export default defineComponent({
             }
         };
 
+        const focus = () => {
+            console.log("12341");
+        }
+
         return {
             ...toRefs(state),
             onOpenChange,
-            collapsed
+            collapsed,
+            focus
         };
     },
 });
