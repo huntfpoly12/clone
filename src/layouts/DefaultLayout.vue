@@ -26,8 +26,8 @@
                         <menu-fold-outlined v-else class="trigger" />
                     </a-button>
                     <div class="wrap-search">
-                        <a-input v-model:value="inputSearchText" placeholder="Search Menu" @change="onSearch"
-                            :class="{ shown: state }" @click.prevent="toggleDropdown" />
+                        <a-input v-model:value="inputSearchText" placeholder="Search Menu"
+                            @keyup="onSearch($event.target.value)" :class="{ shown: state }" />
                         <div class="test" v-if="inputSearchText.length > 0">
                             <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
                                 <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex"
@@ -179,19 +179,21 @@ export default defineComponent({
             this.$store.commit("auth/logout");
         },
 
-        onSearch() {
+        onSearch(key) {
+            this.state = true
             this.filteredResult = [];
+            this.inputSearchText = key
             if (
-                this.menuData?.length > 0 &&
-                this.inputSearchText?.length >= 1
+                this.menuData?.length > 0
             ) {
                 this.menuData.forEach((val) => {
-                    const searchId = val.name.includes(this.inputSearchText) || val.id.includes(this.inputSearchText);
+                    const searchId = val.name.includes(key) || val.id.includes(key);
                     if (searchId) {
                         this.filteredResult.push(val);
                     }
                 });
             }
+            console.log(this.filteredResult);
         },
         toggleDropdown() {
             this.state = !this.state;
