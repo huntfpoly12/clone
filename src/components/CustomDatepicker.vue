@@ -1,7 +1,7 @@
 <template>
   <div>
     <DxDateBox  :class="className" :show-clear-button="false" :use-mask-behavior="true" :value="dateValue('2022/08/25')"
-      @focusIn="dateOnFocus" :display-format="formatter" type="date" :width="width" :on-value-changed="dateOnFocus" :on-closed="dateOnFocus"/>
+      @focusIn="dateOnFocus" :display-format="formatter" type="date" :width="width" :on-value-changed="dateOnFocus" :on-closed="dateOnFocus" :on-enter-key="dateOnFocus" @value-changed="dataReturn"/>
   </div>
 </template>
 <script lang="ts">
@@ -30,7 +30,7 @@ export default defineComponent({
   components: {
     DxDateBox,
   },
-  setup(props) {
+  setup(props, { emit }) {
     let className: string = props.id ? `date_${props.id}` :'';
     let dateFormat: string | undefined = props.dateFormat;
 
@@ -56,12 +56,17 @@ export default defineComponent({
     function dateOnFocus(e: any) {
       e.element.querySelector("input.dx-texteditor-input").select();  
     }
+
+    function dataReturn(e: any){
+      emit('data-datetime', e);
+    }
     
     return {
       dateValue,
       formatter,
       dateOnFocus,
-      className
+      className,
+      dataReturn
     };
   },
 });
