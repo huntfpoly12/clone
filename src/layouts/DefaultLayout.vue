@@ -25,8 +25,8 @@
                         <menu-unfold-outlined v-if="collapsed" class="trigger" />
                         <menu-fold-outlined v-else class="trigger" />
                     </a-button>
-                    <div class="wrap-search" >
-                        <a-input v-model:value="inputSearchText" placeholder="Search Menu"
+                    <div class="wrap-search">
+                        <a-input v-model:value="inputSearchText" placeholder="메뉴를 입력해보세요"
                             @keyup="onSearch($event.target.value)" :class="{ shown: state }"
                             @click.prevent="toggleDropdown" @blur="focusInput" />
                         <div>
@@ -309,3 +309,174 @@ export default defineComponent({
 
 });
 </script>
+<style scoped lang="scss">
+.ant-layout.ant-layout-has-sider {
+    min-height: calc(100vh - 64px);
+}
+
+.ant-layout-header {
+    display: flex;
+    justify-content: space-between;
+    background: #7dbcea;
+    color: #fff;
+}
+
+.ant-layout-header a {
+    color: #fff;
+}
+
+.list-action ::v-deep .ant-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.header-content {
+    display: flex;
+    background: #91d5ff;
+    align-items: center;
+
+    .left {
+        flex-basis: 300px;
+        display: flex;
+        align-items: center;
+        padding-left: 15px;
+        height: 58px
+    }
+
+    .right {
+        padding-left: 24px;
+        padding-top: 5px;
+        flex-basis: calc(100% - 324px);
+    }
+}
+
+.top-content {
+    background: #e6f7ff;
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .list-action {
+        button {
+            margin: 0 2px;
+        }
+    }
+}
+
+::v-deep .ant-layout-content {
+    text-align: left;
+}
+
+.wrap-search {
+    padding-left: 5px;
+    width: calc(100% - 35px);
+}
+
+.search-no-data {
+    padding: 10px;
+}
+
+.search-height {
+    max-height: 150px;
+}
+
+.box-search {
+    overflow: auto;
+    position: absolute;
+    z-index: 9;
+    width: 233px;
+    background: #fff;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.item-search {
+    padding: 5px 10px;
+    display: flex;
+    text-align: left;
+}
+
+.item-search a {
+    color: #000;
+    display: block;
+    overflow: hidden;
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #d6dee1;
+    border-radius: 20px;
+    border: 6px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a8bbbf;
+}
+
+::v-deep .ant-layout-header {
+    background-color: #096dd9;
+}
+
+::v-deep h3.ant-typography {
+    margin-bottom: 0;
+}
+
+::v-deep .page-content {
+    padding: 24px;
+}
+
+.nav-tabs {
+    display: block;
+    box-shadow: inset 0 -1px 0 #888;
+    height: 40px;
+    margin-bottom: 5px;
+
+    ul {
+        display: block;
+        text-align: left;
+        padding-left: 0;
+
+        li {
+            display: inline-block;
+            width: auto;
+            text-align: center;
+            height: 40px;
+            line-height: 40px;
+            padding: 0 5px 0 10px;
+            background-color: #fafafa;
+            border: 1px solid #888;
+            margin: 0 2px;
+            border-radius: 8px 8px 0 0;
+
+            svg {
+                float: right;
+                margin-top: 12px;
+                margin-left: 10px;
+            }
+
+            cursor: pointer;
+
+            &:first-of-type {
+                margin-left: 0;
+            }
+
+            &.active {
+                background-color: #fff;
+                border-bottom: 1px solid #fff;
+                color: #1890ff;
+            }
+        }
+    }
+}
+</style>
