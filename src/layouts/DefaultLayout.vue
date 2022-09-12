@@ -271,6 +271,7 @@ export default defineComponent({
 
 .header-content {
     display: flex;
+    background: #91d5ff;
     align-items: center;
 
     .left {
@@ -278,13 +279,27 @@ export default defineComponent({
         display: flex;
         align-items: center;
         padding-left: 15px;
-        height: 85px
+        height: 58px
     }
 
     .right {
         padding-left: 24px;
-        padding-top: 15px;
-        flex-basis: calc(100% - 300px);
+        padding-top: 5px;
+        flex-basis: calc(100% - 324px);
+    }
+}
+
+.top-content {
+    background: #e6f7ff;
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .list-action {
+        button {
+            margin: 0 2px;
+        }
     }
 }
 
@@ -343,11 +358,23 @@ export default defineComponent({
     background-color: #a8bbbf;
 }
 
+::v-deep .ant-layout-header {
+    background-color: #096dd9;
+}
+
+::v-deep h3.ant-typography {
+    margin-bottom: 0;
+}
+
+.main-content {
+    padding: 24px;
+}
+
 .nav-tabs {
     display: block;
-    box-shadow: inset 0 -1px 0 #cccccc;
-    height: 50px;
-    margin-bottom: 20px;
+    box-shadow: inset 0 -1px 0 #888;
+    height: 40px;
+    margin-bottom: 5px;
 
     ul {
         display: block;
@@ -358,17 +385,17 @@ export default defineComponent({
             display: inline-block;
             width: auto;
             text-align: center;
-            height: 50px;
-            line-height: 50px;
+            height: 40px;
+            line-height: 40px;
             padding: 0 5px 0 10px;
             background-color: #fafafa;
-            border: 1px solid #cccccc;
+            border: 1px solid #888;
             margin: 0 2px;
             border-radius: 8px 8px 0 0;
 
             svg {
                 float: right;
-                margin-top: 17px;
+                margin-top: 12px;
                 margin-left: 10px;
             }
 
