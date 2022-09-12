@@ -27,7 +27,8 @@
                     </a-button>
                     <div class="wrap-search">
                         <a-input v-model:value="inputSearchText" placeholder="Search Menu"
-                            @keyup="onSearch($event.target.value)" :class="{ shown: state }" />
+                            @keyup="onSearch($event.target.value)" :class="{ shown: state }" @click="toggleDropdown" />
+
                         <div class="test" v-if="inputSearchText.length > 0">
                             <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
                                 <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex"
@@ -193,9 +194,8 @@ export default defineComponent({
                     }
                 });
             }
-            console.log(this.filteredResult);
         },
-        toggleDropdown() {
+        toggleDropdown() { 
             this.state = !this.state;
         },
         close(e) {
