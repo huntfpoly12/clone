@@ -383,7 +383,7 @@ export default defineComponent({
     overflow: auto;
     position: absolute;
     z-index: 9;
-    width: 204px;
+    width: 233px;
     background: #fff;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
@@ -396,6 +396,11 @@ export default defineComponent({
 
 .item-search a {
     color: #000;
+    display: block;
+    overflow: hidden;
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 ::-webkit-scrollbar {
