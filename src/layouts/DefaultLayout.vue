@@ -17,7 +17,6 @@
                     </template>
                 </a-dropdown>
             </div>
-
         </a-layout-header>
         <a-layout-content>
             <div class="header-content">
@@ -29,7 +28,7 @@
                     <div class="wrap-search">
                         <a-input v-model:value="inputSearchText" placeholder="Search Menu"
                             @keyup="onSearch($event.target.value)" :class="{ shown: state }"
-                            @click.prevent="toggleDropdown" />
+                            @click.prevent="toggleDropdown" @blur="focusInput" />
                         <div>
                             <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
                                 <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex"
@@ -50,7 +49,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div v-if="inputSearchText.length === 0">
                             <div class="box-search search-height" v-show="state" @click.prevent="toggleDropdown">
                                 <div v-for="(result) in menuData" class="item-search">
@@ -60,14 +58,12 @@
                                 </div>
                             </div>
                         </div>
-
                         <div v-if="filteredResult.length === 0 && inputSearchText.length" v-show="state"
                             class="box-search search-no-data" @click.prevent="toggleDropdown">
                             No Data
                         </div>
                     </div>
                 </div>
-
                 <div class="right">
                     <nav class="nav-tabs" v-if="menuTab.length > 0">
                         <ul class="list-menu-tab">
@@ -153,7 +149,6 @@
             </a-layout>
         </a-layout-content>
     </a-layout>
-
 </template>
 <script>
 import { defineComponent, reactive, toRefs, ref } from "vue";
@@ -161,6 +156,7 @@ import BF310 from '../views/BF/BF3/BF310/index.vue'
 import BF320 from '../views/BF/BF3/BF320/index.vue'
 import BF330 from '../views/BF/BF3/BF330/index.vue'
 import Test from '../views/DefaultComponent.vue'
+import Style from "./style/styleLayout.scss";
 import _ from "lodash";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
@@ -171,8 +167,9 @@ import {
     PrinterOutlined,
     DeleteOutlined,
     SearchOutlined,
-    SaveOutlined
+    SaveOutlined,
 } from '@ant-design/icons-vue';
+
 export default defineComponent({
     name: `LayoutDefault`,
     data() {
@@ -199,7 +196,8 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SearchOutlined,
-        SaveOutlined
+        SaveOutlined,
+        Style
     },
     created() {
         menuData.forEach(item => {
@@ -226,7 +224,6 @@ export default defineComponent({
         }
 
     },
-
     methods: {
         logout() {
             this.$router.push("/login");
@@ -252,9 +249,7 @@ export default defineComponent({
         toggleDropdown() {
             this.state = !this.state;
         },
-        focusInputSearch() {
-            console.log("antu");
-        },
+       
         close(e) {
             if (!this.$el.contains(e.target)) {
                 this.state = false;
@@ -268,9 +263,7 @@ export default defineComponent({
             for (let i = 0, len = this.menuTab.length; i < len; i++) {
                 obj[this.menuTab[i]['id']] = this.menuTab[i];
             }
-
             this.menuTab = new Array();
-
             for (const key in obj) {
                 this.menuTab.push(obj[key]);
             }
@@ -281,9 +274,11 @@ export default defineComponent({
         },
         changeActiveTab(item) {
             this.activeTab = item
+        },
+        focusInput() {
+            this.state = false
         }
     },
-
     mounted() {
         document.addEventListener("click", this.close);
     },
@@ -303,181 +298,12 @@ export default defineComponent({
                 state.openKeys = latestOpenKey ? [latestOpenKey] : [];
             }
         };
-
         return {
             ...toRefs(state),
             onOpenChange,
             collapsed,
-            focus
         };
     },
 
 });
 </script>
-
-<style scoped lang="scss">
-.ant-layout.ant-layout-has-sider {
-    min-height: calc(100vh - 64px);
-}
-
-.ant-layout-header {
-    display: flex;
-    justify-content: space-between;
-    background: #7dbcea;
-    color: #fff;
-}
-
-.ant-layout-header a {
-    color: #fff;
-}
-
-.list-action ::v-deep .ant-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-.header-content {
-    display: flex;
-    background: #91d5ff;
-    align-items: center;
-
-    .left {
-        flex-basis: 300px;
-        display: flex;
-        align-items: center;
-        padding-left: 15px;
-        height: 58px
-    }
-
-    .right {
-        padding-left: 24px;
-        padding-top: 5px;
-        flex-basis: calc(100% - 324px);
-    }
-}
-
-.top-content {
-    background: #e6f7ff;
-    padding: 10px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .list-action {
-        button {
-            margin: 0 2px;
-        }
-    }
-}
-
-::v-deep .ant-layout-content {
-    text-align: left;
-}
-
-.wrap-search {
-    padding-left: 15px;
-    width: calc(100% - 65px);
-}
-
-.search-no-data {
-    padding: 10px;
-}
-
-.search-height {
-    max-height: 150px;
-}
-
-.box-search {
-    overflow: auto;
-    position: absolute;
-    z-index: 9;
-    width: 204px;
-    background: #fff;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-
-.item-search {
-    padding: 5px 10px;
-    display: flex;
-    text-align: left;
-}
-
-.item-search a {
-    color: #000;
-}
-
-::-webkit-scrollbar {
-    width: 15px;
-}
-
-::-webkit-scrollbar-track {
-    background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #d6dee1;
-    border-radius: 20px;
-    border: 6px solid transparent;
-    background-clip: content-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #a8bbbf;
-}
-
-::v-deep .ant-layout-header {
-    background-color: #096dd9;
-}
-
-::v-deep h3.ant-typography {
-    margin-bottom: 0;
-}
-
-::v-deep .page-content {
-    padding: 24px;
-}
-
-.nav-tabs {
-    display: block;
-    box-shadow: inset 0 -1px 0 #888;
-    height: 40px;
-    margin-bottom: 5px;
-
-    ul {
-        display: block;
-        text-align: left;
-        padding-left: 0;
-
-        li {
-            display: inline-block;
-            width: auto;
-            text-align: center;
-            height: 40px;
-            line-height: 40px;
-            padding: 0 5px 0 10px;
-            background-color: #fafafa;
-            border: 1px solid #888;
-            margin: 0 2px;
-            border-radius: 8px 8px 0 0;
-
-            svg {
-                float: right;
-                margin-top: 12px;
-                margin-left: 10px;
-            }
-
-            cursor: pointer;
-
-            &:first-of-type {
-                margin-left: 0;
-            }
-
-            &.active {
-                background-color: #fff;
-                border-bottom: 1px solid #fff;
-                color: #1890ff;
-            }
-        }
-    }
-}
-</style>
