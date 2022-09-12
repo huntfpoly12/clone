@@ -27,7 +27,7 @@
                         <menu-fold-outlined v-else class="trigger" />
                     </a-button>
                     <div class="wrap-search">
-                        <a-input v-model:value="inputSearchText" placeholder="Search Menu"
+                        <a-input v-model:value="inputSearchText" placeholder="메뉴를 입력해보세요"
                             @keyup="onSearch($event.target.value)" :class="{ shown: state }"
                             @click.prevent="toggleDropdown" />
                         <div>
@@ -375,8 +375,8 @@ export default defineComponent({
 }
 
 .wrap-search {
-    padding-left: 15px;
-    width: calc(100% - 65px);
+    padding-left: 5px;
+    width: calc(100% - 35px);
 }
 
 .search-no-data {
