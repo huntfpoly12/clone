@@ -51,7 +51,7 @@
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
             <ul class="list-menu-tab">
-              <li v-for="(item, index) in menuTab" :class="activeTab === item.id? 'active': ''" :key="index"
+              <li v-for="(item, index) in menuTab" :class="activeTab.id === item.id? 'active': ''" :key="index"
                 @click="changeActiveTab(item)"> {{item.name}} <DxButton @click="removeItemTab(index)"><svg focusable="false"
                     class="" data-icon="close" width="1em" height="1em" fill="currentColor" aria-hidden="true"
                     viewBox="64 64 896 896">
@@ -87,8 +87,11 @@
         </a-layout-sider>
         <a-layout style="padding: 0 24px 24px 24px">
          
-          <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
-            <a-typography-title :level="2">{{activeTab.name}} </a-typography-title>
+          <a-layout-content :style="{ background: '#fff',  margin: 0, minHeight: '280px' }">
+            <div class="top-content">
+              <a-typography-title :level="2">{{activeTab.name}} </a-typography-title>
+            </div>
+            
             <template v-if="activeTab">
               <keep-alive>
                 <component v-bind:is="currentComponent" />
@@ -265,6 +268,7 @@ export default defineComponent({
 }
 .header-content {
   display: flex;
+  background: #91d5ff;
   align-items: center;
   .left {
     flex-basis: 300px;
@@ -278,6 +282,10 @@ export default defineComponent({
     padding-top: 15px;
     flex-basis: calc(100% - 300px);
   }
+}
+.top-content {
+  background: #e6f7ff;
+  padding: 10px 24px;
 }
 ::v-deep .ant-layout-content {
   text-align: left;
@@ -332,6 +340,9 @@ export default defineComponent({
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
+}
+::v-deep .ant-layout-header {
+  background-color: #096dd9;
 }
 .nav-tabs {
   display: block;
