@@ -249,7 +249,7 @@ export default defineComponent({
         toggleDropdown() {
             this.state = !this.state;
         },
-       
+
         close(e) {
             if (!this.$el.contains(e.target)) {
                 this.state = false;
@@ -276,7 +276,9 @@ export default defineComponent({
             this.activeTab = item
         },
         focusInput() {
-            this.state = false
+            setTimeout(() => {
+                this.state = false
+            }, 200);
         }
     },
     mounted() {
