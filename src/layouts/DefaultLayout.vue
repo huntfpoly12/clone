@@ -84,16 +84,28 @@
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
-        <a-layout style="padding: 0 24px 24px 24px">
+        <a-layout>
          
           <a-layout-content :style="{ background: '#fff',  margin: 0, minHeight: '280px' }">
             <div class="top-content">
               <a-typography-title :level="3">{{activeTab.name}} </a-typography-title>
               <div class="list-action">
-                <a-button><PrinterOutlined /></a-button>
-                <a-button><DeleteOutlined /></a-button>
-                <a-button><SearchOutlined /></a-button>
-                <a-button><SaveOutlined /></a-button>
+                <a-tooltip>
+                    <template #title>조회</template>
+                    <a-button><SearchOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>저장</template>
+                    <a-button><SaveOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>삭제</template>
+                    <a-button><DeleteOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>출력</template>
+                    <a-button><PrinterOutlined /></a-button>
+                </a-tooltip>  
               </div>
             </div>
             <div class="main-content">
@@ -119,6 +131,7 @@
 import { defineComponent, reactive, toRefs, ref } from "vue";
 import BF310 from '../views/BF/BF3/BF310/index.vue'
 import BF320 from '../views/BF/BF3/BF320/index.vue'
+import BF330 from '../views/BF/BF3/BF330/index.vue'
 import Test from '../views/DefaultComponent.vue'
 import _ from "lodash";
 import menuTree from "./menuTree"
@@ -150,6 +163,7 @@ export default defineComponent({
   components: {
     BF310,
     BF320,
+    BF330,
     Test,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -178,7 +192,8 @@ export default defineComponent({
     currentComponent() {
       if (this.activeTab.id === '') return
       if (this.activeTab.id === 'bf-310') return BF310
-      if (this.activeTab.id === 'bf-320') return BF320;
+      if (this.activeTab.id === 'bf-320') return BF320
+      if (this.activeTab.id === 'bf-330') return BF330
       return Test
     }
 
@@ -368,8 +383,8 @@ export default defineComponent({
 ::v-deep h3.ant-typography {
   margin-bottom: 0;
 }
-.main-content {
-  padding: 24px;
+::v-deep .page-content {
+    padding: 24px;
 }
 .nav-tabs {
   display: block;
