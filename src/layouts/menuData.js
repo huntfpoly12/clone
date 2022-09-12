@@ -14,7 +14,7 @@ export default
           url: "/dashboard/bf-310",
           id: "bf-310",
         },
-        { name: "사업자관리", url: "/dashboard/bf-310", id: "bf-320" },
+        { name: "사업자관리", url: "/dashboard/bf-320", id: "bf-320" },
         { name: "서비스관리", url: "/dashboard/bf-310", id: "bf-330" },
         { name: "영업자관리", url: "/dashboard/bf-310", id: "bf-340" },
         { name: "요금청구,심사", url: "/dashboard/bf-310", id: "bf-410" },
@@ -35,7 +35,7 @@ export default
         { name: "예산서", url: "/dashboard/bf-310", id: "ac-220" },
         { name: "결산서", url: "/dashboard/bf-310", id: "ac-230" },
         { name: "세입예산서", url: "/dashboard/bf-310", id: "ac-310" },
-        { name: "세출예산서", url: "/dashboard/bf-310", id: "ac-320" },
+        { name: "세출예산서", url: "/dashboard/bf-320", id: "ac-320" },
         { name: "예산총괄표", url: "/dashboard/bf-310", id: "ac-330" },
         { name: "임직원보수일람표", url: "/dashboard/bf-310", id: "ac-340" },
         { name: "과목전용조서", url: "/dashboard/bf-310", id: "ac-350" },
@@ -87,7 +87,7 @@ export default
         },
         {
           name: "지급명세서전자신고(연말정산)",
-          url: "/dashboard/bf-310",
+          url: "/dashboard/bf-320",
           id: "pa-320",
         },
         {
