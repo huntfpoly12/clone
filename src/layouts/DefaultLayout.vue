@@ -53,7 +53,7 @@
 
                         <div v-if="inputSearchText.length === 0">
                             <div class="box-search search-height" v-show="state" @click.prevent="toggleDropdown">
-                                <div v-for="(result) in menuData" class="item-search">
+                                <div v-for="result in menuData" :key="result.id" class="item-search">
                                     <router-link :to="result.url" @click.enter="addMenuTab(result)">
                                         {{ result.id + ' | ' + result.name }}
                                     </router-link>
