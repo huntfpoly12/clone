@@ -17,6 +17,7 @@
                     </template>
                 </a-dropdown>
             </div>
+
         </a-layout-header>
         <a-layout-content>
             <div class="header-content">
@@ -67,24 +68,24 @@
                     </div>
                 </div>
 
+                <div class="right">
+                    <nav class="nav-tabs" v-if="menuTab.length > 0">
+                        <ul class="list-menu-tab">
+                            <li v-for="(item, index) in menuTab" :class="activeTab.id === item.id? 'active': ''"
+                                :key="index" @click="changeActiveTab(item)"> {{item.name}} <DxButton
+                                    @click="removeItemTab(index)"><svg focusable="false" class="" data-icon="close"
+                                        width="1em" height="1em" fill="currentColor" aria-hidden="true"
+                                        viewBox="64 64 896 896">
+                                        <path
+                                            d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
+                                        </path>
+                                    </svg></DxButton>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
 
-            <div class="right">
-                <nav class="nav-tabs" v-if="menuTab.length > 0">
-                    <ul class="list-menu-tab">
-                        <li v-for="(item, index) in menuTab" :class="activeTab.id === item.id? 'active': ''"
-                            :key="index" @click="changeActiveTab(item)"> {{item.name}} <DxButton
-                                @click="removeItemTab(index)"><svg focusable="false" class="" data-icon="close"
-                                    width="1em" height="1em" fill="currentColor" aria-hidden="true"
-                                    viewBox="64 64 896 896">
-                                    <path
-                                        d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
-                                    </path>
-                                </svg></DxButton>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
             <a-layout>
                 <a-layout-sider width="300" v-model:collapsed="collapsed" :trigger="null" collapsible>
                     <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :open-keys="openKeys"
@@ -328,6 +329,11 @@ export default defineComponent({
 
 .ant-layout-header a {
     color: #fff;
+}
+
+.list-action ::v-deep .ant-btn svg {
+    width: 20px;
+    height: 20px;
 }
 
 .header-content {
