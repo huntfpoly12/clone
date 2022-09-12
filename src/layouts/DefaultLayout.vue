@@ -51,7 +51,7 @@
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
             <ul class="list-menu-tab">
-              <li v-for="(item, index) in menuTab" :class="activeTab === item.id? 'active': ''" :key="index"
+              <li v-for="(item, index) in menuTab" :class="activeTab.id === item.id? 'active': ''" :key="index"
                 @click="changeActiveTab(item)"> {{item.name}} <DxButton @click="removeItemTab(index)"><svg focusable="false"
                     class="" data-icon="close" width="1em" height="1em" fill="currentColor" aria-hidden="true"
                     viewBox="64 64 896 896">
@@ -84,20 +84,42 @@
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
-        <a-layout style="padding: 0 24px 24px 24px">
+        <a-layout>
          
-          <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
-            <a-typography-title :level="2">{{activeTab.name}} </a-typography-title>
-            <template v-if="activeTab">
-              <keep-alive>
-                <component v-bind:is="currentComponent" />
-              </keep-alive>
-            </template>
-            <template v-else>
-              <keep-alive>
-                <router-view></router-view>
-              </keep-alive>
-          </template>
+          <a-layout-content :style="{ background: '#fff',  margin: 0, minHeight: '280px' }">
+            <div class="top-content">
+              <a-typography-title :level="3">{{activeTab.name}} </a-typography-title>
+              <div class="list-action">
+                <a-tooltip>
+                    <template #title>조회</template>
+                    <a-button><SearchOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>저장</template>
+                    <a-button><SaveOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>삭제</template>
+                    <a-button><DeleteOutlined /></a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>출력</template>
+                    <a-button><PrinterOutlined /></a-button>
+                </a-tooltip>  
+              </div>
+            </div>
+            <div class="main-content">
+              <template v-if="activeTab">
+                <keep-alive>
+                  <component v-bind:is="currentComponent" />
+                </keep-alive>
+                </template>
+                <template v-else>
+                  <keep-alive>
+                    <router-view></router-view>
+                  </keep-alive>
+              </template>
+            </div>
           </a-layout-content>
         </a-layout>
       </a-layout>
@@ -109,6 +131,7 @@
 import { defineComponent, reactive, toRefs, ref } from "vue";
 import BF310 from '../views/BF/BF3/BF310/index.vue'
 import BF320 from '../views/BF/BF3/BF320/index.vue'
+import BF330 from '../views/BF/BF3/BF330/index.vue'
 import Test from '../views/DefaultComponent.vue'
 import _ from "lodash";
 import menuTree from "./menuTree"
@@ -116,11 +139,11 @@ import menuData from "./menuData"
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  PieChartOutlined,
   MailOutlined,
-  DesktopOutlined,
-  InboxOutlined,
-  AppstoreOutlined,
+  PrinterOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+  SaveOutlined
 } from '@ant-design/icons-vue';
 export default defineComponent({
   name: `LayoutDefault`,
@@ -140,14 +163,22 @@ export default defineComponent({
   components: {
     BF310,
     BF320,
+    BF330,
     Test,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    PieChartOutlined,
     MailOutlined,
-    DesktopOutlined,
-    InboxOutlined,
-    AppstoreOutlined,
+    PrinterOutlined,
+    DeleteOutlined,
+    SearchOutlined,
+    SaveOutlined
+  },
+  created() {
+    menuData.forEach(item=> {
+      if(this.$route.fullPath.includes(item.id)) {
+        this.activeTab = item
+      }
+    })
   },
   computed: {
     username() {
@@ -161,7 +192,8 @@ export default defineComponent({
     currentComponent() {
       if (this.activeTab.id === '') return
       if (this.activeTab.id === 'bf-310') return BF310
-      if (this.activeTab.id === 'bf-320') return BF320;
+      if (this.activeTab.id === 'bf-320') return BF320
+      if (this.activeTab.id === 'bf-330') return BF330
       return Test
     }
 
@@ -264,18 +296,31 @@ export default defineComponent({
 }
 .header-content {
   display: flex;
+  background: #91d5ff;
   align-items: center;
   .left {
     flex-basis: 300px;
     display: flex;
     align-items: center;
     padding-left: 15px;
-    height: 85px
+    height: 58px
   }
   .right {
     padding-left: 24px;
-    padding-top: 15px;
-    flex-basis: calc(100% - 300px);
+    padding-top: 5px;
+    flex-basis: calc(100% - 324px);
+  }
+}
+.top-content {
+  background: #e6f7ff;
+  padding: 10px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .list-action {
+    button {
+      margin: 0 2px;
+    }
   }
 }
 ::v-deep .ant-layout-content {
@@ -332,12 +377,20 @@ export default defineComponent({
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
 }
-
+::v-deep .ant-layout-header {
+  background-color: #096dd9;
+}
+::v-deep h3.ant-typography {
+  margin-bottom: 0;
+}
+::v-deep .page-content {
+    padding: 24px;
+}
 .nav-tabs {
   display: block;
-  box-shadow: inset 0 -1px 0 #cccccc;
-  height: 50px;
-  margin-bottom: 20px;
+  box-shadow: inset 0 -1px 0 #888;
+  height: 40px;
+  margin-bottom: 5px;
 
   ul {
     display: block;
@@ -348,17 +401,17 @@ export default defineComponent({
       display: inline-block;
       width: auto;
       text-align: center;
-      height: 50px;
-      line-height: 50px;
+      height: 40px;
+      line-height: 40px;
       padding: 0 5px 0 10px;
       background-color: #fafafa;
-      border: 1px solid #cccccc;
+      border: 1px solid #888;
       margin: 0 2px;
       border-radius: 8px 8px 0 0;
 
       svg {
         float: right;
-        margin-top: 17px;
+        margin-top: 12px;
         margin-left: 10px;
       }
 

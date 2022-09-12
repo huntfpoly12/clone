@@ -73,8 +73,8 @@
                     </div>
                 </template>
             </DxDataGrid>
-            <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
-            <BF320Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
+            <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
+            <BF330Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
                 :data="popupData" />
         </div>
     </div>
@@ -89,7 +89,7 @@ import {
     DxSelection,
     DxSearchPanel
 } from 'devextreme-vue/data-grid';
-import BF320Popup from "./components/BF320Popup.vue";
+import BF330Popup from "./components/BF330Popup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees, states } from '../data.js';
@@ -112,7 +112,7 @@ export default defineComponent({
         DxSelection,
         DxExport,
         DxSearchPanel,
-        BF320Popup,
+        BF330Popup,
         EditOutlined,
         HistoryOutlined,
         Style
