@@ -42,16 +42,17 @@
             </div>
         </div>
         <div class="page-content">
-            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
-                <DxSelection mode="multiple" />
+            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
+                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+                <DxSelection mode="multiple"  />
                 <DxPaging :page-size="5" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
-                <DxColumn data-field="사업자코드" />
+                <DxColumn data-field="사업자코드" :fixed="true"/>
                 <DxColumn data-field="상호" data-type="date" />
                 <DxColumn data-field="대표자" />
                 <DxColumn data-field="주소" data-type="date" />
-                <DxColumn data-field="연락처" />
+                <DxColumn data-field="연락처" :width="230" />
                 <DxColumn data-field="매니저" />
                 <DxColumn data-field="관리시작일" data-type="date" />
                 <DxColumn data-field="영업자" />
