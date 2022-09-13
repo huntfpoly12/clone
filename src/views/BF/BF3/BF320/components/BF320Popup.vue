@@ -1,6 +1,7 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" title="사업자관리 " okText="저장하고 나가기" cancelText="그냥 나가기" width="1000px" @cancel="setModalVisible()">
+        <a-modal :visible="modalStatus" title="사업자관리 " okText="저장하고 나가기" cancelText="그냥 나가기" width="1000px"
+            @cancel="setModalVisible()">
             <a-collapse v-model:activeKey="activeKey" accordion>
                 <a-collapse-panel key="1" header="사업자정보">
                     <a-form :label-col="labelCol">
@@ -26,7 +27,7 @@
                             </a-col>
                         </a-row>
                         <a-form-item label="주소">
-                            <a-row :gutter="[0, 16]">
+                            <a-row :gutter="[0, 4]">
                                 <a-col :span="24">
                                     <a-row>
                                         <a-col :span="12">
@@ -50,8 +51,8 @@
                             </a-row>
                             <a-row> </a-row>
                         </a-form-item>
-                        <a-row :gutter="[16, 16]">
-                            <a-col :span="18">
+                        <a-row>
+                            <a-col>
                                 <a-form-item label="연락처">
                                     <a-input v-model:value="formState.desc" style="width: 150px" />
                                 </a-form-item>
@@ -59,7 +60,7 @@
                                     <a-input v-model:value="formState.desc" style="width: 150px" />
                                 </a-form-item>
                             </a-col>
-                            <imgUpload :title="titleModal" @update-img="getImgUrl" />
+                            <imgUpload :title="titleModal" @update-img="getImgUrl" :marginTop="marginTopModal" />
                         </a-row>
                     </a-form>
                 </a-collapse-panel>
@@ -168,22 +169,13 @@ import {
 import {
     UploadOutlined,
     MinusCircleOutlined,
-    InfoCircleFilled,
     ZoomInOutlined,
     SaveOutlined,
     DeleteOutlined,
     PlusSquareOutlined,
     WarningFilled,
 } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
 import type { UploadProps } from "ant-design-vue";
-
-function getBase64(img: Blob, callback: (base64Url: string) => void) {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => callback(reader.result as string));
-    reader.readAsDataURL(img);
-}
-
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -203,6 +195,11 @@ export default defineComponent({
         PlusSquareOutlined,
         WarningFilled,
         imgUpload,
+    },
+    data() {
+        return {
+            marginTopModal: 'margin-top : -56px'
+        }
     },
     setup() {
         const loading = ref<boolean>(false);
