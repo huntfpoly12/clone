@@ -13,23 +13,17 @@
         <a-collapse-panel key="1" header="심사정보">
           <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-form-item label="승인상태">
-              <DxDropDownBox
-                v-model:value="gridBoxValue"
-                v-model:opened="isGridBoxOpened"
-                :defer-rendering="false"
-                :display-expr="gridBoxDisplayExpr"
-                :show-clear-button="true"
-                :data-source="gridDataSource"
-                value-expr="ID"
-                placeholder="Select a value..."
-              >
-                <template #content>
+              <a-dropdown>
+                <div v-html="yourVariable"></div>
+                <template #overlay>
                   <DxDataGrid
-                    height="100%"
+                    width="500px"
                     :data-source="gridDataSource"
                     v-model:selected-row-keys="gridBoxValue"
-                    @selection-changed="onGridSelectionChanged()"
+                    @selection-changed="onGridSelectionChanged(gridBoxValue)"
                     :show-borders="true"
+                    key-expr="ID"
+                    :columns="gridColumns"
                   >
                     <DxSelection mode="single" />
                     <DxPaging :page-size="5" />
@@ -47,8 +41,9 @@
                     <DxColumn data-field="상호" data-type="date" />
                   </DxDataGrid>
                 </template>
-              </DxDropDownBox>
+              </a-dropdown>
             </a-form-item>
+
             <a-form-item label="사업자코드">
               <a-typography-title :level="5">C22020312</a-typography-title>
             </a-form-item>
@@ -64,7 +59,6 @@
                 </a-form-item>
               </a-col>
             </a-row>
-
             <a-form-item label="심사메모">
               <a-input v-model:value="value" placeholder="Basic usage" />
             </a-form-item>
@@ -450,7 +444,6 @@
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent } from "vue";
-
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
   DxDataGrid,
@@ -458,9 +451,7 @@ import {
   DxPaging,
   DxSelection,
 } from "devextreme-vue/data-grid";
-
 import { employees } from "../data.js";
-// for upload image
 import {
   UploadOutlined,
   MinusCircleOutlined,
@@ -551,6 +542,8 @@ export default defineComponent({
         checked: false,
       },
       value: ref<number>(1),
+      dataSelectModal:
+        '<button style="width:100%;height : 36px;text-align: left;background: white; border: 1px solid #d9d9d9; padding: 4px 6px; ">Select a value...</button>',
     };
   },
   components: {
@@ -564,6 +557,11 @@ export default defineComponent({
     CustomDatepicker,
     InfoCircleFilled,
     PlusOutlined,
+  },
+  computed: {
+    yourVariable() {
+      return this.dataSelectModal;
+    },
   },
   methods: {
     setModalVisible() {
@@ -581,16 +579,36 @@ export default defineComponent({
         return "grey";
       }
     },
-    onGridSelectionChanged() {
+    onGridSelectionChanged(value: any) {
+      let html = "";
+      this.gridDataSource.map((element) => {
+        if (element.ID == value) {
+          console.log(element);
+          html =
+            '<div style="border: 1px solid #d9d9d9;padding: 6px;"><span style="border: 1px solid ' +
+            this.getColorTag(element.심사상태) +
+            ";color :" +
+            this.getColorTag(element.심사상태) +
+            '; padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">' +
+            element.심사상태 +
+            "</span>" +
+            " " +
+            element.상호 +
+            " " +
+            " " +
+            element.신청일자 +
+            " " +
+            element.신청코드 +
+            "</div>";
+        }
+      });
+      this.dataSelectModal = html;
       this.isGridBoxOpened = false;
     },
     gridBoxDisplayExpr() {
       var item = JSON.parse(JSON.stringify(this.gridBoxValue))[0];
-      return item && `${item.심사상태}  - ${item.상호} - ${item.사업자코드}`;
+      return item && `${item.심사상태} - ${item.상호} - ${item.사업자코드}`;
     },
-
-    // function
-
     handleChange(info: { file: { status: string; name: any }; fileList: any }) {
       if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);
@@ -601,7 +619,6 @@ export default defineComponent({
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-
     dateValue(date: string | number | Date | dayjs.Dayjs | null | undefined) {
       return dayjs(date, this.dateFormat);
     },
