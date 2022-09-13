@@ -1,23 +1,16 @@
 <template>
   <div>
-    <DxDateBox
-      :show-clear-button="false"
-      :use-mask-behavior="true"
-      :value="dateValue('2022/08/25')"
-      @focusIn="dateOnFocus"
-      :display-format="formatter"
-      type="date"
-      :width="width"
-    />
+    <DxDateBox  :class="className" :show-clear-button="false" :use-mask-behavior="true" :value="dateValue('2022/08/25')"
+      @focusIn="dateOnFocus" :display-format="formatter" type="date" :width="width" :on-value-changed="dateOnFocus" :on-closed="dateOnFocus" :on-enter-key="dateOnFocus" @value-changed="dataReturn"/>
   </div>
 </template>
 <script lang="ts">
 import DxDateBox from "devextreme-vue/date-box";
-import { defineComponent } from "vue";
-import dayjs from "dayjs";
+import { defineComponent,ref } from "vue";
+import dayjs, { Dayjs } from 'dayjs';
 export default defineComponent({
   props: {
-    dateFormat:{
+    dateFormat: {
       default: "YYYY-MM-DD",
       type: String,
     },
@@ -29,11 +22,16 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    id: {
+      type: String,
+      default: "",
+    }
   },
   components: {
     DxDateBox,
   },
-  setup(props) {
+  setup(props, { emit }) {
+    let className: string = props.id ? `date_${props.id}` :'';
     let dateFormat: string | undefined = props.dateFormat;
 
     function dateValue(
@@ -55,21 +53,20 @@ export default defineComponent({
       return `${year}-${customMonth}-${customDay}`;
     }
 
-    function dateOnFocus(e: {
-      element: {
-        querySelector: (arg0: string) => {
-          (): any;
-          new (): any;
-          select: { (): void; new (): any };
-        };
-      };
-    }) {
-      e.element.querySelector(".dx-texteditor-input").select();
+    function dateOnFocus(e: any) {
+      e.element.querySelector("input.dx-texteditor-input").select();  
     }
+
+    function dataReturn(e: any){
+      emit('data-datetime', e);
+    }
+    
     return {
       dateValue,
       formatter,
       dateOnFocus,
+      className,
+      dataReturn
     };
   },
 });
