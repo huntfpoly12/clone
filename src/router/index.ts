@@ -48,8 +48,8 @@ const routes = [
         component: () => import('../views/BF/BF3/BF320/index.vue')
       },
       {
-        path: "test-menu",
-        component: () => import('../views/testMenu/index.vue')
+        path: "bf-330",
+        component: () => import('../views/BF/BF3/BF330/index.vue')
       }
     ]
   }

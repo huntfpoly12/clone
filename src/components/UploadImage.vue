@@ -1,6 +1,6 @@
 <template>
-  <a-row style="justify-content: end" :gutter="[16, 16]">
-    <a-col :span="18">
+  <a-row class="container_upload" :gutter="[16, 16]">
+    <a-col :span="12">
       <a-form-item class="title" :label="title">
         <a-upload
           v-model:file-list="fileList"
@@ -26,20 +26,14 @@
         </div>
       </a-space>
     </a-col>
-    <a-col :span="6" class="imgPreview">
+    <a-col :span="12" class="imgPreview">
       <img
         v-if="imageUrl"
-        :width="200"
         :src="imageUrl"
         alt="avatar"
         @click="handlePreview"
       />
-      <img
-        v-else
-        :width="300"
-        src="https://taao.vn/placeholder.jpg"
-        alt="avatar"
-      />
+      <img v-else src="https://taao.vn/placeholder.jpg" alt="avatar" />
     </a-col>
     <div>
       <a-modal
@@ -50,11 +44,7 @@
       >
         <img alt="example" style="width: 100%" :src="imageUrl" />
       </a-modal>
-      <a-button
-        v-if="imageUrl"
-        type="primary"
-        @click="handleRemove"
-        :size="size"
+      <a-button v-if="imageUrl" type="primary" @click="handleRemove" :size="10"
         >Remove</a-button
       >
     </div>
@@ -62,25 +52,26 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import uploadImage from "../mixins/uploadImage";
+import { ref, defineComponent } from "vue";
 import { message } from "ant-design-vue";
 import type { UploadProps } from "ant-design-vue";
 import {
   UploadOutlined,
   MinusCircleOutlined,
-  InfoCircleFilled,
   ZoomInOutlined,
   SaveOutlined,
   DeleteOutlined,
   PlusSquareOutlined,
   WarningFilled,
 } from "@ant-design/icons-vue";
+
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result as string));
   reader.readAsDataURL(img);
 }
-export default {
+export default defineComponent({
   props: {
     title: {
       type: String,
@@ -98,7 +89,7 @@ export default {
     PlusSquareOutlined,
     WarningFilled,
   },
-  setup() {
+  setup(props: any, { emit }) {
     const fileList = ref<UploadProps["fileList"]>([]);
     const loading = ref<boolean>(false);
     const imageUrl = ref<string>("");
@@ -124,8 +115,9 @@ export default {
         getBase64(info.file.originFileObj, (base64Url: string) => {
           imageUrl.value = base64Url;
           loading.value = false;
+          console.log("value img", imageUrl.value);
+          emit("update-img", imageUrl.value);
         });
-        $emit("update-img", imageUrl.value);
       }
       if (info.file.status === "error") {
         loading.value = false;
@@ -151,22 +143,22 @@ export default {
       handleChange,
       beforeUpload,
       handleRemove,
+      fileList,
     };
   },
-  // watch: {
-  //   message() {
-  //     console.log("message changed");
-  //   },
-  // },
-};
-function $emit(arg0: string, item: any) {
-  throw new Error("Function not implemented.");
-}
+});
 </script>
 
 <style lang="scss" scoped>
+.container_upload {
+  width: 100%;
+}
 .imgPreview {
   cursor: pointer;
+  width: 100%;
+}
+.imgPreview img {
+  width: 100%;
 }
 .title {
   padding-left: 8px;
