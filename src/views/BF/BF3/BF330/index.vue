@@ -41,6 +41,44 @@
                 </a-row>
             </div>
         </div>
+<<<<<<< HEAD
+        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
+            <DxSelection mode="multiple" />
+            <DxPaging :page-size="5" />
+            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+            <DxExport :enabled="true" :allow-export-selected-data="true" />
+            <DxColumn data-field="사업자코드" />
+            <DxColumn data-field="상호" data-type="date" />
+            <DxColumn data-field="대표자" />
+            <DxColumn data-field="주소" data-type="date" />
+            <DxColumn data-field="연락처" />
+            <DxColumn data-field="매니저" />
+            <DxColumn data-field="관리시작일" data-type="date" />
+            <DxColumn data-field="영업자" />
+            <DxColumn data-field="서비스" />
+            <DxColumn data-field="이용료" />
+            <DxColumn data-field="해지일자" data-type="date"/>
+            
+            <DxColumn :width="80" cell-template="pupop" />
+            <template #pupop="{ data }" class="custom-action">
+                <div class="custom-action">
+                    <a-space :size="10">
+                        <a-tooltip placement="top">
+                            <template #title>편집</template>
+                            <EditOutlined @click="setModalVisible(data)" />
+                        </a-tooltip>
+                        <a-tooltip placement="top">
+                            <template #title>변경이력</template>
+                            <HistoryOutlined @click="modalHistory(data)" />
+                        </a-tooltip>
+                    </a-space>
+                </div>
+            </template>
+        </DxDataGrid>
+        <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
+        <BF330Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
+            :data="popupData" />
+=======
         <div class="page-content">
             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
                 <DxSelection mode="multiple" />
@@ -77,6 +115,7 @@
             <BF330Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
                 :data="popupData" />
         </div>
+>>>>>>> fa50c0c26b659225c6dc44b753764f29929dc7ea
     </div>
 </template>
 <script>

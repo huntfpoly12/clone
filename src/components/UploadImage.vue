@@ -52,7 +52,6 @@
 </template>
 
 <script lang="ts">
-import uploadImage from "../mixins/uploadImage";
 import { ref, defineComponent } from "vue";
 import { message } from "ant-design-vue";
 import type { UploadProps } from "ant-design-vue";
