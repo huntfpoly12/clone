@@ -61,7 +61,7 @@
                     <template v-else-if="column.key === 'action'">
                       <span>
                         <a-popconfirm title="Are you sure delete this row?" ok-text="Yes" cancel-text="No">
-                          <a-button type="text" @click="deleteRow(record.key)">
+                          <a-button type="text">
                             <minus-circle-outlined />
                           </a-button>
                         </a-popconfirm>
