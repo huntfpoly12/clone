@@ -4,7 +4,7 @@
       <a-form-item class="title" :label="title">
         <a-upload
           v-model:file-list="fileList"
-          :show-upload-list="false"
+          :show-upload-list="true"
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           :before-upload="beforeUpload"
           @change="handleChange"
@@ -85,7 +85,7 @@
 
 <script lang="ts">
 import { ref, defineComponent } from "vue";
-import { message } from "ant-design-vue";
+import { message, Upload } from "ant-design-vue";
 import type { UploadProps } from "ant-design-vue";
 import {
   UploadOutlined,
@@ -135,9 +135,9 @@ export default defineComponent({
       if (!isLt2M) {
         message.error("Image must smaller than 2MB!");
       }
-      return isJpgOrPng && isLt2M;
+      return isJpgOrPng && isLt2M && true;
     };
-    const handleChange = (info: any) => {
+    const handleChange = (info: any, fileList: any) => {
       if (info.file.status === "uploading") {
         loading.value = true;
         return;
@@ -147,6 +147,7 @@ export default defineComponent({
           imageUrl.value = base64Url;
           loading.value = false;
           console.log("value img", imageUrl.value);
+
           emit("update-img", imageUrl.value);
         });
       }
