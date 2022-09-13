@@ -1,6 +1,6 @@
 <template>
-  <a-row class="container_upload" :gutter="[16, 16]">
-    <a-col :span="12">
+  <a-row class="container_upload" :gutter="[16, 8]">
+    <a-col v-if="imageUrl" style="margin-top: -125px" :span="16">
       <a-form-item class="title" :label="title">
         <a-upload
           v-model:file-list="fileList"
@@ -26,8 +26,33 @@
         </div>
       </a-space>
     </a-col>
-
-    <a-col :span="12" class="imgPreview">
+    <a-col v-else :span="16">
+      <a-form-item class="title" :label="title">
+        <a-upload
+          v-model:file-list="fileList"
+          :show-upload-list="false"
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          :before-upload="beforeUpload"
+          @change="handleChange"
+        >
+          <a-button>
+            <upload-outlined></upload-outlined>
+            파일선택...
+          </a-button>
+        </a-upload>
+      </a-form-item>
+      <a-space :size="10" align="start" style="padding-left: 8px">
+        <div>
+          <warning-filled :style="{ fontSize: '15px' }" />
+        </div>
+        <div :span="22" class="warring-modal">
+          <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
+          <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
+          <p>파일용량 : 최대 5MB</p>
+        </div>
+      </a-space>
+    </a-col>
+    <a-col :span="8" class="imgPreview">
       <div style="display: flex; flex-direction: column">
         <img
           v-if="imageUrl"
@@ -158,7 +183,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .container_upload {
   width: 100%;
-  margin-top: -100px;
+  margin-top: -50px;
 }
 .imgPreview {
   cursor: pointer;
