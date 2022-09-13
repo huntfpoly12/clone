@@ -188,7 +188,6 @@
           <DxColumn data-field="상세" cell-template="detail" />
           <template #detail="{}">
             <a-space :size="8">
-              trang
               <zoom-in-outlined :style="{ fontSize: '15px' }" />
             </a-space>
           </template>
