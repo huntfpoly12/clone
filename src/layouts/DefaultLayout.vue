@@ -152,13 +152,13 @@
 </template>
 <script>
 import { defineComponent, reactive, toRefs, ref, defineAsyncComponent} from "vue";
-import Test from '../views/DefaultComponent.vue'
 import Style from "./style/styleLayout.scss";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
 const BF310 = defineAsyncComponent(() => import('../views/BF/BF3/BF310/index.vue'));
 const BF320 = defineAsyncComponent(() => import('../views/BF/BF3/BF320/index.vue'));
 const BF330 = defineAsyncComponent(() => import('../views/BF/BF3/BF330/index.vue'));
+const Test = defineAsyncComponent(() => import('../views/DefaultComponent.vue'));
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -290,9 +290,17 @@ export default defineComponent({
         const collapsed = ref(false)
         const onOpenChange = openKeys => {
             const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
-
             if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-                state.openKeys = openKeys;
+                if(latestOpenKey && latestOpenKey.includes('bf')) {
+                    state.openKeys = ['bf-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('cm')) {
+                    state.openKeys = ['cm-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('ac')) {
+                    state.openKeys = ['ac-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('pa')) {
+                    state.openKeys = ['pa-000', latestOpenKey];
+                }
+                
             } else {
                 state.openKeys = latestOpenKey ? [latestOpenKey] : [];
             }
