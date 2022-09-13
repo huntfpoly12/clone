@@ -293,9 +293,17 @@ export default defineComponent({
         const collapsed = ref(false)
         const onOpenChange = openKeys => {
             const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
-
             if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-                state.openKeys = openKeys;
+                if(latestOpenKey && latestOpenKey.includes('bf')) {
+                    state.openKeys = ['bf-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('cm')) {
+                    state.openKeys = ['cm-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('ac')) {
+                    state.openKeys = ['ac-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('pa')) {
+                    state.openKeys = ['pa-000', latestOpenKey];
+                }
+                
             } else {
                 state.openKeys = latestOpenKey ? [latestOpenKey] : [];
             }
