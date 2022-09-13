@@ -3,7 +3,7 @@
         <div class="search-form">
             <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16,8]">
-                    <a-col>
+                    <a-col>a
                         <label class="lable-item">
                             사업자코드 :
                         </label>
