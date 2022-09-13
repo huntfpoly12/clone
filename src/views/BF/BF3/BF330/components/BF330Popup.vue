@@ -22,55 +22,54 @@
                                 </a-form-item>
                             </a-col>
                         </a-row>
-                        <a-card title="⁙ 운영사업" :bordered="true" style="width: 100%"
-                            :headStyle="{padding: '0px',color: 'red'}" bodyStyle="padding: 24px 0px">
-                            <template #extra>
-                                <a-button type="text">
-                                    <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
-                                </a-button>
-                            </template>
-                            <a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
-                                <template #headerCell="{ column }">
-                                    <template v-if="column.key === '사업명'">
-                                        <span> 사업명 (중복불가) </span>
-                                    </template>
-                                </template>
-                                <template #bodyCell="{ column, record }">
-                                    <template v-if="column.key === '사업명'">
-                                        <a>
-                                            {{ record.사업명 }}
-                                        </a>
-                                    </template>
-                                    <template v-else-if="column.key === '사업분류'">
-                                        <span>
-                                            <a-select ref="select" v-model:value="record.사업분류" style="width: 200px">
-                                                <a-select-option value="방문요양">방문요양</a-select-option>
-                                                <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
-                                                <a-select-option value="방문간호">방문간호</a-select-option>
-                                                <a-select-option value="방문목욕">방문목욕</a-select-option>
-                                                <a-select-option value="단기보호">단기보호</a-select-option>
-                                                <a-select-option value="복지용구">복지용구</a-select-option>
-                                            </a-select>
-                                        </span>
-                                    </template>
-                                    <template v-else-if="column.key === '서비스시작년월'">
-                                        <span>
-                                            <CustomDatepicker :valueDate="record.서비스시작년월" />
-                                        </span>
-                                    </template>
-                                    <template v-else-if="column.key === 'action'">
-                                        <span>
-                                            <a-popconfirm title="Are you sure delete this row?" ok-text="Yes"
-                                                cancel-text="No">
-                                                <a-button type="text">
-                                                    <minus-circle-outlined />
-                                                </a-button>
-                                            </a-popconfirm>
-                                        </span>
-                                    </template>
-                                </template>
-                            </a-table>
-                        </a-card>
+                        <a-card title="⁙ 운영사업" :bordered="true" style="width: 100%" :headStyle="{padding: '0px',color: 'red'}"
+                bodyStyle="padding: 24px 0px">
+                <template #extra>
+                  <a-button type="text">
+                    <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
+                  </a-button>
+                </template>
+                <a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
+                  <template #headerCell="{ column }">
+                    <template v-if="column.key === '사업명'">
+                      <span> 사업명 (중복불가) </span>
+                    </template>
+                  </template>
+                  <template #bodyCell="{ column, record }">
+                    <template v-if="column.key === '사업명'">
+                      <a>
+                        {{ record.사업명 }}
+                      </a>
+                    </template>
+                    <template v-else-if="column.key === '사업분류'">
+                      <span>
+                        <a-select ref="select" v-model:value="record.사업분류" style="width: 200px">
+                          <a-select-option value="방문요양">방문요양</a-select-option>
+                          <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
+                          <a-select-option value="방문간호">방문간호</a-select-option>
+                          <a-select-option value="방문목욕">방문목욕</a-select-option>
+                          <a-select-option value="단기보호">단기보호</a-select-option>
+                          <a-select-option value="복지용구">복지용구</a-select-option>
+                        </a-select>
+                      </span>
+                    </template>
+                    <template v-else-if="column.key === '서비스시작년월'">
+                      <span>
+                        <CustomDatepicker :valueDate="record.서비스시작년월" />
+                      </span>
+                    </template>
+                    <template v-else-if="column.key === 'action'">
+                      <span>
+                        <a-popconfirm title="Are you sure delete this row?" ok-text="Yes" cancel-text="No">
+                          <a-button type="text">
+                            <minus-circle-outlined />
+                          </a-button>
+                        </a-popconfirm>
+                      </span>
+                    </template>
+                  </template>
+                </a-table>
+              </a-card>
                         <a-form-item label="주소">
                             <a-row :gutter="[0,16]">
                                 <a-col :span="24">
