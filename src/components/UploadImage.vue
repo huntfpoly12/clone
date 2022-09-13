@@ -26,28 +26,35 @@
         </div>
       </a-space>
     </a-col>
+
     <a-col :span="12" class="imgPreview">
-      <img
-        v-if="imageUrl"
-        :src="imageUrl"
-        alt="avatar"
-        @click="handlePreview"
-      />
-      <img v-else src="https://taao.vn/placeholder.jpg" alt="avatar" />
+      <div style="display: flex; flex-direction: column">
+        <img
+          v-if="imageUrl"
+          :src="imageUrl"
+          alt="avatar"
+          @click="handlePreview"
+        />
+        <img v-else src="https://taao.vn/placeholder.jpg" alt="avatar" />
+        <a-button
+          class="button_remove"
+          v-if="imageUrl"
+          type="primary"
+          @click="handleRemove"
+          :size="10"
+          >Remove</a-button
+        >
+      </div>
     </a-col>
-    <div>
-      <a-modal
-        :visible="previewVisible"
-        :title="title"
-        :footer="null"
-        @cancel="handleCancel"
-      >
-        <img alt="example" style="width: 100%" :src="imageUrl" />
-      </a-modal>
-      <a-button v-if="imageUrl" type="primary" @click="handleRemove" :size="10"
-        >Remove</a-button
-      >
-    </div>
+
+    <a-modal
+      :visible="previewVisible"
+      :title="title"
+      :footer="null"
+      @cancel="handleCancel"
+    >
+      <img alt="example" style="width: 100%" :src="imageUrl" />
+    </a-modal>
   </a-row>
 </template>
 
@@ -151,6 +158,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .container_upload {
   width: 100%;
+  margin-top: -100px;
 }
 .imgPreview {
   cursor: pointer;
@@ -162,6 +170,10 @@ export default defineComponent({
 .title {
   padding-left: 8px;
   padding-right: 8px;
+}
+.button_remove {
+  width: 100px;
+  margin: 0 auto;
 }
 </style>
 >

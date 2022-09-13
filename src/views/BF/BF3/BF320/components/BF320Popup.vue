@@ -1,6 +1,7 @@
 <template>
   <div id="components-modal-demo-position">
     <a-modal
+      style="justify-content: flex-end"
       :visible="modalStatus"
       title="사업자관리 "
       centered
