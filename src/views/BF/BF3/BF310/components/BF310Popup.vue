@@ -210,7 +210,7 @@
             <div>
               <a-card
                 title="⁙ 운영사업"
-                :bordered="true"
+                :bordered="false"
                 style="width: 100%"
                 :headStyle="{ padding: '0px', color: 'red' }"
                 bodyStyle="padding: 24px 0px"
