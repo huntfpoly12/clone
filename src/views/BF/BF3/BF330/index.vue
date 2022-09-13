@@ -57,8 +57,10 @@
             <DxColumn data-field="매니저" />
             <DxColumn data-field="관리시작일" data-type="date" />
             <DxColumn data-field="영업자" />
-            <DxColumn data-field="해지일자" />
-            <DxColumn data-field="연체(개월)" />
+            <DxColumn data-field="서비스" />
+            <DxColumn data-field="이용료" />
+            <DxColumn data-field="해지일자" data-type="date"/>
+            
             <DxColumn :width="80" cell-template="pupop" />
             <template #pupop="{ data }" class="custom-action">
                 <div class="custom-action">
