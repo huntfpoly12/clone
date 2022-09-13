@@ -300,7 +300,6 @@ export default defineComponent({
                 } else if(latestOpenKey && latestOpenKey.includes('pa')) {
                     state.openKeys = ['pa-000', latestOpenKey];
                 }
-                
             } else {
                 state.openKeys = latestOpenKey ? [latestOpenKey] : [];
             }
