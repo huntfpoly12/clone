@@ -18,9 +18,9 @@
                         <a-row>
                             <a-col :span="12">
                                 <a-form-item label="회계서비스">
-                                    <input type="checkbox" value="regist">  회계서비스 신청
+                                    <input type="checkbox" value="regist"> 회계서비스 신청
                                 </a-form-item>
-                            </a-col>                            
+                            </a-col>
                         </a-row>
                         <a-card title="⁙ 운영사업" :bordered="true" style="width: 100%" :headStyle="{padding: '0px',color: 'red'}"
                 bodyStyle="padding: 24px 0px">
@@ -97,9 +97,10 @@
                             </a-row>
                         </a-form-item>
                         <a-row :gutter="[16,16]">
-                            <a-col :span="18">                                
+                            <a-col :span="18">
                                 <a-form-item label="장기요양기관등록번호">
-                                    <a-input v-model:value="formState.desc" style="width: 150px" placeholder="01234567898"/>
+                                    <a-input v-model:value="formState.desc" style="width: 150px"
+                                        placeholder="01234567898" />
                                 </a-form-item>
                                 <a-form-item label="장기요양기관등록증">
                                     <a-upload v-model:file-list="fileList" :show-upload-list="false"
@@ -120,40 +121,40 @@
                                         <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
                                         <p>파일용량 : 최대 5MB</p>
                                     </div>
-                                </a-space>                                
+                                </a-space>
                             </a-col>
                             <imgUpload :title="titleModal" :imageUrl="imageUrl" />
                         </a-row>
                     </a-form>
                     <hr>
                     <a-row>
-                            <a-col :span="12">
-                                <a-form-item label="원천서비스">
-                                    <input type="checkbox" value="regist">  원천서비스 신청
-                                </a-form-item>
-                            </a-col>                                                        
+                        <a-col :span="12">
+                            <a-form-item label="원천서비스">
+                                <input type="checkbox" value="regist"> 원천서비스 신청
+                            </a-form-item>
+                        </a-col>
                     </a-row>
                     <a-form-item label="서비스 시작년월:">
-                            <a-input v-model:value="formState.name" style="width:440px" />
-                        </a-form-item>
-                        <a-form-item label="직원수:">
-                            <a-input v-model:value="formState.name" style="width: 240px" />
-                        </a-form-item>
-                        <a-form-item label="회계서비스 이용료:">
-                            <a-input v-model:value="formState.name" style="width: 240px" />
-                        </a-form-item>
-                    <a-row> 
+                        <a-input v-model:value="formState.name" style="width:440px" />
+                    </a-form-item>
+                    <a-form-item label="직원수:">
+                        <a-input v-model:value="formState.name" style="width: 240px" />
+                    </a-form-item>
+                    <a-form-item label="회계서비스 이용료:">
+                        <a-input v-model:value="formState.name" style="width: 240px" />
+                    </a-form-item>
+                    <a-row>
                         <a-form-item>
-                            <input type="checkbox" value="basicfee">  기본이용료
+                            <input type="checkbox" value="basicfee"> 기본이용료
                             <a-input v-model:value="formState.name" style="width:440px" />
-                        </a-form-item>                                              
-                    </a-row>  
-                     <a-row> 
+                        </a-form-item>
+                    </a-row>
+                    <a-row>
                         <a-form-item>
-                            <input type="checkbox" value="insurance">  4대보험
+                            <input type="checkbox" value="insurance"> 4대보험
                             <a-input v-model:value="formState.name" style="width:440px" />
-                        </a-form-item>                                              
-                    </a-row> 
+                        </a-form-item>
+                    </a-row>
                 </a-collapse-panel>
                 <a-collapse-panel key="2" header="담당매니저/ 영업자">
                     <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
@@ -261,7 +262,7 @@ import {
     DxSelection
 } from "devextreme-vue/data-grid"
 
-import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled ,PlusOutlined} from '@ant-design/icons-vue'
+import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import type { UploadProps } from 'ant-design-vue'
 
@@ -355,55 +356,55 @@ export default defineComponent({
         }])
         const keyNumber = ref(0)
         const titleModal = "사업자등록증"
-const columns= [
-        {
-          name: "사업명 (중복불가)",
-          dataIndex: "사업명",
-          key: "사업명",
-        },
-        {
-          title: "사업분류",
-          dataIndex: "사업분류",
-          key: "사업분류",
-        },
-        {
-          title: "서비스시작년월",
-          dataIndex: "서비스시작년월",
-          key: "서비스시작년월",
-        },
-        {
-          title: "정원수(명)",
-          key: "정원수",
-          dataIndex: "정원수",
-        },
-        {
-          title: "",
-          key: "action",
-        },
-      ];
-      const dataTable= [
-        {
-          key: "1",
-          사업명: "가나다라마바 사업",
-          사업분류: "방문요양",
-          서비스시작년월: "2015/01/01",
-          정원수: 10,
-        },
-        {
-          key: "2",
-          사업명: "가나다라마바 사업",
-          사업분류: "방문간호",
-          서비스시작년월: "2015/01/01",
-          정원수: 10,
-        },
-        {
-          key: "3",
-          사업명: "가나다라마바 사업",
-          사업분류: "단기보호",
-          서비스시작년월: "2015/01/13",
-          정원수: 10,
-        },
-      ];
+        const columns = [
+            {
+                name: "사업명 (중복불가)",
+                dataIndex: "사업명",
+                key: "사업명",
+            },
+            {
+                title: "사업분류",
+                dataIndex: "사업분류",
+                key: "사업분류",
+            },
+            {
+                title: "서비스시작년월",
+                dataIndex: "서비스시작년월",
+                key: "서비스시작년월",
+            },
+            {
+                title: "정원수(명)",
+                key: "정원수",
+                dataIndex: "정원수",
+            },
+            {
+                title: "",
+                key: "action",
+            },
+        ];
+        const dataTable = [
+            {
+                key: "1",
+                사업명: "가나다라마바 사업",
+                사업분류: "방문요양",
+                서비스시작년월: "2015/01/01",
+                정원수: 10,
+            },
+            {
+                key: "2",
+                사업명: "가나다라마바 사업",
+                사업분류: "방문간호",
+                서비스시작년월: "2015/01/01",
+                정원수: 10,
+            },
+            {
+                key: "3",
+                사업명: "가나다라마바 사업",
+                사업분류: "단기보호",
+                서비스시작년월: "2015/01/13",
+                정원수: 10,
+            },
+        ];
         return {
             fileList,
             loading,
@@ -479,7 +480,7 @@ const columns= [
     line-height: 5px;
 }
 
-.ant-form-item-label{
+.ant-form-item-label {
     text-align: left;
 }
 </style>
