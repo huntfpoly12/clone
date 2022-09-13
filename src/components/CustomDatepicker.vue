@@ -1,11 +1,5 @@
 <template>
-  <div>
-    <a-date-picker v-model:value="value" v-model:open="displayDatepicker"/>
-        <a-input-group compact>
-        <a-input :value="value" style="width: 50%" />
-        <a-button type="default" @click="xxx"><CalendarOutlined /></a-button>
-        </a-input-group>
-  </div>
+  <Datepicker v-model="date" placeholder="Start Typing ..." textInput />
 </template>
 <script lang="ts">
 import { CalendarOutlined } from '@ant-design/icons-vue';
@@ -50,6 +44,7 @@ export default defineComponent({
     ) {
       return dayjs(date, dateFormat);
     }
+    const date = ref();
 
     function formatter(date: {
       getDate: () => any;
@@ -69,10 +64,10 @@ export default defineComponent({
     }
 
  
-    function dateOnFocus(value: any) {
-      this.$el.querySelector("input").select();
-      value = value;
-    }
+    // function dateOnFocus(value: any) {
+    //   this.$el.querySelector("input").select();
+    //   value = value;
+    // }
     function dataReturn(e: any){
       emit('data-datetime', e);
     }
@@ -82,9 +77,10 @@ export default defineComponent({
      console.log(displayDatepicker);
     }
     return {
+      date,
       dateValue,
       formatter,
-      dateOnFocus,
+      // dateOnFocus,
       className,
       dataReturn,
       autoFormatDate,
