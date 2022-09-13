@@ -4,7 +4,7 @@
       <a-form-item class="title" :label="title">
         <a-upload
           v-model:file-list="fileList"
-          :show-upload-list="true"
+          :show-upload-list="false"
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           :before-upload="beforeUpload"
           @change="handleChange"
@@ -15,7 +15,7 @@
           </a-button>
         </a-upload>
       </a-form-item>
-      <a-space :size="10" align="start" style="padding-left: 8px">
+      <a-space :size="10" align="start" style="margin-top: 10px">
         <div>
           <warning-filled :style="{ fontSize: '15px' }" />
         </div>
@@ -41,7 +41,7 @@
           </a-button>
         </a-upload>
       </a-form-item>
-      <a-space :size="10" align="start" style="padding-left: 8px">
+      <a-space :size="10" align="start" style="margin-top: 10px">
         <div>
           <warning-filled :style="{ fontSize: '15px' }" />
         </div>
@@ -152,8 +152,15 @@ export default defineComponent({
         });
       }
       if (info.file.status === "error") {
-        loading.value = false;
-        message.error("upload error");
+        // loading.value = false;
+        // message.error("upload error");
+        getBase64(info.file.originFileObj, (base64Url: string) => {
+          imageUrl.value = base64Url;
+          loading.value = false;
+          console.log("value img", imageUrl.value);
+
+          emit("update-img", imageUrl.value);
+        });
       }
     };
 
@@ -184,7 +191,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .container_upload {
   width: 100%;
-  margin-top: -50px;
 }
 .imgPreview {
   cursor: pointer;
@@ -194,12 +200,14 @@ export default defineComponent({
   width: 100%;
 }
 .title {
-  padding-left: 8px;
   padding-right: 8px;
 }
 .button_remove {
   width: 100px;
   margin: 0 auto;
+  margin-top: 10px;
+}
+.ant-space-item {
+  padding-top: 5px;
 }
 </style>
->
