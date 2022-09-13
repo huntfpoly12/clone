@@ -7,7 +7,7 @@
       okText="저장하고 나가기"
       cancelText="그냥 나가기"
       @cancel="setModalVisible()"
-      width="50%"
+      width="1000px"
     >
       <a-collapse v-model:activeKey="activeKey" accordion>
         <a-collapse-panel key="1" header="심사정보">
@@ -210,7 +210,7 @@
             <div>
               <a-card
                 title="⁙ 운영사업"
-                :bordered="true"
+                :bordered="false"
                 style="width: 100%"
                 :headStyle="{ padding: '0px', color: 'red' }"
                 bodyStyle="padding: 24px 0px"
