@@ -41,7 +41,6 @@
                 </a-row>
             </div>
         </div>
-<<<<<<< HEAD
         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
             <DxSelection mode="multiple" />
             <DxPaging :page-size="5" />
@@ -78,7 +77,6 @@
         <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
         <BF330Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
             :data="popupData" />
-=======
         <div class="page-content">
             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
                 <DxSelection mode="multiple" />
@@ -115,7 +113,6 @@
             <BF330Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
                 :data="popupData" />
         </div>
->>>>>>> fa50c0c26b659225c6dc44b753764f29929dc7ea
     </div>
 </template>
 <script>
