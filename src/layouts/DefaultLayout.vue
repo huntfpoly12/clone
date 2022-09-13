@@ -151,15 +151,14 @@
     </a-layout>
 </template>
 <script>
-import { defineComponent, reactive, toRefs, ref } from "vue";
-import BF310 from '../views/BF/BF3/BF310/index.vue'
-import BF320 from '../views/BF/BF3/BF320/index.vue'
-import BF330 from '../views/BF/BF3/BF330/index.vue'
+import { defineComponent, reactive, toRefs, ref, defineAsyncComponent} from "vue";
 import Test from '../views/DefaultComponent.vue'
 import Style from "./style/styleLayout.scss";
-import _ from "lodash";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
+const BF310 = defineAsyncComponent(() => import('../views/BF/BF3/BF310/index.vue'));
+const BF320 = defineAsyncComponent(() => import('../views/BF/BF3/BF320/index.vue'));
+const BF330 = defineAsyncComponent(() => import('../views/BF/BF3/BF330/index.vue'));
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -249,7 +248,7 @@ export default defineComponent({
         toggleDropdown() {
             this.state = !this.state;
         },
-
+       
         close(e) {
             if (!this.$el.contains(e.target)) {
                 this.state = false;
@@ -276,9 +275,7 @@ export default defineComponent({
             this.activeTab = item
         },
         focusInput() {
-            setTimeout(() => {
-                this.state = false
-            }, 200);
+            this.state = false
         }
     },
     mounted() {
@@ -293,17 +290,9 @@ export default defineComponent({
         const collapsed = ref(false)
         const onOpenChange = openKeys => {
             const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
+
             if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-                if(latestOpenKey && latestOpenKey.includes('bf')) {
-                    state.openKeys = ['bf-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('cm')) {
-                    state.openKeys = ['cm-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('ac')) {
-                    state.openKeys = ['ac-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('pa')) {
-                    state.openKeys = ['pa-000', latestOpenKey];
-                }
-                
+                state.openKeys = openKeys;
             } else {
                 state.openKeys = latestOpenKey ? [latestOpenKey] : [];
             }
