@@ -22,8 +22,7 @@
           </a-col>
           <a-col>
             <label class="lable-item">상태 :</label>
-            <a-select style="width: 100px" v-model:value="dataSearch.nameSale" 
-               option-label-prop="children">
+            <a-select style="width: 100px" v-model:value="dataSearch.nameSale" option-label-prop="children">
               <a-select-option value="정상" label="정상">
                 <a-tag :color="getColorTag('정상')">정상</a-tag>
               </a-select-option>
@@ -40,26 +39,36 @@
     </div>
     <div class="page-content">
       <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting" >
-        <DxSelection mode="multiple" />
         <DxPaging :page-size="5" />
-      
+
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
         <DxExport :enabled="true" :allow-export-selected-data="true" />
-        <DxEditing
-     
-        :allow-adding="true"
-          mode="row"
-        />
-        <DxColumn data-field="사업자코드" />
-        <DxColumn data-field="상호" data-type="date" />
-        <DxColumn data-field="대표자" />
-        <DxColumn data-field="주소" data-type="date" />
-        <DxColumn data-field="연락처" />
-        <DxColumn data-field="매니저" />
-        <DxColumn data-field="관리시작일" data-type="date" />
-        <DxColumn data-field="영업자" />
-        <DxColumn data-field="해지일자" />
-        <DxColumn data-field="연체(개월)" />
+        
+        <DxToolbar>
+          <DxItem name="searchPanel" />
+          <DxItem name="exportButton" />
+          <DxItem location="after" template="button-template"  css-class="cell-button-add"/>
+          <DxItem name="groupPanel" />
+         
+          <DxItem name="addRowButton" show-text="always"/>
+          <DxItem name="columnChooserButton" />
+        </DxToolbar>
+        <template #button-template>
+          <DxButton icon="plus" @click="openAddNewModal" />
+        </template>
+        <DxColumn data-field="영업자코드" :width="100" css-class="cell-center"/>
+        <DxColumn data-field="상태" cell-template="grid-cell" css-class="cell-center" :width="100"/>
+        <template #grid-cell="{ data }">
+            <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+        </template>
+        <DxColumn data-field="영업자명" css-class="cell-center" :width="100"/>
+        <DxColumn data-field="등급"/>
+        <DxColumn data-field="주소"/>
+        <DxColumn data-field="연락처" :width="100"/>
+        <DxColumn data-field="휴대폰" :width="100"/>
+        <DxColumn data-field="가입일자" data-type="date" :width="100"/>
+        <DxColumn data-field="해지일자" data-type="date" :width="100"/>
+        <DxColumn data-field="사업자소" data-type="number" :width="100"/>
         <DxColumn :width="80" cell-template="pupop" />
         <template #pupop="{ data }" class="custom-action">
           <div class="custom-action">
@@ -76,9 +85,7 @@
           </div>
         </template>
       </DxDataGrid>
-      <BF340Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="popupData" />
-      <BF340Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory = false"
-        :data="popupData" />
+      <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
     </div>
   </div>
 </template>
@@ -92,12 +99,15 @@ import {
   DxSelection,
   DxSearchPanel,
   DxToolbar,
-  DxEditing
+  DxEditing,
+  DxGrouping,
+  DxItem
 } from "devextreme-vue/data-grid";
 import BF340Popup from "./components/BF340Popup.vue";
+import AddNew340Poup from "./components/AddNew340Poup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
-import { employees, states } from "../data.js";
+import { employees } from "./data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
@@ -122,12 +132,15 @@ export default defineComponent({
     HistoryOutlined,
     Style,
     DxToolbar,
-    DxEditing
+    DxEditing,
+    DxGrouping,
+    DxItem,
+    AddNew340Poup
+
   },
   data() {
     return {
       dataSource: employees,
-      states,
       options: [
         {
           value: "jack",
@@ -144,11 +157,11 @@ export default defineComponent({
       ],
       popupData: [],
       modalStatus: false,
-      modalStatusHistory: false,
+      modalAddNewStatus: false,
       dataSearch: {
         typeSevice: "전체",
-        nameCompany: "김영업",
-        surrogate: "S0001",
+        nameCompany: "",
+        surrogate: "",
         status: "전체",
         address: "",
         manager: "",
@@ -174,14 +187,14 @@ export default defineComponent({
       });
       e.cancel = true;
     },
+    openAddNewModal(){
+      this.modalAddNewStatus = true;
+    },
     setModalVisible(data) {
       this.modalStatus = true;
       this.popupData = data;
     },
-    modalHistory(data) {
-      this.modalStatusHistory = true;
-      this.popupData = data;
-    },
+
     getColorTag(data) {
       if (data === "정상") {
         return "#108ee9";
@@ -195,39 +208,44 @@ export default defineComponent({
 });
 </script>
 <style>
-  .dx-button-has-text .dx-button-content {
-      padding: 0px 15px !important;
-  }
-  
-  .search-form {
-      background: #f1f3f4;
-      padding: 10px 24px;
-  }
-  
-  #data-grid-demo {
-      min-height: 700px;
-  }
-  
-  .dx-select-checkbox {
-      display: inline-block !important;
-  }
-  
-  .search-form .col {
-      display: flex;
-      align-items: center;
-  }
-  
-  .search-form .col {
-      margin-top: 20px;
-  }
-  
-  .search-form .col .lable-item {
-      width: 110px;
-      display: inline-block;
-  }
-  
-  .search-form .col .item:nth-child(2) {
-      margin-left: 30px;
-  }
-  
-  </style>
+.cell-button-add{
+  padding-left: 100px !important;
+}
+.cell-center{
+  text-align: center!important  
+}
+.dx-button-has-text .dx-button-content {
+  padding: 0px 15px !important;
+}
+
+.search-form {
+  background: #f1f3f4;
+  padding: 10px 24px;
+}
+
+#data-grid-demo {
+  min-height: 700px;
+}
+
+.dx-select-checkbox {
+  display: inline-block !important;
+}
+
+.search-form .col {
+  display: flex;
+  align-items: center;
+}
+
+.search-form .col {
+  margin-top: 20px;
+}
+
+.search-form .col .lable-item {
+  width: 110px;
+  display: inline-block;
+}
+
+.search-form .col .item:nth-child(2) {
+  margin-left: 30px;
+}
+</style>
