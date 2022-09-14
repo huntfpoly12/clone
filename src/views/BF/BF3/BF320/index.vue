@@ -156,7 +156,7 @@ export default defineComponent({
                 autoFilterEnabled: true,
             }).then(() => {
                 workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
                 });
             });
             e.cancel = true;

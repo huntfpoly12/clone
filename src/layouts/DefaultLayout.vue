@@ -28,7 +28,7 @@
                     <div class="wrap-search">
                         <a-input v-model:value="inputSearchText" placeholder="메뉴를 입력해보세요"
                             @keyup="onSearch($event.target.value)" :class="{ shown: state }"
-                            @click.prevent="toggleDropdown" @blur="focusInput" />
+                            @click.prevent="toggleDropdown" />
                         <div>
                             <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
                                 <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex"

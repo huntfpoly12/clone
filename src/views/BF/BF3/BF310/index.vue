@@ -152,7 +152,7 @@ export default defineComponent({
                 workbook.xlsx.writeBuffer().then((buffer) => {
                     saveAs(
                         new Blob([buffer], { type: "application/octet-stream" }),
-                        "DataGrid.xlsx"
+                        "계약정보관리.xlsx"
                     );
                 });
             });
