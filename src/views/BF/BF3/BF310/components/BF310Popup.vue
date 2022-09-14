@@ -229,7 +229,7 @@
 				<a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
 						<a-form-item label="출금은행">
-							<a-select ref="select" value="은행선택" style="width: 200px">
+							<a-select ref="select" v-model:value="은행선택" style="width: 200px">
 								<a-select-option value="은행선택">은행선택</a-select-option>
 								<a-select-option value="국민은행">국민은행</a-select-option>
 								<a-select-option value="신한은행">신한은행</a-select-option>
@@ -244,7 +244,7 @@
 						<a-form-item label="예금주명">
 							<a-input value="주식회사 타운소프트비나" />
 						</a-form-item>
-						<a-form-item label="사업자(주민)등록번호:">
+						<a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start">
 							<a-input value="100100056489011" />
 							<div class="noteImage">
 								<a-row>
@@ -273,7 +273,7 @@
 				<a-collapse-panel key="7" header="기타">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
 						<a-form-item label="영업관리담당">
-							<a-select ref="select" value="영업자선택" style="width: 200px">
+							<a-select ref="select" v-model:value="은행선택" style="width: 200px">
 								<a-select-option value="영업자선택">영업자선택</a-select-option>
 								<a-select-option value="A_대리점">A 대리점</a-select-option>
 								<a-select-option value="B_대리점">B 대리점</a-select-option>
@@ -318,7 +318,7 @@ export default defineComponent({
 	props: ["modalStatus", "data"],
 	data() {
 		return {
-			activeKey: [],
+			activeKey: 1,
 			text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
 			formState: {
 				name: "",
@@ -327,6 +327,7 @@ export default defineComponent({
 				resource: "",
 				desc: "",
 			},
+			은행선택: '은행선택',
 			gridDataSource: employees,
 			gridBoxValue: [],
 			fileList: [],
@@ -388,8 +389,8 @@ export default defineComponent({
 			wrapperCol: { span: 14 },
 			radioStyle: {
 				display: "flex",
-				height: "30px",
-				lineHeight: "30px",
+				height: "20px",
+				lineHeight: "20px",
 				checked: false,
 			},
 			value: ref<number>(1),
@@ -488,27 +489,4 @@ export default defineComponent({
 		},
 	},
 });
-</script>
-<style lang="scss" scoped>
-.noteText p {
-	margin-bottom: 1px;
-}
-
-.noteImage {
-	font-size: 12px;
-	width: 100%;
-	padding-top: 15px;
-}
-
-.ant-card-head-title {
-	padding: 0px;
-}
-
-.ant-form-item {
-	margin-bottom: 4px;
-}
-
-.title-number-modal {
-	margin-top: 7px;
-}
-</style>
+</script> 
