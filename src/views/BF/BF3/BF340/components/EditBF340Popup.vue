@@ -139,7 +139,7 @@
             </a-form>
         </a-modal>
 
-        <a-modal v-model:visible="visible" title="해지 확인" ok-text="완료">
+        <a-modal v-model:visible="visible" title="해지 확인" ok-text="완료" class="confirm-modal">
             <a-row>
                 <a-col :span="4">
                     <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />
@@ -153,7 +153,7 @@
             </a-row>
             <template #footer>
                 <a-input v-model:value="confirm" placeholder="확인" style="width: 150px" />
-                <a-button  type="primary" @click="handleOkConfirm">완료</a-button>
+                <a-button  type="primary" @click="handleOkConfirm" class="confirm-button">완료</a-button>
             </template>
         </a-modal>
     </div>
@@ -281,6 +281,15 @@ export default defineComponent({
 })
 </script>
 <style>
+.confirm-button{
+    margin-left: 100px;
+}
+.confirm-modal p{
+    white-space: normal;
+    font-size: 13px;
+    line-height: 16px;
+}
+
 .email-input .ant-form-item-label {
     white-space: normal;
 

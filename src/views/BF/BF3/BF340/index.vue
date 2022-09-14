@@ -62,7 +62,7 @@
             <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
         </template>
         <DxColumn data-field="영업자명" css-class="cell-center" :width="100"/>
-        <DxColumn data-field="등급"/>
+        <DxColumn data-field="등급" css-class="cell-center" :width="100"/>
         <DxColumn data-field="주소"/>
         <DxColumn data-field="연락처" :width="100"/>
         <DxColumn data-field="휴대폰" :width="100"/>
