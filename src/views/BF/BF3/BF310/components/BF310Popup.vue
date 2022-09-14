@@ -149,7 +149,7 @@
 								</template>
 							</a-card>
 							<a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
-								<template #headerCell="{ column }">
+								<template #headerCell="{ column, index }">
 									<template v-if="column.key === '사업명'">
 										<span> 사업명 (중복불가) </span>
 									</template>
@@ -173,7 +173,7 @@
 									</template>
 									<template v-else-if="column.key === '서비스시작년월'">
 										<span>
-											<CustomDatepicker :valueDate="record.서비스시작년월" />
+											<CustomDatepicker :valueDate="record.서비스시작년월" :className='record.key' />
 										</span>
 									</template>
 									<template v-else-if="column.key === 'action'">
@@ -214,7 +214,7 @@
 						<div style="margin-top: 20px">
 							<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
 								<a-form-item label="서비스 시작년월">
-									<CustomDatepicker width="30%" valueDate="2022/08/25" />
+									<CustomDatepicker width="30%" valueDate="2022/08/25" className="0" />
 								</a-form-item>
 								<a-form-item label="직 원 수">
 									<a-input-number value="10" style="width: 100px" />
@@ -504,11 +504,11 @@ export default defineComponent({
 	padding: 0px;
 }
 
-.ant-form-item{
+.ant-form-item {
 	margin-bottom: 4px;
 }
 
-.title-number-modal{
+.title-number-modal {
 	margin-top: 7px;
 }
 </style>
