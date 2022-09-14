@@ -197,7 +197,7 @@ export default defineComponent({
     }
 }
 .ant-select {
-    width: 120px;
+    width: 145px;
 }
 #data-grid-demo {
     min-height: 700px;
