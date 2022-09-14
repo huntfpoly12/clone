@@ -4,7 +4,6 @@
     </Datepicker>
 </template>
 <script lang="ts">
-import { CalendarOutlined } from '@ant-design/icons-vue';
 import DxDateBox from "devextreme-vue/date-box";
 import { defineComponent, ref } from "vue";
 import { Dayjs } from 'dayjs';
@@ -34,7 +33,6 @@ export default defineComponent({
     },
     components: {
         DxDateBox,
-        CalendarOutlined,
         Datepicker
     },
     setup(props, { emit }) {

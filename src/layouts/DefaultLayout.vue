@@ -28,7 +28,7 @@
                     <div class="wrap-search">
                         <a-input v-model:value="inputSearchText" placeholder="메뉴를 입력해보세요"
                             @keyup="onSearch($event.target.value)" :class="{ shown: state }"
-                            @click.prevent="toggleDropdown" @blur="focusInput" />
+                            @click.prevent="toggleDropdown" />
                         <div>
                             <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
                                 <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex"
@@ -158,6 +158,7 @@ import menuData from "./menuData"
 const BF310 = defineAsyncComponent(() => import('../views/BF/BF3/BF310/index.vue'));
 const BF320 = defineAsyncComponent(() => import('../views/BF/BF3/BF320/index.vue'));
 const BF330 = defineAsyncComponent(() => import('../views/BF/BF3/BF330/index.vue'));
+const BF340 = defineAsyncComponent(() => import('../views/BF/BF3/BF340/index.vue'));
 const Test = defineAsyncComponent(() => import('../views/DefaultComponent.vue'));
 import {
     MenuFoldOutlined,
@@ -188,6 +189,7 @@ export default defineComponent({
         BF310,
         BF320,
         BF330,
+        BF340,
         Test,
         MenuFoldOutlined,
         MenuUnfoldOutlined,
@@ -219,6 +221,7 @@ export default defineComponent({
             if (this.activeTab.id === 'bf-310') return BF310
             if (this.activeTab.id === 'bf-320') return BF320
             if (this.activeTab.id === 'bf-330') return BF330
+            if (this.activeTab.id === 'bf-340') return BF340
             return Test
         }
 
@@ -300,7 +303,6 @@ export default defineComponent({
                 } else if(latestOpenKey && latestOpenKey.includes('pa')) {
                     state.openKeys = ['pa-000', latestOpenKey];
                 }
-                
             } else {
                 state.openKeys = latestOpenKey ? [latestOpenKey] : [];
             }
