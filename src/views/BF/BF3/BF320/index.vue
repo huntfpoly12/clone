@@ -141,8 +141,8 @@ export default defineComponent({
                 surrogate: '',
                 status: false,
                 address: '',
-                manager: '',
-                nameSale: ''
+                manager: 'Jack',
+                nameSale: 'Jack'
             },
         };
     },
