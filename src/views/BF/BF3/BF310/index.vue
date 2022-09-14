@@ -11,19 +11,19 @@
                 <a-col>
                     <label class="lable-item">심사상태/결과 :</label>
                     <a-select ref="select" v-model:value="dataSearch.status">
-                                <a-select-option value="신청">신청</a-select-option>
-                                <a-select-option value="심사중">심사중</a-select-option>
-                                <a-select-option value="승인">승인</a-select-option>
-                                <a-select-option value="반려 ">반려</a-select-option>
+                        <a-select-option value="신청">신청</a-select-option>
+                        <a-select-option value="심사중">심사중</a-select-option>
+                        <a-select-option value="승인">승인</a-select-option>
+                        <a-select-option value="반려 ">반려</a-select-option>
                     </a-select>
                 </a-col>
                 <a-col>
                     <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" value="A 대리점" placeholder="전체">
-                                <a-select-option value="A 대리점">A 대리점</a-select-option>
-                                <a-select-option value="C 영업사원">C 영업사원</a-select-option>
-                                <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-                                <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                    <a-select ref="select" v-model:value="dataSearch.select1" placeholder="전체">
+                        <a-select-option value="A 대리점">A 대리점</a-select-option>
+                        <a-select-option value="C 영업사원">C 영업사원</a-select-option>
+                        <a-select-option value="D 영업사원">D 영업사원</a-select-option>
+                        <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
                     </a-select>
                 </a-col>
                 <a-col>
@@ -133,7 +133,8 @@ export default defineComponent({
                 typeSevice1: true,
                 typeSevice2: true,
                 status: '신청',
-                staff: ''
+                staff: '',
+                select1: 'A 대리점'
             },
             sizeButton: 'small'
         };
@@ -178,7 +179,7 @@ export default defineComponent({
     },
 });
 </script>
-<style>
+<style lang="scss">
 .dx-button-has-text .dx-button-content {
     padding: 0px 15px !important;
 }
@@ -186,8 +187,18 @@ export default defineComponent({
 .search-form {
     background: #f1f3f4;
     padding: 10px 24px;
+    > div {
+        justify-content: flex-start !important;
+        align-items: center;
+        margin-right: 15px;
+    }
+    label {
+        margin-right: 10px;
+    }
 }
-
+.ant-select {
+    width: 120px;
+}
 #data-grid-demo {
     min-height: 700px;
 }
