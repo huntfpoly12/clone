@@ -87,7 +87,7 @@
       </DxDataGrid>
       <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
       <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" /> 
-      <HistoryBF340Popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" /> 
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" title="변경이력[cm-000-pop]"/> 
     </div>
   </div>
 </template>
@@ -108,7 +108,7 @@ import {
 
 import EditBF340Popup from "./components/EditBF340Popup.vue";
 import AddNew340Poup from "./components/AddNew340Poup.vue";
-import HistoryBF340Popup from "./components/HistoryBF340Popup.vue";
+import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees } from "./data.js";
@@ -140,25 +140,11 @@ export default defineComponent({
     DxItem,
     AddNew340Poup,
     EditBF340Popup,
-    HistoryBF340Popup
+    HistoryPopup
   },
   data() {
     return {
       dataSource: employees,
-      options: [
-        {
-          value: "jack",
-          label: "Jack",
-        },
-        {
-          value: "lucy",
-          label: "Lucy",
-        },
-        {
-          value: "tom",
-          label: "Tom Halin Sin Han Bank",
-        },
-      ],
       popupData: [],
       modalAddNewStatus: false,
       modalEditStatus: false,
@@ -195,9 +181,6 @@ export default defineComponent({
     openAddNewModal(){
       this.modalAddNewStatus = true;
     },
-    openHistoryModal(){
-      this.modalHistoryStatus = true;
-    },
     setModalEditVisible(data) {
       this.modalEditStatus = true;
       this.popupData = data;
@@ -206,7 +189,6 @@ export default defineComponent({
       this.modalHistoryStatus = true;
       this.popupData = data;
     },
-
     getColorTag(data) {
       if (data === "정상") {
         return "#108ee9";

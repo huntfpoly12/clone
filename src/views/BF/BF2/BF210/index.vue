@@ -91,7 +91,7 @@
       </DxDataGrid>
       <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
       <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" /> 
-      <HistoryBF210Popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" /> 
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" title="변경이력[cm-000-pop]"/> 
     </div>
   </div>
 </template>
@@ -112,7 +112,7 @@ import {
 
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
-import HistoryBF210Popup from "./components/HistoryBF210Popup.vue";
+import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees } from "./data.js";
@@ -145,7 +145,7 @@ export default defineComponent({
     DxItem,
     AddNew210Poup,
     EditBF210Popup,
-    HistoryBF210Popup
+    HistoryPopup
   },
   data() {
     return {
@@ -199,9 +199,6 @@ export default defineComponent({
     },
     openAddNewModal(){
       this.modalAddNewStatus = true;
-    },
-    openHistoryModal(){
-      this.modalHistoryStatus = true;
     },
     setModalEditVisible(data) {
       this.modalEditStatus = true;
