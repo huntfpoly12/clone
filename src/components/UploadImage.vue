@@ -1,14 +1,10 @@
 <template>
   <a-row class="container_upload" :gutter="[16, 8]">
-    <a-col v-if="imageUrl" style="margin-top: -125px" :span="16">
+    <a-col v-if="imageUrl" :span="16">
       <a-form-item class="title" :label="title">
-        <a-upload
-          v-model:file-list="fileList"
-          :show-upload-list="true"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          :before-upload="beforeUpload"
-          @change="handleChange"
-        >
+        <a-upload v-model:file-list="fileList" :show-upload-list="true"
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :before-upload="beforeUpload"
+          @change="handleChange">
           <a-button>
             <upload-outlined></upload-outlined>
             파일선택...
@@ -28,13 +24,9 @@
     </a-col>
     <a-col v-else :span="16">
       <a-form-item class="title" :label="title">
-        <a-upload
-          v-model:file-list="fileList"
-          :show-upload-list="false"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          :before-upload="beforeUpload"
-          @change="handleChange"
-        >
+        <a-upload v-model:file-list="fileList" :show-upload-list="false"
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :before-upload="beforeUpload"
+          @change="handleChange">
           <a-button>
             <upload-outlined></upload-outlined>
             파일선택...
@@ -54,30 +46,14 @@
     </a-col>
     <a-col :span="8" class="imgPreview">
       <div style="display: flex; flex-direction: column">
-        <img
-          v-if="imageUrl"
-          :src="imageUrl"
-          alt="avatar"
-          @click="handlePreview"
-        />
+        <img v-if="imageUrl" :src="imageUrl" alt="avatar" @click="handlePreview" />
         <img v-else src="https://taao.vn/placeholder.jpg" alt="avatar" />
-        <a-button
-          class="button_remove"
-          v-if="imageUrl"
-          type="primary"
-          @click="handleRemove"
-          :size="10"
-          >Remove</a-button
-        >
+        <a-button class="button_remove" v-if="imageUrl" type="primary" @click="handleRemove" :size="10">Remove
+        </a-button>
       </div>
     </a-col>
 
-    <a-modal
-      :visible="previewVisible"
-      :title="title"
-      :footer="null"
-      @cancel="handleCancel"
-    >
+    <a-modal :visible="previewVisible" :title="title" :footer="null" @cancel="handleCancel">
       <img alt="example" style="width: 100%" :src="imageUrl" />
     </a-modal>
   </a-row>
@@ -183,20 +159,23 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .container_upload {
-  width: 100%;
-  margin-top: -50px;
+  width: 100%; 
 }
+
 .imgPreview {
   cursor: pointer;
   width: 100%;
 }
+
 .imgPreview img {
   width: 100%;
 }
+
 .title {
   padding-left: 8px;
   padding-right: 8px;
 }
+
 .button_remove {
   width: 100px;
   margin: 0 auto;
