@@ -1,6 +1,6 @@
 <template>
   <a-row class="container_upload" :gutter="[16, 8]">
-    <a-col :span="16">
+    <a-col :span="16" style="padding-left: 16px">
       <a-form-item class="title" :label="title">
         <a-upload
           single
@@ -13,14 +13,12 @@
           @change="handleChange"
           accept=".pdf,.tiff,.png,.jpeg,.jpg"
         >
-          <a-button>
+          <a-button class="test-local">
             <upload-outlined></upload-outlined>
             파일선택...
           </a-button>
-          trang
-          <input type="text" v-model="fileName" />
+
           <p>{{ fileName }}</p>
-          trang
         </a-upload>
         <!-- <div id="app" style="display: flex; align-items: center">
           <input
@@ -66,7 +64,7 @@
   </a-row>
 </template>
 
-<script lang="ts">
+<script src="" lang="ts">
 import { ref, defineComponent } from "vue";
 import { message, Upload } from "ant-design-vue";
 import type { UploadProps } from "ant-design-vue";
@@ -130,7 +128,7 @@ export default defineComponent({
     const file = ref<any>("");
     const title = ref<string>("");
     const previewVisible = ref(false);
-    var fileName = ref<any>("xxx");
+    var fileName = ref<any>("");
     function beforeUpload(file: any) {
       const isJpgOrPng =
         file.type === "image/png" ||

@@ -128,7 +128,7 @@
                   </a-row>
                 </a-col>
                 <a-col :span="24">
-                  <a-row>
+                  <a-row class="address_number3">
                     <a-input v-model:value="formState.name" />
                   </a-row>
                 </a-col>
@@ -527,7 +527,9 @@ export default defineComponent({
   font-size: 13px;
   line-height: 5px;
 }
-
+.address_number3 {
+  padding-bottom: 10px;
+}
 .ant-form-item-label {
   text-align: left;
 }

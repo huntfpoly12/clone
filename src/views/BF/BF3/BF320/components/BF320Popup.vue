@@ -352,6 +352,11 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 ::v-deep.components-modal-demo-position {
+  ::v-deep.test-local {
+    background-color: pink !important;
+    width: 1000px !important;
+    height: 200px !important;
+  }
   .imgPreview img {
     width: 1000px !important;
   }
