@@ -66,9 +66,7 @@ export default {
     const form = reactive({
       username: "",
       password: "",
-      confirmpassword: "",
     });
-    const isSignup = ref(false);
     const errors = ref(null);
 
     const submitForm = (e) => {
@@ -101,7 +99,6 @@ export default {
 
     return {
       form,
-      isSignup,
       submitForm,
       errors,
       signinLoading,

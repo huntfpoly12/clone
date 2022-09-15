@@ -390,9 +390,11 @@ export default defineComponent({
 .search-height {
     max-height: 150px;
 }
-
+.ant-layout {
+    overflow-x: hidden;
+}
 .box-search {
-    overflow: auto;
+    overflow-y: auto;
     position: absolute;
     z-index: 9;
     width: 233px;
