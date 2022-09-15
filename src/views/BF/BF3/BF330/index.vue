@@ -2,11 +2,9 @@
     <div id="bf-310">
         <div class="search-form">
             <div id="components-grid-demo-flex">
-                <a-row justify="start" :gutter="[16,8]">
-                    <a-col>a
-                        <label class="lable-item">
-                            사업자코드 :
-                        </label>
+                <a-row justify="start" :gutter="[16, 8]">
+                    <a-col>
+                        <label class="lable-item"> 사업자코드 : </label>
                         <a-input style="width: 120px" v-model:value="dataSearch.typeSevice" />
                     </a-col>
                     <a-col>
@@ -38,11 +36,6 @@
                             placeholder="영업자명" :options="options">
                         </a-select>
                     </a-col>
-                    <a-col>
-                    <label class="lable-item"></label>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
-                </a-col>
                 </a-row>
             </div>
         </div>
@@ -60,9 +53,8 @@
                 <DxColumn data-field="매니저" />
                 <DxColumn data-field="관리시작일" data-type="date" />
                 <DxColumn data-field="영업자" />
-                <DxColumn data-field="서비스" />
-                <DxColumn data-field="이용료" />
-                <DxColumn data-field="해지일자" data-type="date"/>               
+                <DxColumn data-field="해지일자" />
+                <DxColumn data-field="연체(개월)" />
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
@@ -79,36 +71,35 @@
                     </div>
                 </template>
             </DxDataGrid>
-
-            <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
-            <BF330Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
+            <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="popupData" />
+            <BF330Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory = false"
                 :data="popupData" />
         </div>
     </div>
 </template>
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import {
     DxDataGrid,
     DxColumn,
     DxPaging,
     DxExport,
     DxSelection,
-    DxSearchPanel
-} from 'devextreme-vue/data-grid';
+    DxSearchPanel,
+} from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
-import { employees, states } from '../data.js';
-import { Workbook } from 'exceljs';
-import { saveAs } from 'file-saver-es';
-import { exportDataGrid } from 'devextreme/excel_exporter';
-import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
-import dayjs from 'dayjs';
-import weekday from "dayjs/plugin/weekday"
-import localeData from "dayjs/plugin/localeData"
-dayjs.extend(weekday)
-dayjs.extend(localeData)
+import { employees, states } from "../data.js";
+import { Workbook } from "exceljs";
+import { saveAs } from "file-saver-es";
+import { exportDataGrid } from "devextreme/excel_exporter";
+import { EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
+import dayjs from "dayjs";
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 
 export default defineComponent({
     components: {
@@ -122,47 +113,54 @@ export default defineComponent({
         BF330Popup,
         EditOutlined,
         HistoryOutlined,
-        Style
+        Style,
     },
     data() {
         return {
             dataSource: employees,
             states,
-            options: [{
-                value: 'jack',
-                label: 'Jack',
-            }, {
-                value: 'lucy',
-                label: 'Lucy',
-            }, {
-                value: 'tom',
-                label: 'Tom Halin Sin Han Bank',
-            }],
+            options: [
+                {
+                    value: "jack",
+                    label: "Jack",
+                },
+                {
+                    value: "lucy",
+                    label: "Lucy",
+                },
+                {
+                    value: "tom",
+                    label: "Tom Halin Sin Han Bank",
+                },
+            ],
             popupData: [],
             modalStatus: false,
             modalStatusHistory: false,
             dataSearch: {
-                typeSevice: '',
-                nameCompany: '',
-                surrogate: '',
+                typeSevice: "",
+                nameCompany: "",
+                surrogate: "",
                 status: false,
-                address: '',
-                manager: '',
-                nameSale: ''
+                address: "",
+                manager: "",
+                nameSale: "",
             },
         };
     },
     methods: {
         onExporting(e) {
             const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet('employees');
+            const worksheet = workbook.addWorksheet("employees");
             exportDataGrid({
                 component: e.component,
                 worksheet,
                 autoFilterEnabled: true,
             }).then(() => {
                 workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+                    saveAs(
+                        new Blob([buffer], { type: "application/octet-stream" }),
+                        "서비스관리.xlsx"
+                    );
                 });
             });
             e.cancel = true;
@@ -175,7 +173,6 @@ export default defineComponent({
             this.modalStatusHistory = true;
             this.popupData = data;
         },
-     
     },
 });
 </script>
