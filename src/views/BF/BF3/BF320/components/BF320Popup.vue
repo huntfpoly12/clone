@@ -101,7 +101,7 @@
                         <a-form-item label="사업자(주민)등록번호:">
                             <a-input value="100100056489011" />
                         </a-form-item>
-                        <a-form-item label="자동이체출금일자">
+                        <a-form-item label="자동이체출금일자" align="start">
                             <a-radio-group v-model:value="value">
                                 <a-radio :style="radioStyle" :value="1">매월 5일</a-radio>
                                 <a-radio :style="radioStyle" :value="2">매월 12일</a-radio>
@@ -304,14 +304,4 @@ export default defineComponent({
         },
     },
 });
-</script>
-<style>
-.warring-modal {
-    font-size: 13px;
-    line-height: 5px;
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
-</style>
+</script> 

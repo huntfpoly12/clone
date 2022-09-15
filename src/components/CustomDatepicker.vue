@@ -50,7 +50,8 @@ export default defineComponent({
         }
 
         const alertDate = () => {
-            if (date.value == null) {
+
+            if (dataInput) {
                 let dateInput = ''
                 if (dataInput.length == 8) {
                     dateInput = dataInput.slice(0, 4) + '-' + dataInput.slice(4, 6) + '-' + dataInput.slice(6, 8)
@@ -75,7 +76,6 @@ export default defineComponent({
             let classDate = '.' + classNameProps + ' .dp__input'
             var Url = document.querySelector(classDate) as HTMLInputElement;
             dataInput = Url.value
-            console.log(dataInput);
 
         }
 
