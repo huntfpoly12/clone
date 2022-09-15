@@ -1,5 +1,5 @@
 <template>
-    <div id="components-modal-demo-position">
+    <div id="components-modal-demo-position" >
         <a-modal :visible="modalStatus" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
@@ -35,7 +35,7 @@
                         </a-row>
                         <div>
                             <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                                :headStyle="{padding: '0px',color: 'red'}" bodyStyle="padding: 24px 0px">
+                                :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 24px 0px">
                                 <template #extra>
                                     <a-button type="text">
                                         <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
@@ -131,8 +131,8 @@
                         <imgUpload :title="titleModal" :imageUrl="imageUrl" />
 
                     </a-form>
-                    <hr>
-                    <a-row>
+                    <hr>                   
+                    <a-row style="padding: 5px">
                         <a-col>
                             <a-form-item label="원천서비스" style="font-weight: bold">
                                 <input type="checkbox" value="regist"> 원천서비스 신청
@@ -553,6 +553,7 @@ export default defineComponent({
 
 .ant-form-item-label {
     text-align: left;
+    padding: 10px;
 }
 
 .ant-form-item {
@@ -567,12 +568,16 @@ export default defineComponent({
     height: 600px;
     border: 1px solid #333;
     overflow: auto;
-    border: 0ch;
-}
+    border: 0ch;  
+   }
 
 .table-scroll {
     height: 190px;
     border: 1px solid #333;
     overflow: auto;
+    padding: 5px;
+}
+.ant-collapse-content > .ant-collapse-content-box {
+    padding: 10px 0px;
 }
 </style>
