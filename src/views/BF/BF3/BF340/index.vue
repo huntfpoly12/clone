@@ -62,7 +62,7 @@
             <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
         </template>
         <DxColumn data-field="영업자명" css-class="cell-center" :width="100"/>
-        <DxColumn data-field="등급"/>
+        <DxColumn data-field="등급" css-class="cell-center" :width="100"/>
         <DxColumn data-field="주소"/>
         <DxColumn data-field="연락처" :width="100"/>
         <DxColumn data-field="휴대폰" :width="100"/>
@@ -75,7 +75,7 @@
             <a-space :size="10">
               <a-tooltip placement="top">
                 <template #title>편집</template>
-                <EditOutlined @click="setModalVisible(data)" />
+                <EditOutlined @click="setModalEditVisible(data)" />
               </a-tooltip>
               <a-tooltip placement="top">
                 <template #title>변경이력</template>
@@ -86,6 +86,7 @@
         </template>
       </DxDataGrid>
       <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+      <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" /> 
     </div>
   </div>
 </template>
@@ -103,7 +104,8 @@ import {
   DxGrouping,
   DxItem
 } from "devextreme-vue/data-grid";
-import BF340Popup from "./components/BF340Popup.vue";
+
+import EditBF340Popup from "./components/EditBF340Popup.vue";
 import AddNew340Poup from "./components/AddNew340Poup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
@@ -127,7 +129,6 @@ export default defineComponent({
     DxSelection,
     DxExport,
     DxSearchPanel,
-    BF340Popup,
     EditOutlined,
     HistoryOutlined,
     Style,
@@ -135,7 +136,8 @@ export default defineComponent({
     DxEditing,
     DxGrouping,
     DxItem,
-    AddNew340Poup
+    AddNew340Poup,
+    EditBF340Popup
 
   },
   data() {
@@ -156,8 +158,8 @@ export default defineComponent({
         },
       ],
       popupData: [],
-      modalStatus: false,
       modalAddNewStatus: false,
+      modalEditStatus: false,
       dataSearch: {
         typeSevice: "전체",
         nameCompany: "",
@@ -190,8 +192,8 @@ export default defineComponent({
     openAddNewModal(){
       this.modalAddNewStatus = true;
     },
-    setModalVisible(data) {
-      this.modalStatus = true;
+    setModalEditVisible(data) {
+      this.modalEditStatus = true;
       this.popupData = data;
     },
 
