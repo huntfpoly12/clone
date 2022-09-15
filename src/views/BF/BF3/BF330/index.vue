@@ -6,7 +6,7 @@
                     <a-col>
                         <label class="lable-item"> 사업자코드 : </label>
                         <a-input style="width: 120px" v-model:value="dataSearch.typeSevice" />
-                    </a-col>
+                    </a-col>                   
                     <a-col>
                         <label class="lable-item">상호:</label>
                         <a-input style="width: 120px" v-model:value="dataSearch.nameCompany" />
@@ -36,6 +36,11 @@
                             placeholder="영업자명" :options="options">
                         </a-select>
                     </a-col>
+                    <a-col>
+                    <label class="lable-item"></label>
+                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
+                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                </a-col>
                 </a-row>
             </div>
         </div>
@@ -46,6 +51,7 @@
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="사업자코드" />
+                <DxColumn data-field="상태" />
                 <DxColumn data-field="상호" data-type="date" />
                 <DxColumn data-field="대표자" />
                 <DxColumn data-field="주소" data-type="date" />
@@ -53,8 +59,9 @@
                 <DxColumn data-field="매니저" />
                 <DxColumn data-field="관리시작일" data-type="date" />
                 <DxColumn data-field="영업자" />
-                <DxColumn data-field="해지일자" />
-                <DxColumn data-field="연체(개월)" />
+                <DxColumn data-field="서비스" />
+                <DxColumn data-field="이용료" />
+                <DxColumn data-field="해지일자" />                
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
@@ -177,3 +184,9 @@ export default defineComponent({
     },
 });
 </script>
+<style>
+   .components-grid-demo-flex .ant-col {
+        display: flex;
+        align-items: center;
+    }
+</style>

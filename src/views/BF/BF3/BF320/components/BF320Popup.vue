@@ -304,7 +304,7 @@ export default defineComponent({
   },
   methods: {
     getImgUrl(img: any) {
-      console.log("imgUrl", img);
+      // console.log("imgUrl", img);
     },
     setModalVisible() {
       this.$emit("closePopup", false);

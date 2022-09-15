@@ -7,7 +7,7 @@
 }
 .modal-note {
     max-height: 500px;
-    overflow: auto;
+    overflow-y: auto;
 
     .title-note {
         display: flex;

@@ -59,19 +59,19 @@
 				</a-collapse-panel>
 				<a-collapse-panel key="2" header="사업자정보">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-						<a-form-item label="상 호">
+						<a-form-item label="상 호" class="clr">
 							<a-input v-model:value="formState.name" />
 						</a-form-item>
-						<a-form-item label="사업자등록번호">
+						<a-form-item label="사업자등록번호" class="clr">
 							<a-input v-model:value="formState.name" style="width: 300px" />
 						</a-form-item>
 
 						<a-row>
 							<a-col :span="12">
-								<a-form-item label="사업자유형">
+								<a-form-item label="사업자유형" class="clr">
 									<a-radio-group v-model:value="formState.resource">
-										<a-radio value="1">법인사업자</a-radio>
-										<a-radio value="2">개인사업자</a-radio>
+										<a-radio value="1" class="clb">법인사업자</a-radio>
+										<a-radio value="2" class="clb">개인사업자</a-radio>
 									</a-radio-group>
 								</a-form-item>
 							</a-col>
@@ -81,7 +81,7 @@
 								</a-form-item>
 							</a-col>
 						</a-row>
-						<a-form-item label="주소">
+						<a-form-item label="주소" class="clr">
 							<a-row :gutter="[0, 4]">
 								<a-col :span="24">
 									<a-row>
@@ -108,7 +108,7 @@
 						</a-form-item>
 						<a-row :gutter="[16, 16]">
 							<a-col :span="18">
-								<a-form-item label="연락처">
+								<a-form-item label="연락처" class="clr">
 									<a-input v-model:value="formState.desc" />
 								</a-form-item>
 								<a-form-item label="팩 스">
@@ -122,16 +122,16 @@
 				</a-collapse-panel>
 				<a-collapse-panel key="3" header="대표자정보">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-						<a-form-item has-feedback label="대표자명">
+						<a-form-item has-feedback label="대표자명" class="clr">
 							<a-input value="홍길동" autocomplete="off" style="width: 300px" />
 						</a-form-item>
-						<a-form-item has-feedback label="생년월일">
+						<a-form-item has-feedback label="생년월일" class="clr">
 							<a-input value="19620820" autocomplete="off" style="width: 300px" />
 						</a-form-item>
-						<a-form-item has-feedback label="휴대폰번호">
+						<a-form-item has-feedback label="휴대폰번호" class="clr">
 							<a-input-number value="01098765432" style="width: 200px" />
 						</a-form-item>
-						<a-form-item has-feedback label="이메일">
+						<a-form-item has-feedback label="이메일" class="clr">
 							<a-input value="abc123@mailaddress.com" style="width: 300px" />
 						</a-form-item>
 					</a-form>
@@ -151,12 +151,12 @@
 							<a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
 								<template #headerCell="{ column, index }">
 									<template v-if="column.key === '사업명'">
-										<span> 사업명 (중복불가) </span>
+										<span class="clr-text"> 사업명 (중복불가) </span>
 									</template>
 								</template>
 								<template #bodyCell="{ column, record }">
 									<template v-if="column.key === '사업명'">
-										<a>
+										<a href="">
 											{{ record.사업명 }}
 										</a>
 									</template>
@@ -189,7 +189,7 @@
 								</template>
 							</a-table>
 
-							<a-form-item label="장기요양기관등록번호" class="title-number-modal">
+							<a-form-item label="장기요양기관등록번호" class="title-number-modal clr">
 								<a-input value="01234567898" style="width: 300px" />
 							</a-form-item>
 							<imgUpload :title="titleModal" @update-img="getImgUrl" />
@@ -213,10 +213,10 @@
 						<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
 						<div style="margin-top: 20px">
 							<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-								<a-form-item label="서비스 시작년월">
+								<a-form-item label="서비스 시작년월" class="clr">
 									<CustomDatepicker width="30%" valueDate="2022/08/25" className="0" />
 								</a-form-item>
-								<a-form-item label="직 원 수">
+								<a-form-item label="직 원 수" class="clr">
 									<a-input-number value="10" style="width: 100px" />
 								</a-form-item>
 								<a-form-item label="부가서비스">
@@ -502,3 +502,19 @@ export default defineComponent({
 	},
 });
 </script> 
+
+<style lang="scss">
+.clr {
+	label {
+		color: red;
+	}
+}
+
+.clr-text {
+	color: red;
+}
+
+.clb {
+	color: black !important;
+}
+</style>

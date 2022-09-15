@@ -567,14 +567,14 @@ export default defineComponent({
 .popup-scroll {
     height: 600px;
     border: 1px solid #333;
-    overflow: auto;
+    overflow-y: auto;
     border: 0ch;  
    }
 
 .table-scroll {
     height: 190px;
     border: 1px solid #333;
-    overflow: auto;
+    overflow-y: auto;
     padding: 5px;
 }
 .ant-collapse-content > .ant-collapse-content-box {
