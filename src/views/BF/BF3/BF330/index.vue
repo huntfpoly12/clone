@@ -185,7 +185,7 @@ export default defineComponent({
 });
 </script>
 <style>
-    .ant-col {
+   .components-grid-demo-flex .ant-col {
         display: flex;
         align-items: center;
     }
