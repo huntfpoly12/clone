@@ -129,7 +129,8 @@ export default defineComponent({
     const title = ref<string>("");
     const previewVisible = ref(false);
     var fileName = ref<any>("");
-    function beforeUpload(file: any) {
+
+    const beforeUpload = (file: any) => {
       const isJpgOrPng =
         file.type === "image/png" ||
         file.type === "image/jpg" ||
@@ -148,67 +149,23 @@ export default defineComponent({
         loading.value = false;
         message.error("Image must smaller than 5MB!");
       }
-
+      fileName = file.name;
+      console.log(file.name, "fileName");
       return isJpgOrPng && isLt5M && true;
-    }
-    // const beforeUpload = (file: any) => {
-    //   const isJpgOrPng =
-    //     file.type === "image/png" ||
-    //     file.type === "image/jpg" ||
-    //     file.type === "image/jpeg" ||
-    //     file.type === "application/pdf" ||
-    //     file.type === "image/tiff";
-
-    //   console.log("file type", isJpgOrPng);
-
-    //   if (!isJpgOrPng) {
-    //     message.error("You can not upload file!");
-    //   }
-
-    //   const isLt5M = file.size / 1024 / 1024 < 5;
-    //   if (!isLt5M) {
-    //     loading.value = false;
-    //     message.error("Image must smaller than 5MB!");
-    //   }
-    //   fileName = file.name;
-    //   console.log(file.name, "fileName");
-    //   return isJpgOrPng && isLt5M && true;
-    // };
+    };
     const onRemove = () => {
       imageUrl.value = "";
     };
 
     const handleChange = (info: any, fileList: any) => {
-      // if (info.file.status === "uploading") {
-      //   loading.value = true;
-      //   return;
-      // }
-
-      // if (info.file.status === "done") {
       fileName = info.file.name;
       console.log(info.file.name, "fileName");
       getBase64(info.file.originFileObj, (base64Url: string) => {
         imageUrl.value = base64Url;
         loading.value = false;
 
-        // setTimeout(() => {
-        //   fileName = imageUrl;
-        //   console.log(imageUrl, "fileName");
-        // }, 100);
         emit("update-img", imageUrl.value);
       });
-
-      // }
-      // if (info.file.status === "error") {
-      //   loading.value = false;
-
-      //   getBase64(info.file.originFileObj, (base64Url: string) => {
-      //     imageUrl.value = base64Url;
-      //     loading.value = false;
-      //     console.log("value img", imageUrl.value);
-      //     emit("update-img", imageUrl.value);
-      //   });
-      // }
     };
 
     const handleCancel = () => {
