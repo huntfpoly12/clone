@@ -143,7 +143,7 @@
 							<a-card title="⁙ 운영사업" :style="{padding : '0px'}" :bordered="false" style="width: 100%"
 								:headStyle="{ padding: '0px', color: 'red' }">
 								<template #extra style="padding: 0px;">
-									<a-button type="text">
+									<a-button type="text" @click="handleCopy">
 										<PlusOutlined :style="{ fontSize: '20px', color: '#08c' }" />
 									</a-button>
 								</template>
@@ -383,6 +383,7 @@ export default defineComponent({
 					정원수: 10,
 				},
 			],
+			keyNumber: 3,
 			dateFormat: "YYYY-MM-DD",
 			value1: dayjs("2015/01/01", "YYYY-MM-DD"),
 			labelCol: { style: { width: "150px" } },
@@ -418,11 +419,22 @@ export default defineComponent({
 		},
 	},
 	methods: {
+		handleCopy() {
+			this.keyNumber++;
+			let dataDef = {
+				key: this.keyNumber,
+				사업명: "가나다라마바 사업",
+				사업분류: "방문간호",
+				서비스시작년월: "2015/01/01",
+				정원수: 10,
+			};
+			this.dataTable.push(dataDef);
+		},
 		setModalVisible() {
 			this.$emit("closePopup", false);
 		},
 		getImgUrl(img: any) {
-			console.log("imgUrl", img);
+			// console.log("imgUrl", img);
 		},
 
 		getColorTag(data: string) {

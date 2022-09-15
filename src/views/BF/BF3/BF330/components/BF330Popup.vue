@@ -4,201 +4,195 @@
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
                 <a-collapse-panel key="1" header="이용서비스">
-                    <a-form :label-col="labelCol">
-                        <a-form-item label="총일용료">
-                            <a-input v-model:value="formState.name" style="width:440px" />
-                        </a-form-item>
-                        <a-form-item label="회계서비스 이용료">
-                            <a-input v-model:value="formState.name" style="width: 240px" />
-                        </a-form-item>
-                        <a-form-item label="원천서비스 이용료">
-                            <a-input v-model:value="formState.name" style="width: 240px" />
-                        </a-form-item>
+                    <a-form :label-col="labelCol" class="popup-scroll">
+                        <a-row>
+                            <a-col :span="10">
+                                <a-form-item label="총일용료" style="font-weight: bold">
+                                    <a-input v-model:value="formState.totalService" disabled="True" />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="8"></a-col>
+                            <a-col :span="10">
+                                <a-form-item label="회계서비스 이용료" style="padding-left: 50px;">
+                                    <a-input v-model:value="formState.accFeeService" disabled="True" />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="14"></a-col>
+                            <a-col :span="10">
+                                <a-form-item label="원천서비스 이용료" style="padding-left: 50px">
+                                    <a-input v-model:value="formState.taxFeeSevice" disabled="True" />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="14"></a-col>
+                        </a-row>
                         <hr>
                         <a-row>
                             <a-col :span="12">
-                                <a-form-item label="회계서비스">
+                                <a-form-item label="회계서비스" style="font-weight: bold">
                                     <input type="checkbox" value="regist"> 회계서비스 신청
                                 </a-form-item>
                             </a-col>
                         </a-row>
-                        <a-card title="⁙ 운영사업" :bordered="true" style="width: 100%" :headStyle="{padding: '0px',color: 'red'}"
-                bodyStyle="padding: 24px 0px">
-                <template #extra>
-                  <a-button type="text">
-                    <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
-                  </a-button>
-                </template>
-                <a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
-                  <template #headerCell="{ column }">
-                    <template v-if="column.key === '사업명'">
-                      <span> 사업명 (중복불가) </span>
-                    </template>
-                  </template>
-                  <template #bodyCell="{ column, record }">
-                    <template v-if="column.key === '사업명'">
-                      <a>
-                        {{ record.사업명 }}
-                      </a>
-                    </template>
-                    <template v-else-if="column.key === '사업분류'">
-                      <span>
-                        <a-select ref="select" v-model:value="record.사업분류" style="width: 200px">
-                          <a-select-option value="방문요양">방문요양</a-select-option>
-                          <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
-                          <a-select-option value="방문간호">방문간호</a-select-option>
-                          <a-select-option value="방문목욕">방문목욕</a-select-option>
-                          <a-select-option value="단기보호">단기보호</a-select-option>
-                          <a-select-option value="복지용구">복지용구</a-select-option>
-                        </a-select>
-                      </span>
-                    </template>
-                    <template v-else-if="column.key === '서비스시작년월'">
-                      <span>
-                        <CustomDatepicker :valueDate="record.서비스시작년월" />
-                      </span>
-                    </template>
-                    <template v-else-if="column.key === 'action'">
-                      <span>
-                        <a-popconfirm title="Are you sure delete this row?" ok-text="Yes" cancel-text="No">
-                          <a-button type="text">
-                            <minus-circle-outlined />
-                          </a-button>
-                        </a-popconfirm>
-                      </span>
-                    </template>
-                  </template>
-                </a-table>
-              </a-card>
-                        <a-form-item label="주소">
-                            <a-row :gutter="[0,16]">
-                                <a-col :span="24">
-                                    <a-row>
-                                        <a-col :span="12">
-                                            <a-input v-model:value="formState.name" style="width: 300px" />
-                                        </a-col>
-                                        <a-col :span="12">
-                                            <a-button type="primary">우편번호 검색</a-button>
-                                        </a-col>
-                                    </a-row>
-                                </a-col>
-                                <a-col :span="24">
-                                    <a-row>
-                                        <a-input v-model:value="formState.name" />
-                                    </a-row>
-                                </a-col>
-                                <a-col :span="24">
-                                    <a-row>
-                                        <a-input v-model:value="formState.name" />
-                                    </a-row>
-                                </a-col>
-                            </a-row>
-                            <a-row>
-                            </a-row>
-                        </a-form-item>
-                        <a-row :gutter="[16,16]">
-                            <a-col :span="18">
-                                <a-form-item label="장기요양기관등록번호">
-                                    <a-input v-model:value="formState.desc" style="width: 150px"
-                                        placeholder="01234567898" />
+                        <div>
+                            <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
+                                :headStyle="{padding: '0px',color: 'red'}" bodyStyle="padding: 24px 0px">
+                                <template #extra>
+                                    <a-button type="text">
+                                        <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
+                                    </a-button>
+                                </template>
+                                <a-table :columns="columns" :data-source="dataTable" :pagination="false"
+                                    :bordered="true" class="table-scroll">
+                                    <template #headerCell="{ column }">
+                                        <template v-if="column.key === '사업명'">
+                                            <span> 사업명 (중복불가) </span>
+                                        </template>
+                                    </template>
+                                    <template #bodyCell="{ column, record }">
+                                        <template v-if="column.key === '사업명'">
+                                            <a>
+                                                {{ record.사업명 }}
+                                            </a>
+                                        </template>
+                                        <template v-else-if="column.key === '사업분류'">
+                                            <span>
+                                                <a-select ref="select" value="주.야간보호" style="width: 200px">
+                                                    <a-select-option value="방문요양">방문요양</a-select-option>
+                                                    <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
+                                                    <a-select-option value="방문간호">방문간호</a-select-option>
+                                                    <a-select-option value="방문목욕">방문목욕</a-select-option>
+                                                    <a-select-option value="단기보호">단기보호</a-select-option>
+                                                    <a-select-option value="복지용구">복지용구</a-select-option>
+                                                </a-select>
+                                            </span>
+                                        </template>
+                                        <template v-else-if="column.key === '서비스시작년월'">
+                                            <span>
+                                                <CustomDatepicker :valueDate="record.서비스시작년월" />
+                                            </span>
+                                        </template>
+                                        <template v-else-if="column.key === 'action'">
+                                            <span>
+                                                <a-popconfirm title="Are you sure delete this row?" ok-text="Yes"
+                                                    cancel-text="No">
+                                                    <a-button type="text">
+                                                        <minus-circle-outlined />
+                                                    </a-button>
+                                                </a-popconfirm>
+                                            </span>
+                                        </template>
+                                    </template>
+                                </a-table>
+                            </a-card>
+                        </div>
+                        <a-row>
+                            <a-col :span="14">
+                                <a-form-item label="회계서비스 이용료:" style="margin-top: 10px; font-weight: bold">
+                                    <a-input v-model:value="formState.accFeeService" disabled="True" />
                                 </a-form-item>
-                                <a-form-item label="장기요양기관등록증">
-                                    <a-upload v-model:file-list="fileList" :show-upload-list="false"
-                                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                        :before-upload="beforeUpload" @change="handleChange">
-                                        <a-button>
-                                            <upload-outlined></upload-outlined>
-                                            파일선택...
-                                        </a-button>
-                                    </a-upload>
-                                </a-form-item>
-                                <a-space :size="10" align="start">
-                                    <div>
-                                        <warning-filled :style="{ fontSize: '15px'}" />
-                                    </div>
-                                    <div class="warring-modal">
-                                        <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
-                                        <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
-                                        <p>파일용량 : 최대 5MB</p>
-                                    </div>
-                                </a-space>
                             </a-col>
-                            <imgUpload :title="titleModal" :imageUrl="imageUrl" />
+                            <a-coll :span="10"></a-coll>
+                            <a-col :span="14">
+                                <div style="display: flex;padding-left: 155px;">
+                                    <span style="width:180px">
+                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee">
+                                        기본이용료</span>
+                                    <a-input v-model:value="formState.accBasicFee" />
+                                </div>
+                            </a-col>
+                            <a-col :sapn="10"></a-col>
+                            <a-col :span="14">
+                                <div style="display: flex; padding-left: 155px; margin-top: 5px;">
+                                    <span style="width:180px">
+                                        <input type="checkbox" v-model="formState.checkBoxAccInput"> 입력대형
+                                    </span>
+                                    <a-input v-model:value="formState.accInput" />
+                                </div>
+                            </a-col>
+                            <a-col :span="14">
+                                <div style="display: flex;padding-left: 155px; margin-top: 5px;">
+                                    <span style="width:180px">
+                                        <input type="checkbox" v-model="formState.checkBoxAccConso"> 계좌통합
+                                    </span>
+                                    <a-input v-model:value="formState.accConsolidation" />
+                                </div>
+                            </a-col>
+                            <a-col :span="14">
+                                <div style="display: flex;padding-left: 155px; margin-top: 5px;">
+                                    <span style="width:180px">
+                                        <input type="checkbox" v-model="formState.checkBoxAcc4wc"> W4C
+                                    </span>
+                                    <a-input v-model:value="formState.acc4wc" />
+                                </div>
+                            </a-col>
                         </a-row>
+
+
+                        <imgUpload :title="titleModal" :imageUrl="imageUrl" />
+
                     </a-form>
                     <hr>
                     <a-row>
-                        <a-col :span="12">
-                            <a-form-item label="원천서비스">
+                        <a-col>
+                            <a-form-item label="원천서비스" style="font-weight: bold">
                                 <input type="checkbox" value="regist"> 원천서비스 신청
                             </a-form-item>
                         </a-col>
                     </a-row>
-                    <a-form-item label="서비스 시작년월:">
-                        <a-input v-model:value="formState.name" style="width:440px" />
-                    </a-form-item>
-                    <a-form-item label="직원수:">
-                        <a-input v-model:value="formState.name" style="width: 240px" />
-                    </a-form-item>
-                    <a-form-item label="회계서비스 이용료:">
-                        <a-input v-model:value="formState.name" style="width: 240px" />
-                    </a-form-item>
+                    <div style="margin-top: 20px">
+                        <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+                            <a-form-item label="서비스 시작년월">
+                                <CustomDatepicker width="30%" valueDate="2022/08/25" />
+                            </a-form-item>
+                            <a-form-item label="직 원 수">
+                                <a-input-number value="10" style="width: 100px" />
+                            </a-form-item>
+                            <a-form-item label="원천서비스 이용료:">
+                                <a-input v-model:value="formState.taxFeeSevice" style="width: 358px" disabled="True" />
+                            </a-form-item>
+                        </a-form>
+                    </div>
                     <a-row>
-                        <a-form-item>
-                            <input type="checkbox" value="basicfee"> 기본이용료
-                            <a-input v-model:value="formState.name" style="width:440px" />
-                        </a-form-item>
+                        <a-col span="4"></a-col>
                     </a-row>
                     <a-row>
-                        <a-form-item>
-                            <input type="checkbox" value="insurance"> 4대보험
-                            <a-input v-model:value="formState.name" style="width:440px" />
-                        </a-form-item>
+                        <a-coll :span="10"></a-coll>
+                        <a-col :span="14">
+                            <div style="display: flex;padding-left: 155px;">
+                                <span style="width:180px">
+                                    <input type="checkbox" v-model="formState.checkBoxBasicFee">
+                                    기본이용료</span>
+                                <a-input v-model:value="formState.basicFee" />
+                            </div>
+                        </a-col>
+                        <a-coll :span="8"></a-coll>
+                        <a-col :span="14">
+                            <div style="display: flex;padding-left: 155px; margin-top: 5px;">
+                                <span style="width:180px">
+                                    <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
+                                    4대보험</span>
+                                <a-input v-model:value="formState.majorInsurance" />
+                            </div>
+                        </a-col>
                     </a-row>
                 </a-collapse-panel>
                 <a-collapse-panel key="2" header="담당매니저/ 영업자">
-                    <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
-                        <a-form-item has-feedback label="대표자명">
-                            <a-input value="홍길동" autocomplete="off" style="width: 300px" />
-                        </a-form-item>
-                        <a-form-item has-feedback label="생년월일">
-                            <a-input value="19620820" autocomplete="off" style="width: 300px" />
-                        </a-form-item>
-                        <a-form-item has-feedback label="휴대폰번호">
-                            <a-input-number value="01098765432" style="width: 300px" />
-                        </a-form-item>
-                        <a-form-item has-feedback label="이메일">
-                            <a-input value="abc123@mailaddress.com" style="width: 300px" />
-                        </a-form-item>
-                    </a-form>
-                </a-collapse-panel>
-                <a-collapse-panel key="3" header="CMS (자동이체출금) 계좌 정보 입력">
                     <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                        <a-form-item label="출금은행">
-                            <a-select ref="select" value="은행선택" style="width: 200px">
-                                <a-select-option value="은행선택">은행선택</a-select-option>
-                                <a-select-option value="국민은행">국민은행</a-select-option>
-                                <a-select-option value="신한은행">신한은행</a-select-option>
-                                <a-select-option value="우리은행">우리은행</a-select-option>
-                                <a-select-option value="기업은행">기업은행</a-select-option>
-                                <a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
+                        <a-form-item label="담당매니저">
+                            <a-select ref="select" value="담당매니저선택" style="width: 200px">
+                                <a-select-option value="김매니저 kim5604">김매니저 kim5604</a-select-option>
+                                <a-select-option value="유하람 haram.interpreter">유하람 haram.interpreter</a-select-option>
                             </a-select>
                         </a-form-item>
-                        <a-form-item label="출금계좌번호">
-                            <a-input value="100100056489011" />
-                        </a-form-item>
-                        <a-form-item label="예금주명">
-                            <a-input value="주식회사 타운소프트비나" />
-                        </a-form-item>
-                        <a-form-item label="사업자(주민)등록번호:">
-                            <a-input value="100100056489011" />
-                        </a-form-item>
-                        <a-form-item label="자동이체출금일자">
-                            <a-radio-group v-model:value="value">
-                                <a-radio :style="radioStyle" :value="1">매월 5일</a-radio>
-                                <a-radio :style="radioStyle" :value="2">매월 12일</a-radio>
-                                <a-radio :style="radioStyle" :value="3">매월 19일</a-radio>
-                            </a-radio-group>
+                        <a-form-item label="영업자">
+                            <a-select ref="select" value="영업자선택" style="width: 200px">
+                                <a-select-option value="장영업">장영업</a-select-option>
+                                <a-select-option value="박혁서세">박혁서세</a-select-option>
+                                <a-select-option value="강감찬">강감찬</a-select-option>
+                                <a-select-option value="달나라 대리점">달나라 대리점</a-select-option>
+                                <a-select-option value="타운소프트비나">타운소프트비나</a-select-option>
+                                <a-select-option value="다우데이터스스템">다우데이터스스템</a-select-option>
+                            </a-select>
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
@@ -230,13 +224,15 @@
             </a-collapse>
         </a-modal>
 
-        <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="50%">
+        <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
             <div style="margin-top: 20px">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
-                    <DxColumn data-field="기록일시" />
+                    <DxColumn data-field="기록일시" width='150px' />
                     <DxColumn data-field="비고" />
                     <DxColumn data-field="생성일시" />
                     <DxColumn data-field="생성자ID" />
+                    <DxColumn data-field="수정일시" />
+                    <DxColumn data-field="수성자ID" />
                     <DxColumn data-field="삭제여부" />
                     <DxColumn data-field="IP주소" />
                     <DxColumn data-field="상세" cell-template="detail" />
@@ -252,6 +248,7 @@
 </template>
 
 <script lang="ts">
+import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent } from 'vue'
 import DxDropDownBox from "devextreme-vue/drop-down-box"
 import imgUpload from "../../../../../components/UploadImage.vue"
@@ -291,7 +288,8 @@ export default defineComponent({
         PlusSquareOutlined,
         WarningFilled,
         imgUpload,
-        PlusOutlined
+        PlusOutlined,
+        CustomDatepicker
     },
     setup() {
         const loading = ref<boolean>(false)
@@ -328,10 +326,28 @@ export default defineComponent({
         const activeKey = ref([])
         const formState = ref({
             name: "",
+            name2: "",
+            name3: "",
             delivery: false,
             type: [],
             resource: "",
             desc: "",
+            totalService: 0,
+            accFeeService: 0,
+            accBasicFee: "",
+            accInput: "",
+            accConsolidation: "",
+            acc4wc: "",
+            basicFee: '',
+            majorInsurance: '',
+            taxFeeSevice: 0,
+            checkBox: true,
+            checkBoxAccBasicFee: true,
+            checkBoxAccInput: true,
+            checkBoxAccConso: true,
+            checkBoxAcc4wc: true,
+            checkBoxMajorInsurance: true,
+            checkBoxBasicFee: true,
         })
         const labelCol = ref({ style: { width: '150px' } })
         const wrapperCol = ref({ span: 14 })
@@ -357,6 +373,11 @@ export default defineComponent({
         const keyNumber = ref(0)
         const titleModal = "사업자등록증"
         const columns = [
+            {
+                title: "No",
+                dataIndex: "No",
+                key: "No",
+            },
             {
                 name: "사업명 (중복불가)",
                 dataIndex: "사업명",
@@ -385,13 +406,16 @@ export default defineComponent({
         const dataTable = [
             {
                 key: "1",
+                No: "1",
                 사업명: "가나다라마바 사업",
                 사업분류: "방문요양",
                 서비스시작년월: "2015/01/01",
                 정원수: 10,
+
             },
             {
                 key: "2",
+                No: "2",
                 사업명: "가나다라마바 사업",
                 사업분류: "방문간호",
                 서비스시작년월: "2015/01/01",
@@ -399,6 +423,15 @@ export default defineComponent({
             },
             {
                 key: "3",
+                No: "3",
+                사업명: "가나다라마바 사업",
+                사업분류: "단기보호",
+                서비스시작년월: "2015/01/13",
+                정원수: 10,
+            },
+            {
+                key: "4",
+                No: "4",
                 사업명: "가나다라마바 사업",
                 사업분류: "단기보호",
                 서비스시작년월: "2015/01/13",
@@ -471,6 +504,44 @@ export default defineComponent({
             this.dataSource.push(dataDef)
         },
 
+    },
+    watch: {
+        formState: {
+            handler(value) {
+                if (this.formState.accFeeService != 0 && this.formState.taxFeeSevice != 0) {
+                    this.formState.totalService = this.formState.taxFeeSevice + this.formState.accFeeService
+                };
+                if (this.formState.checkBox == true && this.formState.accBasicFee != '' && this.formState.accConsolidation != '' && this.formState.accInput != '' && this.formState.acc4wc != '') {
+                    this.formState.accFeeService = parseInt(this.formState.accBasicFee) + parseInt(this.formState.accConsolidation) + parseInt(this.formState.accInput) + parseInt(this.formState.acc4wc)
+                };
+                if (this.formState.checkBox == true && this.formState.basicFee != '' && this.formState.majorInsurance != '') {
+                    this.formState.taxFeeSevice = parseInt(this.formState.basicFee) + parseInt(this.formState.majorInsurance)
+                };
+                if (this.formState.checkBoxAccBasicFee == false) {
+                    this.formState.accBasicFee = '0'
+                };
+                if (this.formState.checkBoxAccInput == false) {
+                    this.formState.accInput = '0'
+                };
+                if (this.formState.checkBoxAccConso == false) {
+                    this.formState.accConsolidation = '0'
+                };
+                if (this.formState.checkBoxAcc4wc == false) {
+                    this.formState.accConsolidation = '0'
+                };
+                if (this.formState.checkBoxMajorInsurance == false) {
+                    this.formState.majorInsurance = '0'
+                };
+                if (this.formState.checkBoxBasicFee == false) {
+                    this.formState.basicFee = '0'
+                };
+                if (this.formState.checkBoxAcc4wc == false) {
+                    this.formState.acc4wc = '0'
+                };
+            },
+            deep: true,
+            immediate: true
+        },
     }
 })
 </script>
@@ -482,5 +553,26 @@ export default defineComponent({
 
 .ant-form-item-label {
     text-align: left;
+}
+
+.ant-form-item {
+    margin-bottom: 4px;
+}
+
+.ant-table-tbody>tr>td {
+    padding: 2px 8px
+}
+
+.popup-scroll {
+    height: 600px;
+    border: 1px solid #333;
+    overflow: auto;
+    border: 0ch;
+}
+
+.table-scroll {
+    height: 190px;
+    border: 1px solid #333;
+    overflow: auto;
 }
 </style>

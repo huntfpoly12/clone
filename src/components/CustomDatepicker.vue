@@ -49,7 +49,7 @@ export default defineComponent({
             return `${year}/${month}/${day}`;
         }
 
-        const alertDate = () => { 
+        const alertDate = () => {
 
             if (dataInput) {
                 let dateInput = ''
