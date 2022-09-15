@@ -5,6 +5,7 @@
 .dx-select-checkbox {
     display: inline-block !important;
 }
+
 .modal-note {
     max-height: 500px;
     overflow: auto;
@@ -30,10 +31,18 @@
 
 .search-form {
     margin-bottom: 10px;
+    background: #f1f3f4;
+    padding: 10px 24px;
 
     >div {
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-start !important;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    label {
+        margin-right: 10px;
     }
 
     .lable-item {
@@ -43,14 +52,43 @@
     }
 
     .col {
-        align-items: center; 
+        align-items: center;
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+
+        .lable-item {
+            width: 110px;
+            display: inline-block;
+        }
+
+        .item:nth-child(2) {
+            margin-left: 30px;
+        }
     }
 }
 
-.ant-row{
+.ant-row {
     align-items: center;
 }
 
-.ant-form-item{
+.ant-form-item {
     margin-bottom: 4px;
+}
+
+.ant-collapse {
+    .ant-collapse-item {
+        .ant-collapse-header {
+            padding: 7px;
+        }
+    }
+}
+
+.warring-modal {
+    font-size: 13px;
+    line-height: 5px;
+}
+
+.ant-form-item-label {
+    text-align: left;
 }

@@ -440,7 +440,7 @@ export default defineComponent({
 }
 
 ::v-deep .page-content {
-    padding: 24px;
+    padding: 10px;
 }
 
 .nav-tabs {
