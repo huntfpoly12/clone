@@ -191,7 +191,9 @@ export default defineComponent({
     color: rgba(0, 0, 0, 0.45);
 }
 
-.ant-tooltip {
-    display: none;
+.container_upload {
+    .ant-tooltip {
+        display: none;
+    }
 }
 </style>
