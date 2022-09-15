@@ -87,6 +87,7 @@
       </DxDataGrid>
       <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
       <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" /> 
+      <HistoryBF340Popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" /> 
     </div>
   </div>
 </template>
@@ -107,6 +108,7 @@ import {
 
 import EditBF340Popup from "./components/EditBF340Popup.vue";
 import AddNew340Poup from "./components/AddNew340Poup.vue";
+import HistoryBF340Popup from "./components/HistoryBF340Popup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees } from "./data.js";
@@ -137,8 +139,8 @@ export default defineComponent({
     DxGrouping,
     DxItem,
     AddNew340Poup,
-    EditBF340Popup
-
+    EditBF340Popup,
+    HistoryBF340Popup
   },
   data() {
     return {
@@ -160,6 +162,7 @@ export default defineComponent({
       popupData: [],
       modalAddNewStatus: false,
       modalEditStatus: false,
+      modalHistoryStatus: false,
       dataSearch: {
         typeSevice: "전체",
         nameCompany: "",
@@ -192,8 +195,15 @@ export default defineComponent({
     openAddNewModal(){
       this.modalAddNewStatus = true;
     },
+    openHistoryModal(){
+      this.modalHistoryStatus = true;
+    },
     setModalEditVisible(data) {
       this.modalEditStatus = true;
+      this.popupData = data;
+    },
+    modalHistory(data) {
+      this.modalHistoryStatus = true;
       this.popupData = data;
     },
 
