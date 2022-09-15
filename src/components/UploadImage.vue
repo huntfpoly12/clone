@@ -1,11 +1,6 @@
 <template>
-<<<<<<< HEAD
   <a-row class="container_upload" :gutter="[16, 8]">
     <a-col :span="16" style="padding-left: 16px">
-=======
-  <a-row class="container_upload" :gutter="[16, 0]">
-    <a-col v-if="imageUrl" :span="16">
->>>>>>> develop
       <a-form-item class="title" :label="title">
         <a-upload
           single
