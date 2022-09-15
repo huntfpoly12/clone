@@ -1,5 +1,5 @@
 <template>
-  <div id="bf-340">
+  <div id="bf-210">
     <div class="search-form">
       <div id="components-grid-demo-flex">
         <a-row justify="start" :gutter="[16, 8]">
@@ -69,7 +69,7 @@
         <DxColumn data-field="가입일자" data-type="date" :width="100"/>
         <DxColumn data-field="해지일자" data-type="date" :width="100"/>
         <DxColumn data-field="사업자소" data-type="number" :width="100"/>
-        <DxColumn :width="80" cell-template="pupop" />
+        <DxColumn :width="100" cell-template="pupop" />
         <template #pupop="{ data }" class="custom-action">
           <div class="custom-action">
             <a-space :size="10">
@@ -81,13 +81,17 @@
                 <template #title>변경이력</template>
                 <HistoryOutlined @click="modalHistory(data)" />
               </a-tooltip>
+              <a-tooltip placement="top">
+                <template #title>로그인이력</template>
+                <login-outlined />
+              </a-tooltip>
             </a-space>
           </div>
         </template>
       </DxDataGrid>
-      <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-      <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" /> 
-      <HistoryBF340Popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" /> 
+      <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+      <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" /> 
+      <HistoryBF210Popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" /> 
     </div>
   </div>
 </template>
@@ -106,16 +110,16 @@ import {
   DxItem
 } from "devextreme-vue/data-grid";
 
-import EditBF340Popup from "./components/EditBF340Popup.vue";
-import AddNew340Poup from "./components/AddNew340Poup.vue";
-import HistoryBF340Popup from "./components/HistoryBF340Popup.vue";
+import EditBF210Popup from "./components/EditBF210Popup.vue";
+import AddNew210Poup from "./components/AddNew210Poup.vue";
+import HistoryBF210Popup from "./components/HistoryBF210Popup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees } from "./data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-import { EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, LoginOutlined} from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -133,14 +137,15 @@ export default defineComponent({
     DxSearchPanel,
     EditOutlined,
     HistoryOutlined,
+    LoginOutlined,
     Style,
     DxToolbar,
     DxEditing,
     DxGrouping,
     DxItem,
-    AddNew340Poup,
-    EditBF340Popup,
-    HistoryBF340Popup
+    AddNew210Poup,
+    EditBF210Popup,
+    HistoryBF210Popup
   },
   data() {
     return {
