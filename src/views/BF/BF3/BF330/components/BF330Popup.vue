@@ -3,8 +3,8 @@
         <a-modal :visible="modalStatus" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
-                <a-collapse-panel key="1" header="이용서비스" class="popup-scroll">
-                    <a-form :label-col="labelCol">
+                <a-collapse-panel key="1" header="이용서비스">
+                    <a-form :label-col="labelCol" class="popup-scroll">
                         <a-row>
                             <a-col :span="10">
                                 <a-form-item label="총일용료" style="font-weight: bold">
@@ -597,10 +597,12 @@ export default defineComponent({
 height: 600px;
 border: 1px solid #333;
 overflow-y: scroll;
+border: 0ch;
 }
 .table-scroll{
 height: 190px;
 border: 1px solid #333;
 overflow-y: scroll; 
+;
 }
 </style>
