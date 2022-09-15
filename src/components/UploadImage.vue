@@ -125,7 +125,7 @@ export default defineComponent({
             getBase64(info.file.originFileObj, (base64Url: string) => {
                 imageUrl.value = base64Url;
                 loading.value = false;
-                // emit("update-img", imageUrl.value);
+                emit("update-img", imageUrl.value);
             });
         };
 
