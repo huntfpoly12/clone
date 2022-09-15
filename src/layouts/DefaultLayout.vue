@@ -1,7 +1,7 @@
 <template >
     <a-layout>
         <a-layout-header class="header">
-            <div class="nav-logo">BankDa</div>
+            <div class="nav-logo"><img src="../assets/images/logo.png" /></div>
             <div class="user-info" v-if="username">
                 <a-dropdown>
                     <a class="ant-dropdown-link" @click.prevent>
@@ -442,7 +442,9 @@ export default defineComponent({
 ::v-deep .page-content {
     padding: 24px;
 }
-
+.nav-logo img {
+    max-width: 150px;
+}
 .nav-tabs {
     display: block;
     box-shadow: inset 0 -1px 0 #888;
