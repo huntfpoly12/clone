@@ -38,6 +38,11 @@
                             placeholder="영업자명" :options="options">
                         </a-select>
                     </a-col>
+                    <a-col>
+                    <label class="lable-item"></label>
+                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
+                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                </a-col>
                 </a-row>
             </div>
         </div>
@@ -55,8 +60,9 @@
                 <DxColumn data-field="매니저" />
                 <DxColumn data-field="관리시작일" data-type="date" />
                 <DxColumn data-field="영업자" />
-                <DxColumn data-field="해지일자" />
-                <DxColumn data-field="연체(개월)" />
+                <DxColumn data-field="서비스" />
+                <DxColumn data-field="이용료" />
+                <DxColumn data-field="해지일자" data-type="date"/>               
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
@@ -73,6 +79,7 @@
                     </div>
                 </template>
             </DxDataGrid>
+
             <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
             <BF330Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
                 :data="popupData" />
