@@ -1,7 +1,7 @@
 export const employees = [{
   ID: 1,
   영업자코드: 'S0001',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -13,7 +13,7 @@ export const employees = [{
 }, {
   ID: 2,
   영업자코드: 'S0002',
-  상태: '전체',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -25,7 +25,7 @@ export const employees = [{
 }, {
   ID: 3,
   영업자코드: 'S0003',
-  상태: '해지',
+  상태: '이용중',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -37,7 +37,7 @@ export const employees = [{
 }, {
   ID: 4,
   영업자코드: 'S0004',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -49,7 +49,7 @@ export const employees = [{
 }, {
   ID: 5,
   영업자코드: 'S0005',
-  상태: '정상',
+  상태: '이용중',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -61,7 +61,7 @@ export const employees = [{
 }, {
   ID: 6,
   영업자코드: 'S0006',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -73,7 +73,7 @@ export const employees = [{
 }, {
   ID: 7,
   영업자코드: 'S0007',
-  상태: '정상',
+  상태: '이용중',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -85,7 +85,7 @@ export const employees = [{
 }, {
   ID: 8,
   영업자코드: 'S0008',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -97,7 +97,7 @@ export const employees = [{
 }, {
   ID: 9,
   영업자코드: 'S0009',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -109,7 +109,7 @@ export const employees = [{
 }, {
   ID: 10,
   영업자코드: 'S0010',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -121,7 +121,7 @@ export const employees = [{
 }, {
   ID: 11,
   영업자코드: 'S0011',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -133,7 +133,7 @@ export const employees = [{
 }, {
   ID: 12,
   영업자코드: 'S0012',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -145,7 +145,7 @@ export const employees = [{
 }, {
   ID: 13,
   영업자코드: 'S0013',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
@@ -157,7 +157,7 @@ export const employees = [{
 }, {
   ID: 14,
   영업자코드: 'S0014',
-  상태: '정상',
+  상태: '이용중지',
   영업자명: '신청',
   등급: '대리점',
   주소: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
