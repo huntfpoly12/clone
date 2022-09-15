@@ -2,15 +2,14 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" title="영업자관리[bf-340]" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
-           
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
                     <a-col :span="12">
                         <a-form-item label="영업자코드">
-                            <a-input v-model:value="bf310Detail.영업자코드" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
                         </a-form-item>
                         <a-form-item label="영업자명">
-                            <a-input v-model:value="bf310Detail.영업자명" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
                         </a-form-item>
                         <a-form-item label="사업자유형">
                             <a-select ref="select" v-model:value="bf310Detail.사업자유형" style="width: 150px">
@@ -20,13 +19,13 @@
                             </a-select>
                         </a-form-item>
                         <a-form-item label="이메일">
-                            <a-input v-model:value="bf310Detail.이메일" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
                         </a-form-item>
                         <a-form-item label="연락처">
-                            <a-input v-model:value="bf310Detail.연락처" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
                         </a-form-item>
                         <a-form-item label="팩스">
-                            <a-input v-model:value="bf310Detail.팩스" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
                         </a-form-item>
                         <a-form-item label="주소">
                             <a-input-search v-model:value="bf310Detail.name" placeholder="우편번호검색..."
@@ -62,13 +61,13 @@
                             </a-select>
                         </a-form-item>
                         <a-form-item label="등록번호">
-                            <a-input v-model:value="bf310Detail.등록번호" />
+                            <a-input v-model:value="bf310Detail.name" />
                         </a-form-item>
                         <a-form-item label="사업자등록번호">
-                            <a-input v-model:value="bf310Detail.사업자등록번호" />
+                            <a-input v-model:value="bf310Detail.name" />
                         </a-form-item>
                         <a-form-item label="휴대폰">
-                            <a-input v-model:value="bf310Detail.휴대폰" />
+                            <a-input v-model:value="bf310Detail.name" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -93,7 +92,7 @@
                     </a-col>
                     <a-col :span="12">
                         <a-form-item label="전자세금계산서수신이메일" class="email-input">
-                            <a-input v-model:value="bf310Detail.전자세금계산서수신이메일" placeholder="상세주소" />
+                            <a-input v-model:value="bf310Detail.name" placeholder="상세주소" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -116,7 +115,7 @@
                         <a-form-item label="계좌번호">
                             <a-input v-model:value="bf310Detail.계좌번호" style="width: 150px" />
                         </a-form-item>
-                        <a-form-item label="가입일자">
+                        <a-form-item label="계좌번호">
                             <a-date-picker v-model:value="value1" />
                         </a-form-item>
                     </a-col>
@@ -124,7 +123,7 @@
                         <a-form-item label="예금주">
                             <a-input v-model:value="bf310Detail.예금주" />
                         </a-form-item>
-                        <a-form-item label="해지일자">
+                        <a-form-item label="계좌번호">
                             <a-date-picker v-model:value="value1" />
                         </a-form-item>
                     </a-col>
@@ -139,7 +138,7 @@
             </a-form>
         </a-modal>
 
-        <a-modal v-model:visible="visible" title="해지 확인" ok-text="완료" class="confirm-modal">
+        <a-modal v-model:visible="visible" title="해지 확인" ok-text="완료">
             <a-row>
                 <a-col :span="4">
                     <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />
@@ -153,7 +152,7 @@
             </a-row>
             <template #footer>
                 <a-input v-model:value="confirm" placeholder="확인" style="width: 150px" />
-                <a-button  type="primary" @click="handleOkConfirm" class="confirm-button">완료</a-button>
+                <a-button  type="primary" @click="handleOkConfirm">완료</a-button>
             </template>
         </a-modal>
     </div>
@@ -162,44 +161,35 @@
 <script lang="ts">
 import { ref, defineComponent, reactive } from 'vue'
 import type { UnwrapRef } from 'vue';
-import { SearchOutlined ,WarningOutlined,} from '@ant-design/icons-vue';
+import { SearchOutlined ,WarningOutlined} from '@ant-design/icons-vue';
 import dayjs, { Dayjs } from 'dayjs';
+import { Modal } from 'ant-design-vue';
 interface FormState {
-    name:string;
-    영업자코드: string;
-    영업자명: string;
+    name: string;
+    delivery: boolean;
+    type: string[];
+    resource: string;
+    desc: string;
     사업자유형: string;
     상태: string;
     등급: string;
     주소: boolean;
     은행: string;
     계좌번호: string;
-    등록번호:string;
     예금주: string;
     가입일자: string;
-    사업자등록번호:string;
-    휴대폰:string;
     비고: string;
-    이메일:string;
-    연락처:string;
-    팩스:string;
-    전자세금계산서수신이메일:string;
 }
 
 export default defineComponent({
-    props:['modalStatus','data']
-       ,
+    props: {
+        modalStatus: Boolean,
+    },
     components: {
         SearchOutlined,
         WarningOutlined
     },
-    created() {
-
-        
-    },
-    setup(props) {
-        const data  = props.data;
-
+    setup() {
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
@@ -216,6 +206,10 @@ export default defineComponent({
         let confirm = ref<string>('');;
         const bf310Detail: UnwrapRef<FormState> = reactive({
             name: '',
+            delivery: false,
+            type: [],
+            resource: '',
+            desc: '',
             사업자유형: '개인',
             상태: '정상',
             등급: '본사',
@@ -224,16 +218,7 @@ export default defineComponent({
             계좌번호: '',
             예금주: '',
             가입일자: '',
-            비고: '',
-            영업자코드:'',
-            영업자명:'',
-            등록번호:'',
-            사업자등록번호:'',
-            휴대폰:'',
-            이메일:'',
-            연락처:'',
-            팩스:'',
-            전자세금계산서수신이메일:''
+            비고: ''
         });
         const confirmPopup = (value: any) => {
             if (value == '해지') {
@@ -241,7 +226,6 @@ export default defineComponent({
             }
         }
         const handleOkConfirm = () => {
-            console.log(data,'fffffff');
             if(confirm.value == '확인'){
                 visible.value = false;
             }else{
@@ -281,15 +265,6 @@ export default defineComponent({
 })
 </script>
 <style>
-.confirm-button{
-    margin-left: 100px;
-}
-.confirm-modal p{
-    white-space: normal;
-    font-size: 13px;
-    line-height: 16px;
-}
-
 .email-input .ant-form-item-label {
     white-space: normal;
 
