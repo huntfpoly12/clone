@@ -9,6 +9,8 @@ export const employees = [{
   대표자: '1995/01/15',
   연락처: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
   영업자: '351 S Hill St.',
+  서비스: '회계4',
+  이용료: 150000,
   해지일자: 5,
 }, {
   ID: 2,

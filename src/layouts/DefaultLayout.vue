@@ -1,7 +1,7 @@
 <template >
     <a-layout>
         <a-layout-header class="header">
-            <div class="nav-logo">BankDa</div>
+            <div class="nav-logo"><img src="../assets/images/logo.png" /></div>
             <div class="user-info" v-if="username">
                 <a-dropdown>
                     <a class="ant-dropdown-link" @click.prevent>
@@ -158,6 +158,7 @@ import menuData from "./menuData"
 const BF310 = defineAsyncComponent(() => import('../views/BF/BF3/BF310/index.vue'));
 const BF320 = defineAsyncComponent(() => import('../views/BF/BF3/BF320/index.vue'));
 const BF330 = defineAsyncComponent(() => import('../views/BF/BF3/BF330/index.vue'));
+const BF340 = defineAsyncComponent(() => import('../views/BF/BF3/BF340/index.vue'));
 const Test = defineAsyncComponent(() => import('../views/DefaultComponent.vue'));
 import {
     MenuFoldOutlined,
@@ -188,6 +189,7 @@ export default defineComponent({
         BF310,
         BF320,
         BF330,
+        BF340,
         Test,
         MenuFoldOutlined,
         MenuUnfoldOutlined,
@@ -219,6 +221,7 @@ export default defineComponent({
             if (this.activeTab.id === 'bf-310') return BF310
             if (this.activeTab.id === 'bf-320') return BF320
             if (this.activeTab.id === 'bf-330') return BF330
+            if (this.activeTab.id === 'bf-340') return BF340
             return Test
         }
 
@@ -437,9 +440,11 @@ export default defineComponent({
 }
 
 ::v-deep .page-content {
-    padding: 24px;
+    padding: 10px;
 }
-
+.nav-logo img {
+    max-width: 150px;
+}
 .nav-tabs {
     display: block;
     box-shadow: inset 0 -1px 0 #888;
