@@ -1,17 +1,17 @@
 <template>
-    <a-row class="container_upload" :gutter="[16, 8]">
-        <a-col :span="16" style="padding-left: 16px">
-            <a-form-item class="title" :label="title">
-                <a-upload single type="file" v-model:file-list="fileList" :show-upload-list="{name : 'picture'}"
-                    name="fileUpload" action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                    :before-upload="beforeUpload" :on-remove="onRemove" @change="handleChange" :max-count="1" accept=".tiff,.png,.jpeg,.jpg">
-                    <a-button class="test-local">
+    <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
+        <a-col :span="16">
+            <a-form-item class="clb-label title" :label="title">
+                <a-upload single type="file" v-model:file-list="fileList" :show-upload-list="true" name="fileUpload"
+                    :before-upload="beforeUpload" :on-remove="onRemove" @change="handleChange" :max-count="1"
+                    accept=".tiff,.png,.jpeg,.jpg">
+                    <a-button class="button-upload">
                         <upload-outlined></upload-outlined>
                         파일선택...
                     </a-button>
                 </a-upload>
             </a-form-item>
-            <a-space :size="10" align="start" style="margin-top: 10px; padding-left: 142px">
+            <a-space :size="10" align="start" style="margin-top: 8px">
                 <div>
                     <warning-filled :style="{ fontSize: '15px' }" />
                 </div>
@@ -24,7 +24,7 @@
         </a-col>
 
         <a-col :span="8" class="imgPreview">
-            <img v-if="imageUrl" :src="imageUrl" @click="handlePreview" />
+            <img v-if="imageUrl && showImg == true" :src="imageUrl" @click="handlePreview" />
             <img v-else src="https://taao.vn/placeholder.jpg" />
         </a-col>
 
@@ -71,11 +71,6 @@ export default defineComponent({
         PlusSquareOutlined,
         WarningFilled,
     },
-    data() {
-        return {
-            imageUrl: ref<string>(""),
-        };
-    },
     methods: {
         onFileChange(e: any) {
             const file = e.target.files[0];
@@ -92,12 +87,13 @@ export default defineComponent({
     setup(props: any, { emit }) {
         const fileList = ref<UploadProps["fileList"]>([]);
         const loading = ref<boolean>(false);
-        const imageUrl = ref<string>("");
+        let imageUrl = ref<any>("");
         const file = ref<any>("");
         const previewVisible = ref(false);
         var fileName = ref<any>("");
-
+        var showImg = ref<boolean>(true)
         const beforeUpload = (file: any) => {
+            showImg.value = true
             const isJpgOrPng =
                 file.type === "image/png" ||
                 file.type === "image/jpg" ||
@@ -117,10 +113,11 @@ export default defineComponent({
             return isLt5M && true;
         };
         const onRemove = () => {
-            imageUrl.value = "";
+            showImg.value = false
         };
 
         const handleChange = (info: any, fileList: any) => {
+
             fileName = info.file.name;
             getBase64(info.file.originFileObj, (base64Url: string) => {
                 imageUrl.value = base64Url;
@@ -148,6 +145,7 @@ export default defineComponent({
             Upload,
             file,
             fileName,
+            showImg
         };
     },
 });
@@ -195,5 +193,11 @@ export default defineComponent({
     .ant-tooltip {
         display: none;
     }
+}
+
+.button-upload {
+    width: 200px;
+    text-align: left;
+    border-radius: 5px;
 }
 </style>

@@ -234,7 +234,7 @@ export default defineComponent({
 }
 
 .noteImage {
-    font-size: 12px;
+    font-size: 11px;
     width: 100%;
     padding-top: 2px;
 }
