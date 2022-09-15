@@ -68,7 +68,7 @@
         <DxColumn data-field="휴대폰" :width="100"/>
         <DxColumn data-field="가입일자" data-type="date" :width="100"/>
         <DxColumn data-field="해지일자" data-type="date" :width="100"/>
-        <DxColumn data-field="사업자소" data-type="number" :width="100"/>
+        <DxColumn data-field="사업자수" data-type="number" :width="100"/>
         <DxColumn :width="80" cell-template="pupop" />
         <template #pupop="{ data }" class="custom-action">
           <div class="custom-action">
