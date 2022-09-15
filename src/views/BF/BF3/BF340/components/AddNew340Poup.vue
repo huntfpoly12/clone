@@ -2,34 +2,33 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" title="영업자관리[bf-340]" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
-            <a-form v-bind="layout" name="nest-messages">
+            <a-form v-bind="layout" name="nest-messages" label-align="right">
                 <a-row :gutter="24">
                     <a-col :span="12">
                         <a-form-item label="영업자코드">
-                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.영업자코드" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="영업자명">
-                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.영업자명" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="사업자유형">
-                            <a-select ref="select" v-model:value="bf310Detail.사업자유형" style="width: 150px">
+                            <a-select ref="select" v-model:value="bf310Detail.사업자유형" style="width: 200px">
                                 <a-select-option value="법인">법인</a-select-option>
                                 <a-select-option value="개인사업자">개인사업자</a-select-option>
                                 <a-select-option value="개인">개인</a-select-option>
                             </a-select>
                         </a-form-item>
                         <a-form-item label="이메일">
-                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.이메일" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="연락처">
-                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.연락처" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="팩스">
-                            <a-input v-model:value="bf310Detail.name" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.팩스" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="주소">
-                            <a-input-search v-model:value="bf310Detail.name" placeholder="우편번호검색..."
-                                style="width: 200px">
+                            <a-input-search v-model:value="bf310Detail.주소" placeholder="우편번호검색..." style="width: 200px">
                                 <template #prefix>
                                     <search-outlined />
                                 </template>
@@ -60,46 +59,55 @@
                                 <a-select-option value="대리점">대리점</a-select-option>
                             </a-select>
                         </a-form-item>
-                        <a-form-item label="등록번호">
-                            <a-input v-model:value="bf310Detail.name" />
+                        <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }">
+                            <a-input v-model:value="bf310Detail.법인주민등록번호" />
                         </a-form-item>
                         <a-form-item label="사업자등록번호">
-                            <a-input v-model:value="bf310Detail.name" />
+                            <a-input v-model:value="bf310Detail.사업자등록번호" />
                         </a-form-item>
                         <a-form-item label="휴대폰">
-                            <a-input v-model:value="bf310Detail.name" />
+                            <a-input v-model:value="bf310Detail.휴대폰" />
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="15">
                         <a-form-item class="result-address" :wrapper-col="{ span: 24 }">
-                            <a-input v-model:value="bf310Detail.name" style="width: 100%" />
+                            <a-input v-model:value="bf310Detail.result_address" style="width: 100%" :disabled="true" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8">
                         <a-form-item :wrapper-col="{ span: 24}" class="detail-address">
-                            <a-input v-model:value="bf310Detail.name" placeholder="상세주소" />
+                            <a-input v-model:value="bf310Detail.detail_address" placeholder="상세주소" :disabled="true" />
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="주소">
-                            <a-switch v-model:checked="bf310Detail.주소" checked-children="발행" un-checked-children="미발행"
-                                style="width: 25%" />
+                        <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }" >
+                            <a-switch v-model:checked="bf310Detail.세금계산서발행여부" checked-children="발행"
+                                un-checked-children="미발행" style="width: 80px" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="12">
-                        <a-form-item label="전자세금계산서수신이메일" class="email-input">
-                            <a-input v-model:value="bf310Detail.name" placeholder="상세주소" />
-                        </a-form-item>
+                        <a-row>
+                            <a-col :span="8">
+                                <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
+                            </a-col>
+                            <a-col :span="14">
+                                <a-form-item class="email-input" :wrapper-col="{ span: 24 }">
+                                    <a-input v-model:value="bf310Detail.전자세금계산서수신이메일" placeholder="상세주소" style="width: 100%"/>
+                                </a-form-item>
+                            </a-col>
+                        </a-row>
+
+
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12">
                         <a-form-item label="은행">
-                            <a-select ref="select" v-model:value="bf310Detail.은행" style="width: 150px">
+                            <a-select ref="select" v-model:value="bf310Detail.은행" style="width: 200px">
                                 <a-select-option value="농협">농협</a-select-option>
                                 <a-select-option value="신한은행">신한은행</a-select-option>
                                 <a-select-option value="국민은행">국민은행</a-select-option>
@@ -113,7 +121,7 @@
                 <a-row>
                     <a-col :span="12">
                         <a-form-item label="계좌번호">
-                            <a-input v-model:value="bf310Detail.계좌번호" style="width: 150px" />
+                            <a-input v-model:value="bf310Detail.계좌번호" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="계좌번호">
                             <a-date-picker v-model:value="value1" />
@@ -147,12 +155,12 @@
                     <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
                     <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을 </p>
                     <p>누르세요</p>
-                    
+
                 </a-col>
             </a-row>
             <template #footer>
-                <a-input v-model:value="confirm" placeholder="확인" style="width: 150px" />
-                <a-button  type="primary" @click="handleOkConfirm">완료</a-button>
+                <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
+                <a-button type="primary" @click="handleOkConfirm">완료</a-button>
             </template>
         </a-modal>
     </div>
@@ -161,9 +169,7 @@
 <script lang="ts">
 import { ref, defineComponent, reactive } from 'vue'
 import type { UnwrapRef } from 'vue';
-import { SearchOutlined ,WarningOutlined} from '@ant-design/icons-vue';
-import dayjs, { Dayjs } from 'dayjs';
-import { Modal } from 'ant-design-vue';
+import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 interface FormState {
     name: string;
     delivery: boolean;
@@ -194,10 +200,6 @@ export default defineComponent({
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         };
-        const formTailLayout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 16, },
-        };
         const visible = ref<boolean>(false);
         const dateFormat = 'YYYY-MM-DD';
 
@@ -210,11 +212,11 @@ export default defineComponent({
             type: [],
             resource: '',
             desc: '',
-            사업자유형: '개인',
-            상태: '정상',
-            등급: '본사',
+            사업자유형: '',
+            상태: '',
+            등급: '',
             주소: false,
-            은행: '농협',
+            은행: '',
             계좌번호: '',
             예금주: '',
             가입일자: '',
@@ -226,9 +228,9 @@ export default defineComponent({
             }
         }
         const handleOkConfirm = () => {
-            if(confirm.value == '확인'){
+            if (confirm.value == '확인') {
                 visible.value = false;
-            }else{
+            } else {
                 bf310Detail.상태 = '정상';
                 visible.value = false;
             }
@@ -239,7 +241,6 @@ export default defineComponent({
             wrapperCol,
             bf310Detail,
             layout,
-            formTailLayout,
             value1: ref<Dayjs>(),
             visible,
             confirmPopup,
@@ -278,7 +279,7 @@ export default defineComponent({
 }
 
 .result-address {
-    margin-left: 110px;
+    margin-left: 19%;
 }
 
 .ant-form-item {
@@ -290,7 +291,8 @@ export default defineComponent({
     line-height: 5px;
 }
 
-.ant-form-item-label {
-    text-align: left;
+
+.ant-form-item-label > label {
+    
 }
 </style>
