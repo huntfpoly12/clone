@@ -1,5 +1,5 @@
 <template>
-  <a-row class="container_upload" :gutter="[16, 8]">
+  <a-row class="container_upload" :gutter="[16, 0]">
     <a-col v-if="imageUrl" :span="16">
       <a-form-item class="title" :label="title">
         <a-upload v-model:file-list="fileList" :show-upload-list="true"
