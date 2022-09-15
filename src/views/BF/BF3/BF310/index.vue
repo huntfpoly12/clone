@@ -114,7 +114,7 @@ export default defineComponent({
             dateFormat: "YYYY/MM/DD",
             checbox1: true,
             checbox2: true,
-            value4: [dayjs().subtract(1, 'week'), dayjs()],
+            value4: [dayjs().subtract(1, 'year'), dayjs()],
             gridColumns: ["심사상태", "사업자코드", "상호"],
             gridBoxValue: [3],
             gridDataSource: employees,

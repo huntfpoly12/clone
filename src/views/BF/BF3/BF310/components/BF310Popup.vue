@@ -422,7 +422,7 @@ export default defineComponent({
 		handleCopy() {
 			this.keyNumber++;
 			let dataDef = {
-				key: this.keyNumber,
+				key: this.keyNumber.toString(),
 				사업명: "가나다라마바 사업",
 				사업분류: "방문간호",
 				서비스시작년월: "2015/01/01",
