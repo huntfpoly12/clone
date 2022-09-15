@@ -1,10 +1,10 @@
 <template>
-    <div id="components-modal-demo-position">
+    <div id="components-modal-demo-position" >
         <a-modal :visible="modalStatus" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
-                <a-collapse-panel key="1" header="이용서비스" class="popup-scroll">
-                    <a-form :label-col="labelCol">
+                <a-collapse-panel key="1" header="이용서비스">
+                    <a-form :label-col="labelCol" class="popup-scroll">
                         <a-row>
                             <a-col :span="10">
                                 <a-form-item label="총일용료" style="font-weight: bold">
@@ -34,56 +34,57 @@
                             </a-col>
                         </a-row>
                         <div>
-                        <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                            :headStyle="{padding: '0px',color: 'red'}" bodyStyle="padding: 24px 0px">
-                            <template #extra>
-                                <a-button type="text">
-                                    <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
-                                </a-button>
-                            </template>
-                            <a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true" class="table-scroll">
-                                <template #headerCell="{ column }">
-                                    <template v-if="column.key === '사업명'">
-                                        <span> 사업명 (중복불가) </span>
-                                    </template>
+                            <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
+                                :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 24px 0px">
+                                <template #extra>
+                                    <a-button type="text">
+                                        <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
+                                    </a-button>
                                 </template>
-                                <template #bodyCell="{ column, record }">
-                                    <template v-if="column.key === '사업명'">
-                                        <a>
-                                            {{ record.사업명 }}
-                                        </a>
+                                <a-table :columns="columns" :data-source="dataTable" :pagination="false"
+                                    :bordered="true" class="table-scroll">
+                                    <template #headerCell="{ column }">
+                                        <template v-if="column.key === '사업명'">
+                                            <span> 사업명 (중복불가) </span>
+                                        </template>
                                     </template>
-                                    <template v-else-if="column.key === '사업분류'">
-                                        <span>
-                                            <a-select ref="select" value="주.야간보호" style="width: 200px">
-                                                <a-select-option value="방문요양">방문요양</a-select-option>
-                                                <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
-                                                <a-select-option value="방문간호">방문간호</a-select-option>
-                                                <a-select-option value="방문목욕">방문목욕</a-select-option>
-                                                <a-select-option value="단기보호">단기보호</a-select-option>
-                                                <a-select-option value="복지용구">복지용구</a-select-option>
-                                            </a-select>
-                                        </span>
+                                    <template #bodyCell="{ column, record }">
+                                        <template v-if="column.key === '사업명'">
+                                            <a>
+                                                {{ record.사업명 }}
+                                            </a>
+                                        </template>
+                                        <template v-else-if="column.key === '사업분류'">
+                                            <span>
+                                                <a-select ref="select" value="주.야간보호" style="width: 200px">
+                                                    <a-select-option value="방문요양">방문요양</a-select-option>
+                                                    <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
+                                                    <a-select-option value="방문간호">방문간호</a-select-option>
+                                                    <a-select-option value="방문목욕">방문목욕</a-select-option>
+                                                    <a-select-option value="단기보호">단기보호</a-select-option>
+                                                    <a-select-option value="복지용구">복지용구</a-select-option>
+                                                </a-select>
+                                            </span>
+                                        </template>
+                                        <template v-else-if="column.key === '서비스시작년월'">
+                                            <span>
+                                                <CustomDatepicker :valueDate="record.서비스시작년월" />
+                                            </span>
+                                        </template>
+                                        <template v-else-if="column.key === 'action'">
+                                            <span>
+                                                <a-popconfirm title="Are you sure delete this row?" ok-text="Yes"
+                                                    cancel-text="No">
+                                                    <a-button type="text">
+                                                        <minus-circle-outlined />
+                                                    </a-button>
+                                                </a-popconfirm>
+                                            </span>
+                                        </template>
                                     </template>
-                                    <template v-else-if="column.key === '서비스시작년월'">
-                                        <span>
-                                            <CustomDatepicker :valueDate="record.서비스시작년월" />
-                                        </span>
-                                    </template>
-                                    <template v-else-if="column.key === 'action'">
-                                        <span>
-                                            <a-popconfirm title="Are you sure delete this row?" ok-text="Yes"
-                                                cancel-text="No">
-                                                <a-button type="text">
-                                                    <minus-circle-outlined />
-                                                </a-button>
-                                            </a-popconfirm>
-                                        </span>
-                                    </template>
-                                </template>
-                            </a-table>
-                        </a-card>
-                    </div>
+                                </a-table>
+                            </a-card>
+                        </div>
                         <a-row>
                             <a-col :span="14">
                                 <a-form-item label="회계서비스 이용료:" style="margin-top: 10px; font-weight: bold">
@@ -125,45 +126,13 @@
                                 </div>
                             </a-col>
                         </a-row>
-                        <a-row :gutter="[16,16]">
-                            <a-col :span="18">
-                                <a-form-item label="장기요양기관등록번호">
-                                    <a-input v-model:value="formState.desc" style="width: 150px"
-                                        placeholder="01234567898" />
-                                </a-form-item>
-                                <a-form-item label="장기요양기관등록증">
-                                    <a-upload v-model:file-list="fileList" :show-upload-list="false"
-                                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                        :before-upload="beforeUpload" @change="handleChange">
-                                        <a-button>
-                                            <upload-outlined></upload-outlined>
-                                            파일선택...
-                                        </a-button>
-                                    </a-upload>
-                                </a-form-item>
-                                <a-space :size="10" align="start">
-                                    <div>
-                                        <warning-filled :style="{ fontSize: '15px'}" />
-                                    </div>
-                                    <div class="warring-modal">
-                                        <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
-                                        <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
-                                        <p>파일용량 : 최대 5MB</p>
-                                    </div>
-                                </a-space>
-                                <a-row>
-                                    <a-row>
-                                        <a-form-item label="부가서비스">
-                                            <input type="checkbox" value="regist"> 회계입력대행서비스
-                                        </a-form-item>
-                                    </a-row>
-                                </a-row>
-                            </a-col>
-                            <imgUpload :title="titleModal" :imageUrl="imageUrl" />
-                        </a-row>
+
+
+                        <imgUpload :title="titleModal" :imageUrl="imageUrl" />
+
                     </a-form>
-                    <hr>
-                    <a-row>
+                    <hr>                   
+                    <a-row style="padding: 5px">
                         <a-col>
                             <a-form-item label="원천서비스" style="font-weight: bold">
                                 <input type="checkbox" value="regist"> 원천서비스 신청
@@ -584,6 +553,7 @@ export default defineComponent({
 
 .ant-form-item-label {
     text-align: left;
+    padding: 10px;
 }
 
 .ant-form-item {
@@ -593,14 +563,21 @@ export default defineComponent({
 .ant-table-tbody>tr>td {
     padding: 2px 8px
 }
-.popup-scroll{
-height: 600px;
-border: 1px solid #333;
-overflow-y: scroll;
+
+.popup-scroll {
+    height: 600px;
+    border: 1px solid #333;
+    overflow: auto;
+    border: 0ch;  
+   }
+
+.table-scroll {
+    height: 190px;
+    border: 1px solid #333;
+    overflow: auto;
+    padding: 5px;
 }
-.table-scroll{
-height: 190px;
-border: 1px solid #333;
-overflow-y: scroll; 
+.ant-collapse-content > .ant-collapse-content-box {
+    padding: 10px 0px;
 }
 </style>
