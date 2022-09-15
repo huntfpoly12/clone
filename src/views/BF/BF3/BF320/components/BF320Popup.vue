@@ -1,5 +1,8 @@
 <template>
-  <div id="components-modal-demo-position">
+  <div
+    class="components-modal-demo-position"
+    id="components-modal-demo-position"
+  >
     <a-modal
       :visible="modalStatus"
       title="사업자관리 "
@@ -76,6 +79,7 @@
                 </a-form-item>
               </a-col>
               <imgUpload
+                class="custom"
                 :title="titleModal"
                 @update-img="getImgUrl"
                 :marginTop="marginTopModal"
@@ -243,7 +247,7 @@ export default defineComponent({
   },
   data() {
     return {
-      marginTopModal: "margin-top : -56px",
+      marginTopModal: "margin-top : -67px",
     };
   },
   setup() {
@@ -350,13 +354,19 @@ export default defineComponent({
   },
 });
 </script>
-<style>
-.warring-modal {
-  font-size: 13px;
-  line-height: 5px;
-}
+<style lang="scss" scoped>
+::v-deep.components-modal-demo-position {
+  .imgPreview img {
+    width: 1000px !important;
+  }
 
-.ant-form-item-label {
-  text-align: left;
+  .warring-modal {
+    font-size: 13px;
+    line-height: 5px;
+  }
+
+  .ant-form-item-label {
+    text-align: left;
+  }
 }
 </style>
