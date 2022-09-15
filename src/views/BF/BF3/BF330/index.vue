@@ -184,3 +184,9 @@ export default defineComponent({
     },
 });
 </script>
+<style>
+    .ant-col {
+        display: flex;
+        align-items: center;
+    }
+</style>
