@@ -20,7 +20,6 @@
                     </template>
                 </DxDataGrid>
                 <template #footer>
-                   
                 </template>
         </a-modal>
     </div>
