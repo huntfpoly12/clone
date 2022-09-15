@@ -75,8 +75,7 @@
                 </template>
             </DxDataGrid>
             <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
-            <BF320Popup :modalStatusHistory="modalStatusHistory" @closePopupHis="modalStatusHistory=false"
-                :data="popupData" />
+            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" title="변경이력[cm-000-pop]"/> 
         </div>
     </div>
 </template>
@@ -90,6 +89,7 @@ import {
     DxSelection,
     DxSearchPanel
 } from 'devextreme-vue/data-grid';
+import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
@@ -114,6 +114,7 @@ export default defineComponent({
         DxExport,
         DxSearchPanel,
         BF320Popup,
+        HistoryPopup,
         EditOutlined,
         HistoryOutlined,
         Style
@@ -134,7 +135,7 @@ export default defineComponent({
             }],
             popupData: [],
             modalStatus: false,
-            modalStatusHistory: false,
+            modalHistoryStatus: false,
             dataSearch: {
                 typeSevice: '',
                 nameCompany: '',
@@ -166,7 +167,7 @@ export default defineComponent({
             this.popupData = data;
         },
         modalHistory(data) {
-            this.modalStatusHistory = true;
+            this.modalHistoryStatus = true;
             this.popupData = data;
         },
     },
