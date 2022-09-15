@@ -1,5 +1,6 @@
 <template>
   <a-row class="container_upload" :gutter="[16, 8]">
+<<<<<<< HEAD
     <a-col :span="16">
       <a-form-item class="title" :label="title">
         <a-upload
@@ -13,6 +14,13 @@
           @change="handleChange"
           accept=".pdf,.tiff,.png,.jpeg,.jpg"
         >
+=======
+    <a-col v-if="imageUrl" :span="16">
+      <a-form-item class="title" :label="title">
+        <a-upload v-model:file-list="fileList" :show-upload-list="true"
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :before-upload="beforeUpload"
+          @change="handleChange">
+>>>>>>> 9acbf9759a78474e9519b29ad6b6098c9c0cef69
           <a-button>
             <upload-outlined></upload-outlined>
             파일선택...
@@ -31,11 +39,37 @@
           <DeleteOutlined v-if="imageUrl" @click="onRemove" name="rỗng" />
         </div> -->
       </a-form-item>
+<<<<<<< HEAD
       <a-space
         :size="10"
         align="start"
         style="margin-top: 10px; padding-left: 142px"
       >
+=======
+      <a-space :size="10" align="start" style="padding-left: 8px">
+        <div>
+          <warning-filled :style="{ fontSize: '15px' }" />
+        </div>
+        <div :span="22" class="warring-modal">
+          <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
+          <p>파일형식 : PDF, JPG(JPEG), TIF, GIF, PNG</p>
+          <p>파일용량 : 최대 5MB</p>
+        </div>
+      </a-space>
+    </a-col>
+    <a-col v-else :span="16">
+      <a-form-item class="title" :label="title">
+        <a-upload v-model:file-list="fileList" :show-upload-list="false"
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :before-upload="beforeUpload"
+          @change="handleChange">
+          <a-button>
+            <upload-outlined></upload-outlined>
+            파일선택...
+          </a-button>
+        </a-upload>
+      </a-form-item>
+      <a-space :size="10" align="start" style="padding-left: 8px">
+>>>>>>> 9acbf9759a78474e9519b29ad6b6098c9c0cef69
         <div>
           <warning-filled :style="{ fontSize: '15px' }" />
         </div>
@@ -48,6 +82,7 @@
     </a-col>
 
     <a-col :span="8" class="imgPreview">
+<<<<<<< HEAD
       <img v-if="imageUrl" :src="imageUrl" @click="handlePreview" />
       <img v-else src="https://taao.vn/placeholder.jpg" />
       <!-- <div id="preview">
@@ -62,6 +97,18 @@
       @cancel="handleCancel"
     >
       <img style="width: 100%" :src="imageUrl" />
+=======
+      <div style="display: flex; flex-direction: column">
+        <img v-if="imageUrl" :src="imageUrl" alt="avatar" @click="handlePreview" />
+        <img v-else src="https://taao.vn/placeholder.jpg" alt="avatar" />
+        <a-button class="button_remove" v-if="imageUrl" type="primary" @click="handleRemove" :size="10">Remove
+        </a-button>
+      </div>
+    </a-col>
+
+    <a-modal :visible="previewVisible" :title="title" :footer="null" @cancel="handleCancel">
+      <img alt="example" style="width: 100%" :src="imageUrl" />
+>>>>>>> 9acbf9759a78474e9519b29ad6b6098c9c0cef69
     </a-modal>
   </a-row>
 </template>
@@ -241,16 +288,20 @@ export default defineComponent({
 .container_upload {
   width: 100%;
 }
+
 .imgPreview {
   cursor: pointer;
   width: 100%;
 }
+
 .imgPreview img {
   width: 100%;
 }
+
 .title {
   padding-right: 8px;
 }
+
 .button_remove {
   width: 100px;
   margin: 0 auto;
@@ -260,3 +311,7 @@ export default defineComponent({
   padding-top: 5px;
 }
 </style>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9acbf9759a78474e9519b29ad6b6098c9c0cef69

@@ -4,34 +4,34 @@
         <div class="search-form">
             <a-row :gutter="[8,8]">
                 <a-col>
-                    <label class="lable-item">영업자명 :</label>
+                    <label class="lable-item">서비스종류 :</label>
                     <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
                     <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
                 </a-col>
                 <a-col>
                     <label class="lable-item">심사상태/결과 :</label>
                     <a-select ref="select" v-model:value="dataSearch.status">
-                                <a-select-option value="신청">신청</a-select-option>
-                                <a-select-option value="심사중">심사중</a-select-option>
-                                <a-select-option value="승인">승인</a-select-option>
-                                <a-select-option value="반려 ">반려</a-select-option>
+                        <a-select-option value="신청">신청</a-select-option>
+                        <a-select-option value="심사중">심사중</a-select-option>
+                        <a-select-option value="승인">승인</a-select-option>
+                        <a-select-option value="반려 ">반려</a-select-option>
                     </a-select>
                 </a-col>
                 <a-col>
-                    <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" value="A 대리점" placeholder="전체">
-                                <a-select-option value="A 대리점">A 대리점</a-select-option>
-                                <a-select-option value="C 영업사원">C 영업사원</a-select-option>
-                                <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-                                <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                    <label class="lable-item">영업자 :</label>
+                    <a-select ref="select" v-model:value="dataSearch.select1" placeholder="전체">
+                        <a-select-option value="A 대리점">A 대리점</a-select-option>
+                        <a-select-option value="C 영업사원">C 영업사원</a-select-option>
+                        <a-select-option value="D 영업사원">D 영업사원</a-select-option>
+                        <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
                     </a-select>
                 </a-col>
                 <a-col>
-                    <label class="lable-item">영업자명 :</label>
+                    <label class="lable-item">신청기간 :</label>
                     <a-range-picker v-model:value="value4" width="50%" />
                 </a-col>
             </a-row>
-       
+
         </div>
         <div class="page-content">
             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
@@ -133,7 +133,8 @@ export default defineComponent({
                 typeSevice1: true,
                 typeSevice2: true,
                 status: '신청',
-                staff: ''
+                staff: '',
+                select1: 'A 대리점'
             },
             sizeButton: 'small'
         };
@@ -151,7 +152,7 @@ export default defineComponent({
                 workbook.xlsx.writeBuffer().then((buffer) => {
                     saveAs(
                         new Blob([buffer], { type: "application/octet-stream" }),
-                        "DataGrid.xlsx"
+                        "계약정보관리.xlsx"
                     );
                 });
             });
@@ -178,7 +179,7 @@ export default defineComponent({
     },
 });
 </script>
-<style>
+<style lang="scss">
 .dx-button-has-text .dx-button-content {
     padding: 0px 15px !important;
 }
@@ -186,6 +187,20 @@ export default defineComponent({
 .search-form {
     background: #f1f3f4;
     padding: 10px 24px;
+
+    >div {
+        justify-content: flex-start !important;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    label {
+        margin-right: 10px;
+    }
+}
+
+.ant-select {
+    width: 145px;
 }
 
 #data-grid-demo {
@@ -214,4 +229,61 @@ export default defineComponent({
     margin-left: 30px;
 }
 
+.noteText p {
+    margin-bottom: 1px;
+}
+
+.noteImage {
+    font-size: 12px;
+    width: 100%;
+    padding-top: 2px;
+}
+
+.ant-card-head-title {
+    padding: 0px;
+}
+
+.ant-form-item {
+    margin-bottom: 4px;
+}
+
+.title-number-modal {
+    margin-top: 7px;
+}
+
+.ant-collapse {
+    .ant-collapse-item {
+        .ant-collapse-header {
+            padding: 7px;
+        }
+    }
+}
+
+.ant-form-item-label {
+    text-align: left;
+}
+
+.ant-card-extra {
+    padding: 0px;
+}
+
+.ant-card-head {
+    min-height: 30px;
+}
+
+.ant-table-thead {
+    tr {
+        th {
+            padding: 7px;
+        }
+    }
+}
+
+.ant-table-tbody {
+    tr {
+        td {
+            padding: 7px;
+        }
+    }
+}
 </style>

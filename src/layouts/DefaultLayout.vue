@@ -28,7 +28,7 @@
                     <div class="wrap-search">
                         <a-input v-model:value="inputSearchText" placeholder="메뉴를 입력해보세요"
                             @keyup="onSearch($event.target.value)" :class="{ shown: state }"
-                            @click.prevent="toggleDropdown" @blur="focusInput" />
+                            @click.prevent="toggleDropdown" />
                         <div>
                             <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
                                 <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex"
@@ -152,13 +152,14 @@
 </template>
 <script>
 import { defineComponent, reactive, toRefs, ref, defineAsyncComponent} from "vue";
-import Test from '../views/DefaultComponent.vue'
 import Style from "./style/styleLayout.scss";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
 const BF310 = defineAsyncComponent(() => import('../views/BF/BF3/BF310/index.vue'));
 const BF320 = defineAsyncComponent(() => import('../views/BF/BF3/BF320/index.vue'));
 const BF330 = defineAsyncComponent(() => import('../views/BF/BF3/BF330/index.vue'));
+const BF340 = defineAsyncComponent(() => import('../views/BF/BF3/BF340/index.vue'));
+const Test = defineAsyncComponent(() => import('../views/DefaultComponent.vue'));
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -188,6 +189,7 @@ export default defineComponent({
         BF310,
         BF320,
         BF330,
+        BF340,
         Test,
         MenuFoldOutlined,
         MenuUnfoldOutlined,
@@ -219,6 +221,7 @@ export default defineComponent({
             if (this.activeTab.id === 'bf-310') return BF310
             if (this.activeTab.id === 'bf-320') return BF320
             if (this.activeTab.id === 'bf-330') return BF330
+            if (this.activeTab.id === 'bf-340') return BF340
             return Test
         }
 
@@ -290,9 +293,16 @@ export default defineComponent({
         const collapsed = ref(false)
         const onOpenChange = openKeys => {
             const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
-
             if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-                state.openKeys = openKeys;
+                if(latestOpenKey && latestOpenKey.includes('bf')) {
+                    state.openKeys = ['bf-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('cm')) {
+                    state.openKeys = ['cm-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('ac')) {
+                    state.openKeys = ['ac-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('pa')) {
+                    state.openKeys = ['pa-000', latestOpenKey];
+                }
             } else {
                 state.openKeys = latestOpenKey ? [latestOpenKey] : [];
             }
@@ -430,7 +440,7 @@ export default defineComponent({
 }
 
 ::v-deep .page-content {
-    padding: 24px;
+    padding: 10px;
 }
 
 .nav-tabs {
