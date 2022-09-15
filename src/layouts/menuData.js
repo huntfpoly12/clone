@@ -2,7 +2,7 @@ export default
  [
         { name: "인증", url: "/dashboard/bf-310", id: "bf-110", },
         { name: "개인정보관리", url: "/dashboard/bf-310", id: "bf-120" },
-        { name: "회원등록", url: "/dashboard/bf-310", id: "bf-210" },
+        { name: "회원등록", url: "/dashboard/bf-210", id: "bf-210" },
         { name: "권한그룹", url: "/dashboard/bf-310", id: "bf-220" },
         { name: "기초정보설정", url: "/dashboard/bf-310", id: "bf-230" },
         { name: "계약정보관리&심사 ", url: "/dashboard/bf-310", id: "bf-310", },
