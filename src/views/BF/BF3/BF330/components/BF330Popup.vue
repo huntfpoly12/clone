@@ -37,7 +37,7 @@
                             <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                 :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
                                 <template #extra>
-                                    <a-button type="text" @click="handleCopy">
+                                    <a-button type="text" @click="handleCopy()">
                                         <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
                                     </a-button>
                                 </template> 
@@ -197,7 +197,7 @@
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="4" header="메모" class="modal-note">
+                <a-collapse-panel key="3" header="메모" class="modal-note">
                     <a-table bordered :data-source="dataSource" :pagination="false">
                         <template #bodyCell="{  text, index }">
                             <div>
@@ -404,7 +404,7 @@ export default defineComponent({
                 key: "action",
             },
         ];
-        const dataTable = [
+        const dataTable = ref([
             {
                 key: "1",
                 No: "1",
@@ -438,7 +438,7 @@ export default defineComponent({
                 서비스시작년월: "2015/01/13",
                 정원수: 10,
             },
-        ];
+        ]);
         return {
             fileList,
             loading,
@@ -497,8 +497,7 @@ export default defineComponent({
             }
         },
         handleCopy() {
-            console.log(this.dataTable);
-            
+           
 			this.keyNumber++;
 			let dataDef = {
               
@@ -509,7 +508,7 @@ export default defineComponent({
                 서비스시작년월: "2015/01/01",
                 정원수: 10,
 			};
-			this.dataTable.push(dataDef); console.log(this.dataTable);
+			this.dataTable.push(dataDef); 
 		},
         deleteRow(key: string) {
 			for (var i = 0; i < this.dataTable.length; i++) {
