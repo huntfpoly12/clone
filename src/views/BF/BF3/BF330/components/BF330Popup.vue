@@ -7,7 +7,7 @@
                     <a-form :label-col="labelCol" class="popup-scroll">
                         <a-row>
                             <a-col :span="10">
-                                <a-form-item label="총일용료" style="font-weight: bold">
+                                <a-form-item label="총일용료" style="font-weight: bold;">
                                     <a-input v-model:value="formState.totalService" disabled="True" />
                                 </a-form-item>
                             </a-col>
@@ -19,7 +19,7 @@
                             </a-col>
                             <a-col :span="14"></a-col>
                             <a-col :span="10">
-                                <a-form-item label="원천서비스 이용료" style="padding-left: 50px">
+                                <a-form-item label="원천서비스 이용료" style="padding-left: 50px;">
                                     <a-input v-model:value="formState.taxFeeSevice" disabled="True" />
                                 </a-form-item>
                             </a-col>
@@ -35,12 +35,12 @@
                         </a-row>
                         <div>
                             <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                                :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 24px 0px">
+                                :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
                                 <template #extra>
-                                    <a-button type="text">
+                                    <a-button type="text" @click="handleCopy">
                                         <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
                                     </a-button>
-                                </template>
+                                </template> 
                                 <a-table :columns="columns" :data-source="dataTable" :pagination="false"
                                     :bordered="true" class="table-scroll">
                                     <template #headerCell="{ column }">
@@ -75,7 +75,7 @@
                                             <span>
                                                 <a-popconfirm title="Are you sure delete this row?" ok-text="Yes"
                                                     cancel-text="No">
-                                                    <a-button type="text">
+                                                    <a-button type="text" @click="deleteRow(record.key)">
                                                         <minus-circle-outlined />
                                                     </a-button>
                                                 </a-popconfirm>
@@ -139,7 +139,7 @@
                             </a-form-item>
                         </a-col>
                     </a-row>
-                    <div style="margin-top: 20px">
+                    <div>
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                             <a-form-item label="서비스 시작년월">
                                 <CustomDatepicker width="30%" valueDate="2022/08/25" />
@@ -212,7 +212,7 @@
                                     <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.note" />
                                 </div>
                                 <a-space :size="8" style="margin-top: 7px">
-                                    <save-outlined :style="{ fontSize: '20px'}" @click="handleCopy(text.note)" />
+                                    <save-outlined :style="{ fontSize: '20px'}" @click="handleCopy()" />
                                     <DeleteOutlined :style="{ fontSize: '20px'}" @click="handleDelete(text.key)" />
                                 </a-space>
                             </div>
@@ -225,7 +225,7 @@
         </a-modal>
 
         <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
-            <div style="margin-top: 20px">
+            <div>
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
                     <DxColumn data-field="기록일시" width='150px' />
                     <DxColumn data-field="비고" />
@@ -370,7 +370,7 @@ export default defineComponent({
             '삭제여부': '1',
             'IP주소': '123.451.342.1'
         }])
-        const keyNumber = ref(0)
+        const keyNumber = ref(5)
         const titleModal = "사업자등록증"
         const columns = [
             {
@@ -461,7 +461,7 @@ export default defineComponent({
             PlusOutlined,
         }
     },
-    methods: {
+    methods: {        
         setModalVisible() {
             this.$emit('closePopup', false)
         },
@@ -495,14 +495,29 @@ export default defineComponent({
                 })
             }
         },
-        handleCopy(note: any) {
-            this.keyNumber++
-            let dataDef = {
-                key: this.keyNumber,
-                note: note,
-            }
-            this.dataSource.push(dataDef)
-        },
+        handleCopy() {
+            console.log(this.dataTable);
+            
+			this.keyNumber++;
+			let dataDef = {
+              
+                key: this.keyNumber.toString(),
+                No: this.keyNumber.toString(),
+                사업명: "가나다라마바 사업",
+                사업분류: "방문요양",
+                서비스시작년월: "2015/01/01",
+                정원수: 10,
+			};
+			this.dataTable.push(dataDef); console.log(this.dataTable);
+		},
+        deleteRow(key: string) {
+			for (var i = 0; i < this.dataTable.length; i++) {
+				if (this.dataTable[i].key == key) {
+					this.dataTable.splice(i, 1);
+					break;
+				}
+			}
+		},
 
     },
     watch: {
@@ -553,11 +568,11 @@ export default defineComponent({
 
 .ant-form-item-label {
     text-align: left;
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 .ant-form-item {
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .ant-table-tbody>tr>td {
@@ -578,6 +593,12 @@ export default defineComponent({
     padding: 5px;
 }
 .ant-collapse-content > .ant-collapse-content-box {
-    padding: 10px 0px;
+    padding: 10px 0px 10px 16px;
+}
+.input-form {
+    margin-top: 5px;
+}
+.ant-card-extra,.ant-card-head-title {
+    padding: 0;
 }
 </style>
