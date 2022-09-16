@@ -457,6 +457,9 @@ export default defineComponent({
 ::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active {
     background: #1890ff;
 }
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active a {
+    color: #fff;
+}
 ::v-deep .page-content {
     padding: 10px;
 }
