@@ -303,7 +303,6 @@ export default defineComponent({
 });
 </script>
 <style>
-<<<<<<< HEAD
 .modal {
   width: 300px;
   padding: 30px;
@@ -342,8 +341,6 @@ export default defineComponent({
 .result-address {
   margin-left: 110px;
 }
-=======
->>>>>>> develop
 
 .ant-form-item {
   margin-bottom: 10px;
