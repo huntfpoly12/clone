@@ -46,7 +46,7 @@
                 :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                 <DxSelection mode="multiple" />
                 <DxPaging :page-size="5" />
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true"/>
+                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="사업자코드" :fixed="true" />
                 <DxColumn data-field="상호" data-type="date" />
@@ -75,7 +75,8 @@
                 </template>
             </DxDataGrid>
             <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
-            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" title="변경이력[cm-000-pop]"/> 
+            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+                title="변경이력[cm-000-pop]" />
         </div>
     </div>
 </template>
@@ -91,7 +92,6 @@ import {
 } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
-import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees, states } from '../data.js';
 import { Workbook } from 'exceljs';
@@ -117,7 +117,6 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        Style
     },
     data() {
         return {
@@ -173,3 +172,158 @@ export default defineComponent({
     },
 });
 </script>
+
+<style lang="scss">
+#data-grid-demo {
+    min-height: 700px;
+}
+
+.dx-select-checkbox {
+    display: inline-block !important;
+}
+
+.modal-note {
+    max-height: 500px;
+    overflow: auto;
+
+    .title-note {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    th {
+        display: none;
+    }
+
+    .ant-collapse-content-box {
+        padding: 0px;
+    }
+}
+
+.anticon {
+    cursor: pointer;
+}
+
+.custom-action {
+    text-align: center;
+}
+
+.search-form {
+    margin-bottom: 10px;
+    background: #f1f3f4;
+    padding: 10px 24px;
+
+    >div {
+        width: 100%;
+        justify-content: flex-start !important;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    label {
+        margin-right: 10px;
+    }
+
+    .lable-item {
+        white-space: nowrap;
+        margin-right: 10px;
+        width: auto !important;
+    }
+
+    .col {
+        align-items: center;
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+
+        .lable-item {
+            width: 110px;
+            display: inline-block;
+        }
+
+        .item:nth-child(2) {
+            margin-left: 30px;
+        }
+    }
+}
+
+.ant-row {
+    align-items: center;
+}
+
+.ant-form-item {
+    margin-bottom: 4px;
+}
+
+.ant-collapse {
+    .ant-collapse-item {
+        .ant-collapse-header {
+            padding: 7px;
+        }
+    }
+}
+
+.warring-modal {
+    font-size: 12px;
+    line-height: 0px;
+}
+
+.ant-form-item-label {
+    text-align: left;
+}
+
+.clr {
+    label {
+        color: red;
+    }
+}
+
+.clr-text {
+    color: red;
+}
+
+.clb,
+.clb-label label {
+    color: black !important;
+}
+
+
+::v-deep.components-modal-demo-position {
+    ::v-deep.test-local {
+        background-color: pink !important;
+        width: 1000px !important;
+        height: 200px !important;
+    }
+
+    .imgPreview img {
+        width: 1000px !important;
+    }
+
+    .ant-form-item-label {
+        text-align: left;
+    }
+
+}
+
+.dflex {
+    display: flex;
+}
+
+.custom-flex {
+    align-items: flex-start;
+}
+
+.warring-bank {
+    display: flex;
+    align-items: center;
+}
+
+.pl-5 {
+    padding-left: 5px;
+}
+
+.custom-lineHeight {
+    line-height: 3px;
+}
+</style>

@@ -263,6 +263,7 @@ export default defineComponent({
                     if(newValue.id.includes('pa-5')) {
                         this.openKeys = ['pa-000', 'pa-500']
                     }
+                   
                 }
             },
             immediate: true
