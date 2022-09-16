@@ -426,7 +426,8 @@ export default defineComponent({
 				서비스시작년월: "2015/01/01",
 				정원수: 10,
 			};
-			this.dataTable.push(dataDef);
+			this.dataTable.unshift(dataDef);
+
 		},
 		setModalVisible() {
 			this.$emit("closePopup", false);
