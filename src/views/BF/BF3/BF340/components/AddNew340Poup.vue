@@ -6,7 +6,7 @@
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
                         <a-form-item label="영업자코드">
-                            <a-input v-model:value="bf340Detail.영업자코드" style="width: 200px" :disabled="true" />
+                            <a-input v-model:value="bf340Detail.영업자코드" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="영업자명">
                             <a-input v-model:value="bf340Detail.영업자명" style="width: 200px" />
