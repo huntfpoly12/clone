@@ -91,10 +91,10 @@
                     </a-col>
                     <a-col :span="12">
                         <a-row>
-                            <a-col :span="8">
+                            <a-col :span="6" :md="6" :lg="5">
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
-                            <a-col :span="14">
+                            <a-col :span="16" :md="16" :lg="17">
                                 <a-form-item class="email-input" :wrapper-col="{ span: 24 }">
                                     <a-input v-model:value="bf340Detail.전자세금계산서수신이메일" placeholder="상세주소"
                                         style="width: 100%" />
@@ -228,7 +228,7 @@ export default defineComponent({
 
         let withPopup = () => {
             var percent = 100 -  (window.innerWidth / (window.innerWidth + window.innerHeight))*100 + 30;
-            if(windowHeight.value <= 1960){
+            if(windowHeight.value <= 1919){
                 return percent+'%';
             }else{
                 return '50%';
