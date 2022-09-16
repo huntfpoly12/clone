@@ -2,13 +2,8 @@ export default
  [
         { name: "인증", url: "/dashboard/bf-310", id: "bf-110", },
         { name: "개인정보관리", url: "/dashboard/bf-310", id: "bf-120" },
-<<<<<<< HEAD
-        { name: "회원관리", url: "/dashboard/bf-210", id: "bf-210" },
-        { name: "권한그룹", url: "/dashboard/bf-310", id: "bf-220" },
-=======
         { name: "회원등록", url: "/dashboard/bf-210", id: "bf-210" },
         { name: "권한그룹관리", url: "/dashboard/bf-220", id: "bf-220" },
->>>>>>> develop
         { name: "기초정보설정", url: "/dashboard/bf-310", id: "bf-230" },
         { name: "계약정보관리&심사 ", url: "/dashboard/bf-310", id: "bf-310", },
         { name: "사업자관리", url: "/dashboard/bf-320", id: "bf-320" },
