@@ -166,141 +166,140 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-#bf-220 {
-    #data-grid-demo {
-        min-height: 700px;
-    }
+#data-grid-demo {
+    min-height: 700px;
+}
 
-    .dx-select-checkbox {
-        display: inline-block !important;
-    }
+.dx-select-checkbox {
+    display: inline-block !important;
+}
 
-    .modal-note {
-        max-height: 500px;
-        overflow: auto;
+.modal-note {
+    max-height: 500px;
+    overflow: auto;
 
-        .title-note {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        th {
-            display: none;
-        }
-
-        .ant-collapse-content-box {
-            padding: 0px;
-        }
-    }
-
-    .anticon {
-        cursor: pointer;
-    }
-
-    .custom-action {
-        text-align: center;
-    }
-
-    .search-form {
-        margin-bottom: 10px;
-        background: #f1f3f4;
-        padding: 10px 24px;
-
-        >div {
-            width: 100%;
-            justify-content: flex-start !important;
-            align-items: center;
-            margin-right: 15px;
-        }
-
-        label {
-            margin-right: 10px;
-        }
-
-        .lable-item {
-            white-space: nowrap;
-            margin-right: 10px;
-            width: auto !important;
-        }
-
-        .col {
-            align-items: center;
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-
-            .lable-item {
-                width: 110px;
-                display: inline-block;
-            }
-
-            .item:nth-child(2) {
-                margin-left: 30px;
-            }
-        }
-    }
-
-    .ant-row {
+    .title-note {
+        display: flex;
+        justify-content: space-between;
         align-items: center;
     }
 
-    .ant-form-item {
-        margin-bottom: 4px;
+    th {
+        display: none;
     }
 
-    .ant-collapse {
-        .ant-collapse-item {
-            .ant-collapse-header {
-                padding: 7px;
-            }
+    .ant-collapse-content-box {
+        padding: 0px;
+    }
+}
+
+.anticon {
+    cursor: pointer;
+}
+
+.custom-action {
+    text-align: center;
+}
+
+.search-form {
+    margin-bottom: 10px;
+    background: #f1f3f4;
+    padding: 10px 24px;
+
+    >div {
+        width: 100%;
+        justify-content: flex-start !important;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    label {
+        margin-right: 10px;
+    }
+
+    .lable-item {
+        white-space: nowrap;
+        margin-right: 10px;
+        width: auto !important;
+    }
+
+    .col {
+        align-items: center;
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+
+        .lable-item {
+            width: 110px;
+            display: inline-block;
+        }
+
+        .item:nth-child(2) {
+            margin-left: 30px;
         }
     }
+}
 
-    .warring-modal {
-        font-size: 12px;
-        line-height: 0px;
+.ant-row {
+    align-items: center;
+}
+
+.ant-form-item {
+    margin-bottom: 4px;
+}
+
+.ant-collapse {
+    .ant-collapse-item {
+        .ant-collapse-header {
+            padding: 7px;
+        }
+    }
+}
+
+.warring-modal {
+    font-size: 12px;
+    line-height: 0px;
+}
+
+.ant-form-item-label {
+    text-align: left;
+}
+
+.clr {
+    label {
+        color: red;
+    }
+}
+
+.clr-text {
+    color: red;
+}
+
+.clb,
+.clb-label label {
+    color: black !important;
+}
+
+
+::v-deep.components-modal-demo-position {
+    ::v-deep.test-local {
+        background-color: pink !important;
+        width: 1000px !important;
+        height: 200px !important;
+    }
+
+    .imgPreview img {
+        width: 1000px !important;
     }
 
     .ant-form-item-label {
         text-align: left;
     }
 
-    .clr {
-        label {
-            color: red;
-        }
-    }
-
-    .clr-text {
-        color: red;
-    }
-
-    .clb,
-    .clb-label label {
-        color: black !important;
-    }
-
-
-    ::v-deep.components-modal-demo-position {
-        ::v-deep.test-local {
-            background-color: pink !important;
-            width: 1000px !important;
-            height: 200px !important;
-        }
-
-        .imgPreview img {
-            width: 1000px !important;
-        }
-
-        .ant-form-item-label {
-            text-align: left;
-        }
-
-    }
-
-
 }
+
+
+
 
 .dflex {
     display: flex;

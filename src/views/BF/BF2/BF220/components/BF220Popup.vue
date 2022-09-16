@@ -283,7 +283,7 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" >
+<style lang="scss" scoped>
 .ant-form-item {
     margin-bottom: 10px;
 }
