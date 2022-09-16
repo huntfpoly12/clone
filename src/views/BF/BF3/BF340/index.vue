@@ -64,7 +64,7 @@
         </template>
         <DxColumn data-field="영업자명" css-class="cell-center" :width="100"/>
         <DxColumn data-field="등급" css-class="cell-center" :width="100"/>
-        <DxColumn data-field="주소"/>
+        <DxColumn data-field="주소" width="50%"/>
         <DxColumn data-field="연락처" :width="100"/>
         <DxColumn data-field="휴대폰" :width="100"/>
         <DxColumn data-field="가입일자" data-type="date" :width="100"/>
