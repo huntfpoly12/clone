@@ -38,7 +38,8 @@
       </div>
     </div>
     <div class="page-content">
-      <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting" >
+      <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
+        <DxScrolling column-rendering-mode="virtual"/>
         <DxPaging :page-size="5" />
 
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -84,6 +85,7 @@
             </a-space>
           </div>
         </template>
+        
       </DxDataGrid>
       <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
       <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" /> 
@@ -103,6 +105,7 @@ import {
   DxToolbar,
   DxEditing,
   DxGrouping,
+  DxScrolling,
   DxItem
 } from "devextreme-vue/data-grid";
 
@@ -131,6 +134,7 @@ export default defineComponent({
     DxSelection,
     DxExport,
     DxSearchPanel,
+    DxScrolling,
     EditOutlined,
     HistoryOutlined,
     Style,
@@ -172,7 +176,7 @@ export default defineComponent({
         workbook.xlsx.writeBuffer().then((buffer) => {
           saveAs(
             new Blob([buffer], { type: "application/octet-stream" }),
-            "DataGrid.xlsx"
+            "영업자관리.xlsx"
           );
         });
       });
