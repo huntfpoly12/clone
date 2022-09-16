@@ -172,6 +172,7 @@
 import { ref, defineComponent, reactive, onMounted } from 'vue'
 import type { UnwrapRef } from 'vue';
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
+import dayjs, { Dayjs } from 'dayjs';
 interface FormState {
     name: string;
     영업자코드: string;
