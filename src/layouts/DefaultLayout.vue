@@ -445,7 +445,9 @@ export default defineComponent({
 ::v-deep .ant-layout-header {
     background-color: #096dd9;
 }
-
+::v-deep .ant-menu-dark .ant-menu-item-selected > span > a {
+    color: rgba(255, 255, 255, 0.65);
+}
 ::v-deep h3.ant-typography {
     margin-bottom: 0;
 }
