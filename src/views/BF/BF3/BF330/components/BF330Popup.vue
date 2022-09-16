@@ -138,17 +138,18 @@
                                 <input type="checkbox" value="regist"> 원천서비스 신청
                             </a-form-item>
                         </a-col>
-                    </a-row>
+                    </a-row> 
+                    
                     <div>
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                            <a-form-item label="서비스 시작년월">
+                            <a-form-item label="서비스 시작년월" style="width: 300px">
                                 <CustomDatepicker width="30%" valueDate="2022/08/25" />
                             </a-form-item>
                             <a-form-item label="직 원 수">
                                 <a-input-number value="10" style="width: 100px" />
                             </a-form-item>
                             <a-form-item label="원천서비스 이용료:">
-                                <a-input v-model:value="formState.taxFeeSevice" style="width: 358px" disabled="True" />
+                                <a-input v-model:value="formState.taxFeeSevice" style="width: 367px" disabled="True" />
                             </a-form-item>
                         </a-form>
                     </div>
