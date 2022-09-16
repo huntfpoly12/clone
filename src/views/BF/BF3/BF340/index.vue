@@ -93,7 +93,7 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import {
   DxDataGrid,
@@ -112,7 +112,6 @@ import {
 import EditBF340Popup from "./components/EditBF340Popup.vue";
 import AddNew340Poup from "./components/AddNew340Poup.vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
-import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees } from "./data.js";
 import { Workbook } from "exceljs";
@@ -137,7 +136,6 @@ export default defineComponent({
     DxScrolling,
     EditOutlined,
     HistoryOutlined,
-    Style,
     DxToolbar,
     DxEditing,
     DxGrouping,
@@ -165,7 +163,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onExporting(e) {
+    onExporting(e: { component: any; cancel: boolean; }) {
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("employees");
       exportDataGrid({
@@ -185,15 +183,15 @@ export default defineComponent({
     openAddNewModal(){
       this.modalAddNewStatus = true;
     },
-    setModalEditVisible(data) {
+    setModalEditVisible(data: never[]) {
       this.modalEditStatus = true;
       this.popupData = data;
     },
-    modalHistory(data) {
+    modalHistory(data: never[]) {
       this.modalHistoryStatus = true;
       this.popupData = data;
     },
-    getColorTag(data) {
+    getColorTag(data: string) {
       if (data === "정상") {
         return "#108ee9";
       } else if (data === "해지") {

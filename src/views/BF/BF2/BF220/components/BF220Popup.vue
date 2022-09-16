@@ -35,16 +35,25 @@
                         </a-form-item>
                     </a-col>
 
-
                     <a-col :span="24" class="title-modal" style="margin-top: 10px;">
                         <span>권한그룹메뉴별 권한</span>
                     </a-col>
                     <a-col :span="20">
                         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID">
                             <DxPaging :page-size="5" />
-                            <DxColumn data-field="사업자코드" :fixed="true" />
-                            <DxColumn data-field="상호" data-type="date" />
-                            <DxColumn data-field="대표자" />
+                            <DxColumn data-field="메뉴" :fixed="true" />
+                            <DxColumn cell-template="col1" :width="100" alignment="center" />
+                            <template #col1="{}" class="custom-action">
+                                <div class="custom-action">
+                                    <a-checkbox></a-checkbox>
+                                </div>
+                            </template>
+                            <DxColumn cell-template="col2" alignment="center" :width="100" />
+                            <template #col2="{}" class="custom-action">
+                                <div class="custom-action">
+                                    <a-checkbox></a-checkbox>
+                                </div>
+                            </template>
                         </DxDataGrid>
                     </a-col>
 
@@ -62,18 +71,18 @@
                     <a-col :span="16">
                         <a-form-item label="그룹코드">
                             <div class="dflex">
-                                <a-input v-model:value="dataEditDemo.name" class="mr5" disabled=""/>
+                                <a-input v-model:value="dataEditDemo.name" class="mr5" disabled="" />
                                 <a-button type="button" disabled>중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <a-input v-model:value="dataEditDemo.delivery" placeholder="최대 20자"/>
+                            <a-input v-model:value="dataEditDemo.delivery" placeholder="최대 20자" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8"></a-col>
-                    <a-col :span="16" >
+                    <a-col :span="16">
                         <a-form-item label="대상회원">
                             <a-checkbox v-model:checked="dataEditDemo.type">매니저</a-checkbox>
                             <a-checkbox v-model:checked="dataEditDemo.type1">영업자</a-checkbox>
@@ -92,9 +101,19 @@
                     <a-col :span="20">
                         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID">
                             <DxPaging :page-size="5" />
-                            <DxColumn data-field="사업자코드" :fixed="true" />
-                            <DxColumn data-field="상호" data-type="date" />
-                            <DxColumn data-field="대표자" />
+                            <DxColumn data-field="메뉴" :fixed="true" />
+                            <DxColumn cell-template="col1" :width="100" alignment="center" />
+                            <template #col1="{}" class="custom-action">
+                                <div class="custom-action">
+                                    <a-checkbox></a-checkbox>
+                                </div>
+                            </template>
+                            <DxColumn cell-template="col2" alignment="center" :width="100" />
+                            <template #col2="{}" class="custom-action">
+                                <div class="custom-action">
+                                    <a-checkbox></a-checkbox>
+                                </div>
+                            </template>
                         </DxDataGrid>
                     </a-col>
 
@@ -165,27 +184,13 @@ export default defineComponent({
             dataSource: [{
                 ID: 1,
                 메뉴: 'John',
-                신청코드: 'Heart',
-                심사상태: '신청',
-                사업자코드: 'CEO',
-                상호: '1964/03/16',
-                주소: '1964/03/16',
-                대표자: '1995/01/15',
-                영업자: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
-                신청서비스: '351 S Hill St.',
-                부가서비스: 5,
+                읽기: 'Heart',
+                쓰기: '신청',
             }, {
                 ID: 2,
-                신청일자: 'Olivia',
-                신청코드: 'Peyton',
-                심사상태: '심사중',
-                사업자코드: 'Sales Assistant',
-                상호: '1964/03/16',
-                주소: '1964/03/16',
-                대표자: '2012/05/14',
-                영업자: 'Olivia loves to sell. She has been selling DevAV products since 2012. \r\n\r\nOlivia was homecoming queen in high school. She is expecting her first child in 6 months. Good Luck Olivia.',
-                신청서비스: '807 W Paseo Del Mar',
-                부가서비스: 5,
+                메뉴: 'John',
+                읽기: 'Heart',
+                쓰기: '신청',
             }]
         }
     },
@@ -199,7 +204,6 @@ export default defineComponent({
             wrapperCol: { span: 16, },
         };
         const visible = ref<boolean>(false);
-        const dateFormat = 'YYYY-MM-DD';
 
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
@@ -228,7 +232,7 @@ export default defineComponent({
             type1: false,
             type2: false,
             resource: '',
-           
+
         }
 
         const confirmPopup = (value: any) => {
@@ -305,5 +309,9 @@ export default defineComponent({
 
 .mr5 {
     margin-right: 5px;
+}
+
+.custom-action {
+    text-align: center;
 }
 </style>

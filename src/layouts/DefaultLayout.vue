@@ -151,7 +151,7 @@
     </a-layout>
 </template>
 <script>
-import { defineComponent, reactive, toRefs, ref, defineAsyncComponent} from "vue";
+import { defineComponent, reactive, toRefs, ref, defineAsyncComponent, onMounted} from "vue";
 import Style from "./style/styleLayout.scss";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
@@ -184,7 +184,10 @@ export default defineComponent({
             menuItems: menuTree,
             activeKey: 1,
             menuTab: [],
-            activeTab: ''
+            activeTab: '',
+            openKeys: ['bf-000'],
+            rootSubmenuKeys: ['bf-000', 'cm-000', 'ac-000', 'pa-000'],
+            selectedKeys: [],
         };
     },
     components: {
@@ -210,6 +213,60 @@ export default defineComponent({
                 this.activeTab = item
             }
         })
+    },
+    watch: {
+        activeTab: {
+            handler(newValue) {
+                if(newValue) {
+                    if(newValue.id.includes('bf-1')) {
+                        this.openKeys = ['bf-000', 'bf-100']
+                    }
+                    if(newValue.id.includes('bf-2')) {
+                        this.openKeys = ['bf-000', 'bf-200']
+                    }
+                    if(newValue.id.includes('bf-3')) {
+                        this.openKeys = ['bf-000', 'bf-300']
+                    }
+                    if(newValue.id.includes('bf-4')) {
+                        this.openKeys = ['bf-000', 'bf-400']
+                    }
+                    if(newValue.id.includes('cm-1')) {
+                        this.openKeys = ['cm-000', 'cm-100']
+                    }
+                    if(newValue.id.includes('ac-1')) {
+                        this.openKeys = ['ac-000', 'ac-100']
+                    }
+                    if(newValue.id.includes('ac-2')) {
+                        this.openKeys = ['ac-000', 'ac-200']
+                    }
+                    if(newValue.id.includes('ac-3')) {
+                        this.openKeys = ['ac-000', 'ac-300']
+                    }
+                    if(newValue.id.includes('ac-4')) {
+                        this.openKeys = ['ac-000', 'ac-400']
+                    }
+                    if(newValue.id.includes('ac-5')) {
+                        this.openKeys = ['ac-000', 'ac-500']
+                    }
+                    if(newValue.id.includes('pa-1')) {
+                        this.openKeys = ['pa-000', 'pa-100']
+                    }
+                    if(newValue.id.includes('pa-2')) {
+                        this.openKeys = ['pa-000', 'pa-200']
+                    }
+                    if(newValue.id.includes('pa-3')) {
+                        this.openKeys = ['pa-000', 'pa-300']
+                    }
+                    if(newValue.id.includes('pa-4')) {
+                        this.openKeys = ['pa-000', 'pa-400']
+                    }
+                    if(newValue.id.includes('pa-5')) {
+                        this.openKeys = ['pa-000', 'pa-500']
+                    }
+                }
+            },
+            immediate: true
+        }
     },
     computed: {
         username() {
@@ -291,37 +348,30 @@ export default defineComponent({
         },
         focusInput() {
             this.state = false
+        },
+        onOpenChange(openKeys) {
+            const latestOpenKey = openKeys.find(key => this.openKeys.indexOf(key) === -1);
+            if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+                if(latestOpenKey && latestOpenKey.includes('bf')) {
+                    this.openKeys = ['bf-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('cm')) {
+                    this.openKeys = ['cm-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('ac')) {
+                    this.openKeys = ['ac-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('pa')) {
+                    this.openKeys = ['pa-000', latestOpenKey];
+                }
+            } else {
+                this.openKeys = latestOpenKey ? [latestOpenKey] : [];
+            }
         }
     },
     mounted() {
         document.addEventListener("click", this.close);
     },
     setup() {
-        const state = reactive({
-            rootSubmenuKeys: ['bf-000', 'cm-000', 'ac-000', 'pa-000'],
-            openKeys: ['bf-000'],
-            selectedKeys: [],
-        });
         const collapsed = ref(false)
-        const onOpenChange = openKeys => {
-            const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
-            if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-                if(latestOpenKey && latestOpenKey.includes('bf')) {
-                    state.openKeys = ['bf-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('cm')) {
-                    state.openKeys = ['cm-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('ac')) {
-                    state.openKeys = ['ac-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('pa')) {
-                    state.openKeys = ['pa-000', latestOpenKey];
-                }
-            } else {
-                state.openKeys = latestOpenKey ? [latestOpenKey] : [];
-            }
-        };
         return {
-            ...toRefs(state),
-            onOpenChange,
             collapsed,
         };
     },
