@@ -35,7 +35,6 @@
                         </a-form-item>
                     </a-col>
 
-
                     <a-col :span="24" class="title-modal" style="margin-top: 10px;">
                         <span>권한그룹메뉴별 권한</span>
                     </a-col>
