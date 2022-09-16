@@ -1,70 +1,47 @@
 <template>
-    <div id="bf-310">
+    <div id="bf-220">
         <div class="search-form">
             <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16,8]">
                     <a-col>
-                        <label class="lable-item">
-                            사업자코드 :
-                        </label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.typeSevice" />
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">상호:</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.nameCompany" />
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">대표자:</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.surrogate" />
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">해지:</label>
-                        <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
-                    </a-col>
-
-                    <a-col>
-                        <label class="lable-item">주소 :</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.address" />
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">매니저명 :</label>
-                        <a-select style="width: 120px" v-model:value="dataSearch.manager" show-search placeholder="매니저명"
-                            :options="options">
-                        </a-select>
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">영업자명 :</label>
-                        <a-select style="width: 120px" v-model:value="dataSearch.nameSale" show-search
-                            placeholder="영업자명" :options="options">
-                        </a-select>
+                        <label class="lable-item">대상회원</label>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice1">매니저</a-checkbox>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice2">영업자</a-checkbox>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice3">파트너</a-checkbox>
                     </a-col>
                 </a-row>
             </div>
         </div>
         <div class="page-content">
-            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
-                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
-                <DxSelection mode="multiple" />
+            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
+
                 <DxPaging :page-size="5" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
+                <DxToolbar>
+                    <DxItem name="searchPanel" />
+                    <DxItem name="exportButton" />
+                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                    <DxItem name="groupPanel" />
+                    <DxItem name="addRowButton" show-text="always" />
+                    <DxItem name="columnChooserButton" />
+                </DxToolbar>
+                <template #button-template>
+                    <DxButton icon="plus" @click="openAddNewModal" />
+                </template>
+
                 <DxColumn data-field="사업자코드" :fixed="true" />
                 <DxColumn data-field="상호" data-type="date" />
                 <DxColumn data-field="대표자" />
                 <DxColumn data-field="주소" data-type="date" />
-                <DxColumn data-field="연락처" :width="230" />
-                <DxColumn data-field="매니저" />
-                <DxColumn data-field="관리시작일" data-type="date" />
-                <DxColumn data-field="영업자" />
-                <DxColumn data-field="해지일자" />
-                <DxColumn data-field="연체(개월)" />
+
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
                         <a-space :size="10">
                             <a-tooltip placement="top">
                                 <template #title>편집</template>
-                                <EditOutlined @click="setModalVisible(data)" />
+                                <EditOutlined @click="openEditModal(data)" />
                             </a-tooltip>
                             <a-tooltip placement="top">
                                 <template #title>변경이력</template>
@@ -74,7 +51,8 @@
                     </div>
                 </template>
             </DxDataGrid>
-            <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
+            <BF220Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus=false"
+                :modalEdit="modalEditStatus" @closePopupEdit="modalEditStatus = false" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                 title="변경이력[cm-000-pop]" />
         </div>
@@ -88,12 +66,14 @@ import {
     DxPaging,
     DxExport,
     DxSelection,
-    DxSearchPanel
+    DxSearchPanel,
+    DxToolbar,
+    DxItem
 } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
-import BF320Popup from "./components/BF320Popup.vue";
+import BF220Popup from "./components/BF220Popup.vue";
 import DxButton from "devextreme-vue/button";
-import { employees, states } from '../data.js';
+import { employees, states } from './data';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
@@ -113,10 +93,12 @@ export default defineComponent({
         DxSelection,
         DxExport,
         DxSearchPanel,
-        BF320Popup,
+        BF220Popup,
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
+        DxToolbar,
+        DxItem
     },
     data() {
         return {
@@ -144,6 +126,8 @@ export default defineComponent({
                 manager: 'Jack',
                 nameSale: 'Jack'
             },
+            modalAddNewStatus: false,
+            modalEditStatus: false
         };
     },
     methods: {
@@ -156,7 +140,7 @@ export default defineComponent({
                 autoFilterEnabled: true,
             }).then(() => {
                 workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '권한그룹관리.xlsx');
                 });
             });
             e.cancel = true;
@@ -168,6 +152,14 @@ export default defineComponent({
         modalHistory(data) {
             this.modalHistoryStatus = true;
             this.popupData = data;
+        },
+
+        openAddNewModal() {
+            this.modalAddNewStatus = true;
+        },
+
+        openEditModal() {
+            this.modalEditStatus = true;
         },
     },
 });
@@ -305,6 +297,9 @@ export default defineComponent({
     }
 
 }
+
+
+
 
 .dflex {
     display: flex;

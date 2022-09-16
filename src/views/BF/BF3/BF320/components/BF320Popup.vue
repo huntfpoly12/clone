@@ -301,7 +301,7 @@ export default defineComponent({
                 key: this.keyNumber,
                 note: "",
             };
-            this.dataSource.push(dataDef);
+            this.dataSource.unshift(dataDef);
         },
         handleDelete(key: number) {
             if (this.dataSource.length > 1) {
@@ -316,7 +316,7 @@ export default defineComponent({
                 key: this.keyNumber,
                 note: note,
             };
-            this.dataSource.push(dataDef);
+            this.dataSource.unshift(dataDef);
         },
     },
 });
