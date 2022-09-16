@@ -277,7 +277,7 @@ export default defineComponent({
         removeItemTab(item) {
             this.menuTab.splice(item, 1)
             if(this.menuTab.length === 0) {
-               this.activeTab = ''
+                this.$router.push("/");
             }
         },
         changeActiveTab(item) {
