@@ -1,5 +1,5 @@
 <template>
-    <div id="components-modal-demo-position" >
+    <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
@@ -40,7 +40,7 @@
                                     <a-button type="text" @click="handleCopy()">
                                         <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
                                     </a-button>
-                                </template> 
+                                </template>
                                 <a-table :columns="columns" :data-source="dataTable" :pagination="false"
                                     :bordered="true" class="table-scroll">
                                     <template #headerCell="{ column }">
@@ -97,7 +97,7 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAccBasicFee">
                                         기본이용료</span>
-                                    <a-input v-model:value="formState.accBasicFee"  @change="handleInputACCService()"/>
+                                    <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" />
                                 </div>
                             </a-col>
                             <a-col :sapn="10"></a-col>
@@ -106,7 +106,7 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAccInput"> 입력대형
                                     </span>
-                                    <a-input v-model:value="formState.accInput" @change="handleInputACCService()"/>
+                                    <a-input v-model:value="formState.accInput" @change="handleInputACCService()" />
                                 </div>
                             </a-col>
                             <a-col :span="14">
@@ -114,7 +114,8 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAccConso"> 계좌통합
                                     </span>
-                                    <a-input v-model:value="formState.accConsolidation" @change="handleInputACCService()"/>
+                                    <a-input v-model:value="formState.accConsolidation"
+                                        @change="handleInputACCService()" />
                                 </div>
                             </a-col>
                             <a-col :span="14">
@@ -122,7 +123,7 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAcc4wc"> W4C
                                     </span>
-                                    <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()"/>
+                                    <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" />
                                 </div>
                             </a-col>
                         </a-row>
@@ -131,15 +132,15 @@
                         <imgUpload :title="titleModal" :imageUrl="imageUrl" />
 
                     </a-form>
-                    <hr>                   
+                    <hr>
                     <a-row style="padding: 5px">
                         <a-col>
                             <a-form-item label="원천서비스" style="font-weight: bold">
                                 <input type="checkbox" value="regist"> 원천서비스 신청
                             </a-form-item>
                         </a-col>
-                    </a-row> 
-                    
+                    </a-row>
+
                     <div>
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                             <a-form-item label="서비스 시작년월" style="width: 300px">
@@ -161,18 +162,20 @@
                         <a-col :span="14">
                             <div style="display: flex;padding-left: 155px;">
                                 <span style="width:180px">
-                                    <input type="checkbox" v-model="formState.checkBoxBasicFee">
+                                    <input type="checkbox" v-model="formState.checkBoxBasicFee"
+                                        />
                                     기본이용료</span>
-                                <a-input v-model:value="formState.basicFee" />
+                                <a-input v-model:value="formState.basicFee"  @change="handleInputTexService()"/>
                             </div>
                         </a-col>
                         <a-coll :span="8"></a-coll>
                         <a-col :span="14">
                             <div style="display: flex;padding-left: 155px; margin-top: 5px;">
                                 <span style="width:180px">
-                                    <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
+                                    <input type="checkbox" v-model="formState.checkBoxMajorInsurance"
+                                        >
                                     4대보험</span>
-                                <a-input v-model:value="formState.majorInsurance" />
+                                <a-input v-model:value="formState.majorInsurance" @change="handleInputTexService()"/>
                             </div>
                         </a-col>
                     </a-row>
@@ -464,7 +467,7 @@ export default defineComponent({
             PlusOutlined,
         }
     },
-    methods: {        
+    methods: {
         setModalVisible() {
             this.$emit('closePopup', false)
         },
@@ -499,38 +502,47 @@ export default defineComponent({
             }
         },
         handleCopy() {
-           
-			this.keyNumber++;
-			let dataDef = {
-              
+
+            this.keyNumber++;
+            let dataDef = {
+
                 key: this.keyNumber.toString(),
                 No: this.keyNumber.toString(),
                 사업명: "가나다라마바 사업",
                 사업분류: "방문요양",
                 서비스시작년월: "2015/01/01",
                 정원수: 10,
-			};
-			this.dataTable.push(dataDef); 
-		},
+            };
+            this.dataTable.push(dataDef);
+        },
         deleteRow(key: string) {
-			for (var i = 0; i < this.dataTable.length; i++) {
-				if (this.dataTable[i].key == key) {
-					this.dataTable.splice(i, 1);
-					break;
-				}
-			}
-		},
-        handleInputACCService(){
-            if( this.formState.accBasicFee != '' || this.formState.accConsolidation != '' || this.formState.accInput != '' || this.formState.acc4wc != ''){
+            for (var i = 0; i < this.dataTable.length; i++) {
+                if (this.dataTable[i].key == key) {
+                    this.dataTable.splice(i, 1);
+                    break;
+                }
+            }
+        },
+        handleInputACCService() {
+            if (this.formState.accBasicFee != '' || this.formState.accConsolidation != '' || this.formState.accInput != '' || this.formState.acc4wc != '') {
                 let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
                 let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
                 let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
                 let acc4wc = this.formState.acc4wc == '' ? 0 : parseInt(this.formState.acc4wc);
 
                 this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
-           
+
             }
-        }
+        },
+        handleInputTexService() {
+            if (this.formState.basicFee != '' || this.formState.majorInsurance != '') {
+                let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
+                let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);
+                this.formState.taxFeeSevice = basicFee + majorInsurance;
+                console.log(this.formState.basicFee);
+                console.log(this.formState.majorInsurance);
+            }
+        },
 
     },
     watch: {
@@ -596,8 +608,8 @@ export default defineComponent({
     height: 600px;
     border: 1px solid #333;
     overflow-y: auto;
-    border: 0ch;  
-   }
+    border: 0ch;
+}
 
 .table-scroll {
     height: 190px;
@@ -605,13 +617,17 @@ export default defineComponent({
     overflow-y: auto;
     padding: 5px;
 }
-.ant-collapse-content > .ant-collapse-content-box {
+
+.ant-collapse-content>.ant-collapse-content-box {
     padding: 10px 0px 10px 16px;
 }
+
 .input-form {
     margin-top: 5px;
 }
-.ant-card-extra,.ant-card-head-title {
+
+.ant-card-extra,
+.ant-card-head-title {
     padding: 0;
 }
 </style>
