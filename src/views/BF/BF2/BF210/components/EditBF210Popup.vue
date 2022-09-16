@@ -2,13 +2,13 @@
   <div id="components-modal-demo-position">
     <a-modal
       :visible="modalStatus"
-      title="영업자관"
       centered
       okText="저장하고 나가기"
       cancelText="그냥 나가기"
       @cancel="setModalVisible()"
       width="50%"
     >
+      <h2 class="title_modal">회원정보</h2>
       <a-form
         v-bind="layout"
         name="nest-messages"
@@ -19,14 +19,31 @@
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="팩스">
-              <a-input v-model:value="bf310Detail.팩스" style="width: 150px" />
+              <a-input
+                disabled
+                value="S0001"
+                style="width: 150px; margin-right: 10px"
+              />
+              <button
+                disabled
+                style="
+                  background-color: #00000040;
+                  color: #918e8b;
+                  border: none;
+                  height: 32px;
+                "
+              >
+                중복체크
+              </button>
+            </a-form-item>
+            <a-form-item label="팩스">
+              <a-input
+                value="김회원명"
+                style="width: 150px; margin-right: 10px"
+              />
             </a-form-item>
             <a-form-item label="주소">
-              <a-input-search
-                v-model:value="bf310Detail.name"
-                placeholder="우편번호검색..."
-                style="width: 200px"
-              >
+              <a-input-search v-model:value="bf310Detail.name" placeholder="">
                 <template #prefix>
                   <search-outlined />
                 </template>
@@ -50,13 +67,24 @@
 
             <a-form-item label="등급">
               <a-select
-                ref="select"
-                v-model:value="bf310Detail.등급"
                 style="width: 100px"
+                v-model:value="dataMode.color"
+                option-label-prop="children"
               >
-                <a-select-option value="본사">본사</a-select-option>
-                <a-select-option value="지사">지사</a-select-option>
-                <a-select-option value="대리점">대리점</a-select-option>
+                <a-select-option value="고객사" label="고객사">
+                  <a-tag style="color: black" :color="getColorTag('고객사')"
+                    >고객사</a-tag
+                  >
+                </a-select-option>
+                <a-select-option value="최고매니저" label="최고매니저">
+                  <a-tag :color="getColorTag('최고매니저')">최고매니저</a-tag>
+                </a-select-option>
+                <a-select-option value="중간매니저" label="중간매니저">
+                  <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
+                </a-select-option>
+                <a-select-option value="전체" label="전체">
+                  <a-tag :color="getColorTag('전체')">전체</a-tag>
+                </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -76,38 +104,88 @@
               label="휴대폰"
               :rules="[{ type: 'number' }]"
             >
-              <a-input v-model:value="formState.user.number" />
+              <a-input
+                v-model:value="formState.user.number"
+                style="width: 150px"
+              />
             </a-form-item>
             <a-form-item
               :name="['user', 'email']"
               label="이메일"
               :rules="[{ type: 'email' }]"
             >
-              <a-input v-model:value="formState.user.email" />
+              <a-input
+                v-model:value="formState.user.email"
+                style="width: 250px"
+              />
+            </a-form-item>
+            <a-form-item>
+              <a-button class="btn_sendemail" @click="showModal"
+                >비밀번호 변경
+              </a-button>
+              <a-modal
+                class="container_email"
+                v-model:visible="isShow"
+                @ok="handleSuccsess"
+              >
+                <div id="modal_email" class="modal_email">
+                  <mail-outlined style="padding-right: 10px" />
+                  <div>
+                    <p>비밀번호 설정 이메일</p>
+                    <p>
+                      비밀번호 설정 링크가 이메일로 발송됩니다. 계속
+                      진행하시겠습니까?
+                    </p>
+                  </div>
+                </div>
+              </a-modal>
             </a-form-item>
           </a-col>
-          <a-col :span="12">
-            <a-button
-              @click="showModal"
-              type="primary"
-              class="btn_sendemail"
-              danger
-              ghost
-            >
-              회원정보</a-button
-            >
-          </a-col>
-        </a-row>
-        <a-row v-model="isShow" :close="closeModal">
-          <div class="modal">
-            <p>Hello</p>
-            <button @click="closeModal">close</button>
-          </div>
         </a-row>
       </a-form>
+
+      <div style="margin-top: 50px" class="page-content">
+        <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
+
+        <DxDataGrid
+          :data-source="dataSource"
+          :show-borders="true"
+          key-expr="ID"
+          :allow-column-reordering="true"
+          :allow-column-resizing="true"
+          :column-auto-width="true"
+        >
+          <DxSelection mode="multiple" />
+
+          <DxColumn data-field="코드" :width="80" :fixed="true" />
+
+          <DxColumn data-field="상태" />
+
+          <DxColumn data-field="회원명" />
+          <DxColumn :width="50" cell-template="modal-table" />
+          <template #modal-table="{}">
+            <div class="action-menu"><menu-outlined /></div>
+          </template>
+
+          <template class="custom-action">
+            <div class="custom-action">
+              <a-space :size="10">
+                <a-tooltip placement="top">
+                  <template #title>편집</template>
+                  <EditOutlined />
+                </a-tooltip>
+                <a-tooltip placement="top">
+                  <template #title>변경이력</template>
+                  <HistoryOutlined />
+                </a-tooltip>
+              </a-space>
+            </div>
+          </template>
+        </DxDataGrid>
+      </div>
     </a-modal>
 
-    <a-modal
+    <!-- <a-modal
       v-model:visible="visible"
       title="해지 확인"
       ok-text="완료"
@@ -133,17 +211,31 @@
           >완료</a-button
         >
       </template>
-    </a-modal>
+    </a-modal> -->
   </div>
 </template>
 
 <script lang="ts">
 import { ref, defineComponent, reactive } from "vue";
-
+import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
-import { SearchOutlined, WarningOutlined } from "@ant-design/icons-vue";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxPaging,
+  DxExport,
+  DxSelection,
+  DxSearchPanel,
+} from "devextreme-vue/data-grid";
+import {
+  SearchOutlined,
+  WarningOutlined,
+  MailOutlined,
+  MenuOutlined,
+} from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
 import { any } from "vue-types";
+
 interface FormState {
   name: string;
   영업자코드: string;
@@ -170,18 +262,40 @@ export default defineComponent({
   props: ["modalStatus", "data", "msg"],
 
   components: {
+    MenuOutlined,
     SearchOutlined,
     WarningOutlined,
+    MailOutlined,
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxSelection,
+    DxExport,
+    DxSearchPanel,
   },
   created() {},
   data() {
     return {
       isShow: ref<boolean>(false),
+
+      dataSource: employees,
+      states,
+      dataMode: {
+        color: "고객사",
+      },
     };
   },
   setup(props) {
     const data = props.data;
-
+    const isShow = ref<boolean>(false);
+    const visible = ref<boolean>(false);
+    const showModal = () => {
+      isShow.value = true;
+    };
+    const handleSuccsess = (e: MouseEvent) => {
+      console.log(e);
+      isShow.value = false;
+    };
     const layout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
@@ -191,7 +305,6 @@ export default defineComponent({
       wrapperCol: { span: 16 },
     };
 
-    const visible = ref<boolean>(false);
     const dateFormat = "YYYY-MM-DD";
 
     const labelCol = { style: { width: "300px" } };
@@ -242,11 +355,7 @@ export default defineComponent({
       팩스: "",
       전자세금계산서수신이메일: "",
     });
-    const confirmPopup = (value: any) => {
-      if (value == "해지") {
-        visible.value = true;
-      }
-    };
+
     const handleOkConfirm = () => {
       console.log(data, "fffffff");
       if (confirm.value == "확인") {
@@ -264,13 +373,15 @@ export default defineComponent({
       layout,
       formTailLayout,
       value1: ref<Dayjs>(),
-      visible,
-      confirmPopup,
+
       confirm,
       handleOkConfirm,
       formState,
       onFinish,
       validateMessages,
+      isShow,
+      showModal,
+      handleSuccsess,
     };
   },
   methods: {
@@ -278,10 +389,14 @@ export default defineComponent({
       this.$emit("closePopup", false);
     },
     getColorTag(data: string) {
-      if (data === "정상") {
-        return "#108ee9";
-      } else if (data === "해지") {
-        return "#cd201f";
+      if (data === "고객사") {
+        return "#fff";
+      } else if (data === "최고매니저") {
+        return "#4a4848";
+      } else if (data === "중간매니저") {
+        return "#4a4848";
+      } else if (data === "담당매니저") {
+        return "#4a4848";
       } else if (data === "전체") {
         return "grey";
       }
@@ -293,9 +408,7 @@ export default defineComponent({
         this.msg["email"] = "Invalid Email Address";
       }
     },
-    showModal() {
-      this.isShow = true;
-    },
+
     closeModal() {
       this.isShow = false;
     },
@@ -303,6 +416,17 @@ export default defineComponent({
 });
 </script>
 <style>
+.action-menu {
+  text-align: center;
+}
+.title_modal {
+  font-weight: 700;
+  color: gray;
+}
+#modal_email .anticon-mail svg {
+  width: 50px;
+  height: 50px;
+}
 .modal {
   width: 300px;
   padding: 30px;
@@ -311,10 +435,13 @@ export default defineComponent({
   font-size: 20px;
   text-align: center;
 }
+.modal_email {
+  display: flex;
+}
 .btn_sendemail {
-  margin-top: 10px;
   padding: 5px 10px;
   color: red;
+  margin-left: 115px;
   border: 1px solid red;
 }
 .confirm-button {
@@ -353,5 +480,8 @@ export default defineComponent({
 
 .ant-form-item-label {
   text-align: left;
+}
+.ant-popover-arrow {
+  display: none;
 }
 </style>

@@ -1,287 +1,480 @@
 <template>
-    <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" title="회원관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" width="50%">
-            <a-form v-bind="layout" name="nest-messages">
-                <a-row :gutter="24">
-                    <a-col :span="24" class="title-modal-add">
-                        <span>회원정보 </span>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item label="영업자코드">
-                            <a-input v-model:value="bf210Detail.name" style="width: 150px" />
-                        </a-form-item>
-                        <a-form-item label="영업자명">
-                            <a-input v-model:value="bf210Detail.name" style="width: 150px" />
-                        </a-form-item>
-                        <a-form-item label="사업자유형">
-                            <a-select ref="select" v-model:value="bf210Detail.사업자유형" style="width: 150px">
-                                <a-select-option value="법인">법인</a-select-option>
-                                <a-select-option value="개인사업자">개인사업자</a-select-option>
-                                <a-select-option value="개인">개인</a-select-option>
-                            </a-select>
-                        </a-form-item>
-                        <a-form-item label="이메일">
-                            <a-input v-model:value="bf210Detail.name" style="width: 150px" />
-                        </a-form-item>
-                        <a-form-item label="연락처">
-                            <a-input v-model:value="bf210Detail.name" style="width: 150px" />
-                        </a-form-item>
-                        <a-form-item label="팩스">
-                            <a-input v-model:value="bf210Detail.name" style="width: 150px" />
-                        </a-form-item>
-                        <a-form-item label="주소">
-                            <a-input-search v-model:value="bf210Detail.name" placeholder="우편번호검색..."
-                                style="width: 200px">
-                                <template #prefix>
-                                    <search-outlined />
-                                </template>
-                                <template #enterButton>
-                                    <a-button>
-                                        <search-outlined />
-                                    </a-button>
-                                </template>
-                            </a-input-search>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item label="상태">
-                            <a-select style="width: 100px" v-model:value="bf210Detail.상태" option-label-prop="children"
-                                @select="confirmPopup">
-                                <a-select-option value="정상" label="정상">
-                                    <a-tag :color="getColorTag('정상')">정상</a-tag>
-                                </a-select-option>
-                                <a-select-option value="해지" label="해지">
-                                    <a-tag :color="getColorTag('해지')">해지</a-tag>
-                                </a-select-option>
-                            </a-select>
-                        </a-form-item>
-                        <a-form-item label="등급">
-                            <a-select ref="select" v-model:value="bf210Detail.등급" style="width: 100px">
-                                <a-select-option value="본사">본사</a-select-option>
-                                <a-select-option value="지사">지사</a-select-option>
-                                <a-select-option value="대리점">대리점</a-select-option>
-                            </a-select>
-                        </a-form-item>
-                        <a-form-item label="등록번호">
-                            <a-input v-model:value="bf210Detail.name" />
-                        </a-form-item>
-                        <a-form-item label="사업자등록번호">
-                            <a-input v-model:value="bf210Detail.name" />
-                        </a-form-item>
-                        <a-form-item label="휴대폰">
-                            <a-input v-model:value="bf210Detail.name" />
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-row>
-                    <a-col :span="15">
-                        <a-form-item class="result-address" :wrapper-col="{ span: 24 }">
-                            <a-input v-model:value="bf210Detail.name" style="width: 100%" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="8">
-                        <a-form-item :wrapper-col="{ span: 24}" class="detail-address">
-                            <a-input v-model:value="bf210Detail.name" placeholder="상세주소" />
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-row>
-                    <a-col :span="12">
-                        <a-form-item label="주소">
-                            <a-switch v-model:checked="bf210Detail.주소" checked-children="발행" un-checked-children="미발행"
-                                style="width: 25%" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item label="전자세금계산서수신이메일" class="email-input">
-                            <a-input v-model:value="bf210Detail.name" placeholder="상세주소" />
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-row>
-                    <a-col :span="12">
-                        <a-form-item label="은행">
-                            <a-select ref="select" v-model:value="bf210Detail.은행" style="width: 150px">
-                                <a-select-option value="농협">농협</a-select-option>
-                                <a-select-option value="신한은행">신한은행</a-select-option>
-                                <a-select-option value="국민은행">국민은행</a-select-option>
-                                <a-select-option value="우리은행">우리은행</a-select-option>
-                                <a-select-option value="기업은행">기업은행</a-select-option>
-                                <a-select-option value="하나은행">하나은행</a-select-option>
-                            </a-select>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-row>
-                    <a-col :span="12">
-                        <a-form-item label="계좌번호">
-                            <a-input v-model:value="bf210Detail.계좌번호" style="width: 150px" />
-                        </a-form-item>
-                        <a-form-item label="계좌번호">
-                            <a-date-picker v-model:value="value1" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item label="예금주">
-                            <a-input v-model:value="bf210Detail.예금주" />
-                        </a-form-item>
-                        <a-form-item label="계좌번호">
-                            <a-date-picker v-model:value="value1" />
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-row>
-                    <a-col :span="24">
-                        <a-form-item label="비고" :label-col="{ span: 3 }" :wrapper-col="{ span: 20 }">
-                            <a-textarea v-model:value="bf210Detail.비고" placeholder="500자 이내" />
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form>
-        </a-modal>
+  <div id="components-modal-demo-position">
+    <a-modal
+      :visible="modalStatus"
+      centered
+      okText="저장하고 나가기"
+      cancelText="그냥 나가기"
+      @cancel="setModalVisible()"
+      width="50%"
+    >
+      <h2 class="title_modal">회원정보</h2>
+      <a-form
+        v-bind="layout"
+        name="nest-messages"
+        :model="formState"
+        :validate-messages="validateMessages"
+        @finish="onFinish"
+      >
+        <a-row :gutter="24">
+          <a-col :span="12">
+            <a-form-item label="팩스">
+              <a-input disabled style="width: 150px; margin-right: 10px" />
+              <button
+                disabled
+                style="
+                  background-color: #00000040;
+                  color: #918e8b;
+                  border: none;
+                  height: 32px;
+                "
+              >
+                중복체크
+              </button>
+            </a-form-item>
+            <a-form-item label="팩스">
+              <a-input style="width: 150px; margin-right: 10px" />
+            </a-form-item>
+            <a-form-item label="주소">
+              <a-input-search v-model:value="bf310Detail.name" placeholder="">
+                <template #prefix>
+                  <search-outlined />
+                </template>
+                <template #enterButton>
+                  <a-button>
+                    <search-outlined />
+                  </a-button>
+                </template>
+              </a-input-search>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="주소">
+              <a-switch
+                v-model:checked="bf310Detail.주소"
+                checked-children="발행"
+                un-checked-children="미발행"
+                style="width: 25%"
+              />
+            </a-form-item>
 
-        <a-modal v-model:visible="visible" title="해지 확인" ok-text="완료">
-            <a-row>
-                <a-col :span="4">
-                    <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />
-                </a-col>
-                <a-col :span="20">
-                    <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
-                    <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을 </p>
-                    <p>누르세요</p>
-                </a-col>
-            </a-row>
-            <template #footer>
-                <a-input v-model:value="confirm" placeholder="확인" style="width: 150px" />
-                <a-button type="primary" @click="handleOkConfirm">완료</a-button>
-            </template>
-        </a-modal>
-    </div>
+            <a-form-item label="등급">
+              <a-select
+                style="width: 100px"
+                v-model:value="dataMode.color"
+                option-label-prop="children"
+              >
+                <a-select-option value="고객사" label="고객사">
+                  <a-tag style="color: black" :color="getColorTag('고객사')"
+                    >고객사</a-tag
+                  >
+                </a-select-option>
+                <a-select-option value="최고매니저" label="최고매니저">
+                  <a-tag :color="getColorTag('최고매니저')">최고매니저</a-tag>
+                </a-select-option>
+                <a-select-option value="중간매니저" label="중간매니저">
+                  <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
+                </a-select-option>
+                <a-select-option value="전체" label="전체">
+                  <a-tag :color="getColorTag('전체')">전체</a-tag>
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row>
+          <a-col :span="12"> </a-col>
+        </a-row>
+        <a-row>
+          <a-col :span="12"> </a-col>
+        </a-row>
+        <a-row>
+          <a-col :span="12">
+            <a-form-item
+              type="number"
+              :name="['user', 'number']"
+              label="휴대폰"
+              :rules="[{ type: 'number' }]"
+            >
+              <a-input
+                v-model:value="formState.user.number"
+                style="width: 150px"
+              />
+            </a-form-item>
+            <a-form-item
+              :name="['user', 'email']"
+              label="이메일"
+              :rules="[{ type: 'email' }]"
+            >
+              <a-input
+                v-model:value="formState.user.email"
+                style="width: 250px"
+              />
+            </a-form-item>
+            <a-form-item>
+              <a-button class="btn_sendemail" @click="showModal"
+                >비밀번호 변경
+              </a-button>
+              <a-modal
+                class="container_email"
+                v-model:visible="isShow"
+                @ok="handleSuccsess"
+              >
+                <div id="modal_email" class="modal_email">
+                  <mail-outlined style="padding-right: 10px" />
+                  <div>
+                    <p>비밀번호 설정 이메일</p>
+                    <p>
+                      비밀번호 설정 링크가 이메일로 발송됩니다. 계속
+                      진행하시겠습니까?
+                    </p>
+                  </div>
+                </div>
+              </a-modal>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+
+      <div style="margin-top: 50px" class="page-content">
+        <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
+
+        <DxDataGrid
+          :data-source="dataSource"
+          :show-borders="true"
+          key-expr="ID"
+          :allow-column-reordering="true"
+          :allow-column-resizing="true"
+          :column-auto-width="true"
+        >
+          <DxSelection mode="multiple" />
+
+          <DxColumn data-field="코드" :width="80" :fixed="true" />
+
+          <DxColumn data-field="상태" />
+
+          <DxColumn data-field="회원명" />
+          <DxColumn :width="50" cell-template="modal-table" />
+          <template #modal-table="{}">
+            <div class="action-menu"><menu-outlined /></div>
+          </template>
+
+          <template class="custom-action">
+            <div class="custom-action">
+              <a-space :size="10">
+                <a-tooltip placement="top">
+                  <template #title>편집</template>
+                  <EditOutlined />
+                </a-tooltip>
+                <a-tooltip placement="top">
+                  <template #title>변경이력</template>
+                  <HistoryOutlined />
+                </a-tooltip>
+              </a-space>
+            </div>
+          </template>
+        </DxDataGrid>
+      </div>
+    </a-modal>
+
+    <!-- <a-modal
+        v-model:visible="visible"
+        title="해지 확인"
+        ok-text="완료"
+        class="confirm-modal"
+      >
+        <a-row>
+          <a-col :span="4">
+            <warning-outlined :style="{ fontSize: '70px', color: '#faad14' }" />
+          </a-col>
+          <a-col :span="20">
+            <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
+            <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을</p>
+            <p>누르세요</p>
+          </a-col>
+        </a-row>
+        <template #footer>
+          <a-input
+            v-model:value="confirm"
+            placeholder="확인"
+            style="width: 150px"
+          />
+          <a-button type="primary" @click="handleOkConfirm" class="confirm-button"
+            >완료</a-button
+          >
+        </template>
+      </a-modal> -->
+  </div>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, reactive } from 'vue'
-import type { UnwrapRef } from 'vue';
-import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
-import { Dayjs } from 'dayjs';
+import { ref, defineComponent, reactive } from "vue";
+import { employees, states } from "../data.js";
+import type { UnwrapRef } from "vue";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxPaging,
+  DxExport,
+  DxSelection,
+  DxSearchPanel,
+} from "devextreme-vue/data-grid";
+import {
+  SearchOutlined,
+  WarningOutlined,
+  MailOutlined,
+  MenuOutlined,
+} from "@ant-design/icons-vue";
+import dayjs, { Dayjs } from "dayjs";
+import { any } from "vue-types";
+
 interface FormState {
-    name: string;
-    delivery: boolean;
-    type: string[];
-    resource: string;
-    desc: string;
-    사업자유형: string;
-    상태: string;
-    등급: string;
-    주소: boolean;
-    은행: string;
-    계좌번호: string;
-    예금주: string;
-    가입일자: string;
-    비고: string;
+  name: string;
+  영업자코드: string;
+  영업자명: string;
+  사업자유형: string;
+  상태: string;
+  등급: string;
+  주소: boolean;
+  은행: string;
+  계좌번호: string;
+  등록번호: string;
+  예금주: string;
+  가입일자: string;
+  사업자등록번호: string;
+  휴대폰: string;
+  비고: string;
+  이메일: string;
+  연락처: string;
+  팩스: string;
+  전자세금계산서수신이메일: string;
 }
 
 export default defineComponent({
-    props: {
-        modalStatus: Boolean,
-    },
-    components: {
-        SearchOutlined,
-        WarningOutlined
-    },
-    setup() {
-        const layout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 16 },
-        };
-        const formTailLayout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 16, },
-        };
-        const visible = ref<boolean>(false);
-        const dateFormat = 'YYYY-MM-DD';
+  props: ["modalStatus", "data", "msg"],
 
-        const labelCol = { style: { width: "300px" } };
-        const wrapperCol = { span: 14 };
-        let confirm = ref<string>('');;
-        const bf210Detail: UnwrapRef<FormState> = reactive({
-            name: '',
-            delivery: false,
-            type: [],
-            resource: '',
-            desc: '',
-            사업자유형: '개인',
-            상태: '정상',
-            등급: '본사',
-            주소: false,
-            은행: '농협',
-            계좌번호: '',
-            예금주: '',
-            가입일자: '',
-            비고: ''
-        });
-        const confirmPopup = (value: any) => {
-            if (value == '해지') {
-                visible.value = true;
-            }
-        }
-        const handleOkConfirm = () => {
-            if (confirm.value == '확인') {
-                visible.value = false;
-            } else {
-                bf210Detail.상태 = '정상';
-                visible.value = false;
-            }
-        }
+  components: {
+    MenuOutlined,
+    SearchOutlined,
+    WarningOutlined,
+    MailOutlined,
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxSelection,
+    DxExport,
+    DxSearchPanel,
+  },
+  created() {},
+  data() {
+    return {
+      isShow: ref<boolean>(false),
 
-        return {
-            labelCol,
-            wrapperCol,
-            bf210Detail,
-            layout,
-            formTailLayout,
-            value1: ref<Dayjs>(),
-            visible,
-            confirmPopup,
-            confirm,
-            handleOkConfirm
-        }
+      dataSource: employees,
+      states,
+      dataMode: {
+        color: "고객사",
+      },
+    };
+  },
+  setup(props) {
+    const data = props.data;
+    const isShow = ref<boolean>(false);
+    const visible = ref<boolean>(false);
+    const showModal = () => {
+      isShow.value = true;
+    };
+    const handleSuccsess = (e: MouseEvent) => {
+      console.log(e);
+      isShow.value = false;
+    };
+    const layout = {
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 },
+    };
+    const formTailLayout = {
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 },
+    };
+
+    const dateFormat = "YYYY-MM-DD";
+
+    const labelCol = { style: { width: "300px" } };
+    const wrapperCol = { span: 14 };
+    let confirm = ref<string>("");
+
+    const validateMessages = {
+      required: "${label} is required!",
+      types: {
+        email: "이메일 형식이 정확하지 않습니다",
+        number: "Numeric only!",
+      },
+      number: {
+        range: "${label} must be between ${min} and ${max}",
+      },
+    };
+
+    const formState = reactive({
+      user: {
+        number: "",
+        age: undefined,
+        email: "",
+        website: "",
+        introduction: "",
+      },
+    });
+    const onFinish = (values: any) => {
+      console.log("Success:", values);
+    };
+    const bf310Detail: UnwrapRef<FormState> = reactive({
+      name: "",
+      사업자유형: "개인",
+      상태: "정상",
+      등급: "본사",
+      주소: false,
+      은행: "농협",
+      계좌번호: "",
+      예금주: "",
+      가입일자: "",
+      비고: "",
+      영업자코드: "",
+      영업자명: "",
+      등록번호: "",
+      사업자등록번호: "",
+      휴대폰: "",
+      이메일: "",
+      연락처: "",
+      팩스: "",
+      전자세금계산서수신이메일: "",
+    });
+
+    const handleOkConfirm = () => {
+      console.log(data, "fffffff");
+      if (confirm.value == "확인") {
+        visible.value = false;
+      } else {
+        bf310Detail.상태 = "정상";
+        visible.value = false;
+      }
+    };
+
+    return {
+      labelCol,
+      wrapperCol,
+      bf310Detail,
+      layout,
+      formTailLayout,
+      value1: ref<Dayjs>(),
+
+      confirm,
+      handleOkConfirm,
+      formState,
+      onFinish,
+      validateMessages,
+      isShow,
+      showModal,
+      handleSuccsess,
+    };
+  },
+  methods: {
+    setModalVisible() {
+      this.$emit("closePopup", false);
     },
-    methods: {
-        setModalVisible() {
-            this.$emit('closePopup', false)
-        },
-        getColorTag(data: string) {
-            if (data === "정상") {
-                return "#108ee9";
-            } else if (data === "해지") {
-                return "#cd201f";
-            } else if (data === "전체") {
-                return "grey";
-            }
-        },
+    getColorTag(data: string) {
+      if (data === "고객사") {
+        return "#fff";
+      } else if (data === "최고매니저") {
+        return "#4a4848";
+      } else if (data === "중간매니저") {
+        return "#4a4848";
+      } else if (data === "담당매니저") {
+        return "#4a4848";
+      } else if (data === "전체") {
+        return "grey";
+      }
+    },
+    validateEmail(value: any) {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+        this.msg["email"] = "";
+      } else {
+        this.msg["email"] = "Invalid Email Address";
+      }
+    },
 
-    }
-})
+    closeModal() {
+      this.isShow = false;
+    },
+  },
+});
 </script>
 <style>
+.action-menu {
+  text-align: center;
+}
+.title_modal {
+  font-weight: 700;
+  color: gray;
+}
+#modal_email .anticon-mail svg {
+  width: 50px;
+  height: 50px;
+}
+.modal {
+  width: 300px;
+  padding: 30px;
+  box-sizing: border-box;
+  background-color: #fff;
+  font-size: 20px;
+  text-align: center;
+}
+.modal_email {
+  display: flex;
+}
+.btn_sendemail {
+  padding: 5px 10px;
+  color: red;
+  margin-left: 115px;
+  border: 1px solid red;
+}
+.confirm-button {
+  margin-left: 100px;
+}
+.confirm-modal p {
+  white-space: normal;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.email-input .ant-form-item-label {
+  white-space: normal;
+
+  display: inline-block;
+  text-align: center;
+  line-height: 16px;
+}
+
+.detail-address {
+  margin-left: 7px;
+}
+
+.result-address {
+  margin-left: 110px;
+}
+
 .ant-form-item {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .warring-modal {
-    font-size: 13px;
-    line-height: 5px;
+  font-size: 13px;
+  line-height: 5px;
 }
 
 .ant-form-item-label {
-    text-align: left;
+  text-align: left;
 }
-
-.title-modal-add {
-    font-size: 18px;
-    margin-bottom: 20px;
-    font-weight: bold;
+.ant-popover-arrow {
+  display: none;
 }
 </style>
