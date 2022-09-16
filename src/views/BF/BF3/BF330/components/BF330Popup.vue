@@ -97,7 +97,7 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAccBasicFee">
                                         기본이용료</span>
-                                    <a-input v-model:value="formState.accBasicFee" />
+                                    <a-input v-model:value="formState.accBasicFee"  @change="handleInputACCService()"/>
                                 </div>
                             </a-col>
                             <a-col :sapn="10"></a-col>
@@ -106,7 +106,7 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAccInput"> 입력대형
                                     </span>
-                                    <a-input v-model:value="formState.accInput" />
+                                    <a-input v-model:value="formState.accInput" @change="handleInputACCService()"/>
                                 </div>
                             </a-col>
                             <a-col :span="14">
@@ -114,7 +114,7 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAccConso"> 계좌통합
                                     </span>
-                                    <a-input v-model:value="formState.accConsolidation" />
+                                    <a-input v-model:value="formState.accConsolidation" @change="handleInputACCService()"/>
                                 </div>
                             </a-col>
                             <a-col :span="14">
@@ -122,7 +122,7 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAcc4wc"> W4C
                                     </span>
-                                    <a-input v-model:value="formState.acc4wc" />
+                                    <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()"/>
                                 </div>
                             </a-col>
                         </a-row>
@@ -439,6 +439,8 @@ export default defineComponent({
                 정원수: 10,
             },
         ]);
+
+
         return {
             fileList,
             loading,
@@ -518,6 +520,17 @@ export default defineComponent({
 				}
 			}
 		},
+        handleInputACCService(){
+            if( this.formState.accBasicFee != '' || this.formState.accConsolidation != '' || this.formState.accInput != '' || this.formState.acc4wc != ''){
+                let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
+                let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
+                let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
+                let acc4wc = this.formState.acc4wc == '' ? 0 : parseInt(this.formState.acc4wc);
+
+                this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
+           
+            }
+        }
 
     },
     watch: {
@@ -541,7 +554,7 @@ export default defineComponent({
                 if (this.formState.checkBoxAccConso == false) {
                     this.formState.accConsolidation = '0'
                 };
-                if (this.formState.checkBoxAcc4wc == false) {
+                if (this.formState.checkBoxAccConso == false) {
                     this.formState.accConsolidation = '0'
                 };
                 if (this.formState.checkBoxMajorInsurance == false) {
