@@ -92,7 +92,7 @@
                             </template>
                             <template #title>{{ menuItem.title }}</template>
                             <a-sub-menu v-for="subMenu in menuItem.subMenus" :key="subMenu.id" :title="subMenu.title">
-                                <a-menu-item v-for="item in subMenu.items" :key="item.id"
+                                <a-menu-item v-for="item in subMenu.items" :key="item.id" :class="item.id ===activeTab.id? 'ant-menu-item-selected-active': ''"
                                     @click.enter="addMenuTab(item)">
                                     <router-link :to="item.url">{{ item.name }}</router-link>
                                 </a-menu-item>
@@ -138,11 +138,11 @@
                                     <component v-bind:is="currentComponent" />
                                 </keep-alive>
                             </template>
-                            <template v-else>
+                            <!-- <template v-else>
                                 <keep-alive>
                                     <router-view></router-view>
                                 </keep-alive>
-                            </template>
+                            </template> -->
                         </div>
                     </a-layout-content>
                 </a-layout>
@@ -279,9 +279,15 @@ export default defineComponent({
         },
         removeItemTab(item) {
             this.menuTab.splice(item, 1)
+            if(this.menuTab.length === 0) {
+                this.$router.push("/");
+            }
         },
         changeActiveTab(item) {
             this.activeTab = item
+            if(this.menuTab.length === 0) {
+               this.activeTab = ''
+            }
         },
         focusInput() {
             this.state = false
@@ -442,11 +448,21 @@ export default defineComponent({
 ::v-deep .ant-layout-header {
     background-color: #096dd9;
 }
-
+::v-deep .ant-menu-dark .ant-menu-item-selected > span > a {
+    color: rgba(255, 255, 255, 0.65);
+}
 ::v-deep h3.ant-typography {
     margin-bottom: 0;
 }
-
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background: none;
+}
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active {
+    background: #1890ff;
+}
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active a {
+    color: #fff;
+}
 ::v-deep .page-content {
     padding: 10px;
 }
