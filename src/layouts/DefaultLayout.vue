@@ -277,7 +277,7 @@ export default defineComponent({
         removeItemTab(item) {
             this.menuTab.splice(item, 1)
             if(this.menuTab.length === 0) {
-               this.activeTab = ''
+                this.$router.push("/");
             }
         },
         changeActiveTab(item) {
@@ -456,6 +456,9 @@ export default defineComponent({
 }
 ::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active {
     background: #1890ff;
+}
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active a {
+    color: #fff;
 }
 ::v-deep .page-content {
     padding: 10px;
