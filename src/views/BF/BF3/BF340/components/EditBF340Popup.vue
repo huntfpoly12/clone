@@ -101,8 +101,6 @@
                                 </a-form-item>
                             </a-col>
                         </a-row>
-
-
                     </a-col>
                 </a-row>
                 <a-row>
@@ -226,7 +224,6 @@ export default defineComponent({
             window.onresize = () => {
                 console.log(windowHeight.value = window.innerWidth);
             }
-
         });
 
         let withPopup = () => {
@@ -236,7 +233,6 @@ export default defineComponent({
             } else {
                 return '50%';
             }
-
         };
         let bf340Detail: UnwrapRef<FormState> = reactive({
             name: '',
