@@ -42,13 +42,13 @@
                         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID">
                             <DxPaging :page-size="5" />
                             <DxColumn data-field="메뉴" :fixed="true" />
-                            <DxColumn cell-template="col1" :width="100" alignment="center" />
+                            <DxColumn data-field="읽기" cell-template="col1" :width="100" alignment="center" />
                             <template #col1="{}" class="custom-action">
                                 <div class="custom-action">
                                     <a-checkbox></a-checkbox>
                                 </div>
                             </template>
-                            <DxColumn cell-template="col2" alignment="center" :width="100" />
+                            <DxColumn data-field="쓰기" cell-template="col2" alignment="center" :width="100" />
                             <template #col2="{}" class="custom-action">
                                 <div class="custom-action">
                                     <a-checkbox></a-checkbox>
@@ -102,13 +102,13 @@
                         <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID">
                             <DxPaging :page-size="5" />
                             <DxColumn data-field="메뉴" :fixed="true" />
-                            <DxColumn cell-template="col1" :width="100" alignment="center" />
+                            <DxColumn data-field="읽기" cell-template="col1" :width="100" alignment="center" />
                             <template #col1="{}" class="custom-action">
                                 <div class="custom-action">
                                     <a-checkbox></a-checkbox>
                                 </div>
                             </template>
-                            <DxColumn cell-template="col2" alignment="center" :width="100" />
+                            <DxColumn data-field="쓰기" cell-template="col2" alignment="center" :width="100" />
                             <template #col2="{}" class="custom-action">
                                 <div class="custom-action">
                                     <a-checkbox></a-checkbox>
@@ -283,7 +283,7 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
+<style lang="scss" >
 .ant-form-item {
     margin-bottom: 10px;
 }
