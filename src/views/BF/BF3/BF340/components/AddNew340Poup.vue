@@ -101,8 +101,6 @@
                                 </a-form-item>
                             </a-col>
                         </a-row>
-
-
                     </a-col>
                 </a-row>
                 <a-row>
@@ -223,17 +221,15 @@ export default defineComponent({
             window.onresize = () => {
                 console.log(windowHeight.value = window.innerWidth);
             }
-
         });
 
         let withPopup = () => {
             var percent = 100 -  (window.innerWidth / (window.innerWidth + window.innerHeight))*100 + 30;
-            if(windowHeight.value <= 1919){
+            if(windowHeight.value <= 1960){
                 return percent+'%';
             }else{
                 return '50%';
             }
-            
         };
         const bf340Detail: UnwrapRef<FormState> = reactive({
             name: '',
