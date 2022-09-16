@@ -2,7 +2,7 @@
   <div id="components-modal-demo-position">
     <a-modal
       :visible="modalStatus"
-      title="영업자관리[bf-340]"
+      title="영업자관"
       centered
       okText="저장하고 나가기"
       cancelText="그냥 나가기"

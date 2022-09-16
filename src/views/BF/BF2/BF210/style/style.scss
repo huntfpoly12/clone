@@ -5,6 +5,7 @@
 .dx-select-checkbox {
     display: inline-block !important;
 }
+
 .modal-note {
     max-height: 500px;
     overflow-y: auto;
@@ -30,10 +31,16 @@
 
 .search-form {
     margin-bottom: 10px;
+    background: #f1f3f4;
+    padding: 10px 24px;
 
     >div {
         width: 100%;
         justify-content: space-between;
+    }
+
+    col {
+        margin-top: 20px;
     }
 
     .lable-item {
@@ -43,6 +50,37 @@
     }
 
     .col {
-        align-items: center; 
+        align-items: center;
+
+        .lable-item {
+            width: 110px;
+            display: inline-block;
+        }
+
+        .item:nth-child(2) {
+            margin-left: 30px;
+        }
+
+        .col .search-form .col {
+            display: flex;
+            align-items: center;
+        }
     }
+}
+
+.cell-center {
+    text-align: center !important
+}
+
+.dx-button-has-text .dx-button-content {
+    padding: 0px 15px !important;
+}
+
+
+#data-grid-demo {
+    min-height: 700px;
+}
+
+.dx-select-checkbox {
+    display: inline-block !important;
 }

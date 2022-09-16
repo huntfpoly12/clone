@@ -38,8 +38,7 @@
                     </a-col>
                     <a-col>
                     <label class="lable-item"></label>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                    
                 </a-col>
                 </a-row>
             </div>

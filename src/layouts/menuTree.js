@@ -14,7 +14,7 @@ export default [{
         title: '회원관리',
         id: 'bf-200',
         items: [
-          {name: '회원등록', url: '/dashboard/bf-210',id: 'bf-210'}, 
+          {name: '회원관리', url: '/dashboard/bf-210',id: 'bf-210'}, 
           {name: '권한그룹', url: '#',id: 'bf-220'}, 
           {name: '기초정보설정', url: '#',id: 'bf-230'}
           ]
