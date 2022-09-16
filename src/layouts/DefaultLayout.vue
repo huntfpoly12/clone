@@ -92,7 +92,7 @@
                             </template>
                             <template #title>{{ menuItem.title }}</template>
                             <a-sub-menu v-for="subMenu in menuItem.subMenus" :key="subMenu.id" :title="subMenu.title">
-                                <a-menu-item v-for="item in subMenu.items" :key="item.id"
+                                <a-menu-item v-for="item in subMenu.items" :key="item.id" :class="item.id ===activeTab.id? 'ant-menu-item-selected-active': ''"
                                     @click.enter="addMenuTab(item)">
                                     <router-link :to="item.url">{{ item.name }}</router-link>
                                 </a-menu-item>
@@ -138,11 +138,11 @@
                                     <component v-bind:is="currentComponent" />
                                 </keep-alive>
                             </template>
-                            <template v-else>
+                            <!-- <template v-else>
                                 <keep-alive>
                                     <router-view></router-view>
                                 </keep-alive>
-                            </template>
+                            </template> -->
                         </div>
                     </a-layout-content>
                 </a-layout>
@@ -151,7 +151,7 @@
     </a-layout>
 </template>
 <script>
-import { defineComponent, reactive, toRefs, ref, defineAsyncComponent} from "vue";
+import { defineComponent, reactive, toRefs, ref, defineAsyncComponent, onMounted} from "vue";
 import Style from "./style/styleLayout.scss";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
@@ -160,6 +160,7 @@ const BF320 = defineAsyncComponent(() => import('../views/BF/BF3/BF320/index.vue
 const BF330 = defineAsyncComponent(() => import('../views/BF/BF3/BF330/index.vue'));
 const BF340 = defineAsyncComponent(() => import('../views/BF/BF3/BF340/index.vue'));
 const BF210 = defineAsyncComponent(() => import('../views/BF/BF2/BF210/index.vue'));
+const BF220 = defineAsyncComponent(() => import('../views/BF/BF2/BF220/index.vue'));
 const Test = defineAsyncComponent(() => import('../views/DefaultComponent.vue'));
 import {
     MenuFoldOutlined,
@@ -183,7 +184,10 @@ export default defineComponent({
             menuItems: menuTree,
             activeKey: 1,
             menuTab: [],
-            activeTab: ''
+            activeTab: '',
+            openKeys: ['bf-000'],
+            rootSubmenuKeys: ['bf-000', 'cm-000', 'ac-000', 'pa-000'],
+            selectedKeys: [],
         };
     },
     components: {
@@ -192,6 +196,7 @@ export default defineComponent({
         BF330,
         BF340,
         BF210,
+        BF220,
         Test,
         MenuFoldOutlined,
         MenuUnfoldOutlined,
@@ -209,6 +214,61 @@ export default defineComponent({
             }
         })
     },
+    watch: {
+        activeTab: {
+            handler(newValue) {
+                if(newValue) {
+                    if(newValue.id.includes('bf-1')) {
+                        this.openKeys = ['bf-000', 'bf-100']
+                    }
+                    if(newValue.id.includes('bf-2')) {
+                        this.openKeys = ['bf-000', 'bf-200']
+                    }
+                    if(newValue.id.includes('bf-3')) {
+                        this.openKeys = ['bf-000', 'bf-300']
+                    }
+                    if(newValue.id.includes('bf-4')) {
+                        this.openKeys = ['bf-000', 'bf-400']
+                    }
+                    if(newValue.id.includes('cm-1')) {
+                        this.openKeys = ['cm-000', 'cm-100']
+                    }
+                    if(newValue.id.includes('ac-1')) {
+                        this.openKeys = ['ac-000', 'ac-100']
+                    }
+                    if(newValue.id.includes('ac-2')) {
+                        this.openKeys = ['ac-000', 'ac-200']
+                    }
+                    if(newValue.id.includes('ac-3')) {
+                        this.openKeys = ['ac-000', 'ac-300']
+                    }
+                    if(newValue.id.includes('ac-4')) {
+                        this.openKeys = ['ac-000', 'ac-400']
+                    }
+                    if(newValue.id.includes('ac-5')) {
+                        this.openKeys = ['ac-000', 'ac-500']
+                    }
+                    if(newValue.id.includes('pa-1')) {
+                        this.openKeys = ['pa-000', 'pa-100']
+                    }
+                    if(newValue.id.includes('pa-2')) {
+                        this.openKeys = ['pa-000', 'pa-200']
+                    }
+                    if(newValue.id.includes('pa-3')) {
+                        this.openKeys = ['pa-000', 'pa-300']
+                    }
+                    if(newValue.id.includes('pa-4')) {
+                        this.openKeys = ['pa-000', 'pa-400']
+                    }
+                    if(newValue.id.includes('pa-5')) {
+                        this.openKeys = ['pa-000', 'pa-500']
+                    }
+                   
+                }
+            },
+            immediate: true
+        }
+    },
     computed: {
         username() {
             if (localStorage.getItem("username")) {
@@ -225,6 +285,7 @@ export default defineComponent({
             if (this.activeTab.id === 'bf-330') return BF330
             if (this.activeTab.id === 'bf-340') return BF340
             if (this.activeTab.id === 'bf-210') return BF210
+            if (this.activeTab.id === 'bf-220') return BF220
             return Test
         }
 
@@ -276,43 +337,42 @@ export default defineComponent({
         },
         removeItemTab(item) {
             this.menuTab.splice(item, 1)
+            if(this.menuTab.length === 0) {
+                this.$router.push("/");
+            }
         },
         changeActiveTab(item) {
             this.activeTab = item
+            if(this.menuTab.length === 0) {
+               this.activeTab = ''
+            }
         },
         focusInput() {
             this.state = false
+        },
+        onOpenChange(openKeys) {
+            const latestOpenKey = openKeys.find(key => this.openKeys.indexOf(key) === -1);
+            if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+                if(latestOpenKey && latestOpenKey.includes('bf')) {
+                    this.openKeys = ['bf-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('cm')) {
+                    this.openKeys = ['cm-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('ac')) {
+                    this.openKeys = ['ac-000', latestOpenKey];
+                } else if(latestOpenKey && latestOpenKey.includes('pa')) {
+                    this.openKeys = ['pa-000', latestOpenKey];
+                }
+            } else {
+                this.openKeys = latestOpenKey ? [latestOpenKey] : [];
+            }
         }
     },
     mounted() {
         document.addEventListener("click", this.close);
     },
     setup() {
-        const state = reactive({
-            rootSubmenuKeys: ['bf-000', 'cm-000', 'ac-000', 'pa-000'],
-            openKeys: ['bf-000'],
-            selectedKeys: [],
-        });
         const collapsed = ref(false)
-        const onOpenChange = openKeys => {
-            const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
-            if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-                if(latestOpenKey && latestOpenKey.includes('bf')) {
-                    state.openKeys = ['bf-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('cm')) {
-                    state.openKeys = ['cm-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('ac')) {
-                    state.openKeys = ['ac-000', latestOpenKey];
-                } else if(latestOpenKey && latestOpenKey.includes('pa')) {
-                    state.openKeys = ['pa-000', latestOpenKey];
-                }
-            } else {
-                state.openKeys = latestOpenKey ? [latestOpenKey] : [];
-            }
-        };
         return {
-            ...toRefs(state),
-            onOpenChange,
             collapsed,
         };
     },
@@ -439,11 +499,21 @@ export default defineComponent({
 ::v-deep .ant-layout-header {
     background-color: #096dd9;
 }
-
+::v-deep .ant-menu-dark .ant-menu-item-selected > span > a {
+    color: rgba(255, 255, 255, 0.65);
+}
 ::v-deep h3.ant-typography {
     margin-bottom: 0;
 }
-
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background: none;
+}
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active {
+    background: #1890ff;
+}
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active a {
+    color: #fff;
+}
 ::v-deep .page-content {
     padding: 10px;
 }

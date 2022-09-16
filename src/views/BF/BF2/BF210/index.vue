@@ -86,7 +86,7 @@
           cell-template="grid-cell"
           css-class="cell-center"
         />
-        <DxColumn data-field="코드" css-class="cell-center" />
+        <DxColumn data-field="회원ID" css-class="cell-center" />
         <template #grid-cell="{ data }">
           <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
         </template>
@@ -95,7 +95,7 @@
         <DxColumn data-field="휴대폰" />
         <DxColumn data-field="소속코드" />
         <DxColumn data-field="소속명" />
-        <DxColumn cell-template="pupop" :width="100" />
+        <DxColumn cell-template="pupop" />
         <template #pupop="{ data }" class="custom-action">
           <div class="custom-action">
             <a-space :size="10">

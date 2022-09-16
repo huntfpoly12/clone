@@ -91,18 +91,16 @@
                     </a-col>
                     <a-col :span="12">
                         <a-row>
-                            <a-col :span="8">
+                            <a-col :span="6" :md="6" :lg="5">
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
-                            <a-col :span="14">
+                            <a-col :span="16" :md="16" :lg="17">
                                 <a-form-item class="email-input" :wrapper-col="{ span: 24 }">
                                     <a-input v-model:value="bf340Detail.전자세금계산서수신이메일" placeholder="상세주소"
                                         style="width: 100%" />
                                 </a-form-item>
                             </a-col>
                         </a-row>
-
-
                     </a-col>
                 </a-row>
                 <a-row>
@@ -226,7 +224,6 @@ export default defineComponent({
             window.onresize = () => {
                 console.log(windowHeight.value = window.innerWidth);
             }
-
         });
 
         let withPopup = () => {
@@ -236,7 +233,6 @@ export default defineComponent({
             } else {
                 return '50%';
             }
-
         };
         let bf340Detail: UnwrapRef<FormState> = reactive({
             name: '',
