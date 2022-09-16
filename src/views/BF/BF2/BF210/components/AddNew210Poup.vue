@@ -265,22 +265,6 @@ export default defineComponent({
 })
 </script>
 <style>
-.email-input .ant-form-item-label {
-    white-space: normal;
-
-    display: inline-block;
-    text-align: center;
-    line-height: 16px;
-}
-
-.detail-address {
-    margin-left: 7px;
-}
-
-.result-address {
-    margin-left: 110px;
-}
-
 .ant-form-item {
     margin-bottom: 10px;
 }

@@ -1,6 +1,6 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" title="변경이력[cm-000-pop]" centered
+        <a-modal :visible="modalStatus" :title="title" centered
             @cancel="setModalVisible()" width="50%">
             <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
                     <DxColumn data-field="기록일시" />
@@ -37,7 +37,7 @@ import {
 import {ZoomInOutlined} from '@ant-design/icons-vue';
 
 export default defineComponent({
-    props:['modalStatus','data']
+    props:['modalStatus','data','title']
        ,
     components: {
         DxDataGrid,
@@ -73,32 +73,4 @@ export default defineComponent({
 })
 </script>
 <style>
-.email-input .ant-form-item-label {
-    white-space: normal;
-
-    display: inline-block;
-    text-align: center;
-    line-height: 16px;
-}
-
-.detail-address {
-    margin-left: 7px;
-}
-
-.result-address {
-    margin-left: 110px;
-}
-
-.ant-form-item {
-    margin-bottom: 10px;
-}
-
-.warring-modal {
-    font-size: 13px;
-    line-height: 5px;
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
 </style>
