@@ -19,6 +19,10 @@
     th {
         display: none;
     }
+
+    .ant-collapse-content-box{
+        padding: 0px;
+    }
 }
 
 .anticon {
@@ -85,10 +89,64 @@
 }
 
 .warring-modal {
-    font-size: 13px;
-    line-height: 5px;
+    font-size: 12px;
+    line-height: 0px;
 }
 
 .ant-form-item-label {
     text-align: left;
+}
+
+.clr {
+    label {
+        color: red;
+    }
+}
+
+.clr-text {
+    color: red;
+}
+
+.clb,
+.clb-label label {
+    color: black !important;
+}
+
+
+::v-deep.components-modal-demo-position {
+    ::v-deep.test-local {
+        background-color: pink !important;
+        width: 1000px !important;
+        height: 200px !important;
+    }
+
+    .imgPreview img {
+        width: 1000px !important;
+    }
+
+    .ant-form-item-label {
+        text-align: left;
+    }
+
+}
+
+.dflex {
+    display: flex;
+}
+
+.custom-flex {
+    align-items: flex-start;
+}
+
+.warring-bank {
+    display: flex;
+    align-items: center;
+}
+
+.pl-5{
+    padding-left: 5px;
+}
+
+.custom-lineHeight{
+    line-height: 3px;
 }

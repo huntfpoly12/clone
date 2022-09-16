@@ -281,30 +281,6 @@ export default defineComponent({
 })
 </script>
 <style>
-.confirm-button{
-    margin-left: 100px;
-}
-.confirm-modal p{
-    white-space: normal;
-    font-size: 13px;
-    line-height: 16px;
-}
-
-.email-input .ant-form-item-label {
-    white-space: normal;
-
-    display: inline-block;
-    text-align: center;
-    line-height: 16px;
-}
-
-.detail-address {
-    margin-left: 7px;
-}
-
-.result-address {
-    margin-left: 110px;
-}
 
 .ant-form-item {
     margin-bottom: 10px;

@@ -203,8 +203,6 @@
 									</a-col>
 								</a-row>
 							</div>
-
-
 						</div>
 					</div>
 				</a-collapse-panel>
@@ -228,7 +226,7 @@
 				</a-collapse-panel>
 				<a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-						<a-form-item label="출금은행">
+						<a-form-item label="출금은행" class="clr">
 							<a-select ref="select" v-model:value="은행선택" style="width: 200px">
 								<a-select-option value="은행선택">은행선택</a-select-option>
 								<a-select-option value="국민은행">국민은행</a-select-option>
@@ -238,13 +236,13 @@
 								<a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
 							</a-select>
 						</a-form-item>
-						<a-form-item label="출금계좌번호">
+						<a-form-item label="출금계좌번호" class="clr">
 							<a-input value="100100056489011" />
 						</a-form-item>
-						<a-form-item label="예금주명">
+						<a-form-item label="예금주명" class="clr">
 							<a-input value="주식회사 타운소프트비나" />
 						</a-form-item>
-						<a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start">
+						<a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
 							<a-input value="100100056489011" />
 							<div class="noteImage">
 								<a-row>
@@ -261,11 +259,11 @@
 								</a-row>
 							</div>
 						</a-form-item>
-						<a-form-item label="자동이체출금일자">
+						<a-form-item label="자동이체출금일자" class="clr">
 							<a-radio-group v-model:value="value">
-								<a-radio :style="radioStyle" :value="1">매월 5일</a-radio>
-								<a-radio :style="radioStyle" :value="2">매월 12일</a-radio>
-								<a-radio :style="radioStyle" :value="3">매월 19일</a-radio>
+								<a-radio class="clb" :style="radioStyle" :value="1">매월 5일</a-radio>
+								<a-radio class="clb" :style="radioStyle" :value="2">매월 12일</a-radio>
+								<a-radio class="clb" :style="radioStyle" :value="3">매월 19일</a-radio>
 							</a-radio-group>
 						</a-form-item>
 					</a-form>
@@ -283,7 +281,7 @@
 							</a-select>
 						</a-form-item>
 						<a-form-item label="전달사항">
-							<a-textarea v-model="value" placeholder="전달사항입력" :auto-size="{ minRows: 3, maxRows: 5 }" />
+							<a-textarea v-model="value" placeholder="전달사항입력" />
 						</a-form-item>
 					</a-form>
 				</a-collapse-panel>
