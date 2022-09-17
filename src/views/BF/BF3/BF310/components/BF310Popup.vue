@@ -149,7 +149,7 @@
 								</template>
 							</a-card>
 							<a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
-								<template #headerCell="{ column, index }">
+								<template #headerCell="{ column }">
 									<template v-if="column.key === '사업명'">
 										<span class="clr-text"> 사업명 (중복불가) </span>
 									</template>
