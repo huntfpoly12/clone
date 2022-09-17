@@ -76,7 +76,7 @@
                             </a-tooltip>
                             <a-tooltip placement="top">
                                 <template #title>로그인이력</template>
-                                <login-outlined />
+                                <login-outlined  @click="modalListLogin()"/>
                             </a-tooltip>
                         </a-space>
                     </div>
@@ -87,6 +87,8 @@
             <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                 title="변경이력[cm-000-pop]" />
+            <ListLoginPopup :modalStatus="modalListLoginStatus" @closePopup="modalListLoginStatus = false" :data="popupData"
+                title="로그인이력 [ cm-000-popLogin ]" />
         </div>
     </div>
 </template>
@@ -108,6 +110,7 @@ import {
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
+import ListLoginPopup from "../../../../components/ListLoginPopup.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees } from "./data.js";
@@ -140,7 +143,8 @@ export default defineComponent({
         DxItem,
         AddNew210Poup,
         EditBF210Popup,
-        HistoryPopup
+        HistoryPopup,
+        ListLoginPopup
     },
     data() {
         return {
@@ -163,6 +167,7 @@ export default defineComponent({
             modalAddNewStatus: false,
             modalEditStatus: false,
             modalHistoryStatus: false,
+            modalListLoginStatus: false,
             dataSearch: {
                 typeSevice: "전체",
                 nameCompany: "",
@@ -201,6 +206,10 @@ export default defineComponent({
         },
         modalHistory(data) {
             this.modalHistoryStatus = true;
+            this.popupData = data;
+        },
+        modalListLogin(data) {
+            this.modalListLoginStatus = true;
             this.popupData = data;
         },
 
