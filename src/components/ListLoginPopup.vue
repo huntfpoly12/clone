@@ -75,5 +75,8 @@ export default defineComponent({
     }
 })
 </script>
-<style>
+<style lang="css">    
+.cell-center{
+    text-align: center!important  
+}
 </style>
