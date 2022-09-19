@@ -37,8 +37,7 @@
             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
                 :columns="gridColumns">
                 <DxSelection mode="multiple" />
-                <DxPaging :page-size="5" />
-
+                <DxPaging :page-size="5" /> 
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="신청일자" />

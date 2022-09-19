@@ -50,14 +50,14 @@
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="사업자코드" :fixed="true" />
                 <DxColumn data-field="상호" data-type="date" />
-                <DxColumn data-field="대표자" />
+                <DxColumn data-field="대표자" data-type="date" />
                 <DxColumn data-field="주소" data-type="date" />
                 <DxColumn data-field="연락처" :width="230" />
                 <DxColumn data-field="매니저" />
-                <DxColumn data-field="관리시작일" data-type="date" />
+                <DxColumn data-field="관리시작일" />
                 <DxColumn data-field="영업자" />
                 <DxColumn data-field="해지일자" />
-                <DxColumn data-field="연체(개월)" />
+                <DxColumn data-field="연체(개월)" data-type="number" />
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
