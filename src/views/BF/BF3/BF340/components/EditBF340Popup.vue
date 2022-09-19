@@ -78,7 +78,7 @@
                     </a-col>
                     <a-col :span="8" :md="13" :lg="11">
                         <a-form-item :wrapper-col="{ span: 24}" class="detail-address">
-                            <a-input v-model:value="bf340Detail.detail_address" placeholder="상세주소" :disabled="true" />
+                            <a-input v-model:value="bf340Detail.detail_address" placeholder="상세주소"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -96,7 +96,7 @@
                             </a-col>
                             <a-col :span="16" :md="16" :lg="17">
                                 <a-form-item class="email-input" :wrapper-col="{ span: 24 }">
-                                    <a-input v-model:value="bf340Detail.전자세금계산서수신이메일" placeholder="상세주소"
+                                    <a-input v-model:value="bf340Detail.전자세금계산서수신이메일" placeholder=""
                                         style="width: 100%" />
                                 </a-form-item>
                             </a-col>
@@ -123,7 +123,7 @@
                             <a-input v-model:value="bf340Detail.계좌번호" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="가입일자">
-                            <a-date-picker v-model:value="value1" />
+                            <a-date-picker :value="dateValue(bf340Detail.가입일자)" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="12" :md="13" :lg="14">
@@ -131,7 +131,7 @@
                             <a-input v-model:value="bf340Detail.예금주" />
                         </a-form-item>
                         <a-form-item label="해지일자">
-                            <a-date-picker v-model:value="value1" />
+                            <a-date-picker :value="dateValue(bf340Detail.해지일자)" />
                         </a-form-item>
                     </a-col>
 
@@ -184,7 +184,6 @@ interface FormState {
     계좌번호: string;
     등록번호: string;
     예금주: string;
-    가입일자: string;
     사업자등록번호: string;
     휴대폰: string;
     비고: string;
@@ -196,6 +195,8 @@ interface FormState {
     법인주민등록번호: string;
     result_address: string;
     detail_address: string;
+    해지일자: string;
+    가입일자: string;
 }
 
 export default defineComponent({
@@ -222,7 +223,7 @@ export default defineComponent({
         // get window resize 
         onMounted(() => {
             window.onresize = () => {
-                console.log(windowHeight.value = window.innerWidth);
+               windowHeight.value = window.innerWidth;
             }
         });
 
@@ -243,7 +244,6 @@ export default defineComponent({
             은행: '농협',
             계좌번호: '',
             예금주: '',
-            가입일자: '',
             비고: '',
             영업자코드: '',
             영업자명: '',
@@ -257,7 +257,9 @@ export default defineComponent({
             세금계산서발행여부: '',
             법인주민등록번호: '',
             result_address: '',
-            detail_address: ''
+            detail_address: '',
+            가입일자:'',
+            해지일자:'',
         });
         onMounted(() => {
             bf340Detail.사업자유형 = '개인';
@@ -267,7 +269,6 @@ export default defineComponent({
             bf340Detail.은행 = '국민은행';
             bf340Detail.계좌번호 = '1000985-87-12547';
             bf340Detail.예금주 = '홍길동 (소프트파워독산점)';
-            bf340Detail.가입일자 = '2021-08-15';
             bf340Detail.비고 = '';
             bf340Detail.영업자코드 = 'S0001';
             bf340Detail.영업자명 = '김영업자';
@@ -282,6 +283,8 @@ export default defineComponent({
             bf340Detail.법인주민등록번호 = '110111-2154800';
             bf340Detail.result_address = '';
             bf340Detail.detail_address = '';
+            bf340Detail.가입일자 = '2021-08-15';
+            bf340Detail.해지일자 = '2021-08-14';
         });
         const confirmPopup = (value: any) => {
             if (value == '해지') {
@@ -305,6 +308,9 @@ export default defineComponent({
             }
         }
 
+        const dateValue = (date: string | number | Date | dayjs.Dayjs | null | undefined) => {
+			return dayjs(date,"YYYY-MM-DD");
+		}
         return {
             labelCol,
             wrapperCol,
@@ -317,7 +323,8 @@ export default defineComponent({
             handleOkConfirm,
             afterConfirmClose,
             withPopup,
-            windowHeight
+            windowHeight,
+            dateValue
         }
     },
     methods: {
