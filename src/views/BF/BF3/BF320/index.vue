@@ -173,11 +173,19 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #data-grid-demo {
     min-height: 700px;
 }
-
+::v-deep .dx-toolbar-after {
+    display: flex;
+    .dx-toolbar-item {
+        &:first-child {
+            order: 2;
+            margin-left: 15px;
+        }
+    }
+}
 .dx-select-checkbox {
     display: inline-block !important;
 }

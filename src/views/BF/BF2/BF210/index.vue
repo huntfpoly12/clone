@@ -220,14 +220,6 @@ export default defineComponent({
           value: "jack",
           label: "Jack",
         },
-        {
-          value: "lucy",
-          label: "Lucy",
-        },
-        {
-          value: "tom",
-          label: "Tom Halin Sin Han Bank",
-        },
       ],
       popupData: [],
       modalAddNewStatus: false,

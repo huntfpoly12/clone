@@ -383,7 +383,6 @@ export default defineComponent({
 .ant-layout.ant-layout-has-sider {
     min-height: calc(100vh - 64px);
 }
-
 .ant-layout-header {
     display: flex;
     justify-content: space-between;
