@@ -4,16 +4,24 @@
       <div id="components-grid-demo-flex">
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
-            <label class="lable-item"> 회원종류 : </label>
+            <label class="lable-item">회원종류 :</label>
             <a-select
-              ref="select"
-              v-model:value="dataSearch.status"
-              style="width: 150px"
+              style="width: 100px"
+              v-model:value="dataSearch.nameSale"
+              option-label-prop="children"
             >
-              <a-select-option value=" 전체">전체</a-select-option>
-              <a-select-option value="본사">본사</a-select-option>
-              <a-select-option value="지사">지사</a-select-option>
-              <a-select-option value="대리점">대리점</a-select-option>
+              <a-select-option value="고객사" label="고객사">
+                <a-tag :color="getColorTag('고객사')">고객사</a-tag>
+              </a-select-option>
+              <a-select-option value="매니저" label="전체">
+                <a-tag :color="getColorTag('매니저')">매니저</a-tag>
+              </a-select-option>
+              <a-select-option value="영업자" label="영업자">
+                <a-tag :color="getColorTag('영업자')">영업자</a-tag>
+              </a-select-option>
+              <a-select-option value="파트너" label="파트너">
+                <a-tag :color="getColorTag('파트너')">영업자</a-tag>
+              </a-select-option>
             </a-select>
           </a-col>
           <a-col>
@@ -32,24 +40,22 @@
           </a-col>
           <a-col>
             <label class="lable-item">회원ID :</label>
-            <a-input
-              style="width: 150px"
-              v-model:value="dataSearch.surrogate"
-            />
+            <a-input style="width: 150px" v-model:value="dataSearch.userid" />
           </a-col>
           <a-col>
             <label class="lable-item">회원명 :</label>
-            <a-input
-              style="width: 150px"
-              v-model:value="dataSearch.surrogate"
-            />
+            <a-input style="width: 150px" v-model:value="dataSearch.username" />
           </a-col>
           <a-col style="display: flex; align-items: center">
             <a-checkbox v-model:checked="dataSearch.typeSevice1"
-              >이용중</a-checkbox
+              ><a-tag :color="getAbleDisable('이용중')"
+                >이용중</a-tag
+              ></a-checkbox
             >
             <a-checkbox v-model:checked="dataSearch.typeSevice2"
-              >이용중지</a-checkbox
+              ><a-tag :color="getAbleDisable('이용중지')"
+                >이용중지</a-tag
+              ></a-checkbox
             >
           </a-col>
         </a-row>
@@ -80,22 +86,30 @@
         <template #button-template>
           <DxButton icon="plus" @click="openAddNewModal" />
         </template>
-
         <DxColumn
           data-field="상태"
+          css-class="cell-center"
+          cell-template="check-box"
+          :width="100"
+        />
+        <template #check-box="{ data }">
+          <a-tag :color="getAbleDisable(data.value)">{{ data.value }}</a-tag>
+        </template>
+        <DxColumn data-field="회원ID" :width="80" css-class="cell-center" />
+        <DxColumn data-field="회원명" :width="100" />
+        <DxColumn
+          data-field="회원종류"
           cell-template="grid-cell"
           css-class="cell-center"
+          :width="150"
         />
-        <DxColumn data-field="코드" :width="80" css-class="cell-center" />
         <template #grid-cell="{ data }">
           <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
         </template>
-        <DxColumn data-field="회원명" css-class="cell-center" />
-        <DxColumn data-field="회원종류" css-class="cell-center" />
-        <DxColumn data-field="휴대폰" />
-        <DxColumn data-field="소속코드" />
+        <DxColumn data-field="휴대폰" :width="200" />
+        <DxColumn data-field="소속코드" :width="200" />
         <DxColumn data-field="소속명" />
-        <DxColumn cell-template="pupop" :width="80" />
+        <DxColumn cell-template="pupop" :width="100" />
         <template #pupop="{ data }" class="custom-action">
           <div class="custom-action">
             <a-space :size="10">
@@ -109,7 +123,7 @@
               </a-tooltip>
               <a-tooltip placement="top">
                 <template #title>로그인이력</template>
-                <login-outlined />
+                <login-outlined @click="modalLogin(data)" />
               </a-tooltip>
             </a-space>
           </div>
@@ -124,12 +138,19 @@
         :modalStatus="modalEditStatus"
         @closePopup="modalEditStatus = false"
         :data="popupData"
+        title="회원관리 [ bf-210 –pop ]"
       />
       <HistoryPopup
         :modalStatus="modalHistoryStatus"
         @closePopup="modalHistoryStatus = false"
         :data="popupData"
         title="변경이력[cm-000-pop]"
+      />
+      <PopLogin
+        :modalStatus="modalLoginStatus"
+        @closePopup="modalLoginStatus = false"
+        :data="popupData"
+        title="로그인이력 [ cm-000-popLogin ]"
       />
     </div>
   </div>
@@ -152,6 +173,7 @@ import {
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
+import PopLogin from "./components/PopLogin.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees } from "./data.js";
@@ -168,7 +190,6 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -189,6 +210,7 @@ export default defineComponent({
     AddNew210Poup,
     EditBF210Popup,
     HistoryPopup,
+    PopLogin,
   },
   data() {
     return {
@@ -211,14 +233,15 @@ export default defineComponent({
       modalAddNewStatus: false,
       modalEditStatus: false,
       modalHistoryStatus: false,
+      modalLoginStatus: false,
+
       dataSearch: {
-        typeSevice: "전체",
-        nameCompany: "",
-        surrogate: "",
+        typeSevice: "이용중",
         status: "전체",
-        address: "",
-        manager: "",
-        nameSale: "정상",
+        nameSale: "고객사",
+        typeSevice1: "이용중",
+        userid: "",
+        username: "",
       },
     };
   },
@@ -251,14 +274,26 @@ export default defineComponent({
       this.modalHistoryStatus = true;
       this.popupData = data;
     },
-
+    modalLogin(data) {
+      this.modalLoginStatus = true;
+      this.popupData = data;
+    },
     getColorTag(data) {
-      if (data === "정상") {
-        return "#108ee9";
-      } else if (data === "해지") {
-        return "#cd201f";
-      } else if (data === "전체") {
+      if (data === "고객사") {
+        return "blue";
+      } else if (data === "매니저") {
+        return "black";
+      } else if (data === "영업자") {
         return "grey";
+      } else if (data === "파트너") {
+        return "#cdc71c";
+      }
+    },
+    getAbleDisable(data) {
+      if (data === "이용중") {
+        return "blue";
+      } else if (data === "이용중지") {
+        return "#d5a7a7";
       }
     },
   },
