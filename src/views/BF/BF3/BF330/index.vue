@@ -1,7 +1,7 @@
 <template>
     <div id="bf-310">
         <div class="search-form">
-            <div id="components-grid-demo-flex">
+            <div class="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16, 8]">
                     <a-col>
                         <label class="lable-item"> 사업자코드 : </label>
@@ -94,7 +94,6 @@ import {
 } from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
-import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { employees, states } from "../data.js";
 import { Workbook } from "exceljs";
@@ -120,7 +119,6 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        Style,
     },
     data() {
         return {
@@ -183,9 +181,69 @@ export default defineComponent({
     },
 });
 </script>
-<style>
-   .components-grid-demo-flex .ant-col {
+<style lang="scss" scoped>
+   #data-grid-demo {
+    min-height: 700px;
+}
+.search-form {
+    background: #f1f3f4;
+    padding: 10px 24px;
+}
+.components-grid-demo-flex .ant-col {
+    display: flex;
+    align-items: center;
+}
+.dx-select-checkbox {
+    display: inline-block !important;
+}
+::v-deep .dx-toolbar-after {
+    display: flex;
+    .dx-toolbar-item {
+        &:first-child {
+            order: 2;
+            margin-left: 15px;
+        }
+    }
+}
+.modal-note {
+    max-height: 500px;
+    overflow-y: auto;
+
+    .title-note {
         display: flex;
+        justify-content: space-between;
         align-items: center;
     }
+
+    th {
+        display: none;
+    }
+}
+
+.anticon {
+    cursor: pointer;
+}
+
+.custom-action {
+    text-align: center;
+}
+
+.search-form {
+    margin-bottom: 10px;
+
+    >div {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .lable-item {
+        white-space: nowrap;
+        margin-right: 10px;
+        width: auto !important;
+    }
+
+    .col {
+        align-items: center; 
+    }
+}
 </style>
