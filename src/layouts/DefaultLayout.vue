@@ -383,6 +383,10 @@ export default defineComponent({
 .ant-layout.ant-layout-has-sider {
     min-height: calc(100vh - 64px);
 }
+.components-grid-demo-flex .ant-col {
+    display: flex;
+    align-items: center;
+}
 .ant-layout-header {
     display: flex;
     justify-content: space-between;
@@ -400,13 +404,13 @@ export default defineComponent({
 }
 
 .header-content {
-    display: flex;
+    display: block;
     background: #91d5ff;
     align-items: center;
-
+    position: relative;
     .left {
-        flex-basis: 300px;
-        display: flex;
+        width: 300px;
+        float: left;
         align-items: center;
         padding-left: 15px;
         height: 58px
@@ -415,7 +419,13 @@ export default defineComponent({
     .right {
         padding-left: 24px;
         padding-top: 5px;
-        flex-basis: calc(100% - 324px);
+        float: left;
+        width: calc(100% - 324px);
+    }
+    &::after {
+        content: "";
+  clear: both;
+  display: table;
     }
 }
 
@@ -529,7 +539,10 @@ export default defineComponent({
         display: block;
         text-align: left;
         padding-left: 0;
-
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-width: 100%;
         li {
             display: inline-block;
             width: auto;
