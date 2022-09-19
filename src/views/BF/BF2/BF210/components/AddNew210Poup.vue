@@ -18,24 +18,14 @@
       >
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item label="팩스">
-              <a-input disabled style="width: 150px; margin-right: 10px" />
-              <button
-                disabled
-                style="
-                  background-color: #00000040;
-                  color: #918e8b;
-                  border: none;
-                  height: 32px;
-                "
-              >
-                중복체크
-              </button>
+            <a-form-item label="회원ID ">
+              <a-input style="width: 150px; margin-right: 10px" />
+              <button style="border: 1px solid grey">중복체크</button>
             </a-form-item>
-            <a-form-item label="팩스">
+            <a-form-item label="회원명">
               <a-input style="width: 150px; margin-right: 10px" />
             </a-form-item>
-            <a-form-item label="주소">
+            <a-form-item label="소속">
               <a-input-search v-model:value="bf310Detail.name" placeholder="">
                 <template #prefix>
                   <search-outlined />
@@ -49,16 +39,16 @@
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="주소">
+            <a-form-item label="상태">
               <a-switch
                 v-model:checked="bf310Detail.주소"
-                checked-children="발행"
-                un-checked-children="미발행"
-                style="width: 25%"
+                checked-children="이용중"
+                un-checked-children="이용중지"
+                style="width: 30%"
               />
             </a-form-item>
 
-            <a-form-item label="등급">
+            <a-form-item label="회원종류">
               <a-select
                 style="width: 100px"
                 v-model:value="dataMode.color"
@@ -95,12 +85,16 @@
               type="number"
               :name="['user', 'number']"
               label="휴대폰"
-              :rules="[{ type: 'number' }]"
             >
-              <a-input
-                v-model:value="formState.user.number"
-                style="width: 150px"
-              />
+              <div style="display: flex; align-items: flex-end">
+                <a-input
+                  @keypress="onlyNumber"
+                  type="text"
+                  v-model:value="formState.user.number"
+                  style="width: 150px; margin-right: 8px"
+                />
+                <span style="color: #a19999">Numeric only!</span>
+              </div>
             </a-form-item>
             <a-form-item
               :name="['user', 'email']"
@@ -113,7 +107,7 @@
               />
             </a-form-item>
             <a-form-item>
-              <a-button class="btn_sendemail" @click="showModal"
+              <a-button class="btn_sendemail" danger @click="showModal"
                 >비밀번호 변경
               </a-button>
               <a-modal
@@ -152,9 +146,9 @@
 
           <DxColumn data-field="코드" :width="80" :fixed="true" />
 
-          <DxColumn data-field="상태" />
+          <DxColumn data-field="권한그룹명" />
 
-          <DxColumn data-field="회원명" />
+          <DxColumn data-field="권한그룹설명" />
           <DxColumn :width="50" cell-template="modal-table" />
           <template #modal-table="{}">
             <div class="action-menu"><menu-outlined /></div>
@@ -274,7 +268,7 @@ export default defineComponent({
       dataSource: employees,
       states,
       dataMode: {
-        color: "고객사",
+        color: "",
       },
     };
   },
@@ -378,12 +372,20 @@ export default defineComponent({
     };
   },
   methods: {
+    onlyNumber(e: any) {
+      //console.log($event.keyCode); //keyCodes value
+      let keyCode = e.keyCode ? e.keyCode : e.which;
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
+        // 46 is dot
+        e.preventDefault();
+      }
+    },
     setModalVisible() {
       this.$emit("closePopup", false);
     },
     getColorTag(data: string) {
       if (data === "고객사") {
-        return "#fff";
+        return "blue";
       } else if (data === "최고매니저") {
         return "#4a4848";
       } else if (data === "중간매니저") {
