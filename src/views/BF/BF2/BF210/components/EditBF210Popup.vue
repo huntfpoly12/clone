@@ -2,7 +2,6 @@
   <div id="components-modal-demo-position">
     <a-modal
       :visible="modalStatus"
-      :title="title"
       centered
       okText="저장하고 나가기"
       cancelText="그냥 나가기"
@@ -19,7 +18,7 @@
       >
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item label="회원ID">
+            <a-form-item label="팩스">
               <a-input
                 disabled
                 value="S0001"
@@ -37,13 +36,13 @@
                 중복체크
               </button>
             </a-form-item>
-            <a-form-item label="회원명">
+            <a-form-item label="팩스">
               <a-input
                 value="김회원명"
                 style="width: 150px; margin-right: 10px"
               />
             </a-form-item>
-            <a-form-item label="소속">
+            <a-form-item label="주소">
               <a-input-search v-model:value="bf310Detail.name" placeholder="">
                 <template #prefix>
                   <search-outlined />
@@ -57,18 +56,18 @@
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="상태">
+            <a-form-item label="주소">
               <a-switch
                 v-model:checked="bf310Detail.주소"
-                checked-children="이용중"
-                un-checked-children="이용중지"
-                style="width: 30%"
+                checked-children="발행"
+                un-checked-children="미발행"
+                style="width: 25%"
               />
             </a-form-item>
 
-            <a-form-item label="회원종류">
+            <a-form-item label="등급">
               <a-select
-                style="width: 150px"
+                style="width: 100px"
                 v-model:value="dataMode.color"
                 option-label-prop="children"
               >
@@ -83,16 +82,8 @@
                 <a-select-option value="중간매니저" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="담당매니저" label="담당매니저">
-                  <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
-                </a-select-option>
-                <a-select-option value="영업자" label="영업자">
-                  <a-tag :color="getColorTag('영업자')">영업자</a-tag>
-                </a-select-option>
-                <a-select-option value="파트너" label="파트너">
-                  <a-tag style="color: black" :color="getColorTag('파트너')"
-                    >파트너</a-tag
-                  >
+                <a-select-option value="전체" label="전체">
+                  <a-tag :color="getColorTag('전체')">전체</a-tag>
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -111,16 +102,12 @@
               type="number"
               :name="['user', 'number']"
               label="휴대폰"
+              :rules="[{ type: 'number' }]"
             >
-              <div style="display: flex; align-items: flex-end">
-                <a-input
-                  @keypress="onlyNumber"
-                  type="text"
-                  v-model:value="formState.user.number"
-                  style="width: 150px; margin-right: 8px"
-                />
-                <span style="color: #a19999">Numeric only!</span>
-              </div>
+              <a-input
+                v-model:value="formState.user.number"
+                style="width: 150px"
+              />
             </a-form-item>
             <a-form-item
               :name="['user', 'email']"
@@ -167,15 +154,14 @@
           :allow-column-reordering="true"
           :allow-column-resizing="true"
           :column-auto-width="true"
-          disable
         >
           <DxSelection mode="multiple" />
 
           <DxColumn data-field="코드" :width="80" :fixed="true" />
 
-          <DxColumn data-field="권한그룹명" />
+          <DxColumn data-field="상태" />
 
-          <DxColumn data-field="권한그룹설명" />
+          <DxColumn data-field="회원명" />
           <DxColumn :width="50" cell-template="modal-table" />
           <template #modal-table="{}">
             <div class="action-menu"><menu-outlined /></div>
@@ -273,7 +259,7 @@ interface FormState {
 }
 
 export default defineComponent({
-  props: ["modalStatus", "data", "msg", "title"],
+  props: ["modalStatus", "data", "msg"],
 
   components: {
     MenuOutlined,
@@ -399,32 +385,20 @@ export default defineComponent({
     };
   },
   methods: {
-    onlyNumber(e: any) {
-      //console.log($event.keyCode); //keyCodes value
-      let keyCode = e.keyCode ? e.keyCode : e.which;
-      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-        // 46 is dot
-        e.preventDefault();
-      }
-    },
     setModalVisible() {
       this.$emit("closePopup", false);
     },
     getColorTag(data: string) {
       if (data === "고객사") {
-        return "blue";
+        return "#fff";
       } else if (data === "최고매니저") {
         return "#4a4848";
       } else if (data === "중간매니저") {
         return "#4a4848";
       } else if (data === "담당매니저") {
         return "#4a4848";
-      } else if (data === "담당매니저") {
-        return "#4a4848";
-      } else if (data === "영업자") {
+      } else if (data === "전체") {
         return "grey";
-      } else if (data === "파트너") {
-        return "#efe70b";
       }
     },
     validateEmail(value: any) {
@@ -442,10 +416,6 @@ export default defineComponent({
 });
 </script>
 <style>
-.container_email .ant-modal-body {
-  padding: 0 24px;
-  padding-top: 16px;
-}
 .action-menu {
   text-align: center;
 }
@@ -467,7 +437,6 @@ export default defineComponent({
 }
 .modal_email {
   display: flex;
-  align-items: center;
 }
 .btn_sendemail {
   padding: 5px 10px;
