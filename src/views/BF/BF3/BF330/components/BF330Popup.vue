@@ -48,15 +48,16 @@
                                             <span> 사업명 (중복불가) </span>
                                         </template>
                                     </template>
-                                    <template #bodyCell="{ column, record }">
-                                        <template v-if="column.key === '사업명'">
+                                    <template #bodyCell="{ column, record }" contenteditable="true">
+                                        <template v-if="column.key === '사업명'" >
                                             <a>
                                                 {{ record.사업명 }}
                                             </a>
                                         </template>
                                         <template v-else-if="column.key === '사업분류'">
                                             <span>
-                                                <a-select ref="select" value="주.야간보호" style="width: 200px">
+                                                <a-select ref="select" v-model:value="record.사업분류" style="width: 200px">
+                                                    <a-select-option value="주.야간보호">주.야간보호</a-select-option>
                                                     <a-select-option value="방문요양">방문요양</a-select-option>
                                                     <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
                                                     <a-select-option value="방문간호">방문간호</a-select-option>
@@ -162,20 +163,18 @@
                         <a-col :span="14">
                             <div style="display: flex;padding-left: 155px;">
                                 <span style="width:180px">
-                                    <input type="checkbox" v-model="formState.checkBoxBasicFee"
-                                        />
+                                    <input type="checkbox" v-model="formState.checkBoxBasicFee" />
                                     기본이용료</span>
-                                <a-input v-model:value="formState.basicFee"  @change="handleInputTexService()"/>
+                                <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" />
                             </div>
                         </a-col>
                         <a-coll :span="8"></a-coll>
                         <a-col :span="14">
                             <div style="display: flex;padding-left: 155px; margin-top: 5px;">
                                 <span style="width:180px">
-                                    <input type="checkbox" v-model="formState.checkBoxMajorInsurance"
-                                        >
+                                    <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
                                     4대보험</span>
-                                <a-input v-model:value="formState.majorInsurance" @change="handleInputTexService()"/>
+                                <a-input v-model:value="formState.majorInsurance" @change="handleInputTexService()" />
                             </div>
                         </a-col>
                     </a-row>
@@ -183,13 +182,13 @@
                 <a-collapse-panel key="2" header="담당매니저/ 영업자">
                     <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                         <a-form-item label="담당매니저">
-                            <a-select ref="select" value="담당매니저선택" style="width: 200px">
+                            <a-select ref="select" v-model:value="담당자선택" style="width: 200px">
                                 <a-select-option value="김매니저 kim5604">김매니저 kim5604</a-select-option>
                                 <a-select-option value="유하람 haram.interpreter">유하람 haram.interpreter</a-select-option>
                             </a-select>
                         </a-form-item>
                         <a-form-item label="영업자">
-                            <a-select ref="select" value="영업자선택" style="width: 200px">
+                            <a-select ref="select" v-model:value="영업자선택" style="width: 200px">
                                 <a-select-option value="장영업">장영업</a-select-option>
                                 <a-select-option value="박혁서세">박혁서세</a-select-option>
                                 <a-select-option value="강감찬">강감찬</a-select-option>
@@ -278,6 +277,12 @@ export default defineComponent({
         modalStatus: Boolean,
         modalStatusHistory: Boolean,
     },
+    data() {
+        return {
+            담당자선택: "담당자선택",
+            영업자선택: "영업자선택",
+        }
+    },
     components: {
         DxDropDownBox,
         DxDataGrid,
@@ -295,6 +300,7 @@ export default defineComponent({
         PlusOutlined,
         CustomDatepicker
     },
+
     setup() {
         const loading = ref<boolean>(false)
         const imageUrl = ref<string>('')
@@ -543,6 +549,7 @@ export default defineComponent({
                 console.log(this.formState.majorInsurance);
             }
         },
+
 
     },
     watch: {
