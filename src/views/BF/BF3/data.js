@@ -1,7 +1,7 @@
 export const employees = [{
   ID: 1,
   매니저: 'John',
-  '연체(개월)': 28000000,
+  '연체(개월)': 'Heart',
   관리시작일: '신청',
   사업자코드: 'CEO',
   상호: '1964/03/16',
@@ -11,12 +11,12 @@ export const employees = [{
   연락처: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
   영업자: '351 S Hill St.',
   서비스: '회계4',
-  이용료: 150000,
+  이용료: 1500000,
   해지일자: 5,
 }, {
   ID: 2,
   매니저: 'Olivia',
-  '연체(개월)': 3100000,
+  '연체(개월)': 'Peyton',
   상태: '해지',
   관리시작일: '심사중',
   사업자코드: 'Sales Assistant',

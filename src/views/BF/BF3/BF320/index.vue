@@ -1,5 +1,5 @@
 <template>
-    <div id="bf-310">
+    <div id="bf-320">
         <div class="search-form">
             <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16,8]">
@@ -57,7 +57,7 @@
                 <DxColumn data-field="관리시작일" />
                 <DxColumn data-field="영업자" />
                 <DxColumn data-field="해지일자" />
-                <DxColumn data-field="연체(개월)" data-type="number" />
+                <DxColumn data-field="이용료" :format="amountFormat" data-type="number" />
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
@@ -120,6 +120,7 @@ export default defineComponent({
     },
     data() {
         return {
+            amountFormat: { currency: 'VND', useGrouping: true },
             dataSource: employees,
             states,
             options: [{
@@ -173,12 +174,14 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 #data-grid-demo {
     min-height: 700px;
 }
+
 ::v-deep .dx-toolbar-after {
     display: flex;
+
     .dx-toolbar-item {
         &:first-child {
             order: 2;
@@ -186,6 +189,7 @@ export default defineComponent({
         }
     }
 }
+
 .dx-select-checkbox {
     display: inline-block !important;
 }
@@ -217,41 +221,42 @@ export default defineComponent({
     text-align: center;
 }
 
-.search-form {
-    margin-bottom: 10px;
-    background: #f1f3f4;
-    padding: 10px 24px;
+#bf-320 {
+    .search-form {
+        margin-bottom: 10px;
+        padding: 10px 24px;
 
-    >div {
-        width: 100%;
-        justify-content: flex-start !important;
-        align-items: center;
-        margin-right: 15px;
-    }
-
-    label {
-        margin-right: 10px;
-    }
-
-    .lable-item {
-        white-space: nowrap;
-        margin-right: 10px;
-        width: auto !important;
-    }
-
-    .col {
-        align-items: center;
-        display: flex;
-        align-items: center;
-        margin-top: 20px;
-
-        .lable-item {
-            width: 110px;
-            display: inline-block;
+        >div {
+            width: 100%;
+            justify-content: flex-start !important;
+            align-items: center;
+            margin-right: 15px;
         }
 
-        .item:nth-child(2) {
-            margin-left: 30px;
+        label {
+            margin-right: 10px;
+        }
+
+        .lable-item {
+            white-space: nowrap;
+            margin-right: 10px;
+            width: auto !important;
+        }
+
+        .col {
+            align-items: center;
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+
+            .lable-item {
+                width: 110px;
+                display: inline-block;
+            }
+
+            .item:nth-child(2) {
+                margin-left: 30px;
+            }
         }
     }
 }
