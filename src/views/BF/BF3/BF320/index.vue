@@ -11,7 +11,9 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">상호:</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.nameCompany" />
+                        <VueNumberFormat v-model="value" style="width: 120px" class="inputNumber"
+                            :options="{precision: 0,prefix: '', decimal: '.', thousand: ','}">
+                        </VueNumberFormat>
                     </a-col>
                     <a-col>
                         <label class="lable-item">대표자:</label>
@@ -79,7 +81,8 @@
                 title="변경이력[cm-000-pop]" />
         </div>
     </div>
-</template>
+</template> 
+
 <script>
 import { defineComponent } from 'vue';
 import {
@@ -101,6 +104,7 @@ import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
+import VueNumberFormat from 'vue-number-format'
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
@@ -117,6 +121,7 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
+        VueNumberFormat
     },
     data() {
         return {
@@ -145,6 +150,7 @@ export default defineComponent({
                 manager: 'Jack',
                 nameSale: 'Jack'
             },
+            value: 0,
         };
     },
     methods: {
@@ -170,6 +176,13 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
+        convertInputNumber(val) {
+            if (!isNaN(parseInt(val.key))) {
+                console.log(val);
+            } else {
+                this.dataSearch.nameCompany = 1
+            }
+        }
     },
 });
 </script>
@@ -338,5 +351,19 @@ export default defineComponent({
 
 .custom-lineHeight {
     line-height: 3px;
+}
+
+.inputNumber {
+    border: 1px solid #d9d9d9;
+    padding: 4px 10px;
+}
+
+.inputNumber:focus-visible {
+    outline: 1px solid #40a9ff;
+    border-color: #40a9ff;
+    border-radius: 1px;
+    box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
+    border-right-width: 1px !important;
+    outline: 0;
 }
 </style>
