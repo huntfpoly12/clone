@@ -35,10 +35,7 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">해지:</label>
-                        <div @click="$event.target.select()">
-                            <a-switch v-model:checked="dataSearch.status" checked-children="포함"
-                                un-checked-children="제외" />
-                        </div>
+                        <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
                     </a-col>
 
                     <a-col>
@@ -217,6 +214,7 @@ export default defineComponent({
 #data-grid-demo {
     min-height: 700px;
 }
+
 ::v-deep .dx-toolbar-after {
     display: flex;
 
