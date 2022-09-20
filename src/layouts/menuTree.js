@@ -59,7 +59,7 @@ export default [{
         title: '사용자업무설정',
         id: 'cm-100',
         items: [
-          {name: '기초정보설정', url: '#',id: 'cm-110'},
+          {name: '기초정보설정', url: '/dashboard/cm-110',id: 'cm-110'},
           {name: '회계설정', url: '#',id: 'cm-120'},
           {name: '원천설정', url: '#',id: 'cm-130'}
          ]
