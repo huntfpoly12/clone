@@ -11,7 +11,9 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">상호:</label>
-                        <InpuNumber :typeInput="1" />
+
+                        <InpuNumber :typeInput="1" @dataInput="updateInput" />
+
                     </a-col>
                     <a-col>
                         <label class="lable-item">대표자:</label>
@@ -176,6 +178,9 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
+        updateInput(data) {
+            this.dataSearch.nameCompany = data
+        }
     },
 
 });

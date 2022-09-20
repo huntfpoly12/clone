@@ -1,9 +1,10 @@
 
 <template>
-    <VueNumberFormat v-if="type == 1" v-model="value" style="width: 120px" class="inputNumber"
-        :options="{precision: 0,prefix: '', decimal: '.', thousand: ','}" @click="$event.target.select()">
+    <VueNumberFormat v-if="typeInput == 1" v-model:value="valueInput" style="width: 120px" class="inputNumber"
+        :options="{precision: 0,prefix: '', decimal: '.', thousand: ','}" @click="$event.target.select()"
+        @change="changeInputNumber">
     </VueNumberFormat>
-    <VueNumberFormat v-if="type == 2" v-model="value" style="width: 120px" class="inputNumber"
+    <VueNumberFormat v-if="typeInput == 2" v-model:value="valueInput" style="width: 120px" class="inputNumber"
         :options="{precision: 0,prefix: '', decimal: '.', thousand: ''}" @click="$event.target.select()">
     </VueNumberFormat>
 </template>
@@ -20,16 +21,23 @@ export default defineComponent({
     },
     data(props) {
         return {
-            value: '',
-            type: props.typeInput
+            valueInput: '',
+            typeInput: props.typeInput
         }
+    },
+    methods: {
+        changeInputNumber() {
+            console.log(this.valueInput);
+            this.$emit("dataInput", this.valueInput);
+        }
+
     },
     mounted() {
         var els = document.getElementsByClassName("inputNumber");
         for (var i = 0; i < els.length; i++) {
             els[i].value = "";
         }
-    }
+    },
 })
 </script>
 
