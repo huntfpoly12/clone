@@ -1,5 +1,5 @@
 <template>
-    <div id="cm-110">
+    <div id="cm-110" class="page-content">
         <a-tabs v-model:activeKey="activeKey" type="card">
             <a-tab-pane key="1" tab="사업자">
                 <a-row>
@@ -60,21 +60,50 @@
                                         </a-row>
                                     </a-col>
                                 </a-row>
-
                                 <h2 class="title-h2">직인등록</h2>
                                 <a-row>
                                     <a-col :span="16">
-                                        <a-form-item label="직인(인감)">
-                                            <a-image :width="200"
-                                            :src="previewImage" />
-                                            <a-upload v-model:file-list="fileList" name="file" :headers="headers"
-                                                @change="handleChange" :multiple="false" :showUploadList="false"  accept=".tiff,.png,.jpeg,.jpg">
-                                                <a-button>
-                                                    <upload-outlined></upload-outlined>
-                                                    Click to Upload
-                                                </a-button>
-                                            </a-upload>
-                                        </a-form-item>
+                                        <a-row>
+                                            <a-col :span="9" :xl="9">
+                                                <a-form-item label="직인(인감)">
+                                                    <a-image :width="200" :src="previewImage" :preview="false" />
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="14"  :xl="14">
+                                                <a-row>
+                                                    <a-col :span="5" >
+                                                        <a-button type="primary" @click="stampReview">직인자동생성</a-button>
+                                                    </a-col>
+                                                    <a-col :span="16" >
+                                                        <InfoCircleFilled />
+                                                        <a-typography-text>
+                                                            직인 이미지를 자동으로 생성하여 등록합니다.
+                                                        </a-typography-text>
+                                                    </a-col>
+                                                </a-row>
+                                            </a-col>
+                                        </a-row>
+                                    </a-col>
+                                </a-row>
+                                <a-row>
+                                    <a-col :span="16">
+                                        <a-row>
+                                            <a-col :span="6" :offset="3" :xl="6">
+                                                <a-form-item label="">
+                                                    <a-upload v-model:file-list="fileList" name="file"
+                                                        :headers="headers" @change="handleChange" :multiple="false"
+                                                        :showUploadList="false" accept=".tiff,.png,.jpeg,.jpg">
+                                                        <a-button class="btn-upload-image">직인업로드</a-button>
+                                                    </a-upload>
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="14" :xl="14">
+                                                <InfoCircleFilled />
+                                                <a-typography-text>
+                                                    이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 / 종류 : GIF, JPG, PNG
+                                                </a-typography-text>
+                                            </a-col>
+                                        </a-row>
                                     </a-col>
                                 </a-row>
                                 <h2 class="title-h2">대표자정보</h2>
@@ -129,23 +158,22 @@
                             </a-form>
                         </div>
                     </a-col>
-
                 </a-row>
-
+                <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false "  :data="fileImage"/>
             </a-tab-pane>
             <a-tab-pane key="2" tab="이용자">
-
             </a-tab-pane>
 
         </a-tabs>
     </div>
 </template>
 <script lang="ts">
-import { UploadOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
 import { defineComponent, ref, toRaw, reactive } from "vue";
 import type { UnwrapRef } from 'vue';
-
+import {
+    InfoCircleFilled,
+} from "@ant-design/icons-vue";
+import ReviewStampImage from "./components/ReviewStampImage.vue";
 interface FormState {
     상호: string;
     사업자유형: string;
@@ -161,18 +189,19 @@ interface FormState {
 }
 
 function getBase64(file: File) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
 }
 
 export default defineComponent({
     components: {
-        UploadOutlined,
-    },
+    InfoCircleFilled,
+    ReviewStampImage
+},
     setup() {
         const formState: UnwrapRef<FormState> = reactive({
             상호: '효사랑노인요양전문병원',
@@ -189,18 +218,28 @@ export default defineComponent({
         });
 
         let previewImage: any = ref('/public/images/demo-image.jpg');
-        const handleChange = async  (info: any) => {
+        let fileImage: any = ref([]);
+        let modalStampReviewStatus: any = ref();
+
+        const handleChange = async (info: any) => {
+            
             if (info.file.status !== 'uploading') {
                 previewImage.value = await getBase64(info.file.originFileObj);
+                fileImage.value = info;
             }
-            
+
             if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
+                //message.success(`${info.file.name} file uploaded successfully`);
             } else if (info.file.status === 'error') {
                 console.log(info.file);
-                message.error(`${info.file.name} file upload failed.`);
+                //message.error(`${info.file.name} file upload failed.`);
             }
         };
+
+        const stampReview = ()=>{
+            modalStampReviewStatus.value = true;
+        }
+
         const fileList = ref([]);
         const onSubmit = () => {
             console.log('submit!', toRaw(formState));
@@ -215,7 +254,10 @@ export default defineComponent({
                 authorization: 'authorization-text',
             },
             handleChange,
-            previewImage
+            previewImage,
+            stampReview,
+            modalStampReviewStatus,
+            fileImage
         };
     },
 });
@@ -236,6 +278,11 @@ export default defineComponent({
 .validate-message {
     margin-left: 2%;
     color: #c3baba;
+}
+
+.btn-upload-image{
+    width: 200px;
+    margin-left: 17px;
 }
 </style>
   
