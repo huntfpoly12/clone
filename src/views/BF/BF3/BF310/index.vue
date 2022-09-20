@@ -183,6 +183,10 @@ export default defineComponent({
     padding: 0px 15px !important;
 }
 
+::v-deep .dx-select-checkbox {
+    display: inline-block !important;
+}
+
 ::v-deep .dx-toolbar-after {
     display: flex;
 
