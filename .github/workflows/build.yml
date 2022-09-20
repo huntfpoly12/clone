@@ -9,7 +9,8 @@ on:
 
 jobs:
   build:
-    runs-on: [ self-hosted, linux, x64 ]
+    # runs-on: [ self-hosted, linux, x64 ]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -24,21 +25,30 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets._AUTH_TOKEN}}
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      # - name: Install Yarn
+      #   run: npm install -g yarn
 
-      - name: Check yarn cache
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      # - name: Check yarn cache
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: '**/node_modules'
+      #     key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      # - name: Install packages
+      #   if: steps.yarn-cache.outputs.cache-hit != 'true'
+      #   run: yarn install
+      #   env:
+      #     CI: true
+      #     NODE_AUTH_TOKEN: ${{secrets._AUTH_TOKEN}}
+
+      # - name: Build vue
+      #   run: yarn run build
 
       - name: Install packages
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn install
+        run: npm install
         env:
           CI: true
           NODE_AUTH_TOKEN: ${{secrets._AUTH_TOKEN}}
 
       - name: Build vue
-        run: yarn run build
+        run: npm run build

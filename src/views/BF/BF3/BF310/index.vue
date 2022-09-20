@@ -38,7 +38,6 @@
                 :columns="gridColumns">
                 <DxSelection mode="multiple" />
                 <DxPaging :page-size="5" />
-
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="신청일자" />
@@ -179,9 +178,24 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .dx-button-has-text .dx-button-content {
     padding: 0px 15px !important;
+}
+
+::v-deep .dx-select-checkbox {
+    display: inline-block !important;
+}
+
+::v-deep .dx-toolbar-after {
+    display: flex;
+
+    .dx-toolbar-item {
+        &:first-child {
+            order: 2;
+            margin-left: 15px;
+        }
+    }
 }
 
 .search-form {

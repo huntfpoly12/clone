@@ -156,7 +156,7 @@
 								</template>
 								<template #bodyCell="{ column, record }">
 									<template v-if="column.key === '사업명'">
-										<a href="">
+										<a href="#">
 											{{ record.사업명 }}
 										</a>
 									</template>

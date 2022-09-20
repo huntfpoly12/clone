@@ -11,7 +11,7 @@ export const employees = [{
   연락처: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
   영업자: '351 S Hill St.',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 1500000,
   해지일자: 5,
 }, {
   ID: 2,
@@ -26,7 +26,7 @@ export const employees = [{
   연락처: 'Olivia loves to sell. She has been selling DevAV products since 2012. \r\n\r\nOlivia was homecoming queen in high school. She is expecting her first child in 6 months. Good Luck Olivia.',
   영업자: '807 W Paseo Del Mar',
   서비스: '회계3',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 5,
 }, {
   ID: 3,
@@ -41,7 +41,7 @@ export const employees = [{
   연락처: 'Robert was recently voted the CMO of the year by CMO Magazine. He is a proud member of the DevAV Management Team.\r\n\r\nRobert is a championship BBQ chef, so when you get the chance ask him for his secret recipe.',
   영업자: '4 Westmoreland Pl.',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 4,
 }, {
   ID: 4,
@@ -56,7 +56,7 @@ export const employees = [{
   연락처: "Greta has been DevAV's HR Manager since 2003. She joined DevAV from Sonee Corp.\r\n\r\nGreta is currently training for the NYC marathon. Her best marathon time is 4 hours. Go Greta.",
   영업자: '1700 S Grandview Dr.',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 11,
 }, {
   ID: 5,
@@ -71,7 +71,7 @@ export const employees = [{
   연락처: 'Brett came to DevAv from Microsoft and has led our IT department since 2012.\r\n\r\nWhen he is not working hard for DevAV, he coaches Little League (he was a high school pitcher).',
   영업자: '1120 Old Mill Rd.',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 13,
 }, {
   ID: 6,
@@ -86,7 +86,7 @@ export const employees = [{
   연락처: "Sandra is a CPA and has been our controller since 2008. She loves to interact with staff so if you've not met her, be certain to say hi.\r\n\r\nSandra has 2 daughters both of whom are accomplished gymnasts.",
   영업자: '4600 N Virginia Rd.',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 44,
 }, {
   ID: 7,
@@ -101,7 +101,7 @@ export const employees = [{
   연락처: 'Kevin is our hard-working shipping manager and has been helping that department work like clockwork for 18 months.\r\n\r\nWhen not in the office, he is usually on the basketball court playing pick-up games.',
   영업자: '424 N Main St.',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 5,
 }, {
   ID: 8,
@@ -116,7 +116,7 @@ export const employees = [{
   연락처: 'Cindy joined us in 2008 and has been in the HR department for 2 years. \r\n\r\nShe was recently awarded employee of the month. Way to go Cindy!',
   영업자: '2211 Bonita Dr.',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 4,
 }, {
   ID: 9,
@@ -131,7 +131,7 @@ export const employees = [{
   연락처: 'As our ombudsman, Kent is on the front-lines solving customer problems and helping our partners 영업자 issues out in the field.    He is a classically trained musician and is a member of the Chamber Orchestra.',
   영업자: '12100 Mora Dr',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 26,
 }, {
   ID: 10,
@@ -146,7 +146,7 @@ export const employees = [{
   연락처: "If you are like the rest of us at DevAV, then you've probably reached out for help from Taylor. He does a great job as a member of our IT department.",
   영업자: '7776 Torreyson Dr',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 5,
 }, {
   ID: 11,
@@ -161,7 +161,7 @@ export const employees = [{
   연락처: 'Sammy is proud to be a member of the DevAV team. He joined the team in 2012 and has been in the sales department from the beginning.\r\n\r\nHe has just picked up golf so you can find him on the links every weekend.',
   영업자: '645 Prospect Crescent',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 11,
 }, {
   ID: 12,
@@ -176,7 +176,7 @@ export const employees = [{
   연락처: "Kelly loves people and that's why she joined DevAV's support department. One of the funniest people in the company, she does stand-up on the weekends at the Laugh Factory.",
   영업자: '1601 W Mountain St.',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 5,
 }, {
   ID: 13,
@@ -191,7 +191,7 @@ export const employees = [{
   연락처: 'Natalie travels the US and teaches our partners how to explain the benefits of our products to customers.\r\n\r\nShe is a proud wife and mom and volunteers her time at the elementary school.',
   영업자: '6400 E Bixby Hill Rd',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 29,
 }, {
   ID: 14,
@@ -206,7 +206,7 @@ export const employees = [{
   연락처: "Walter has been developing apps and websites for DevAV since 2011. His passion is software and if you ever walk by his desk, you'll know why.\r\n\r\nWally once worked 72 hours straight - writing code and fixing bugs.",
   영업자: '10385 Shadow Oak Dr',
   서비스: '회계4',
-  이용료:150000,
+  이용료: 150000,
   해지일자: 13,
 }];
 

@@ -3,8 +3,8 @@
         <a-modal :visible="modalStatus" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
-                <a-collapse-panel key="1" header="이용서비스">
-                    <a-form :label-col="labelCol" class="popup-scroll">
+                <a-collapse-panel key="1" header="이용서비스" class="popup-scroll">
+                    <a-form :label-col="labelCol" style="height: 500px">
                         <a-row>
                             <a-col :span="10">
                                 <a-form-item label="총일용료" style="font-weight: bold;">
@@ -49,7 +49,7 @@
                                         </template>
                                     </template>
                                     <template #bodyCell="{ column, record }" contenteditable="true">
-                                        <template v-if="column.key === '사업명'" >
+                                        <template v-if="column.key === '사업명'">
                                             <a>
                                                 {{ record.사업명 }}
                                             </a>
@@ -120,7 +120,7 @@
                                 </div>
                             </a-col>
                             <a-col :span="14">
-                                <div style="display: flex;padding-left: 155px; margin-top: 5px;">
+                                <div style="display: flex;padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAcc4wc"> W4C
                                     </span>
@@ -128,56 +128,54 @@
                                 </div>
                             </a-col>
                         </a-row>
-
-
                         <imgUpload :title="titleModal" :imageUrl="imageUrl" />
-
+                        <hr>
+                        <a-row style="padding: 5px">
+                            <a-col>
+                                <a-form-item label="원천서비스" style="font-weight: bold">
+                                    <input type="checkbox" value="regist"> 원천서비스 신청
+                                </a-form-item>
+                            </a-col>
+                        </a-row>
+                        <div>
+                            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+                                <a-form-item label="서비스 시작년월" style="width: 300px">
+                                    <CustomDatepicker width="30%" valueDate="2022/08/25" />
+                                </a-form-item>
+                                <a-form-item label="직 원 수">
+                                    <a-input-number type='number' v-model:value="직원수" style="width: 100px" />
+                                </a-form-item>
+                                <a-form-item label="원천서비스 이용료:">
+                                    <a-input v-model:value="formState.taxFeeSevice" style="width: 367px"
+                                        disabled="True" />
+                                </a-form-item>
+                            </a-form>
+                        </div>
+                        <a-row>
+                            <a-col span="4"></a-col>
+                        </a-row>
+                        <a-row>
+                            <a-coll :span="10"></a-coll>
+                            <a-col :span="14">
+                                <div style="display: flex;padding-left: 155px;">
+                                    <span style="width:180px">
+                                        <input type="checkbox" v-model="formState.checkBoxBasicFee" />
+                                        기본이용료</span>
+                                    <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" />
+                                </div>
+                            </a-col>
+                            <a-coll :span="8"></a-coll>
+                            <a-col :span="14">
+                                <div style="display: flex;padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
+                                    <span style="width:180px">
+                                        <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
+                                        4대보험</span>
+                                    <a-input v-model:value="formState.majorInsurance"
+                                        @change="handleInputTexService()" />
+                                </div>
+                            </a-col>
+                        </a-row>
                     </a-form>
-                    <hr>
-                    <a-row style="padding: 5px">
-                        <a-col>
-                            <a-form-item label="원천서비스" style="font-weight: bold">
-                                <input type="checkbox" value="regist"> 원천서비스 신청
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
-
-                    <div>
-                        <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                            <a-form-item label="서비스 시작년월" style="width: 300px">
-                                <CustomDatepicker width="30%" valueDate="2022/08/25" />
-                            </a-form-item>
-                            <a-form-item label="직 원 수">
-                                <a-input-number value="10" style="width: 100px" />
-                            </a-form-item>
-                            <a-form-item label="원천서비스 이용료:">
-                                <a-input v-model:value="formState.taxFeeSevice" style="width: 367px" disabled="True" />
-                            </a-form-item>
-                        </a-form>
-                    </div>
-                    <a-row>
-                        <a-col span="4"></a-col>
-                    </a-row>
-                    <a-row>
-                        <a-coll :span="10"></a-coll>
-                        <a-col :span="14">
-                            <div style="display: flex;padding-left: 155px;">
-                                <span style="width:180px">
-                                    <input type="checkbox" v-model="formState.checkBoxBasicFee" />
-                                    기본이용료</span>
-                                <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" />
-                            </div>
-                        </a-col>
-                        <a-coll :span="8"></a-coll>
-                        <a-col :span="14">
-                            <div style="display: flex;padding-left: 155px; margin-top: 5px;">
-                                <span style="width:180px">
-                                    <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
-                                    4대보험</span>
-                                <a-input v-model:value="formState.majorInsurance" @change="handleInputTexService()" />
-                            </div>
-                        </a-col>
-                    </a-row>
                 </a-collapse-panel>
                 <a-collapse-panel key="2" header="담당매니저/ 영업자">
                     <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -200,6 +198,8 @@
                     </a-form>
                 </a-collapse-panel>
                 <a-collapse-panel key="3" header="메모" class="modal-note">
+                    <a-badge count="25" :number-style="{
+                    backgroundColor: '#444',color: '#999',}" />
                     <a-table bordered :data-source="dataSource" :pagination="false">
                         <template #bodyCell="{  text, index }">
                             <div>
@@ -229,7 +229,8 @@
 
         <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
             <div>
-                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
+                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key"
+                    :selected-row-keys="selectedItemKeys" @selection-changed="selectionChanged">
                     <DxColumn data-field="기록일시" width='150px' />
                     <DxColumn data-field="비고" />
                     <DxColumn data-field="생성일시" />
@@ -245,6 +246,9 @@
                         </a-space>
                     </template>
                 </DxDataGrid>
+                <DxEditing :allow-updating="true" :allow-adding="true" :allow-deleting="true" mode="cell" />
+                <DxPaging :enabled="false" />
+                <DxSelection mode="multiple" />
             </div>
         </a-modal>
     </div>
@@ -259,7 +263,9 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxSelection
+    DxSelection,
+    DxEditing,
+
 } from "devextreme-vue/data-grid"
 
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
@@ -281,6 +287,17 @@ export default defineComponent({
         return {
             담당자선택: "담당자선택",
             영업자선택: "영업자선택",
+            직원수: '직원수',
+            // dataSource: new DataSource({
+            //     store: new ArrayStore({
+            //         data: dataTable,
+            //         key: 'ID',
+            //     }),
+            // }),
+            selectedItemKeys: [],
+            selectionChanged: (dataTable: { selectedRowKeys: Function; }) => {
+                this.selectedItemKeys = dataTable.selectedRowKeys;
+            },
         }
     },
     components: {
@@ -298,7 +315,8 @@ export default defineComponent({
         WarningFilled,
         imgUpload,
         PlusOutlined,
-        CustomDatepicker
+        CustomDatepicker,
+        DxEditing,
     },
 
     setup() {
@@ -333,7 +351,7 @@ export default defineComponent({
             }
             return isJpgOrPng && isLt2M
         }
-        const activeKey = ref([])
+        const activeKey = ref([1])
         const formState = ref({
             name: "",
             name2: "",
@@ -612,7 +630,7 @@ export default defineComponent({
 }
 
 .popup-scroll {
-    height: 600px;
+    /* height: 600px; */
     border: 1px solid #333;
     overflow-y: auto;
     border: 0ch;
