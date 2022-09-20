@@ -411,7 +411,8 @@ export default defineComponent({
         float: left;
         align-items: center;
         padding-left: 15px;
-        height: 58px
+        height: 58px;
+        display: flex;
     }
 
     .right {
