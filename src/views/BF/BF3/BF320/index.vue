@@ -230,7 +230,7 @@ export default defineComponent({
 
 #bf-320 {
     .search-form {
-        margin-bottom: 10px;
+        background: #f1f3f4;
         padding: 10px 24px;
 
         >div {
