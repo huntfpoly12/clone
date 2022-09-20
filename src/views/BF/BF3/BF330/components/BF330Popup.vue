@@ -8,6 +8,7 @@
                         <a-row>
                             <a-col :span="10">
                                 <a-form-item label="총일용료" style="font-weight: bold;">
+                                    <!-- <InpuNumber :typeInput="'2'" /> -->
                                     <a-input v-model:value="formState.totalService" disabled="True" />
                                 </a-form-item>
                             </a-col>
@@ -41,7 +42,7 @@
                                         <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
                                     </a-button>
                                 </template>
-                                <a-table :columns="columns" :data-source="dataTable" :pagination="false"
+                                <!-- <a-table :columns="columns" :data-source="dataTable" :pagination="false"
                                     :bordered="true" class="table-scroll">
                                     <template #headerCell="{ column }">
                                         <template v-if="column.key === '사업명'">
@@ -83,9 +84,37 @@
                                             </span>
                                         </template>
                                     </template>
-                                </a-table>
+                                </a-table> -->
+                                <template>
+                                    <div id="data-grid-demo">
+                                        <DxDataGrid id="gridContainer" :data-source="dataTable" :show-borders="true"
+                                            >
+                                            <DxEditing :allow-updating="true" :allow-adding="true"
+                                                :allow-deleting="true" mode="cell" />
+                                            <DxPaging :enabled="false" />
+                                            <DxSelection mode="multiple" />
+                                            <DxColumn :width="55" data-field="Prefix" caption="Title" :allow-editing="true" />
+                                            <DxColumn data-field="사업명" />
+                                            <DxColumn data-field="사업분류" />
+                                            <DxColumn :width="170" data-field="서비스시작년월" />
+                                            <DxColumn :width="125" data-field="정원수" caption="State">
+                                            </DxColumn>
+                                            <DxColumn data-field="BirthDate" data-type="date" />
+                                            <DxToolbar>
+                                                <DxItem name="addRowButton" show-text="always" />
+                                                <DxItem location="after">
+                                                    <template #default>
+                                                        <DxButton  icon="trash"
+                                                            text="Delete Selected Records" />
+                                                    </template>
+                                                </DxItem>
+                                            </DxToolbar>
+                                        </DxDataGrid>
+                                    </div>
+                                </template>
                             </a-card>
                         </div>
+
                         <a-row>
                             <a-col :span="14">
                                 <a-form-item label="회계서비스 이용료:" style="margin-top: 10px; font-weight: bold">
@@ -197,9 +226,9 @@
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="3" header="메모" class="modal-note">
-                    <a-badge count="25" :number-style="{
-                    backgroundColor: '#444',color: '#999',}" />
+                <a-collapse-panel key="3" header="메모" class="modal-note badge">
+                    <!-- <a-badge count="25" :number-style="{
+                    backgroundColor: '#444',color: '#999',}" /> -->
                     <a-table bordered :data-source="dataSource" :pagination="false">
                         <template #bodyCell="{  text, index }">
                             <div>
@@ -229,9 +258,8 @@
 
         <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
             <div>
-                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key"
-                    :selected-row-keys="selectedItemKeys" @selection-changed="selectionChanged">
-                    <DxColumn data-field="기록일시" width='150px' />
+                <DxDataGrid :data-source="dataTable" :show-borders="true" key-expr="key">
+                    <DxColumn data-field="기록일시" width='150px'  />
                     <DxColumn data-field="비고" />
                     <DxColumn data-field="생성일시" />
                     <DxColumn data-field="생성자ID" />
@@ -263,14 +291,24 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxSelection,
     DxEditing,
+    DxSelection,
+    DxLookup,
+    DxToolbar,
+    DxItem,
 
 } from "devextreme-vue/data-grid"
+import { DxButton } from 'devextreme-vue/button';
+import DataSource from 'devextreme/data/data_source';
+import ArrayStore from 'devextreme/data/array_store';
+
+// import { dataTable };
+import InpuNumber from "../../../../../components/CustomInputFormatNumber.vue"
 
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import type { UploadProps } from 'ant-design-vue'
+
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
     const reader = new FileReader()
@@ -282,21 +320,29 @@ export default defineComponent({
     props: {
         modalStatus: Boolean,
         modalStatusHistory: Boolean,
+
     },
     data() {
         return {
             담당자선택: "담당자선택",
             영업자선택: "영업자선택",
             직원수: '직원수',
-            // dataSource: new DataSource({
-            //     store: new ArrayStore({
-            //         data: dataTable,
-            //         key: 'ID',
-            //     }),
-            // }),
+            dataSource: new DataSource({
+                store: new ArrayStore({
+                    data: this.dataTable,
+                    key: 'ID',
+                }),
+            }),
             selectedItemKeys: [],
-            selectionChanged: (dataTable: { selectedRowKeys: Function; }) => {
-                this.selectedItemKeys = dataTable.selectedRowKeys;
+            selectionChanged: (data:any) => {
+                this.selectedItemKeys = data.selectedRowKeys;
+            },
+            deleteRecords: () => {
+                this.selectedItemKeys.forEach((key) => {
+                    this.dataSource.store().remove(key);
+                });
+                this.selectedItemKeys = [];
+                this.dataSource.reload();
             },
         }
     },
@@ -317,6 +363,11 @@ export default defineComponent({
         PlusOutlined,
         CustomDatepicker,
         DxEditing,
+        InpuNumber,
+        DxLookup,
+        DxButton,
+        DxToolbar,
+        DxItem,
     },
 
     setup() {
@@ -423,8 +474,8 @@ export default defineComponent({
             },
             {
                 title: "정원수(명)",
-                key: "정원수",
                 dataIndex: "정원수",
+                key: "정원수",
             },
             {
                 title: "",
@@ -654,5 +705,21 @@ export default defineComponent({
 .ant-card-extra,
 .ant-card-head-title {
     padding: 0;
+}
+
+.data-grid-demo {
+    min-height: 700px;
+}
+
+.gridDeleteSelected {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    margin: 1px;
+    top: 0;
+}
+
+.gridDeleteSelected .dx-button-text {
+    line-height: 0;
 }
 </style>
