@@ -17,7 +17,7 @@ export default
         { name: "원천업무마감관리", url: "/dashboard/bf-310", id: "bf-520" },
         { name: "4대보험업무관리", url: "/dashboard/bf-310", id: "bf-530" },
         { name: "제본/배송관리", url: "/dashboard/bf-310", id: "bf-540" },
-        { name: "기초정보설정", url: "/dashboard/bf-310", id: "cm-110" },
+        { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
         { name: "회계설정", url: "/dashboard/bf-310", id: "cm-120" },
         { name: "원천설정", url: "/dashboard/bf-310", id: "cm-130" },
         { name: "통장내역", url: "/dashboard/bf-310", id: "ac-110" },

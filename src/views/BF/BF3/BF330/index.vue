@@ -61,7 +61,7 @@
                 <DxColumn data-field="영업자" />
                 <DxColumn data-field="서비스" />
                 <DxColumn data-field="이용료" />
-                <DxColumn data-field="해지일자" />
+                <DxColumn data-field="해지일자"/>
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
@@ -197,10 +197,6 @@ export default defineComponent({
     display: flex;
     align-items: center;
 }
-::v-deep .dx-select-checkbox {
-    display: inline-block !important;
-}
-
 ::v-deep .dx-toolbar-after {
     display: flex;
 

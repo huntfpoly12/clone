@@ -22,12 +22,15 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+.page-content {
+  padding: 24px;
+}
+.dx-select-checkbox {
+    display: inline-block !important;
+}
+.search-form .col {
+  display: flex;
+  align-items: center;
 }
 body {
   margin: 0;
