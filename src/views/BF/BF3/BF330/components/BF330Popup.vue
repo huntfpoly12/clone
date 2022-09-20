@@ -288,7 +288,6 @@ import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import { employees, states } from './data.js';
 // import { dataTable };
-import InpuNumber from "../../../../../components/CustomInputFormatNumber.vue"
 
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
@@ -349,7 +348,6 @@ export default defineComponent({
         PlusOutlined,
         CustomDatepicker,
         DxEditing,
-        InpuNumber,
         DxLookup,
         DxButton,
         DxToolbar,
