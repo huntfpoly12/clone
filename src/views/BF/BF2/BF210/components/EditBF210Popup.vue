@@ -154,8 +154,16 @@
                 <div id="modal_email" class="modal_email">
                   <mail-outlined style="padding-right: 10px" />
                   <div>
-                    <p>비밀번호 설정 이메일</p>
-                    <p>
+                    <p
+                      style="
+                        margin-bottom: 2px;
+                        font-weight: 600;
+                        margin-top: 16px;
+                      "
+                    >
+                      비밀번호 설정 이메일
+                    </p>
+                    <p style="margin-bottom: 0">
                       비밀번호 설정 링크가 이메일로 발송됩니다. 계속
                       진행하시겠습니까?
                     </p>
