@@ -12,7 +12,8 @@
                     <a-col>
                         <label class="lable-item">상호:</label>
                         <VueNumberFormat v-model="value" style="width: 120px" class="inputNumber"
-                            :options="{precision: 0,prefix: '', decimal: '.', thousand: ','}">
+                            :options="{precision: 0,prefix: '', decimal: '.', thousand: ','}"
+                            @click="$event.target.select()">
                         </VueNumberFormat>
                     </a-col>
                     <a-col>
