@@ -2,6 +2,7 @@
   <div id="components-modal-demo-position">
     <a-modal
       :visible="modalStatus"
+      :title="title"
       centered
       okText="저장하고 나가기"
       cancelText="그냥 나가기"
@@ -18,7 +19,7 @@
       >
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item label="팩스">
+            <a-form-item label="회원ID">
               <a-input
                 disabled
                 value="S0001"
@@ -36,13 +37,13 @@
                 중복체크
               </button>
             </a-form-item>
-            <a-form-item label="팩스">
+            <a-form-item label="회원명">
               <a-input
                 value="김회원명"
                 style="width: 150px; margin-right: 10px"
               />
             </a-form-item>
-            <a-form-item label="주소">
+            <a-form-item label="소속">
               <a-input-search v-model:value="bf310Detail.name" placeholder="">
                 <template #prefix>
                   <search-outlined />
@@ -56,20 +57,22 @@
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="주소">
+            <a-form-item label="상태">
               <a-switch
-                v-model:checked="bf310Detail.주소"
-                checked-children="발행"
-                un-checked-children="미발행"
-                style="width: 25%"
+                v-model:checked="bf310Detail.switch"
+                checked-children="이용중"
+                un-checked-children="이용중지"
+                style="width: 30%"
               />
             </a-form-item>
 
-            <a-form-item label="등급">
+            <a-form-item label="회원종류">
               <a-select
-                style="width: 100px"
+                style="width: 150px"
                 v-model:value="dataMode.color"
                 option-label-prop="children"
+                class="select_disable"
+                disabled
               >
                 <a-select-option value="고객사" label="고객사">
                   <a-tag style="color: black" :color="getColorTag('고객사')"
@@ -82,17 +85,25 @@
                 <a-select-option value="중간매니저" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="전체" label="전체">
-                  <a-tag :color="getColorTag('전체')">전체</a-tag>
+                <a-select-option value="담당매니저" label="담당매니저">
+                  <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
+                </a-select-option>
+                <a-select-option value="영업자" label="영업자">
+                  <a-tag :color="getColorTag('영업자')">영업자</a-tag>
+                </a-select-option>
+                <a-select-option value="파트너" label="파트너">
+                  <a-tag style="color: black" :color="getColorTag('파트너')"
+                    >파트너</a-tag
+                  >
                 </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
         </a-row>
 
-        <a-row>
+        <a-rowc :gutter="24">
           <a-col :span="12"> </a-col>
-        </a-row>
+        </a-rowc>
         <a-row>
           <a-col :span="12"> </a-col>
         </a-row>
@@ -102,12 +113,19 @@
               type="number"
               :name="['user', 'number']"
               label="휴대폰"
-              :rules="[{ type: 'number' }]"
             >
-              <a-input
-                v-model:value="formState.user.number"
-                style="width: 150px"
-              />
+              <div style="display: flex; align-items: flex-end">
+                <a-input
+                  @keypress="onlyNumber"
+                  type="text"
+                  v-model:value="formState.user.number"
+                  style="width: 150px; margin-right: 8px"
+                />
+                <span style="color: #a19999">Numeric only!</span>
+              </div>
+              <div :class="{ active: toggleActive }" class="toggle_container">
+                <ToggleButton v-on:change="triggerToggleEvent" />
+              </div>
             </a-form-item>
             <a-form-item
               :name="['user', 'email']"
@@ -120,10 +138,15 @@
               />
             </a-form-item>
             <a-form-item>
-              <a-button class="btn_sendemail" @click="showModal"
+              <a-button
+                :disabled="!validated"
+                html-type="submit"
+                class="btn_sendemail"
+                @click="showModal"
                 >비밀번호 변경
               </a-button>
               <a-modal
+                :disabled="!formState.user.email"
                 class="container_email"
                 v-model:visible="isShow"
                 @ok="handleSuccsess"
@@ -131,8 +154,16 @@
                 <div id="modal_email" class="modal_email">
                   <mail-outlined style="padding-right: 10px" />
                   <div>
-                    <p>비밀번호 설정 이메일</p>
-                    <p>
+                    <p
+                      style="
+                        margin-bottom: 2px;
+                        font-weight: 600;
+                        margin-top: 16px;
+                      "
+                    >
+                      비밀번호 설정 이메일
+                    </p>
+                    <p style="margin-bottom: 0">
                       비밀번호 설정 링크가 이메일로 발송됩니다. 계속
                       진행하시겠습니까?
                     </p>
@@ -144,44 +175,46 @@
         </a-row>
       </a-form>
 
-      <div style="margin-top: 50px" class="page-content">
+      <div style="margin-top: 50px" disabled class="page-content">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
+        <div style="position: relative">
+          <div v-if="!bf310Detail.switch" class="overlay"></div>
+          <DxDataGrid
+            :data-source="dataSource"
+            :show-borders="true"
+            key-expr="ID"
+            :allow-column-reordering="true"
+            :allow-column-resizing="true"
+            :column-auto-width="true"
+          >
+            <DxSelection mode="multiple" />
 
-        <DxDataGrid
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="ID"
-          :allow-column-reordering="true"
-          :allow-column-resizing="true"
-          :column-auto-width="true"
-        >
-          <DxSelection mode="multiple" />
+            <DxColumn data-field="코드" :width="80" :fixed="true" />
 
-          <DxColumn data-field="코드" :width="80" :fixed="true" />
+            <DxColumn data-field="권한그룹명" />
 
-          <DxColumn data-field="상태" />
+            <DxColumn data-field="권한그룹설명" />
+            <DxColumn :width="50" cell-template="modal-table" />
+            <template #modal-table="{}">
+              <div class="action-menu"><menu-outlined /></div>
+            </template>
 
-          <DxColumn data-field="회원명" />
-          <DxColumn :width="50" cell-template="modal-table" />
-          <template #modal-table="{}">
-            <div class="action-menu"><menu-outlined /></div>
-          </template>
-
-          <template class="custom-action">
-            <div class="custom-action">
-              <a-space :size="10">
-                <a-tooltip placement="top">
-                  <template #title>편집</template>
-                  <EditOutlined />
-                </a-tooltip>
-                <a-tooltip placement="top">
-                  <template #title>변경이력</template>
-                  <HistoryOutlined />
-                </a-tooltip>
-              </a-space>
-            </div>
-          </template>
-        </DxDataGrid>
+            <template class="custom-action">
+              <div class="custom-action">
+                <a-space :size="10">
+                  <a-tooltip placement="top">
+                    <template #title>편집</template>
+                    <EditOutlined />
+                  </a-tooltip>
+                  <a-tooltip placement="top">
+                    <template #title>변경이력</template>
+                    <HistoryOutlined />
+                  </a-tooltip>
+                </a-space>
+              </div>
+            </template>
+          </DxDataGrid>
+        </div>
       </div>
     </a-modal>
 
@@ -216,9 +249,11 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, reactive } from "vue";
+import { ref, defineComponent, reactive, computed } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
+import { DxSelectBox } from "devextreme-vue/select-box";
+
 import {
   DxDataGrid,
   DxColumn,
@@ -235,7 +270,7 @@ import {
 } from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
 import { any } from "vue-types";
-
+import themes from "devextreme/ui/themes";
 interface FormState {
   name: string;
   영업자코드: string;
@@ -243,7 +278,7 @@ interface FormState {
   사업자유형: string;
   상태: string;
   등급: string;
-  주소: boolean;
+  switch: boolean;
   은행: string;
   계좌번호: string;
   등록번호: string;
@@ -259,7 +294,7 @@ interface FormState {
 }
 
 export default defineComponent({
-  props: ["modalStatus", "data", "msg"],
+  props: ["modalStatus", "data", "msg", "title"],
 
   components: {
     MenuOutlined,
@@ -272,26 +307,39 @@ export default defineComponent({
     DxSelection,
     DxExport,
     DxSearchPanel,
+    DxSelectBox,
   },
   created() {},
   data() {
     return {
       isShow: ref<boolean>(false),
-
       dataSource: employees,
       states,
       dataMode: {
         color: "고객사",
       },
+      toggleActive: false,
+      reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
     };
+  },
+  computed: {
+    validated() {
+      return this.validateEmail(this.formState.user.email);
+    },
   },
   setup(props) {
     const data = props.data;
     const isShow = ref<boolean>(false);
     const visible = ref<boolean>(false);
+    const validateError = ref<boolean>(false);
     const showModal = () => {
       isShow.value = true;
     };
+
+    const onToggle = () => {
+      bf310Detail.switch = !bf310Detail.switch;
+    };
+
     const handleSuccsess = (e: MouseEvent) => {
       console.log(e);
       isShow.value = false;
@@ -305,20 +353,14 @@ export default defineComponent({
       wrapperCol: { span: 16 },
     };
 
-    const dateFormat = "YYYY-MM-DD";
-
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
 
     const validateMessages = {
-      required: "${label} is required!",
+      required: true,
       types: {
         email: "이메일 형식이 정확하지 않습니다",
-        number: "Numeric only!",
-      },
-      number: {
-        range: "${label} must be between ${min} and ${max}",
       },
     };
 
@@ -339,7 +381,7 @@ export default defineComponent({
       사업자유형: "개인",
       상태: "정상",
       등급: "본사",
-      주소: false,
+      switch: false,
       은행: "농협",
       계좌번호: "",
       예금주: "",
@@ -373,7 +415,6 @@ export default defineComponent({
       layout,
       formTailLayout,
       value1: ref<Dayjs>(),
-
       confirm,
       handleOkConfirm,
       formState,
@@ -382,40 +423,67 @@ export default defineComponent({
       isShow,
       showModal,
       handleSuccsess,
+      onToggle,
     };
   },
   methods: {
+    onlyNumber(e: any) {
+      //console.log($event.keyCode); //keyCodes value
+      let keyCode = e.keyCode ? e.keyCode : e.which;
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
+        // 46 is dot
+        e.preventDefault();
+      }
+    },
     setModalVisible() {
       this.$emit("closePopup", false);
     },
     getColorTag(data: string) {
       if (data === "고객사") {
-        return "#fff";
+        return "blue";
       } else if (data === "최고매니저") {
         return "#4a4848";
       } else if (data === "중간매니저") {
         return "#4a4848";
       } else if (data === "담당매니저") {
         return "#4a4848";
-      } else if (data === "전체") {
+      } else if (data === "담당매니저") {
+        return "#4a4848";
+      } else if (data === "영업자") {
         return "grey";
-      }
-    },
-    validateEmail(value: any) {
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
-        this.msg["email"] = "";
-      } else {
-        this.msg["email"] = "Invalid Email Address";
+      } else if (data === "파트너") {
+        return "#efe70b";
       }
     },
 
     closeModal() {
       this.isShow = false;
     },
+    triggerToggleEvent(value: any) {
+      this.toggleActive = value;
+    },
+    validateEmail(email: any): any {
+      const re =
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
   },
 });
 </script>
 <style>
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.container_email .ant-modal-body {
+  padding: 0 24px;
+  padding-top: 16px;
+}
 .action-menu {
   text-align: center;
 }
@@ -435,13 +503,15 @@ export default defineComponent({
   font-size: 20px;
   text-align: center;
 }
+
 .modal_email {
   display: flex;
+  align-items: center;
 }
 .btn_sendemail {
   padding: 5px 10px;
   color: red;
-  margin-left: 115px;
+  margin-left: 112px;
   border: 1px solid red;
 }
 .confirm-button {
