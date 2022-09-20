@@ -71,6 +71,8 @@
                 style="width: 150px"
                 v-model:value="dataMode.color"
                 option-label-prop="children"
+                class="select_disable"
+                disabled
               >
                 <a-select-option value="고객사" label="고객사">
                   <a-tag style="color: black" :color="getColorTag('고객사')"
@@ -133,7 +135,11 @@
               />
             </a-form-item>
             <a-form-item>
-              <a-button class="btn_sendemail" @click="showModal"
+              <a-button
+                :disabled="disabled"
+                html-type="submit"
+                class="btn_sendemail"
+                @click="showModal"
                 >비밀번호 변경
               </a-button>
               <a-modal
@@ -157,7 +163,7 @@
         </a-row>
       </a-form>
 
-      <div style="margin-top: 50px" class="page-content">
+      <div style="margin-top: 50px" disabled class="page-content">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
 
         <DxDataGrid
@@ -167,7 +173,6 @@
           :allow-column-reordering="true"
           :allow-column-resizing="true"
           :column-auto-width="true"
-          disable
         >
           <DxSelection mode="multiple" />
 
@@ -230,7 +235,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, reactive } from "vue";
+import { ref, defineComponent, reactive, computed } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
 import {
@@ -303,9 +308,13 @@ export default defineComponent({
     const data = props.data;
     const isShow = ref<boolean>(false);
     const visible = ref<boolean>(false);
+    const validateError = ref<boolean>(false);
     const showModal = () => {
       isShow.value = true;
     };
+    const disabled = computed(() => {
+      return !formState.user.email;
+    });
     const handleSuccsess = (e: MouseEvent) => {
       console.log(e);
       isShow.value = false;
@@ -319,20 +328,14 @@ export default defineComponent({
       wrapperCol: { span: 16 },
     };
 
-    const dateFormat = "YYYY-MM-DD";
-
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
 
     const validateMessages = {
-      required: "${label} is required!",
+      required: true,
       types: {
         email: "이메일 형식이 정확하지 않습니다",
-        number: "Numeric only!",
-      },
-      number: {
-        range: "${label} must be between ${min} and ${max}",
       },
     };
 
@@ -387,7 +390,6 @@ export default defineComponent({
       layout,
       formTailLayout,
       value1: ref<Dayjs>(),
-
       confirm,
       handleOkConfirm,
       formState,
@@ -396,6 +398,7 @@ export default defineComponent({
       isShow,
       showModal,
       handleSuccsess,
+      disabled,
     };
   },
   methods: {
@@ -425,13 +428,6 @@ export default defineComponent({
         return "grey";
       } else if (data === "파트너") {
         return "#efe70b";
-      }
-    },
-    validateEmail(value: any) {
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
-        this.msg["email"] = "";
-      } else {
-        this.msg["email"] = "Invalid Email Address";
       }
     },
 
