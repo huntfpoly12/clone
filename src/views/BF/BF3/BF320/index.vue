@@ -4,20 +4,27 @@
             <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16,8]">
                     <a-col>
-                        <label class="lable-item">
-                            사업자코드 :
-                        </label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.typeSevice" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">
+                                사업자코드 :
+                            </label>
+                            <DxNumberBox v-model:value="dataSearch.typeSevice" value-change-event="keyup"
+                                style="width: 120px;height: 33px" @value-changed="changeValueInput" format="#,##0"
+                                @click="$event.target.select()" />
+                        </div>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">상호:</label>
-
-                        <InpuNumber :typeInput="1" @dataInput="updateInput" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">상호:</label>
+                            <DxNumberBox :value="dataSearch.nameCompany" style="width: 120px;height: 33px" @click="$event.target.select()" />
+                        </div>
 
                     </a-col>
                     <a-col>
-                        <label class="lable-item">대표자:</label>
-                        <InpuNumber :typeInput="2" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">대표자:</label>
+                            <DxNumberBox :value="''" style="width: 120px;height: 33px" />
+                        </div>
                     </a-col>
                     <a-col>
                         <label class="lable-item">해지:</label>
@@ -25,18 +32,20 @@
                     </a-col>
 
                     <a-col>
-                        <label class="lable-item">주소 :</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.address" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">주소 :</label>
+                            <DxNumberBox :value="dataSearch.address" style="width: 120px;height: 33px" />
+                        </div>
                     </a-col>
                     <a-col>
                         <label class="lable-item">매니저명 :</label>
-                        <a-select style="width: 120px" v-model:value="dataSearch.manager" show-search placeholder="매니저명"
-                            :options="options">
+                        <a-select style="width: 120px;height: 33px" v-model:value="dataSearch.manager" show-search
+                            placeholder="매니저명" :options="options">
                         </a-select>
                     </a-col>
                     <a-col>
                         <label class="lable-item">영업자명 :</label>
-                        <a-select style="width: 120px" v-model:value="dataSearch.nameSale" show-search
+                        <a-select style="width: 120px;height: 33px" v-model:value="dataSearch.nameSale" show-search
                             placeholder="영업자명" :options="options">
                         </a-select>
                     </a-col>
@@ -83,7 +92,7 @@
     </div>
 </template> 
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import {
     DxDataGrid,
@@ -104,8 +113,7 @@ import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
-import InpuNumber from "../../../../components/CustomInputFormatNumber.vue"
-
+import DxNumberBox from 'devextreme-vue/number-box';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
@@ -122,7 +130,7 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        InpuNumber
+        DxNumberBox
     },
     data() {
         return {
@@ -152,11 +160,11 @@ export default defineComponent({
                 nameSale: 'Jack'
             },
             value: '',
-            typeInputCall: 1
+            typeInputCall: 1,
         };
     },
     methods: {
-        onExporting(e) {
+        onExporting(e: any) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet('employees');
             exportDataGrid({
@@ -170,16 +178,21 @@ export default defineComponent({
             });
             e.cancel = true;
         },
-        setModalVisible(data) {
+        setModalVisible(data: any) {
             this.modalStatus = true;
             this.popupData = data;
         },
-        modalHistory(data) {
+        modalHistory(data: any) {
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        updateInput(data) {
+        updateInput(data: any) {
             this.dataSearch.nameCompany = data
+        },
+        changeValueInput() {
+            if (this.dataSearch.typeSevice == '0') {
+                this.dataSearch.typeSevice = ''
+            }
         }
     },
 
@@ -204,7 +217,7 @@ export default defineComponent({
     }
 }
 
-.dx-select-checkbox {
+::v-deep .dx-select-checkbox {
     display: inline-block !important;
 }
 
@@ -236,9 +249,16 @@ export default defineComponent({
 }
 
 #bf-320 {
+    .dx-texteditor-input {
+        height: 33px;
+        min-height: auto !important;
+    }
+
     .search-form {
         background: #f1f3f4;
         padding: 10px 24px;
+
+
 
         >div {
             width: 100%;
@@ -269,7 +289,7 @@ export default defineComponent({
             }
 
             .item:nth-child(2) {
-                margin-left: 30px;
+                margin-left: 33px;
             }
         }
     }
@@ -330,7 +350,6 @@ export default defineComponent({
     .ant-form-item-label {
         text-align: left;
     }
-
 }
 
 .dflex {
@@ -338,7 +357,7 @@ export default defineComponent({
 }
 
 .custom-flex {
-    align-items: flex-start;
+    align-items: center;
 }
 
 .warring-bank {
@@ -354,9 +373,15 @@ export default defineComponent({
     line-height: 3px;
 }
 
-
+.dx-texteditor-input {
+    padding: 0px 5px 6px 5px;
+}
 
 .dx-checkbox-icon {
     border: 1px solid #d9d9d9
+}
+
+.dx-field {
+    margin-bottom: 20px;
 }
 </style>
