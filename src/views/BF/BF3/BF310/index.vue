@@ -55,7 +55,7 @@
                 <DxColumn data-field="부가서비스" />
                 <DxColumn :width="110" cell-template="pupop" type="buttons" />
                 <template #pupop="{ data }">
-                    <DxButton @click="setModalVisible(data)" text="편집" type="default" styling-mode="outlined"
+                    <DxButton @click="setModalVisible(data)" class="button-popup" text="편집" type="default" styling-mode="outlined"
                         height="20px" />
                 </template>
             </DxDataGrid>
@@ -216,7 +216,9 @@ export default defineComponent({
 .ant-select {
     width: 145px;
 }
-
+::v-deep  .dx-button-text {
+    line-height: 0.5;
+}
 #data-grid-demo {
     min-height: 700px;
 }
