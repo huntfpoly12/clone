@@ -151,7 +151,7 @@ export default defineComponent({
                 manager: 'Jack',
                 nameSale: 'Jack'
             },
-            value: 0,
+            value: '',
         };
     },
     methods: {
@@ -176,14 +176,7 @@ export default defineComponent({
         modalHistory(data) {
             this.modalHistoryStatus = true;
             this.popupData = data;
-        },
-        convertInputNumber(val) {
-            if (!isNaN(parseInt(val.key))) {
-                console.log(val);
-            } else {
-                this.dataSearch.nameCompany = 1
-            }
-        }
+        }, 
     },
 });
 </script>
