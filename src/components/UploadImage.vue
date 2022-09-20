@@ -32,13 +32,15 @@
       </a-space>
     </a-col>
 
-    <a-col :span="8" class="imgPreview">
-      <img
-        v-if="imageUrl && showImg == true"
-        :src="imageUrl"
-        @click="handlePreview"
-      />
-      <img v-else src="../assets/images/imgdefault.jpg" />
+    <a-col :span="7">
+      <div class="img-preview">
+        <img
+          v-if="imageUrl && showImg == true"
+          :src="imageUrl"
+          @click="handlePreview"
+        />
+        <img v-else src="../assets/images/imgdefault.jpg" />
+      </div>
     </a-col>
 
     <a-modal
@@ -173,13 +175,26 @@ export default defineComponent({
   width: 100%;
 }
 
-.imgPreview {
-  cursor: pointer;
-  //   width: 100%;
-  width: 50px;
-  height: 350px;
+// .imgPreview {
+//   cursor: pointer;
+//   //   width: 100%;
+//   width: 50px;
+//   height: 350px;
+// }
+.img-preview {
+  position: relative;
+  width: 100%;
+  padding-top: 142%;
+  img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 }
-
 .imgPreview img {
   width: 100%;
   height: 100%;
