@@ -8,33 +8,45 @@
                             <label class="lable-item">
                                 사업자코드 :
                             </label>
-                            <DxNumberBox v-model:value="dataSearch.typeSevice" value-change-event="keyup"
-                                style="width: 120px;height: 33px" @value-changed="changeValueInput" format="#,##0"
-                                @click="$event.target.select()" />
+                            <div @click="$event.target.select()">
+                                <DxNumberBox v-model:value="dataSearch.typeSevice" value-change-event="keyup"
+                                    style="width: 120px;height: 33px" @value-changed="changeValueInput"
+                                    format="#,##0" />
+                            </div>
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">상호:</label>
-                            <DxNumberBox :value="dataSearch.nameCompany" style="width: 120px;height: 33px" @click="$event.target.select()" />
+                            <div @click="$event.target.select()">
+                                <DxNumberBox :value="dataSearch.nameCompany" style="width: 120px;height: 33px"
+                                    @click="$event.target.select()" />
+                            </div>
                         </div>
 
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">대표자:</label>
-                            <DxNumberBox :value="''" style="width: 120px;height: 33px" />
+                            <div @click="$event.target.select()">
+                                <DxNumberBox :value="''" style="width: 120px;height: 33px" />
+                            </div>
                         </div>
                     </a-col>
                     <a-col>
                         <label class="lable-item">해지:</label>
-                        <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
+                        <div @click="$event.target.select()">
+                            <a-switch v-model:checked="dataSearch.status" checked-children="포함"
+                                un-checked-children="제외" />
+                        </div>
                     </a-col>
 
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">주소 :</label>
-                            <DxNumberBox :value="dataSearch.address" style="width: 120px;height: 33px" />
+                            <div @click="$event.target.select()">
+                                <DxNumberBox :value="dataSearch.address" style="width: 120px;height: 33px" />
+                            </div>
                         </div>
                     </a-col>
                     <a-col>
@@ -92,7 +104,7 @@
     </div>
 </template> 
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue';
 import {
     DxDataGrid,
@@ -161,10 +173,11 @@ export default defineComponent({
             },
             value: '',
             typeInputCall: 1,
+
         };
     },
     methods: {
-        onExporting(e: any) {
+        onExporting(e) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet('employees');
             exportDataGrid({
@@ -178,22 +191,23 @@ export default defineComponent({
             });
             e.cancel = true;
         },
-        setModalVisible(data: any) {
+        setModalVisible(data) {
             this.modalStatus = true;
             this.popupData = data;
         },
-        modalHistory(data: any) {
+        modalHistory(data) {
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        updateInput(data: any) {
+        updateInput(data) {
             this.dataSearch.nameCompany = data
         },
         changeValueInput() {
             if (this.dataSearch.typeSevice == '0') {
                 this.dataSearch.typeSevice = ''
             }
-        }
+        },
+
     },
 
 });
@@ -203,9 +217,11 @@ export default defineComponent({
 #data-grid-demo {
     min-height: 700px;
 }
+
 ::v-deep .dx-select-checkbox {
     display: inline-block !important;
 }
+
 ::v-deep .dx-toolbar-after {
     display: flex;
 
@@ -219,6 +235,10 @@ export default defineComponent({
 
 ::v-deep .dx-select-checkbox {
     display: inline-block !important;
+}
+
+::v-deep .dx-texteditor-input {
+    min-height: 30px !important;
 }
 
 .modal-note {
