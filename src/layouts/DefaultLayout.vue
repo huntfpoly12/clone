@@ -68,14 +68,14 @@
                     <nav class="nav-tabs" v-if="menuTab.length > 0">
                         <ul class="list-menu-tab">
                             <li v-for="(item, index) in menuTab" :class="activeTab.id === item.id? 'active': ''"
-                                :key="index" @click="changeActiveTab(item)"> {{item.name}} <DxButton
+                                :key="index" @click="changeActiveTab(item)"> {{item.name}} <button
                                     @click="removeItemTab(index)"><svg focusable="false" class="" data-icon="close"
                                         width="1em" height="1em" fill="currentColor" aria-hidden="true"
                                         viewBox="64 64 896 896">
                                         <path
                                             d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
                                         </path>
-                                    </svg></DxButton>
+                                    </svg></button>
                             </li>
                         </ul>
                     </nav>
@@ -152,7 +152,6 @@
 </template>
 <script>
 import { defineComponent, reactive, toRefs, ref, defineAsyncComponent, onMounted} from "vue";
-import Style from "./style/styleLayout.scss";
 import menuTree from "./menuTree"
 import menuData from "./menuData"
 const BF310 = defineAsyncComponent(() => import('../views/BF/BF3/BF310/index.vue'));
@@ -204,8 +203,7 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SearchOutlined,
-        SaveOutlined,
-        Style
+        SaveOutlined
     },
     created() {
         menuData.forEach(item => {
@@ -383,7 +381,10 @@ export default defineComponent({
 .ant-layout.ant-layout-has-sider {
     min-height: calc(100vh - 64px);
 }
-
+.components-grid-demo-flex .ant-col {
+    display: flex;
+    align-items: center;
+}
 .ant-layout-header {
     display: flex;
     justify-content: space-between;
@@ -401,22 +402,29 @@ export default defineComponent({
 }
 
 .header-content {
-    display: flex;
+    display: block;
     background: #91d5ff;
     align-items: center;
-
+    position: relative;
     .left {
-        flex-basis: 300px;
-        display: flex;
+        width: 300px;
+        float: left;
         align-items: center;
         padding-left: 15px;
-        height: 58px
+        height: 58px;
+        display: flex;
     }
 
     .right {
         padding-left: 24px;
         padding-top: 5px;
-        flex-basis: calc(100% - 324px);
+        float: left;
+        width: calc(100% - 324px);
+    }
+    &::after {
+        content: "";
+        clear: both;
+        display: table;
     }
 }
 
@@ -530,7 +538,10 @@ export default defineComponent({
         display: block;
         text-align: left;
         padding-left: 0;
-
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-width: 100%;
         li {
             display: inline-block;
             width: auto;
@@ -542,13 +553,13 @@ export default defineComponent({
             border: 1px solid #888;
             margin: 0 2px;
             border-radius: 8px 8px 0 0;
-
-            svg {
+            button {
+                background: none;
+                border: none;
+                height: 100%;
                 float: right;
-                margin-top: 12px;
-                margin-left: 10px;
+                cursor: pointer;
             }
-
             cursor: pointer;
 
             &:first-of-type {

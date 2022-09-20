@@ -7,8 +7,7 @@ on:
 
 jobs:
   publish:
-    # runs-on: [ self-hosted, linux, x64 ]
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, linux, x64 ]
     if: github.event_name == 'push'
 
     steps:
@@ -24,33 +23,24 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets._AUTH_TOKEN}}
 
-      # - name: Install Yarn
-      #   run: npm install -g yarn
+      - name: Install Yarn
+        run: npm install -g yarn
 
-      # - name: Check yarn cache
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: '**/node_modules'
-      #     key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      # - name: Install packages
-      #   if: steps.yarn-cache.outputs.cache-hit != 'true'
-      #   run: yarn install
-      #   env:
-      #     CI: true
-      #     NODE_AUTH_TOKEN: ${{secrets._AUTH_TOKEN}}
-
-      # - name: Build vue
-      #   run: yarn run build
+      - name: Check yarn cache
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install packages
-        run: npm install
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
         env:
           CI: true
           NODE_AUTH_TOKEN: ${{secrets._AUTH_TOKEN}}
 
       - name: Build vue
-        run: npm run build
+        run: yarn run build
 
       - name: Upload S3 and Deploy CloudFront
         uses: lbertenasco/s3-deploy@v1
