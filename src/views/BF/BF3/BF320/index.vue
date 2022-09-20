@@ -1,5 +1,5 @@
 <template>
-    <div id="bf-310">
+    <div id="bf-320">
         <div class="search-form">
             <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16,8]">
@@ -11,7 +11,10 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">상호:</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.nameCompany" />
+                        <VueNumberFormat v-model="value" style="width: 120px" class="inputNumber"
+                            :options="{precision: 0,prefix: '', decimal: '.', thousand: ','}"
+                            @click="$event.target.select()">
+                        </VueNumberFormat>
                     </a-col>
                     <a-col>
                         <label class="lable-item">대표자:</label>
@@ -50,14 +53,14 @@
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="사업자코드" :fixed="true" />
                 <DxColumn data-field="상호" data-type="date" />
-                <DxColumn data-field="대표자" />
+                <DxColumn data-field="대표자" data-type="date" />
                 <DxColumn data-field="주소" data-type="date" />
                 <DxColumn data-field="연락처" :width="230" />
                 <DxColumn data-field="매니저" />
-                <DxColumn data-field="관리시작일" data-type="date" />
+                <DxColumn data-field="관리시작일" />
                 <DxColumn data-field="영업자" />
                 <DxColumn data-field="해지일자" />
-                <DxColumn data-field="연체(개월)" />
+                <DxColumn data-field="이용료" :format="amountFormat" data-type="number" />
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
@@ -79,7 +82,8 @@
                 title="변경이력[cm-000-pop]" />
         </div>
     </div>
-</template>
+</template> 
+
 <script>
 import { defineComponent } from 'vue';
 import {
@@ -101,6 +105,7 @@ import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
+import VueNumberFormat from 'vue-number-format'
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
@@ -117,9 +122,11 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
+        VueNumberFormat
     },
     data() {
         return {
+            amountFormat: { currency: 'VND', useGrouping: true },
             dataSource: employees,
             states,
             options: [{
@@ -144,6 +151,7 @@ export default defineComponent({
                 manager: 'Jack',
                 nameSale: 'Jack'
             },
+            value: '',
         };
     },
     methods: {
@@ -168,7 +176,7 @@ export default defineComponent({
         modalHistory(data) {
             this.modalHistoryStatus = true;
             this.popupData = data;
-        },
+        }, 
     },
 });
 </script>
@@ -177,8 +185,12 @@ export default defineComponent({
 #data-grid-demo {
     min-height: 700px;
 }
+::v-deep .dx-select-checkbox {
+    display: inline-block !important;
+}
 ::v-deep .dx-toolbar-after {
     display: flex;
+
     .dx-toolbar-item {
         &:first-child {
             order: 2;
@@ -186,6 +198,7 @@ export default defineComponent({
         }
     }
 }
+
 .dx-select-checkbox {
     display: inline-block !important;
 }
@@ -217,41 +230,42 @@ export default defineComponent({
     text-align: center;
 }
 
-.search-form {
-    margin-bottom: 10px;
-    background: #f1f3f4;
-    padding: 10px 24px;
+#bf-320 {
+    .search-form {
+        margin-bottom: 10px;
+        padding: 10px 24px;
 
-    >div {
-        width: 100%;
-        justify-content: flex-start !important;
-        align-items: center;
-        margin-right: 15px;
-    }
-
-    label {
-        margin-right: 10px;
-    }
-
-    .lable-item {
-        white-space: nowrap;
-        margin-right: 10px;
-        width: auto !important;
-    }
-
-    .col {
-        align-items: center;
-        display: flex;
-        align-items: center;
-        margin-top: 20px;
-
-        .lable-item {
-            width: 110px;
-            display: inline-block;
+        >div {
+            width: 100%;
+            justify-content: flex-start !important;
+            align-items: center;
+            margin-right: 15px;
         }
 
-        .item:nth-child(2) {
-            margin-left: 30px;
+        label {
+            margin-right: 10px;
+        }
+
+        .lable-item {
+            white-space: nowrap;
+            margin-right: 10px;
+            width: auto !important;
+        }
+
+        .col {
+            align-items: center;
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+
+            .lable-item {
+                width: 110px;
+                display: inline-block;
+            }
+
+            .item:nth-child(2) {
+                margin-left: 30px;
+            }
         }
     }
 }
@@ -333,5 +347,19 @@ export default defineComponent({
 
 .custom-lineHeight {
     line-height: 3px;
+}
+
+.inputNumber {
+    border: 1px solid #d9d9d9;
+    padding: 4px 10px;
+}
+
+.inputNumber:focus-visible {
+    outline: 1px solid #40a9ff;
+    border-color: #40a9ff;
+    border-radius: 1px;
+    box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
+    border-right-width: 1px !important;
+    outline: 0;
 }
 </style>
