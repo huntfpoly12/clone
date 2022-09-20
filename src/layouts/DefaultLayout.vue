@@ -160,6 +160,7 @@ const BF330 = defineAsyncComponent(() => import('../views/BF/BF3/BF330/index.vue
 const BF340 = defineAsyncComponent(() => import('../views/BF/BF3/BF340/index.vue'));
 const BF210 = defineAsyncComponent(() => import('../views/BF/BF2/BF210/index.vue'));
 const BF220 = defineAsyncComponent(() => import('../views/BF/BF2/BF220/index.vue'));
+const CM110 = defineAsyncComponent(() => import('../views/CM/CM1/CM110/index.vue'));
 const Test = defineAsyncComponent(() => import('../views/DefaultComponent.vue'));
 import {
     MenuFoldOutlined,
@@ -196,6 +197,7 @@ export default defineComponent({
         BF340,
         BF210,
         BF220,
+        CM110,
         Test,
         MenuFoldOutlined,
         MenuUnfoldOutlined,
@@ -284,6 +286,7 @@ export default defineComponent({
             if (this.activeTab.id === 'bf-340') return BF340
             if (this.activeTab.id === 'bf-210') return BF210
             if (this.activeTab.id === 'bf-220') return BF220
+            if (this.activeTab.id === 'cm-110') return CM110
             return Test
         }
 
