@@ -11,14 +11,11 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">상호:</label>
-                        <VueNumberFormat v-model="value" style="width: 120px" class="inputNumber"
-                            :options="{precision: 0,prefix: '', decimal: '.', thousand: ','}"
-                            @click="$event.target.select()">
-                        </VueNumberFormat>
+                        <InpuNumber :typeInput="1" />
                     </a-col>
                     <a-col>
                         <label class="lable-item">대표자:</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.surrogate" />
+                        <InpuNumber :typeInput="2" />
                     </a-col>
                     <a-col>
                         <label class="lable-item">해지:</label>
@@ -48,7 +45,7 @@
             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
                 :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                 <DxSelection mode="multiple" />
-                <DxPaging :page-size="5" />
+                <DxPaging :page-size="10" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="사업자코드" :fixed="true" />
@@ -105,7 +102,8 @@ import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
-import VueNumberFormat from 'vue-number-format'
+import InpuNumber from "../../../../components/CustomInputFormatNumber.vue"
+
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
@@ -122,7 +120,7 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        VueNumberFormat
+        InpuNumber
     },
     data() {
         return {
@@ -152,6 +150,7 @@ export default defineComponent({
                 nameSale: 'Jack'
             },
             value: '',
+            typeInputCall: 1
         };
     },
     methods: {
@@ -176,8 +175,9 @@ export default defineComponent({
         modalHistory(data) {
             this.modalHistoryStatus = true;
             this.popupData = data;
-        }, 
+        },
     },
+
 });
 </script>
 
@@ -185,9 +185,7 @@ export default defineComponent({
 #data-grid-demo {
     min-height: 700px;
 }
-::v-deep .dx-select-checkbox {
-    display: inline-block !important;
-}
+
 ::v-deep .dx-toolbar-after {
     display: flex;
 
@@ -232,7 +230,7 @@ export default defineComponent({
 
 #bf-320 {
     .search-form {
-        margin-bottom: 10px;
+        background: #f1f3f4;
         padding: 10px 24px;
 
         >div {
@@ -349,17 +347,9 @@ export default defineComponent({
     line-height: 3px;
 }
 
-.inputNumber {
-    border: 1px solid #d9d9d9;
-    padding: 4px 10px;
-}
 
-.inputNumber:focus-visible {
-    outline: 1px solid #40a9ff;
-    border-color: #40a9ff;
-    border-radius: 1px;
-    box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
-    border-right-width: 1px !important;
-    outline: 0;
+
+.dx-checkbox-icon {
+    border: 1px solid #d9d9d9
 }
 </style>

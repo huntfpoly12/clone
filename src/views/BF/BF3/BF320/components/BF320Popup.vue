@@ -329,4 +329,96 @@ export default defineComponent({
     },
 });
 </script>
- 
+<style lang="scss" scoped>
+#data-grid-demo {
+    min-height: 700px;
+}
+
+.modal-note {
+    max-height: 500px;
+    overflow: auto;
+
+    .title-note {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    th {
+        display: none;
+    }
+
+    .ant-collapse-content-box {
+        padding: 0px;
+    }
+}
+
+.anticon {
+    cursor: pointer;
+}
+
+.custom-action {
+    text-align: center;
+}
+
+.ant-row {
+    align-items: center;
+}
+
+.ant-form-item {
+    margin-bottom: 4px;
+}
+
+.ant-collapse {
+    .ant-collapse-item {
+        .ant-collapse-header {
+            padding: 7px;
+        }
+    }
+}
+
+.warring-modal {
+    font-size: 12px;
+    line-height: 0px;
+}
+
+.ant-form-item-label {
+    text-align: left;
+}
+
+.clr {
+    label {
+        color: red;
+    }
+}
+
+.clr-text {
+    color: red;
+}
+
+.clb,
+.clb-label label {
+    color: black !important;
+}
+
+.dflex {
+    display: flex;
+}
+
+.custom-flex {
+    align-items: flex-start;
+}
+
+.warring-bank {
+    display: flex;
+    align-items: center;
+}
+
+.pl-5 {
+    padding-left: 5px;
+}
+
+.custom-lineHeight {
+    line-height: 3px;
+}
+</style> 

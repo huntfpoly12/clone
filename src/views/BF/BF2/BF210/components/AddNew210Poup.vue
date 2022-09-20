@@ -41,7 +41,7 @@
           <a-col :span="12">
             <a-form-item label="상태">
               <a-switch
-                v-model:checked="bf310Detail.주소"
+                v-model:checked="bf310Detail.switch"
                 checked-children="이용중"
                 un-checked-children="이용중지"
                 style="width: 30%"
@@ -50,7 +50,7 @@
 
             <a-form-item label="회원종류">
               <a-select
-                style="width: 100px"
+                style="width: 150px"
                 v-model:value="dataMode.color"
                 option-label-prop="children"
               >
@@ -65,21 +65,23 @@
                 <a-select-option value="중간매니저" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="전체" label="전체">
-                  <a-tag :color="getColorTag('전체')">전체</a-tag>
+                <a-select-option value="담당매니저" label="담당매니저">
+                  <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
+                </a-select-option>
+                <a-select-option value="영업자" label="영업자">
+                  <a-tag :color="getColorTag('영업자')">영업자</a-tag>
+                </a-select-option>
+                <a-select-option value="파트너" label="파트너">
+                  <a-tag style="color: black" :color="getColorTag('파트너')"
+                    >파트너</a-tag
+                  >
                 </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
         </a-row>
 
-        <a-row>
-          <a-col :span="12"> </a-col>
-        </a-row>
-        <a-row>
-          <a-col :span="12"> </a-col>
-        </a-row>
-        <a-row>
+        <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item
               type="number"
@@ -107,7 +109,11 @@
               />
             </a-form-item>
             <a-form-item>
-              <a-button class="btn_sendemail" danger @click="showModal"
+              <a-button
+                :disabled="!validated"
+                html-type="submit"
+                class="btn_sendemail"
+                @click="showModal"
                 >비밀번호 변경
               </a-button>
               <a-modal
@@ -134,41 +140,44 @@
       <div style="margin-top: 50px" class="page-content">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
 
-        <DxDataGrid
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="ID"
-          :allow-column-reordering="true"
-          :allow-column-resizing="true"
-          :column-auto-width="true"
-        >
-          <DxSelection mode="multiple" />
+        <div style="position: relative">
+          <div v-if="!bf310Detail.switch" class="overlay"></div>
+          <DxDataGrid
+            :data-source="dataSource"
+            :show-borders="true"
+            key-expr="ID"
+            :allow-column-reordering="true"
+            :allow-column-resizing="true"
+            :column-auto-width="true"
+          >
+            <DxSelection mode="multiple" />
 
-          <DxColumn data-field="코드" :width="80" :fixed="true" />
+            <DxColumn data-field="코드" :width="80" :fixed="true" />
 
-          <DxColumn data-field="권한그룹명" />
+            <DxColumn data-field="권한그룹명" />
 
-          <DxColumn data-field="권한그룹설명" />
-          <DxColumn :width="50" cell-template="modal-table" />
-          <template #modal-table="{}">
-            <div class="action-menu"><menu-outlined /></div>
-          </template>
+            <DxColumn data-field="권한그룹설명" />
+            <DxColumn :width="50" cell-template="modal-table" />
+            <template #modal-table="{}">
+              <div class="action-menu"><menu-outlined /></div>
+            </template>
 
-          <template class="custom-action">
-            <div class="custom-action">
-              <a-space :size="10">
-                <a-tooltip placement="top">
-                  <template #title>편집</template>
-                  <EditOutlined />
-                </a-tooltip>
-                <a-tooltip placement="top">
-                  <template #title>변경이력</template>
-                  <HistoryOutlined />
-                </a-tooltip>
-              </a-space>
-            </div>
-          </template>
-        </DxDataGrid>
+            <template class="custom-action">
+              <div class="custom-action">
+                <a-space :size="10">
+                  <a-tooltip placement="top">
+                    <template #title>편집</template>
+                    <EditOutlined />
+                  </a-tooltip>
+                  <a-tooltip placement="top">
+                    <template #title>변경이력</template>
+                    <HistoryOutlined />
+                  </a-tooltip>
+                </a-space>
+              </div>
+            </template>
+          </DxDataGrid>
+        </div>
       </div>
     </a-modal>
 
@@ -230,7 +239,7 @@ interface FormState {
   사업자유형: string;
   상태: string;
   등급: string;
-  주소: boolean;
+  switch: boolean;
   은행: string;
   계좌번호: string;
   등록번호: string;
@@ -272,6 +281,11 @@ export default defineComponent({
       },
     };
   },
+  computed: {
+    validated() {
+      return this.validateEmail(this.formState.user.email);
+    },
+  },
   setup(props) {
     const data = props.data;
     const isShow = ref<boolean>(false);
@@ -282,6 +296,9 @@ export default defineComponent({
     const handleSuccsess = (e: MouseEvent) => {
       console.log(e);
       isShow.value = false;
+    };
+    const onToggle = () => {
+      bf310Detail.switch = !bf310Detail.switch;
     };
     const layout = {
       labelCol: { span: 6 },
@@ -326,7 +343,7 @@ export default defineComponent({
       사업자유형: "개인",
       상태: "정상",
       등급: "본사",
-      주소: false,
+      switch: true,
       은행: "농협",
       계좌번호: "",
       예금주: "",
@@ -360,7 +377,7 @@ export default defineComponent({
       layout,
       formTailLayout,
       value1: ref<Dayjs>(),
-
+      onToggle,
       confirm,
       handleOkConfirm,
       formState,
@@ -392,25 +409,36 @@ export default defineComponent({
         return "#4a4848";
       } else if (data === "담당매니저") {
         return "#4a4848";
-      } else if (data === "전체") {
+      } else if (data === "담당매니저") {
+        return "#4a4848";
+      } else if (data === "영업자") {
         return "grey";
-      }
-    },
-    validateEmail(value: any) {
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
-        this.msg["email"] = "";
-      } else {
-        this.msg["email"] = "Invalid Email Address";
+      } else if (data === "파트너") {
+        return "#efe70b";
       }
     },
 
     closeModal() {
       this.isShow = false;
     },
+    validateEmail(email: any): any {
+      const re =
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
   },
 });
 </script>
 <style>
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.3);
+}
 .action-menu {
   text-align: center;
 }
@@ -436,7 +464,7 @@ export default defineComponent({
 .btn_sendemail {
   padding: 5px 10px;
   color: red;
-  margin-left: 115px;
+  margin-left: 112px;
   border: 1px solid red;
 }
 .confirm-button {

@@ -6,7 +6,7 @@
                     <a-col>
                         <label class="lable-item"> 사업자코드 : </label>
                         <a-input style="width: 120px" v-model:value="dataSearch.typeSevice" />
-                    </a-col>                   
+                    </a-col>
                     <a-col>
                         <label class="lable-item">상호:</label>
                         <a-input style="width: 120px" v-model:value="dataSearch.nameCompany" />
@@ -37,9 +37,10 @@
                         </a-select>
                     </a-col>
                     <a-col>
-                    <label class="lable-item"></label>
-                    
-                </a-col>
+                        <label class="lable-item"></label>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                    </a-col>
                 </a-row>
             </div>
         </div>
@@ -60,7 +61,7 @@
                 <DxColumn data-field="영업자" />
                 <DxColumn data-field="서비스" />
                 <DxColumn data-field="이용료" />
-                <DxColumn data-field="해지일자" />                
+                <DxColumn data-field="해지일자" />
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
@@ -78,7 +79,8 @@
                 </template>
             </DxDataGrid>
             <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="popupData" />
-            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData" title="변경이력[cm-000-pop]"/> 
+            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+                title="변경이력[cm-000-pop]" />
         </div>
     </div>
 </template>
@@ -182,13 +184,15 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-   #data-grid-demo {
+#data-grid-demo {
     min-height: 700px;
 }
+
 .search-form {
     background: #f1f3f4;
     padding: 10px 24px;
 }
+
 .components-grid-demo-flex .ant-col {
     display: flex;
     align-items: center;
@@ -196,8 +200,10 @@ export default defineComponent({
 ::v-deep .dx-select-checkbox {
     display: inline-block !important;
 }
+
 ::v-deep .dx-toolbar-after {
     display: flex;
+
     .dx-toolbar-item {
         &:first-child {
             order: 2;
@@ -205,6 +211,7 @@ export default defineComponent({
         }
     }
 }
+
 .modal-note {
     max-height: 500px;
     overflow-y: auto;
@@ -243,7 +250,7 @@ export default defineComponent({
     }
 
     .col {
-        align-items: center; 
+        align-items: center;
     }
 }
 </style>

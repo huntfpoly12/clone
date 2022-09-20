@@ -37,7 +37,7 @@
             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
                 :columns="gridColumns">
                 <DxSelection mode="multiple" />
-                <DxPaging :page-size="5" /> 
+                <DxPaging :page-size="5" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="신청일자" />
@@ -182,9 +182,11 @@ export default defineComponent({
 .dx-button-has-text .dx-button-content {
     padding: 0px 15px !important;
 }
+
 ::v-deep .dx-select-checkbox {
     display: inline-block !important;
 }
+
 ::v-deep .dx-toolbar-after {
     display: flex;
 
@@ -195,6 +197,7 @@ export default defineComponent({
         }
     }
 }
+
 .search-form {
     background: #f1f3f4;
     padding: 10px 24px;
