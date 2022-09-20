@@ -488,25 +488,6 @@ export default defineComponent({
     text-overflow: ellipsis;
 }
 
-::-webkit-scrollbar {
-    width: 15px;
-}
-
-::-webkit-scrollbar-track {
-    background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #d6dee1;
-    border-radius: 20px;
-    border: 6px solid transparent;
-    background-clip: content-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #a8bbbf;
-}
-
 ::v-deep .ant-layout-header {
     background-color: #096dd9;
 }
