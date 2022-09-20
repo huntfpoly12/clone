@@ -178,11 +178,20 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .dx-button-has-text .dx-button-content {
     padding: 0px 15px !important;
 }
+::v-deep .dx-toolbar-after {
+    display: flex;
 
+    .dx-toolbar-item {
+        &:first-child {
+            order: 2;
+            margin-left: 15px;
+        }
+    }
+}
 .search-form {
     background: #f1f3f4;
     padding: 10px 24px;
