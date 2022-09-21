@@ -4,20 +4,27 @@
             <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16,8]">
                     <a-col>
-                        <label class="lable-item">
-                            사업자코드 :
-                        </label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.typeSevice" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">
+                                사업자코드 :
+                            </label>
+                            <DxTextBox v-model:value="dataSearch.typeSevice" />
+                        </div>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">상호:</label>
-
-                        <InpuNumber :typeInput="1" @dataInput="updateInput" />
-
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">상호:</label>
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'5'" :max="'10'"
+                                :spinButtons="true" :clearButton="false" :nameService="'nameCompany'" />
+                        </div>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">대표자:</label>
-                        <InpuNumber :typeInput="2" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">대표자:</label>
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'5'" :max="'10'"
+                                :spinButtons="false" :clearButton="true" :nameService="'typeSevice'" />
+
+                        </div>
                     </a-col>
                     <a-col>
                         <label class="lable-item">해지:</label>
@@ -25,18 +32,21 @@
                     </a-col>
 
                     <a-col>
-                        <label class="lable-item">주소 :</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.address" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">주소 :</label>
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'5'" :max="'10'"
+                                :spinButtons="true" :clearButton="false" :nameService="'address'" />
+                        </div>
                     </a-col>
                     <a-col>
                         <label class="lable-item">매니저명 :</label>
-                        <a-select style="width: 120px" v-model:value="dataSearch.manager" show-search placeholder="매니저명"
-                            :options="options">
+                        <a-select style="width: 120px;height: 33px" v-model:value="dataSearch.manager" show-search
+                            placeholder="매니저명" :options="options">
                         </a-select>
                     </a-col>
                     <a-col>
                         <label class="lable-item">영업자명 :</label>
-                        <a-select style="width: 120px" v-model:value="dataSearch.nameSale" show-search
+                        <a-select style="width: 120px;height: 33px" v-model:value="dataSearch.nameSale" show-search
                             placeholder="영업자명" :options="options">
                         </a-select>
                     </a-col>
@@ -91,7 +101,7 @@ import {
     DxPaging,
     DxExport,
     DxSelection,
-    DxSearchPanel
+    DxSearchPanel,
 } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
@@ -104,8 +114,9 @@ import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
-import InpuNumber from "../../../../components/CustomInputFormatNumber.vue"
-
+import DxNumberBox from 'devextreme-vue/number-box';
+import inputFormat from '../../../../components/inputBoxFormat.vue'
+import DxTextBox from 'devextreme-vue/text-box';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
@@ -122,7 +133,9 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        InpuNumber
+        DxNumberBox,
+        inputFormat,
+        DxTextBox
     },
     data() {
         return {
@@ -152,7 +165,8 @@ export default defineComponent({
                 nameSale: 'Jack'
             },
             value: '',
-            typeInputCall: 1
+            typeInputCall: 1,
+
         };
     },
     methods: {
@@ -180,6 +194,17 @@ export default defineComponent({
         },
         updateInput(data) {
             this.dataSearch.nameCompany = data
+        },
+        changeValueInput() {
+            if (this.dataSearch.typeSevice == '0') {
+                this.dataSearch.typeSevice = ''
+            }
+        },
+        changeValueInputEmit(data) {
+            if (data.name == 'nameCompany') {
+                this.dataSearch.nameCompany = data.value
+            }
+
         }
     },
 
@@ -202,8 +227,12 @@ export default defineComponent({
     }
 }
 
-.dx-select-checkbox {
+::v-deep .dx-select-checkbox {
     display: inline-block !important;
+}
+
+::v-deep .dx-texteditor-input {
+    min-height: 30px !important;
 }
 
 .modal-note {
@@ -234,9 +263,16 @@ export default defineComponent({
 }
 
 #bf-320 {
+    .dx-texteditor-input {
+        height: 33px;
+        min-height: auto !important;
+    }
+
     .search-form {
         background: #f1f3f4;
         padding: 10px 24px;
+
+
 
         >div {
             width: 100%;
@@ -267,7 +303,7 @@ export default defineComponent({
             }
 
             .item:nth-child(2) {
-                margin-left: 30px;
+                margin-left: 33px;
             }
         }
     }
@@ -328,7 +364,6 @@ export default defineComponent({
     .ant-form-item-label {
         text-align: left;
     }
-
 }
 
 .dflex {
@@ -336,7 +371,7 @@ export default defineComponent({
 }
 
 .custom-flex {
-    align-items: flex-start;
+    align-items: center;
 }
 
 .warring-bank {
@@ -352,7 +387,9 @@ export default defineComponent({
     line-height: 3px;
 }
 
-
+.dx-texteditor-input {
+    padding: 0px 5px 6px 5px;
+}
 
 .dx-checkbox-icon {
     border: 1px solid #d9d9d9

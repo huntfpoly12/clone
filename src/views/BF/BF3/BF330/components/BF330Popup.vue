@@ -9,7 +9,7 @@
                             <a-col :span="10">
                                 <a-form-item label="총일용료" style="font-weight: bold;">
                                     <!-- <InpuNumber :typeInput="'2'" /> -->
-                                    <a-input v-model:value="formState.totalService" disabled="True" />
+                                    <a-input v-model:value="formState.totalService" disabled="True" :format="amountFormat" data-type="number"/>
                                 </a-form-item>
                             </a-col>
                             <a-col :span="8"></a-col>
@@ -35,20 +35,18 @@
                             </a-col>
                         </a-row>
                         <div>
-                            <div style="display: flex;">
-                                <div style="width: 100%"> ⁙ 운영사업 </div>
-                                <div>
-                                    <a-button @click="addNew"><PlusOutlined :style="{ fontSize: '20px', color: '#08c' }" /></a-button>
-                                </div>
-                            </div>
+                            <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
+                                :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
+                                 
+                                </a-card>
                             <div id="data-grid-demo">
                                 <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
                                     :selected-row-keys="selectedItemKeys">
-                                    <DxEditing :allow-updating="true" :allow-adding="false" :allow-deleting="true"
+                                    <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true" :allow-deleting="true"
                                         template="button-template" mode="cell" />
-                                    <!-- <template #button-template>
+                                    <template #button-template>
                                         <DxButton icon="plus" />
-                                    </template> -->
+                                    </template>
                                     <DxPaging :enabled="false" />
                                     <DxColumn :width="35" data-field="No" caption="#" />
                                     <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
@@ -58,7 +56,7 @@
                                     <DxColumn data-field="서비스시작년월" data-type="date" />
                                     <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
                                     <DxToolbar>
-                                        <DxItem name="addRowButton" show-text="always" />
+                                        <DxItem name="addRowButton"/>
                                     </DxToolbar>
                                 </DxDataGrid>
                             </div>
@@ -74,8 +72,8 @@
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee">
+                                    <span style="width:180px" :format="amountFormat" data-type="number">
+                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee" >
                                         기본이용료</span>
                                     <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" />
                                 </div>
@@ -252,7 +250,6 @@ import { DxButton } from 'devextreme-vue/button';
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import { employees, states } from './data.js';
-import InpuNumber from "../../../../../components/CustomInputFormatNumber.vue"
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import type { UploadProps } from 'ant-design-vue'
@@ -272,6 +269,7 @@ export default defineComponent({
     },
     data() {
         return {
+            amountFormat: { currency: 'VND', useGrouping: true },
             담당자선택: "담당자선택",
             영업자선택: "영업자선택",
             직원수: '직원수',
@@ -306,7 +304,6 @@ export default defineComponent({
         PlusOutlined,
         CustomDatepicker,
         DxEditing,
-        InpuNumber,
         DxLookup,
         DxButton,
         DxToolbar,
@@ -582,9 +579,8 @@ export default defineComponent({
     display: inline-block !important;
 }
 
-.ant-form-item-label {
-    text-align: left;
-    /* padding: 10px; */
+::v-deep .ant-form-item-label {
+    text-align: left;   
 }
 
 .ant-form-item {
