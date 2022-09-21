@@ -113,7 +113,7 @@
                     <a-row>
                       <a-col :span="15">
                         <a-form-item label="대표자명">
-                          <a-input v-model:value="formState.대표자명" />
+                          <a-input v-model:value="formState.대표자명" :disabled="true" />
                         </a-form-item>
                       </a-col>
                     </a-row>
