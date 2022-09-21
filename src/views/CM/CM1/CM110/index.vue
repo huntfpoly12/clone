@@ -178,14 +178,14 @@
           <template #button-template>
             <DxButton icon="plus" @click="openAddNewModal" />
           </template>
-          <DxColumn data-field="이용자ID" />
-          <DxColumn data-field="상태" cell-template="tag-status" css-class="cell-center" />
+          <DxColumn data-field="이용자ID" :width="200"/>
+          <DxColumn data-field="상태" cell-template="tag-status" css-class="cell-center" :width="150"/>
           <template #tag-status="{ data }">
             <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
           </template>
-          <DxColumn data-field="성명" />
+          <DxColumn data-field="성명" :width="200"/>
           <DxColumn data-field="회계권한(담당사업)" />
-          <DxColumn data-field="원천권한" cell-template="checked-status" />
+          <DxColumn data-field="원천권한" cell-template="checked-status" :width="80"/>
           <template #checked-status="{ data }">
             <a-checkbox :checked="data.value" />
           </template>
