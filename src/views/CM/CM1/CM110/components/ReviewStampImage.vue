@@ -40,13 +40,12 @@
           </a-col>
         </a-row>
       </div>
-
       <template #footer> </template>
     </a-modal>
   </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, onMounted,watch } from "vue";
+import { ref, defineComponent,watch } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 
 function getBase64(file: File) {
