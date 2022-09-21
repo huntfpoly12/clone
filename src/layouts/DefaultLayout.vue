@@ -271,8 +271,8 @@ export default defineComponent({
     },
     computed: {
         username() {
-            if (localStorage.getItem("username")) {
-                return localStorage.getItem("username");
+            if (sessionStorage.getItem("username")) {
+                return sessionStorage.getItem("username");
             } else {
                 return "";
             }
@@ -486,25 +486,6 @@ export default defineComponent({
     max-width: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-
-::-webkit-scrollbar {
-    width: 15px;
-}
-
-::-webkit-scrollbar-track {
-    background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #d6dee1;
-    border-radius: 20px;
-    border: 6px solid transparent;
-    background-clip: content-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #a8bbbf;
 }
 
 ::v-deep .ant-layout-header {

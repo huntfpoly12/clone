@@ -220,13 +220,11 @@ export default defineComponent({
   background: #f1f3f4;
   padding: 10px 24px;
 }
-
+.dx-select-checkbox {
+    display: inline-block !important;
+}
 #data-grid-demo {
   min-height: 700px;
-}
-
-.dx-select-checkbox {
-  display: inline-block !important;
 }
 
 .search-form .col {
