@@ -8,29 +8,23 @@
                             <label class="lable-item">
                                 사업자코드 :
                             </label>
-                            <div @click="$event.target.select()">
-                                <DxNumberBox v-model:value="dataSearch.typeSevice" value-change-event="keyup"
-                                    style="width: 120px;height: 33px" @value-changed="changeValueInput"
-                                    format="#,##0" />
-                            </div>
+                            <DxTextBox v-model:value="dataSearch.typeSevice" />
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">상호:</label>
-                            <div @click="$event.target.select()">
-                                <DxNumberBox :value="dataSearch.nameCompany" style="width: 120px;height: 33px"
-                                    @click="$event.target.select()" />
-                            </div>
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'0'" :max="'30'"
+                                :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"
+                                :disabled="false" />
                         </div>
-
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">대표자:</label>
-                            <div @click="$event.target.select()">
-                                <DxNumberBox :value="''" style="width: 120px;height: 33px" />
-                            </div>
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
+                                :clearButton="true" :nameService="'typeSevice'" />
+
                         </div>
                     </a-col>
                     <a-col>
@@ -41,9 +35,8 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">주소 :</label>
-                            <div @click="$event.target.select()">
-                                <DxNumberBox :value="dataSearch.address" style="width: 120px;height: 33px" />
-                            </div>
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
+                                :spinButtons="fasle" :clearButton="true" :nameService="'address'" />
                         </div>
                     </a-col>
                     <a-col>
@@ -109,7 +102,7 @@ import {
     DxPaging,
     DxExport,
     DxSelection,
-    DxSearchPanel
+    DxSearchPanel,
 } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
@@ -123,6 +116,8 @@ import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
 import DxNumberBox from 'devextreme-vue/number-box';
+import inputFormat from '../../../../components/inputBoxFormat.vue'
+import DxTextBox from 'devextreme-vue/text-box';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
@@ -139,7 +134,9 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        DxNumberBox
+        DxNumberBox,
+        inputFormat,
+        DxTextBox
     },
     data() {
         return {
@@ -204,7 +201,12 @@ export default defineComponent({
                 this.dataSearch.typeSevice = ''
             }
         },
+        changeValueInputEmit(data) {
+            if (data.name == 'nameCompany') {
+                this.dataSearch.nameCompany = data.value
+            }
 
+        }
     },
 
 });
@@ -392,9 +394,5 @@ export default defineComponent({
 
 .dx-checkbox-icon {
     border: 1px solid #d9d9d9
-}
-
-.dx-field {
-    margin-bottom: 20px;
 }
 </style>
