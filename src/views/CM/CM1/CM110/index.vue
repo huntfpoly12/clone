@@ -61,14 +61,14 @@
                 </a-row>
                 <h2 class="title-h2">직인등록</h2>
                 <a-row>
-                  <a-col :span="16">
+                  <a-col :span="24">
                     <a-row>
-                      <a-col :span="9" :xl="9">
+                      <a-col :span="8">
                         <a-form-item label="직인(인감)">
                           <a-image :width="200" :src="previewImage" :preview="false" />
                         </a-form-item>
                       </a-col>
-                      <a-col :span="14" :xl="14">
+                      <a-col :span="14">
                         <div class="preview-image">
                           <a-row>
                             <a-col :span="5">
@@ -87,15 +87,15 @@
                   </a-col>
                 </a-row>
                 <a-row>
-                  <a-col :span="16">
+                  <a-col :span="24">
                     <a-row>
-                      <a-col :span="6" :offset="3" :xl="6">
-                        <a-form-item label="">
+                      <a-col :span="5" :offset="3">
+                        
                           <a-upload v-model:file-list="fileList" name="file" :headers="headers" @change="handleChange"
                             :multiple="false" :showUploadList="false" accept=".tiff,.png,.jpeg,.jpg">
                             <a-button class="btn-upload-image">직인업로드</a-button>
                           </a-upload>
-                        </a-form-item>
+                       
                       </a-col>
                       <a-col :span="14" :xl="14">
                         <InfoCircleFilled />
@@ -179,13 +179,16 @@
             <DxButton icon="plus" @click="openAddNewModal" />
           </template>
           <DxColumn data-field="이용자ID" />
-          <DxColumn data-field="상태" cell-template="tag-status" />
+          <DxColumn data-field="상태" cell-template="tag-status" css-class="cell-center" />
           <template #tag-status="{ data }">
             <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
           </template>
           <DxColumn data-field="성명" />
           <DxColumn data-field="회계권한(담당사업)" />
-          <DxColumn data-field="원천권한" data-type="boolean" />
+          <DxColumn data-field="원천권한" cell-template="checked-status" />
+          <template #checked-status="{ data }">
+            <a-checkbox :checked="data.value" />
+          </template>
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
             <div class="custom-action">
@@ -447,10 +450,15 @@ export default defineComponent({
 .btn-upload-image {
   width: 200px;
   margin-left: 17px;
+  
 }
 
-.btn-submit{
+.btn-submit {
   margin-top: 20px;
+}
+
+.page-content>>>.cell-center {
+  text-align: center !important
 }
 </style>
   
