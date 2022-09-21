@@ -54,6 +54,7 @@
                                             :allow-updating="true"
                                             :allow-adding="true"
                                             :allow-deleting="true"
+                                            text="편집"
                                             mode="cell"
                                         />
                                         <DxPaging :enabled="false"/>
