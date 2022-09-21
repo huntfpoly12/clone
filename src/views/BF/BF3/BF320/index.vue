@@ -14,14 +14,14 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">상호:</label>
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'5'" :max="'10'"
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
                                 :spinButtons="true" :clearButton="false" :nameService="'nameCompany'" />
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">대표자:</label>
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'5'" :max="'10'"
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'0'" :max="'10000'"
                                 :spinButtons="false" :clearButton="true" :nameService="'typeSevice'" />
 
                         </div>
@@ -34,8 +34,8 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">주소 :</label>
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'5'" :max="'10'"
-                                :spinButtons="true" :clearButton="false" :nameService="'address'" />
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
+                                :spinButtons="fasle" :clearButton="true" :nameService="'address'" />
                         </div>
                     </a-col>
                     <a-col>
