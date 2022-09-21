@@ -271,8 +271,8 @@ export default defineComponent({
     },
     computed: {
         username() {
-            if (localStorage.getItem("username")) {
-                return localStorage.getItem("username");
+            if (sessionStorage.getItem("username")) {
+                return sessionStorage.getItem("username");
             } else {
                 return "";
             }
