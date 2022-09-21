@@ -42,76 +42,62 @@
                                         <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
                                     </a-button>
                                 </template>
-                                <!-- <a-table :columns="columns" :data-source="dataTable" :pagination="false"
-                                    :bordered="true" class="table-scroll">
-                                    <template #headerCell="{ column }">
-                                        <template v-if="column.key === '사업명'">
-                                            <span> 사업명 (중복불가) </span>
-                                        </template>
-                                    </template>
-                                    <template #bodyCell="{ column, record }" contenteditable="true">
-                                        <template v-if="column.key === '사업명'">
-                                            <a>
-                                                {{ record.사업명 }}
-                                            </a>
-                                        </template>
-                                        <template v-else-if="column.key === '사업분류'">
-                                            <span>
-                                                <a-select ref="select" v-model:value="record.사업분류" style="width: 200px">
-                                                    <a-select-option value="주.야간보호">주.야간보호</a-select-option>
-                                                    <a-select-option value="방문요양">방문요양</a-select-option>
-                                                    <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
-                                                    <a-select-option value="방문간호">방문간호</a-select-option>
-                                                    <a-select-option value="방문목욕">방문목욕</a-select-option>
-                                                    <a-select-option value="단기보호">단기보호</a-select-option>
-                                                    <a-select-option value="복지용구">복지용구</a-select-option>
-                                                </a-select>
-                                            </span>
-                                        </template>
-                                        <template v-else-if="column.key === '서비스시작년월'">
-                                            <span>
-                                                <CustomDatepicker :valueDate="record.서비스시작년월" />
-                                            </span>
-                                        </template>
-                                        <template v-else-if="column.key === 'action'">
-                                            <span>
-                                                <a-popconfirm title="Are you sure delete this row?" ok-text="Yes"
-                                                    cancel-text="No">
-                                                    <a-button type="text" @click="deleteRow(record.key)">
-                                                        <minus-circle-outlined />
-                                                    </a-button>
-                                                </a-popconfirm>
-                                            </span>
-                                        </template>
-                                    </template>
-                                </a-table> -->
-                                <template>
-                                    <div id="data-grid-demo">
-                                        <DxDataGrid id="gridContainer" :data-source="dataTable" :show-borders="true"
-                                            >
-                                            <DxEditing :allow-updating="true" :allow-adding="true"
-                                                :allow-deleting="true" mode="cell" />
-                                            <DxPaging :enabled="false" />
-                                            <DxSelection mode="multiple" />
-                                            <DxColumn :width="55" data-field="Prefix" caption="Title" :allow-editing="true" />
-                                            <DxColumn data-field="사업명" />
-                                            <DxColumn data-field="사업분류" />
-                                            <DxColumn :width="170" data-field="서비스시작년월" />
-                                            <DxColumn :width="125" data-field="정원수" caption="State">
-                                            </DxColumn>
-                                            <DxColumn data-field="BirthDate" data-type="date" />
-                                            <DxToolbar>
-                                                <DxItem name="addRowButton" show-text="always" />
-                                                <DxItem location="after">
-                                                    <template #default>
-                                                        <DxButton  icon="trash"
-                                                            text="Delete Selected Records" />
-                                                    </template>
-                                                </DxItem>
-                                            </DxToolbar>
+                                <div id="data-grid-demo">
+                                        <DxDataGrid
+                                        id="gridContainer"
+                                        :data-source="dataTable"
+                                        :show-borders="true"
+                                        :selected-row-keys="selectedItemKeys"
+                                      
+                                        >
+                                        <DxEditing
+                                            :allow-updating="true"
+                                            :allow-adding="true"
+                                            :allow-deleting="true"
+                                            text="편집"
+                                            mode="cell"
+                                        />
+                                        <DxPaging :enabled="false"/>
+                                        <DxSelection mode="multiple"/>
+                                        <DxColumn
+                                            :width="55"
+                                            data-field="Prefix"
+                                            caption="Title"
+                                        />
+                                        <DxColumn
+                                            data-field="FirstName"
+                                        />
+                                        <DxColumn
+                                            data-field="LastName"
+                                        />
+                                        <DxColumn
+                                            :width="170"
+                                            data-field="Position"
+                                        />
+                                        <DxColumn
+                                            :width="125"
+                                            data-field="StateID"
+                                            caption="State"
+                                        >
+                                            <DxLookup
+                                            :data-source="states"
+                                            value-expr="ID"
+                                            display-expr="Name"
+                                            />
+                                        </DxColumn>
+                                        <DxColumn
+                                            data-field="BirthDate"
+                                            data-type="date"
+                                        />
+                                        <DxToolbar>
+                                            <DxItem
+                                            name="addRowButton"
+                                            show-text="always"
+                                            />
+        
+                                        </DxToolbar>
                                         </DxDataGrid>
                                     </div>
-                                </template>
                             </a-card>
                         </div>
 
@@ -258,7 +244,7 @@
 
         <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
             <div>
-                <DxDataGrid :data-source="dataTable" :show-borders="true" key-expr="key">
+                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="key">
                     <DxColumn data-field="기록일시" width='150px'  />
                     <DxColumn data-field="비고" />
                     <DxColumn data-field="생성일시" />
@@ -301,9 +287,8 @@ import {
 import { DxButton } from 'devextreme-vue/button';
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
-
+import { employees, states } from './data.js';
 // import { dataTable };
-import InpuNumber from "../../../../../components/CustomInputFormatNumber.vue"
 
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
@@ -327,23 +312,24 @@ export default defineComponent({
             담당자선택: "담당자선택",
             영업자선택: "영업자선택",
             직원수: '직원수',
-            dataSource: new DataSource({
-                store: new ArrayStore({
-                    data: this.dataTable,
-                    key: 'ID',
-                }),
-            }),
-            selectedItemKeys: [],
+            // dataSource: new DataSource({
+            //     store: new ArrayStore({
+            //         data: this.dataTable,
+            //         key: 'ID',
+            //     }),
+            // }),
+            // selectedItemKeys: [],
             selectionChanged: (data:any) => {
                 this.selectedItemKeys = data.selectedRowKeys;
             },
-            deleteRecords: () => {
-                this.selectedItemKeys.forEach((key) => {
-                    this.dataSource.store().remove(key);
-                });
-                this.selectedItemKeys = [];
-                this.dataSource.reload();
-            },
+            dataTable: new DataSource({
+                store: new ArrayStore({
+                data: employees,
+                key: 'ID',
+                }),
+            }),
+            selectedItemKeys: [],
+            states,
         }
     },
     components: {
@@ -363,7 +349,6 @@ export default defineComponent({
         PlusOutlined,
         CustomDatepicker,
         DxEditing,
-        InpuNumber,
         DxLookup,
         DxButton,
         DxToolbar,
@@ -482,41 +467,41 @@ export default defineComponent({
                 key: "action",
             },
         ];
-        const dataTable = ref([
-            {
-                key: "1",
-                No: "1",
-                사업명: "가나다라마바 사업",
-                사업분류: "방문요양",
-                서비스시작년월: "2015/01/01",
-                정원수: 10,
+        // const dataTable = ref([
+        //     {
+        //         key: "1",
+        //         No: "1",
+        //         사업명: "가나다라마바 사업",
+        //         사업분류: "방문요양",
+        //         서비스시작년월: "2015/01/01",
+        //         정원수: 10,
 
-            },
-            {
-                key: "2",
-                No: "2",
-                사업명: "가나다라마바 사업",
-                사업분류: "방문간호",
-                서비스시작년월: "2015/01/01",
-                정원수: 10,
-            },
-            {
-                key: "3",
-                No: "3",
-                사업명: "가나다라마바 사업",
-                사업분류: "단기보호",
-                서비스시작년월: "2015/01/13",
-                정원수: 10,
-            },
-            {
-                key: "4",
-                No: "4",
-                사업명: "가나다라마바 사업",
-                사업분류: "단기보호",
-                서비스시작년월: "2015/01/13",
-                정원수: 10,
-            },
-        ]);
+        //     },
+        //     {
+        //         key: "2",
+        //         No: "2",
+        //         사업명: "가나다라마바 사업",
+        //         사업분류: "방문간호",
+        //         서비스시작년월: "2015/01/01",
+        //         정원수: 10,
+        //     },
+        //     {
+        //         key: "3",
+        //         No: "3",
+        //         사업명: "가나다라마바 사업",
+        //         사업분류: "단기보호",
+        //         서비스시작년월: "2015/01/13",
+        //         정원수: 10,
+        //     },
+        //     {
+        //         key: "4",
+        //         No: "4",
+        //         사업명: "가나다라마바 사업",
+        //         사업분류: "단기보호",
+        //         서비스시작년월: "2015/01/13",
+        //         정원수: 10,
+        //     },
+        // ]);
 
 
         return {
@@ -537,7 +522,6 @@ export default defineComponent({
             keyNumber,
             titleModal,
             columns,
-            dataTable,
             PlusSquareOutlined,
             PlusOutlined,
         }
@@ -571,7 +555,7 @@ export default defineComponent({
         },
         handleDelete(key: number) {
             if (this.dataSource.length > 1) {
-                this.dataSource = this.dataSource.filter(function (obj) {
+                this.dataSource = this.dataSource.filter(function (obj: { key: number; }) {
                     return obj.key != key
                 })
             }
@@ -588,16 +572,8 @@ export default defineComponent({
                 서비스시작년월: "2015/01/01",
                 정원수: 10,
             };
-            this.dataTable.push(dataDef);
         },
-        deleteRow(key: string) {
-            for (var i = 0; i < this.dataTable.length; i++) {
-                if (this.dataTable[i].key == key) {
-                    this.dataTable.splice(i, 1);
-                    break;
-                }
-            }
-        },
+
         handleInputACCService() {
             if (this.formState.accBasicFee != '' || this.formState.accConsolidation != '' || this.formState.accInput != '' || this.formState.acc4wc != '') {
                 let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
@@ -623,7 +599,7 @@ export default defineComponent({
     },
     watch: {
         formState: {
-            handler(value) {
+            handler(value: any) {
                 if (this.formState.accFeeService != 0 && this.formState.taxFeeSevice != 0) {
                     this.formState.totalService = this.formState.taxFeeSevice + this.formState.accFeeService
                 };
@@ -661,12 +637,14 @@ export default defineComponent({
     }
 })
 </script>
-<style>
+<style scoped>
 .warring-modal {
     font-size: 13px;
     line-height: 5px;
 }
-
+::v-deep .dx-select-checkbox {
+    display: inline-block !important;
+}
 .ant-form-item-label {
     text-align: left;
     /* padding: 10px; */

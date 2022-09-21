@@ -197,10 +197,6 @@ export default defineComponent({
     display: flex;
     align-items: center;
 }
-::v-deep .dx-select-checkbox {
-    display: inline-block !important;
-}
-
 ::v-deep .dx-toolbar-after {
     display: flex;
 
