@@ -19,8 +19,9 @@
                         <div class="dflex custom-flex">
                             <label class="lable-item">상호:</label>
                             <div @click="$event.target.select()">
-                                <DxNumberBox :value="dataSearch.nameCompany" style="width: 120px;height: 33px"
-                                    @click="$event.target.select()" />
+                                <DxNumberBox v-model:value="dataSearch.nameCompany" value-change-event="keyup"
+                                    style="width: 120px;height: 33px" @value-changed="changeValueInput"
+                                    format="#,##0" />
                             </div>
                         </div>
 
@@ -139,7 +140,8 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        DxNumberBox
+        DxNumberBox,
+        inputFormat
     },
     data() {
         return {
@@ -392,9 +394,5 @@ export default defineComponent({
 
 .dx-checkbox-icon {
     border: 1px solid #d9d9d9
-}
-
-.dx-field {
-    margin-bottom: 20px;
 }
 </style>
