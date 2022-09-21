@@ -94,7 +94,11 @@
                                         <input type="checkbox" v-model="formState.checkBoxAccInput"
                                             @change="handleInputACCService()"> 입력대형
                                     </span>
-                                    <a-input v-model:value="formState.accInput" @change="handleInputACCService()" />
+
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'accInput'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.accInput" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :span="14">
@@ -103,8 +107,11 @@
                                         <input type="checkbox" v-model="formState.checkBoxAccConso"
                                             @change="handleInputACCService()"> 계좌통합
                                     </span>
-                                    <a-input v-model:value="formState.accConsolidation"
-                                        @change="handleInputACCService()" />
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'accConsolidation'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.accConsolidation"
+                                        @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :span="14">
@@ -113,7 +120,10 @@
                                         <input type="checkbox" v-model="formState.checkBoxAcc4wc"
                                             @change="handleInputACCService()"> W4C
                                     </span>
-                                    <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" />
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'acc4wc'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                         </a-row>
@@ -166,7 +176,7 @@
                         </a-row>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="2" header="담당매니저/ 영업자">
+                <a-collapse-panel key="2" header="담당매니저/ 영업자" >
                     <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                         <a-form-item label="담당매니저">
                             <a-select ref="select" v-model:value="담당자선택" style="width: 200px">
@@ -186,7 +196,8 @@
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="3" header="메모" class="modal-note badge">
+                <a-collapse-panel key="3" header="메모">  
+                    
                     <!-- <a-badge count="25" :number-style="{
                     backgroundColor: '#444',color: '#999',}" /> -->
                     <a-table bordered :data-source="dataSource" :pagination="false">
@@ -280,6 +291,7 @@ export default defineComponent({
         modalStatusHistory: Boolean,
 
     },
+    
     data() {
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
@@ -520,14 +532,15 @@ export default defineComponent({
             };
         },
 
-        handleInputACCService() { 
-            if (this.formState.accBasicFee != '' || this.formState.accConsolidation != '' || this.formState.accInput != '' || this.formState.acc4wc != '') {
+        handleInputACCService() {
+           
                 let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
                 let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
                 let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
                 let acc4wc = this.formState.acc4wc == '' ? 0 : parseInt(this.formState.acc4wc);
+
                 this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
-            }
+            
         },
         handleInputTexService() {
             if (this.formState.basicFee != '' || this.formState.majorInsurance != '') {
@@ -543,8 +556,10 @@ export default defineComponent({
                 this.formState.accBasicFee = data.value
                 this.handleInputACCService()
             }
-
-
+            if (data.name === 'accInput') {
+                this.formState.accInput = data.value
+                this.handleInputACCService()
+            }
         }
 
 
@@ -553,46 +568,55 @@ export default defineComponent({
         formState: {
             handler() {
                 if (this.formState.accFeeService != 0 && this.formState.taxFeeSevice != 0) {
-                    console.log('1');
 
                     this.formState.totalService = this.formState.taxFeeSevice + this.formState.accFeeService
                 };
                 if (this.formState.checkBox == true && this.formState.accBasicFee != '' && this.formState.accConsolidation != '' && this.formState.accInput != '' && this.formState.acc4wc != '') {
                     this.formState.accFeeService = parseInt(this.formState.accBasicFee) + parseInt(this.formState.accConsolidation) + parseInt(this.formState.accInput) + parseInt(this.formState.acc4wc)
-                    console.log('2');
                 };
                 if (this.formState.checkBox == true && this.formState.basicFee != '' && this.formState.majorInsurance != '') {
                     this.formState.taxFeeSevice = parseInt(this.formState.basicFee) + parseInt(this.formState.majorInsurance)
-                    console.log('3');
                 };
+
+                
+                // if (this.formState.checkBoxAccBasicFee == false) {
+                //     this.formState.accBasicFee = '0'
+                // };
+                // if (this.formState.checkBoxAccInput == false) {
+                //     this.formState.accInput = '0'
+                // };
+                // if (this.formState.checkBoxAccConso == false) {
+                //     this.formState.accConsolidation = '0'
+                // };
+                // if (this.formState.checkBoxAccConso == false) {
+                //     this.formState.accConsolidation = '0'
+                // };
+                // if (this.formState.checkBoxMajorInsurance == false) {
+                //     this.formState.majorInsurance = '0'
+                // };
+                // if (this.formState.checkBoxBasicFee == false) {
+                //     this.formState.basicFee = '0'
+                // };
+                // if (this.formState.checkBoxAcc4wc == false) {
+                //     this.formState.acc4wc = '0'
+
+                // };
+
                 if (this.formState.checkBoxAccBasicFee == false) {
                     this.formState.accBasicFee = '0'
-                    console.log('4');
-                };
+                    let data = (document.querySelector(".accBasicFee div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
                 if (this.formState.checkBoxAccInput == false) {
                     this.formState.accInput = '0'
-                    console.log('5');
-                };
-                if (this.formState.checkBoxAccConso == false) {
-                    this.formState.accConsolidation = '0'
-                    console.log('6');
-                };
-                if (this.formState.checkBoxAccConso == false) {
-                    this.formState.accConsolidation = '0'
-                    console.log('7');
-                };
-                if (this.formState.checkBoxMajorInsurance == false) {
-                    this.formState.majorInsurance = '0'
-                    console.log('8');
-                };
-                if (this.formState.checkBoxBasicFee == false) {
-                    this.formState.basicFee = '0'
-                    console.log('9');
-                };
-                if (this.formState.checkBoxAcc4wc == false) {
-                    this.formState.acc4wc = '0'
-                    console.log('10');
-                };
+                    let data = (document.querySelector(".accInput div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
+
+
+
             },
             deep: true,
             immediate: true
@@ -624,9 +648,8 @@ export default defineComponent({
 
 .popup-scroll {
     /* height: 600px; */
-    border: 1px solid #333;
-    overflow-y: auto;
-    border: 0ch;
+    /* border: 1px solid #333; */
+    overflow-y: auto; 
 }
 
 .table-scroll {
