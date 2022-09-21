@@ -9,7 +9,8 @@
                             <a-col :span="10">
                                 <a-form-item label="총일용료" style="font-weight: bold;">
                                     <!-- <InpuNumber :typeInput="'2'" /> -->
-                                    <a-input v-model:value="formState.totalService" disabled="True" :format="amountFormat" data-type="number"/>
+                                    <a-input v-model:value="formState.totalService" disabled="True"
+                                        :format="amountFormat" data-type="number" />
                                 </a-form-item>
                             </a-col>
                             <a-col :span="8"></a-col>
@@ -37,13 +38,13 @@
                         <div>
                             <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                 :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
-                                 
-                                </a-card>
+
+                            </a-card>
                             <div id="data-grid-demo">
                                 <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
                                     :selected-row-keys="selectedItemKeys">
-                                    <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true" :allow-deleting="true"
-                                        template="button-template" mode="cell" />
+                                    <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+                                        :allow-deleting="true" template="button-template" mode="cell" />
                                     <template #button-template>
                                         <DxButton icon="plus" />
                                     </template>
@@ -56,7 +57,7 @@
                                     <DxColumn data-field="서비스시작년월" data-type="date" />
                                     <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
                                     <DxToolbar>
-                                        <DxItem name="addRowButton"/>
+                                        <DxItem name="addRowButton" />
                                     </DxToolbar>
                                 </DxDataGrid>
                             </div>
@@ -72,17 +73,26 @@
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:180px" :format="amountFormat" data-type="number">
-                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee" >
-                                        기본이용료</span>
-                                    <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" />
+                                    <span style="width:116px">
+
+
+                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee"
+                                            @change="handleInputACCService()">
+                                        기본이용료
+                                    </span>
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'accBasicFee'"
+                                        style="width: 230px;" />
+
+                                    <!-- <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :sapn="10"></a-col>
                             <a-col :span="14">
                                 <div style="display: flex; padding-left: 155px; margin-top: 5px;">
                                     <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccInput"> 입력대형
+                                        <input type="checkbox" v-model="formState.checkBoxAccInput"
+                                            @change="handleInputACCService()"> 입력대형
                                     </span>
                                     <a-input v-model:value="formState.accInput" @change="handleInputACCService()" />
                                 </div>
@@ -90,7 +100,8 @@
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px; margin-top: 5px;">
                                     <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccConso"> 계좌통합
+                                        <input type="checkbox" v-model="formState.checkBoxAccConso"
+                                            @change="handleInputACCService()"> 계좌통합
                                     </span>
                                     <a-input v-model:value="formState.accConsolidation"
                                         @change="handleInputACCService()" />
@@ -99,7 +110,8 @@
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                     <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAcc4wc"> W4C
+                                        <input type="checkbox" v-model="formState.checkBoxAcc4wc"
+                                            @change="handleInputACCService()"> W4C
                                     </span>
                                     <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" />
                                 </div>
@@ -252,6 +264,7 @@ import ArrayStore from 'devextreme/data/array_store';
 import { employees, states } from './data.js';
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
+import inputFormat from '../../../../../components/inputBoxFormat.vue'
 import type { UploadProps } from 'ant-design-vue'
 
 
@@ -308,6 +321,7 @@ export default defineComponent({
         DxButton,
         DxToolbar,
         DxItem,
+        inputFormat
     },
 
     setup() {
@@ -474,7 +488,7 @@ export default defineComponent({
             }
             this.dataModal.push(add)
             console.log(this.dataModal);
-            
+
 
         },
         handleAdd() {
@@ -506,15 +520,13 @@ export default defineComponent({
             };
         },
 
-        handleInputACCService() {
+        handleInputACCService() { 
             if (this.formState.accBasicFee != '' || this.formState.accConsolidation != '' || this.formState.accInput != '' || this.formState.acc4wc != '') {
                 let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
                 let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
                 let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
                 let acc4wc = this.formState.acc4wc == '' ? 0 : parseInt(this.formState.acc4wc);
-
                 this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
-
             }
         },
         handleInputTexService() {
@@ -526,41 +538,60 @@ export default defineComponent({
                 console.log(this.formState.majorInsurance);
             }
         },
+        changeValueInputEmit(data: any) {
+            if (data.name === 'accBasicFee') {
+                this.formState.accBasicFee = data.value
+                this.handleInputACCService()
+            }
+
+
+        }
 
 
     },
     watch: {
         formState: {
-            handler(value: any) {
+            handler() {
                 if (this.formState.accFeeService != 0 && this.formState.taxFeeSevice != 0) {
+                    console.log('1');
+
                     this.formState.totalService = this.formState.taxFeeSevice + this.formState.accFeeService
                 };
                 if (this.formState.checkBox == true && this.formState.accBasicFee != '' && this.formState.accConsolidation != '' && this.formState.accInput != '' && this.formState.acc4wc != '') {
                     this.formState.accFeeService = parseInt(this.formState.accBasicFee) + parseInt(this.formState.accConsolidation) + parseInt(this.formState.accInput) + parseInt(this.formState.acc4wc)
+                    console.log('2');
                 };
                 if (this.formState.checkBox == true && this.formState.basicFee != '' && this.formState.majorInsurance != '') {
                     this.formState.taxFeeSevice = parseInt(this.formState.basicFee) + parseInt(this.formState.majorInsurance)
+                    console.log('3');
                 };
                 if (this.formState.checkBoxAccBasicFee == false) {
                     this.formState.accBasicFee = '0'
+                    console.log('4');
                 };
                 if (this.formState.checkBoxAccInput == false) {
                     this.formState.accInput = '0'
+                    console.log('5');
                 };
                 if (this.formState.checkBoxAccConso == false) {
                     this.formState.accConsolidation = '0'
+                    console.log('6');
                 };
                 if (this.formState.checkBoxAccConso == false) {
                     this.formState.accConsolidation = '0'
+                    console.log('7');
                 };
                 if (this.formState.checkBoxMajorInsurance == false) {
                     this.formState.majorInsurance = '0'
+                    console.log('8');
                 };
                 if (this.formState.checkBoxBasicFee == false) {
                     this.formState.basicFee = '0'
+                    console.log('9');
                 };
                 if (this.formState.checkBoxAcc4wc == false) {
                     this.formState.acc4wc = '0'
+                    console.log('10');
                 };
             },
             deep: true,
@@ -580,7 +611,7 @@ export default defineComponent({
 }
 
 ::v-deep .ant-form-item-label {
-    text-align: left;   
+    text-align: left;
 }
 
 .ant-form-item {
