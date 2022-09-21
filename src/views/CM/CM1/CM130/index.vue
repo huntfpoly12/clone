@@ -71,7 +71,6 @@
                       <div style="margin-left: 50px">
                         <span>두루누리 적용 여부 (사업자):</span>
                         <a-switch
-                          v-model:checked="bf130Detail.switch"
                           checked-children="이용중"
                           un-checked-children="이용중지"
                           style="width: 10%; margin-left: 8px"
@@ -224,7 +223,7 @@
                   </a-tooltip>
                   <a-tooltip placement="top">
                     <template #title>변경이력</template>
-                    <HistoryOutlined />
+                    <HistoryOutlined @click="modalHistory(data)" />
                   </a-tooltip>
                 </a-space>
               </div>
@@ -241,12 +240,12 @@
           :data="popupData"
           title="원천설정 [ cm-130 –pop] "
         />
-        <!-- <HistoryPopup
+        <HistoryPopup
           :modalStatus="modalHistoryStatus"
           @closePopup="modalHistoryStatus = false"
           :data="popupData"
-          title="변경이력[cm-000-pop]"
-        /> -->
+          title="변경이력[cm-130-pop]"
+        />
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -365,6 +364,7 @@ export default defineComponent({
       employees,
       modalEditStatus: false,
       modalAddNewStatus: false,
+      modalHistoryStatus: false,
     };
   },
   setup() {
@@ -384,9 +384,9 @@ export default defineComponent({
       이메일: "bankda.jangbuda@gmail.com",
       switch: false,
     });
-    const bf130Detail: UnwrapRef<FormState> = reactive({
-      switch: false,
-    });
+    // const bf130Detail: UnwrapRef<FormState> = reactive({
+    //   switch: false,
+    // });
     const isShow = ref<boolean>(false);
     const showModal = () => {
       isShow.value = true;
@@ -412,7 +412,7 @@ export default defineComponent({
       },
 
       previewImage,
-      bf130Detail,
+
       isShow,
       showModal,
       handleSuccsess,
@@ -444,6 +444,10 @@ export default defineComponent({
     },
     setModalEditVisible(data: any) {
       this.modalEditStatus = true;
+      this.popupData = data;
+    },
+    modalHistory(data: any) {
+      this.modalHistoryStatus = true;
       this.popupData = data;
     },
   },
