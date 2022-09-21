@@ -54,7 +54,7 @@
                                     <DxColumn :width="225" data-field="StateID" caption="사업분류">
                                         <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                     </DxColumn>
-                                    <DxColumn data-field="서비스시작년월" data-type="date" />
+                                    <DxColumn data-field="서비스시작년월" data-type="date"/>
                                     <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
                                     <DxToolbar>
                                         <DxItem name="addRowButton" />
@@ -107,6 +107,7 @@
                                         <input type="checkbox" v-model="formState.checkBoxAccConso"
                                             @change="handleInputACCService()"> 계좌통합
                                     </span>
+
                                     <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
                                         :spinButtons="false" :clearButton="false" :nameService="'accConsolidation'"
                                         style="width: 360px;" />
@@ -138,14 +139,14 @@
                         </a-row>
                         <div>
                             <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-form-item label="서비스 시작년월" style="width: 300px">
+                                <a-form-item label="서비스 시작년월" style="width: 270px">
                                     <CustomDatepicker width="30%" valueDate="2022/08/25" />
                                 </a-form-item>
                                 <a-form-item label="직 원 수">
-                                    <a-input-number type='number' v-model:value="직원수" style="width: 100px" />
+                                    <a-input-number type='number' v-model:value="직원수" style="width: 120px" />
                                 </a-form-item>
                                 <a-form-item label="원천서비스 이용료:">
-                                    <a-input v-model:value="formState.taxFeeSevice" style="width: 367px"
+                                    <a-input v-model:value="formState.taxFeeSevice" style="width: 353px"
                                         disabled="True" />
                                 </a-form-item>
                             </a-form>
@@ -160,7 +161,10 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxBasicFee" />
                                         기본이용료</span>
-                                    <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" />
+                                        <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'basicFee'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" /> -->
                                 </div>
                             </a-col>
                             <a-coll :span="8"></a-coll>
@@ -169,14 +173,17 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
                                         4대보험</span>
-                                    <a-input v-model:value="formState.majorInsurance"
-                                        @change="handleInputTexService()" />
+                                        <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'majorInsurance'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.majorInsurance" -->
+                                        <!-- @change="handleInputTexService()" /> -->
                                 </div>
                             </a-col>
                         </a-row>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="2" header="담당매니저/ 영업자" >
+                <a-collapse-panel key="2" header="담당매니저/ 영업자">
                     <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                         <a-form-item label="담당매니저">
                             <a-select ref="select" v-model:value="담당자선택" style="width: 200px">
@@ -196,8 +203,8 @@
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="3" header="메모">  
-                    
+                <a-collapse-panel key="3" header="메모">
+
                     <!-- <a-badge count="25" :number-style="{
                     backgroundColor: '#444',color: '#999',}" /> -->
                     <a-table bordered :data-source="dataSource" :pagination="false">
@@ -291,7 +298,7 @@ export default defineComponent({
         modalStatusHistory: Boolean,
 
     },
-    
+
     data() {
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
@@ -533,24 +540,24 @@ export default defineComponent({
         },
 
         handleInputACCService() {
-           
-                let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
-                let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
-                let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
-                let acc4wc = this.formState.acc4wc == '' ? 0 : parseInt(this.formState.acc4wc);
+            let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
+            let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
+            let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
+            let acc4wc = this.formState.acc4wc == '' ? 0 : parseInt(this.formState.acc4wc);
 
-                this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
-            
+            this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
         },
-        handleInputTexService() {
-            if (this.formState.basicFee != '' || this.formState.majorInsurance != '') {
+        handleInputTexService() {           
                 let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
                 let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);
-                this.formState.taxFeeSevice = basicFee + majorInsurance;
-                console.log(this.formState.basicFee);
-                console.log(this.formState.majorInsurance);
-            }
+                this.formState.taxFeeSevice = basicFee + majorInsurance;                           
         },
+        
+        // handleTotalService() {           
+        //         let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
+        //         let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);
+        //         this.formState.taxFeeSevice = basicFee + majorInsurance;                           
+        // },
         changeValueInputEmit(data: any) {
             if (data.name === 'accBasicFee') {
                 this.formState.accBasicFee = data.value
@@ -558,6 +565,22 @@ export default defineComponent({
             }
             if (data.name === 'accInput') {
                 this.formState.accInput = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'accConsolidation') {
+                this.formState.accConsolidation = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'acc4wc') {
+                this.formState.acc4wc = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'majorInsurance') {
+                this.formState.majorInsurance = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'basicFee') {
+                this.formState.basicFee = data.value
                 this.handleInputACCService()
             }
         }
@@ -578,7 +601,7 @@ export default defineComponent({
                     this.formState.taxFeeSevice = parseInt(this.formState.basicFee) + parseInt(this.formState.majorInsurance)
                 };
 
-                
+
                 // if (this.formState.checkBoxAccBasicFee == false) {
                 //     this.formState.accBasicFee = '0'
                 // };
@@ -587,10 +610,7 @@ export default defineComponent({
                 // };
                 // if (this.formState.checkBoxAccConso == false) {
                 //     this.formState.accConsolidation = '0'
-                // };
-                // if (this.formState.checkBoxAccConso == false) {
-                //     this.formState.accConsolidation = '0'
-                // };
+                // };              
                 // if (this.formState.checkBoxMajorInsurance == false) {
                 //     this.formState.majorInsurance = '0'
                 // };
@@ -599,7 +619,6 @@ export default defineComponent({
                 // };
                 // if (this.formState.checkBoxAcc4wc == false) {
                 //     this.formState.acc4wc = '0'
-
                 // };
 
                 if (this.formState.checkBoxAccBasicFee == false) {
@@ -614,9 +633,30 @@ export default defineComponent({
                     data.value = '0'
                     this.handleInputACCService()
                 }
-
-
-
+                if (this.formState.checkBoxAcc4wc == false) {
+                    this.formState.acc4wc = '0'
+                    let data = (document.querySelector(".acc4wc div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
+                if (this.formState.checkBoxAccConso == false) {
+                    this.formState.accConsolidation = '0'
+                    let data = (document.querySelector(".accConsolidation div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
+                if (this.formState.checkBoxMajorInsurance == false) {
+                    this.formState.majorInsurance = '0'
+                    let data = (document.querySelector(".majorInsurance div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
+                if (this.formState.checkBoxBasicFee == false) {
+                    this.formState.basicFee = '0'
+                    let data = (document.querySelector(".basicFee div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
             },
             deep: true,
             immediate: true
@@ -649,7 +689,7 @@ export default defineComponent({
 .popup-scroll {
     /* height: 600px; */
     /* border: 1px solid #333; */
-    overflow-y: auto; 
+    overflow-y: auto;
 }
 
 .table-scroll {
