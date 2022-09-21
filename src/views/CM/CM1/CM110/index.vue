@@ -89,7 +89,7 @@
                 <a-row>
                   <a-col :span="24">
                     <a-row>
-                      <a-col :span="5" :offset="3">
+                      <a-col :span="8" >
                         
                           <a-upload v-model:file-list="fileList" name="file" :headers="headers" @change="handleChange"
                             :multiple="false" :showUploadList="false" accept=".tiff,.png,.jpeg,.jpg">
@@ -449,7 +449,7 @@ export default defineComponent({
 
 .btn-upload-image {
   width: 200px;
-  margin-left: 17px;
+  margin-left: 150px;
   
 }
 
