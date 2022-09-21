@@ -125,7 +125,7 @@ export default defineComponent({
     const options = ref<SelectProps['options']>([]);
     for (let i = 10; i < 36; i++) {
       const value = i.toString(36) + i;
-      options.value.push({
+      options?.value?.push({
         label: `Long Label: ${value}`,
         value,
       });
