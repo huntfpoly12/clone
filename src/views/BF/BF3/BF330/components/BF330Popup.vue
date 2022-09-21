@@ -35,69 +35,34 @@
                             </a-col>
                         </a-row>
                         <div>
-                            <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                                :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
-                                <template #extra>
-                                    <a-button type="text" @click="handleCopy()">
-                                        <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
-                                    </a-button>
-                                </template>
-                                <div id="data-grid-demo">
-                                        <DxDataGrid
-                                        id="gridContainer"
-                                        :data-source="dataTable"
-                                        :show-borders="true"
-                                        :selected-row-keys="selectedItemKeys"
-                                      
-                                        >
-                                        <DxEditing
-                                            :allow-updating="true"
-                                            :allow-adding="true"
-                                            :allow-deleting="true"
-                                            mode="cell"
-                                        />
-                                        <DxPaging :enabled="false"/>
-                                        <DxSelection mode="multiple"/>
-                                        <DxColumn
-                                            :width="55"
-                                            data-field="Prefix"
-                                            caption="Title"
-                                        />
-                                        <DxColumn
-                                            data-field="FirstName"
-                                        />
-                                        <DxColumn
-                                            data-field="LastName"
-                                        />
-                                        <DxColumn
-                                            :width="170"
-                                            data-field="Position"
-                                        />
-                                        <DxColumn
-                                            :width="125"
-                                            data-field="StateID"
-                                            caption="State"
-                                        >
-                                            <DxLookup
-                                            :data-source="states"
-                                            value-expr="ID"
-                                            display-expr="Name"
-                                            />
-                                        </DxColumn>
-                                        <DxColumn
-                                            data-field="BirthDate"
-                                            data-type="date"
-                                        />
-                                        <DxToolbar>
-                                            <DxItem
-                                            name="addRowButton"
-                                            show-text="always"
-                                            />
-        
-                                        </DxToolbar>
-                                        </DxDataGrid>
-                                    </div>
-                            </a-card>
+                            <div style="display: flex;">
+                                <div style="width: 100%"> ⁙ 운영사업 </div>
+                                <div>
+                                    <a-button @click="addNew"><PlusOutlined :style="{ fontSize: '20px', color: '#08c' }" /></a-button>
+                                </div>
+                            </div>
+                            <div id="data-grid-demo">
+                                <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
+                                    :selected-row-keys="selectedItemKeys">
+                                    <DxEditing :allow-updating="true" :allow-adding="false" :allow-deleting="true"
+                                        template="button-template" mode="cell" />
+                                    <!-- <template #button-template>
+                                        <DxButton icon="plus" />
+                                    </template> -->
+                                    <DxPaging :enabled="false" />
+                                    <DxColumn :width="35" data-field="No" caption="#" />
+                                    <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
+                                    <DxColumn :width="225" data-field="StateID" caption="사업분류">
+                                        <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
+                                    </DxColumn>
+                                    <DxColumn data-field="서비스시작년월" data-type="date" />
+                                    <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
+                                    <DxToolbar>
+                                        <DxItem name="addRowButton" show-text="always" />
+                                    </DxToolbar>
+                                </DxDataGrid>
+                            </div>
+
                         </div>
 
                         <a-row>
@@ -244,7 +209,7 @@
         <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
             <div>
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="key">
-                    <DxColumn data-field="기록일시" width='150px'  />
+                    <DxColumn data-field="기록일시" width='150px' />
                     <DxColumn data-field="비고" />
                     <DxColumn data-field="생성일시" />
                     <DxColumn data-field="생성자ID" />
@@ -287,9 +252,7 @@ import { DxButton } from 'devextreme-vue/button';
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import { employees, states } from './data.js';
-// import { dataTable };
 import InpuNumber from "../../../../../components/CustomInputFormatNumber.vue"
-
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import type { UploadProps } from 'ant-design-vue'
@@ -312,20 +275,14 @@ export default defineComponent({
             담당자선택: "담당자선택",
             영업자선택: "영업자선택",
             직원수: '직원수',
-            // dataSource: new DataSource({
-            //     store: new ArrayStore({
-            //         data: this.dataTable,
-            //         key: 'ID',
-            //     }),
-            // }),
-            // selectedItemKeys: [],
-            selectionChanged: (data:any) => {
+            selectionChanged: (data: any) => {
                 this.selectedItemKeys = data.selectedRowKeys;
             },
+            dataModal: employees,
             dataTable: new DataSource({
                 store: new ArrayStore({
-                data: employees,
-                key: 'ID',
+                    data: employees,
+                    key: 'ID',
                 }),
             }),
             selectedItemKeys: [],
@@ -468,43 +425,6 @@ export default defineComponent({
                 key: "action",
             },
         ];
-        // const dataTable = ref([
-        //     {
-        //         key: "1",
-        //         No: "1",
-        //         사업명: "가나다라마바 사업",
-        //         사업분류: "방문요양",
-        //         서비스시작년월: "2015/01/01",
-        //         정원수: 10,
-
-        //     },
-        //     {
-        //         key: "2",
-        //         No: "2",
-        //         사업명: "가나다라마바 사업",
-        //         사업분류: "방문간호",
-        //         서비스시작년월: "2015/01/01",
-        //         정원수: 10,
-        //     },
-        //     {
-        //         key: "3",
-        //         No: "3",
-        //         사업명: "가나다라마바 사업",
-        //         사업분류: "단기보호",
-        //         서비스시작년월: "2015/01/13",
-        //         정원수: 10,
-        //     },
-        //     {
-        //         key: "4",
-        //         No: "4",
-        //         사업명: "가나다라마바 사업",
-        //         사업분류: "단기보호",
-        //         서비스시작년월: "2015/01/13",
-        //         정원수: 10,
-        //     },
-        // ]);
-
-
         return {
             fileList,
             loading,
@@ -545,7 +465,21 @@ export default defineComponent({
                 return "grey"
             }
         },
+        addNew() {
+            let add =
+            {
+                ID: 5,
+                No: "5",
+                사업명: "가나다라마바 사업",
+                StateID: 4,
+                서비스시작년월: "2015/01/13",
+                정원수: 10,
+            }
+            this.dataModal.push(add)
+            console.log(this.dataModal);
+            
 
+        },
         handleAdd() {
             this.keyNumber++
             let dataDef = {
@@ -643,9 +577,11 @@ export default defineComponent({
     font-size: 13px;
     line-height: 5px;
 }
+
 ::v-deep .dx-select-checkbox {
     display: inline-block !important;
 }
+
 .ant-form-item-label {
     text-align: left;
     /* padding: 10px; */
