@@ -183,12 +183,6 @@ interface FormState {
     비고: string;
 }
 
-interface dataFormEdit {
-    name: string,
-    delivery: string,
-    type: string,
-    resource: string,
-}
 
 export default defineComponent({
     props: {
@@ -248,7 +242,7 @@ export default defineComponent({
             비고: ''
         });
 
-        const dataEditDemo: UnwrapRef<dataFormEdit> = reactive({
+        const dataEditDemo = reactive({
             name: 'MMANAGER',
             delivery: '',
             type: '',
