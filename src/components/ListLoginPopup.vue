@@ -6,7 +6,7 @@
                     <DxColumn data-field="기록일시" />
                     <DxColumn data-field="성공여부" cell-template="tag-login" css-class="cell-center"/>
                     <template #tag-login="{ data }">
-                        <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+                        <a-tag :color="getColorTag(data.value)" style="width:65px">{{ data.value }}</a-tag>
                     </template>
                     <DxColumn data-field="응답상태" />
                     <DxColumn data-field="오류메세지" />
@@ -75,8 +75,11 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="css">    
+<style lang="css" scoped>    
 .cell-center{
     text-align: center!important  
+}
+::v-deep .ant-tag{
+    width:65px;
 }
 </style>
