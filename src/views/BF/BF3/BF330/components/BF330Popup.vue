@@ -226,7 +226,6 @@
 
                         </template>
                     </a-table>
-
                 </a-collapse-panel>
             </a-collapse>
         </a-modal>
