@@ -29,7 +29,7 @@
                                     <a-tag color="black">매니저</a-tag>
                                 </a-radio>
                                 <a-radio :value="'영업자'">
-                                    <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                                    <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                                 </a-radio>
                                 <a-radio :value="'파트너'">
                                     <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
@@ -97,7 +97,7 @@
                                     <a-tag color="black">매니저</a-tag>
                                 </a-radio>
                                 <a-radio :value="'영업자'">
-                                    <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                                    <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                                 </a-radio>
                                 <a-radio :value="'파트너'">
                                     <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
