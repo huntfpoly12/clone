@@ -89,13 +89,13 @@
                 <a-row>
                   <a-col :span="24">
                     <a-row>
-                      <a-col :span="5" :offset="3">
-                        
-                          <a-upload v-model:file-list="fileList" name="file" :headers="headers" @change="handleChange"
-                            :multiple="false" :showUploadList="false" accept=".tiff,.png,.jpeg,.jpg">
-                            <a-button class="btn-upload-image">직인업로드</a-button>
-                          </a-upload>
-                       
+                      <a-col :span="8">
+
+                        <a-upload v-model:file-list="fileList" name="file" :headers="headers" @change="handleChange"
+                          :multiple="false" :showUploadList="false" accept=".tiff,.png,.jpeg,.jpg">
+                          <a-button class="btn-upload-image">직인업로드</a-button>
+                        </a-upload>
+
                       </a-col>
                       <a-col :span="14" :xl="14">
                         <InfoCircleFilled />
@@ -178,14 +178,14 @@
           <template #button-template>
             <DxButton icon="plus" @click="openAddNewModal" />
           </template>
-          <DxColumn data-field="이용자ID" />
-          <DxColumn data-field="상태" cell-template="tag-status" css-class="cell-center" />
+          <DxColumn data-field="이용자ID" :width="200" />
+          <DxColumn data-field="상태" cell-template="tag-status" css-class="cell-center" :width="150" />
           <template #tag-status="{ data }">
             <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
           </template>
-          <DxColumn data-field="성명" />
+          <DxColumn data-field="성명" :width="200" />
           <DxColumn data-field="회계권한(담당사업)" />
-          <DxColumn data-field="원천권한" cell-template="checked-status" />
+          <DxColumn data-field="원천권한" cell-template="checked-status" :width="80" />
           <template #checked-status="{ data }">
             <a-checkbox :checked="data.value" />
           </template>
@@ -344,7 +344,7 @@ export default defineComponent({
       이메일: "bankda.jangbuda@gmail.com",
     });
 
-    let previewImage: any = ref("/public/images/demo-image.jpg");
+    let previewImage: any = ref("https://www.chanchao.com.tw/images/default.jpg");
     let fileImage: any = ref(null);
     let modalStampReviewStatus: any = ref();
 
@@ -449,8 +449,8 @@ export default defineComponent({
 
 .btn-upload-image {
   width: 200px;
-  margin-left: 17px;
-  
+  margin-left: 150px;
+
 }
 
 .btn-submit {
