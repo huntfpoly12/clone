@@ -107,13 +107,7 @@
           </a-col>
         </a-row>
 
-        <a-rowc :gutter="24">
-          <a-col :span="12"> </a-col>
-        </a-rowc>
-        <a-row>
-          <a-col :span="12"> </a-col>
-        </a-row>
-        <a-row>
+        <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item
               type="number"
