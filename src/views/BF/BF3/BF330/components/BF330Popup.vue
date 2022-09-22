@@ -204,10 +204,7 @@
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="3" header="메모" >
-
-                    <!-- <a-badge count="25" :number-style="{
-                    backgroundColor: '#444',color: '#999',}" /> -->
+                <a-collapse-panel key="3" header="메모" :extra="dataSource.length > 0? dataSource.length: ''" :style="{position: 'relative'}">
                     <a-table bordered :data-source="dataSource" :pagination="false">
                         <template #bodyCell="{  text, index }">
                             <div>
@@ -718,7 +715,12 @@ export default defineComponent({
 .ant-card-head-title {
     padding: 0;
 }
-
+::v-deep .ant-badge-not-a-wrapper {
+    position: absolute;
+    left: 77px;
+    top: 12px;
+    z-index: 5;
+}
 .data-grid-demo {
     min-height: 700px;
 }
