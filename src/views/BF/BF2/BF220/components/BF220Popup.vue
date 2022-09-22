@@ -183,13 +183,6 @@ interface FormState {
     비고: string;
 }
 
-interface dataFormEdit {
-    name: string,
-    delivery: string,
-    type: string,
-    resource: string,
-}
-
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -230,7 +223,7 @@ export default defineComponent({
 
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
-        let confirm = ref<string>('');;
+        let confirm = ref<string>('');
         const bf220Detail: UnwrapRef<FormState> = reactive({
             name: '',
             delivery: false,
@@ -248,7 +241,7 @@ export default defineComponent({
             비고: ''
         });
 
-        const dataEditDemo: UnwrapRef<dataFormEdit> = reactive({
+        const dataEditDemo = reactive({
             name: 'MMANAGER',
             delivery: '',
             type: '',
