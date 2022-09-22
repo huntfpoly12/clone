@@ -14,15 +14,21 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">상호:</label>
+<<<<<<< HEAD
                             <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
                                 :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"/>
+=======
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'0'" :max="'30'"
+                                :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"
+                                :disabled="false" />
+>>>>>>> develop
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">대표자:</label>
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'0'" :max="'10000'"
-                                :spinButtons="false" :clearButton="true" :nameService="'typeSevice'" />
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
+                                :clearButton="true" :nameService="'typeSevice'" />
 
                         </div>
                     </a-col>

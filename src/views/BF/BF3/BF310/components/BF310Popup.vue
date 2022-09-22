@@ -1,5 +1,5 @@
 <template>
-	<div id="components-modal-demo-position">
+	<div id="modal-detail-bf-310">
 		<a-modal :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
 			@cancel="setModalVisible()" width="1000px">
 			<a-collapse v-model:activeKey="activeKey" accordion>
@@ -172,9 +172,7 @@
 										</span>
 									</template>
 									<template v-else-if="column.key === '서비스시작년월'">
-										<span>
-											<CustomDatepicker :valueDate="record.서비스시작년월" :className='record.key' />
-										</span>
+										<CustomDatepicker :valueDate="record.서비스시작년월" :className='record.key' />
 									</template>
 									<template v-else-if="column.key === 'action'">
 										<span>
@@ -503,6 +501,7 @@ export default defineComponent({
 </script> 
 
 <style lang="scss" scoped>
+// ::v-deep #modal-detail-bf-310 {
 .clr {
 	label {
 		color: red;
@@ -515,5 +514,91 @@ export default defineComponent({
 
 .clb {
 	color: black !important;
+}
+
+
+
+.ant-select {
+	width: 145px;
+}
+
+
+#data-grid-demo {
+	min-height: 700px;
+}
+
+.dx-select-checkbox {
+	display: inline-block !important;
+}
+
+.noteText p {
+	margin-bottom: 1px;
+}
+
+.noteImage {
+	font-size: 11px;
+	width: 100%;
+	padding-top: 2px;
+}
+
+.ant-card-head-title {
+	padding: 0px;
+}
+
+.ant-form-item {
+	margin-bottom: 4px;
+}
+
+.title-number-modal {
+	margin-top: 7px;
+}
+
+.ant-collapse {
+	.ant-collapse-item {
+		.ant-collapse-header {
+			padding: 7px;
+		}
+	}
+}
+
+.ant-form-item-label {
+	text-align: left;
+}
+
+.ant-card-extra {
+	padding: 0px;
+}
+
+.ant-card-head {
+	min-height: 30px;
+}
+
+.ant-table-thead {
+	tr {
+		th {
+			padding: 7px;
+		}
+	}
+}
+
+.ant-table-tbody {
+	tr {
+		td {
+			padding: 7px;
+		}
+	}
+}
+
+
+::v-deep .dp__input {
+	padding: 4px 0px !important;
+}
+
+::v-deep .ant-table-tbody>tr>td {
+	padding: 5 10px !important
+}
+
+::v-deep .ant-table-cell {
+	padding: 10px !important;
 }
 </style>
