@@ -66,24 +66,20 @@
 
                         <a-row>
                             <a-col :span="14">
-                                <a-form-item label="회계서비스 이용료:" style="margin-top: 10px; font-weight: bold">
-                                    <p>{{$filters.formatCurrency(total1)}}</p>
+                                <a-form-item label="회계서비스 이용료:" style="margin-top: 10px; font-weight: bold;">
+                                    <p class="input-disble">{{$filters.formatCurrency(total1)}}</p> 
                                 </a-form-item>
                             </a-col>
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:116px">
-
-
+                                    <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAccBasicFee"
                                             @change="handleInputACCService()">
                                         기본이용료
                                     </span>
-                                    <DxNumberBox
-                                    v-model="formState.numberBox1"
-                                    :format="'#,##0'" />
-                                    
+                                    <DxNumberBox v-model="formState.numberBox1" :format="'#,##0'" />
+
 
                                     <!-- <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" /> -->
                                 </div>
@@ -96,9 +92,7 @@
                                             @change="handleInputACCService()"> 입력대형
                                     </span>
 
-                                    <DxNumberBox
-                                    v-model="formState.numberBox2"
-                                    :format="'#,##0'" />
+                                    <DxNumberBox v-model="formState.numberBox2" :format="'#,##0'" />
                                     <!-- <a-input v-model:value="formState.accInput" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
@@ -109,9 +103,7 @@
                                             @change="handleInputACCService()"> 계좌통합
                                     </span>
 
-                                    <DxNumberBox
-                                    v-model="formState.numberBox3"
-                                    :format="'#,##0'" />
+                                    <DxNumberBox v-model="formState.numberBox3" :format="'#,##0'" />
                                     <!-- <a-input v-model:value="formState.accConsolidation"
                                         @change="handleInputACCService()" /> -->
                                 </div>
@@ -122,9 +114,7 @@
                                         <input type="checkbox" v-model="formState.checkBoxAcc4wc"
                                             @change="handleInputACCService()"> W4C
                                     </span>
-                                    <DxNumberBox
-                                    v-model="formState.numberBox4"
-                                    :format="'#,##0'" />
+                                    <DxNumberBox v-model="formState.numberBox4" :format="'#,##0'" />
                                     <!-- <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
@@ -204,7 +194,7 @@
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="3" header="메모" >
+                <a-collapse-panel key="3" header="메모">
 
                     <!-- <a-badge count="25" :number-style="{
                     backgroundColor: '#444',color: '#999',}" /> -->
@@ -342,7 +332,7 @@ export default defineComponent({
             }),
             selectedItemKeys: [],
             states,
-           
+
         }
     },
     computed: {
@@ -351,7 +341,7 @@ export default defineComponent({
         },
     },
     methods: {
-        
+
         setModalVisible() {
             this.$emit('closePopup', false)
         },
@@ -390,7 +380,7 @@ export default defineComponent({
                 key: this.keyNumber,
                 note: '',
             }
-            this.dataSource.push(dataDef)
+            this.dataSource.unshift(dataDef)
         },
         handleDelete(key: number) {
             if (this.dataSource.length > 1) {
@@ -509,23 +499,23 @@ export default defineComponent({
         //     deep: true,
         //     immediate: true
         // },
-        'formState.checkBoxAccBasicFee'(newVal){
-            if(newVal === false) {
+        'formState.checkBoxAccBasicFee'(newVal) {
+            if (newVal === false) {
                 this.formState.numberBox1 = 0
             }
         },
-        'formState.checkBoxAccInput'(newVal){
-            if(newVal === false) {
+        'formState.checkBoxAccInput'(newVal) {
+            if (newVal === false) {
                 this.formState.numberBox2 = 0
             }
         },
-        'formState.checkBoxAccConso'(newVal){
-            if(newVal === false) {
+        'formState.checkBoxAccConso'(newVal) {
+            if (newVal === false) {
                 this.formState.numberBox3 = 0
             }
         },
-        'formState.checkBoxAcc4wc'(newVal){
-            if(newVal === false) {
+        'formState.checkBoxAcc4wc'(newVal) {
+            if (newVal === false) {
                 this.formState.numberBox4 = 0
             }
         }
@@ -732,5 +722,15 @@ export default defineComponent({
 
 .gridDeleteSelected .dx-button-text {
     line-height: 0;
+}
+.input-disble{
+    background: rgb(204, 203, 203);
+    padding: 5px 10px;
+    border: 1px solid rgb(8, 2, 2);
+    border-radius: 5px;
+}
+.title-note {
+    display: flex;
+    justify-content: space-between;
 }
 </style>
