@@ -21,22 +21,25 @@ export default defineComponent({
         max: Number,
         spinButtons: Boolean,
         clearButton: Boolean,
-        disabled: Boolean
+        disabled: Boolean,
+        value: String,
+        clearData: Boolean
 
+    },
+    data(props) {
+        return {
+            valueInput: props.value
+        }
     },
     components: {
         DxNumberBox
-    },
-    data() {
-        return {
-            valueInput: ''
-        }
     },
     methods: {
         changeValueInput() {
             if (this.valueInput == 0) {
                 this.valueInput = ''
             }
+<<<<<<< HEAD
             let dataCall = {
                 name: this.nameService,
                 value: this.valueInput
@@ -44,6 +47,10 @@ export default defineComponent({
             this.$emit("valueInput", dataCall);
 
         }
+=======
+        },
+
+>>>>>>> develop
     }
 })
 </script>

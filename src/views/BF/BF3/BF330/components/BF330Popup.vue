@@ -54,7 +54,7 @@
                                     <DxColumn :width="225" data-field="StateID" caption="사업분류">
                                         <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                     </DxColumn>
-                                    <DxColumn data-field="서비스시작년월" data-type="date"/>
+                                    <DxColumn data-field="서비스시작년월" data-type="date" />
                                     <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
                                     <DxToolbar>
                                         <DxItem name="addRowButton" />
@@ -159,7 +159,7 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxBasicFee" />
                                         기본이용료</span>
-                                        <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
                                         :spinButtons="false" :clearButton="false" :nameService="'basicFee'"
                                         style="width: 360px;" />
                                     <!-- <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" /> -->
@@ -171,11 +171,11 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
                                         4대보험</span>
-                                        <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
                                         :spinButtons="false" :clearButton="false" :nameService="'majorInsurance'"
                                         style="width: 360px;" />
                                     <!-- <a-input v-model:value="formState.majorInsurance" -->
-                                        <!-- @change="handleInputTexService()" /> -->
+                                    <!-- @change="handleInputTexService()" /> -->
                                 </div>
                             </a-col>
                         </a-row>
@@ -546,12 +546,12 @@ export default defineComponent({
 
             this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
         },
-        handleInputTexService() {           
-                let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
-                let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);
-                this.formState.taxFeeSevice = basicFee + majorInsurance;                           
+        handleInputTexService() {
+            let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
+            let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);
+            this.formState.taxFeeSevice = basicFee + majorInsurance;
         },
-        
+
         // handleTotalService() {           
         //         let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
         //         let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);

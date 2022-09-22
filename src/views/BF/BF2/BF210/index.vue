@@ -6,7 +6,7 @@
           <a-col>
             <label class="lable-item">회원종류 :</label>
             <a-select
-              style="width: 100px"
+              style="width: 130px"
               v-model:value="dataSearch.nameSale"
               option-label-prop="children"
             >
