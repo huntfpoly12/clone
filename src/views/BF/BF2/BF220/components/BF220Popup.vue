@@ -183,10 +183,6 @@ interface FormState {
     비고: string;
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> develop
 export default defineComponent({
     props: {
         modalStatus: Boolean,
