@@ -42,12 +42,19 @@
                                 <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
                                     :selected-row-keys="selectedItemKeys">
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                        :allow-deleting="true" template="button-template" mode="cell" />
+                                        :allow-deleting="true" template="button-template" mode="cell">
+                                        <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                    </DxEditing>
                                     <template #button-template>
                                         <DxButton icon="plus" />
                                     </template>
                                     <DxPaging :enabled="false" />
-                                    <DxColumn :width="35" data-field="No" caption="#" />
+                                    <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                                        cell-template="indexCell" />
+                                    <template #indexCell="{ data }">
+                                        <div>{{data.rowIndex + 1}}</div>
+                                    </template>
+
                                     <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
                                     <DxColumn :width="225" data-field="StateID" caption="사업분류">
                                         <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
@@ -121,8 +128,8 @@
                         <hr>
                         <a-row style="padding: 5px">
                             <a-col>
-                                <a-form-item label="원천서비스" style="font-weight: bold">
-                                    <input type="checkbox" value="regist"> 원천서비스 신청
+                                <a-form-item label="원천서비스" style="font-weight: bold"> 
+                                    <a-checkbox>원천서비스</a-checkbox>
                                 </a-form-item>
                             </a-col>
                         </a-row>
@@ -132,7 +139,7 @@
                                     <CustomDatepicker valueDate="2022/08/25" />
                                 </a-form-item>
                                 <a-form-item label="직 원 수 ">
-                                    <a-input-number type='number' v-model:value="직원수" style="width: 150px" />
+                                    <a-input-number type='number' min="0" v-model:value="직원수" style="width: 150px" />
                                 </a-form-item>
                                 <a-form-item label="원천서비스 이용료:" style="font-weight: bold;width: 605px">
                                     <p class="input-disble">{{$filters.formatCurrency(total2)}}</p>
@@ -200,7 +207,7 @@
                 </a-collapse-panel>
                 <a-collapse-panel key="3" header="메모" :extra="dataSource.length > 0? dataSource.length: ''"
                     :style="{position: 'relative'}">
-                    <a-table bordered :data-source="dataSource" :pagination="false">
+                    <a-table bordered :data-source="dataSource" :pagination="false" :showHeader="false">
                         <template #bodyCell="{  text, index }">
                             <div>
                                 <div class="title-note">
@@ -260,7 +267,6 @@ import { ref, defineComponent } from 'vue'
 import DxDropDownBox from "devextreme-vue/drop-down-box"
 import imgUpload from "../../../../../components/UploadImage.vue"
 import DxNumberBox from 'devextreme-vue/number-box';
-import DxDateBox from 'devextreme-vue/date-box';
 import {
     DxDataGrid,
     DxColumn,
@@ -270,6 +276,7 @@ import {
     DxLookup,
     DxToolbar,
     DxItem,
+    DxTexts
 
 } from "devextreme-vue/data-grid"
 import { DxButton } from 'devextreme-vue/button';
@@ -312,6 +319,8 @@ export default defineComponent({
         DxItem,
         inputFormat,
         DxNumberBox,
+        DxTexts
+
     },
     props: {
         modalStatus: Boolean,
@@ -683,7 +692,7 @@ export default defineComponent({
     },
 })
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .warring-modal {
     font-size: 13px;
     line-height: 5px;
@@ -734,7 +743,7 @@ export default defineComponent({
 
 .ant-card-extra,
 .ant-card-head-title {
-    padding: 0;
+    padding: 0 !important;
 }
 
 ::v-deep .ant-badge-not-a-wrapper {
@@ -774,18 +783,25 @@ export default defineComponent({
 }
 
 ::v-deep .ant-collapse-header .ant-collapse-extra {
-    margin-left: 8px;    
+    margin-left: 8px!important;
     border-radius: 200px;
     background-color: hwb(120 84% 15%);
     background-size: 100px;
     padding: 4px 7px;
     line-height: 8px;
     border: 1px solid rgb(22, 6, 6);
-
-
 }
-.ant-card-head {
 
-    
+
+.ant-card {
+    height: 45px;
+}
+
+::v-deep .dx-toolbar .dx-toolbar-after {
+    margin-top: -35px !important;
+}
+
+::v-deep .dx-datagrid-headers.dx-datagrid-nowrap {
+    margin-top: -35px;
 }
 </style>
