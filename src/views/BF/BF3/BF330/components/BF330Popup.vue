@@ -110,10 +110,18 @@
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee">
-                                        기본이용료</span>
-                                    <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" />
+                                    <span style="width:116px">
+
+
+                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee"
+                                            @change="handleInputACCService()">
+                                        기본이용료
+                                    </span>
+                                    <inputFormat :value="formState.accBasicFee" @valueInput="changeValueInputEmit"
+                                        :format="'#,##0'" :spinButtons="false" :clearButton="false"
+                                        :nameService="'accBasicFee'" style="width: 230px;" :clearData="formState.checkBoxAccBasicFee"/>
+
+                                    <!-- <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :sapn="10"></a-col>
@@ -630,6 +638,10 @@ export default defineComponent({
                 if (this.formState.checkBoxAcc4wc == false) {
                     this.formState.acc4wc = '0'
                 };
+
+                // if(this.formState.checkBoxAccBasicFee == false){
+
+                // }
             },
             deep: true,
             immediate: true
