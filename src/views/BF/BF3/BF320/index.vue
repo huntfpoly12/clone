@@ -14,14 +14,9 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">상호:</label>
-<<<<<<< HEAD
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"/>
-=======
                             <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'0'" :max="'30'"
                                 :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"
                                 :disabled="false" />
->>>>>>> develop
                         </div>
                     </a-col>
                     <a-col>
