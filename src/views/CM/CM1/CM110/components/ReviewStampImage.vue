@@ -62,7 +62,7 @@ export default defineComponent({
     InfoCircleFilled,
   },
   setup(props, { emit }) {
-    let previewImage: any = ref("/public/images/demo-image.jpg");
+    let previewImage: any = ref("https://www.chanchao.com.tw/images/default.jpg");
     let signature = ref("");
     let disabledBtnPreview = ref(true);
     watch( () => props.modalStatus, async (currentValue, oldValue) => {
@@ -72,7 +72,7 @@ export default defineComponent({
     });
     const setModalVisible = () => {
       emit("closePopup", false);
-      previewImage.value = "/public/images/demo-image.jpg";
+      previewImage.value = "https://www.chanchao.com.tw/images/default.jpg";
       signature.value = '';
     };
     const validateCharacter = () => {

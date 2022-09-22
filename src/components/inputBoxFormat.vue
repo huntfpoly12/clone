@@ -1,9 +1,8 @@
 <template>
     <div @click="$event.target.select()">
         <DxNumberBox v-if="max!= '' && min!= ''" v-model:value="valueInput" value-change-event="keyup"
-            style="width: 120px;height: 33px" @value-changed="changeValueInput" :format="format"
-            :show-spin-buttons="spinButtons" :show-clear-button="clearButton" :max="max" :min="min"
-            :disabled="disabled" />
+            style="height: 33px" @value-changed="changeValueInput" :format="format" :show-spin-buttons="spinButtons"
+            :show-clear-button="clearButton" :max="max" :min="min" :disabled="disabled" />
 
         <DxNumberBox v-else v-model:value="valueInput" value-change-event="keyup" style="width: 120px;height: 33px"
             @value-changed="changeValueInput" :show-spin-buttons="spinButtons" :show-clear-button="clearButton"
@@ -22,16 +21,18 @@ export default defineComponent({
         max: Number,
         spinButtons: Boolean,
         clearButton: Boolean,
-        disabled: Boolean
+        disabled: Boolean,
+        value: String,
+        clearData: Boolean
 
+    },
+    data(props) {
+        return {
+            valueInput: props.value
+        }
     },
     components: {
         DxNumberBox
-    },
-    data() {
-        return {
-            valueInput: ''
-        }
     },
     methods: {
         changeValueInput() {
@@ -43,7 +44,8 @@ export default defineComponent({
                 this.$emit("valueInput", dataCall);
                 this.valueInput = ''
             }
-        }
+        },
+
     }
 })
 </script>

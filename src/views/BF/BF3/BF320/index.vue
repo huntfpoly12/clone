@@ -8,22 +8,22 @@
                             <label class="lable-item">
                                 사업자코드 :
                             </label>
-                            <DxTextBox v-model:value="dataSearch.typeSevice" />
+                            <DxTextBox v-model:value="dataSearch.typeSevice" style="width: 130px;" />
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">상호:</label>
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="'0'" :max="'30'"
+                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
                                 :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"
-                                :disabled="false" />
+                                style="width: 130px;" />
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">대표자:</label>
                             <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
-                                :clearButton="true" :nameService="'typeSevice'" />
+                                :clearButton="true" :nameService="'typeSevice'" style="width: 130px;" />
 
                         </div>
                     </a-col>
@@ -36,7 +36,8 @@
                         <div class="dflex custom-flex">
                             <label class="lable-item">주소 :</label>
                             <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="fasle" :clearButton="true" :nameService="'address'" />
+                                :spinButtons="fasle" :clearButton="true" :nameService="'address'"
+                                style="width: 130px;" />
                         </div>
                     </a-col>
                     <a-col>

@@ -60,7 +60,7 @@
                 <DxColumn data-field="관리시작일" data-type="date" />
                 <DxColumn data-field="영업자" />
                 <DxColumn data-field="서비스" />
-                <DxColumn data-field="이용료" />
+                <DxColumn data-field="이용료" :format="amountFormat" data-type="number"/>
                 <DxColumn data-field="해지일자"/>
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
@@ -124,6 +124,7 @@ export default defineComponent({
     },
     data() {
         return {
+            amountFormat: { currency: 'VND', useGrouping: true },
             dataSource: employees,
             states,
             options: [
