@@ -267,7 +267,7 @@ export default defineComponent({
                 }
             },
             immediate: true
-        }
+        },
     },
     computed: {
         username() {
