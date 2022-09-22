@@ -71,8 +71,9 @@
                       <div style="margin-left: 50px">
                         <span>두루누리 적용 여부 (사업자):</span>
                         <a-switch
-                          checked-children="이용중"
-                          un-checked-children="이용중지"
+                          v-model:checked="isSwitch"
+                          checked-children="적용"
+                          un-checked-children="미적용"
                           style="width: 10%; margin-left: 8px"
                         />
                       </div>
@@ -104,6 +105,8 @@
                       <a-modal
                         class="container_email"
                         v-model:visible="isShow"
+                        okText="네. 적용합니다"
+                        cancelText="아니오"
                         @ok="handleSuccsess"
                       >
                         <div id="modal">
@@ -196,8 +199,14 @@
             <DxColumn
               data-field="이용여부"
               :width="80"
+              cell-template="use"
               css-class="cell-center"
             />
+            <template #use="{ data }">
+              <a-tag :color="getAbleDisable(data.value)">{{
+                data.value
+              }}</a-tag>
+            </template>
             <DxColumn data-field="과세구분" />
 
             <DxColumn data-field="항목명" />
@@ -229,10 +238,18 @@
               </div>
             </template>
           </DxDataGrid>
+          <a-form-item
+            style="margin-top: 24px"
+            :wrapper-col="{ span: 14, offset: 9 }"
+          >
+            <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
+            <a-button style="margin-left: 10px">저장하고 나가기</a-button>
+          </a-form-item>
         </div>
         <AddCM130Popup
           :modalStatus="modalAddNewStatus"
           @closePopup="modalAddNewStatus = false"
+          title="원천설정 [ cm-130 –pop ]"
         />
         <EditCM130Popup
           :modalStatus="modalEditStatus"
@@ -387,9 +404,13 @@ export default defineComponent({
     // const bf130Detail: UnwrapRef<FormState> = reactive({
     //   switch: false,
     // });
+    const isSwitch = ref<boolean>(false);
     const isShow = ref<boolean>(false);
     const showModal = () => {
       isShow.value = true;
+    };
+    const SwitchButton = () => {
+      isSwitch.value = true;
     };
     let previewImage: any = ref("/public/images/demo-image.jpg");
 
@@ -412,7 +433,8 @@ export default defineComponent({
       },
 
       previewImage,
-
+      SwitchButton,
+      isSwitch,
       isShow,
       showModal,
       handleSuccsess,
@@ -450,11 +472,21 @@ export default defineComponent({
       this.modalHistoryStatus = true;
       this.popupData = data;
     },
+    getAbleDisable(data: any) {
+      if (data === "") {
+        return "transparent";
+      } else if (data === "이용중지") {
+        return "red";
+      }
+    },
   },
 });
 </script>
-<style lang="scss">
-.cell-center {
+<style lang="scss" scoped>
+::v-deep .ant-tag-red {
+  border: none;
+}
+::v-deep .cell-center {
   text-align: center !important;
 }
 
@@ -473,8 +505,5 @@ export default defineComponent({
 .validate-message {
   margin-left: 2%;
   color: #c3baba;
-}
-.cell-center {
-  text-align: center !important;
 }
 </style>

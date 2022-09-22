@@ -29,7 +29,7 @@
                                     <a-tag color="black">매니저</a-tag>
                                 </a-radio>
                                 <a-radio :value="'영업자'">
-                                    <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                                    <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                                 </a-radio>
                                 <a-radio :value="'파트너'">
                                     <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
@@ -97,7 +97,7 @@
                                     <a-tag color="black">매니저</a-tag>
                                 </a-radio>
                                 <a-radio :value="'영업자'">
-                                    <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                                    <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                                 </a-radio>
                                 <a-radio :value="'파트너'">
                                     <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
@@ -183,13 +183,6 @@ interface FormState {
     비고: string;
 }
 
-interface dataFormEdit {
-    name: string,
-    delivery: string,
-    type: string,
-    resource: string,
-}
-
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -230,7 +223,7 @@ export default defineComponent({
 
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
-        let confirm = ref<string>('');;
+        let confirm = ref<string>('');
         const bf220Detail: UnwrapRef<FormState> = reactive({
             name: '',
             delivery: false,
@@ -248,7 +241,7 @@ export default defineComponent({
             비고: ''
         });
 
-        const dataEditDemo: UnwrapRef<dataFormEdit> = reactive({
+        const dataEditDemo = reactive({
             name: 'MMANAGER',
             delivery: '',
             type: '',
