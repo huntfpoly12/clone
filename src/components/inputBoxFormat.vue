@@ -39,18 +39,8 @@ export default defineComponent({
             if (this.valueInput == 0) {
                 this.valueInput = ''
             }
-<<<<<<< HEAD
-            let dataCall = {
-                name: this.nameService,
-                value: this.valueInput
-            }
-            this.$emit("valueInput", dataCall);
-
-        }
-=======
         },
 
->>>>>>> develop
     }
 })
 </script>
