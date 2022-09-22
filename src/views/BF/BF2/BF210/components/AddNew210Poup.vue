@@ -26,16 +26,22 @@
               <a-input style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-input-search v-model:value="bf310Detail.name" placeholder="">
-                <template #prefix>
-                  <search-outlined />
-                </template>
-                <template #enterButton>
-                  <a-button>
-                    <search-outlined />
-                  </a-button>
-                </template>
-              </a-input-search>
+              <a-select
+                v-model:value="bf310Detail.name"
+                show-search
+                placeholder="Select a person"
+                style="width: 300px"
+                :options="selectSearch"
+                :filter-option="filterOption"
+                @focus="handleFocus"
+                @blur="handleBlur"
+                @change="handleChange"
+                class="select-search"
+              >
+                <template #suffixIcon
+                  ><search-outlined :size="14" class="ant-select-suffix"
+                /></template>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -44,7 +50,7 @@
                 v-model:checked="bf310Detail.switch"
                 checked-children="이용중"
                 un-checked-children="이용중지"
-                style="width: 30%"
+                style="width: 100px"
               />
             </a-form-item>
 
@@ -54,19 +60,11 @@
                 v-model:value="dataMode.color"
                 option-label-prop="children"
               >
-                <a-select-option value="고객사" label="고객사">
-                  <a-tag style="color: black" :color="getColorTag('고객사')"
-                    >고객사</a-tag
-                  >
-                </a-select-option>
-                <a-select-option value="최고매니저" label="최고매니저">
-                  <a-tag :color="getColorTag('최고매니저')">최고매니저</a-tag>
-                </a-select-option>
                 <a-select-option value="중간매니저" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
                 </a-select-option>
                 <a-select-option value="담당매니저" label="담당매니저">
-                  <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
+                  <a-tag :color="getColorTag('담당매니저')">담당매니저</a-tag>
                 </a-select-option>
                 <a-select-option value="영업자" label="영업자">
                   <a-tag :color="getColorTag('영업자')">영업자</a-tag>
@@ -95,7 +93,6 @@
                   v-model:value="formState.user.number"
                   style="width: 150px; margin-right: 8px"
                 />
-                <span style="color: #a19999">Numeric only!</span>
               </div>
             </a-form-item>
             <a-form-item
@@ -107,15 +104,17 @@
                 v-model:value="formState.user.email"
                 style="width: 250px"
               />
-            </a-form-item>
-            <a-form-item>
+
               <a-button
                 :disabled="!validated"
                 html-type="submit"
-                class="btn_sendemail"
+                class="btn_submitemail"
+                danger
                 @click="showModal"
                 >비밀번호 변경
               </a-button>
+            </a-form-item>
+            <a-form-item>
               <a-modal
                 class="container_email"
                 v-model:visible="isShow"
@@ -124,13 +123,7 @@
                 <div id="modal_email" class="modal_email">
                   <mail-outlined style="padding-right: 10px" />
                   <div>
-                    <p
-                      style="
-                        margin-bottom: 2px;
-                        font-weight: 600;
-                        margin-top: 16px;
-                      "
-                    >
+                    <p style="margin-bottom: 2px; font-weight: 600">
                       비밀번호 설정 이메일
                     </p>
                     <p style="margin-bottom: 0">
@@ -223,6 +216,8 @@
 import { ref, defineComponent, reactive } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
+import type { SelectProps } from "ant-design-vue";
+
 import {
   DxDataGrid,
   DxColumn,
@@ -295,6 +290,23 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const selectSearch = ref<SelectProps["options"]>([
+      { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
+      { value: "C20235301", label: "C20225301     효사랑노인요양전문병원" },
+      { value: "D20223838", label: "D20223838     테크노프로그램우리컴퍼니" },
+    ]);
+    const filterOption = (input: string, option: any) => {
+      return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    };
+    const handleChange = (value: string) => {
+      console.log(`selected ${value}`);
+    };
+    const handleBlur = () => {
+      console.log("blur");
+    };
+    const handleFocus = () => {
+      console.log("focus");
+    };
     const data = props.data;
     const isShow = ref<boolean>(false);
     const visible = ref<boolean>(false);
@@ -394,6 +406,11 @@ export default defineComponent({
       isShow,
       showModal,
       handleSuccsess,
+      selectSearch,
+      filterOption,
+      handleFocus,
+      handleBlur,
+      handleChange,
     };
   },
   methods: {
@@ -409,13 +426,7 @@ export default defineComponent({
       this.$emit("closePopup", false);
     },
     getColorTag(data: string) {
-      if (data === "고객사") {
-        return "blue";
-      } else if (data === "최고매니저") {
-        return "#4a4848";
-      } else if (data === "중간매니저") {
-        return "#4a4848";
-      } else if (data === "담당매니저") {
+      if (data === "중간매니저") {
         return "#4a4848";
       } else if (data === "담당매니저") {
         return "#4a4848";
@@ -437,7 +448,26 @@ export default defineComponent({
   },
 });
 </script>
-<style>
+<style scoped>
+::v-deep .ant-modal-footer {
+  padding-top: 0;
+}
+::v-deep .ant-form-item-control {
+  display: flex;
+  flex-direction: row;
+}
+::v-deep .ant-form-item-label > label {
+  width: 110px;
+}
+.select-search ::v-deep .ant-select-arrow .anticon > svg {
+  width: 16px;
+  height: 16px;
+}
+::v-deep .ant-form-item-explain-error {
+  width: 400px;
+  margin-left: 5px;
+  padding-top: 5px;
+}
 .overlay {
   position: absolute;
   top: 0;
@@ -454,7 +484,7 @@ export default defineComponent({
   font-weight: 700;
   color: gray;
 }
-#modal_email .anticon-mail svg {
+.modal_email ::v-deep .anticon svg {
   width: 50px;
   height: 50px;
 }
@@ -469,11 +499,8 @@ export default defineComponent({
 .modal_email {
   display: flex;
 }
-.btn_sendemail {
-  padding: 5px 10px;
-  color: red;
-  margin-left: 112px;
-  border: 1px solid red;
+.btn_submitemail {
+  margin-top: 10px;
 }
 .confirm-button {
   margin-left: 100px;

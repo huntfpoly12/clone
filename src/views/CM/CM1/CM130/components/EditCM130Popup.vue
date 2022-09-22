@@ -10,14 +10,14 @@
       width="50%"
     >
       <h2 style="font-weight: 600; color: gray" class="title_modal">
-        회원정보
+        급여상세항목
       </h2>
       <a-row :gutter="24">
         <a-col :span="12">
           <a-form-item label="코드">
             <a-input
               disabled
-              value="S0001"
+              value="22"
               style="width: 150px; margin-right: 10px"
             />
           </a-form-item>

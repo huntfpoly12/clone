@@ -10,7 +10,7 @@
       width="50%"
     >
       <h2 style="font-weight: 600; color: gray" class="title_modal">
-        회원정보
+        급여상세항목
       </h2>
       <a-row :gutter="24">
         <a-col :span="12">
