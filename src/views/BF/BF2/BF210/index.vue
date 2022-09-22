@@ -5,11 +5,15 @@
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
             <label class="lable-item">회원종류 :</label>
+<<<<<<< HEAD
+            <a-select style="width: 100px" v-model:value="dataSearch.nameSale" option-label-prop="children">
+=======
             <a-select
-              style="width: 100px"
+              style="width: 130px"
               v-model:value="dataSearch.nameSale"
               option-label-prop="children"
             >
+>>>>>>> develop
               <a-select-option value="고객사" label="고객사">
                 <a-tag :color="getColorTag('고객사')">고객사</a-tag>
               </a-select-option>
@@ -26,17 +30,11 @@
           </a-col>
           <a-col>
             <label class="lable-item">소속코드:</label>
-            <a-input
-              style="width: 150px"
-              v-model:value="dataSearch.nameCompany"
-            />
+            <a-input style="width: 150px" v-model:value="dataSearch.nameCompany" />
           </a-col>
           <a-col>
             <label class="lable-item">소속명:</label>
-            <a-input
-              style="width: 150px"
-              v-model:value="dataSearch.surrogate"
-            />
+            <a-input style="width: 150px" v-model:value="dataSearch.surrogate" />
           </a-col>
           <a-col>
             <label class="lable-item">회원ID :</label>
@@ -47,38 +45,25 @@
             <a-input style="width: 150px" v-model:value="dataSearch.username" />
           </a-col>
           <a-col style="display: flex; align-items: center">
-            <a-checkbox v-model:checked="dataSearch.typeSevice1"
-              ><a-tag :color="getAbleDisable('이용중')"
-                >이용중</a-tag
-              ></a-checkbox
-            >
-            <a-checkbox v-model:checked="dataSearch.typeSevice2"
-              ><a-tag :color="getAbleDisable('이용중지')"
-                >이용중지</a-tag
-              ></a-checkbox
-            >
+            <a-checkbox v-model:checked="dataSearch.typeSevice1">
+              <a-tag :color="getAbleDisable('이용중')">이용중</a-tag>
+            </a-checkbox>
+            <a-checkbox v-model:checked="dataSearch.typeSevice2">
+              <a-tag :color="getAbleDisable('이용중지')">이용중지</a-tag>
+            </a-checkbox>
           </a-col>
         </a-row>
       </div>
     </div>
     <div class="page-content">
-      <DxDataGrid
-        :data-source="dataSource"
-        :show-borders="true"
-        key-expr="ID"
-        @exporting="onExporting"
-      >
+      <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
         <DxPaging :page-size="5" />
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
         <DxExport :enabled="true" :allow-export-selected-data="true" />
         <DxToolbar>
           <DxItem name="searchPanel" />
           <DxItem name="exportButton" />
-          <DxItem
-            location="after"
-            template="button-template"
-            css-class="cell-button-add"
-          />
+          <DxItem location="after" template="button-template" css-class="cell-button-add" />
           <DxItem name="groupPanel" />
           <DxItem name="addRowButton" show-text="always" />
           <DxItem name="columnChooserButton" />
@@ -86,23 +71,13 @@
         <template #button-template>
           <DxButton icon="plus" @click="openAddNewModal" />
         </template>
-        <DxColumn
-          data-field="상태"
-          css-class="cell-center"
-          cell-template="check-box"
-          :width="100"
-        />
+        <DxColumn data-field="상태" css-class="cell-center" cell-template="check-box" :width="100" />
         <template #check-box="{ data }">
           <a-tag :color="getAbleDisable(data.value)">{{ data.value }}</a-tag>
         </template>
         <DxColumn data-field="회원ID" :width="80" css-class="cell-center" />
         <DxColumn data-field="회원명" :width="100" />
-        <DxColumn
-          data-field="회원종류"
-          cell-template="grid-cell"
-          css-class="cell-center"
-          :width="150"
-        />
+        <DxColumn data-field="회원종류" cell-template="grid-cell" css-class="cell-center" :width="150" />
         <template #grid-cell="{ data }">
           <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
         </template>
@@ -130,28 +105,13 @@
         </template>
       </DxDataGrid>
 
-      <AddNew210Poup
-        :modalStatus="modalAddNewStatus"
-        @closePopup="modalAddNewStatus = false"
-      />
-      <EditBF210Popup
-        :modalStatus="modalEditStatus"
-        @closePopup="modalEditStatus = false"
-        :data="popupData"
-        title="회원관리 [ bf-210 –pop ]"
-      />
-      <HistoryPopup
-        :modalStatus="modalHistoryStatus"
-        @closePopup="modalHistoryStatus = false"
-        :data="popupData"
-        title="변경이력[cm-000-pop]"
-      />
-      <PopLogin
-        :modalStatus="modalLoginStatus"
-        @closePopup="modalLoginStatus = false"
-        :data="popupData"
-        title="로그인이력 [ cm-000-popLogin ]"
-      />
+      <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+      <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
+        title="회원관리 [ bf-210 –pop ]" />
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+        title="변경이력[cm-000-pop]" />
+      <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
+        title="로그인이력 [ cm-000-popLogin ]" />
     </div>
   </div>
 </template>
