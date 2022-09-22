@@ -5,7 +5,15 @@
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
             <label class="lable-item">회원종류 :</label>
+<<<<<<< HEAD
             <a-select style="width: 100px" v-model:value="dataSearch.nameSale" option-label-prop="children">
+=======
+            <a-select
+              style="width: 130px"
+              v-model:value="dataSearch.nameSale"
+              option-label-prop="children"
+            >
+>>>>>>> develop
               <a-select-option value="고객사" label="고객사">
                 <a-tag :color="getColorTag('고객사')">고객사</a-tag>
               </a-select-option>

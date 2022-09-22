@@ -36,8 +36,8 @@
                             </a-col>
                         </a-row>
                         <div>
-                            <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                                :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
+                            <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%; padding: 0px;"
+                                :headStyle="{padding: '0px',color: 'red'}" bodyStyle="padding: 0px 0px">
 
                             </a-card>
                             <div id="data-grid-demo">
@@ -67,22 +67,20 @@
                         <a-row>
                             <a-col :span="14">
                                 <a-form-item label="회계서비스 이용료:" style="margin-top: 10px; font-weight: bold">
-                                    <a-input v-model:value="formState.accFeeService" disabled="True" />
+                                    <a-input v-model:value="formState.accFeeService" disabled="true" />
                                 </a-form-item>
                             </a-col>
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:116px">
-
-
+                                    <span style="width:150px">
                                         <input type="checkbox" v-model="formState.checkBoxAccBasicFee"
                                             @change="handleInputACCService()">
                                         기본이용료
                                     </span>
                                     <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
                                         :spinButtons="false" :clearButton="false" :nameService="'accBasicFee'"
-                                        style="width: 230px;" />
+                                        style="width: 300px;" />
 
                                     <!-- <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" /> -->
                                 </div>
@@ -204,7 +202,6 @@
                     </a-form>
                 </a-collapse-panel>
                 <a-collapse-panel key="3" header="메모">
-
                     <!-- <a-badge count="25" :number-style="{
                     backgroundColor: '#444',color: '#999',}" /> -->
                     <a-table bordered :data-source="dataSource" :pagination="false">
@@ -540,6 +537,8 @@ export default defineComponent({
         },
 
         handleInputACCService() {
+            console.log('123');
+            
             let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
             let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
             let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
@@ -559,6 +558,8 @@ export default defineComponent({
         //         this.formState.taxFeeSevice = basicFee + majorInsurance;                           
         // },
         changeValueInputEmit(data: any) {
+            console.log(data);
+            
             if (data.name === 'accBasicFee') {
                 this.formState.accBasicFee = data.value
                 this.handleInputACCService()
@@ -577,11 +578,11 @@ export default defineComponent({
             }
             if (data.name === 'majorInsurance') {
                 this.formState.majorInsurance = data.value
-                this.handleInputACCService()
+                this.handleInputTexService()
             }
             if (data.name === 'basicFee') {
                 this.formState.basicFee = data.value
-                this.handleInputACCService()
+                this.handleInputTexService()
             }
         }
 
@@ -590,6 +591,7 @@ export default defineComponent({
     watch: {
         formState: {
             handler() {
+                this.handleInputTexService()
                 if (this.formState.accFeeService != 0 && this.formState.taxFeeSevice != 0) {
 
                     this.formState.totalService = this.formState.taxFeeSevice + this.formState.accFeeService
@@ -649,13 +651,13 @@ export default defineComponent({
                     this.formState.majorInsurance = '0'
                     let data = (document.querySelector(".majorInsurance div div input") as HTMLInputElement)
                     data.value = '0'
-                    this.handleInputACCService()
+                    this.handleInputTexService()
                 }
                 if (this.formState.checkBoxBasicFee == false) {
                     this.formState.basicFee = '0'
                     let data = (document.querySelector(".basicFee div div input") as HTMLInputElement)
                     data.value = '0'
-                    this.handleInputACCService()
+                    this.handleInputTexService()
                 }
             },
             deep: true,

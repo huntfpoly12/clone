@@ -62,7 +62,7 @@
                 v-model:checked="bf310Detail.switch"
                 checked-children="이용중"
                 un-checked-children="이용중지"
-                style="width: 30%"
+                style="width: 100px"
               />
             </a-form-item>
 
@@ -113,6 +113,7 @@
               type="number"
               :name="['user', 'number']"
               label="휴대폰"
+              :span="4"
             >
               <div style="display: flex; align-items: flex-end">
                 <a-input
@@ -121,7 +122,6 @@
                   v-model:value="formState.user.number"
                   style="width: 150px; margin-right: 8px"
                 />
-                <span style="color: #a19999">Numeric only!</span>
               </div>
               <div :class="{ active: toggleActive }" class="toggle_container">
                 <ToggleButton v-on:change="triggerToggleEvent" />
@@ -131,20 +131,22 @@
               :name="['user', 'email']"
               label="이메일"
               :rules="[{ type: 'email' }]"
+              :span="8"
             >
               <a-input
                 v-model:value="formState.user.email"
                 style="width: 250px"
               />
-            </a-form-item>
-            <a-form-item>
               <a-button
                 :disabled="!validated"
                 html-type="submit"
+                danger
                 class="btn_sendemail"
                 @click="showModal"
                 >비밀번호 변경
               </a-button>
+            </a-form-item>
+            <a-form-item>
               <a-modal
                 :disabled="!formState.user.email"
                 class="container_email"
@@ -217,34 +219,6 @@
         </div>
       </div>
     </a-modal>
-
-    <!-- <a-modal
-      v-model:visible="visible"
-      title="해지 확인"
-      ok-text="완료"
-      class="confirm-modal"
-    >
-      <a-row>
-        <a-col :span="4">
-          <warning-outlined :style="{ fontSize: '70px', color: '#faad14' }" />
-        </a-col>
-        <a-col :span="20">
-          <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
-          <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을</p>
-          <p>누르세요</p>
-        </a-col>
-      </a-row>
-      <template #footer>
-        <a-input
-          v-model:value="confirm"
-          placeholder="확인"
-          style="width: 150px"
-        />
-        <a-button type="primary" @click="handleOkConfirm" class="confirm-button"
-          >완료</a-button
-        >
-      </template>
-    </a-modal> -->
   </div>
 </template>
 
@@ -470,7 +444,19 @@ export default defineComponent({
   },
 });
 </script>
-<style>
+<style scoped>
+::v-deep .ant-form-item-control {
+  display: flex;
+  flex-direction: row;
+}
+::v-deep .ant-form-item-explain-error {
+  width: 400px;
+  margin-left: 5px;
+  padding-top: 5px;
+}
+::v-deep .ant-form-item-label > label {
+  width: 110px;
+}
 .overlay {
   position: absolute;
   top: 0;
@@ -491,7 +477,7 @@ export default defineComponent({
   font-weight: 700;
   color: gray;
 }
-#modal_email .anticon-mail svg {
+.modal_email ::v-deep .anticon svg {
   width: 50px;
   height: 50px;
 }
@@ -509,10 +495,7 @@ export default defineComponent({
   align-items: center;
 }
 .btn_sendemail {
-  padding: 5px 10px;
-  color: red;
-  margin-left: 112px;
-  border: 1px solid red;
+  margin-top: 10px;
 }
 .confirm-button {
   margin-left: 100px;

@@ -4,7 +4,7 @@
             style="height: 33px" @value-changed="changeValueInput" :format="format" :show-spin-buttons="spinButtons"
             :show-clear-button="clearButton" :max="max" :min="min" :disabled="disabled" />
 
-        <DxNumberBox v-else v-model:value="valueInput" value-change-event="keyup" style="width: 120px;height: 33px"
+        <DxNumberBox v-else v-model:value="valueInput" value-change-event="keyup" style="height: 33px"
             @value-changed="changeValueInput" :show-spin-buttons="spinButtons" :show-clear-button="clearButton"
             :disabled="disabled" />
     </div>
@@ -37,11 +37,6 @@ export default defineComponent({
     methods: {
         changeValueInput() {
             if (this.valueInput == 0) {
-                let dataCall = {
-                    name: this.nameService,
-                    value: this.valueInput
-                }
-                this.$emit("valueInput", dataCall);
                 this.valueInput = ''
             }
         },
