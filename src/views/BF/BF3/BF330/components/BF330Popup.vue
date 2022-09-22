@@ -9,7 +9,8 @@
                             <a-col :span="10">
                                 <a-form-item label="총일용료" style="font-weight: bold;">
                                     <!-- <InpuNumber :typeInput="'2'" /> -->
-                                    <a-input v-model:value="formState.totalService" disabled="True" />
+                                    <a-input v-model:value="formState.totalService" disabled="True"
+                                        :format="amountFormat" data-type="number" />
                                 </a-form-item>
                             </a-col>
                             <a-col :span="8"></a-col>
@@ -37,68 +38,30 @@
                         <div>
                             <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                 :headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
-                                <template #extra>
-                                    <a-button type="text" @click="handleCopy()">
-                                        <PlusOutlined :style="{fontSize: '20px', color: '#08c'}" />
-                                    </a-button>
-                                </template>
-                                <div id="data-grid-demo">
-                                        <DxDataGrid
-                                        id="gridContainer"
-                                        :data-source="dataTable"
-                                        :show-borders="true"
-                                        :selected-row-keys="selectedItemKeys"
-                                      
-                                        >
-                                        <DxEditing
-                                            :allow-updating="true"
-                                            :allow-adding="true"
-                                            :allow-deleting="true"
-                                            text="편집"
-                                            mode="cell"
-                                        />
-                                        <DxPaging :enabled="false"/>
-                                        <DxSelection mode="multiple"/>
-                                        <DxColumn
-                                            :width="55"
-                                            data-field="Prefix"
-                                            caption="Title"
-                                        />
-                                        <DxColumn
-                                            data-field="FirstName"
-                                        />
-                                        <DxColumn
-                                            data-field="LastName"
-                                        />
-                                        <DxColumn
-                                            :width="170"
-                                            data-field="Position"
-                                        />
-                                        <DxColumn
-                                            :width="125"
-                                            data-field="StateID"
-                                            caption="State"
-                                        >
-                                            <DxLookup
-                                            :data-source="states"
-                                            value-expr="ID"
-                                            display-expr="Name"
-                                            />
-                                        </DxColumn>
-                                        <DxColumn
-                                            data-field="BirthDate"
-                                            data-type="date"
-                                        />
-                                        <DxToolbar>
-                                            <DxItem
-                                            name="addRowButton"
-                                            show-text="always"
-                                            />
-        
-                                        </DxToolbar>
-                                        </DxDataGrid>
-                                    </div>
+
                             </a-card>
+                            <div id="data-grid-demo">
+                                <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
+                                    :selected-row-keys="selectedItemKeys">
+                                    <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+                                        :allow-deleting="true" template="button-template" mode="cell" />
+                                    <template #button-template>
+                                        <DxButton icon="plus" />
+                                    </template>
+                                    <DxPaging :enabled="false" />
+                                    <DxColumn :width="35" data-field="No" caption="#" />
+                                    <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
+                                    <DxColumn :width="225" data-field="StateID" caption="사업분류">
+                                        <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
+                                    </DxColumn>
+                                    <DxColumn data-field="서비스시작년월" data-type="date" />
+                                    <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
+                                    <DxToolbar>
+                                        <DxItem name="addRowButton" />
+                                    </DxToolbar>
+                                </DxDataGrid>
+                            </div>
+
                         </div>
 
                         <a-row>
@@ -110,36 +73,58 @@
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee">
-                                        기본이용료</span>
-                                    <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" />
+                                    <span style="width:116px">
+
+
+                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee"
+                                            @change="handleInputACCService()">
+                                        기본이용료
+                                    </span>
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'accBasicFee'"
+                                        style="width: 230px;" />
+
+                                    <!-- <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :sapn="10"></a-col>
                             <a-col :span="14">
                                 <div style="display: flex; padding-left: 155px; margin-top: 5px;">
                                     <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccInput"> 입력대형
+                                        <input type="checkbox" v-model="formState.checkBoxAccInput"
+                                            @change="handleInputACCService()"> 입력대형
                                     </span>
-                                    <a-input v-model:value="formState.accInput" @change="handleInputACCService()" />
+
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'accInput'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.accInput" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px; margin-top: 5px;">
                                     <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccConso"> 계좌통합
+                                        <input type="checkbox" v-model="formState.checkBoxAccConso"
+                                            @change="handleInputACCService()"> 계좌통합
                                     </span>
-                                    <a-input v-model:value="formState.accConsolidation"
-                                        @change="handleInputACCService()" />
+
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'accConsolidation'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.accConsolidation"
+                                        @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                     <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAcc4wc"> W4C
+                                        <input type="checkbox" v-model="formState.checkBoxAcc4wc"
+                                            @change="handleInputACCService()"> W4C
                                     </span>
-                                    <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" />
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'acc4wc'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                         </a-row>
@@ -154,14 +139,14 @@
                         </a-row>
                         <div>
                             <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-form-item label="서비스 시작년월" style="width: 300px">
+                                <a-form-item label="서비스 시작년월" style="width: 270px">
                                     <CustomDatepicker width="30%" valueDate="2022/08/25" />
                                 </a-form-item>
                                 <a-form-item label="직 원 수">
-                                    <a-input-number type='number' v-model:value="직원수" style="width: 100px" />
+                                    <a-input-number type='number' v-model:value="직원수" style="width: 120px" />
                                 </a-form-item>
                                 <a-form-item label="원천서비스 이용료:">
-                                    <a-input v-model:value="formState.taxFeeSevice" style="width: 367px"
+                                    <a-input v-model:value="formState.taxFeeSevice" style="width: 353px"
                                         disabled="True" />
                                 </a-form-item>
                             </a-form>
@@ -176,7 +161,10 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxBasicFee" />
                                         기본이용료</span>
-                                    <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" />
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'basicFee'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" /> -->
                                 </div>
                             </a-col>
                             <a-coll :span="8"></a-coll>
@@ -185,8 +173,11 @@
                                     <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
                                         4대보험</span>
-                                    <a-input v-model:value="formState.majorInsurance"
-                                        @change="handleInputTexService()" />
+                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                        :spinButtons="false" :clearButton="false" :nameService="'majorInsurance'"
+                                        style="width: 360px;" />
+                                    <!-- <a-input v-model:value="formState.majorInsurance" -->
+                                    <!-- @change="handleInputTexService()" /> -->
                                 </div>
                             </a-col>
                         </a-row>
@@ -212,7 +203,8 @@
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="3" header="메모" class="modal-note badge">
+                <a-collapse-panel key="3" header="메모">
+
                     <!-- <a-badge count="25" :number-style="{
                     backgroundColor: '#444',color: '#999',}" /> -->
                     <a-table bordered :data-source="dataSource" :pagination="false">
@@ -245,7 +237,7 @@
         <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
             <div>
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="key">
-                    <DxColumn data-field="기록일시" width='150px'  />
+                    <DxColumn data-field="기록일시" width='150px' />
                     <DxColumn data-field="비고" />
                     <DxColumn data-field="생성일시" />
                     <DxColumn data-field="생성자ID" />
@@ -288,10 +280,9 @@ import { DxButton } from 'devextreme-vue/button';
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import { employees, states } from './data.js';
-// import { dataTable };
-
 import { UploadOutlined, MinusCircleOutlined, ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined, WarningFilled, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
+import inputFormat from '../../../../../components/inputBoxFormat.vue'
 import type { UploadProps } from 'ant-design-vue'
 
 
@@ -307,25 +298,21 @@ export default defineComponent({
         modalStatusHistory: Boolean,
 
     },
+
     data() {
         return {
+            amountFormat: { currency: 'VND', useGrouping: true },
             담당자선택: "담당자선택",
             영업자선택: "영업자선택",
             직원수: '직원수',
-            // dataSource: new DataSource({
-            //     store: new ArrayStore({
-            //         data: this.dataTable,
-            //         key: 'ID',
-            //     }),
-            // }),
-            // selectedItemKeys: [],
-            selectionChanged: (data:any) => {
+            selectionChanged: (data: any) => {
                 this.selectedItemKeys = data.selectedRowKeys;
             },
+            dataModal: employees,
             dataTable: new DataSource({
                 store: new ArrayStore({
-                data: employees,
-                key: 'ID',
+                    data: employees,
+                    key: 'ID',
                 }),
             }),
             selectedItemKeys: [],
@@ -353,6 +340,7 @@ export default defineComponent({
         DxButton,
         DxToolbar,
         DxItem,
+        inputFormat
     },
 
     setup() {
@@ -467,43 +455,6 @@ export default defineComponent({
                 key: "action",
             },
         ];
-        // const dataTable = ref([
-        //     {
-        //         key: "1",
-        //         No: "1",
-        //         사업명: "가나다라마바 사업",
-        //         사업분류: "방문요양",
-        //         서비스시작년월: "2015/01/01",
-        //         정원수: 10,
-
-        //     },
-        //     {
-        //         key: "2",
-        //         No: "2",
-        //         사업명: "가나다라마바 사업",
-        //         사업분류: "방문간호",
-        //         서비스시작년월: "2015/01/01",
-        //         정원수: 10,
-        //     },
-        //     {
-        //         key: "3",
-        //         No: "3",
-        //         사업명: "가나다라마바 사업",
-        //         사업분류: "단기보호",
-        //         서비스시작년월: "2015/01/13",
-        //         정원수: 10,
-        //     },
-        //     {
-        //         key: "4",
-        //         No: "4",
-        //         사업명: "가나다라마바 사업",
-        //         사업분류: "단기보호",
-        //         서비스시작년월: "2015/01/13",
-        //         정원수: 10,
-        //     },
-        // ]);
-
-
         return {
             fileList,
             loading,
@@ -544,7 +495,21 @@ export default defineComponent({
                 return "grey"
             }
         },
+        addNew() {
+            let add =
+            {
+                ID: 5,
+                No: "5",
+                사업명: "가나다라마바 사업",
+                StateID: 4,
+                서비스시작년월: "2015/01/13",
+                정원수: 10,
+            }
+            this.dataModal.push(add)
+            console.log(this.dataModal);
 
+
+        },
         handleAdd() {
             this.keyNumber++
             let dataDef = {
@@ -575,32 +540,58 @@ export default defineComponent({
         },
 
         handleInputACCService() {
-            if (this.formState.accBasicFee != '' || this.formState.accConsolidation != '' || this.formState.accInput != '' || this.formState.acc4wc != '') {
-                let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
-                let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
-                let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
-                let acc4wc = this.formState.acc4wc == '' ? 0 : parseInt(this.formState.acc4wc);
+            let accBasicFee = this.formState.accBasicFee == '' ? 0 : parseInt(this.formState.accBasicFee);
+            let accConsolidation = this.formState.accConsolidation == '' ? 0 : parseInt(this.formState.accConsolidation);
+            let accInput = this.formState.accInput == '' ? 0 : parseInt(this.formState.accInput);
+            let acc4wc = this.formState.acc4wc == '' ? 0 : parseInt(this.formState.acc4wc);
 
-                this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
-
-            }
+            this.formState.accFeeService = accBasicFee + accConsolidation + accInput + acc4wc;
         },
         handleInputTexService() {
-            if (this.formState.basicFee != '' || this.formState.majorInsurance != '') {
-                let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
-                let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);
-                this.formState.taxFeeSevice = basicFee + majorInsurance;
-                console.log(this.formState.basicFee);
-                console.log(this.formState.majorInsurance);
-            }
+            let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
+            let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);
+            this.formState.taxFeeSevice = basicFee + majorInsurance;
         },
+
+        // handleTotalService() {           
+        //         let basicFee = this.formState.basicFee == '' ? 0 : parseInt(this.formState.basicFee);
+        //         let majorInsurance = this.formState.majorInsurance == '' ? 0 : parseInt(this.formState.majorInsurance);
+        //         this.formState.taxFeeSevice = basicFee + majorInsurance;                           
+        // },
+        changeValueInputEmit(data: any) {
+            if (data.name === 'accBasicFee') {
+                this.formState.accBasicFee = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'accInput') {
+                this.formState.accInput = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'accConsolidation') {
+                this.formState.accConsolidation = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'acc4wc') {
+                this.formState.acc4wc = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'majorInsurance') {
+                this.formState.majorInsurance = data.value
+                this.handleInputACCService()
+            }
+            if (data.name === 'basicFee') {
+                this.formState.basicFee = data.value
+                this.handleInputACCService()
+            }
+        }
 
 
     },
     watch: {
         formState: {
-            handler(value: any) {
+            handler() {
                 if (this.formState.accFeeService != 0 && this.formState.taxFeeSevice != 0) {
+
                     this.formState.totalService = this.formState.taxFeeSevice + this.formState.accFeeService
                 };
                 if (this.formState.checkBox == true && this.formState.accBasicFee != '' && this.formState.accConsolidation != '' && this.formState.accInput != '' && this.formState.acc4wc != '') {
@@ -609,27 +600,63 @@ export default defineComponent({
                 if (this.formState.checkBox == true && this.formState.basicFee != '' && this.formState.majorInsurance != '') {
                     this.formState.taxFeeSevice = parseInt(this.formState.basicFee) + parseInt(this.formState.majorInsurance)
                 };
+
+
+                // if (this.formState.checkBoxAccBasicFee == false) {
+                //     this.formState.accBasicFee = '0'
+                // };
+                // if (this.formState.checkBoxAccInput == false) {
+                //     this.formState.accInput = '0'
+                // };
+                // if (this.formState.checkBoxAccConso == false) {
+                //     this.formState.accConsolidation = '0'
+                // };              
+                // if (this.formState.checkBoxMajorInsurance == false) {
+                //     this.formState.majorInsurance = '0'
+                // };
+                // if (this.formState.checkBoxBasicFee == false) {
+                //     this.formState.basicFee = '0'
+                // };
+                // if (this.formState.checkBoxAcc4wc == false) {
+                //     this.formState.acc4wc = '0'
+                // };
+
                 if (this.formState.checkBoxAccBasicFee == false) {
                     this.formState.accBasicFee = '0'
-                };
+                    let data = (document.querySelector(".accBasicFee div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
                 if (this.formState.checkBoxAccInput == false) {
                     this.formState.accInput = '0'
-                };
-                if (this.formState.checkBoxAccConso == false) {
-                    this.formState.accConsolidation = '0'
-                };
-                if (this.formState.checkBoxAccConso == false) {
-                    this.formState.accConsolidation = '0'
-                };
-                if (this.formState.checkBoxMajorInsurance == false) {
-                    this.formState.majorInsurance = '0'
-                };
-                if (this.formState.checkBoxBasicFee == false) {
-                    this.formState.basicFee = '0'
-                };
+                    let data = (document.querySelector(".accInput div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
                 if (this.formState.checkBoxAcc4wc == false) {
                     this.formState.acc4wc = '0'
-                };
+                    let data = (document.querySelector(".acc4wc div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
+                if (this.formState.checkBoxAccConso == false) {
+                    this.formState.accConsolidation = '0'
+                    let data = (document.querySelector(".accConsolidation div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
+                if (this.formState.checkBoxMajorInsurance == false) {
+                    this.formState.majorInsurance = '0'
+                    let data = (document.querySelector(".majorInsurance div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
+                if (this.formState.checkBoxBasicFee == false) {
+                    this.formState.basicFee = '0'
+                    let data = (document.querySelector(".basicFee div div input") as HTMLInputElement)
+                    data.value = '0'
+                    this.handleInputACCService()
+                }
             },
             deep: true,
             immediate: true
@@ -642,12 +669,13 @@ export default defineComponent({
     font-size: 13px;
     line-height: 5px;
 }
+
 ::v-deep .dx-select-checkbox {
     display: inline-block !important;
 }
-.ant-form-item-label {
+
+::v-deep .ant-form-item-label {
     text-align: left;
-    /* padding: 10px; */
 }
 
 .ant-form-item {
@@ -660,9 +688,8 @@ export default defineComponent({
 
 .popup-scroll {
     /* height: 600px; */
-    border: 1px solid #333;
+    /* border: 1px solid #333; */
     overflow-y: auto;
-    border: 0ch;
 }
 
 .table-scroll {
