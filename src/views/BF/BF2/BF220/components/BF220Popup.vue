@@ -18,15 +18,23 @@
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <a-input v-model:value="bf220Detail.name" />
+                            <a-input v-model:value="bf220Detail.resource" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8"></a-col>
                     <a-col :span="16">
                         <a-form-item label="대상회원">
-                            <a-checkbox>매니저</a-checkbox>
-                            <a-checkbox>영업자</a-checkbox>
-                            <a-checkbox>파트너</a-checkbox>
+                            <a-radio-group v-model:value="bf220Detail.사업자유형">
+                                <a-radio :value="'매니저'">
+                                    <a-tag color="black">매니저</a-tag>
+                                </a-radio>
+                                <a-radio :value="'영업자'">
+                                    <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                                </a-radio>
+                                <a-radio :value="'파트너'">
+                                    <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                                </a-radio>
+                            </a-radio-group>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -84,15 +92,17 @@
                     <a-col :span="8"></a-col>
                     <a-col :span="16">
                         <a-form-item label="대상회원">
-                            <a-checkbox v-model:checked="dataEditDemo.type">
-                                <a-tag color="black">매니저</a-tag>
-                            </a-checkbox>
-                            <a-checkbox v-model:checked="dataEditDemo.type1">
-                                <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
-                            </a-checkbox>
-                            <a-checkbox v-model:checked="dataEditDemo.type2">
-                                <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
-                            </a-checkbox>
+                            <a-radio-group v-model:value="dataEditDemo.type">
+                                <a-radio :value="'매니저'">
+                                    <a-tag color="black">매니저</a-tag>
+                                </a-radio>
+                                <a-radio :value="'영업자'">
+                                    <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                                </a-radio>
+                                <a-radio :value="'파트너'">
+                                    <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                                </a-radio>
+                            </a-radio-group>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -173,6 +183,13 @@ interface FormState {
     비고: string;
 }
 
+interface dataFormEdit {
+    name: string,
+    delivery: string,
+    type: string,
+    resource: string,
+}
+
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -231,15 +248,12 @@ export default defineComponent({
             비고: ''
         });
 
-        var dataEditDemo = {
+        const dataEditDemo: UnwrapRef<dataFormEdit> = reactive({
             name: 'MMANAGER',
             delivery: '',
-            type: true,
-            type1: false,
-            type2: false,
+            type: '',
             resource: '',
-
-        }
+        });
 
         const confirmPopup = (value: any) => {
             if (value == '해지') {
