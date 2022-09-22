@@ -635,13 +635,6 @@ export default defineComponent({
                 }
                 if (this.formState.checkBoxAcc4wc == false) {
                     this.formState.acc4wc = '0'
-<<<<<<< HEAD
-                };
-
-                // if(this.formState.checkBoxAccBasicFee == false){
-
-                // }
-=======
                     let data = (document.querySelector(".acc4wc div div input") as HTMLInputElement)
                     data.value = '0'
                     this.handleInputACCService()
@@ -664,7 +657,6 @@ export default defineComponent({
                     data.value = '0'
                     this.handleInputACCService()
                 }
->>>>>>> develop
             },
             deep: true,
             immediate: true
