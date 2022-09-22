@@ -1,40 +1,8 @@
-import gql from "graphql-tag";
-
+import getCart from "./getCart";
+import getOrder from "./getOrder";
 const queries = {
-  getCart: gql`
-    query getCart {
-      getCart {
-        _id
-        userId
-        products {
-          _id
-          name
-          price
-          image
-          description
-          quantity
-        }
-      }
-    }
-  `,
-
-  getOrders: gql`
-    query getOrders {
-      getOrders {
-        _id
-        userId
-        products {
-          _id
-          name
-          price
-          image
-          description
-          quantity
-          date
-        }
-      }
-    }
-  `,
+  getCart: getCart,
+  getOrders:getOrder
 };
 
 export default queries;

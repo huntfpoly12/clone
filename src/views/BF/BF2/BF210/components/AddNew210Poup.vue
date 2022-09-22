@@ -26,16 +26,22 @@
               <a-input style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-input-search v-model:value="bf310Detail.name" placeholder="">
-                <template #prefix>
-                  <search-outlined />
-                </template>
-                <template #enterButton>
-                  <a-button>
-                    <search-outlined />
-                  </a-button>
-                </template>
-              </a-input-search>
+              <a-select
+                v-model:value="bf310Detail.name"
+                show-search
+                placeholder="Select a person"
+                style="width: 300px"
+                :options="selectSearch"
+                :filter-option="filterOption"
+                @focus="handleFocus"
+                @blur="handleBlur"
+                @change="handleChange"
+                class="select-search"
+              >
+                <template #suffixIcon
+                  ><search-outlined :size="14" class="ant-select-suffix"
+                /></template>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -210,6 +216,8 @@
 import { ref, defineComponent, reactive } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
+import type { SelectProps } from "ant-design-vue";
+
 import {
   DxDataGrid,
   DxColumn,
@@ -282,6 +290,23 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const selectSearch = ref<SelectProps["options"]>([
+      { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
+      { value: "C20235301", label: "C20225301     효사랑노인요양전문병원" },
+      { value: "D20223838", label: "D20223838     테크노프로그램우리컴퍼니" },
+    ]);
+    const filterOption = (input: string, option: any) => {
+      return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    };
+    const handleChange = (value: string) => {
+      console.log(`selected ${value}`);
+    };
+    const handleBlur = () => {
+      console.log("blur");
+    };
+    const handleFocus = () => {
+      console.log("focus");
+    };
     const data = props.data;
     const isShow = ref<boolean>(false);
     const visible = ref<boolean>(false);
@@ -381,6 +406,11 @@ export default defineComponent({
       isShow,
       showModal,
       handleSuccsess,
+      selectSearch,
+      filterOption,
+      handleFocus,
+      handleBlur,
+      handleChange,
     };
   },
   methods: {
@@ -428,6 +458,10 @@ export default defineComponent({
 }
 ::v-deep .ant-form-item-label > label {
   width: 110px;
+}
+.select-search ::v-deep .ant-select-arrow .anticon > svg {
+  width: 16px;
+  height: 16px;
 }
 ::v-deep .ant-form-item-explain-error {
   width: 400px;

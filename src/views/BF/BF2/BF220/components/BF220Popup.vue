@@ -183,7 +183,10 @@ interface FormState {
     비고: string;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -224,7 +227,7 @@ export default defineComponent({
 
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
-        let confirm = ref<string>('');;
+        let confirm = ref<string>('');
         const bf220Detail: UnwrapRef<FormState> = reactive({
             name: '',
             delivery: false,
