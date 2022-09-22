@@ -44,16 +44,22 @@
               />
             </a-form-item>
             <a-form-item label="소속">
-              <a-input-search v-model:value="bf310Detail.name" placeholder="">
-                <template #prefix>
-                  <search-outlined />
-                </template>
-                <template #enterButton>
-                  <a-button>
-                    <search-outlined />
-                  </a-button>
-                </template>
-              </a-input-search>
+              <a-select
+                v-model:value="bf310Detail.name"
+                show-search
+                placeholder="Select a person"
+                style="width: 300px"
+                :options="selectSearch"
+                :filter-option="filterOption"
+                @focus="handleFocus"
+                @blur="handleBlur"
+                @change="handleChange"
+                class="select-search"
+              >
+                <template #suffixIcon
+                  ><search-outlined :size="14" class="ant-select-suffix"
+                /></template>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -101,13 +107,7 @@
           </a-col>
         </a-row>
 
-        <a-rowc :gutter="24">
-          <a-col :span="12"> </a-col>
-        </a-rowc>
-        <a-row>
-          <a-col :span="12"> </a-col>
-        </a-row>
-        <a-row>
+        <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item
               type="number"
@@ -227,7 +227,7 @@ import { ref, defineComponent, reactive, computed } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
-
+import type { SelectProps } from "ant-design-vue";
 import {
   DxDataGrid,
   DxColumn,
@@ -306,6 +306,23 @@ export default defineComponent({
     const isShow = ref<boolean>(false);
     const visible = ref<boolean>(false);
     const validateError = ref<boolean>(false);
+    const selectSearch = ref<SelectProps["options"]>([
+      { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
+      { value: "C20235301", label: "C20225301     효사랑노인요양전문병원" },
+      { value: "D20223838", label: "D20223838     테크노프로그램우리컴퍼니" },
+    ]);
+    const filterOption = (input: string, option: any) => {
+      return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    };
+    const handleChange = (value: string) => {
+      console.log(`selected ${value}`);
+    };
+    const handleBlur = () => {
+      console.log("blur");
+    };
+    const handleFocus = () => {
+      console.log("focus");
+    };
     const showModal = () => {
       isShow.value = true;
     };
@@ -398,6 +415,11 @@ export default defineComponent({
       showModal,
       handleSuccsess,
       onToggle,
+      selectSearch,
+      filterOption,
+      handleFocus,
+      handleBlur,
+      handleChange,
     };
   },
   methods: {
@@ -480,6 +502,10 @@ export default defineComponent({
 .modal_email ::v-deep .anticon svg {
   width: 50px;
   height: 50px;
+}
+.select-search ::v-deep .ant-select-arrow .anticon > svg {
+  width: 16px;
+  height: 16px;
 }
 .modal {
   width: 300px;

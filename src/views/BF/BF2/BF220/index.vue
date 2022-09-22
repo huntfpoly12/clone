@@ -5,16 +5,22 @@
                 <a-row justify="start" :gutter="[16,8]">
                     <a-col>
                         <label class="lable-item">대상회원</label>
-                        <a-checkbox v-model:checked="dataSearch.typeSevice1">매니저</a-checkbox>
-                        <a-checkbox v-model:checked="dataSearch.typeSevice2">영업자</a-checkbox>
-                        <a-checkbox v-model:checked="dataSearch.typeSevice3">파트너</a-checkbox>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice1">
+                            <a-tag color="black">매니저</a-tag>
+                        </a-checkbox>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice2">
+                            <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                        </a-checkbox>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice3">
+                            <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                        </a-checkbox>
                     </a-col>
                 </a-row>
             </div>
         </div>
+
         <div class="page-content">
             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
-
                 <DxPaging :page-size="5" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -29,11 +35,15 @@
                 <template #button-template>
                     <DxButton icon="plus" @click="openAddNewModal" />
                 </template>
+                <DxColumn data-field="그룹코드" :fixed="true" />
+                <DxColumn data-field="그룹명" />
 
-                <DxColumn data-field="사업자코드" :fixed="true" />
-                <DxColumn data-field="상호" data-type="date" />
-                <DxColumn data-field="대표자" />
-                <DxColumn data-field="주소" data-type="date" />
+                <DxColumn data-field="대상회원" cell-template="button" />
+                <template #button="{ data }" class="custom-action">
+                    <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+                </template>
+
+                <DxColumn data-field="메모" />
 
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
@@ -51,6 +61,7 @@
                     </div>
                 </template>
             </DxDataGrid>
+
             <BF220Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus=false"
                 :modalEdit="modalEditStatus" @closePopupEdit="modalEditStatus = false" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
@@ -58,7 +69,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import {
     DxDataGrid,
@@ -124,14 +135,17 @@ export default defineComponent({
                 status: false,
                 address: '',
                 manager: 'Jack',
-                nameSale: 'Jack'
+                nameSale: 'Jack',
+                typeSevice1: false,
+                typeSevice2: false,
+                typeSevice3: false,
             },
             modalAddNewStatus: false,
             modalEditStatus: false
         };
     },
     methods: {
-        onExporting(e) {
+        onExporting(e: any) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet('employees');
             exportDataGrid({
@@ -145,11 +159,11 @@ export default defineComponent({
             });
             e.cancel = true;
         },
-        setModalVisible(data) {
+        setModalVisible(data: any) {
             this.modalStatus = true;
             this.popupData = data;
         },
-        modalHistory(data) {
+        modalHistory(data: any) {
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
@@ -158,14 +172,22 @@ export default defineComponent({
             this.modalAddNewStatus = true;
         },
 
-        openEditModal() {
+        openEditModal(data: any) {
             this.modalEditStatus = true;
         },
+
+        getColorTag(data: String) {
+            if (data === "매니저") {
+                return "black";
+            } else if (data === "파트너") {
+                return "yellow";
+            }
+        }
     },
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #data-grid-demo {
     min-height: 700px;
 }

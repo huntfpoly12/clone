@@ -18,15 +18,23 @@
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <a-input v-model:value="bf220Detail.name" />
+                            <a-input v-model:value="bf220Detail.resource" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8"></a-col>
                     <a-col :span="16">
                         <a-form-item label="대상회원">
-                            <a-checkbox>매니저</a-checkbox>
-                            <a-checkbox>영업자</a-checkbox>
-                            <a-checkbox>파트너</a-checkbox>
+                            <a-radio-group v-model:value="bf220Detail.사업자유형">
+                                <a-radio :value="'매니저'">
+                                    <a-tag color="black">매니저</a-tag>
+                                </a-radio>
+                                <a-radio :value="'영업자'">
+                                    <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                                </a-radio>
+                                <a-radio :value="'파트너'">
+                                    <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                                </a-radio>
+                            </a-radio-group>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -84,9 +92,17 @@
                     <a-col :span="8"></a-col>
                     <a-col :span="16">
                         <a-form-item label="대상회원">
-                            <a-checkbox v-model:checked="dataEditDemo.type">매니저</a-checkbox>
-                            <a-checkbox v-model:checked="dataEditDemo.type1">영업자</a-checkbox>
-                            <a-checkbox v-model:checked="dataEditDemo.type2">파트너</a-checkbox>
+                            <a-radio-group v-model:value="dataEditDemo.type">
+                                <a-radio :value="'매니저'">
+                                    <a-tag color="black">매니저</a-tag>
+                                </a-radio>
+                                <a-radio :value="'영업자'">
+                                    <a-tag color="gray" style="color: black;border: 1px solid black;">영업자</a-tag>
+                                </a-radio>
+                                <a-radio :value="'파트너'">
+                                    <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                                </a-radio>
+                            </a-radio-group>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -167,6 +183,13 @@ interface FormState {
     비고: string;
 }
 
+interface dataFormEdit {
+    name: string,
+    delivery: string,
+    type: string,
+    resource: string,
+}
+
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -225,15 +248,12 @@ export default defineComponent({
             비고: ''
         });
 
-        const dataEditDemo = {
+        const dataEditDemo: UnwrapRef<dataFormEdit> = reactive({
             name: 'MMANAGER',
             delivery: '',
-            type: true,
-            type1: false,
-            type2: false,
+            type: '',
             resource: '',
-
-        }
+        });
 
         const confirmPopup = (value: any) => {
             if (value == '해지') {
@@ -313,5 +333,158 @@ export default defineComponent({
 
 .custom-action {
     text-align: center;
+}
+
+#data-grid-demo {
+    min-height: 700px;
+}
+
+.dx-select-checkbox {
+    display: inline-block !important;
+}
+
+.modal-note {
+    max-height: 500px;
+    overflow: auto;
+
+    .title-note {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    th {
+        display: none;
+    }
+
+    .ant-collapse-content-box {
+        padding: 0px;
+    }
+}
+
+.anticon {
+    cursor: pointer;
+}
+
+.custom-action {
+    text-align: center;
+}
+
+.search-form {
+    margin-bottom: 10px;
+    background: #f1f3f4;
+    padding: 10px 24px;
+
+    >div {
+        width: 100%;
+        justify-content: flex-start !important;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    label {
+        margin-right: 10px;
+    }
+
+    .lable-item {
+        white-space: nowrap;
+        margin-right: 10px;
+        width: auto !important;
+    }
+
+    .col {
+        align-items: center;
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+
+        .lable-item {
+            width: 110px;
+            display: inline-block;
+        }
+
+        .item:nth-child(2) {
+            margin-left: 30px;
+        }
+    }
+}
+
+.ant-row {
+    align-items: center;
+}
+
+.ant-form-item {
+    margin-bottom: 4px;
+}
+
+.ant-collapse {
+    .ant-collapse-item {
+        .ant-collapse-header {
+            padding: 7px;
+        }
+    }
+}
+
+.warring-modal {
+    font-size: 12px;
+    line-height: 0px;
+}
+
+.ant-form-item-label {
+    text-align: left;
+}
+
+.clr {
+    label {
+        color: red;
+    }
+}
+
+.clr-text {
+    color: red;
+}
+
+.clb,
+.clb-label label {
+    color: black !important;
+}
+
+
+::v-deep.components-modal-demo-position {
+    ::v-deep.test-local {
+        background-color: pink !important;
+        width: 1000px !important;
+        height: 200px !important;
+    }
+
+    .imgPreview img {
+        width: 1000px !important;
+    }
+
+    .ant-form-item-label {
+        text-align: left;
+    }
+
+}
+
+.dflex {
+    display: flex;
+}
+
+.custom-flex {
+    align-items: flex-start;
+}
+
+.warring-bank {
+    display: flex;
+    align-items: center;
+}
+
+.pl-5 {
+    padding-left: 5px;
+}
+
+.custom-lineHeight {
+    line-height: 3px;
 }
 </style>

@@ -47,16 +47,12 @@
             <a-input style="width: 150px" v-model:value="dataSearch.username" />
           </a-col>
           <a-col style="display: flex; align-items: center">
-            <a-checkbox v-model:checked="dataSearch.typeSevice1"
-              ><a-tag :color="getAbleDisable('이용중')"
-                >이용중</a-tag
-              ></a-checkbox
-            >
-            <a-checkbox v-model:checked="dataSearch.typeSevice2"
-              ><a-tag :color="getAbleDisable('이용중지')"
-                >이용중지</a-tag
-              ></a-checkbox
-            >
+            <a-checkbox v-model:checked="dataSearch.typeSevice1">
+              <a-tag :color="getAbleDisable('이용중')">이용중</a-tag>
+            </a-checkbox>
+            <a-checkbox v-model:checked="dataSearch.typeSevice2">
+              <a-tag :color="getAbleDisable('이용중지')">이용중지</a-tag>
+            </a-checkbox>
           </a-col>
         </a-row>
       </div>
