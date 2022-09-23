@@ -78,49 +78,39 @@
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccBasicFee"
-                                            @change="handleInputACCService()">
-                                        기본이용료
-                                    </span>
-                                    <DxNumberBox v-model="formState.numberBox1" :format="'#,##0'" />
+                                    <a-checkbox v-model:checked="formState.checkBoxAccBasicFee"
+                                        @change="handleInputACCService()" style="width:180px">기본이용료</a-checkbox>
+                                    <DxNumberBox v-model="formState.numberBox1" :format="'#,##0'"
+                                        :disabled="formState.disableNumber1" />
 
-
-                                    <!-- <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :sapn="10"></a-col>
                             <a-col :span="14">
-                                <div style="display: flex; padding-left: 155px; margin-top: 5px;">
-                                    <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccInput"
-                                            @change="handleInputACCService()"> 입력대형
-                                    </span>
+                                <div style="display: flex; padding-left: 155px; margin-top: 5px;">                                    
+                                    <a-checkbox v-model:checked="formState.checkBoxAccInput" @change="handleInputACCService()"
+                                        style="width:180px">입력대행</a-checkbox>
+                                    <DxNumberBox v-model="formState.numberBox2" :format="'#,##0'"
+                                        :disabled="formState.disableNumber2" />
 
-                                    <DxNumberBox v-model="formState.numberBox2" :format="'#,##0'" />
-                                    <!-- <a-input v-model:value="formState.accInput" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :span="14">
-                                <div style="display: flex;padding-left: 155px; margin-top: 5px;">
-                                    <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAccConso"
-                                            @change="handleInputACCService()"> 계좌통합
-                                    </span>
+                                <div style="display: flex;padding-left: 155px; margin-top: 5px;">                                   
+                                    <a-checkbox v-model:checked="formState.checkBoxAccConso" @change="handleInputACCService()"
+                                        style="width:180px">계좌통합</a-checkbox>
+                                    <DxNumberBox v-model="formState.numberBox3" :format="'#,##0'"
+                                        :disabled="formState.disableNumber3" />
 
-                                    <DxNumberBox v-model="formState.numberBox3" :format="'#,##0'" />
-                                    <!-- <a-input v-model:value="formState.accConsolidation"
-                                        @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                             <a-col :span="14">
-                                <div style="display: flex;padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
-                                    <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxAcc4wc"
-                                            @change="handleInputACCService()"> W4C
-                                    </span>
-                                    <DxNumberBox v-model="formState.numberBox4" :format="'#,##0'" />
-                                    <!-- <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" /> -->
+                                <div style="display: flex;padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">                                   
+                                    <a-checkbox v-model:checked="formState.checkBoxAcc4wc" @change="handleInputACCService()"
+                                        style="width:180px">W4C</a-checkbox>
+                                    <DxNumberBox v-model="formState.numberBox4" :format="'#,##0'"
+                                        :disabled="formState.disableNumber4" />
+
                                 </div>
                             </a-col>
                         </a-row>
@@ -143,8 +133,7 @@
                                 </a-form-item>
                                 <a-form-item label="원천서비스 이용료:" style="font-weight: bold;width: 605px">
                                     <p class="input-disble">{{$filters.formatCurrency(total2)}}</p>
-                                    <!-- <a-input v-model:value="formState.taxFeeSevice" style="width: 353px"
-                                        disabled="True" /> -->
+
 
                                 </a-form-item>
                             </a-form>
@@ -156,30 +145,29 @@
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxBasicFee"
+                                    <!-- <span style="width:180px"> -->
+                                        <!-- <input type="checkbox" v-model="formState.checkBoxBasicFee"
                                             @change=handleInputTexService() />
-                                        기본이용료</span>
-                                    <DxNumberBox v-model="formState.numberBox5" :format="'#,##0'" />
-                                    <!-- <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
-                                        :spinButtons="false" :clearButton="false" :nameService="'basicFee'"
-                                        style="width: 360px;" /> -->
-                                    <!-- <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" /> -->
+                                        기본이용료</span> -->
+                                        <a-checkbox v-model:checked="formState.checkBoxBasicFee" @change="handleInputTexService()"
+                                        style="width:180px">기본이용료</a-checkbox>
+                                    <DxNumberBox v-model="formState.numberBox5" :format="'#,##0'"
+                                        :disabled="formState.disableNumber5" />
+
                                 </div>
                             </a-col>
                             <a-coll :span="8"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
-                                    <span style="width:180px">
+                                    <!-- <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxMajorInsurance"
                                             @change=handleInputTexService()>
-                                        4대보험</span>
-                                    <DxNumberBox v-model="formState.numberBox6" :format="'#,##0'" />
-                                    <!-- <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
-                                        :spinButtons="false" :clearButton="false" :nameService="'majorInsurance'"
-                                        style="width: 360px;" /> -->
-                                    <!-- <a-input v-model:value="formState.majorInsurance" -->
-                                    <!-- @change="handleInputTexService()" /> -->
+                                        4대보험</span> -->
+                                        <a-checkbox v-model:checked="formState.checkBoxMajorInsurance" @change="handleInputTexService()"
+                                        style="width:180px">4대보험</a-checkbox>
+                                    <DxNumberBox v-model="formState.numberBox6" :format="'#,##0'"
+                                        :disabled="formState.disableNumber6" />
+
                                 </div>
                             </a-col>
                         </a-row>
@@ -466,87 +454,58 @@ export default defineComponent({
 
     },
     watch: {
-        // formState: {
-        //     handler() {
-        //         if (this.formState.accFeeService != 0 && this.formState.taxFeeSevice != 0) {
 
-        //             this.formState.totalService = this.formState.taxFeeSevice + this.formState.accFeeService
-        //         };
-        //         if (this.formState.checkBox == true && this.formState.accBasicFee != '' && this.formState.accConsolidation != '' && this.formState.accInput != '' && this.formState.acc4wc != '') {
-        //             this.formState.accFeeService = parseInt(this.formState.accBasicFee) + parseInt(this.formState.accConsolidation) + parseInt(this.formState.accInput) + parseInt(this.formState.acc4wc)
-        //         };
-        //         if (this.formState.checkBox == true && this.formState.basicFee != '' && this.formState.majorInsurance != '') {
-        //             this.formState.taxFeeSevice = parseInt(this.formState.basicFee) + parseInt(this.formState.majorInsurance)
-        //         };
-
-        //         if (this.formState.checkBoxAccBasicFee == false) {
-        //             this.formState.accBasicFee = '0'
-        //             let data = (document.querySelector(".accBasicFee div div input") as HTMLInputElement)
-        //             data.value = '0'
-        //             this.handleInputACCService()
-        //         }
-        //         if (this.formState.checkBoxAccInput == false) {
-        //             this.formState.accInput = '0'
-        //             let data = (document.querySelector(".accInput div div input") as HTMLInputElement)
-        //             data.value = '0'
-        //             this.handleInputACCService()
-        //         }
-        //         if (this.formState.checkBoxAcc4wc == false) {
-        //             this.formState.acc4wc = '0'
-        //             let data = (document.querySelector(".acc4wc div div input") as HTMLInputElement)
-        //             data.value = '0'
-        //             this.handleInputACCService()
-        //         }
-        //         if (this.formState.checkBoxAccConso == false) {
-        //             this.formState.accConsolidation = '0'
-        //             let data = (document.querySelector(".accConsolidation div div input") as HTMLInputElement)
-        //             data.value = '0'
-        //             this.handleInputACCService()
-        //         }
-        //         if (this.formState.checkBoxMajorInsurance == false) {
-        //             this.formState.majorInsurance = '0'
-        //             let data = (document.querySelector(".majorInsurance div div input") as HTMLInputElement)
-        //             data.value = '0'
-        //             this.handleInputACCService()
-        //         }
-        //         if (this.formState.checkBoxBasicFee == false) {
-        //             this.formState.basicFee = '0'
-        //             let data = (document.querySelector(".basicFee div div input") as HTMLInputElement)
-        //             data.value = '0'
-        //             this.handleInputACCService()
-        //         }
-        //     },
-        //     deep: true,
-        //     immediate: true
-        // },
         'formState.checkBoxAccBasicFee'(newVal) {
             if (newVal === false) {
                 this.formState.numberBox1 = 0
+                this.formState.disableNumber1 = true
+            } else {
+                this.formState.disableNumber1 = false
             }
         },
         'formState.checkBoxAccInput'(newVal) {
             if (newVal === false) {
                 this.formState.numberBox2 = 0
+                this.formState.disableNumber2 = true
+            }
+            else {
+                this.formState.disableNumber2 = false
             }
         },
         'formState.checkBoxAccConso'(newVal) {
             if (newVal === false) {
                 this.formState.numberBox3 = 0
+                this.formState.disableNumber3 = true
+            }
+            else {
+                this.formState.disableNumber3 = false
             }
         },
         'formState.checkBoxAcc4wc'(newVal) {
             if (newVal === false) {
                 this.formState.numberBox4 = 0
+                this.formState.disableNumber4 = true
+            }
+            else {
+                this.formState.disableNumber4 = false
             }
         },
         'formState.checkBoxBasicFee'(newVal) {
             if (newVal === false) {
                 this.formState.numberBox5 = 0
+                this.formState.disableNumber5 = true
+            }
+            else {
+                this.formState.disableNumber5 = false
             }
         },
         'formState.checkBoxMajorInsurance'(newVal) {
             if (newVal === false) {
                 this.formState.numberBox6 = 0
+                this.formState.disableNumber6 = true
+            }
+            else {
+                this.formState.disableNumber6 = false
             }
         }
     },
@@ -607,6 +566,12 @@ export default defineComponent({
             checkBoxAcc4wc: true,
             checkBoxMajorInsurance: true,
             checkBoxBasicFee: true,
+            disableNumber1: false,
+            disableNumber2: false,
+            disableNumber3: false,
+            disableNumber4: false,
+            disableNumber5: false,
+            disableNumber6: false,
             numberBox1: 0,
             numberBox2: 0,
             numberBox3: 0,
@@ -775,6 +740,7 @@ export default defineComponent({
     border: 1px solid rgb(206, 198, 198);
     border-radius: 5px;
     margin: 1px;
+    text-align: right;
 }
 
 .title-note {
@@ -790,6 +756,7 @@ export default defineComponent({
     padding: 4px 7px;
     line-height: 8px;
     border: 1px solid rgb(22, 6, 6);
+
 }
 
 
@@ -803,5 +770,9 @@ export default defineComponent({
 
 ::v-deep .dx-datagrid-headers.dx-datagrid-nowrap {
     margin-top: -35px;
+}
+
+::v-deep .dx-texteditor-input {
+    text-align: right;
 }
 </style>
