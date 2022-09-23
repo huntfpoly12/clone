@@ -214,7 +214,7 @@
                 data.value
               }}</a-tag>
             </template>
-            <DxColumn data-field="과세구분" />
+            <DxColumn data-field="과세구분" :width="100" />
 
             <DxColumn data-field="항목명" />
             <DxColumn
@@ -222,7 +222,11 @@
               css-class="cell-center"
               :width="100"
             />
-            <DxColumn data-field="제출여부" css-class="cell-center" />
+            <DxColumn
+              data-field="제출여부"
+              :width="80"
+              css-class="cell-center"
+            />
             <DxColumn data-field="유형" />
             <DxColumn data-field="산출방법" />
             <DxColumn
