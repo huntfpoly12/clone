@@ -22,17 +22,13 @@ export default defineComponent({
         max: Number,
         spinButtons: Boolean,
         clearButton: Boolean,
-        disabled: Boolean
+        disabled: Boolean,
+        valueInput : String
 
     },
     components: {
         DxNumberBox
-    },
-    data() {
-        return {
-            valueInput: ''
-        }
-    },
+    }, 
     methods: {
         changeValueInput() {
             if (this.valueInput == 0) {
