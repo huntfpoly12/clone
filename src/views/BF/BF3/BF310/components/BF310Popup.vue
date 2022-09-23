@@ -121,7 +121,9 @@
 					</a-form>
 				</a-collapse-panel>
 				<a-collapse-panel key="3" header="대표자정보">
-					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+					<a-form :model="formState" v-bind="layout" name="nest-messages"
+						:validate-messages="validateMessages" @finish="onFinish" :label-col="labelCol"
+						:wrapper-col="wrapperCol">
 						<a-form-item has-feedback label="대표자명" class="clr">
 							<a-input placeholder="홍길동" autocomplete="off" style="width: 300px" />
 						</a-form-item>
@@ -132,71 +134,51 @@
 							<a-input-number placeholder="01098765432" style="width: 200px" />
 						</a-form-item>
 
-						<a-form-item has-feedback label="이메일" class="clr">
-							<a-form :model="formState" v-bind="layout" name="nest-messages"
-								:validate-messages="validateMessages" @finish="onFinish">
-								<a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
-									:rules="[{ type: 'email' }]">
-									<a-input v-model:value="formState.user.email" />
-								</a-form-item>
-							</a-form>
+						<a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
+							:rules="[{ type: 'email' }]">
+							<a-input v-model:value="formState.user.email" style="width: 200px" />
 						</a-form-item>
+
+
+						<!-- </a-form-item> -->
 					</a-form>
 				</a-collapse-panel>
-				<a-collapse-panel key="4" header="회계서비스신청">
+				<a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
 					<div>
 						<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
 						<div>
-							<a-card title="⁙ 운영사업" :style="{padding : '0px'}" :bordered="false" style="width: 100%"
-								:headStyle="{ padding: '0px', color: 'red' }">
-								<template #extra style="padding: 0px;">
-									<a-button type="text" @click="handleCopy">
-										<PlusOutlined :style="{ fontSize: '20px', color: '#08c' }" />
-									</a-button>
-								</template>
-							</a-card>
-							<a-table :columns="columns" :data-source="dataTable" :pagination="false" :bordered="true">
-								<template #headerCell="{ column }">
-									<template v-if="column.key === '사업명'">
-										<span class="clr-text"> 사업명 (중복불가) </span>
-									</template>
-								</template>
-								<template #bodyCell="{ column, record }">
-									<template v-if="column.key === '사업명'">
-										<a href="#">
-											{{ record.사업명 }}
-										</a>
-									</template>
-									<template v-else-if="column.key === '사업분류'">
-										<span>
-											<a-select ref="select" v-model:value="record.사업분류" style="width: 200px">
-												<a-select-option value="방문요양">방문요양</a-select-option>
-												<a-select-option value="방문간호">방문간호</a-select-option>
-												<a-select-option value="방문목욕">방문목욕</a-select-option>
-												<a-select-option value="단기보호">단기보호</a-select-option>
-												<a-select-option value="복지용구">복지용구</a-select-option>
-											</a-select>
-										</span>
-									</template>
-									<template v-else-if="column.key === '서비스시작년월'">
-										<CustomDatepicker :valueDate="record.서비스시작년월" :className='record.key' />
-									</template>
-									<template v-else-if="column.key === 'action'">
-										<span>
-											<a-popconfirm title="Are you sure delete this row?" ok-text="Yes"
-												cancel-text="No">
-												<a-button type="text" @click="deleteRow(record.key)">
-													<minus-circle-outlined />
-												</a-button>
-											</a-popconfirm>
-										</span>
-									</template>
-								</template>
-							</a-table>
+							<a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
+								:headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
 
-							<a-form-item label="장기요양기관등록번호" class="title-number-modal clr">
-								<a-input placeholder="01234567898" style="width: 300px" />
-							</a-form-item>
+							</a-card>
+							<div id="data-grid-demo">
+								<DxDataGrid id="gridContainer" :data-source="dataTableModal" :show-borders="true"
+									:selected-row-keys="selectedItemKeys">
+									<DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+										:allow-deleting="true" template="button-template" mode="cell">
+										<DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+									</DxEditing>
+									<template #button-template>
+										<DxButton icon="plus" />
+									</template>
+									<DxPaging :enabled="false" />
+									<DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+										cell-template="indexCell" />
+									<template #indexCell="{ data }">
+										<div>{{data.rowIndex + 1}}</div>
+									</template>
+
+									<DxColumn data-field="심사상태" caption="사업명 (중복불가)" />
+									<DxColumn data-field="사업자코드" caption="사업분류" />
+									<DxColumn data-field="상호" data-type="date" :format="'yyyy-MM-dd'" />
+									<DxColumn :width="100" data-field="부가서비스" caption="정원수 (명)" />
+
+									<DxToolbar>
+										<DxItem name="addRowButton" />
+									</DxToolbar>
+								</DxDataGrid>
+							</div>
+
 							<imgUpload :title="titleModal" @update-img="getImgUrl" />
 							<div>
 								<a-row>
@@ -217,15 +199,15 @@
 						<div style="margin-top: 20px">
 							<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
 								<a-form-item label="서비스 시작년월" class="clr">
-									<div :width="100">
+									<div style="width: 200px;">
 										<CustomDatepicker valueDate="2022/08/25" className="0" />
 									</div>
 								</a-form-item>
 								<a-form-item label="직 원 수" class="clr">
-									<a-input-number v-modal:value="totalUser" style="width: 100px" />
+									<a-input-number style="width: 100px" />
 								</a-form-item>
 								<a-form-item label="부가서비스">
-									<a-checkbox v-model:checked="checked">4대보험신고서비스</a-checkbox>
+									<a-checkbox>4대보험신고서비스</a-checkbox>
 								</a-form-item>
 							</a-form>
 						</div>
@@ -244,13 +226,13 @@
 							</a-select>
 						</a-form-item>
 						<a-form-item label="출금계좌번호" class="clr">
-							<a-input value="100100056489011" />
+							<a-input placeholder="100100056489011" />
 						</a-form-item>
 						<a-form-item label="예금주명" class="clr">
-							<a-input value="주식회사 타운소프트비나" />
+							<a-input placeholder="주식회사 타운소프트비나" />
 						</a-form-item>
 						<a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
-							<a-input value="100100056489011" />
+							<a-input placeholder="100100056489011" />
 							<div class="noteImage">
 								<a-row>
 									<a-col :span="1">
@@ -278,7 +260,7 @@
 				<a-collapse-panel key="7" header="기타">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
 						<a-form-item label="영업관리담당">
-							<a-select ref="select" v-model:value="은행선택" style="width: 200px">
+							<a-select ref="select" v-model:value="영업관리담당" style="width: 200px">
 								<a-select-option value="영업자선택">영업자선택</a-select-option>
 								<a-select-option value="A_대리점">A 대리점</a-select-option>
 								<a-select-option value="B_대리점">B 대리점</a-select-option>
@@ -305,8 +287,14 @@ import {
 	DxColumn,
 	DxPaging,
 	DxSelection,
+	DxEditing,
+	DxLookup,
+	DxToolbar,
+	DxItem,
+	DxTexts
+
 } from "devextreme-vue/data-grid";
-import { employees } from "../data.js";
+import { employees, states } from "../data.js";
 import {
 	UploadOutlined,
 	MinusCircleOutlined,
@@ -333,7 +321,57 @@ export default defineComponent({
 				desc: "",
 			},
 			은행선택: '은행선택',
+			영업관리담당: '은행선택',
 			gridDataSource: employees,
+			dataTableModal: [{
+				ID: 1,
+				신청일자: 'John',
+				신청코드: 'Heart',
+				심사상태: '신청',
+				사업자코드: 'CEO',
+				상호: '1964/03/16',
+				주소: '1964/03/16',
+				대표자: '1995/01/15',
+				영업자: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
+				신청서비스: '351 S Hill St.',
+				부가서비스: 5,
+			}, {
+				ID: 2,
+				신청일자: 'Olivia',
+				신청코드: 'Peyton',
+				심사상태: '심사중',
+				사업자코드: 'Sales Assistant',
+				상호: '1964/03/16',
+				주소: '1964/03/16',
+				대표자: '2012/05/14',
+				영업자: 'Olivia loves to sell. She has been selling DevAV products since 2012. \r\n\r\nOlivia was homecoming queen in high school. She is expecting her first child in 6 months. Good Luck Olivia.',
+				신청서비스: '807 W Paseo Del Mar',
+				부가서비스: 5,
+			}, {
+				ID: 3,
+				신청일자: 'Robert',
+				신청코드: 'Reagan',
+				심사상태: '승인',
+				사업자코드: 'CMO',
+				상호: '1964/03/16',
+				주소: '1964/03/16',
+				대표자: '2002/11/08',
+				영업자: 'Robert was recently voted the CMO of the year by CMO Magazine. He is a proud member of the DevAV Management Team.\r\n\r\nRobert is a championship BBQ chef, so when you get the chance ask him for his secret recipe.',
+				신청서비스: '4 Westmoreland Pl.',
+				부가서비스: 4,
+			}, {
+				ID: 4,
+				신청일자: 'Greta',
+				신청코드: 'Sims',
+				심사상태: '반려',
+				사업자코드: 'HR Manager',
+				상호: '1964/03/16',
+				주소: '1964/03/16',
+				대표자: '1998/04/23',
+				영업자: "Greta has been DevAV's HR Manager since 2003. She joined DevAV from Sonee Corp.\r\n\r\nGreta is currently training for the NYC marathon. Her best marathon time is 4 hours. Go Greta.",
+				신청서비스: '1700 S Grandview Dr.',
+				부가서비스: 11,
+			},],
 			gridBoxValue: [],
 			fileList: [],
 			gridColumns: ["심사상태", "사업자코드", "상호"],
@@ -399,8 +437,10 @@ export default defineComponent({
 				lineHeight: "20px",
 				checked: false,
 			},
+			selectedItemKeys: [],
 			value: ref<number>(1),
 			titleModal: "사업자등록증",
+			states,
 			dataSelectModal:
 				'<button style="width:100%;height : 36px;text-align: left;background: white; border: 1px solid #d9d9d9; padding: 4px 6px; ">Select a value...</button>',
 		};
@@ -416,7 +456,12 @@ export default defineComponent({
 		CustomDatepicker,
 		InfoCircleFilled,
 		PlusOutlined,
-		imgUpload
+		imgUpload,
+		DxEditing,
+		DxLookup,
+		DxToolbar,
+		DxItem,
+		DxTexts
 	},
 	computed: {
 		yourVariable() {
@@ -425,8 +470,6 @@ export default defineComponent({
 	},
 
 	setup() {
-
-		const totalUser = 0
 		const layout = {
 			labelCol: { span: 8 },
 			wrapperCol: { span: 16 },
@@ -445,13 +488,13 @@ export default defineComponent({
 		};
 
 		const validateMessages = {
-			required: '${label} is required!',
+			required: "${label} is required!",
 			types: {
-				email: '${label} is not a valid email!',
-				number: '${label} is not a valid number!',
+				email: "이메일 형식이 정확하지 않습니다",
+				number: "Numeric only!",
 			},
 			number: {
-				range: '${label} must be between ${min} and ${max}',
+				range: "${label} must be between ${min} and ${max}",
 			},
 		};
 
@@ -460,7 +503,6 @@ export default defineComponent({
 			onFinish,
 			layout,
 			validateMessages,
-			totalUser
 		};
 	},
 	methods: {
@@ -572,10 +614,6 @@ export default defineComponent({
 }
 
 
-#data-grid-demo {
-	min-height: 700px;
-}
-
 .dx-select-checkbox {
 	display: inline-block !important;
 }
@@ -638,16 +676,31 @@ export default defineComponent({
 	}
 }
 
-
-// ::v-deep .dp__input {
-// 	padding: 4px 0px !important;
-// }
-
 ::v-deep .ant-table-tbody>tr>td {
 	padding: 5 10px !important
 }
 
 ::v-deep .ant-table-cell {
 	padding: 10px !important;
+}
+
+.ant-card {
+	height: 45px;
+}
+
+::v-deep .dx-toolbar .dx-toolbar-after {
+	margin-top: -35px !important;
+}
+
+::v-deep .dx-datagrid-headers.dx-datagrid-nowrap {
+	margin-top: -35px;
+}
+
+::v-deep .dx-texteditor-input {
+	text-align: right;
+}
+
+#data-grid-demo {
+	margin-bottom: 10px
 }
 </style>
