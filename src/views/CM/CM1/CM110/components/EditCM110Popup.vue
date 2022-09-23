@@ -1,14 +1,15 @@
 <template>
   <div>
-    <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
-      width="50%">
+    <a-modal :visible="modalStatus" centered okText="저장하고 나가기" :mask-closable="false" cancelText="그냥 나가기" @cancel="setModalVisible()"
+      width="700px">
       <div class="cm-100-popup-edit">
         <a-form :model="formState" :label-col="labelCol">
           <h2 class="title-h2">사업자정보</h2>
+
           <a-row>
             <a-col :span="12">
               <a-form-item label="이용자ID">
-                <a-input v-model:value="formState.이용자ID"  :disabled="true"/>
+                <a-input v-model:value="formState.이용자ID" :disabled="true" />
               </a-form-item>
             </a-col>
             <a-col :span="6">
@@ -16,8 +17,7 @@
             </a-col>
             <a-col :span="6">
               <a-form-item label="상태" :label-col="{ span: 8 }">
-                <a-switch v-model:checked="formState.상태"
-                  style="width: 80px" >
+                <a-switch v-model:checked="formState.상태" style="width: 80px">
                   <template #checkedChildren>이용중</template>
                   <template #unCheckedChildren>이용중지</template>
                 </a-switch>
@@ -35,7 +35,8 @@
           <a-row>
             <a-col :span="24">
               <a-form-item label="회계권한(담당사업)">
-                <a-select v-model:value="formState.회계권한담당사업" :options="options" mode="tags" placeholder="Please select" max-tag-count="responsive">
+                <a-select v-model:value="formState.회계권한담당사업" :options="options" mode="tags" placeholder="Please select"
+                  max-tag-count="responsive">
                 </a-select>
               </a-form-item>
             </a-col>
@@ -52,7 +53,7 @@
               <a-row>
                 <a-col :span="15">
                   <a-form-item label="휴대폰">
-                    <a-input v-model:value="formState.휴대폰" />
+                    <a-input v-model:value="formState.휴대폰" @change="validateNumber($event,'휴대폰')" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -66,11 +67,12 @@
               <a-row>
                 <a-col :span="15">
                   <a-form-item label="이메일">
-                    <a-input v-model:value="formState.이메일" />
+                    <a-input v-model:value="formState.이메일" @change="validateEmail"
+                      :style="!statusMailValidate ? { borderColor: 'red'}: ''" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
-                  <p class="validate-message">이메일 형식이 정확하지 않습니다.</p>
+                  <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
                 </a-col>
               </a-row>
             </a-col>
@@ -80,11 +82,18 @@
               <a-button danger class="btn-set-password" @click="confirmPopup">비밀번호 설정</a-button>
             </a-col>
           </a-row>
+
         </a-form>
       </div>
+      <template #footer>
+        <div style="text-align: center;">
+          <a-button>그냥 나가기</a-button>
+          <a-button type="primary">저장하고 나가기</a-button>
+        </div>
+      </template>
     </a-modal>
     <div class="confirm-popup">
-      <a-modal v-model:visible="visible">
+      <a-modal v-model:visible="visible" :mask-closable="false">
         <a-row>
           <a-col :span="4">
             <mail-outlined :style="{fontSize: '70px'}" />
@@ -132,6 +141,7 @@ export default defineComponent({
   },
   setup(props) {
     const visible = ref<boolean>(false);
+    const statusMailValidate = ref<boolean>(true);
     const options = ref<SelectProps['options']>([]);
     for (let i = 10; i < 36; i++) {
       const value = i.toString(36) + i;
@@ -153,13 +163,39 @@ export default defineComponent({
     const confirmPopup = () => {
       visible.value = true;
     }
+
+    const validateNumber = (e: any, name: string) => {
+      let valNumberOnly = e.target.value.replace(/\D+/g, '');
+      switch (name) {
+        case '휴대폰':
+          formState.휴대폰 = valNumberOnly;
+          break;
+        default:
+        // code block
+      }
+    }
+
+    const validateEmail = (e: any) => {
+      let checkMail = e.target.value.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+      if (!checkMail) {
+        statusMailValidate.value = false;
+      } else {
+        statusMailValidate.value = true;
+      }
+    }
+
     return {
       labelCol: { style: { width: "150px" } },
       formState,
       options,
       visible,
       optionsRadio,
-      confirmPopup
+      confirmPopup,
+      validateNumber,
+      validateEmail,
+      statusMailValidate
     };
   }
   ,
@@ -183,5 +219,9 @@ export default defineComponent({
 
 .confirm-popup /deep/.ant-modal-footer {
   text-align: center;
+}
+
+.ant-form-item {
+  margin-bottom: 10px;
 }
 </style>

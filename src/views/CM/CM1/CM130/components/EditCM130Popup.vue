@@ -8,6 +8,7 @@
       cancelText="그냥 나가기"
       @cancel="setModalVisible()"
       width="50%"
+      :mask-closable="false"
     >
       <h2 style="font-weight: 600; color: gray" class="title_modal">
         급여상세항목

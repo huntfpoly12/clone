@@ -2,163 +2,126 @@
   <div id="cm-110" class="page-content">
     <a-tabs v-model:activeKey="activeKey" type="card">
       <a-tab-pane key="1" tab="사업자">
-        <a-row>
-          <a-col :span="24">
-            <div class="container">
-              <a-form :model="formState" :label-col="labelCol">
-                <h2 class="title-h2">사업자정보</h2>
-                <a-row>
-                  <a-col :span="12">
-                    <a-form-item label="상호">
-                      <a-input v-model:value="formState.상호" :disabled="true" />
-                    </a-form-item>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8">
-                    <a-form-item label="사업자유형">
-                      <a-input v-model:value="formState.사업자유형" :disabled="true" />
-                    </a-form-item>
-                  </a-col>
-                  <a-col :span="8" justify="end">
-                    <a-form-item label="사업자번호">
-                      <a-input v-model:value="formState.사업자번호" :disabled="true" />
-                    </a-form-item>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="16">
-                    <a-form-item label="주소" :wrapper-col="{ span: 24 }">
-                      <a-input v-model:value="formState.주소" :disabled="true" />
-                    </a-form-item>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="10">
-                    <a-row>
-                      <a-col :span="15">
-                        <a-form-item label="대표번호">
-                          <a-input v-model:value="formState.대표번호" />
-                        </a-form-item>
-                      </a-col>
-                      <a-col :span="8">
-                        <p class="validate-message">‘-’없이 숫자만 입력</p>
-                      </a-col>
-                    </a-row>
-                  </a-col>
-                  <a-col :span="12">
-                    <a-row>
-                      <a-col :span="12">
-                        <a-form-item label="팩스번호">
-                          <a-input v-model:value="formState.팩스번호" />
-                        </a-form-item>
-                      </a-col>
-                      <a-col :span="8">
-                        <p class="validate-message">‘-’없이 숫자만 입력</p>
-                      </a-col>
-                    </a-row>
-                  </a-col>
-                </a-row>
-                <h2 class="title-h2">직인등록</h2>
-                <a-row>
-                  <a-col :span="24">
-                    <a-row>
-                      <a-col :span="8">
-                        <a-form-item label="직인(인감)">
-                          <a-image :width="200" :src="previewImage" :preview="false" />
-                        </a-form-item>
-                      </a-col>
-                      <a-col :span="14">
-                        <div class="preview-image">
-                          <a-row>
-                            <a-col :span="5">
-                              <a-button type="primary" @click="stampReview">직인자동생성</a-button>
-                            </a-col>
-                            <a-col :span="16">
-                              <InfoCircleFilled />
-                              <a-typography-text>
-                                직인 이미지를 자동으로 생성하여 등록합니다.
-                              </a-typography-text>
-                            </a-col>
-                          </a-row>
-                        </div>
-                      </a-col>
-                    </a-row>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="24">
-                    <a-row>
-                      <a-col :span="8">
-
-                        <a-upload v-model:file-list="fileList" name="file" :headers="headers" @change="handleChange"
-                          :multiple="false" :showUploadList="false" accept=".tiff,.png,.jpeg,.jpg">
-                          <a-button class="btn-upload-image">직인업로드</a-button>
-                        </a-upload>
-
-                      </a-col>
-                      <a-col :span="14" :xl="14">
-                        <InfoCircleFilled />
-                        <a-typography-text>
-                          이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 /
-                          종류 : GIF, JPG, PNG
-                        </a-typography-text>
-                      </a-col>
-                    </a-row>
-                  </a-col>
-                </a-row>
-                <h2 class="title-h2">대표자정보</h2>
-                <a-row>
-                  <a-col :span="10">
-                    <a-row>
-                      <a-col :span="15">
-                        <a-form-item label="대표자명">
-                          <a-input v-model:value="formState.대표자명" :disabled="true" />
-                        </a-form-item>
-                      </a-col>
-                    </a-row>
-                  </a-col>
-                  <a-col :span="12">
-                    <a-row>
-                      <a-col :span="12">
-                        <a-form-item label="휴대폰">
-                          <a-input v-model:value="formState.휴대폰" />
-                        </a-form-item>
-                      </a-col>
-                      <a-col :span="8">
-                        <p class="validate-message">‘-’없이 숫자만 입력</p>
-                      </a-col>
-                    </a-row>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="8">
-                    <a-form-item label="생년월일">
-                      <a-input v-model:value="formState.생년월일" width="100%" />
-                    </a-form-item>
-                  </a-col>
-                  <a-col :span="12">
-                    <p class="validate-message">
-                      ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
-                    </p>
-                  </a-col>
-                </a-row>
-                <a-row>
-                  <a-col :span="12">
-                    <a-form-item label="이메일">
-                      <a-input v-model:value="formState.이메일" />
-                    </a-form-item>
-                  </a-col>
-                  <a-col :span="12">
-                    <p class="validate-message">
-                      이메일 형식이 정확하지 않습니다.
-                    </p>
-                  </a-col>
-                </a-row>
-              </a-form>
+        <div class="container">
+          <a-form :model="formState" :label-col="labelCol">
+            <h2 class="title-h2">사업자정보</h2>
+            <a-form-item label="상호">
+              <a-input v-model:value="formState.상호" :disabled="true" style="width: 300px" />
+            </a-form-item>
+            <div style="display: flex;">
+              <div>
+                <a-form-item label="사업자유형">
+                  <a-input v-model:value="formState.사업자유형" :disabled="true" style="width: 120px" />
+                </a-form-item>
+              </div>
+              <div style="margin-left: 200px;">
+                <a-form-item label="사업자번호">
+                  <a-input v-model:value="formState.사업자번호" :disabled="true" style="width: 176px" />
+                </a-form-item>
+              </div>
             </div>
-          </a-col>
-        </a-row>
+            <a-form-item label="주소">
+              <a-input v-model:value="formState.주소" :disabled="true" style="width: 647px" />
+            </a-form-item>
+            <div style="display: flex;">
+              <div style="display: flex;">
+                <a-form-item label="대표번호">
+                  <a-input v-model:value="formState.대표번호" @change="validateNumber($event,'대표번호')" />
+                </a-form-item>
+                <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
+              </div>
+              <div style="display: flex; margin-left: 19px;">
+                <a-form-item label="팩스번호">
+                  <a-input v-model:value="formState.팩스번호" @change="validateNumber($event,'팩스번호')" />
+                </a-form-item>
+                <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
+              </div>
+            </div>
+            <h2 class="title-h2">직인등록</h2>
+            <a-row>
+              <a-col :span="24">
+                <a-row>
+                  <a-col :span="6">
+                    <a-form-item label="직인(인감)" style="margin-bottom: 5px;">
+                      <a-image :width="100" :src="previewImage" :preview="false" />
+                    </a-form-item>
+                  </a-col>
+                  <a-col :span="14">
+                    <div class="preview-image">
+                      <a-row>
+                        <a-col :span="5">
+                          <a-button type="primary" @click="stampReview">직인자동생성</a-button>
+                        </a-col>
+                        <a-col :span="16">
+                          <InfoCircleFilled />
+                          <a-typography-text>
+                            직인 이미지를 자동으로 생성하여 등록합니다.
+                          </a-typography-text>
+                        </a-col>
+                      </a-row>
+                    </div>
+                  </a-col>
+                </a-row>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span="24">
+                <a-row>
+                  <a-col :span="6">
+                    <a-upload v-model:file-list="fileList" name="file" :headers="headers" @change="handleChange"
+                      :multiple="false" :showUploadList="false" accept=".png,.jpeg,.jpg">
+                      <a-button class="btn-upload-image">직인업로드</a-button>
+                    </a-upload>
+
+                  </a-col>
+                  <a-col :span="14" :xl="14">
+                    <InfoCircleFilled />
+                    <a-typography-text>
+                      이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 /
+                      종류 : GIF, JPG, PNG
+                    </a-typography-text>
+                  </a-col>
+                </a-row>
+              </a-col>
+            </a-row>
+            <h2 class="title-h2">대표자정보</h2>
+            <div style="display: flex;">
+              <div>
+                <a-form-item label="대표자명">
+                  <a-input v-model:value="formState.대표자명" :disabled="true" style="width: 176px" />
+                </a-form-item>
+              </div>
+
+              <div style="display: flex; margin-left: 150px;">
+                <a-form-item label="휴대폰">
+                  <a-input v-model:value="formState.휴대폰" style="width: 176px" @change="validateNumber($event,'휴대폰')" />
+                </a-form-item>
+                <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
+              </div>
+            </div>
+            <div style="display: flex;">
+              <a-form-item label="생년월일">
+                <a-input v-model:value="formState.생년월일" style="width: 176px" @change="validateNumber($event,'생년월일')" />
+              </a-form-item>
+              <p class="validate-message">
+                ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
+              </p>
+            </div>
+            <div style="display: flex;">
+              <a-form-item label="이메일">
+                <a-input v-model:value="formState.이메일" style="width: 300px" @change="validateEmail"
+                  :style="!statusMailValidate ? { borderColor: 'red'}: ''" />
+              </a-form-item>
+              <p class="validate-message" v-if="!statusMailValidate">
+                이메일 형식이 정확하지 않습니다.
+              </p>
+            </div>
+          </a-form>
+        </div>
+        <a-form-item class="btn-submit">
+          <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
+          <a-button style="margin-left: 10px">저장하고 나가기</a-button>
+        </a-form-item>
         <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false"
           :data="fileImage" />
       </a-tab-pane>
@@ -185,9 +148,9 @@
           </template>
           <DxColumn data-field="성명" :width="200" />
           <DxColumn data-field="회계권한(담당사업)" />
-          <DxColumn data-field="원천권한" cell-template="checked-status" :width="80" />
+          <DxColumn data-field="원천권한" cell-template="checked-status" :width="80" :allowEditing="true"/>
           <template #checked-status="{ data }">
-            <a-checkbox :checked="data.value" />
+            <a-checkbox :checked="data.value" @change="checkedRow(data)"/>
           </template>
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
@@ -202,23 +165,27 @@
                   <HistoryOutlined @click="modalHistory(data)" />
                 </a-tooltip>
                 <a-tooltip placement="top">
-                  <template #title>상세보기</template>
-                  <login-outlined />
+                  <template #title>로그인이력</template>
+                  <login-outlined @click="modalLogin(data)" />
                 </a-tooltip>
               </a-space>
             </div>
           </template>
         </DxDataGrid>
+        <a-form-item class="btn-submit-table">
+          <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
+          <a-button style="margin-left: 10px">저장하고 나가기</a-button>
+        </a-form-item>
         <AddNewCM110Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
         <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" />
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
           title="변경이력[cm-000-pop]" />
+        <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
+          title="로그인이력 [ cm-000-popLogin ]" />
       </a-tab-pane>
     </a-tabs>
-    <a-form-item :wrapper-col="{ span: 14, offset: 9 }" class="btn-submit">
-      <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
-      <a-button style="margin-left: 10px">저장하고 나가기</a-button>
-    </a-form-item>
+
+
   </div>
 </template>
 <script lang="ts">
@@ -243,6 +210,9 @@ import { defineComponent, ref, toRaw, reactive } from "vue";
 import type { UnwrapRef } from "vue";
 import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import ReviewStampImage from "./components/ReviewStampImage.vue";
+import ListLoginPopup from "../../../../components/ListLoginPopup.vue";
+import type { UploadProps } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 interface FormState {
   상호: string;
   사업자유형: string;
@@ -287,13 +257,16 @@ export default defineComponent({
     DxItem,
     HistoryPopup,
     AddNewCM110Poup,
-    EditCM110Popup
+    EditCM110Popup,
+    ListLoginPopup
   },
   setup() {
     let modalAddNewStatus = ref(false);
     let modalEditStatus = ref(false);
     let modalHistoryStatus = ref(false);
+    let modalLoginStatus = ref(false);
     let popupData = ref();
+    const statusMailValidate = ref<boolean>(true);
     const dataTableShow = ref([
       {
         key: 0,
@@ -340,36 +313,35 @@ export default defineComponent({
         "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
       대표자명: "홍길동",
       휴대폰: "01056898845",
-      생년월일: "예) 19801231",
+      생년월일: "19801231",
       이메일: "bankda.jangbuda@gmail.com",
     });
 
-    let previewImage: any = ref("https://www.chanchao.com.tw/images/default.jpg");
+    let previewImage: any = ref("https://trello.com/1/cards/63284173f2296b003fcff931/attachments/632bd4d27b65f901c650875f/previews/632bd4d37b65f901c65087c2/download/%EC%98%A8%EB%9D%BC%EC%9D%B8%EB%8F%84%EC%9E%A5-%EC%BD%94%EB%B9%97%EC%86%8C%ED%94%84%ED%8A%B8.png");
     let fileImage: any = ref(null);
     let modalStampReviewStatus: any = ref();
-
+    const fileList = ref<UploadProps['fileList']>([]);
     const handleChange = async (info: any) => {
       if (info.file.status !== "uploading") {
-        previewImage.value = await getBase64(info.file.originFileObj);
-        fileImage.value = info;
+        console.log(info.file.originFileObj.size,'dfgdfdfg');
+        if (info.file.originFileObj.size <= 1000000) {
+          previewImage.value = await getBase64(info.file.originFileObj);
+          fileImage.value = info;
+        } else {
+          message.error(`이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 / 종류 : GIF, JPG, PNG`);
+        }
       }
-
-      if (info.file.status === "done") {
-        //message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        //console.log(info.file);
-        //message.error(`${info.file.name} file upload failed.`);
-      }
+      // if (info.file.status === "done") {
+      //   //message.success(`${info.file.name} file uploaded successfully`);
+      // } else if (info.file.status === "error") {
+      //   //console.log(info.file);
+      //   //message.error(`${info.file.name} file upload failed.`);
+      // }
     };
 
     const stampReview = () => {
-      if (fileImage.value !== null) {
-        modalStampReviewStatus.value = true;
-      }
+      modalStampReviewStatus.value = true;
     };
-
-    const fileList = ref([]);
-
     const openAddNewModal = () => {
       modalAddNewStatus.value = true;
     }
@@ -379,6 +351,11 @@ export default defineComponent({
     }
     const modalHistory = (data: any) => {
       modalHistoryStatus.value = true;
+      popupData.value = data;
+    }
+
+    const modalLogin = (data: any) => {
+      modalLoginStatus.value = true;
       popupData.value = data;
     }
 
@@ -393,6 +370,41 @@ export default defineComponent({
         return "rgb(205 32 31 / 51%)";
       }
     }
+
+    const checkedRow = (data:any) => {
+      dataTableShow.value[data.key].원천권한 = !dataTableShow.value[data.key].원천권한;
+    }
+    
+    const validateNumber = (e: any, name: string) => {
+      let valNumberOnly = e.target.value.replace(/\D+/g, '');
+      switch (name) {
+        case '대표번호':
+          formState.대표번호 = valNumberOnly;
+          break;
+        case '팩스번호':
+          formState.팩스번호 = valNumberOnly;
+          break;
+        case '휴대폰':
+          formState.휴대폰 = valNumberOnly;
+          break;
+        case '생년월일':
+          formState.생년월일 = valNumberOnly;
+          break;
+        default:
+        // code block
+      }
+    }
+    const validateEmail = (e: any) => {
+      let checkMail = e.target.value.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+      if (!checkMail) {
+        statusMailValidate.value = false;
+      } else {
+        statusMailValidate.value = true;
+      }
+    }
+
     return {
       labelCol: { style: { width: "150px" } },
       formState,
@@ -402,6 +414,7 @@ export default defineComponent({
       headers: {
         authorization: "authorization-text",
       },
+      checkedRow,
       handleChange,
       previewImage,
       stampReview,
@@ -411,11 +424,16 @@ export default defineComponent({
       modalAddNewStatus,
       modalEditStatus,
       modalHistoryStatus,
+      modalLoginStatus,
       openAddNewModal,
       openEditModal,
       modalHistory,
+      modalLogin,
       popupData,
-      getColorTag
+      getColorTag,
+      validateNumber,
+      validateEmail,
+      statusMailValidate
     };
   },
 });
@@ -431,9 +449,7 @@ export default defineComponent({
 }
 
 .container {
-  position: relative;
-  margin-left: auto;
-  margin-right: auto;
+  width: 1200px;
   padding-right: 10px;
   padding-left: 10px;
 }
@@ -448,17 +464,28 @@ export default defineComponent({
 }
 
 .btn-upload-image {
-  width: 200px;
+  width: 100px;
   margin-left: 150px;
 
 }
 
+.btn-submit-table {
+  margin-top: 20px;
+  text-align: center;
+}
+
 .btn-submit {
   margin-top: 20px;
+  margin-left: 280px;
 }
+
 
 .page-content>>>.cell-center {
   text-align: center !important
+}
+
+.ant-form-item {
+  margin-bottom: 10px;
 }
 </style>
   

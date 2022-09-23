@@ -4,6 +4,7 @@
       :visible="modalStatus"
       title="직인자동생성"
       @cancel="setModalVisible()"
+      :mask-closable="false"
     >
       <div class="stamp-image-content">
         <a-row type="flex" justify="space-around" align="middle">
@@ -62,7 +63,7 @@ export default defineComponent({
     InfoCircleFilled,
   },
   setup(props, { emit }) {
-    let previewImage: any = ref("https://www.chanchao.com.tw/images/default.jpg");
+    let previewImage: any = ref("https://trello.com/1/cards/63284173f2296b003fcff931/attachments/632bd4d27b65f901c650875f/previews/632bd4d37b65f901c65087c2/download/%EC%98%A8%EB%9D%BC%EC%9D%B8%EB%8F%84%EC%9E%A5-%EC%BD%94%EB%B9%97%EC%86%8C%ED%94%84%ED%8A%B8.png");
     let signature = ref("");
     let disabledBtnPreview = ref(true);
     watch( () => props.modalStatus, async (currentValue, oldValue) => {
@@ -72,7 +73,7 @@ export default defineComponent({
     });
     const setModalVisible = () => {
       emit("closePopup", false);
-      previewImage.value = "https://www.chanchao.com.tw/images/default.jpg";
+      previewImage.value = "https://trello.com/1/cards/63284173f2296b003fcff931/attachments/632bd4d27b65f901c650875f/previews/632bd4d37b65f901c65087c2/download/%EC%98%A8%EB%9D%BC%EC%9D%B8%EB%8F%84%EC%9E%A5-%EC%BD%94%EB%B9%97%EC%86%8C%ED%94%84%ED%8A%B8.png";
       signature.value = '';
     };
     const validateCharacter = () => {

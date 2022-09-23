@@ -1,6 +1,6 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="1000px">
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
@@ -11,14 +11,14 @@
                     <a-col :span="16">
                         <a-form-item label="그룹코드">
                             <div class="dflex">
-                                <a-input v-model:value="bf220Detail.name" class="mr5" />
+                                <a-input v-model:value="bf220Detail.name" class="mr5" placeholder="영문,숫자 5~10자 (중복불가)" />
                                 <a-button type="button">중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <a-input v-model:value="bf220Detail.resource" />
+                            <a-input v-model:value="bf220Detail.resource" placeholder="최대 20자"/>
                         </a-form-item>
                     </a-col>
                     <a-col :span="8"></a-col>
@@ -39,7 +39,7 @@
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="메모" style="align-items: flex-start;">
-                            <a-textarea></a-textarea>
+                            <a-textarea placeholder="최대 30자"></a-textarea>
                         </a-form-item>
                     </a-col>
 
@@ -68,7 +68,7 @@
                 </a-row>
             </a-form>
         </a-modal>
-        <a-modal :visible="modalEdit" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :mask-closable="false" :visible="modalEdit" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="closeModalEdit()" width="1000px">
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
@@ -92,7 +92,7 @@
                     <a-col :span="8"></a-col>
                     <a-col :span="16">
                         <a-form-item label="대상회원">
-                            <a-radio-group v-model:value="dataEditDemo.type">
+                            <a-radio-group v-model:value="dataEditDemo.type" disabled="">
                                 <a-radio :value="'매니저'">
                                     <a-tag color="black">매니저</a-tag>
                                 </a-radio>
@@ -136,7 +136,7 @@
                 </a-row>
             </a-form>
         </a-modal>
-        <a-modal v-model:visible="visible" title="해지 확인" ok-text="완료">
+        <a-modal :mask-closable="false" v-model:visible="visible" title="해지 확인" ok-text="완료">
             <a-row>
                 <a-col :span="4">
                     <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />
@@ -230,7 +230,7 @@ export default defineComponent({
             type: [],
             resource: '',
             desc: '',
-            사업자유형: '개인',
+            사업자유형: '매니저',
             상태: '정상',
             등급: '본사',
             주소: false,
@@ -244,7 +244,7 @@ export default defineComponent({
         const dataEditDemo = reactive({
             name: 'MMANAGER',
             delivery: '',
-            type: '',
+            type: '매니저',
             resource: '',
         });
 

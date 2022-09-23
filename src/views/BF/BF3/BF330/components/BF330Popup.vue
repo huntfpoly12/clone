@@ -1,6 +1,6 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :visible="modalStatus" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
                 <a-collapse-panel key="1" header="이용서비스" class="popup-scroll">
@@ -8,21 +8,19 @@
                         <a-row>
                             <a-col :span="10">
                                 <a-form-item label="총일용료" style="font-weight: bold;">
-                                    <!-- <InpuNumber :typeInput="'2'" /> -->
-                                    <a-input v-model:value="formState.totalService" disabled="True"
-                                        :format="amountFormat" data-type="number" />
+                                    <p class="input-disble">{{$filters.formatCurrency(total)}}</p>
                                 </a-form-item>
                             </a-col>
                             <a-col :span="8"></a-col>
                             <a-col :span="10">
                                 <a-form-item label="회계서비스 이용료" style="padding-left: 50px;">
-                                    <a-input v-model:value="formState.accFeeService" disabled="True" />
+                                    <p class="input-disble">{{$filters.formatCurrency(total1)}}</p>
                                 </a-form-item>
                             </a-col>
                             <a-col :span="14"></a-col>
                             <a-col :span="10">
                                 <a-form-item label="원천서비스 이용료" style="padding-left: 50px;">
-                                    <a-input v-model:value="formState.taxFeeSevice" disabled="True" />
+                                    <p class="input-disble">{{$filters.formatCurrency(total2)}}</p>
                                 </a-form-item>
                             </a-col>
                             <a-col :span="14"></a-col>
@@ -31,7 +29,7 @@
                         <a-row>
                             <a-col :span="12">
                                 <a-form-item label="회계서비스" style="font-weight: bold">
-                                    <input type="checkbox" value="regist"> 회계서비스 신청
+                                    <a-checkbox>회계서비스 신청</a-checkbox>
                                 </a-form-item>
                             </a-col>
                         </a-row>
@@ -44,17 +42,24 @@
                                 <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
                                     :selected-row-keys="selectedItemKeys">
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                        :allow-deleting="true" template="button-template" mode="cell" />
+                                        :allow-deleting="true" template="button-template" mode="cell">
+                                        <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                    </DxEditing>
                                     <template #button-template>
                                         <DxButton icon="plus" />
                                     </template>
                                     <DxPaging :enabled="false" />
-                                    <DxColumn :width="35" data-field="No" caption="#" />
+                                    <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                                        cell-template="indexCell" />
+                                    <template #indexCell="{ data }">
+                                        <div>{{data.rowIndex + 1}}</div>
+                                    </template>
+
                                     <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
                                     <DxColumn :width="225" data-field="StateID" caption="사업분류">
                                         <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                     </DxColumn>
-                                    <DxColumn data-field="서비스시작년월" data-type="date" />
+                                    <DxColumn data-field="서비스시작년월" data-type="date" :format="'yyyy-MM-dd'" />
                                     <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
                                     <DxToolbar>
                                         <DxItem name="addRowButton" />
@@ -66,24 +71,20 @@
 
                         <a-row>
                             <a-col :span="14">
-                                <a-form-item label="회계서비스 이용료:" style="margin-top: 10px; font-weight: bold">
-                                    <p>{{$filters.formatCurrency(total1)}}</p>
+                                <a-form-item label="회계서비스 이용료:" style="margin-top: 10px; font-weight: bold;">
+                                    <p class="input-disble">{{$filters.formatCurrency(total1)}}</p>
                                 </a-form-item>
                             </a-col>
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
-                                    <span style="width:116px">
-
-
+                                    <span style="width:180px">
                                         <input type="checkbox" v-model="formState.checkBoxAccBasicFee"
                                             @change="handleInputACCService()">
                                         기본이용료
                                     </span>
-                                    <DxNumberBox
-                                    v-model="formState.numberBox1"
-                                    :format="'#,##0'" />
-                                    
+                                    <DxNumberBox v-model="formState.numberBox1" :format="'#,##0'" />
+
 
                                     <!-- <a-input v-model:value="formState.accBasicFee" @change="handleInputACCService()" /> -->
                                 </div>
@@ -96,9 +97,7 @@
                                             @change="handleInputACCService()"> 입력대형
                                     </span>
 
-                                    <DxNumberBox
-                                    v-model="formState.numberBox2"
-                                    :format="'#,##0'" />
+                                    <DxNumberBox v-model="formState.numberBox2" :format="'#,##0'" />
                                     <!-- <a-input v-model:value="formState.accInput" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
@@ -109,9 +108,7 @@
                                             @change="handleInputACCService()"> 계좌통합
                                     </span>
 
-                                    <DxNumberBox
-                                    v-model="formState.numberBox3"
-                                    :format="'#,##0'" />
+                                    <DxNumberBox v-model="formState.numberBox3" :format="'#,##0'" />
                                     <!-- <a-input v-model:value="formState.accConsolidation"
                                         @change="handleInputACCService()" /> -->
                                 </div>
@@ -122,33 +119,33 @@
                                         <input type="checkbox" v-model="formState.checkBoxAcc4wc"
                                             @change="handleInputACCService()"> W4C
                                     </span>
-                                    <DxNumberBox
-                                    v-model="formState.numberBox4"
-                                    :format="'#,##0'" />
+                                    <DxNumberBox v-model="formState.numberBox4" :format="'#,##0'" />
                                     <!-- <a-input v-model:value="formState.acc4wc" @change="handleInputACCService()" /> -->
                                 </div>
                             </a-col>
                         </a-row>
                         <imgUpload :title="titleModal" :imageUrl="imageUrl" />
                         <hr>
-                        <a-row style="padding: 5px">
+                        <a-row>
                             <a-col>
                                 <a-form-item label="원천서비스" style="font-weight: bold">
-                                    <input type="checkbox" value="regist"> 원천서비스 신청
+                                    <a-checkbox>원천서비스</a-checkbox>
                                 </a-form-item>
                             </a-col>
                         </a-row>
                         <div>
                             <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-form-item label="서비스 시작년월" style="width: 270px">
-                                    <CustomDatepicker width="30%" valueDate="2022/08/25" />
+                                <a-form-item label="서비스 시작년월" style="width: 300px">
+                                    <CustomDatepicker valueDate="2022/08/25" />
                                 </a-form-item>
-                                <a-form-item label="직 원 수">
-                                    <a-input-number type='number' v-model:value="직원수" style="width: 120px" />
+                                <a-form-item label="직 원 수 ">
+                                    <a-input-number type='number' min="0" v-model:value="직원수" style="width: 150px" />
                                 </a-form-item>
-                                <a-form-item label="원천서비스 이용료:">
-                                    <a-input v-model:value="formState.taxFeeSevice" style="width: 353px"
-                                        disabled="True" />
+                                <a-form-item label="원천서비스 이용료:" style="font-weight: bold;width: 605px">
+                                    <p class="input-disble">{{$filters.formatCurrency(total2)}}</p>
+                                    <!-- <a-input v-model:value="formState.taxFeeSevice" style="width: 353px"
+                                        disabled="True" /> -->
+
                                 </a-form-item>
                             </a-form>
                         </div>
@@ -160,11 +157,13 @@
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px;">
                                     <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxBasicFee" />
+                                        <input type="checkbox" v-model="formState.checkBoxBasicFee"
+                                            @change=handleInputTexService() />
                                         기본이용료</span>
-                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                    <DxNumberBox v-model="formState.numberBox5" :format="'#,##0'" />
+                                    <!-- <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
                                         :spinButtons="false" :clearButton="false" :nameService="'basicFee'"
-                                        style="width: 360px;" />
+                                        style="width: 360px;" /> -->
                                     <!-- <a-input v-model:value="formState.basicFee" @change="handleInputTexService()" /> -->
                                 </div>
                             </a-col>
@@ -172,11 +171,13 @@
                             <a-col :span="14">
                                 <div style="display: flex;padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                     <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxMajorInsurance">
+                                        <input type="checkbox" v-model="formState.checkBoxMajorInsurance"
+                                            @change=handleInputTexService()>
                                         4대보험</span>
-                                    <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
+                                    <DxNumberBox v-model="formState.numberBox6" :format="'#,##0'" />
+                                    <!-- <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'"
                                         :spinButtons="false" :clearButton="false" :nameService="'majorInsurance'"
-                                        style="width: 360px;" />
+                                        style="width: 360px;" /> -->
                                     <!-- <a-input v-model:value="formState.majorInsurance" -->
                                     <!-- @change="handleInputTexService()" /> -->
                                 </div>
@@ -204,11 +205,9 @@
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
-                <a-collapse-panel key="3" header="메모" >
-
-                    <!-- <a-badge count="25" :number-style="{
-                    backgroundColor: '#444',color: '#999',}" /> -->
-                    <a-table bordered :data-source="dataSource" :pagination="false">
+                <a-collapse-panel key="3" header="메모" :extra="dataSource.length > 0? dataSource.length: ''"
+                    :style="{position: 'relative'}">
+                    <a-table bordered :data-source="dataSource" :pagination="false" :showHeader="false">
                         <template #bodyCell="{  text, index }">
                             <div>
                                 <div class="title-note">
@@ -224,18 +223,19 @@
                                 </div>
                                 <a-space :size="8" style="margin-top: 7px">
                                     <save-outlined :style="{ fontSize: '20px'}" @click="handleCopy()" />
-                                    <DeleteOutlined :style="{ fontSize: '20px'}" @click="handleDelete(text.key)" />
+                                    <div v-if="dataSource.length > 1">
+                                        <DeleteOutlined :style="{ fontSize: '20px'}" @click="handleDelete(text.key)" />
+                                    </div>
                                 </a-space>
                             </div>
 
                         </template>
                     </a-table>
-
                 </a-collapse-panel>
             </a-collapse>
         </a-modal>
 
-        <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
+        <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" :mask-closable="false" width="1000px">
             <div>
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="key">
                     <DxColumn data-field="기록일시" width='150px' />
@@ -276,6 +276,7 @@ import {
     DxLookup,
     DxToolbar,
     DxItem,
+    DxTexts
 
 } from "devextreme-vue/data-grid"
 import { DxButton } from 'devextreme-vue/button';
@@ -317,7 +318,9 @@ export default defineComponent({
         DxToolbar,
         DxItem,
         inputFormat,
-        DxNumberBox
+        DxNumberBox,
+        DxTexts
+
     },
     props: {
         modalStatus: Boolean,
@@ -343,16 +346,22 @@ export default defineComponent({
             }),
             selectedItemKeys: [],
             states,
-           
+
         }
     },
     computed: {
         total1() {
             return this.formState.numberBox1 + this.formState.numberBox2 + this.formState.numberBox3 + this.formState.numberBox4
         },
+        total2() {
+            return this.formState.numberBox5 + this.formState.numberBox6
+        },
+        total() {
+            return this.formState.numberBox1 + this.formState.numberBox2 + this.formState.numberBox3 + this.formState.numberBox4 + this.formState.numberBox5 + this.formState.numberBox6
+        },
     },
     methods: {
-        
+
         setModalVisible() {
             this.$emit('closePopup', false)
         },
@@ -391,7 +400,7 @@ export default defineComponent({
                 key: this.keyNumber,
                 note: '',
             }
-            this.dataSource.push(dataDef)
+            this.dataSource.unshift(dataDef)
         },
         handleDelete(key: number) {
             if (this.dataSource.length > 1) {
@@ -510,24 +519,34 @@ export default defineComponent({
         //     deep: true,
         //     immediate: true
         // },
-        'formState.checkBoxAccBasicFee'(newVal){
-            if(newVal === false) {
+        'formState.checkBoxAccBasicFee'(newVal) {
+            if (newVal === false) {
                 this.formState.numberBox1 = 0
             }
         },
-        'formState.checkBoxAccInput'(newVal){
-            if(newVal === false) {
+        'formState.checkBoxAccInput'(newVal) {
+            if (newVal === false) {
                 this.formState.numberBox2 = 0
             }
         },
-        'formState.checkBoxAccConso'(newVal){
-            if(newVal === false) {
+        'formState.checkBoxAccConso'(newVal) {
+            if (newVal === false) {
                 this.formState.numberBox3 = 0
             }
         },
-        'formState.checkBoxAcc4wc'(newVal){
-            if(newVal === false) {
+        'formState.checkBoxAcc4wc'(newVal) {
+            if (newVal === false) {
                 this.formState.numberBox4 = 0
+            }
+        },
+        'formState.checkBoxBasicFee'(newVal) {
+            if (newVal === false) {
+                this.formState.numberBox5 = 0
+            }
+        },
+        'formState.checkBoxMajorInsurance'(newVal) {
+            if (newVal === false) {
+                this.formState.numberBox6 = 0
             }
         }
     },
@@ -591,7 +610,9 @@ export default defineComponent({
             numberBox1: 0,
             numberBox2: 0,
             numberBox3: 0,
-            numberBox4: 0
+            numberBox4: 0,
+            numberBox5: 0,
+            numberBox6: 0,
         })
         const labelCol = ref({ style: { width: '150px' } })
         const wrapperCol = ref({ span: 14 })
@@ -671,7 +692,7 @@ export default defineComponent({
     },
 })
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .warring-modal {
     font-size: 13px;
     line-height: 5px;
@@ -694,8 +715,6 @@ export default defineComponent({
 }
 
 .popup-scroll {
-    /* height: 600px; */
-    /* border: 1px solid #333; */
     overflow-y: auto;
 }
 
@@ -710,13 +729,28 @@ export default defineComponent({
     padding: 10px 0px 10px 16px;
 }
 
+.ant-collapse>.ant-collapse-item>.ant-collapse-header {
+    background-color: #fafafa;
+}
+
+.ant-collapse-item.ant-collapse-item-active.popup-scroll {
+    background-color: white;
+}
+
 .input-form {
     margin-top: 5px;
 }
 
 .ant-card-extra,
 .ant-card-head-title {
-    padding: 0;
+    padding: 0 !important;
+}
+
+::v-deep .ant-badge-not-a-wrapper {
+    position: absolute;
+    left: 77px;
+    top: 12px;
+    z-index: 5;
 }
 
 .data-grid-demo {
@@ -733,5 +767,41 @@ export default defineComponent({
 
 .gridDeleteSelected .dx-button-text {
     line-height: 0;
+}
+
+.input-disble {
+    background: rgb(240, 239, 239);
+    padding: 5px 10px;
+    border: 1px solid rgb(206, 198, 198);
+    border-radius: 5px;
+    margin: 1px;
+}
+
+.title-note {
+    display: flex;
+    justify-content: space-between;
+}
+
+::v-deep .ant-collapse-header .ant-collapse-extra {
+    margin-left: 8px !important;
+    border-radius: 200px;
+    background-color: hwb(120 84% 15%);
+    background-size: 100px;
+    padding: 4px 7px;
+    line-height: 8px;
+    border: 1px solid rgb(22, 6, 6);
+}
+
+
+.ant-card {
+    height: 45px;
+}
+
+::v-deep .dx-toolbar .dx-toolbar-after {
+    margin-top: -35px !important;
+}
+
+::v-deep .dx-datagrid-headers.dx-datagrid-nowrap {
+    margin-top: -35px;
 }
 </style>

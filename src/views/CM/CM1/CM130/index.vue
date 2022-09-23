@@ -108,6 +108,7 @@
                         okText="네. 적용합니다"
                         cancelText="아니오"
                         @ok="handleSuccsess"
+                        :mask-closable="false"
                       >
                         <div id="modal">
                           <div style="display: flex">
