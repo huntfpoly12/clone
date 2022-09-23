@@ -4,6 +4,7 @@
       :visible="modalStatus"
       title="직인자동생성"
       @cancel="setModalVisible()"
+      :mask-closable="false"
     >
       <div class="stamp-image-content">
         <a-row type="flex" justify="space-around" align="middle">

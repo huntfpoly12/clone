@@ -6,6 +6,7 @@
       centered
       @cancel="setModalVisible()"
       width="50%"
+      :mask-closable="false"
     >
       <DxDataGrid
         :data-source="dataTableShow"

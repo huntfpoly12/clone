@@ -48,6 +48,7 @@
       :title="title"
       :footer="null"
       @cancel="handleCancel"
+      :mask-closable="false"
     >
       <img style="width: 100%" :src="imageUrl" />
     </a-modal>

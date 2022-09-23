@@ -23,12 +23,8 @@
                                 :id="'data-'+data.data.ID "> </a-radio>
                         </a-radio-group>
                     </template>
-
-
                     <DxColumn data-field="관할세무서" />
-
                     <DxColumn data-field="지방소득세납세지" />
-
                     <DxColumn data-field="주소" />
                 </DxDataGrid>
             </div>
@@ -131,13 +127,4 @@ export default defineComponent({
     right: 0;
     text-align: center;
 }
-
-/* .btn_submit button {
-  width: 100px;
-  height: 32px;
-  border: none;
-  background-color: #1890ff;
-  color: #fff;
-  border-radius: 4px;
-} */
 </style>
