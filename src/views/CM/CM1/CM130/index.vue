@@ -74,7 +74,7 @@
                           v-model:checked="isSwitch"
                           checked-children="적용"
                           un-checked-children="미적용"
-                          style="width: 10%; margin-left: 8px"
+                          style="width: 80px; margin-left: 8px"
                         />
                       </div>
                       <div style="margin-left: 150px; margin-top: 10px">

@@ -214,10 +214,17 @@ export default defineComponent({
     },
     setup() { 
         onMounted(() => {
-            // const { loading , error, data } = useQuery(queries.findParters, { name: 'super_admin' });
-            console.log(useQuery(queries.findParters, { name: 'super_admin' }));
-            
-        }); 
+            const { loading, error, onResult } = useQuery(queries.findParters, { name: 'super_admin' });
+            console.log(useQuery(queries.findParters, { name: 'super_admin' }))
+            onResult((res) => {
+            console.log(res.data.findParters)
+            })
+        });
+
+
+        return {
+            // getCartItems
+        }
     }
 
 });
