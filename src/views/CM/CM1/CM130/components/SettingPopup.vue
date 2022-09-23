@@ -4,7 +4,7 @@
       :visible="modalStatus"
       :title="title"
       centered
-      width="50%"
+      width="35%"
       :footer="null"
       @cancel="setModalVisible()"
       :mask-closable="false"
@@ -35,12 +35,19 @@
           :selection="{ mode: 'single' }"
           @selection-changed="onSelectionChanged"
         >
-          <DxSelection mode="single" :show-borders="true" />
-
-          <DxColumn data-field="관할세무서" />
-
-          <DxColumn data-field="지방소득세납세지" />
-
+          <DxColumn data-field="" :width="30" cell-template="grid-cell" />
+          <template #grid-cell="{ data }">
+            <a-radio-group v-model:value="modalParam.checkBox">
+              <a-radio
+                :value="data.data.ID"
+                @click="changeOption(data.data.ID)"
+                :id="'data-' + data.data.ID"
+              >
+              </a-radio>
+            </a-radio-group>
+          </template>
+          <DxColumn :width="150" data-field="관할세무서" />
+          <DxColumn :width="200" data-field="지방소득세납세지" />
           <DxColumn data-field="주소" />
         </DxDataGrid>
       </div>
@@ -52,9 +59,8 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, reactive, computed } from "vue";
+import { ref, defineComponent } from "vue";
 import { employees } from "../data.js";
-import type { UnwrapRef } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
 
 import {
@@ -71,30 +77,6 @@ import {
   MailOutlined,
   MenuOutlined,
 } from "@ant-design/icons-vue";
-import dayjs, { Dayjs } from "dayjs";
-import { any } from "vue-types";
-import themes from "devextreme/ui/themes";
-interface FormState {
-  name: string;
-  영업자코드: string;
-  영업자명: string;
-  사업자유형: string;
-  상태: string;
-  등급: string;
-  switch: boolean;
-  은행: string;
-  계좌번호: string;
-  등록번호: string;
-  예금주: string;
-  가입일자: string;
-  사업자등록번호: string;
-  휴대폰: string;
-  비고: string;
-  이메일: string;
-  연락처: string;
-  팩스: string;
-  전자세금계산서수신이메일: string;
-}
 
 export default defineComponent({
   props: ["modalStatus", "data", "title"],
@@ -119,6 +101,9 @@ export default defineComponent({
       showEmployeeInfo: false,
       selectedRowNotes: "",
       selectedRowPicture: "",
+      modalParam: {
+        checkBox: "",
+      },
       employees,
     };
   },
@@ -144,6 +129,10 @@ export default defineComponent({
       this.selectedRowNotes = data && data.관할세무서;
       this.selectedRowPicture = data && data.주소;
     },
+
+    changeOption(data: any) {
+      (document.getElementById("data-" + data) as HTMLInputElement).click();
+    },
   },
 });
 </script>
@@ -151,6 +140,7 @@ export default defineComponent({
 #components-modal-demo-position {
   position: relative;
 }
+
 .btn_submit {
   position: absolute;
   bottom: 0;
@@ -160,12 +150,4 @@ export default defineComponent({
   right: 0;
   text-align: center;
 }
-/* .btn_submit button {
-  width: 100px;
-  height: 32px;
-  border: none;
-  background-color: #1890ff;
-  color: #fff;
-  border-radius: 4px;
-} */
 </style>
