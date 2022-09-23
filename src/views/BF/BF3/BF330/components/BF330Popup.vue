@@ -1,6 +1,6 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :visible="modalStatus" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="50%">
             <a-collapse v-model:activeKey="activeKey" accordion>
                 <a-collapse-panel key="1" header="이용서비스" class="popup-scroll">
@@ -223,7 +223,7 @@
             </a-collapse>
         </a-modal>
 
-        <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" width="1000px">
+        <a-modal :visible="modalStatusHistory" footer='' @cancel="setModalVisibleHis()" :mask-closable="false" width="1000px">
             <div>
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="key">
                     <DxColumn data-field="기록일시" width='150px' />

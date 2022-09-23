@@ -1,7 +1,7 @@
 <template>
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" :title="title" centered
-            @cancel="setModalVisible()" width="50%">
+            @cancel="setModalVisible()" width="50%" :mask-closable="false">
             <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
                     <DxColumn data-field="기록일시" />
                     <DxColumn data-field="비고" />

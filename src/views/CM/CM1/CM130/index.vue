@@ -56,7 +56,7 @@
                           align-items: center;
                         "
                       >
-                        <warning-filled />
+                        <info-circle-outlined />
                         <span style="margin-left: 5px">
                           급여지급일자는 선택사항으로 지정시 급여명세서 등에
                           해당 급여일자가 입력되며, 수정 가능합니다.
@@ -78,7 +78,7 @@
                         />
                       </div>
                       <div style="margin-left: 150px; margin-top: 10px">
-                        <warning-filled />
+                        <info-circle-outlined />
                         <span style="margin-left: 5px">
                           사업자 두루누리 미적용시 해당 사원이 두루누리
                           적용이더라도 급여계산에 반영되지 않습니다.
@@ -108,17 +108,24 @@
                         okText="네. 적용합니다"
                         cancelText="아니오"
                         @ok="handleSuccsess"
+                        :mask-closable="false"
                       >
                         <div id="modal">
                           <div style="display: flex">
                             <question-circle-outlined
                               style="padding-right: 10px; font-size: xxx-large"
                             />
-                            <span>
-                              관할세무서 : 송파세무서 지방소득세 납세지 :
-                              서울특별시 송파구 위 자동으로 선택된 결과로
-                              적용하시겠습니까?
-                            </span>
+                            <div>
+                              <p style="margin: 0; font-weight: 600">
+                                관할세무서 : 송파세무서
+                              </p>
+                              <p style="margin: 0; font-weight: 600">
+                                지방소득세 납세지 : 서울특별시 송파구
+                              </p>
+                              <p style="margin: 0">
+                                위 자동으로 선택된 결과로 적용하시겠습니까?
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </a-modal>
@@ -207,7 +214,7 @@
                 data.value
               }}</a-tag>
             </template>
-            <DxColumn data-field="과세구분" />
+            <DxColumn data-field="과세구분" :width="100" />
 
             <DxColumn data-field="항목명" />
             <DxColumn
@@ -215,7 +222,11 @@
               css-class="cell-center"
               :width="100"
             />
-            <DxColumn data-field="제출여부" css-class="cell-center" />
+            <DxColumn
+              data-field="제출여부"
+              :width="80"
+              css-class="cell-center"
+            />
             <DxColumn data-field="유형" />
             <DxColumn data-field="산출방법" />
             <DxColumn
@@ -272,6 +283,7 @@ import {
   UploadOutlined,
   WarningFilled,
   QuestionCircleOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons-vue";
 import { message, RadioGroupProps } from "ant-design-vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
@@ -362,6 +374,7 @@ export default defineComponent({
     EditCM130Popup,
     HistoryPopup,
     AddCM130Popup,
+    InfoCircleOutlined,
   },
   data() {
     const value1 = ref<string>("매월");
@@ -489,7 +502,9 @@ export default defineComponent({
 ::v-deep .cell-center {
   text-align: center !important;
 }
-
+::v-deep .ant-modal-body {
+  padding: 0;
+}
 .container {
   position: relative;
   margin-left: auto;
