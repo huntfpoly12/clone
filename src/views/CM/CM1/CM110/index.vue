@@ -26,13 +26,17 @@
             <div style="display: flex;">
               <div style="display: flex;">
                 <a-form-item label="대표번호">
-                  <a-input v-model:value="formState.대표번호" @change="validateNumber($event,'대표번호')" />
+                  <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
+                                :spinButtons="false" :clearButton="false" :nameService="'대표번호'"
+                                style="width: 182px;" :valueInput="formState.대표번호"/>
                 </a-form-item>
                 <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
               </div>
               <div style="display: flex; margin-left: 19px;">
                 <a-form-item label="팩스번호">
-                  <a-input v-model:value="formState.팩스번호" @change="validateNumber($event,'팩스번호')" />
+                  <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
+                                :spinButtons="false" :clearButton="false" :nameService="'팩스번호'"
+                                style="width: 175px;" :valueInput="formState.팩스번호"/>
                 </a-form-item>
                 <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
               </div>
@@ -94,14 +98,18 @@
 
               <div style="display: flex; margin-left: 150px;">
                 <a-form-item label="휴대폰">
-                  <a-input v-model:value="formState.휴대폰" style="width: 176px" @change="validateNumber($event,'휴대폰')" />
+                  <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
+                                :spinButtons="false" :clearButton="false" :nameService="'휴대폰'"
+                                style="width: 175px;" :valueInput="formState.휴대폰"/>
                 </a-form-item>
                 <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
               </div>
             </div>
             <div style="display: flex;">
               <a-form-item label="생년월일">
-                <a-input v-model:value="formState.생년월일" style="width: 176px" @change="validateNumber($event,'생년월일')" />
+                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
+                                :spinButtons="false" :clearButton="false" :nameService="'생년월일'"
+                                style="width: 175px;" :valueInput="formState.생년월일"/>
               </a-form-item>
               <p class="validate-message">
                 ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
@@ -184,8 +192,6 @@
           title="로그인이력 [ cm-000-popLogin ]" />
       </a-tab-pane>
     </a-tabs>
-
-
   </div>
 </template>
 <script lang="ts">
@@ -206,6 +212,8 @@ import DxButton from "devextreme-vue/button";
 import AddNewCM110Poup from "./components/AddNewCM110Poup.vue";
 import EditCM110Popup from "./components/EditCM110Popup.vue"
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
+import inputFormat from '../../../../components/inputBoxFormat.vue';
+
 import { defineComponent, ref, toRaw, reactive } from "vue";
 import type { UnwrapRef } from "vue";
 import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
@@ -258,7 +266,8 @@ export default defineComponent({
     HistoryPopup,
     AddNewCM110Poup,
     EditCM110Popup,
-    ListLoginPopup
+    ListLoginPopup,
+    inputFormat
   },
   setup() {
     let modalAddNewStatus = ref(false);
@@ -374,7 +383,29 @@ export default defineComponent({
     const checkedRow = (data:any) => {
       dataTableShow.value[data.key].원천권한 = !dataTableShow.value[data.key].원천권한;
     }
-    
+    const changeValueInputEmit = (data: { name: string; value: any; })=>{
+            if (data.name == '팩스번호') {
+             
+            }
+
+            switch (data.name) {
+              case '팩스번호':
+                formState.팩스번호 = data.value;
+                break;
+              case '대표번호':
+                formState.대표번호 = data.value;
+                break;
+              case '휴대폰':
+                formState.휴대폰 = data.value;
+                break;
+              case '생년월일':
+                formState.생년월일 = data.value;
+                break;
+              default:
+              // code block
+            }
+
+        }
     const validateNumber = (e: any, name: string) => {
       let valNumberOnly = e.target.value.replace(/\D+/g, '');
       switch (name) {
@@ -433,7 +464,8 @@ export default defineComponent({
       getColorTag,
       validateNumber,
       validateEmail,
-      statusMailValidate
+      statusMailValidate,
+      changeValueInputEmit
     };
   },
 });
