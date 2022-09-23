@@ -211,12 +211,7 @@ export default defineComponent({
   data() {
     return {
       dataSource: employees,
-      options: [
-        {
-          value: "jack",
-          label: "Jack",
-        },
-      ],
+
       popupData: [],
       modalAddNewStatus: false,
       modalEditStatus: false,
