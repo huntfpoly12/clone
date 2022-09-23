@@ -110,7 +110,6 @@
                                         style="width:180px">W4C</a-checkbox>
                                     <DxNumberBox v-model="formState.numberBox4" :format="'#,##0'"
                                         :disabled="formState.disableNumber4" />
-
                                 </div>
                             </a-col>
                         </a-row>

@@ -1,12 +1,13 @@
 <template>
     <div ref="root">
-        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" :mask-closable="false" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" :width="withPopup()">
-            <a-form v-bind="layout" name="nest-messages" label-align="right">
+        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+            @cancel="setModalVisible()" :mask-closable="false" :width="1028">
+            <a-form :model="bf340Detail" v-bind="layout" label-align="right" name="nest-messages"
+                :validate-messages="validateMessages" @finish="onFinish">
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
                         <a-form-item label="영업자코드">
-                            <a-input v-model:value="bf340Detail.영업자코드" style="width: 200px" :disabled="true" />
+                            <a-input v-model:value="bf340Detail.영업자코드" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="영업자명">
                             <a-input v-model:value="bf340Detail.영업자명" style="width: 200px" />
@@ -18,7 +19,8 @@
                                 <a-select-option value="개인">개인</a-select-option>
                             </a-select>
                         </a-form-item>
-                        <a-form-item label="이메일">
+
+                        <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]">
                             <a-input v-model:value="bf340Detail.이메일" style="width: 250px" />
                         </a-form-item>
                         <a-form-item label="연락처">
@@ -78,7 +80,7 @@
                     </a-col>
                     <a-col :span="8" :md="13" :lg="11">
                         <a-form-item :wrapper-col="{ span: 24}" class="detail-address">
-                            <a-input v-model:value="bf340Detail.detail_address" placeholder="상세주소"/>
+                            <a-input v-model:value="bf340Detail.detail_address" placeholder="상세주소" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -95,7 +97,8 @@
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
                             <a-col :span="16" :md="16" :lg="17">
-                                <a-form-item class="email-input" :wrapper-col="{ span: 24 }">
+                                <a-form-item class="email-input" :wrapper-col="{ span: 24 }" :name="['전자세금계산서수신이메일']"
+                                    :rules="[{ type: 'email' }]">
                                     <a-input v-model:value="bf340Detail.전자세금계산서수신이메일" placeholder=""
                                         style="width: 100%" />
                                 </a-form-item>
@@ -123,7 +126,9 @@
                             <a-input v-model:value="bf340Detail.계좌번호" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="가입일자">
-                            <a-date-picker :value="dateValue(bf340Detail.가입일자)" />
+                            <div style="width: 150px">
+                                <CustomDatepicker :valueDate="bf340Detail.가입일자" />
+                            </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="12" :md="13" :lg="14">
@@ -131,7 +136,9 @@
                             <a-input v-model:value="bf340Detail.예금주" />
                         </a-form-item>
                         <a-form-item label="해지일자">
-                            <a-date-picker :value="dateValue(bf340Detail.해지일자)" />
+                            <div style="width: 150px">
+                                <CustomDatepicker :valueDate="bf340Detail.해지일자" />
+                            </div>
                         </a-form-item>
                     </a-col>
 
@@ -147,27 +154,33 @@
             </a-form>
         </a-modal>
 
-        <a-modal v-model:visible="visible" :mask-closable="false" title="해지 확인" ok-text="완료" :afterClose="afterConfirmClose()">
+        <a-modal v-model:visible="visible" :mask-closable="false" :afterClose="afterConfirmClose" class="confirm-md"
+            :width="521">
             <a-row>
                 <a-col :span="4">
-                    <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />
+                    <warning-outlined :style="{fontSize: '70px', color: '#faad14',paddingTop: '20px'}" />
                 </a-col>
                 <a-col :span="20">
+                    <h3><b>해지 확인</b></h3>
                     <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
                     <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을 </p>
                     <p>누르세요</p>
 
                 </a-col>
+                <div style="text-align: center;width: 100%;margin-left: 100px;">
+                    <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
+                    <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px;">완료</a-button>
+                </div>
             </a-row>
             <template #footer>
-                <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
-                <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px;">완료</a-button>
             </template>
         </a-modal>
+
     </div>
 </template>
 
 <script lang="ts">
+import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent, reactive, onMounted } from 'vue'
 import type { UnwrapRef } from 'vue';
 import { SearchOutlined, WarningOutlined, } from '@ant-design/icons-vue';
@@ -204,7 +217,8 @@ export default defineComponent({
     ,
     components: {
         SearchOutlined,
-        WarningOutlined
+        WarningOutlined,
+        CustomDatepicker
     },
 
     setup(props) {
@@ -219,21 +233,11 @@ export default defineComponent({
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
-        let windowHeight = ref(window.innerWidth);
-        // get window resize 
-        onMounted(() => {
-            window.onresize = () => {
-               windowHeight.value = window.innerWidth;
-            }
-        });
-
-        let withPopup = () => {
-            var percent = 100 - (window.innerWidth / (window.innerWidth + window.innerHeight)) * 100 + 30;
-            if (windowHeight.value <= 1960) {
-                return percent + '%';
-            } else {
-                return '50%';
-            }
+        const validateMessages = {
+            required: true,
+            types: {
+                email: "이메일 형식이 정확하지 않습니다",
+            },
         };
         let bf340Detail: UnwrapRef<FormState> = reactive({
             name: '',
@@ -258,8 +262,8 @@ export default defineComponent({
             법인주민등록번호: '',
             result_address: '',
             detail_address: '',
-            가입일자:'',
-            해지일자:'',
+            가입일자: '',
+            해지일자: '',
         });
         onMounted(() => {
             bf340Detail.사업자유형 = '개인';
@@ -309,8 +313,12 @@ export default defineComponent({
         }
 
         const dateValue = (date: string | number | Date | dayjs.Dayjs | null | undefined) => {
-			return dayjs(date,"YYYY-MM-DD");
-		}
+            return dayjs(date, "YYYY-MM-DD");
+        }
+
+        const onFinish = (values: any) => {
+            console.log("Success:", values);
+        };
         return {
             labelCol,
             wrapperCol,
@@ -322,9 +330,9 @@ export default defineComponent({
             confirm,
             handleOkConfirm,
             afterConfirmClose,
-            withPopup,
-            windowHeight,
-            dateValue
+            dateValue,
+            onFinish,
+            validateMessages
         }
     },
     methods: {
@@ -344,7 +352,12 @@ export default defineComponent({
     }
 })
 </script>
-<style>
+
+<style scoped>
+.confirm-md>>>.ant-modal-body {
+    padding: 10px !important;
+}
+
 .confirm-button {
     margin-left: 100px;
 }
