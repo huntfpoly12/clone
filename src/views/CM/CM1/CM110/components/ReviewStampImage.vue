@@ -62,7 +62,7 @@ export default defineComponent({
     InfoCircleFilled,
   },
   setup(props, { emit }) {
-    let previewImage: any = ref("https://lh3.googleusercontent.com/prAZ1xAiwE-JFPdZXqNlVc3jI8bZvh2etH5H_o2HvPYTzeWeG6NJL3WDIQfWKt-s80BDgCa2y-EKZY3SV-Phvz5tS5T82UY8ojtoCxIkGB2Okc6s1urH_zXZBXBR0s2Zzai_7I5u0JYo5g9uHP8zhEMrcNFLSvB4QEQ-4lMCSk3Pz9UL2TwYd5QMfqK-_D-4L8XOO_Q82_fNLhs3QwfUHppD9shcL7vOeZ-tsGFdAFtF7rqZDK2ILYNtmc9Y4AwHfBetqna09hP1yqmzH1uCsAulp4bdoZcFEOdSRL23uluUStQll1PnVzMSjIKbPLeykKahl_gT1DWuH3jp93Iky1X4iDNc9JMoHxedH36DZni6zcN0DQPzAgYVX5dqNkAI2JSs3qSppZmhN6UhS7fmct8wuN58mB_cEkODqd66KGNajIIZPtgiOQsx580gNn5_f-eRSvS0eJ-n2U1REYaqxWYKXZQE6ilK86IcRAZSZEOULewEH-lgILlm_mn-_Q6vFmn83YS3BuUrfIGUyc4l_sO4dY_Lrep1PCuiAuRlkpamfBj_Ln5qgciRhM3Vfsqsdiww-Ltx5e-5pWFffQ7FU9vZvrgFuQIlQBCQEwVLTssJGNrpF4r0spb6BNQ11ni98MzrD7Ky2Tv3M-D_RS5iuJMhJ96NnGnoVnhd_1n1v9tBhbEzonkckjZWNIy_2hO6ddSp8BaYAKPF_lmsu9kC7pfwAM6VSJ7u4Ki4y6VtzYawjLAX643_aGkc4rH9S9kwGPkqJjtj5DXbnmKNyEOn1rLcHdihGDUaQxMggiLaphnIxchKKtuWWBC2RkBVKkss3XXMhaZjp8oyZDPOzarA6vk_dROFhlzPGCNVhRAWQRFmNZlIbQv3N4CJa5StQ-h4zi9cf2_VByBTtUb9e3-LhgC_mya8MLP9pTwcUzs=s686-no?authuser=0");
+    let previewImage: any = ref("https://trello.com/1/cards/63284173f2296b003fcff931/attachments/632bd4d27b65f901c650875f/previews/632bd4d37b65f901c65087c2/download/%EC%98%A8%EB%9D%BC%EC%9D%B8%EB%8F%84%EC%9E%A5-%EC%BD%94%EB%B9%97%EC%86%8C%ED%94%84%ED%8A%B8.png");
     let signature = ref("");
     let disabledBtnPreview = ref(true);
     watch( () => props.modalStatus, async (currentValue, oldValue) => {
@@ -72,7 +72,7 @@ export default defineComponent({
     });
     const setModalVisible = () => {
       emit("closePopup", false);
-      previewImage.value = "https://lh3.googleusercontent.com/prAZ1xAiwE-JFPdZXqNlVc3jI8bZvh2etH5H_o2HvPYTzeWeG6NJL3WDIQfWKt-s80BDgCa2y-EKZY3SV-Phvz5tS5T82UY8ojtoCxIkGB2Okc6s1urH_zXZBXBR0s2Zzai_7I5u0JYo5g9uHP8zhEMrcNFLSvB4QEQ-4lMCSk3Pz9UL2TwYd5QMfqK-_D-4L8XOO_Q82_fNLhs3QwfUHppD9shcL7vOeZ-tsGFdAFtF7rqZDK2ILYNtmc9Y4AwHfBetqna09hP1yqmzH1uCsAulp4bdoZcFEOdSRL23uluUStQll1PnVzMSjIKbPLeykKahl_gT1DWuH3jp93Iky1X4iDNc9JMoHxedH36DZni6zcN0DQPzAgYVX5dqNkAI2JSs3qSppZmhN6UhS7fmct8wuN58mB_cEkODqd66KGNajIIZPtgiOQsx580gNn5_f-eRSvS0eJ-n2U1REYaqxWYKXZQE6ilK86IcRAZSZEOULewEH-lgILlm_mn-_Q6vFmn83YS3BuUrfIGUyc4l_sO4dY_Lrep1PCuiAuRlkpamfBj_Ln5qgciRhM3Vfsqsdiww-Ltx5e-5pWFffQ7FU9vZvrgFuQIlQBCQEwVLTssJGNrpF4r0spb6BNQ11ni98MzrD7Ky2Tv3M-D_RS5iuJMhJ96NnGnoVnhd_1n1v9tBhbEzonkckjZWNIy_2hO6ddSp8BaYAKPF_lmsu9kC7pfwAM6VSJ7u4Ki4y6VtzYawjLAX643_aGkc4rH9S9kwGPkqJjtj5DXbnmKNyEOn1rLcHdihGDUaQxMggiLaphnIxchKKtuWWBC2RkBVKkss3XXMhaZjp8oyZDPOzarA6vk_dROFhlzPGCNVhRAWQRFmNZlIbQv3N4CJa5StQ-h4zi9cf2_VByBTtUb9e3-LhgC_mya8MLP9pTwcUzs=s686-no?authuser=0";
+      previewImage.value = "https://trello.com/1/cards/63284173f2296b003fcff931/attachments/632bd4d27b65f901c650875f/previews/632bd4d37b65f901c65087c2/download/%EC%98%A8%EB%9D%BC%EC%9D%B8%EB%8F%84%EC%9E%A5-%EC%BD%94%EB%B9%97%EC%86%8C%ED%94%84%ED%8A%B8.png";
       signature.value = '';
     };
     const validateCharacter = () => {
