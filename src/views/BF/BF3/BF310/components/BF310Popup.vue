@@ -204,7 +204,7 @@
 									</div>
 								</a-form-item>
 								<a-form-item label="직 원 수" class="clr">
-									<a-input-number style="width: 100px" />
+									<a-input-number style="width: 100px" min="0"/>
 								</a-form-item>
 								<a-form-item label="부가서비스">
 									<a-checkbox>4대보험신고서비스</a-checkbox>
