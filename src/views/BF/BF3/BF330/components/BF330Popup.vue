@@ -772,7 +772,7 @@ export default defineComponent({
     margin-top: -35px;
 }
 
-.dx-texteditor-input {
+::v-deep .dx-texteditor-input {
     text-align: right;
 }
 </style>
