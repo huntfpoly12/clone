@@ -195,7 +195,7 @@
 							</a-table>
 
 							<a-form-item label="장기요양기관등록번호" class="title-number-modal clr">
-								<a-input value="01234567898" style="width: 300px" />
+								<a-input placeholder="01234567898" style="width: 300px" />
 							</a-form-item>
 							<imgUpload :title="titleModal" @update-img="getImgUrl" />
 							<div>
@@ -217,10 +217,12 @@
 						<div style="margin-top: 20px">
 							<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
 								<a-form-item label="서비스 시작년월" class="clr">
-									<CustomDatepicker width="30%" valueDate="2022/08/25" className="0" />
+									<div :width="100">
+										<CustomDatepicker valueDate="2022/08/25" className="0" />
+									</div>
 								</a-form-item>
 								<a-form-item label="직 원 수" class="clr">
-									<a-input-number value="10" style="width: 100px" />
+									<a-input-number v-modal:value="totalUser" style="width: 100px" />
 								</a-form-item>
 								<a-form-item label="부가서비스">
 									<a-checkbox v-model:checked="checked">4대보험신고서비스</a-checkbox>
@@ -423,6 +425,8 @@ export default defineComponent({
 	},
 
 	setup() {
+
+		const totalUser = 0
 		const layout = {
 			labelCol: { span: 8 },
 			wrapperCol: { span: 16 },
@@ -456,6 +460,7 @@ export default defineComponent({
 			onFinish,
 			layout,
 			validateMessages,
+			totalUser
 		};
 	},
 	methods: {
@@ -634,9 +639,9 @@ export default defineComponent({
 }
 
 
-::v-deep .dp__input {
-	padding: 4px 0px !important;
-}
+// ::v-deep .dp__input {
+// 	padding: 4px 0px !important;
+// }
 
 ::v-deep .ant-table-tbody>tr>td {
 	padding: 5 10px !important
