@@ -1,6 +1,6 @@
 <template>
     <div ref="root">
-        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" :mask-closable="false" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" :width="withPopup()">
             <a-form v-bind="layout" name="nest-messages" label-align="right">
                 <a-row :gutter="24">
@@ -147,7 +147,7 @@
             </a-form>
         </a-modal>
 
-        <a-modal v-model:visible="visible" title="해지 확인" ok-text="완료" :afterClose="afterConfirmClose()">
+        <a-modal v-model:visible="visible" :mask-closable="false" title="해지 확인" ok-text="완료" :afterClose="afterConfirmClose()">
             <a-row>
                 <a-col :span="4">
                     <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />

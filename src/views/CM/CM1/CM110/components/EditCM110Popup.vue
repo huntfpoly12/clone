@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
+    <a-modal :visible="modalStatus" centered okText="저장하고 나가기" :mask-closable="false" cancelText="그냥 나가기" @cancel="setModalVisible()"
       width="700px">
       <div class="cm-100-popup-edit">
         <a-form :model="formState" :label-col="labelCol">
@@ -93,7 +93,7 @@
       </template>
     </a-modal>
     <div class="confirm-popup">
-      <a-modal v-model:visible="visible">
+      <a-modal v-model:visible="visible" :mask-closable="false">
         <a-row>
           <a-col :span="4">
             <mail-outlined :style="{fontSize: '70px'}" />

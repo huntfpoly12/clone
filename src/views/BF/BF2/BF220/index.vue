@@ -4,7 +4,7 @@
             <div id="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16,8]">
                     <a-col>
-                        <label class="lable-item">대상회원</label>
+                        <label class="lable-item">대상회원 :</label>
                         <a-checkbox v-model:checked="dataSearch.typeSevice1">
                             <a-tag color="black">매니저</a-tag>
                         </a-checkbox>
@@ -136,9 +136,9 @@ export default defineComponent({
                 address: '',
                 manager: 'Jack',
                 nameSale: 'Jack',
-                typeSevice1: false,
-                typeSevice2: false,
-                typeSevice3: false,
+                typeSevice1: true,
+                typeSevice2: true,
+                typeSevice3: true,
             },
             modalAddNewStatus: false,
             modalEditStatus: false
