@@ -27,16 +27,16 @@
               <div style="display: flex;">
                 <a-form-item label="대표번호">
                   <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="false" :clearButton="false" :nameService="'대표번호'"
-                                style="width: 182px;" :valueInput="formState.대표번호"/>
+                    :spinButtons="false" :clearButton="false" :nameService="'대표번호'" style="width: 182px;"
+                    :valueInput="formState.대표번호" />
                 </a-form-item>
                 <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
               </div>
               <div style="display: flex; margin-left: 19px;">
                 <a-form-item label="팩스번호">
                   <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="false" :clearButton="false" :nameService="'팩스번호'"
-                                style="width: 175px;" :valueInput="formState.팩스번호"/>
+                    :spinButtons="false" :clearButton="false" :nameService="'팩스번호'" style="width: 175px;"
+                    :valueInput="formState.팩스번호" />
                 </a-form-item>
                 <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
               </div>
@@ -47,7 +47,8 @@
                 <a-row>
                   <a-col :span="6">
                     <a-form-item label="직인(인감)" style="margin-bottom: 5px;">
-                      <a-image :width="100" :src="previewImage" :preview="false" />
+                      <a-image :width="100" :src="previewImage" :preview="false"
+                        fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCYh2zi+oLMpMzyhRcASGUqqCZ16yno6CkYGRAQMDKMwhqj/fAIcloxgHQqxAjIHBEugw5sUIsSQpBobtQPdLciLEVJYzMPBHMDBsayhILEqEO4DxG0txmrERhM29nYGBddr//5/DGRjYNRkY/l7////39v///y4Dmn+LgeHANwDrkl1AuO+pmgAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAwqADAAQAAAABAAAAwwAAAAD9b/HnAAAHlklEQVR4Ae3dP3PTWBSGcbGzM6GCKqlIBRV0dHRJFarQ0eUT8LH4BnRU0NHR0UEFVdIlFRV7TzRksomPY8uykTk/zewQfKw/9znv4yvJynLv4uLiV2dBoDiBf4qP3/ARuCRABEFAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghgg0Aj8i0JO4OzsrPv69Wv+hi2qPHr0qNvf39+iI97soRIh4f3z58/u7du3SXX7Xt7Z2enevHmzfQe+oSN2apSAPj09TSrb+XKI/f379+08+A0cNRE2ANkupk+ACNPvkSPcAAEibACyXUyfABGm3yNHuAECRNgAZLuYPgEirKlHu7u7XdyytGwHAd8jjNyng4OD7vnz51dbPT8/7z58+NB9+/bt6jU/TI+AGWHEnrx48eJ/EsSmHzx40L18+fLyzxF3ZVMjEyDCiEDjMYZZS5wiPXnyZFbJaxMhQIQRGzHvWR7XCyOCXsOmiDAi1HmPMMQjDpbpEiDCiL358eNHurW/5SnWdIBbXiDCiA38/Pnzrce2YyZ4//59F3ePLNMl4PbpiL2J0L979+7yDtHDhw8vtzzvdGnEXdvUigSIsCLAWavHp/+qM0BcXMd/q25n1vF57TYBp0a3mUzilePj4+7k5KSLb6gt6ydAhPUzXnoPR0dHl79WGTNCfBnn1uvSCJdegQhLI1vvCk+fPu2ePXt2tZOYEV6/fn31dz+shwAR1sP1cqvLntbEN9MxA9xcYjsxS1jWR4AIa2Ibzx0tc44fYX/16lV6NDFLXH+YL32jwiACRBiEbf5KcXoTIsQSpzXx4N28Ja4BQoK7rgXiydbHjx/P25TaQAJEGAguWy0+2Q8PD6/Ki4R8EVl+bzBOnZY95fq9rj9zAkTI2SxdidBHqG9+skdw43borCXO/ZcJdraPWdv22uIEiLA4q7nvvCug8WTqzQveOH26fodo7g6uFe/a17W3+nFBAkRYENRdb1vkkz1CH9cPsVy/jrhr27PqMYvENYNlHAIesRiBYwRy0V+8iXP8+/fvX11Mr7L7ECueb/r48eMqm7FuI2BGWDEG8cm+7G3NEOfmdcTQw4h9/55lhm7DekRYKQPZF2ArbXTAyu4kDYB2YxUzwg0gi/41ztHnfQG26HbGel/crVrm7tNY+/1btkOEAZ2M05r4FB7r9GbAIdxaZYrHdOsgJ/wCEQY0J74TmOKnbxxT9n3FgGGWWsVdowHtjt9Nnvf7yQM2aZU/TIAIAxrw6dOnAWtZZcoEnBpNuTuObWMEiLAx1HY0ZQJEmHJ3HNvGCBBhY6jtaMoEiJB0Z29vL6ls58vxPcO8/zfrdo5qvKO+d3Fx8Wu8zf1dW4p/cPzLly/dtv9Ts/EbcvGAHhHyfBIhZ6NSiIBTo0LNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiEC/wGgKKC4YMA4TAAAAABJRU5ErkJggg==" />
                     </a-form-item>
                   </a-col>
                   <a-col :span="14">
@@ -99,8 +100,8 @@
               <div style="display: flex; margin-left: 150px;">
                 <a-form-item label="휴대폰">
                   <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="false" :clearButton="false" :nameService="'휴대폰'"
-                                style="width: 175px;" :valueInput="formState.휴대폰"/>
+                    :spinButtons="false" :clearButton="false" :nameService="'휴대폰'" style="width: 175px;"
+                    :valueInput="formState.휴대폰" />
                 </a-form-item>
                 <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
               </div>
@@ -108,8 +109,8 @@
             <div style="display: flex;">
               <a-form-item label="생년월일">
                 <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="false" :clearButton="false" :nameService="'생년월일'"
-                                style="width: 175px;" :valueInput="formState.생년월일"/>
+                  :spinButtons="false" :clearButton="false" :nameService="'생년월일'" style="width: 175px;"
+                  :valueInput="formState.생년월일" />
               </a-form-item>
               <p class="validate-message">
                 ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
@@ -156,9 +157,9 @@
           </template>
           <DxColumn data-field="성명" :width="200" />
           <DxColumn data-field="회계권한(담당사업)" />
-          <DxColumn data-field="원천권한" cell-template="checked-status" :width="80" :allowEditing="true"/>
+          <DxColumn data-field="원천권한" cell-template="checked-status" :width="80" :allowEditing="true" />
           <template #checked-status="{ data }">
-            <a-checkbox :checked="data.value" @change="checkedRow(data)"/>
+            <a-checkbox :checked="data.value" @change="checkedRow(data)" />
           </template>
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
@@ -326,13 +327,13 @@ export default defineComponent({
       이메일: "bankda.jangbuda@gmail.com",
     });
 
-    let previewImage: any = ref("https://trello.com/1/cards/63284173f2296b003fcff931/attachments/632bd4d27b65f901c650875f/previews/632bd4d37b65f901c65087c2/download/%EC%98%A8%EB%9D%BC%EC%9D%B8%EB%8F%84%EC%9E%A5-%EC%BD%94%EB%B9%97%EC%86%8C%ED%94%84%ED%8A%B8.png");
+    let previewImage: any = ref("");
     let fileImage: any = ref(null);
     let modalStampReviewStatus: any = ref();
     const fileList = ref<UploadProps['fileList']>([]);
     const handleChange = async (info: any) => {
       if (info.file.status !== "uploading") {
-        console.log(info.file.originFileObj.size,'dfgdfdfg');
+        console.log(info.file.originFileObj.size, 'dfgdfdfg');
         if (info.file.originFileObj.size <= 1000000) {
           previewImage.value = await getBase64(info.file.originFileObj);
           fileImage.value = info;
@@ -380,32 +381,32 @@ export default defineComponent({
       }
     }
 
-    const checkedRow = (data:any) => {
+    const checkedRow = (data: any) => {
       dataTableShow.value[data.key].원천권한 = !dataTableShow.value[data.key].원천권한;
     }
-    const changeValueInputEmit = (data: { name: string; value: any; })=>{
-            if (data.name == '팩스번호') {
-             
-            }
+    const changeValueInputEmit = (data: { name: string; value: any; }) => {
+      if (data.name == '팩스번호') {
 
-            switch (data.name) {
-              case '팩스번호':
-                formState.팩스번호 = data.value;
-                break;
-              case '대표번호':
-                formState.대표번호 = data.value;
-                break;
-              case '휴대폰':
-                formState.휴대폰 = data.value;
-                break;
-              case '생년월일':
-                formState.생년월일 = data.value;
-                break;
-              default:
-              // code block
-            }
+      }
 
-        }
+      switch (data.name) {
+        case '팩스번호':
+          formState.팩스번호 = data.value;
+          break;
+        case '대표번호':
+          formState.대표번호 = data.value;
+          break;
+        case '휴대폰':
+          formState.휴대폰 = data.value;
+          break;
+        case '생년월일':
+          formState.생년월일 = data.value;
+          break;
+        default:
+        // code block
+      }
+
+    }
     const validateNumber = (e: any, name: string) => {
       let valNumberOnly = e.target.value.replace(/\D+/g, '');
       switch (name) {

@@ -87,8 +87,8 @@
       </div>
       <template #footer>
         <div style="text-align: center;">
-          <a-button>그냥 나가기</a-button>
-          <a-button type="primary">저장하고 나가기</a-button>
+          <a-button @click="setModalVisible()">그냥 나가기</a-button>
+          <a-button type="primary" @click="setModalVisible()">저장하고 나가기</a-button>
         </div>
       </template>
     </a-modal>

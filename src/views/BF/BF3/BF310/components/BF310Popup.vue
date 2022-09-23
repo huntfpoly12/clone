@@ -149,7 +149,6 @@
 						<div>
 							<a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
 								:headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
-
 							</a-card>
 							<div id="data-grid-demo">
 								<DxDataGrid id="gridContainer" :data-source="dataTableModal" :show-borders="true"
@@ -170,7 +169,8 @@
 
 									<DxColumn data-field="심사상태" caption="사업명 (중복불가)" />
 									<DxColumn data-field="사업자코드" caption="사업분류" />
-									<DxColumn data-field="상호" data-type="date" :format="'yyyy-MM-dd'" />
+									<DxColumn data-field="상호" caption="서비스시작년월" data-type="date"
+										:format="'yyyy-MM-dd'" />
 									<DxColumn :width="100" data-field="부가서비스" caption="정원수 (명)" />
 
 									<DxToolbar>
@@ -179,7 +179,7 @@
 								</DxDataGrid>
 							</div>
 
-							<imgUpload :title="titleModal" @update-img="getImgUrl" />
+							<imgUpload :title="titleModal2" @update-img="getImgUrl" />
 							<div>
 								<a-row>
 									<a-col :span="12">
@@ -204,7 +204,7 @@
 									</div>
 								</a-form-item>
 								<a-form-item label="직 원 수" class="clr">
-									<a-input-number style="width: 100px" />
+									<a-input-number style="width: 100px" min="0"/>
 								</a-form-item>
 								<a-form-item label="부가서비스">
 									<a-checkbox>4대보험신고서비스</a-checkbox>
@@ -440,6 +440,7 @@ export default defineComponent({
 			selectedItemKeys: [],
 			value: ref<number>(1),
 			titleModal: "사업자등록증",
+			titleModal2: "장기요양기관등록증",
 			states,
 			dataSelectModal:
 				'<button style="width:100%;height : 36px;text-align: left;background: white; border: 1px solid #d9d9d9; padding: 4px 6px; ">Select a value...</button>',
