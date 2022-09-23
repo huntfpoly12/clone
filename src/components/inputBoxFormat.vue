@@ -22,14 +22,8 @@ export default defineComponent({
         spinButtons: Boolean,
         clearButton: Boolean,
         disabled: Boolean,
-        value: String,
-        clearData: Boolean
+        valueInput: String
 
-    },
-    data(props) {
-        return {
-            valueInput: props.value
-        }
     },
     components: {
         DxNumberBox
@@ -37,10 +31,14 @@ export default defineComponent({
     methods: {
         changeValueInput() {
             if (this.valueInput == 0) {
+                let dataCall = {
+                    name: this.nameService,
+                    value: this.valueInput
+                }
+                this.$emit("valueInput", dataCall);
                 this.valueInput = ''
             }
-        },
-
+        }
     }
 })
 </script>
