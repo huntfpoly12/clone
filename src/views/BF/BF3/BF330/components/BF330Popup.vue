@@ -29,7 +29,7 @@
                         <a-row>
                             <a-col :span="12">
                                 <a-form-item label="회계서비스" style="font-weight: bold">
-                                    <input type="checkbox" value="regist"> 회계서비스 신청
+                                    <a-checkbox>회계서비스 신청</a-checkbox>
                                 </a-form-item>
                             </a-col>
                         </a-row>
@@ -126,9 +126,9 @@
                         </a-row>
                         <imgUpload :title="titleModal" :imageUrl="imageUrl" />
                         <hr>
-                        <a-row style="padding: 5px">
+                        <a-row>
                             <a-col>
-                                <a-form-item label="원천서비스" style="font-weight: bold"> 
+                                <a-form-item label="원천서비스" style="font-weight: bold">
                                     <a-checkbox>원천서비스</a-checkbox>
                                 </a-form-item>
                             </a-col>
@@ -783,7 +783,7 @@ export default defineComponent({
 }
 
 ::v-deep .ant-collapse-header .ant-collapse-extra {
-    margin-left: 8px!important;
+    margin-left: 8px !important;
     border-radius: 200px;
     background-color: hwb(120 84% 15%);
     background-size: 100px;

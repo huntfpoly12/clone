@@ -206,4 +206,8 @@ export default defineComponent({
 .confirm-popup /deep/.ant-modal-footer {
   text-align: center;
 }
+
+.ant-form-item {
+  margin-bottom: 10px;
+}
 </style>
