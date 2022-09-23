@@ -1,7 +1,7 @@
 <template>
 	<div id="modal-detail-bf-310">
-		<a-modal :mask-closable="false" :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
-			@cancel="setModalVisible()" width="1000px">
+		<a-modal :mask-closable="false" :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기"
+			cancelText="그냥 나가기" @cancel="setModalVisible()" width="1000px">
 			<a-collapse v-model:activeKey="activeKey" accordion>
 				<a-collapse-panel key="1" header="심사정보">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -60,10 +60,10 @@
 				<a-collapse-panel key="2" header="사업자정보">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
 						<a-form-item label="상 호" class="clr">
-							<a-input v-model:value="formState.name" />
+							<a-input />
 						</a-form-item>
 						<a-form-item label="사업자등록번호" class="clr">
-							<a-input v-model:value="formState.name" style="width: 300px" />
+							<a-input style="width: 300px" />
 						</a-form-item>
 
 						<a-row>
@@ -77,7 +77,7 @@
 							</a-col>
 							<a-col :span="2">
 								<a-form-item label="{ $id no }">
-									<a-input value="800123-1234567" style="width: 300px" />
+									<a-input placeholder="800123-1234567" style="width: 300px" />
 								</a-form-item>
 							</a-col>
 						</a-row>
@@ -86,7 +86,7 @@
 								<a-col :span="24">
 									<a-row>
 										<a-col :span="12">
-											<a-input v-model:value="formState.name" style="width: 300px" />
+											<a-input style="width: 300px" />
 										</a-col>
 										<a-col :span="12">
 											<a-button type="primary">우편번호 검색</a-button>
@@ -95,12 +95,12 @@
 								</a-col>
 								<a-col :span="24">
 									<a-row>
-										<a-input v-model:value="formState.name" />
+										<a-input />
 									</a-row>
 								</a-col>
 								<a-col :span="24">
 									<a-row>
-										<a-input v-model:value="formState.name" />
+										<a-input />
 									</a-row>
 								</a-col>
 							</a-row>
@@ -109,10 +109,10 @@
 						<a-row :gutter="[16, 16]">
 							<a-col :span="18">
 								<a-form-item label="연락처" class="clr">
-									<a-input v-model:value="formState.desc" />
+									<a-input />
 								</a-form-item>
 								<a-form-item label="팩 스">
-									<a-input v-model:value="formState.desc" />
+									<a-input />
 								</a-form-item>
 							</a-col>
 							<imgUpload :title="titleModal" @update-img="getImgUrl" />
@@ -123,16 +123,23 @@
 				<a-collapse-panel key="3" header="대표자정보">
 					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
 						<a-form-item has-feedback label="대표자명" class="clr">
-							<a-input value="홍길동" autocomplete="off" style="width: 300px" />
+							<a-input placeholder="홍길동" autocomplete="off" style="width: 300px" />
 						</a-form-item>
 						<a-form-item has-feedback label="생년월일" class="clr">
-							<a-input value="19620820" autocomplete="off" style="width: 300px" />
+							<a-input placeholder="19620820" autocomplete="off" style="width: 300px" />
 						</a-form-item>
 						<a-form-item has-feedback label="휴대폰번호" class="clr">
-							<a-input-number value="01098765432" style="width: 200px" />
+							<a-input-number placeholder="01098765432" style="width: 200px" />
 						</a-form-item>
+
 						<a-form-item has-feedback label="이메일" class="clr">
-							<a-input value="abc123@mailaddress.com" style="width: 300px" />
+							<a-form :model="formState" v-bind="layout" name="nest-messages"
+								:validate-messages="validateMessages" @finish="onFinish">
+								<a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
+									:rules="[{ type: 'email' }]">
+									<a-input v-model:value="formState.user.email" />
+								</a-form-item>
+							</a-form>
 						</a-form-item>
 					</a-form>
 				</a-collapse-panel>
@@ -289,7 +296,7 @@
 </template>
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, reactive } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
 	DxDataGrid,
@@ -413,6 +420,43 @@ export default defineComponent({
 		yourVariable() {
 			return this.dataSelectModal;
 		},
+	},
+
+	setup() {
+		const layout = {
+			labelCol: { span: 8 },
+			wrapperCol: { span: 16 },
+		};
+		const formState = reactive({
+			user: {
+				name: '',
+				age: undefined,
+				email: '',
+				website: '',
+				introduction: '',
+			},
+		});
+		const onFinish = (values: any) => {
+			console.log('Success:', values);
+		};
+
+		const validateMessages = {
+			required: '${label} is required!',
+			types: {
+				email: '${label} is not a valid email!',
+				number: '${label} is not a valid number!',
+			},
+			number: {
+				range: '${label} must be between ${min} and ${max}',
+			},
+		};
+
+		return {
+			formState,
+			onFinish,
+			layout,
+			validateMessages,
+		};
 	},
 	methods: {
 		handleCopy() {
