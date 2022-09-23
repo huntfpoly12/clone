@@ -7,6 +7,7 @@
       okText="저장하고 나가기"
       cancelText="그냥 나가기"
       @cancel="setModalVisible()"
+      :mask-closable="false"
       width="50%"
     >
       <h2 style="font-weight: 600; color: gray" class="title_modal">

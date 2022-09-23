@@ -266,7 +266,7 @@
 
                 </p>
             </template>
-            <a-modal v-model:visible="visible" ok-text="확인" cancel-text="">
+            <a-modal v-model:visible="visible" :mask-closable="false" ok-text="확인" cancel-text="">
                 <template #footer>
                     <a-button key="submit" type="primary" @click="handleOk">확인</a-button>
                 </template>

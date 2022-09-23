@@ -1,6 +1,6 @@
 <template>
 	<div id="modal-detail-bf-310">
-		<a-modal :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
+		<a-modal :mask-closable="false" :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기" cancelText="그냥 나가기"
 			@cancel="setModalVisible()" width="1000px">
 			<a-collapse v-model:activeKey="activeKey" accordion>
 				<a-collapse-panel key="1" header="심사정보">

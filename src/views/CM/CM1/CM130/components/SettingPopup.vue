@@ -7,6 +7,7 @@
       width="50%"
       :footer="null"
       @cancel="setModalVisible()"
+      :mask-closable="false"
     >
       <h2 style="font-weight: 600; color: gray">
         관할세무서, 지방소득세 납세지 검색

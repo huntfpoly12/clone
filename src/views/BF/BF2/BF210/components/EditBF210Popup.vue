@@ -8,6 +8,7 @@
       cancelText="그냥 나가기"
       @cancel="setModalVisible()"
       width="50%"
+      :mask-closable="false"
     >
       <h2 class="title_modal">회원정보</h2>
       <a-form
