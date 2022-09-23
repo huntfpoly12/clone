@@ -214,14 +214,10 @@ export default defineComponent({
     },
     setup() { 
         onMounted(() => {
-            const { loading, error, data } = useQuery(queries.findParters, { name: 'super_admin' });
+            // const { loading , error, data } = useQuery(queries.findParters, { name: 'super_admin' });
+            console.log(useQuery(queries.findParters, { name: 'super_admin' }));
             
-        });
-
-
-        return {
-            // getCartItems
-        }
+        }); 
     }
 
 });
