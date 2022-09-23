@@ -96,7 +96,7 @@
 </template> 
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import {
     DxDataGrid,
     DxColumn,
@@ -121,6 +121,9 @@ import inputFormat from '../../../../components/inputBoxFormat.vue'
 import DxTextBox from 'devextreme-vue/text-box';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
+
+import { useQuery } from "@vue/apollo-composable";
+import queries from "../../../../graphql/queries/parters"
 
 export default defineComponent({
     components: {
@@ -209,6 +212,17 @@ export default defineComponent({
 
         }
     },
+    setup() { 
+        onMounted(() => {
+            const { loading, error, data } = useQuery(queries.findParters, { name: 'super_admin' });
+            
+        });
+
+
+        return {
+            // getCartItems
+        }
+    }
 
 });
 </script>
