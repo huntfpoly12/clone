@@ -4,7 +4,7 @@
       :visible="modalStatus"
       :title="title"
       centered
-      width="40%"
+      width="35%"
       :footer="null"
       @cancel="setModalVisible()"
       :mask-closable="false"
@@ -46,9 +46,9 @@
               </a-radio>
             </a-radio-group>
           </template>
-          <DxColumn data-field="관할세무서" />
+          <DxColumn :width="150" data-field="관할세무서" />
           <DxColumn :width="200" data-field="지방소득세납세지" />
-          <DxColumn :width="200" data-field="주소" />
+          <DxColumn data-field="주소" />
         </DxDataGrid>
       </div>
       <div class="btn_submit">
