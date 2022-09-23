@@ -1,6 +1,6 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="1000px">
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
@@ -68,7 +68,7 @@
                 </a-row>
             </a-form>
         </a-modal>
-        <a-modal :visible="modalEdit" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :mask-closable="false" :visible="modalEdit" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="closeModalEdit()" width="1000px">
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
@@ -136,7 +136,7 @@
                 </a-row>
             </a-form>
         </a-modal>
-        <a-modal v-model:visible="visible" title="해지 확인" ok-text="완료">
+        <a-modal :mask-closable="false" v-model:visible="visible" title="해지 확인" ok-text="완료">
             <a-row>
                 <a-col :span="4">
                     <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />
