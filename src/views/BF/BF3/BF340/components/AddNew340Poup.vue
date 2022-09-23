@@ -1,7 +1,7 @@
 <template>
     <div ref="root">
         <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" :mask-closable="false" :width="withPopup()" :afterClose="afterPopupClose">
+            @cancel="setModalVisible()" :mask-closable="false" :width="1028" :afterClose="afterPopupClose">
             <a-form :model="bf340Detail" v-bind="layout" label-align="right" name="nest-messages"
                 :validate-messages="validateMessages" @finish="onFinish">
                 <a-row :gutter="24">
@@ -235,20 +235,7 @@ export default defineComponent({
                 email: "이메일 형식이 정확하지 않습니다",
             },
         };
-        let windowHeight = ref(window.innerWidth);
-        // get window resize 
-        onMounted(() => {
-            windowHeight.value = window.innerWidth;
-        });
 
-        let withPopup = () => {
-            var percent = 100 - (window.innerWidth / (window.innerWidth + window.innerHeight)) * 100 + 30;
-            if (windowHeight.value <= 1960) {
-                return percent + '%';
-            } else {
-                return '50%';
-            }
-        };
         const bf340Detail: UnwrapRef<FormState> = reactive({
             name: '',
             사업자유형: '',
@@ -343,8 +330,6 @@ export default defineComponent({
             handleOkConfirm,
             afterConfirmClose,
             afterPopupClose,
-            windowHeight,
-            withPopup,
             dateValue,
             validateMessages,
             onFinish
