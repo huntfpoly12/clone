@@ -157,7 +157,7 @@
         <a-modal v-model:visible="visible" :mask-closable="false" :afterClose="afterConfirmClose" :width="521">
             <a-row>
                 <a-col :span="4">
-                    <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />
+                    <warning-outlined :style="{fontSize: '70px', color: '#faad14',paddingTop: '20px'}" />
                 </a-col>
                 <a-col :span="20">
                     <h3><b>해지 확인</b></h3>
@@ -166,10 +166,13 @@
                     <p>누르세요</p>
 
                 </a-col>
+                <div style="text-align: center;width: 100%;margin-left: 100px;">
+                    <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
+                    <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px;">완료</a-button>
+                </div>
             </a-row>
             <template #footer>
-                <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
-                <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px;">완료</a-button>
+                
             </template>
         </a-modal>
     </div>
