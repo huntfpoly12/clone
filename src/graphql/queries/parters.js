@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 const queries = {
-    findParters: gql`
-      query findParters {
-        findParters {
+  findParters: gql`
+      query searchPublicInstitutions {
+        CompetentTaxOfficeLegalDong  {
             id
             code
             name
