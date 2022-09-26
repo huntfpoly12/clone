@@ -36,7 +36,7 @@
                         <div class="dflex custom-flex">
                             <label class="lable-item">주소 :</label>
                             <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="fasle" :clearButton="true" :nameService="'address'"
+                                :spinButtons="false" :clearButton="true" :nameService="'address'"
                                 style="width: 130px;" />
                         </div>
                     </a-col>
@@ -95,7 +95,7 @@
     </div>
 </template> 
 
-<script>
+<script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
 import {
     DxDataGrid,
@@ -175,7 +175,7 @@ export default defineComponent({
         };
     },
     methods: {
-        onExporting(e) {
+        onExporting(e: any) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet('employees');
             exportDataGrid({
@@ -189,15 +189,15 @@ export default defineComponent({
             });
             e.cancel = true;
         },
-        setModalVisible(data) {
+        setModalVisible(data: any) {
             this.modalStatus = true;
             this.popupData = data;
         },
-        modalHistory(data) {
+        modalHistory(data: any) {
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        updateInput(data) {
+        updateInput(data: any) {
             this.dataSearch.nameCompany = data
         },
         changeValueInput() {
@@ -205,19 +205,19 @@ export default defineComponent({
                 this.dataSearch.typeSevice = ''
             }
         },
-        changeValueInputEmit(data) {
+        changeValueInputEmit(data: any) {
             if (data.name == 'nameCompany') {
                 this.dataSearch.nameCompany = data.value
             }
 
         }
     },
-    setup() { 
+    setup() {
         onMounted(() => {
             const { loading, error, onResult } = useQuery(queries.findParters, { name: 'super_admin' });
             console.log(useQuery(queries.findParters, { name: 'super_admin' }))
             onResult((res) => {
-            console.log(res.data.findParters)
+                console.log(res.data.findParters)
             })
         });
 
