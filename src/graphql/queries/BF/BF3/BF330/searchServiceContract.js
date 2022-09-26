@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 export default  gql`
 query searchServiceContracts($page: Int!, $rows: Int!, $excludeCancel: Boolean!) {
-    searchServiceContracts(filter: ) {
+    searchServiceContracts(filter: { page: $page, rows: $rows, excludeCancel: $excludeCancel }) {
     totalCount
     page
     rows

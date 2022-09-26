@@ -158,6 +158,9 @@ export default defineComponent({
             },
         };
     },
+    mounted() {
+        this.searchServiceContract()
+    },
     methods: {
         onExporting(e) {
             const workbook = new Workbook();
@@ -184,22 +187,19 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-    },
-    setup() {
-        onMounted(() => {
-            const { loading, error, onResult } = useQuery(queries.searchServiceContract, {
-    variables: { filters: {page: 1, rows: 2} },
-  });
-            onResult((res) => {
-                console.log(res.data)
-            })
-        });
+        searchServiceContract(filter = {page: 1,rows: 10,code: '',name: '',presidentName: '', address: '', manageUserId: '', salesRepresentativeId: '',excludeCancel: true}) {
+            try {
+                const { loading, error, onResult } = useQuery(queries.searchServiceContract, filter
+                )
 
-
-        return {
-            // getCartItems
+                onResult((res) => {
+                    return res
+                })
+            } catch (error) {
+                console.log(error);
+            }
         }
-    }
+    },
 });
 </script>
 <style lang="scss" scoped>
