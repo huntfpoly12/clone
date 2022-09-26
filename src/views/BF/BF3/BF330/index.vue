@@ -188,16 +188,11 @@ export default defineComponent({
             this.popupData = data;
         },
         searchServiceContract(filter = {page: 1,rows: 10,code: '',name: '',presidentName: '', address: '', manageUserId: '', salesRepresentativeId: '',excludeCancel: true}) {
-            try {
-                const { loading, error, onResult } = useQuery(queries.searchServiceContract, filter
-                )
-
-                onResult((res) => {
-                    return res
-                })
-            } catch (error) {
-                console.log(error);
-            }
+            const { loading, error, onResult } = useQuery(queries.searchServiceContract, filter)
+            onResult((res) => {
+                return res
+            })
+           
         }
     },
 });
