@@ -123,7 +123,7 @@ dayjs.extend(weekday)
 dayjs.extend(localeData)
 
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../graphql/queries/parters"
+import queries from "../../../../graphql/queries/adminCompanyManageScreen"
 
 export default defineComponent({
     components: {
@@ -214,11 +214,15 @@ export default defineComponent({
     },
     setup() {
         onMounted(() => {
-            const { loading, error, onResult } = useQuery(queries.findParters, { name: 'super_admin' });
-            console.log(useQuery(queries.findParters, { name: 'super_admin' }))
-            onResult((res) => {
-                console.log(res.data.findParters)
-            })
+            try {
+                let data = { name: 'super_admin' }
+                const { loading, error, onResult } = useQuery(queries.findParters,data);
+                onResult((res) => {
+                    console.log(res.data.findParters[0])
+                })
+            } catch (error) {
+                console.log(error); 
+            }
         });
 
 
