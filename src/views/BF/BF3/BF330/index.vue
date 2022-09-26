@@ -85,7 +85,7 @@
     </div>
 </template>
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import {
     DxDataGrid,
     DxColumn,
@@ -105,6 +105,9 @@ import { EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+import { useQuery } from "@vue/apollo-composable";
+import queries from "../../../../graphql/queries/BF/BF3/BF330/index"
+import filters from "../../../../helpers/filters";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -182,6 +185,21 @@ export default defineComponent({
             this.popupData = data;
         },
     },
+    setup() {
+        onMounted(() => {
+            const { loading, error, onResult } = useQuery(queries.searchServiceContract, {
+    variables: { filters: {page: 1, rows: 2} },
+  });
+            onResult((res) => {
+                console.log(res.data)
+            })
+        });
+
+
+        return {
+            // getCartItems
+        }
+    }
 });
 </script>
 <style lang="scss" scoped>
