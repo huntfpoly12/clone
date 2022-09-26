@@ -159,7 +159,8 @@ export default defineComponent({
         };
     },
     mounted() {
-        this.searchServiceContract()
+        const originData = {page: 1,rows: 10,excludeCancel: true}
+        this.searchServiceContract(originData)
     },
     methods: {
         onExporting(e) {
@@ -187,7 +188,7 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        searchServiceContract(filter = {page: 1,rows: 10,code: '',name: '',presidentName: '', address: '', manageUserId: '', salesRepresentativeId: '',excludeCancel: true}) {
+        searchServiceContract(filter) {
             const { loading, error, onResult } = useQuery(queries.searchServiceContract, filter)
             onResult((res) => {
                 return res
