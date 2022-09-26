@@ -136,8 +136,8 @@
 
                     <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
                         :selected-row-keys="selectedItemKeys">
-                        <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                            :allow-deleting="true" template="button-template" mode="cell">
+                        <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true" :allow-deleting="true"
+                            template="button-template" mode="cell">
                             <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                             <DxTexts addRow="추 가" />
                         </DxEditing>
@@ -276,7 +276,9 @@ import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash-es';
 import moment from 'moment'
 import { employees, states } from './data.js';
-import DxNumberBox from 'devextreme-vue/number-box';
+import { useMutation } from "@vue/apollo-composable";
+import mutations from "../../graphql/mutations/RqContract/index";
+
 import {
     DxDataGrid,
     DxColumn,
@@ -351,10 +353,84 @@ export default {
                 debtWithdrawalDate: '매월 5일',
                 salesAgent: 'A 대리점',
                 note: '',
-                
+
             },
             dataModal: employees,
-            states
+            states,
+            dataCallApi: {
+                agreements: {
+                    terms: true,
+                    personalInfo: true,
+                    accountingService: true,
+                    withholdingService: true,
+                },
+                company: {
+                    name: 'name',
+                    zipcode: 'zipcode',
+                    roadAddress: 'roadAddress',
+                    jibunAddress: 'jibunAddress',
+                    addressExtend: 'addressExtend',
+                    addressDetail: {
+                        bcode: 'bcode',
+                        bname: 'bname',
+                        buildingCode: 'buildingCode',
+                        buildingName: 'buildingName',
+                        roadname: 'roadname',
+                        roadnameCode: 'roadnameCode',
+                        sido: 'sido',
+                        sigungu: 'sigungu',
+                        sigunguCode: 'sigunguCode',
+                        zonecode: 'zonecode',
+                    },
+                    phone: 'phone',
+                    fax: 'fax',
+                    licenseFileStorageId: 10,
+                    bizNumber: 'bizNumber',
+                    bizType: 'bizType',
+                    residentId: 'residentId',
+                },
+                president: {
+                    name: 'name',
+                    birthday: 'birthday',
+                    mobilePhone: 'mobilePhone',
+                    email: 'email@gmail.com',
+                },
+                accounting: {
+                    facilityBusinesses: {
+                        longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
+                        facilityBizType: {
+                            // 
+                        },
+                        name: 'name',
+                        startYearMonth: 'startYearMonth',
+                        capacity: 10,
+                        registrationCardFileStorageId: 10,
+                    },
+                    accountingServiceTypes: {
+                        // 
+                    }
+                },
+                withholding: {
+                    startYearMonth: 'startYearMonth',
+                    capacity: 10,
+                    withholdingServiceTypes: {
+                        // 
+                    }
+                },
+                cmsBank: {
+                    bankType: {
+                        // 
+                    },
+                    accountNumber: 'accountNumber',
+                    ownerBizNumber: 'ownerBizNumber',
+                    ownerName: 'ownerName',
+                    withdrawDay: 'withdrawDay',
+                },
+                extra: {
+                    salesRepresentativeId: 10,
+                    comment: 'comment',
+                }
+            }
         }
     },
     computed: {
@@ -396,11 +472,136 @@ export default {
         },
         openPopup() {
             this.visible = true
+
+
+
+
+
+            const {
+                onDone: signinDone,
+            } = useMutation(mutations.creactContract, () => ({
+                variables: {
+                    terms: this.dataCallApi.agreements.terms,
+                    personalInfo: this.dataCallApi.agreements.personalInfo,
+                    accountingService: this.dataCallApi.agreements.accountingService,
+                    withholdingService: this.dataCallApi.agreements.withholdingService,
+
+                    name: this.dataCallApi.company.name,
+                    zipcode: this.dataCallApi.company.zipcode,
+                    roadAddress: this.dataCallApi.company.roadAddress,
+                    jibunAddress: this.dataCallApi.company.jibunAddress,
+                    addressExtend: this.dataCallApi.company.addressExtend,
+
+                    bcode: this.dataCallApi.company.addressDetail.bcode,
+                    bname: this.dataCallApi.company.addressDetail.bname,
+                    buildingCode: this.dataCallApi.company.addressDetail.buildingCode,
+                    buildingName: this.dataCallApi.company.addressDetail.buildingName,
+                    roadname: this.dataCallApi.company.addressDetail.roadname,
+                    roadnameCode: this.dataCallApi.company.addressDetail.roadnameCode,
+                    sido: this.dataCallApi.company.addressDetail.sido,
+                    sigungu: this.dataCallApi.company.addressDetail.sigungu,
+                    sigunguCode: this.dataCallApi.company.addressDetail.sigunguCode,
+                    zonecode: this.dataCallApi.company.addressDetail.zonecode,
+
+                    phone: this.dataCallApi.company.phone,
+                    fax: this.dataCallApi.company.fax,
+                    licenseFileStorageId: this.dataCallApi.company.licenseFileStorageId,
+                    bizNumber: this.dataCallApi.company.bizNumber,
+                    bizType: this.dataCallApi.company.bizType,
+                    residentId: this.dataCallApi.company.residentId,
+
+                    presidentName: this.dataCallApi.president.name,
+                    birthday: this.dataCallApi.president.birthday,
+                    mobilePhone: this.dataCallApi.president.mobilePhone,
+                    email: this.dataCallApi.president.email,
+
+                    longTermCareInstitutionNumber: this.dataCallApi.accounting.facilityBusinesses.longTermCareInstitutionNumber,
+                    nameFacilityBusinesses: this.dataCallApi.accounting.facilityBusinesses.name,
+                    startYearMonth: this.dataCallApi.accounting.facilityBusinesses.startYearMonth,
+                    capacity: this.dataCallApi.accounting.facilityBusinesses.capacity,
+                    registrationCardFileStorageId: this.dataCallApi.accounting.facilityBusinesses.registrationCardFileStorageId,
+
+                    startYearMonth: this.dataCallApi.withholding.startYearMonth,
+                    capacity: this.dataCallApi.withholding.capacity,
+
+                    accountNumber: this.dataCallApi.cmsBank.accountNumber,
+                    ownerBizNumber: this.dataCallApi.cmsBank.ownerBizNumber,
+                    ownerName: this.dataCallApi.cmsBank.ownerName,
+                    withdrawDay: this.dataCallApi.cmsBank.withdrawDay,
+
+                    salesRepresentativeId: this.dataCallApi.extra.salesRepresentativeId,
+                    comment: this.dataCallApi.extra.comment,
+                },
+            }));
+
+
+            // signinDone((res) => {
+            //     console.log(res)
+            // });
+
         },
         handleOk() {
             this.visible = false
-            this.$router.push('/login')
+            const res = useMutation(mutations.creactContract, () => ({
+                variables: {
+                    terms: this.dataCallApi.agreements.terms,
+                    personalInfo: this.dataCallApi.agreements.personalInfo,
+                    accountingService: this.dataCallApi.agreements.accountingService,
+                    withholdingService: this.dataCallApi.agreements.withholdingService,
+
+                    name: this.dataCallApi.company.name,
+                    zipcode: this.dataCallApi.company.zipcode,
+                    roadAddress: this.dataCallApi.company.roadAddress,
+                    jibunAddress: this.dataCallApi.company.jibunAddress,
+                    addressExtend: this.dataCallApi.company.addressExtend,
+
+                    bcode: this.dataCallApi.company.addressDetail.bcode,
+                    bname: this.dataCallApi.company.addressDetail.bname,
+                    buildingCode: this.dataCallApi.company.addressDetail.buildingCode,
+                    buildingName: this.dataCallApi.company.addressDetail.buildingName,
+                    roadname: this.dataCallApi.company.addressDetail.roadname,
+                    roadnameCode: this.dataCallApi.company.addressDetail.roadnameCode,
+                    sido: this.dataCallApi.company.addressDetail.sido,
+                    sigungu: this.dataCallApi.company.addressDetail.sigungu,
+                    sigunguCode: this.dataCallApi.company.addressDetail.sigunguCode,
+                    zonecode: this.dataCallApi.company.addressDetail.zonecode,
+
+                    phone: this.dataCallApi.company.phone,
+                    fax: this.dataCallApi.company.fax,
+                    licenseFileStorageId: this.dataCallApi.company.licenseFileStorageId,
+                    bizNumber: this.dataCallApi.company.bizNumber,
+                    bizType: this.dataCallApi.company.bizType,
+                    residentId: this.dataCallApi.company.residentId,
+
+                    presidentName: this.dataCallApi.president.name,
+                    birthday: this.dataCallApi.president.birthday,
+                    mobilePhone: this.dataCallApi.president.mobilePhone,
+                    email: this.dataCallApi.president.email,
+
+                    longTermCareInstitutionNumber: this.dataCallApi.accounting.facilityBusinesses.longTermCareInstitutionNumber,
+                    nameFacilityBusinesses: this.dataCallApi.accounting.facilityBusinesses.name,
+                    startYearMonth: this.dataCallApi.accounting.facilityBusinesses.startYearMonth,
+                    capacity: this.dataCallApi.accounting.facilityBusinesses.capacity,
+                    registrationCardFileStorageId: this.dataCallApi.accounting.facilityBusinesses.registrationCardFileStorageId,
+
+                    startYearMonth: this.dataCallApi.withholding.startYearMonth,
+                    capacity: this.dataCallApi.withholding.capacity,
+
+                    accountNumber: this.dataCallApi.cmsBank.accountNumber,
+                    ownerBizNumber: this.dataCallApi.cmsBank.ownerBizNumber,
+                    ownerName: this.dataCallApi.cmsBank.ownerName,
+                    withdrawDay: this.dataCallApi.cmsBank.withdrawDay,
+
+                    salesRepresentativeId: this.dataCallApi.extra.salesRepresentativeId,
+                    comment: this.dataCallApi.extra.comment,
+                },
+            }));
+
+            // this.$router.push('/login')
         },
+        // confirmCreactedContact () {
+        //     console.log(this.dataCallApi);
+        // }
     },
 
     setup() {
@@ -667,9 +868,11 @@ export default {
     position: relative;
     z-index: 20;
 }
+
 #gridContainer {
     margin-top: -40px;
 }
+
 .mt-3 {
     margin-top: 30px;
 }
@@ -681,9 +884,11 @@ export default {
 ::v-deep .ant-select {
     width: 180px;
 }
+
 ::v-deep .dx-toolbar-text-auto-hide .dx-button .dx-button-text {
     display: inline-block;
 }
+
 .list-checkbox {
     margin-top: 10px;
 }
