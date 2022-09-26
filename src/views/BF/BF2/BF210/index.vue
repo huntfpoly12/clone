@@ -152,7 +152,7 @@
   </div>
 </template>
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import {
   DxDataGrid,
   DxColumn,
@@ -184,6 +184,10 @@ import {
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+import { useQuery } from "@vue/apollo-composable";
+import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
+import filters from "../../../../helpers/filters";
+
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
@@ -227,6 +231,10 @@ export default defineComponent({
         username: "",
       },
     };
+  },
+  mounted() {
+    const originData = { page: 1, rows: 10, excludeCancel: true };
+    this.searchServiceContract(originData);
   },
   methods: {
     onExporting(e) {
@@ -278,6 +286,15 @@ export default defineComponent({
       } else if (data === "이용중지") {
         return "#d5a7a7";
       }
+    },
+    searchUsers(filter) {
+      const { loading, error, onResult } = useQuery(
+        queries.searchUsers,
+        filter
+      );
+      onResult((res) => {
+        return res;
+      });
     },
   },
 });
