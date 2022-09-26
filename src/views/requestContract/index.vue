@@ -277,7 +277,7 @@ import { cloneDeep } from 'lodash-es';
 import moment from 'moment'
 import { employees, states } from './data.js';
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "../../graphql/mutations/index";
+import mutations from "../../graphql/mutations/RqContract/index";
 
 import {
     DxDataGrid,
@@ -386,7 +386,7 @@ export default {
                     fax: 'fax',
                     licenseFileStorageId: 10,
                     bizNumber: 'bizNumber',
-                    bizType: 'bizType',
+                    // bizType: 'bizType',
                     residentId: 'residentId',
                 },
                 president: {
@@ -411,8 +411,8 @@ export default {
                     }
                 },
                 withholding: {
-                    startYearMonth: 'startYearMonth',
-                    capacity: 10,
+                    startYearMonthHolding: 'startYearMonth',
+                    capacityHolding: 10,
                     withholdingServiceTypes: {
                         // 
                     }
@@ -434,11 +434,11 @@ export default {
         }
     },
     mounted() {
-        useMutation(mutations.customerWorkLogin, () => ({
-            variables: {
-                companyId: 5,
-            },
-            }))
+        // useMutation(mutations.customerWorkLogin, () => ({
+        //     variables: {
+        //         companyId: 5,
+        //     },
+        // }))
     },
     computed: {
         checkStepTwo() {
@@ -482,41 +482,87 @@ export default {
         },
         handleOk() {
             this.visible = false
-            useMutation(mutations.customerWorkLogin, () => ({
-            variables: {
-                companyId: 5,
-            },
-            }))
 
             // this.$router.push('/login')
         },
-        // confirmCreactedContact () {
-        //     console.log(this.dataCallApi);
-        // }
-    },
-    
-    setup() {
 
-    // signin mutation
-    const {
-      mutate: createContract,
-      loading,
-      onDone: creatDone,
-      onError,
-    } = useMutation(mutations.customerWorkLogin, () => ({
-      variables: {
-        companyId: 5,
-      },
-    }));
-    creatDone((res) => {
-      console.log(res)
-    });
-   
-    onMounted(() => {
-        createContract()
-    })
-    
-  },
+    },
+
+    setup() {
+        const {
+            mutate: createContract,
+            loading,
+            onDone: creatDone,
+            onError,
+        } = useMutation(mutations.creactContract, () => ({
+            variables: {
+
+                terms: true,
+                personalInfo: true,
+                accountingService: true,
+                withholdingService: true,
+
+
+                name: 'name',
+                zipcode: 'zipcode',
+                roadAddress: 'roadAddress',
+                jibunAddress: 'jibunAddress',
+                addressExtend: 'addressExtend',
+
+                bcode: 'bcode',
+                bname: 'bname',
+                buildingCode: 'buildingCode',
+                buildingName: 'buildingName',
+                roadname: 'roadname',
+                roadnameCode: 'roadnameCode',
+                sido: 'sido',
+                sigungu: 'sigungu',
+                sigunguCode: 'sigunguCode',
+                zonecode: 'zonecode',
+
+                phone: 'phone',
+                fax: 'fax',
+                licenseFileStorageId: 10,
+                bizNumber: 'bizNumber',
+                // bizType: 'bizType',
+                residentId: 'residentId',
+
+
+                name: 'name',
+                birthday: 'birthday',
+                mobilePhone: 'mobilePhone',
+                email: 'email@gmail.com',
+                longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
+                name: 'name',
+                startYearMonth: 'startYearMonth',
+                capacity: 10,
+                registrationCardFileStorageId: 10,
+                startYearMonth: 'startYearMonth',
+                capacity: 10,
+                withholdingServiceTypes: {
+
+                },
+                accountNumber: 'accountNumber',
+                ownerBizNumber: 'ownerBizNumber',
+                ownerName: 'ownerName',
+                withdrawDay: 'withdrawDay',
+
+
+                salesRepresentativeId: 10,
+                comment: 'comment',
+
+            },
+        }));
+
+        creatDone((res) => {
+            console.log(res)
+        });
+
+        onMounted(() => {
+            createContract()
+        })
+
+    },
 }
 </script>
 
