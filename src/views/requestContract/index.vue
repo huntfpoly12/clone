@@ -524,7 +524,7 @@ export default {
                 fax: 'fax',
                 licenseFileStorageId: 10,
                 bizNumber: 'bizNumber',
-                bizType: 'test',
+                bizType: ['bizType', 5],
                 residentId: 'residentId',
 
 
@@ -537,9 +537,11 @@ export default {
                 startYearMonth: 'startYearMonth',
                 capacity: 10,
                 registrationCardFileStorageId: 10,
-                startYearMonth: 'startYearMonth',
-                capacity: 10,
-                withholdingServiceTypes: [1,2,3],
+                holdingYear: 'holdingYear',
+                capacityHolding: 10,
+                withholdingServiceTypes:['withholdingServiceTypes', 5],
+                accountingServiceTypes:['accountingServiceTypes', 5],
+                facilityBizType:['facilityBizType', 5],
                 accountNumber: 'accountNumber',
                 ownerBizNumber: 'ownerBizNumber',
                 ownerName: 'ownerName',
