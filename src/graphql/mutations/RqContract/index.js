@@ -32,6 +32,9 @@ const mutations = {
     #   $bizType: String!
       $residentId:String!
 
+      $facilityBizType : String!, Int!
+      $withholdingServiceTypes
+
       $presidentName : String!
       $birthday : String! 
       $mobilePhone : String! 
@@ -95,9 +98,7 @@ const mutations = {
         accounting: {
             facilityBusinesses: {
                 longTermCareInstitutionNumber: $longTermCareInstitutionNumber
-                facilityBizType: {
- 
-                }
+                facilityBizType: $facilityBizType
                 name: $name
                 startYearMonth: $startYearMonth
                 capacity: $capacity
@@ -110,9 +111,7 @@ const mutations = {
         withholding: {
             startYearMonth: $startYearMonthHolding
             capacity: $capacityHolding
-            withholdingServiceTypes: {
-                
-            }
+            withholdingServiceTypes: $withholdingServiceTypes
         }
         cmsBank: {
             bankType: "ok"
