@@ -233,8 +233,9 @@ export default defineComponent({
     };
   },
   mounted() {
-    const originData = { page: 1, rows: 10, excludeCancel: true };
-    this.searchServiceContract(originData);
+    const originData = { page: 1, rows: 10, type: "", active: true };
+    this.searchUsers(originData);
+    this.getUsers;
   },
   methods: {
     onExporting(e) {
@@ -292,6 +293,12 @@ export default defineComponent({
         queries.searchUsers,
         filter
       );
+      onResult((res) => {
+        return res;
+      });
+    },
+    getUsers() {
+      const { loading, error, onResult } = useQuery(queries.getUsers);
       onResult((res) => {
         return res;
       });

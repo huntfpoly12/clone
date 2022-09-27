@@ -152,6 +152,7 @@
             :allow-column-resizing="true"
             :column-auto-width="true"
           >
+            <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
 
             <DxColumn data-field="코드" :width="80" :fixed="true" />
@@ -182,34 +183,6 @@
         </div>
       </div>
     </a-modal>
-
-    <!-- <a-modal
-        v-model:visible="visible"
-        title="해지 확인"
-        ok-text="완료"
-        class="confirm-modal"
-      >
-        <a-row>
-          <a-col :span="4">
-            <warning-outlined :style="{ fontSize: '70px', color: '#faad14' }" />
-          </a-col>
-          <a-col :span="20">
-            <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
-            <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을</p>
-            <p>누르세요</p>
-          </a-col>
-        </a-row>
-        <template #footer>
-          <a-input
-            v-model:value="confirm"
-            placeholder="확인"
-            style="width: 150px"
-          />
-          <a-button type="primary" @click="handleOkConfirm" class="confirm-button"
-            >완료</a-button
-          >
-        </template>
-      </a-modal> -->
   </div>
 </template>
 
@@ -259,7 +232,7 @@ interface FormState {
 }
 
 export default defineComponent({
-  props: ["modalStatus", "data", "msg"],
+  props: ["modalStatus", "data"],
 
   components: {
     MenuOutlined,
@@ -416,10 +389,8 @@ export default defineComponent({
   },
   methods: {
     onlyNumber(e: any) {
-      //console.log($event.keyCode); //keyCodes value
       let keyCode = e.keyCode ? e.keyCode : e.which;
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-        // 46 is dot
         e.preventDefault();
       }
     },
