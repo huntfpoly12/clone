@@ -34,14 +34,17 @@
 
         </div>
         <div class="page-content">
-            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
+            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
                 :columns="gridColumns">
                 <DxSelection mode="multiple" />
                 <DxPaging :page-size="5" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
-                <DxColumn data-field="신청일자" />
-                <DxColumn data-field="신청코드" />
+                <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date"/>
+                <template #createdat-cell="{ data }">
+                    {{ formarDate(data.value) }}
+                </template>
+                <DxColumn data-field="code"   caption="신청코드"/>
                 <DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
                 <template #grid-cell="{ data }">
                     <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
@@ -71,6 +74,10 @@ import DxDateBox from 'devextreme-vue/date-box';
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
 import { ref, defineComponent } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
+
+import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
+import { useQuery } from "@vue/apollo-composable";
+
 import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
@@ -138,6 +145,10 @@ export default defineComponent({
             sizeButton: 'small'
         };
     },
+    mounted() {
+        const originData = {page: 1,rows: 10}
+        this.searchSubscriptionRequests(originData)
+    },
     methods: {
         onExporting(e: { component: any; cancel: boolean; }) {
             const workbook = new Workbook();
@@ -174,6 +185,18 @@ export default defineComponent({
         setModalVisible(data: never[]) {
             this.popupData = data;
             this.modalStatus = true;
+        },
+        searchSubscriptionRequests(filter:any) {
+            const { loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, filter)
+            onResult((res) => {
+                this.dataSource = res.data.searchSubscriptionRequests.datas
+                console.log(res.data.searchSubscriptionRequests.datas[0],'ghjgjg')
+            })
+           
+        }
+        ,
+        formarDate(date:any){
+            return dayjs(date).format('DD/MM/YYYY')
         }
     },
 });
