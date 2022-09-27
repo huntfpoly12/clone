@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from "graphql-tag"; 
 
 const mutations = {
   creactContract: gql`
@@ -24,30 +24,27 @@ const mutations = {
       $sigungu:String!
       $sigunguCode:String!
       $zonecode: String!
+      $bankType: String!
 
       $phone: String!
       $fax: String!
       $licenseFileStorageId: Int!
-      $bizNumber: String!
-    #   $bizType: String!
+      $bizNumber: String! 
       $residentId:String!
-
-      $facilityBizType : String!, Int!
-      $withholdingServiceTypes
 
       $presidentName : String!
       $birthday : String! 
       $mobilePhone : String! 
       $email : String! 
       
-      $longTermCareInstitutionNumber : String! 
-      $nameFacilityBusinesses : String! 
+      $longTermCareInstitutionNumber : String!  
       $startYearMonth : String!
       $capacity : Int!
       $registrationCardFileStorageId : Int!
       
       $startYearMonthHolding : String! 
       $capacityHolding : Int! 
+      $withholdingServiceTypes : Int! 
       
       $accountNumber : String! 
       $ownerBizNumber : String! 
@@ -55,6 +52,9 @@ const mutations = {
       $withdrawDay : String!
 
       $salesRepresentativeId: Int! 
+      $accountingServiceTypes: Int! 
+      $bizType: Int! 
+      $facilityBizType: Int! 
       $comment: String! 
     ) {
       createSubscriptionRequest(content :{
@@ -86,7 +86,7 @@ const mutations = {
             fax: $fax
             licenseFileStorageId: $licenseFileStorageId
             bizNumber: $bizNumber
-            bizType: "ok"
+            bizType:  $bizType
             residentId: $residentId
         }
         president: {
@@ -104,17 +104,15 @@ const mutations = {
                 capacity: $capacity
                 registrationCardFileStorageId: $registrationCardFileStorageId
             }
-            accountingServiceTypes: {
-                
-            }
+            accountingServiceTypes: $accountingServiceTypes
         }
         withholding: {
             startYearMonth: $startYearMonthHolding
             capacity: $capacityHolding
-            withholdingServiceTypes: $withholdingServiceTypes
+            withholdingServiceTypes:  $withholdingServiceTypes
         }
         cmsBank: {
-            bankType: "ok"
+            bankType:  $bankType
             accountNumber: $accountNumber
             ownerBizNumber: $ownerBizNumber
             ownerName: $ownerName
