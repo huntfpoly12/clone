@@ -30,7 +30,7 @@ const mutations = {
       $fax: String!
       $licenseFileStorageId: Int!
       $bizNumber: String! 
-      $residentId:String!
+      $residentId: String!
 
       $presidentName : String!
       $birthday : String! 
