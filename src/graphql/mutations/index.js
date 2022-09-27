@@ -21,20 +21,15 @@ const mutations = {
     }
   `,
 
-  createProduct: gql`
-    mutation createProduct(
-      $name: String!
-      $price: Int!
-      $image: String!
-      $description: String!
+  customerWorkLogin: gql`
+    mutation customerWorkLogin(
+      $companyId: Int!
     ) {
-      addProduct(
-        name: $name
-        price: $price
-        image: $image
-        description: $description
+      customerWorkLogin(
+        companyId: $companyId
       ) {
-        _id
+        accessToken
+        refreshToken
       }
     }
   `,

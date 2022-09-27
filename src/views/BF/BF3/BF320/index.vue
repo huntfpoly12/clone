@@ -209,28 +209,27 @@ export default defineComponent({
             if (data.name == 'nameCompany') {
                 this.dataSearch.nameCompany = data.value
             }
-
+        },
+        creactCompanyManageMemo(){
+            
         }
     },
     setup() {
+        let data = {
+            page: 1,
+            rows: 10,
+            code: '',
+            name: '',
+            presidentName: '',
+            address: '',
+            manageUserId: '',
+            salesRepresentativeId: '',
+            excludeCancel: true
+        }
+
         onMounted(() => {
-            try {
-                let data = {
-                    page: 1,
-                    rows: 10,
-                    code: '',
-                    name: '',
-                    presidentName: '',
-                    address: '',
-                    manageUserId: '',
-                    salesRepresentativeId: '',
-                    excludeCancel: true
-
-                }
-
-                const { loading, error, onResult } = useQuery(queries.findParters,  data
-                )
-
+            try { 
+                const { loading, error, onResult } = useQuery(queries.getData.findParters, data) 
                 onResult((res) => {
                     console.log(res.data.findParters)
                 })

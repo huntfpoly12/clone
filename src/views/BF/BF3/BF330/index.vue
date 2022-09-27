@@ -190,8 +190,9 @@ export default defineComponent({
         },
         searchServiceContract(filter) {
             const { loading, error, onResult } = useQuery(queries.searchServiceContract, filter)
+            console.log(useQuery(queries.searchServiceContract, filter))
             onResult((res) => {
-                return res
+                console.log(res.data.searchServiceContracts.datas)
             })
            
         }
