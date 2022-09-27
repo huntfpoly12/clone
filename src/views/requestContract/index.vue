@@ -357,80 +357,7 @@ export default {
             },
             dataModal: employees,
             states,
-            dataCallApi: {
-                agreements: {
-                    terms: true,
-                    personalInfo: true,
-                    accountingService: true,
-                    withholdingService: true,
-                },
-                company: {
-                    name: 'name',
-                    zipcode: 'zipcode',
-                    roadAddress: 'roadAddress',
-                    jibunAddress: 'jibunAddress',
-                    addressExtend: 'addressExtend',
-                    addressDetail: {
-                        bcode: 'bcode',
-                        bname: 'bname',
-                        buildingCode: 'buildingCode',
-                        buildingName: 'buildingName',
-                        roadname: 'roadname',
-                        roadnameCode: 'roadnameCode',
-                        sido: 'sido',
-                        sigungu: 'sigungu',
-                        sigunguCode: 'sigunguCode',
-                        zonecode: 'zonecode',
-                    },
-                    phone: 'phone',
-                    fax: 'fax',
-                    licenseFileStorageId: 10,
-                    bizNumber: 'bizNumber',
-                    // bizType: 'bizType',
-                    residentId: 'residentId',
-                },
-                president: {
-                    name: 'name',
-                    birthday: 'birthday',
-                    mobilePhone: 'mobilePhone',
-                    email: 'email@gmail.com',
-                },
-                accounting: {
-                    facilityBusinesses: {
-                        longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
-                        facilityBizType: {
-                            // 
-                        },
-                        name: 'name',
-                        startYearMonth: 'startYearMonth',
-                        capacity: 10,
-                        registrationCardFileStorageId: 10,
-                    },
-                    accountingServiceTypes: {
-                        // 
-                    }
-                },
-                withholding: {
-                    startYearMonthHolding: 'startYearMonth',
-                    capacityHolding: 10,
-                    withholdingServiceTypes: {
-                        // 
-                    }
-                },
-                cmsBank: {
-                    bankType: {
-                        // 
-                    },
-                    accountNumber: 'accountNumber',
-                    ownerBizNumber: 'ownerBizNumber',
-                    ownerName: 'ownerName',
-                    withdrawDay: 'withdrawDay',
-                },
-                extra: {
-                    salesRepresentativeId: 10,
-                    comment: 'comment',
-                }
-            }
+            
         }
     },
     mounted() {
@@ -527,7 +454,7 @@ export default {
                 // bizType: 'bizType',
                 residentId: 'residentId',
 
-
+                facilityBizType : ['facilityBizType',5],
                 name: 'name',
                 birthday: 'birthday',
                 mobilePhone: 'mobilePhone',
