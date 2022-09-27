@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 const mutations = {
-    creactContract: gql`
+  creactContract: gql`
     mutation createSubscriptionRequest(
       $terms: Boolean!
       $personalInfo: Boolean!
