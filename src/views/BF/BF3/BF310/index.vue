@@ -11,10 +11,10 @@
                 <a-col>
                     <label class="lable-item">심사상태/결과 :</label>
                     <a-select ref="select" v-model:value="dataSearch.status">
-                        <a-select-option value="신청">신청</a-select-option>
-                        <a-select-option value="심사중">심사중</a-select-option>
-                        <a-select-option value="승인">승인</a-select-option>
-                        <a-select-option value="반려 ">반려</a-select-option>
+                        <a-select-option value="10">신청</a-select-option>
+                        <a-select-option value="20">심사중</a-select-option>
+                        <a-select-option value="30">승인</a-select-option>
+                        <a-select-option value="99 ">반려</a-select-option>
                     </a-select>
                 </a-col>
                 <a-col>
@@ -40,26 +40,34 @@
                 <DxPaging :page-size="5" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
-                <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date"/>
+                <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
                 <template #createdat-cell="{ data }">
                     {{ formarDate(data.value) }}
                 </template>
-                <DxColumn data-field="code"   caption="신청코드"/>
-                <DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
+                <DxColumn data-field="code" caption="신청코드" />
+                <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
                 <template #grid-cell="{ data }">
-                    <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+                    <a-tag :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
                 </template>
-                <DxColumn :width="170" data-field="사업자코드" />
-                <DxColumn data-field="상호" data-type="date" />
-                <DxColumn data-field="주소" data-type="date" />
-                <DxColumn data-field="대표자" />
-                <DxColumn data-field="영업자" />
-                <DxColumn data-field="신청서비스" />
-                <DxColumn data-field="부가서비스" />
-                <DxColumn :width="110" cell-template="pupop" type="buttons" />
-                <template #pupop="{ data }">
-                    <DxButton @click="setModalVisible(data)" class="button-popup" text="편집" type="default"
-                        styling-mode="outlined" height="20px" />
+                <DxColumn :width="170" data-field="compactSalesRepresentative.code" caption="사업자코드"
+                    css-class="cell-center" />
+                <DxColumn data-field="companyName" caption="상호" />
+                <DxColumn data-field="companyAddress" caption="주소" />
+                <DxColumn data-field="presidentName" caption="대표자" />
+                <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
+                <DxColumn   caption="신청서비스" cell-template="acc-service"/>
+                <template #acc-service="{ data }">
+                    <span>회계 <a-tag>{{data.data.simpleAccountingInfos.length}}</a-tag></span> 
+                    <span>원천 <a-tag>{{data.data.simpleWithholdingInfo.length}}</a-tag></span>
+                </template>
+                <DxColumn :width="50" cell-template="pupop" type="buttons" />
+                <template #pupop="{ data }" class="custom-action">
+                    <div class="custom-action">
+                        <a-tooltip placement="top">
+                            <template #title>편집</template>
+                            <EditOutlined @click="setModalVisible(data)" />
+                        </a-tooltip>
+                    </div>
                 </template>
             </DxDataGrid>
 
@@ -69,7 +77,7 @@
 
 </template>
 <script lang="ts">
-import { SearchOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, EditOutlined } from '@ant-design/icons-vue';
 import DxDateBox from 'devextreme-vue/date-box';
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
 import { ref, defineComponent } from 'vue';
@@ -109,11 +117,12 @@ export default defineComponent({
         BF310Popup,
         locale,
         DxDateBox,
-        SearchOutlined
+        SearchOutlined,
+        EditOutlined
     },
     data() {
         return {
-            dataSource: employees,
+            dataSource: [],
             states,
             value1: "신청",
             value2: "A 대리점",
@@ -123,7 +132,6 @@ export default defineComponent({
             value4: [dayjs().subtract(1, 'year'), dayjs()],
             gridColumns: ["심사상태", "사업자코드", "상호"],
             gridBoxValue: [3],
-            gridDataSource: employees,
             modalStatus: false,
             text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
             formState: {
@@ -146,7 +154,7 @@ export default defineComponent({
         };
     },
     mounted() {
-        const originData = {page: 1,rows: 10}
+        const originData = { page: 1, rows: 10 }
         this.searchSubscriptionRequests(originData)
     },
     methods: {
@@ -171,32 +179,32 @@ export default defineComponent({
         customClass(cellInfo: { value: any; }) {
             return cellInfo.value;
         },
-        getColorTag(data: string) {
-            if (data === "신청") {
-                return "red";
-            } else if (data === "심사중") {
-                return "blue";
-            } else if (data === "승인") {
-                return "green";
-            } else if (data === "반려") {
-                return "grey";
+        getColorTag(data: any) {
+            if (data == 10) {
+                return { "name": "red", "tag_name": "신청" };
+            } else if (data == 20) {
+                return { "name": "blue", "tag_name": "심사중" };
+            } else if (data == 30) {
+                return { "name": "green", "tag_name": "승인" };
+            } else if (data == 99) {
+                return { "name": "grey", "tag_name": "반려" };
             }
         },
         setModalVisible(data: never[]) {
+            console.log(data,'utyutyuyut');
             this.popupData = data;
             this.modalStatus = true;
         },
-        searchSubscriptionRequests(filter:any) {
+        searchSubscriptionRequests(filter: any) {
             const { loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, filter)
             onResult((res) => {
                 this.dataSource = res.data.searchSubscriptionRequests.datas
-                console.log(res.data.searchSubscriptionRequests.datas[0],'ghjgjg')
             })
-           
+
         }
         ,
-        formarDate(date:any){
-            return dayjs(date).format('DD/MM/YYYY')
+        formarDate(date: any) {
+            return dayjs(date).format('MM/DD/YYYY')
         }
     },
 });
@@ -323,5 +331,9 @@ export default defineComponent({
             padding: 7px;
         }
     }
+}
+
+::v-deep .cell-center {
+    text-align: center !important
 }
 </style>
