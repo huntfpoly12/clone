@@ -60,11 +60,11 @@
                         </div>
                         <div class="form-item">
                             <label class="red">사업자유형 :</label>
-                            <a-radio-group v-model:value="contractCreacted.bizType" name="radioGroup"
-                                @change="changeTypeCompany">
-                                <a-radio value="1">법인사업자</a-radio>
-                                <a-radio value="2">개인사업자</a-radio>
+                            <a-radio-group v-model:value="contractCreacted.bizType" @change="changeTypeCompany">
+                                <a-radio :value="1">법인사업자</a-radio>
+                                <a-radio :value="2">개인사업자</a-radio>
                             </a-radio-group>
+
                             <div class="group-label">
                                 <p>{{textIDNo}}:</p>
                                 <a-input class="width-auto" v-model:value="contractCreacted.residentId"
@@ -88,7 +88,8 @@
                         </div>
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <a-input class="width-auto" v-model:value="contractCreacted.phone" placeholder="0298765432" />
+                            <a-input class="width-auto" v-model:value="contractCreacted.phone"
+                                placeholder="0298765432" />
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
@@ -104,19 +105,24 @@
                     <div class="info-box">
                         <div class="form-item">
                             <label class="red">대표자명:</label>
-                            <a-input placeholder="홍길동" />
+                            <a-input placeholder="홍길동" style="width: 150px"
+                                v-model:value="contractCreacted.namePresident" />
                         </div>
                         <div class="form-item">
                             <label class="red">생년월일 :</label>
-                            <a-input placeholder="19620820" />
+                            <div>
+                                <CustomDatepicker :valueDate="contractCreacted.birthday" />
+                            </div>
                         </div>
                         <div class="form-item">
                             <label class="red">휴대폰번호:</label>
-                            <a-input placeholder="01098765432" />
+                            <a-input placeholder="01098765432" style="width: 150px"
+                                v-model:value="contractCreacted.mobilePhone" />
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
-                            <a-input placeholder="abc123@mailaddress.com" />
+                            <a-input placeholder="abc123@mailaddress.com" style="width: 300px;"
+                                v-model:value="contractCreacted.email" />
                         </div>
                     </div>
                 </div>
@@ -135,8 +141,8 @@
                         <p class="red">⁙ 운영사업</p>
                     </div>
 
-                    <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
-                        :selected-row-keys="selectedItemKeys">
+                    <DxDataGrid id="gridContainer" :data-source="contractCreacted.facilityBusinesses"
+                        :show-borders="true" :selected-row-keys="selectedItemKeys">
                         <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true" :allow-deleting="true"
                             template="button-template" mode="cell">
                             <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -148,29 +154,38 @@
                         <DxPaging :enabled="false" />
                         <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                             cell-template="indexCell" />
+
                         <template #indexCell="{ data }">
                             <div>{{data.rowIndex + 1}}</div>
                         </template>
 
-                        <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
-                        <DxColumn :width="225" data-field="StateID" caption="사업분류">
+                        <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                        <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                             <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                         </DxColumn>
-                        <DxColumn data-field="서비스시작년월" data-type="date" :format="'yyyy-MM-dd'" />
-                        <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
+                        <DxColumn data-field="startYearMonth" data-type="date" :format="'yyyy-MM-dd'" />
+                        <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
                         <DxToolbar>
                             <DxItem name="addRowButton" />
                         </DxToolbar>
                     </DxDataGrid>
+
+
                     <div class="form-item">
                         <label class="red">장기요양기관등록번호 :</label>
-                        <a-input placeholder="09xx-xxx-xxx" v-model:value="dataInputCallApi.numberPhone" />
+                        <a-input placeholder="1234567898" v-model:value="contractCreacted.longTermCareInstitutionNumber"
+                            @change="changeValueLongTermCareInstitutionNumber" />
+                    </div>
+                    
+                    <div>
+                        <imgUpload :title="titleModal" @update-img="getImgUrl" style="margin-top: 10px;" />
                     </div>
                     <div class="form-item">
-                        <label class="red">부가서비스</label>
-                        <a-checkbox v-model:checked="dataInputCallApi.agentService">회계입력대행서비스</a-checkbox>
+                        <label >부가서비스:</label>
+                        <a-checkbox v-model:checked="contractCreacted.accountingServiceTypes">회계입력대행서비스</a-checkbox>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>2. 원천서비스 신청</label>
                     <div class="list-checkbox">
@@ -195,6 +210,8 @@
                         <a-checkbox v-model:checked="dataInputCallApi.declarationService">4대보험신고서비스</a-checkbox>
                     </div>
                 </div>
+
+
                 <div class="form-group">
                     <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                     <div class="form-item">
@@ -280,6 +297,7 @@ import { employees, states } from './data.js';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../graphql/mutations/RqContract/index";
 
+
 import {
     DxDataGrid,
     DxColumn,
@@ -289,11 +307,12 @@ import {
     DxLookup,
     DxToolbar,
     DxItem,
-    DxTexts
+    DxTexts,
 
 } from "devextreme-vue/data-grid"
 import { DxButton } from 'devextreme-vue/button';
 import imgUpload from "../../components/UploadImage.vue";
+import CustomDatepicker from "../../components/CustomDatepicker.vue";
 export default {
     components: {
         CheckOutlined,
@@ -308,7 +327,9 @@ export default {
         DxItem,
         DxTexts,
         DxButton,
-        imgUpload
+        imgUpload,
+        CustomDatepicker,
+        moment
     },
     data() {
         return {
@@ -320,7 +341,7 @@ export default {
             radio2: '',
             radio3: '',
             radio4: '',
-            dataModal: employees,
+            dataModal: [],
             states,
             marginTopModal: "margin-top : 10px",
             titleModal: "사업자등록증",
@@ -399,37 +420,14 @@ export default {
             } else {
                 return 'finish'
             }
-        }
-    },
-    methods: {
-        changeTypeCompany() {
-            console.log(this.contractCreacted.bizType);
-            if (this.contractCreacted.bizType == 2) {
-                this.textIDNo = '주민등록번호'
-            }else {
-                this.textIDNo = '법인등록번호'
+        },
+        changeValueInputEmit(data) {
+            if (data.name == 'nameCompany') {
+                this.dataSearch.nameCompany = data.value
             }
         },
-        prevStep() {
-            this.step--
-        },
-
-        nextStep() {
-            this.step++
-        },
-        openPopup() {
-            this.visible = true
-        },
-        handleOk() {
-            this.visible = false
-
-            // this.$router.push('/login')
-        },
-        getImgUrl(img) {
-            // console.log("imgUrl", img);
-        },
-
     },
+
 
     setup() {
         const contractCreacted = reactive({
@@ -462,9 +460,8 @@ export default {
             bizType: 1,
             residentId: 'residentId',
 
-
-            name: 'name',
-            birthday: 'birthday',
+            namePresident: 'name',
+            birthday: '2021-08-15',
             mobilePhone: 'mobilePhone',
             email: 'email@gmail.com',
 
@@ -474,7 +471,9 @@ export default {
             startYearMonth: 'startYearMonth',
             capacity: 10,
             registrationCardFileStorageId: 10,
-            accountingServiceTypes: 1,
+            accountingServiceTypes: true,
+
+            facilityBusinesses: [],
 
             startYearMonthHolding: 'startYearMonthHolding',
             capacityHolding: 10,
@@ -505,12 +504,76 @@ export default {
         //     console.log(res)
         // });
 
-        // onMounted(() => {
-        //     createContract()
-        // })
+
         return {
             contractCreacted
         }
+    },
+    watch: {
+        'contractCreacted.longTermCareInstitutionNumber'(newVal) {
+            let arrNew = [];
+            if (this.contractCreacted.facilityBusinesses.length > 0) {
+                this.contractCreacted.facilityBusinesses.forEach(element => {
+                    let obj = {
+                        ...element,
+                        longTermCareInstitutionNumber: newVal
+                    }
+                    arrNew.push(obj)
+                });
+                console.log(arrNew);
+            }
+        },
+        'contractCreacted.facilityBusinesses' : {
+            handler() { 
+                let arrNew = []; 
+                if (this.contractCreacted.facilityBusinesses.length > 0) {
+                    this.contractCreacted.facilityBusinesses.forEach(element => {
+                        let obj = {
+                            ...element,
+                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber
+                        }
+                        arrNew.push(obj)
+                    });
+                    console.log(arrNew);
+                }
+                
+            },
+            deep: true,
+            immediate :true
+
+        }
+    },
+    methods: {
+        changeValueLongTermCareInstitutionNumber() {
+
+        },
+        changeTypeCompany() {
+            console.log(this.contractCreacted.bizType);
+            if (this.contractCreacted.bizType == 2) {
+                this.textIDNo = '주민등록번호'
+            } else {
+                this.textIDNo = '법인등록번호'
+            }
+        },
+        prevStep() {
+            this.step--
+        },
+
+        nextStep() {
+            this.step++
+        },
+        openPopup() {
+            this.visible = true
+        },
+        handleOk() {
+            this.visible = false
+
+            // this.$router.push('/login')
+        },
+        getImgUrl(img) {
+            // console.log("imgUrl", img);
+        },
+
     },
 }
 </script>
@@ -591,8 +654,13 @@ export default {
 }
 
 .form-item ::v-deep input,
-.form-item ::v-deep .ant-input-affix-wrapper {
+.form-item .ant-input-affix-wrapper ::v-deep {
     max-width: calc(100% - 165px);
+}
+
+::v-deep input.dp__input.dp__input_icon_pad {
+    width: 150px;
+    max-width: 200px !important;
 }
 
 .form-item p {
@@ -678,6 +746,7 @@ export default {
     margin-top: 30px;
     position: relative;
     z-index: 20;
+    width: 200px;
 }
 
 #gridContainer {
