@@ -58,72 +58,73 @@ const mutations = {
       $salesRepresentativeId: Int! 
       $comment: String! 
     ) {
-      createSubscriptionRequest(content :{
-        agreements: {
-          terms: $terms
-          personalInfo: $personalInfo
-          accountingService: $accountingService
-          withholdingService: $withholdingService
+      createSubscriptionRequest(
+        content :{
+          agreements: {
+            terms: $terms
+            personalInfo: $personalInfo
+            accountingService: $accountingService
+            withholdingService: $withholdingService
+          }
+          company: {
+              name: $name
+              zipcode: $zipcode
+              roadAddress: $roadAddress
+              jibunAddress: $jibunAddress
+              addressExtend: $addressExtend
+              addressDetail: {
+                  bcode: $bcode
+                  bname: $bname
+                  buildingCode: $buildingCode
+                  buildingName: $buildingName
+                  roadname: $roadname
+                  roadnameCode: $roadnameCode
+                  sido: $sido
+                  sigungu: $sigungu
+                  sigunguCode: $sigunguCode
+                  zonecode: $zonecode
+              }
+              phone: $phone
+              fax: $fax
+              licenseFileStorageId: $licenseFileStorageId
+              bizNumber: $bizNumber
+              bizType: $bizType
+              residentId: $residentId
+          }
+          president: {
+              name: $presidentName
+              birthday: $birthday
+              mobilePhone: $mobilePhone
+              email: $email
+          }
+          accounting: {
+              facilityBusinesses: {
+                  longTermCareInstitutionNumber: $longTermCareInstitutionNumber
+                  facilityBizType:  $facilityBizType
+                  name: $name
+                  startYearMonth: "2022/10/10"
+                  capacity: $capacity
+                  registrationCardFileStorageId: $registrationCardFileStorageId
+              }
+              accountingServiceTypes:  $accountingServiceTypes
+          }
+          withholding: {
+              startYearMonth: "2022/10/10"
+              capacity: $capacityHolding
+              withholdingServiceTypes:  $WithholdingAdditionalServiceTypeScalar
+          }
+          cmsBank: {
+              bankType: WithholdingAdditionalServiceType
+              accountNumber: $accountNumber
+              ownerBizNumber: $ownerBizNumber
+              ownerName: $ownerName
+              withdrawDay: $withdrawDay
+          }
+          extra: {
+              salesRepresentativeId: $salesRepresentativeId
+              comment: $comment
+          }
         }
-        company: {
-            name: $name
-            zipcode: $zipcode
-            roadAddress: $roadAddress
-            jibunAddress: $jibunAddress
-            addressExtend: $addressExtend
-            addressDetail: {
-                bcode: $bcode
-                bname: $bname
-                buildingCode: $buildingCode
-                buildingName: $buildingName
-                roadname: $roadname
-                roadnameCode: $roadnameCode
-                sido: $sido
-                sigungu: $sigungu
-                sigunguCode: $sigunguCode
-                zonecode: $zonecode
-            }
-            phone: $phone
-            fax: $fax
-            licenseFileStorageId: $licenseFileStorageId
-            bizNumber: $bizNumber
-            bizType: $bizType
-            residentId: $residentId
-        }
-        president: {
-            name: $presidentName
-            birthday: $birthday
-            mobilePhone: $mobilePhone
-            email: $email
-        }
-        accounting: {
-            facilityBusinesses: {
-                longTermCareInstitutionNumber: $longTermCareInstitutionNumber
-                facilityBizType:  $facilityBizType
-                name: $name
-                startYearMonth: "2022/10/10"
-                capacity: $capacity
-                registrationCardFileStorageId: $registrationCardFileStorageId
-            }
-            accountingServiceTypes:  $accountingServiceTypes
-        }
-        withholding: {
-            startYearMonth: "2022/10/10"
-            capacity: $capacityHolding
-            withholdingServiceTypes:  $WithholdingAdditionalServiceTypeScalar
-        }
-        cmsBank: {
-            bankType: WithholdingAdditionalServiceType
-            accountNumber: $accountNumber
-            ownerBizNumber: $ownerBizNumber
-            ownerName: $ownerName
-            withdrawDay: $withdrawDay
-        }
-        extra: {
-            salesRepresentativeId: $salesRepresentativeId
-            comment: $comment
-        }
-      }
       ) {
         id
         status
