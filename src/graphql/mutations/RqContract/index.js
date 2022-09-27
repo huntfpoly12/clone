@@ -1,60 +1,63 @@
-import gql from "graphql-tag"; 
+import gql from "graphql-tag";
 
 const mutations = {
   creactContract: gql`
     mutation createSubscriptionRequest(
-      $terms: Boolean!
-      $personalInfo: Boolean!
-      $accountingService: Boolean!
-      $withholdingService: Boolean!
+      $terms: Boolean!,
+      $personalInfo: Boolean!,
+      $accountingService: Boolean!,
+      $withholdingService: Boolean!,
 
-      $name:String!
-      $zipcode:String!
-      $roadAddress:String!
-      $jibunAddress:String!
-      $addressExtend:String!
+      $name:String!,
+      $zipcode:String!,
+      $roadAddress:String!,
+      $jibunAddress:String!,
+      $addressExtend:String!,
 
-      $bcode: String!
-      $bname: String!
-      $buildingCode:String!
-      $buildingName:String!
-      $roadname: String!
-      $roadnameCode:String!
-      $sido: String!
-      $sigungu:String!
-      $sigunguCode:String!
-      $zonecode: String!
-      $bankType: String!
+      $bcode: String!,
+      $bname: String!,
+      $buildingCode:String!,
+      $buildingName:String!,
+      $roadname: String!,
+      $roadnameCode:String!,
+      $sido: String!,
+      $sigungu:String!,
+      $sigunguCode:String!,
+      $zonecode: String!,
 
-      $phone: String!
-      $fax: String!
-      $licenseFileStorageId: Int!
-      $bizNumber: String! 
-      $residentId: String!
+      $phone: String!,
+      $fax: String!,
+      $licenseFileStorageId: Int!,
+      $bizNumber: String!,
+      $bizType: Int!,
+      $residentId: String!,
 
-      $presidentName : String!
-      $birthday : String! 
-      $mobilePhone : String! 
-      $email : String! 
+      $presidentName : String!,
+      $presidentBirthday : String!,
+      $presidentMobilePhone : String!,
+      $presidentEmail : String!,
       
-      $longTermCareInstitutionNumber : String!  
-      $startYearMonth : String!
-      $capacity : Int!
-      $registrationCardFileStorageId : Int!
+      $longTermCareInstitutionNumber : String!,
+      $facilityBizType:Int!,
+      $facilityName : String! ,
+      $facilitystartYearMonth : String!,
+      $facilityCapacity : Int!,
+      $registrationCardFileStorageId : Int!,
       
-      $startYearMonthHolding : String! 
-      $capacityHolding : Int! 
-      $withholdingServiceTypes : Int! 
-      
-      $accountNumber : String! 
-      $ownerBizNumber : String! 
-      $ownerName : String!
-      $withdrawDay : String!
+      $accountingServiceTypes : Int!,
 
-      $salesRepresentativeId: Int! 
-      $accountingServiceTypes: Int! 
-      $bizType: Int! 
-      $facilityBizType: Int! 
+      $holdingstartYearMonth : String! ,
+      $holdingCapacity : Int! ,
+      $withholdingServiceTypes :  Int! ,
+
+      $bankType :  String!,
+      $accountNumber : String! ,
+      $ownerBizNumber : String! ,
+      $ownerName : String!,
+      $withdrawDay : String!,
+
+
+      $salesRepresentativeId: Int! ,
       $comment: String! 
     ) {
       createSubscriptionRequest(content :{
@@ -86,22 +89,22 @@ const mutations = {
             fax: $fax
             licenseFileStorageId: $licenseFileStorageId
             bizNumber: $bizNumber
-            bizType:  $bizType
+            bizType: $bizType
             residentId: $residentId
         }
         president: {
             name: $presidentName
-            birthday: $birthday
-            mobilePhone: $mobilePhone
-            email: $email
+            birthday: $presidentBirthday
+            mobilePhone: $presidentMobilePhone
+            email: $presidentEmail
         }
         accounting: {
             facilityBusinesses: {
                 longTermCareInstitutionNumber: $longTermCareInstitutionNumber
                 facilityBizType: $facilityBizType
-                name: $name
-                startYearMonth: $startYearMonth
-                capacity: $capacity
+                name: $facilityName
+                startYearMonth: $facilitystartYearMonth
+                capacity: $facilityCapacity
                 registrationCardFileStorageId: $registrationCardFileStorageId
             }
             accountingServiceTypes: $accountingServiceTypes
@@ -109,10 +112,10 @@ const mutations = {
         withholding: {
             startYearMonth: $startYearMonthHolding
             capacity: $capacityHolding
-            withholdingServiceTypes:  $withholdingServiceTypes
+            withholdingServiceTypes: $withholdingServiceTypes
         }
         cmsBank: {
-            bankType:  $bankType
+            bankType: $ankType
             accountNumber: $accountNumber
             ownerBizNumber: $ownerBizNumber
             ownerName: $ownerName
