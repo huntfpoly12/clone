@@ -1,7 +1,7 @@
-import gql from "graphql-tag";
+import gql from "graphql-tag"; 
 
 const mutations = {
-    creactContract: gql`
+  creactContract: gql`
     mutation createSubscriptionRequest(
       $terms: Boolean!
       $personalInfo: Boolean!
@@ -24,27 +24,27 @@ const mutations = {
       $sigungu:String!
       $sigunguCode:String!
       $zonecode: String!
+      $bankType: String!
 
       $phone: String!
       $fax: String!
       $licenseFileStorageId: Int!
-      $bizNumber: String!
-    #   $bizType: String!
-      $residentId:String!
+      $bizNumber: String! 
+      $residentId: String!
 
       $presidentName : String!
       $birthday : String! 
       $mobilePhone : String! 
       $email : String! 
       
-      $longTermCareInstitutionNumber : String! 
-      $nameFacilityBusinesses : String! 
+      $longTermCareInstitutionNumber : String!  
       $startYearMonth : String!
       $capacity : Int!
       $registrationCardFileStorageId : Int!
       
       $startYearMonthHolding : String! 
       $capacityHolding : Int! 
+      $withholdingServiceTypes : Int! 
       
       $accountNumber : String! 
       $ownerBizNumber : String! 
@@ -52,6 +52,9 @@ const mutations = {
       $withdrawDay : String!
 
       $salesRepresentativeId: Int! 
+      $accountingServiceTypes: Int! 
+      $bizType: Int! 
+      $facilityBizType: Int! 
       $comment: String! 
     ) {
       createSubscriptionRequest(content :{
@@ -83,7 +86,7 @@ const mutations = {
             fax: $fax
             licenseFileStorageId: $licenseFileStorageId
             bizNumber: $bizNumber
-            bizType: "ok"
+            bizType:  $bizType
             residentId: $residentId
         }
         president: {
@@ -95,27 +98,21 @@ const mutations = {
         accounting: {
             facilityBusinesses: {
                 longTermCareInstitutionNumber: $longTermCareInstitutionNumber
-                facilityBizType: {
- 
-                }
+                facilityBizType: $facilityBizType
                 name: $name
                 startYearMonth: $startYearMonth
                 capacity: $capacity
                 registrationCardFileStorageId: $registrationCardFileStorageId
             }
-            accountingServiceTypes: {
-                
-            }
+            accountingServiceTypes: $accountingServiceTypes
         }
         withholding: {
             startYearMonth: $startYearMonthHolding
             capacity: $capacityHolding
-            withholdingServiceTypes: {
-                
-            }
+            withholdingServiceTypes:  $withholdingServiceTypes
         }
         cmsBank: {
-            bankType: "ok"
+            bankType:  $bankType
             accountNumber: $accountNumber
             ownerBizNumber: $ownerBizNumber
             ownerName: $ownerName

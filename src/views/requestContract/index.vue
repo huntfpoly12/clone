@@ -11,41 +11,37 @@
             <template v-if="step === 0">
                 <div class="form-group">
                     <label>1. 서비스약관 동의</label>
-                    <a-textarea placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                    <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
                         <a-radio-group v-model:value="radio">
-                            <a-radio :value="'미동의'">미동의</a-radio>
-                            <a-radio :value="'동의함'">동의함</a-radio>
+                            <a-checkbox v-model:checked="contractCreacted.terms">동의함</a-checkbox>
                         </a-radio-group>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>2. 개인정보제공 및 활용동의</label>
-                    <a-textarea placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                    <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
-                        <a-radio-group v-model:value="radio1">
-                            <a-radio :value="'미동의'">미동의</a-radio>
-                            <a-radio :value="'동의함'">동의함</a-radio>
+                        <a-radio-group v-model:value="radio">
+                            <a-checkbox v-model:checked="contractCreacted.personalInfo">동의함</a-checkbox>
                         </a-radio-group>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>3. 회계서비스약관 동의</label>
-                    <a-textarea placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                    <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
-                        <a-radio-group v-model:value="radio2">
-                            <a-radio :value="'미동의'">미동의</a-radio>
-                            <a-radio :value="'동의함'">동의함</a-radio>
+                        <a-radio-group v-model:value="radio">
+                            <a-checkbox v-model:checked="contractCreacted.accountingService">동의함</a-checkbox>
                         </a-radio-group>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>4. 원천서비스약관 동의</label>
-                    <a-textarea placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                    <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                     <div class="radio-group">
-                        <a-radio-group v-model:value="radio3">
-                            <a-radio :value="'미동의'">미동의</a-radio>
-                            <a-radio :value="'동의함'">동의함</a-radio>
+                        <a-radio-group v-model:value="radio">
+                            <a-checkbox v-model:checked="contractCreacted.withholdingService">동의함</a-checkbox>
                         </a-radio-group>
                     </div>
                 </div>
@@ -56,21 +52,23 @@
                     <div class="info-box">
                         <div class="form-item">
                             <label class="red">상 호 :</label>
-                            <a-input placeholder="가나다라마바사아자차카타파하 요양병원" />
+                            <a-input v-model:value="contractCreacted.nameCompany" placeholder="가나다라마바사아자차카타파하 요양병원" />
                         </div>
                         <div class="form-item">
                             <label class="red">사업자등록번호 :</label>
-                            <a-input placeholder="123-45-67890" />
+                            <a-input v-model:value="contractCreacted.bizNumber" placeholder="123-45-67890" />
                         </div>
                         <div class="form-item">
                             <label class="red">사업자유형 :</label>
-                            <a-radio-group v-model:value="radio4">
-                                <a-radio :value="'법인사업자'">법인사업자</a-radio>
-                                <a-radio :value="'개인사업자'">개인사업자</a-radio>
+                            <a-radio-group v-model:value="contractCreacted.bizType" name="radioGroup"
+                                @change="changeTypeCompany">
+                                <a-radio value="1">법인사업자</a-radio>
+                                <a-radio value="2">개인사업자</a-radio>
                             </a-radio-group>
                             <div class="group-label">
-                                <p>{ $id no } :</p>
-                                <a-input class="width-auto" placeholder="800123-1234567" />
+                                <p>{{textIDNo}}:</p>
+                                <a-input class="width-auto" v-model:value="contractCreacted.residentId"
+                                    placeholder="800123-1234567" />
                             </div>
                         </div>
                         <div class="form-item">
@@ -89,12 +87,15 @@
                             <a-input placeholder="ADDR2" />
                         </div>
                         <div class="form-item">
-                            <label class="red">상 호 :</label>
-                            <a-input class="width-auto" placeholder="0298765432" />
+                            <label class="red">연락처 :</label>
+                            <a-input class="width-auto" v-model:value="contractCreacted.phone" placeholder="0298765432" />
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
-                            <a-input class="width-auto" placeholder="0212345678" />
+                            <a-input class="width-auto" v-model:value="contractCreacted.fax" placeholder="0212345678" />
+                        </div>
+                        <div>
+                            <imgUpload :title="titleModal" @update-img="getImgUrl" style="margin-top: 10px;" />
                         </div>
                     </div>
                 </div>
@@ -273,7 +274,7 @@
 <script >
 import { computed, reactive, ref, onMounted } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
-import { cloneDeep } from 'lodash-es';
+
 import moment from 'moment'
 import { employees, states } from './data.js';
 import { useMutation } from "@vue/apollo-composable";
@@ -292,6 +293,7 @@ import {
 
 } from "devextreme-vue/data-grid"
 import { DxButton } from 'devextreme-vue/button';
+import imgUpload from "../../components/UploadImage.vue";
 export default {
     components: {
         CheckOutlined,
@@ -305,10 +307,12 @@ export default {
         DxToolbar,
         DxItem,
         DxTexts,
-        DxButton
+        DxButton,
+        imgUpload
     },
     data() {
         return {
+            textIDNo: '법인등록번호',
             step: 0,
             visible: false,
             radio: '',
@@ -316,6 +320,10 @@ export default {
             radio2: '',
             radio3: '',
             radio4: '',
+            dataModal: employees,
+            states,
+            marginTopModal: "margin-top : 10px",
+            titleModal: "사업자등록증",
             dataInputCallApi: {
                 dossier: '',
                 businessActivities: [
@@ -353,84 +361,8 @@ export default {
                 debtWithdrawalDate: '매월 5일',
                 salesAgent: 'A 대리점',
                 note: '',
-
-            },
-            dataModal: employees,
-            states,
-            dataCallApi: {
-                agreements: {
-                    terms: true,
-                    personalInfo: true,
-                    accountingService: true,
-                    withholdingService: true,
-                },
-                company: {
-                    name: 'name',
-                    zipcode: 'zipcode',
-                    roadAddress: 'roadAddress',
-                    jibunAddress: 'jibunAddress',
-                    addressExtend: 'addressExtend',
-                    addressDetail: {
-                        bcode: 'bcode',
-                        bname: 'bname',
-                        buildingCode: 'buildingCode',
-                        buildingName: 'buildingName',
-                        roadname: 'roadname',
-                        roadnameCode: 'roadnameCode',
-                        sido: 'sido',
-                        sigungu: 'sigungu',
-                        sigunguCode: 'sigunguCode',
-                        zonecode: 'zonecode',
-                    },
-                    phone: 'phone',
-                    fax: 'fax',
-                    licenseFileStorageId: 10,
-                    bizNumber: 'bizNumber',
-                    // bizType: 'bizType',
-                    residentId: 'residentId',
-                },
-                president: {
-                    name: 'name',
-                    birthday: 'birthday',
-                    mobilePhone: 'mobilePhone',
-                    email: 'email@gmail.com',
-                },
-                accounting: {
-                    facilityBusinesses: {
-                        longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
-                        facilityBizType: {
-                            // 
-                        },
-                        name: 'name',
-                        startYearMonth: 'startYearMonth',
-                        capacity: 10,
-                        registrationCardFileStorageId: 10,
-                    },
-                    accountingServiceTypes: {
-                        // 
-                    }
-                },
-                withholding: {
-                    startYearMonthHolding: 'startYearMonth',
-                    capacityHolding: 10,
-                    withholdingServiceTypes: {
-                        // 
-                    }
-                },
-                cmsBank: {
-                    bankType: {
-                        // 
-                    },
-                    accountNumber: 'accountNumber',
-                    ownerBizNumber: 'ownerBizNumber',
-                    ownerName: 'ownerName',
-                    withdrawDay: 'withdrawDay',
-                },
-                extra: {
-                    salesRepresentativeId: 10,
-                    comment: 'comment',
-                }
             }
+
         }
     },
     mounted() {
@@ -470,6 +402,14 @@ export default {
         }
     },
     methods: {
+        changeTypeCompany() {
+            console.log(this.contractCreacted.bizType);
+            if (this.contractCreacted.bizType == 2) {
+                this.textIDNo = '주민등록번호'
+            }else {
+                this.textIDNo = '법인등록번호'
+            }
+        },
         prevStep() {
             this.step--
         },
@@ -485,83 +425,92 @@ export default {
 
             // this.$router.push('/login')
         },
+        getImgUrl(img) {
+            // console.log("imgUrl", img);
+        },
 
     },
 
     setup() {
-        const {
-            mutate: createContract,
-            loading,
-            onDone: creatDone,
-            onError,
-        } = useMutation(mutations.creactContract, () => ({
-            variables: {
+        const contractCreacted = reactive({
+            terms: false,
+            personalInfo: false,
+            accountingService: false,
+            withholdingService: false,
 
-                terms: true,
-                personalInfo: true,
-                accountingService: true,
-                withholdingService: true,
+            nameCompany: 'nameCompany',
+            zipcode: 'zipcode',
+            roadAddress: 'roadAddress',
+            jibunAddress: 'jibunAddress',
+            addressExtend: 'addressExtend',
 
+            bcode: 'bcode',
+            bname: 'bname',
+            buildingCode: 'buildingCode',
+            buildingName: 'buildingName',
+            roadname: 'roadname',
+            roadnameCode: 'roadnameCode',
+            sido: 'sido',
+            sigungu: 'sigungu',
+            sigunguCode: 'sigunguCode',
+            zonecode: 'zonecode',
 
-                name: 'name',
-                zipcode: 'zipcode',
-                roadAddress: 'roadAddress',
-                jibunAddress: 'jibunAddress',
-                addressExtend: 'addressExtend',
-
-                bcode: 'bcode',
-                bname: 'bname',
-                buildingCode: 'buildingCode',
-                buildingName: 'buildingName',
-                roadname: 'roadname',
-                roadnameCode: 'roadnameCode',
-                sido: 'sido',
-                sigungu: 'sigungu',
-                sigunguCode: 'sigunguCode',
-                zonecode: 'zonecode',
-
-                phone: 'phone',
-                fax: 'fax',
-                licenseFileStorageId: 10,
-                bizNumber: 'bizNumber',
-                // bizType: 'bizType',
-                residentId: 'residentId',
+            phone: 'phone',
+            fax: 'fax',
+            licenseFileStorageId: 10,
+            bizNumber: 'bizNumber',
+            bizType: 1,
+            residentId: 'residentId',
 
 
-                name: 'name',
-                birthday: 'birthday',
-                mobilePhone: 'mobilePhone',
-                email: 'email@gmail.com',
-                longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
-                name: 'name',
-                startYearMonth: 'startYearMonth',
-                capacity: 10,
-                registrationCardFileStorageId: 10,
-                startYearMonth: 'startYearMonth',
-                capacity: 10,
-                withholdingServiceTypes: {
+            name: 'name',
+            birthday: 'birthday',
+            mobilePhone: 'mobilePhone',
+            email: 'email@gmail.com',
 
-                },
-                accountNumber: 'accountNumber',
-                ownerBizNumber: 'ownerBizNumber',
-                ownerName: 'ownerName',
-                withdrawDay: 'withdrawDay',
+            longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
+            facilityBizType: 1,
+            name: 'name',
+            startYearMonth: 'startYearMonth',
+            capacity: 10,
+            registrationCardFileStorageId: 10,
+            accountingServiceTypes: 1,
 
+            startYearMonthHolding: 'startYearMonthHolding',
+            capacityHolding: 10,
+            withholdingServiceTypes: 1,
 
-                salesRepresentativeId: 10,
-                comment: 'comment',
+            bankType: "bankType",
+            accountNumber: 'accountNumber',
+            ownerBizNumber: 'ownerBizNumber',
+            ownerName: 'ownerName',
+            withdrawDay: 'withdrawDay',
 
-            },
-        }));
-
-        creatDone((res) => {
-            console.log(res)
-        });
-
-        onMounted(() => {
-            createContract()
+            salesRepresentativeId: 10,
+            comment: 'comment',
         })
+        // const {
+        //     mutate: createContract,
+        //     loading,
+        //     onDone: creatDone,
+        //     onError,
+        // } = useMutation(mutations.creactContract, () => ({
+        //     variables: {
 
+
+        //     },
+        // }));
+
+        // creatDone((res) => {
+        //     console.log(res)
+        // });
+
+        // onMounted(() => {
+        //     createContract()
+        // })
+        return {
+            contractCreacted
+        }
     },
 }
 </script>
