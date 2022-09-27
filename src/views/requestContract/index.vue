@@ -271,7 +271,7 @@
     </div>
 </template>
 <script >
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, onMounted } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash-es';
 import moment from 'moment'
@@ -386,7 +386,7 @@ export default {
                     fax: 'fax',
                     licenseFileStorageId: 10,
                     bizNumber: 'bizNumber',
-                    bizType: 'bizType',
+                    // bizType: 'bizType',
                     residentId: 'residentId',
                 },
                 president: {
@@ -411,8 +411,8 @@ export default {
                     }
                 },
                 withholding: {
-                    startYearMonth: 'startYearMonth',
-                    capacity: 10,
+                    startYearMonthHolding: 'startYearMonth',
+                    capacityHolding: 10,
                     withholdingServiceTypes: {
                         // 
                     }
@@ -432,6 +432,13 @@ export default {
                 }
             }
         }
+    },
+    mounted() {
+        // useMutation(mutations.customerWorkLogin, () => ({
+        //     variables: {
+        //         companyId: 5,
+        //     },
+        // }))
     },
     computed: {
         checkStepTwo() {
@@ -472,234 +479,89 @@ export default {
         },
         openPopup() {
             this.visible = true
-
-
-
-
-
-            const {
-                onDone: signinDone,
-            } = useMutation(mutations.creactContract, () => ({
-                variables: {
-                    terms: this.dataCallApi.agreements.terms,
-                    personalInfo: this.dataCallApi.agreements.personalInfo,
-                    accountingService: this.dataCallApi.agreements.accountingService,
-                    withholdingService: this.dataCallApi.agreements.withholdingService,
-
-                    name: this.dataCallApi.company.name,
-                    zipcode: this.dataCallApi.company.zipcode,
-                    roadAddress: this.dataCallApi.company.roadAddress,
-                    jibunAddress: this.dataCallApi.company.jibunAddress,
-                    addressExtend: this.dataCallApi.company.addressExtend,
-
-                    bcode: this.dataCallApi.company.addressDetail.bcode,
-                    bname: this.dataCallApi.company.addressDetail.bname,
-                    buildingCode: this.dataCallApi.company.addressDetail.buildingCode,
-                    buildingName: this.dataCallApi.company.addressDetail.buildingName,
-                    roadname: this.dataCallApi.company.addressDetail.roadname,
-                    roadnameCode: this.dataCallApi.company.addressDetail.roadnameCode,
-                    sido: this.dataCallApi.company.addressDetail.sido,
-                    sigungu: this.dataCallApi.company.addressDetail.sigungu,
-                    sigunguCode: this.dataCallApi.company.addressDetail.sigunguCode,
-                    zonecode: this.dataCallApi.company.addressDetail.zonecode,
-
-                    phone: this.dataCallApi.company.phone,
-                    fax: this.dataCallApi.company.fax,
-                    licenseFileStorageId: this.dataCallApi.company.licenseFileStorageId,
-                    bizNumber: this.dataCallApi.company.bizNumber,
-                    bizType: this.dataCallApi.company.bizType,
-                    residentId: this.dataCallApi.company.residentId,
-
-                    presidentName: this.dataCallApi.president.name,
-                    birthday: this.dataCallApi.president.birthday,
-                    mobilePhone: this.dataCallApi.president.mobilePhone,
-                    email: this.dataCallApi.president.email,
-
-                    longTermCareInstitutionNumber: this.dataCallApi.accounting.facilityBusinesses.longTermCareInstitutionNumber,
-                    nameFacilityBusinesses: this.dataCallApi.accounting.facilityBusinesses.name,
-                    startYearMonth: this.dataCallApi.accounting.facilityBusinesses.startYearMonth,
-                    capacity: this.dataCallApi.accounting.facilityBusinesses.capacity,
-                    registrationCardFileStorageId: this.dataCallApi.accounting.facilityBusinesses.registrationCardFileStorageId,
-
-                    startYearMonth: this.dataCallApi.withholding.startYearMonth,
-                    capacity: this.dataCallApi.withholding.capacity,
-
-                    accountNumber: this.dataCallApi.cmsBank.accountNumber,
-                    ownerBizNumber: this.dataCallApi.cmsBank.ownerBizNumber,
-                    ownerName: this.dataCallApi.cmsBank.ownerName,
-                    withdrawDay: this.dataCallApi.cmsBank.withdrawDay,
-
-                    salesRepresentativeId: this.dataCallApi.extra.salesRepresentativeId,
-                    comment: this.dataCallApi.extra.comment,
-                },
-            }));
-
-
-            // signinDone((res) => {
-            //     console.log(res)
-            // });
-
         },
         handleOk() {
             this.visible = false
-            const res = useMutation(mutations.creactContract, () => ({
-                variables: {
-                    terms: this.dataCallApi.agreements.terms,
-                    personalInfo: this.dataCallApi.agreements.personalInfo,
-                    accountingService: this.dataCallApi.agreements.accountingService,
-                    withholdingService: this.dataCallApi.agreements.withholdingService,
-
-                    name: this.dataCallApi.company.name,
-                    zipcode: this.dataCallApi.company.zipcode,
-                    roadAddress: this.dataCallApi.company.roadAddress,
-                    jibunAddress: this.dataCallApi.company.jibunAddress,
-                    addressExtend: this.dataCallApi.company.addressExtend,
-
-                    bcode: this.dataCallApi.company.addressDetail.bcode,
-                    bname: this.dataCallApi.company.addressDetail.bname,
-                    buildingCode: this.dataCallApi.company.addressDetail.buildingCode,
-                    buildingName: this.dataCallApi.company.addressDetail.buildingName,
-                    roadname: this.dataCallApi.company.addressDetail.roadname,
-                    roadnameCode: this.dataCallApi.company.addressDetail.roadnameCode,
-                    sido: this.dataCallApi.company.addressDetail.sido,
-                    sigungu: this.dataCallApi.company.addressDetail.sigungu,
-                    sigunguCode: this.dataCallApi.company.addressDetail.sigunguCode,
-                    zonecode: this.dataCallApi.company.addressDetail.zonecode,
-
-                    phone: this.dataCallApi.company.phone,
-                    fax: this.dataCallApi.company.fax,
-                    licenseFileStorageId: this.dataCallApi.company.licenseFileStorageId,
-                    bizNumber: this.dataCallApi.company.bizNumber,
-                    bizType: this.dataCallApi.company.bizType,
-                    residentId: this.dataCallApi.company.residentId,
-
-                    presidentName: this.dataCallApi.president.name,
-                    birthday: this.dataCallApi.president.birthday,
-                    mobilePhone: this.dataCallApi.president.mobilePhone,
-                    email: this.dataCallApi.president.email,
-
-                    longTermCareInstitutionNumber: this.dataCallApi.accounting.facilityBusinesses.longTermCareInstitutionNumber,
-                    nameFacilityBusinesses: this.dataCallApi.accounting.facilityBusinesses.name,
-                    startYearMonth: this.dataCallApi.accounting.facilityBusinesses.startYearMonth,
-                    capacity: this.dataCallApi.accounting.facilityBusinesses.capacity,
-                    registrationCardFileStorageId: this.dataCallApi.accounting.facilityBusinesses.registrationCardFileStorageId,
-
-                    startYearMonth: this.dataCallApi.withholding.startYearMonth,
-                    capacity: this.dataCallApi.withholding.capacity,
-
-                    accountNumber: this.dataCallApi.cmsBank.accountNumber,
-                    ownerBizNumber: this.dataCallApi.cmsBank.ownerBizNumber,
-                    ownerName: this.dataCallApi.cmsBank.ownerName,
-                    withdrawDay: this.dataCallApi.cmsBank.withdrawDay,
-
-                    salesRepresentativeId: this.dataCallApi.extra.salesRepresentativeId,
-                    comment: this.dataCallApi.extra.comment,
-                },
-            }));
 
             // this.$router.push('/login')
         },
-        // confirmCreactedContact () {
-        //     console.log(this.dataCallApi);
-        // }
+
     },
 
     setup() {
-        const columns = [
-            {
-                title: '#',
-                dataIndex: 'key',
+        const {
+            mutate: createContract,
+            loading,
+            onDone: creatDone,
+            onError,
+        } = useMutation(mutations.creactContract, () => ({
+            variables: {
+
+                terms: true,
+                personalInfo: true,
+                accountingService: true,
+                withholdingService: true,
+
+
+                name: 'name',
+                zipcode: 'zipcode',
+                roadAddress: 'roadAddress',
+                jibunAddress: 'jibunAddress',
+                addressExtend: 'addressExtend',
+
+                bcode: 'bcode',
+                bname: 'bname',
+                buildingCode: 'buildingCode',
+                buildingName: 'buildingName',
+                roadname: 'roadname',
+                roadnameCode: 'roadnameCode',
+                sido: 'sido',
+                sigungu: 'sigungu',
+                sigunguCode: 'sigunguCode',
+                zonecode: 'zonecode',
+
+                phone: 'phone',
+                fax: 'fax',
+                licenseFileStorageId: 10,
+                bizNumber: 'bizNumber',
+                bizType: ['bizType', 5],
+                residentId: 'residentId',
+
+
+                name: 'name',
+                birthday: 'birthday',
+                mobilePhone: 'mobilePhone',
+                email: 'email@gmail.com',
+                longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
+                name: 'name',
+                startYearMonth: 'startYearMonth',
+                capacity: 10,
+                registrationCardFileStorageId: 10,
+                holdingYear: 'holdingYear',
+                capacityHolding: 10,
+                withholdingServiceTypes:['withholdingServiceTypes', 5],
+                accountingServiceTypes:['accountingServiceTypes', 5],
+                facilityBizType:['facilityBizType', 5],
+                accountNumber: 'accountNumber',
+                ownerBizNumber: 'ownerBizNumber',
+                ownerName: 'ownerName',
+                withdrawDay: 'withdrawDay',
+
+
+                salesRepresentativeId: 10,
+                comment: 'comment',
+
             },
-            {
-                title: '사업명 (중복불가)',
-                dataIndex: 'name',
-            },
-            {
-                title: '사업분류',
-                dataIndex: 'select',
-            },
-            {
-                title: '서비스시작년월',
-                dataIndex: 'date',
-            },
-            {
-                title: '정원수(명)',
-                dataIndex: 'number',
-            },
-            {
-                title: '',
-                dataIndex: 'operation',
-            }
-        ];
+        }));
 
-        const dataSource = ref([{
-            key: '0',
-            name: '가나다라마바 사업',
-            select: "주•야간보호",
-            date: '2022-08-25',
-            number: '10'
-        }, {
-            key: '1',
-            name: '다라마 사업',
-            select: "방문요양",
-            date: '2022-08-25',
-            number: '10'
-        },
-        {
-            key: '2',
-            name: '사하자차카타파하 사업',
-            select: '방문간호',
-            date: '2022-08-25',
-            number: '10'
-        },
-        {
-            key: '3',
-            name: '사하자차카타파하 가나다라마바',
-            select: '방문간호',
-            date: '2022-08-25',
-            number: '10'
-        }
-        ]);
+        creatDone((res) => {
+            console.log(res)
+        });
 
-        const count = computed(() => dataSource.value.length + 1);
-        const editableData = reactive({});
+        onMounted(() => {
+            createContract()
+        })
 
-        const edit = key => {
-            editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
-            console.log(editableData);
-        };
-
-        const save = key => {
-            Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
-            delete editableData[key];
-        };
-
-        const onDelete = key => {
-            dataSource.value = dataSource.value.filter(item => item.key !== key);
-        };
-
-        const handleAdd = () => {
-            const newData = {
-                key: `${count.value}`,
-                name: '사하자차카타파하 사업',
-                select: 32,
-                date: '',
-                number: '10',
-            };
-            dataSource.value.push(newData);
-        };
-
-        return {
-            columns,
-            onDelete,
-            handleAdd,
-            dataSource,
-            editableData,
-            count,
-            edit,
-            save,
-            moment
-        };
     },
 }
 </script>
