@@ -3,7 +3,7 @@ export default  gql`
 query getUser {
     getUser {
         id
-        typ
+        type
         username
         name
         mobilePhone
