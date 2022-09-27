@@ -132,46 +132,35 @@
 
                     <div class="group-title">
                         <p class="red">⁙ 운영사업</p>
-                        <a-button class="editable-add-btn" style="margin-bottom: 8px" @click="handleAdd">추 가</a-button>
                     </div>
 
-                    <a-table bordered :data-source="dataSource" :columns="columns" pagination=false>
-                        <template #bodyCell="{ column, text, record }">
-                            <template v-if="column.dataIndex === 'name'">
-                                <div class="editable-cell">
-                                    <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                                        <a-input v-model:value="editableData[record.key].name"
-                                            @pressEnter="save(record.key)" />
-                                        <check-outlined class="editable-cell-icon-check" @click="save(record.key)" />
-                                    </div>
-                                    <div v-else class="editable-cell-text-wrapper">
-                                        {{ text || ' ' }}
-                                        <edit-outlined class="editable-cell-icon" @click="edit(record.key)" />
-                                    </div>
-                                </div>
-                            </template>
-                            <template v-else-if="column.dataIndex === 'select'">
-                                <a-select ref="select" placeholder="사업분류">
-                                    <a-select-option value="주•야간보호">주•야간보호</a-select-option>
-                                    <a-select-option value="방문요양">방문요양</a-select-option>
-                                    <a-select-option value="인지활동형 방문요양">인지활동형 방문요양</a-select-option>
-                                    <a-select-option value="방문간호">방문간호</a-select-option>
-                                    <a-select-option value="단기보호">단기보호</a-select-option>
-                                    <a-select-option value="복지용구">복지용구</a-select-option>
-                                </a-select>
-                            </template>
-                            <template v-else-if="column.dataIndex === 'date'">
-                                <a-date-picker />
-                            </template>
-                            <template v-else-if="column.dataIndex === 'operation'">
-                                <a-popconfirm v-if="dataSource.length" title="정말 삭제 하시겠습니까?"
-                                    @confirm="onDelete(record.key)">
-                                    <a>삭 제</a>
-                                </a-popconfirm>
-                            </template>
+                    <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
+                        :selected-row-keys="selectedItemKeys">
+                        <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true" :allow-deleting="true"
+                            template="button-template" mode="cell">
+                            <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                            <DxTexts addRow="추 가" />
+                        </DxEditing>
+                        <template #button-template>
+                            <DxButton icon="plus" />
                         </template>
-                    </a-table>
+                        <DxPaging :enabled="false" />
+                        <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                            cell-template="indexCell" />
+                        <template #indexCell="{ data }">
+                            <div>{{data.rowIndex + 1}}</div>
+                        </template>
 
+                        <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
+                        <DxColumn :width="225" data-field="StateID" caption="사업분류">
+                            <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
+                        </DxColumn>
+                        <DxColumn data-field="서비스시작년월" data-type="date" :format="'yyyy-MM-dd'" />
+                        <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
+                        <DxToolbar>
+                            <DxItem name="addRowButton" />
+                        </DxToolbar>
+                    </DxDataGrid>
                     <div class="form-item">
                         <label class="red">장기요양기관등록번호 :</label>
                         <a-input placeholder="09xx-xxx-xxx" v-model:value="dataInputCallApi.numberPhone" />
@@ -282,15 +271,41 @@
     </div>
 </template>
 <script >
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, onMounted } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash-es';
 import moment from 'moment'
+import { employees, states } from './data.js';
+import { useMutation } from "@vue/apollo-composable";
+import mutations from "../../graphql/mutations/RqContract/index";
 
+import {
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxEditing,
+    DxSelection,
+    DxLookup,
+    DxToolbar,
+    DxItem,
+    DxTexts
+
+} from "devextreme-vue/data-grid"
+import { DxButton } from 'devextreme-vue/button';
 export default {
     components: {
         CheckOutlined,
         EditOutlined,
+        DxDataGrid,
+        DxColumn,
+        DxPaging,
+        DxEditing,
+        DxSelection,
+        DxLookup,
+        DxToolbar,
+        DxItem,
+        DxTexts,
+        DxButton
     },
     data() {
         return {
@@ -337,11 +352,93 @@ export default {
                 numberBusiness: '',
                 debtWithdrawalDate: '매월 5일',
                 salesAgent: 'A 대리점',
-                note: ''
+                note: '',
+
             },
-
-
+            dataModal: employees,
+            states,
+            dataCallApi: {
+                agreements: {
+                    terms: true,
+                    personalInfo: true,
+                    accountingService: true,
+                    withholdingService: true,
+                },
+                company: {
+                    name: 'name',
+                    zipcode: 'zipcode',
+                    roadAddress: 'roadAddress',
+                    jibunAddress: 'jibunAddress',
+                    addressExtend: 'addressExtend',
+                    addressDetail: {
+                        bcode: 'bcode',
+                        bname: 'bname',
+                        buildingCode: 'buildingCode',
+                        buildingName: 'buildingName',
+                        roadname: 'roadname',
+                        roadnameCode: 'roadnameCode',
+                        sido: 'sido',
+                        sigungu: 'sigungu',
+                        sigunguCode: 'sigunguCode',
+                        zonecode: 'zonecode',
+                    },
+                    phone: 'phone',
+                    fax: 'fax',
+                    licenseFileStorageId: 10,
+                    bizNumber: 'bizNumber',
+                    // bizType: 'bizType',
+                    residentId: 'residentId',
+                },
+                president: {
+                    name: 'name',
+                    birthday: 'birthday',
+                    mobilePhone: 'mobilePhone',
+                    email: 'email@gmail.com',
+                },
+                accounting: {
+                    facilityBusinesses: {
+                        longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
+                        facilityBizType: {
+                            // 
+                        },
+                        name: 'name',
+                        startYearMonth: 'startYearMonth',
+                        capacity: 10,
+                        registrationCardFileStorageId: 10,
+                    },
+                    accountingServiceTypes: {
+                        // 
+                    }
+                },
+                withholding: {
+                    startYearMonthHolding: 'startYearMonth',
+                    capacityHolding: 10,
+                    withholdingServiceTypes: {
+                        // 
+                    }
+                },
+                cmsBank: {
+                    bankType: {
+                        // 
+                    },
+                    accountNumber: 'accountNumber',
+                    ownerBizNumber: 'ownerBizNumber',
+                    ownerName: 'ownerName',
+                    withdrawDay: 'withdrawDay',
+                },
+                extra: {
+                    salesRepresentativeId: 10,
+                    comment: 'comment',
+                }
+            }
         }
+    },
+    mounted() {
+        // useMutation(mutations.customerWorkLogin, () => ({
+        //     variables: {
+        //         companyId: 5,
+        //     },
+        // }))
     },
     computed: {
         checkStepTwo() {
@@ -385,106 +482,86 @@ export default {
         },
         handleOk() {
             this.visible = false
-            this.$router.push('/login')
+
+            // this.$router.push('/login')
         },
+
     },
 
     setup() {
-        const columns = [
-            {
-                title: '#',
-                dataIndex: 'key',
+        const {
+            mutate: createContract,
+            loading,
+            onDone: creatDone,
+            onError,
+        } = useMutation(mutations.creactContract, () => ({
+            variables: {
+
+                terms: true,
+                personalInfo: true,
+                accountingService: true,
+                withholdingService: true,
+
+
+                name: 'name',
+                zipcode: 'zipcode',
+                roadAddress: 'roadAddress',
+                jibunAddress: 'jibunAddress',
+                addressExtend: 'addressExtend',
+
+                bcode: 'bcode',
+                bname: 'bname',
+                buildingCode: 'buildingCode',
+                buildingName: 'buildingName',
+                roadname: 'roadname',
+                roadnameCode: 'roadnameCode',
+                sido: 'sido',
+                sigungu: 'sigungu',
+                sigunguCode: 'sigunguCode',
+                zonecode: 'zonecode',
+
+                phone: 'phone',
+                fax: 'fax',
+                licenseFileStorageId: 10,
+                bizNumber: 'bizNumber',
+                // bizType: 'bizType',
+                residentId: 'residentId',
+
+
+                name: 'name',
+                birthday: 'birthday',
+                mobilePhone: 'mobilePhone',
+                email: 'email@gmail.com',
+                longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
+                name: 'name',
+                startYearMonth: 'startYearMonth',
+                capacity: 10,
+                registrationCardFileStorageId: 10,
+                startYearMonth: 'startYearMonth',
+                capacity: 10,
+                withholdingServiceTypes: {
+
+                },
+                accountNumber: 'accountNumber',
+                ownerBizNumber: 'ownerBizNumber',
+                ownerName: 'ownerName',
+                withdrawDay: 'withdrawDay',
+
+
+                salesRepresentativeId: 10,
+                comment: 'comment',
+
             },
-            {
-                title: '사업명 (중복불가)',
-                dataIndex: 'name',
-            },
-            {
-                title: '사업분류',
-                dataIndex: 'select',
-            },
-            {
-                title: '서비스시작년월',
-                dataIndex: 'date',
-            },
-            {
-                title: '정원수(명)',
-                dataIndex: 'number',
-            },
-            {
-                title: '',
-                dataIndex: 'operation',
-            }
-        ];
+        }));
 
-        const dataSource = ref([{
-            key: '0',
-            name: '가나다라마바 사업',
-            select: "주•야간보호",
-            date: '2022-08-25',
-            number: '10'
-        }, {
-            key: '1',
-            name: '다라마 사업',
-            select: "방문요양",
-            date: '2022-08-25',
-            number: '10'
-        },
-        {
-            key: '2',
-            name: '사하자차카타파하 사업',
-            select: '방문간호',
-            date: '2022-08-25',
-            number: '10'
-        },
-        {
-            key: '3',
-            name: '사하자차카타파하 가나다라마바',
-            select: '방문간호',
-            date: '2022-08-25',
-            number: '10'
-        }
-        ]);
+        creatDone((res) => {
+            console.log(res)
+        });
 
-        const count = computed(() => dataSource.value.length + 1);
-        const editableData = reactive({});
+        onMounted(() => {
+            createContract()
+        })
 
-        const edit = key => {
-            editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
-            console.log(editableData);
-        };
-
-        const save = key => {
-            Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
-            delete editableData[key];
-        };
-
-        const onDelete = key => {
-            dataSource.value = dataSource.value.filter(item => item.key !== key);
-        };
-
-        const handleAdd = () => {
-            const newData = {
-                key: `${count.value}`,
-                name: '사하자차카타파하 사업',
-                select: 32,
-                date: '',
-                number: '10',
-            };
-            dataSource.value.push(newData);
-        };
-
-        return {
-            columns,
-            onDelete,
-            handleAdd,
-            dataSource,
-            editableData,
-            count,
-            edit,
-            save,
-            moment
-        };
     },
 }
 </script>
@@ -650,6 +727,12 @@ export default {
     display: flex;
     justify-content: space-between;
     margin-top: 30px;
+    position: relative;
+    z-index: 20;
+}
+
+#gridContainer {
+    margin-top: -40px;
 }
 
 .mt-3 {
@@ -662,6 +745,10 @@ export default {
 
 ::v-deep .ant-select {
     width: 180px;
+}
+
+::v-deep .dx-toolbar-text-auto-hide .dx-button .dx-button-text {
+    display: inline-block;
 }
 
 .list-checkbox {

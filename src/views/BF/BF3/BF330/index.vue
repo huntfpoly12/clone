@@ -85,7 +85,7 @@
     </div>
 </template>
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import {
     DxDataGrid,
     DxColumn,
@@ -105,6 +105,9 @@ import { EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+import { useQuery } from "@vue/apollo-composable";
+import queries from "../../../../graphql/queries/BF/BF3/BF330/index"
+import filters from "../../../../helpers/filters";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -155,6 +158,10 @@ export default defineComponent({
             },
         };
     },
+    mounted() {
+        const originData = {page: 1,rows: 10,excludeCancel: true}
+        this.searchServiceContract(originData)
+    },
     methods: {
         onExporting(e) {
             const workbook = new Workbook();
@@ -181,6 +188,14 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
+        searchServiceContract(filter) {
+            const { loading, error, onResult } = useQuery(queries.searchServiceContract, filter)
+            console.log(useQuery(queries.searchServiceContract, filter))
+            onResult((res) => {
+                console.log(res.data.searchServiceContracts.datas)
+            })
+           
+        }
     },
 });
 </script>

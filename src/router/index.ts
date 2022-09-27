@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/Login.vue";
 import LoginLayout from '../layouts/LoginLayout.vue'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
-import RquestContract from "../views/RequestContract.vue"
+import RquestContract from "../views/requestContract/index.vue"
 const routes = [
   { path: "/", component: DefaultLayout, 
     meta: {
