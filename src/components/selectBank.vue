@@ -1,14 +1,10 @@
 <template>
   <div>
     <a-space>
-      <a-select
-        ref="select"
-        @change="handleChange"
-        v-model:value="bankType.value"
-      >
+      <a-select ref="select" @change="handleChange" v-model="bankType.value">
         <a-select-option
           v-for="item in bankType"
-          :key="item"
+          :key="item.value"
           :value="item.bankName"
         ></a-select-option>
       </a-select>
@@ -54,7 +50,7 @@ export default {
       { bankName: "케이뱅크", value: 91 },
       { bankName: "하나은행", value: 81 },
     ]);
-    const handleChange = (value: string) => {
+    const handleChange = (value: any) => {
       console.log(`selected ${value}`);
       emit("bank", value);
     };
