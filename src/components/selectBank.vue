@@ -1,12 +1,12 @@
 <template>
   <div>
     <a-space>
-      <a-select ref="select" @change="handleChange" v-model="bankType.value">
-        <a-select-option
-          v-for="item in bankType"
-          :key="item.value"
-          :value="item.bankName"
-        ></a-select-option>
+      <a-select
+        ref="select"
+        @change="handleChange"
+        v-model="bankType.label"
+        :options="bankType"
+      >
       </a-select>
     </a-space>
   </div>
@@ -14,6 +14,7 @@
 <script lang="ts">
 import { ref } from "vue";
 import type { SelectProps } from "ant-design-vue";
+import { log } from "console";
 export default {
   components: {},
   data() {
@@ -28,27 +29,27 @@ export default {
   },
   setup(props: any, { emit }: any) {
     const bankType = ref<SelectProps["options"]>([
-      { bankName: "경남은행", value: 39 },
-      { bankName: "광주은행", value: 34 },
-      { bankName: "국민은행", value: 4 },
-      { bankName: "기업은행", value: 3 },
-      { bankName: "농협", value: 13 },
-      { bankName: "대구은행", value: 31 },
-      { bankName: "부산은행", value: 32 },
-      { bankName: "산업은행", value: 89 },
-      { bankName: "새마을금고", value: 45 },
-      { bankName: "수협", value: 88 },
-      { bankName: "신한은행", value: 26 },
-      { bankName: "신협", value: 48 },
-      { bankName: "씨티은행", value: 28 },
-      { bankName: "우리은행", value: 20 },
-      { bankName: "우체국", value: 71 },
-      { bankName: "전북은행", value: 37 },
-      { bankName: "전북은행", value: 23 },
-      { bankName: "제주은행", value: 35 },
-      { bankName: "카카오뱅크", value: 92 },
-      { bankName: "케이뱅크", value: 91 },
-      { bankName: "하나은행", value: 81 },
+      { label: "경남은행", value: 39 },
+      { label: "광주은행", value: 34 },
+      { label: "국민은행", value: 4 },
+      { label: "기업은행", value: 3 },
+      { label: "농협", value: 13 },
+      { label: "대구은행", value: 31 },
+      { label: "부산은행", value: 32 },
+      { label: "산업은행", value: 89 },
+      { label: "새마을금고", value: 45 },
+      { label: "수협", value: 88 },
+      { label: "신한은행", value: 26 },
+      { label: "신협", value: 48 },
+      { label: "씨티은행", value: 28 },
+      { label: "우리은행", value: 20 },
+      { label: "우체국", value: 71 },
+      { label: "전북은행", value: 37 },
+      { label: "전북은행", value: 23 },
+      { label: "제주은행", value: 35 },
+      { label: "카카오뱅크", value: 92 },
+      { label: "케이뱅크", value: 91 },
+      { label: "하나은행", value: 81 },
     ]);
     const handleChange = (value: any) => {
       console.log(`selected ${value}`);
