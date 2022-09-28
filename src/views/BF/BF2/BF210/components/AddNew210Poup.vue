@@ -24,7 +24,10 @@
               <button style="border: 1px solid grey">중복체크</button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input style="width: 150px; margin-right: 10px" />
+              <a-input
+                style="width: 150px; margin-right: 10px"
+                v-model:value="createUser.username"
+              />
             </a-form-item>
             <a-form-item label="소속">
               <a-select
@@ -91,7 +94,7 @@
                 <a-input
                   @keypress="onlyNumber"
                   type="text"
-                  v-model:value="formState.user.number"
+                  v-model:value="createUser.mobilePhone"
                   style="width: 150px; margin-right: 8px"
                 />
               </div>
@@ -101,10 +104,7 @@
               label="이메일"
               :rules="[{ type: 'email' }]"
             >
-              <a-input
-                v-model:value="formState.user.email"
-                style="width: 250px"
-              />
+              <a-input v-model:value="createUser.email" style="width: 250px" />
 
               <a-button
                 :disabled="!validated"
@@ -246,7 +246,9 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
   },
-  created() {},
+  created() {
+    console.log("createUser", this.createUser);
+  },
   data() {
     return {
       isShow: ref<boolean>(false),
@@ -260,9 +262,10 @@ export default defineComponent({
   },
   computed: {
     validated() {
-      return this.validateEmail(this.formState.user.email);
+      return this.validateEmail(this.createUser.email);
     },
   },
+
   setup(props) {
     const selectSearch = ref<SelectProps["options"]>([
       { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
@@ -363,7 +366,16 @@ export default defineComponent({
         visible.value = false;
       }
     };
-
+    const createUser = reactive({
+      type: "type test",
+      username: "Hoang Thanh Trang",
+      name: "name",
+      managerGrade: 1,
+      salesRepresentativeId: 1,
+      screenRoleGroupIds: "screenRoleGroupIds",
+      mobilePhone: "123456789",
+      email: "",
+    });
     return {
       labelCol,
       wrapperCol,
@@ -385,6 +397,7 @@ export default defineComponent({
       handleFocus,
       handleBlur,
       handleChange,
+      createUser,
     };
   },
   methods: {
