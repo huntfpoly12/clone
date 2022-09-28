@@ -118,10 +118,9 @@
                         <div class="form-item">
                             <label class="red">생년월일 :</label>
                             <div>
-
                                 <CustomDatepicker v-if="contractCreacted.birthday == ''"
                                     @valueDateChange="changeValueDate" />
-                                <CustomDatepicker v-else :valueDate="dayjs(contractCreacted.birthday)"
+                                <CustomDatepicker v-else :valueDate="contractCreacted.birthday"
                                     @valueDateChange="changeValueDate" />
                             </div>
                         </div>
@@ -213,7 +212,10 @@
                     <div class="form-item">
                         <label>서비스 시작년월 :</label>
                         <div style="position: relative;">
-                            <CustomDatepicker :valueDate="contractCreacted.startYearMonthHolding" />
+                            <CustomDatepicker v-if="contractCreacted.startYearMonthHolding == ''"
+                                @valueDateChange="changeValueDateHoding" />
+                            <CustomDatepicker v-else :valueDate="contractCreacted.startYearMonthHolding"
+                                @valueDateChange="changeValueDateHoding" />
                         </div>
                     </div>
 
@@ -467,21 +469,7 @@ export default {
             salesRepresentativeId: null,
             comment: '',
         })
-        // const {
-        //     mutate: createContract,
-        //     loading,
-        //     onDone: creatDone,
-        //     onError,
-        // } = useMutation(mutations.creactContract, () => ({
-        //     variables: {
 
-
-        //     },
-        // }));
-
-        // creatDone((res) => {
-        //     console.log(res)
-        // });
 
 
         return {
@@ -519,13 +507,16 @@ export default {
             },
             deep: true,
             immediate: true
-
         }
     },
     methods: {
         changeValueDate(data) {
-            // console.log(data);
+            console.log(data);
             this.contractCreacted.birthday = data
+        },
+        changeValueDateHoding(data) {
+            console.log(data);
+            this.contractCreacted.startYearMonthHolding = data
         },
         funcAddress(data) {
             this.contractCreacted.zipcode = data.zonecode
@@ -558,15 +549,30 @@ export default {
             this.step++
         },
         openPopup() {
+            // const {
+            //     mutate: createContract,
+            //     loading,
+            //     onDone: creatDone,
+            //     onError,
+            // } = useMutation(mutations.creactContract, () => ({
+            //     variables: contractCreacted,
+            // }));
+
+            console.log(useMutation(mutations.creactContract, () => ({
+                variables: contractCreacted,
+            })))
+
+            // creatDone((res) => {
+            //     console.log(res)
+            // });
+
             this.visible = true
         },
         handleOk() {
             this.visible = false
-
-            // this.$router.push('/login')
         },
         getImgUrl(img) {
-            // console.log("imgUrl", img);
+            console.log("imgUrl", img);
         },
 
     },

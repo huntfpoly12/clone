@@ -68,8 +68,8 @@ export default defineComponent({
                 }
                 let dat = new Date(dateInput);
                 date.value = dat
-                emitData()
             }
+            emitData()
         }
 
         const closeDateTime = () => {
