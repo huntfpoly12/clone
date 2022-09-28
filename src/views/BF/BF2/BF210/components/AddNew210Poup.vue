@@ -24,7 +24,10 @@
               <button style="border: 1px solid grey">중복체크</button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input style="width: 150px; margin-right: 10px" />
+              <a-input
+                style="width: 150px; margin-right: 10px"
+                v-model:value="createUser.username"
+              />
             </a-form-item>
             <a-form-item label="소속">
               <a-select
@@ -91,7 +94,7 @@
                 <a-input
                   @keypress="onlyNumber"
                   type="text"
-                  v-model:value="formState.user.number"
+                  v-model:value="createUser.mobilePhone"
                   style="width: 150px; margin-right: 8px"
                 />
               </div>
@@ -101,10 +104,7 @@
               label="이메일"
               :rules="[{ type: 'email' }]"
             >
-              <a-input
-                v-model:value="formState.user.email"
-                style="width: 250px"
-              />
+              <a-input v-model:value="createUser.email" style="width: 250px" />
 
               <a-button
                 :disabled="!validated"
@@ -152,6 +152,7 @@
             :allow-column-resizing="true"
             :column-auto-width="true"
           >
+            <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
 
             <DxColumn data-field="코드" :width="80" :fixed="true" />
@@ -182,34 +183,6 @@
         </div>
       </div>
     </a-modal>
-
-    <!-- <a-modal
-        v-model:visible="visible"
-        title="해지 확인"
-        ok-text="완료"
-        class="confirm-modal"
-      >
-        <a-row>
-          <a-col :span="4">
-            <warning-outlined :style="{ fontSize: '70px', color: '#faad14' }" />
-          </a-col>
-          <a-col :span="20">
-            <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
-            <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을</p>
-            <p>누르세요</p>
-          </a-col>
-        </a-row>
-        <template #footer>
-          <a-input
-            v-model:value="confirm"
-            placeholder="확인"
-            style="width: 150px"
-          />
-          <a-button type="primary" @click="handleOkConfirm" class="confirm-button"
-            >완료</a-button
-          >
-        </template>
-      </a-modal> -->
   </div>
 </template>
 
@@ -259,7 +232,7 @@ interface FormState {
 }
 
 export default defineComponent({
-  props: ["modalStatus", "data", "msg"],
+  props: ["modalStatus", "data"],
 
   components: {
     MenuOutlined,
@@ -273,7 +246,9 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
   },
-  created() {},
+  created() {
+    console.log("createUser", this.createUser);
+  },
   data() {
     return {
       isShow: ref<boolean>(false),
@@ -287,9 +262,10 @@ export default defineComponent({
   },
   computed: {
     validated() {
-      return this.validateEmail(this.formState.user.email);
+      return this.validateEmail(this.createUser.email);
     },
   },
+
   setup(props) {
     const selectSearch = ref<SelectProps["options"]>([
       { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
@@ -390,7 +366,16 @@ export default defineComponent({
         visible.value = false;
       }
     };
-
+    const createUser = reactive({
+      type: "type test",
+      username: "Hoang Thanh Trang",
+      name: "name",
+      managerGrade: 1,
+      salesRepresentativeId: 1,
+      screenRoleGroupIds: "screenRoleGroupIds",
+      mobilePhone: "123456789",
+      email: "",
+    });
     return {
       labelCol,
       wrapperCol,
@@ -412,14 +397,13 @@ export default defineComponent({
       handleFocus,
       handleBlur,
       handleChange,
+      createUser,
     };
   },
   methods: {
     onlyNumber(e: any) {
-      //console.log($event.keyCode); //keyCodes value
       let keyCode = e.keyCode ? e.keyCode : e.which;
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-        // 46 is dot
         e.preventDefault();
       }
     },
