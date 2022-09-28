@@ -225,7 +225,7 @@
                             v-model:value="contractCreacted.capacityHolding" />
                     </div>
                     <div class="form-item">
-                        <label>부가서비스</label>
+                        <label>부가서비스 :</label>
                         <a-checkbox v-model:checked="contractCreacted.withholdingServiceTypes">4대보험신고서비스</a-checkbox>
                     </div>
                 </div>
@@ -235,14 +235,7 @@
                     <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                     <div class="form-item">
                         <label class="red">출금은행 :</label>
-                        <a-select placeholder="은행선택" v-model:value="contractCreacted.bankType">
-                            <a-select-option value="39">경남은행</a-select-option>
-                            <a-select-option value="34">광주은행</a-select-option>
-                            <a-select-option value="04">국민은행</a-select-option>
-                            <a-select-option value="03">기업은행</a-select-option>
-                            <a-select-option value="13">농협</a-select-option>
-                            <a-select-option value="31">대구은행</a-select-option>
-                        </a-select>
+                        <selectBank @bank="getIDBank" />
                     </div>
                     <div class="form-item">
                         <label class="red">출금계좌번호 :</label>
@@ -274,11 +267,11 @@
                     <div class="form-item">
                         <label>영업관리담당 :</label>
                         <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택">
-                            <a-select-option value="은행선택">A 대리점</a-select-option>
-                            <a-select-option value="농협">농협</a-select-option>
-                            <a-select-option value="신한은행">C 영업사원</a-select-option>
-                            <a-select-option value="우리은행">D 영업사원</a-select-option>
-                            <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                            <a-select-option :value="1">A 대리점</a-select-option>
+                            <a-select-option value="2">농협</a-select-option>
+                            <a-select-option :value="3">C 영업사원</a-select-option>
+                            <a-select-option :value="4">D 영업사원</a-select-option>
+                            <a-select-option :value="5">E 본사영업사원</a-select-option>
                         </a-select>
                     </div>
                     <div class="form-item">
@@ -334,6 +327,7 @@ import {
 import { DxButton } from 'devextreme-vue/button';
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
+import selectBank from "../../components/selectBank.vue";
 import postCode from "./postCode.vue"
 
 export default {
@@ -353,6 +347,7 @@ export default {
         imgUpload,
         CustomDatepicker,
         moment,
+        selectBank,
         postCode
     },
     data() {
@@ -453,27 +448,47 @@ export default {
             facilityBizType: 1,
 
             registrationCardFileStorageId: null,
-            accountingServiceTypes: true,
+            accountingServiceTypes: 1,
 
             facilityBusinesses: [],
 
-            startYearMonthHolding: null,
-            capacityHolding: null,
-            withholdingServiceTypes: true,
+            startYearMonthHolding: "1992/02/02",
+            capacityHolding: 10,
+            withholdingServiceTypes: 1,
 
             bankType: null,
             accountNumber: '',
             ownerBizNumber: '',
             withdrawDay: '매월 5일',
 
-            salesRepresentativeId: null,
+            salesRepresentativeId: 1,
             comment: '',
+
+
+            ownerName: ''
+
         })
 
+        const {
+            mutate: createContract,
+            loading,
+            onDone: creatDone,
+            onError : creactError,
+        } = useMutation(mutations.creactContract, () => ({
+            variables: contractCreacted,
+        }));
 
+        creatDone((res) => {
+            console.log(res)
+        });
+
+        creactError((res) => {
+            console.log(res[0].message)
+        });
 
         return {
-            contractCreacted
+            contractCreacted,
+            createContract
         }
     },
     watch: {
@@ -487,7 +502,6 @@ export default {
                     }
                     arrNew.push(obj)
                 });
-                console.log(arrNew);
             }
         },
         'contractCreacted.facilityBusinesses': {
@@ -501,7 +515,6 @@ export default {
                         }
                         arrNew.push(obj)
                     });
-                    console.log(arrNew);
                 }
 
             },
@@ -511,11 +524,9 @@ export default {
     },
     methods: {
         changeValueDate(data) {
-            console.log(data);
             this.contractCreacted.birthday = data
         },
         changeValueDateHoding(data) {
-            console.log(data);
             this.contractCreacted.startYearMonthHolding = data
         },
         funcAddress(data) {
@@ -534,7 +545,6 @@ export default {
             this.contractCreacted.zonecode = data.zonecode
         },
         changeTypeCompany() {
-            console.log(this.contractCreacted.bizType);
             if (this.contractCreacted.bizType == 2) {
                 this.textIDNo = '주민등록번호'
             } else {
@@ -549,22 +559,10 @@ export default {
             this.step++
         },
         openPopup() {
-            // const {
-            //     mutate: createContract,
-            //     loading,
-            //     onDone: creatDone,
-            //     onError,
-            // } = useMutation(mutations.creactContract, () => ({
-            //     variables: contractCreacted,
-            // }));
 
-            console.log(useMutation(mutations.creactContract, () => ({
-                variables: contractCreacted,
-            })))
+            this.createContract()
 
-            // creatDone((res) => {
-            //     console.log(res)
-            // });
+
 
             this.visible = true
         },
@@ -572,8 +570,12 @@ export default {
             this.visible = false
         },
         getImgUrl(img) {
-            console.log("imgUrl", img);
+            // console.log("imgUrl", img);
         },
+
+        getIDBank(data) {
+            console.log(data);
+        }
 
     },
 }
