@@ -55,10 +55,50 @@
                 <DxColumn data-field="companyAddress" caption="주소" />
                 <DxColumn data-field="presidentName" caption="대표자" />
                 <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                <DxColumn   caption="신청서비스" cell-template="acc-service"/>
+                <DxColumn caption="신청서비스" cell-template="acc-service" />
                 <template #acc-service="{ data }">
-                    <span>회계 <a-tag>{{data.data.simpleAccountingInfos.length}}</a-tag></span> 
-                    <span>원천 <a-tag>{{data.data.simpleWithholdingInfo.length}}</a-tag></span>
+                    <span>회계
+                        <a-popover>
+                            <template #content>
+                                <a-table :columns="[ {
+                                  title: 'Name',
+                                  dataIndex: 'name',
+                                },
+                                {
+                                  title: 'Year Month',
+                                  dataIndex: 'startYearMonth',
+                                }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
+                                    <template #bodyCell="{ column, text }">
+                                        <template v-if="column.dataIndex === 'name'">
+                                            <a>{{ text }}</a>
+                                        </template>
+                                    </template>
+                                </a-table>
+                            </template>
+                            <a-tag>{{data.data.simpleAccountingInfos.length}}</a-tag>
+                        </a-popover>
+                    </span>
+                    <span>원천
+                        <a-popover>
+                            <template #content>
+                                <a-table :columns="[ {
+                                  title: 'Name',
+                                  dataIndex: 'name',
+                                },
+                                {
+                                  title: 'Year Month',
+                                  dataIndex: 'startYearMonth',
+                                }]" :data-source="[data.data.simpleWithholdingInfo]" bordered :pagination="false">
+                                    <template #bodyCell="{ column, text }">
+                                        <template v-if="column.dataIndex === 'name'">
+                                            <a>{{ text }}</a>
+                                        </template>
+                                    </template>
+                                </a-table>
+                            </template>
+                            <a-tag>1</a-tag>
+                        </a-popover>
+                    </span>
                 </template>
                 <DxColumn :width="50" cell-template="pupop" type="buttons" />
                 <template #pupop="{ data }" class="custom-action">
@@ -191,7 +231,7 @@ export default defineComponent({
             }
         },
         setModalVisible(data: never[]) {
-            console.log(data,'utyutyuyut');
+            console.log(data, 'utyutyuyut');
             this.popupData = data;
             this.modalStatus = true;
         },
