@@ -146,15 +146,22 @@ export default defineComponent({
 
     const handleChange = async(info: any, fileList: any) => {
       fileName = info.file.name;
-      const data  = await uploadRepository.public({
-        category: 'SubscriptionRequestCompanyLicense',
-        file: info.file
-      })
-      console.log(data)
+
+      const formData = new FormData();
+      formData.append('category', 'SubscriptionRequestCompanyLicense');
+      formData.append('file', info.file.originFileObj);
+      let dataImage = '';
+      try {
+        const data  = await uploadRepository.public(formData);
+        dataImage = data.id;
+      } catch (error) {
+        dataImage = '';
+      }
+   
       getBase64(info.file.originFileObj, (base64Url: string) => {
         imageUrl.value = base64Url;
         loading.value = false;
-        emit("update-img", imageUrl.value);
+        emit("update-img", dataImage);
       });
     };
 
