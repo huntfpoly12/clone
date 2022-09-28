@@ -190,6 +190,7 @@
             :allow-column-resizing="true"
             :column-auto-width="true"
           >
+            <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
 
             <DxColumn data-field="코드" :width="80" :fixed="true" />

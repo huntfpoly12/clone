@@ -59,6 +59,9 @@
 import { ref, defineComponent } from "vue";
 import { message, Upload } from "ant-design-vue";
 import type { UploadProps } from "ant-design-vue";
+import Repository from "../repositories/index";
+const uploadRepository = Repository.get("upload");
+
 import {
   UploadOutlined,
   MinusCircleOutlined,
@@ -81,6 +84,10 @@ export default defineComponent({
     title: {
       type: String,
     },
+    category: {
+      type: String,
+      default: 'SubscriptionRequestCompanyLicense'
+    }
   },
 
   components: {
@@ -137,12 +144,24 @@ export default defineComponent({
       showImg.value = false;
     };
 
-    const handleChange = (info: any, fileList: any) => {
+    const handleChange = async(info: any, fileList: any) => {
       fileName = info.file.name;
+
+      const formData = new FormData();
+      formData.append('category', 'SubscriptionRequestCompanyLicense');
+      formData.append('file', info.file.originFileObj);
+      let dataImage = '';
+      try {
+        const data  = await uploadRepository.public(formData);
+        dataImage = data.id;
+      } catch (error) {
+        dataImage = '';
+      }
+   
       getBase64(info.file.originFileObj, (base64Url: string) => {
         imageUrl.value = base64Url;
         loading.value = false;
-        emit("update-img", imageUrl.value);
+        emit("update-img", dataImage);
       });
     };
 
