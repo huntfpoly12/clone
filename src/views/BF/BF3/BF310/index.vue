@@ -34,10 +34,9 @@
 
         </div>
         <div class="page-content">
-            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                :columns="gridColumns">
+            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
                 <DxSelection mode="multiple" />
-                <DxPaging :page-size="5" />
+
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
                 <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
@@ -68,11 +67,6 @@
                                   title: 'Year Month',
                                   dataIndex: 'startYearMonth',
                                 }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
-                                    <template #bodyCell="{ column, text }">
-                                        <template v-if="column.dataIndex === 'name'">
-                                            <a>{{ text }}</a>
-                                        </template>
-                                    </template>
                                 </a-table>
                             </template>
                             <a-tag>{{data.data.simpleAccountingInfos.length}}</a-tag>
@@ -89,11 +83,6 @@
                                   title: 'Year Month',
                                   dataIndex: 'startYearMonth',
                                 }]" :data-source="[data.data.simpleWithholdingInfo]" bordered :pagination="false">
-                                    <template #bodyCell="{ column, text }">
-                                        <template v-if="column.dataIndex === 'name'">
-                                            <a>{{ text }}</a>
-                                        </template>
-                                    </template>
                                 </a-table>
                             </template>
                             <a-tag>1</a-tag>
@@ -110,7 +99,6 @@
                     </div>
                 </template>
             </DxDataGrid>
-
             <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
         </div>
     </div>
@@ -135,7 +123,6 @@ import {
     DxSelection,
     DxSearchPanel,
 } from "devextreme-vue/data-grid";
-import { employees, states } from "../BF310/data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
@@ -162,27 +149,8 @@ export default defineComponent({
     },
     data() {
         return {
-            dataSource: [],
-            states,
-            value1: "신청",
-            value2: "A 대리점",
-            dateFormat: "YYYY/MM/DD",
-            checbox1: true,
-            checbox2: true,
             value4: [dayjs().subtract(1, 'year'), dayjs()],
-            gridColumns: ["심사상태", "사업자코드", "상호"],
-            gridBoxValue: [3],
-            modalStatus: false,
-            text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
-            formState: {
-                name: "",
-                delivery: false,
-                type: [],
-                resource: "",
-                desc: "",
-            },
-            popupData: [],
-            valueDate: ref<Dayjs>(),
+
             dataSearch: {
                 typeSevice1: true,
                 typeSevice2: true,
@@ -190,7 +158,6 @@ export default defineComponent({
                 staff: '',
                 select1: 'A 대리점'
             },
-            sizeButton: 'small'
         };
     },
     mounted() {
@@ -230,23 +197,41 @@ export default defineComponent({
                 return { "name": "grey", "tag_name": "반려" };
             }
         },
-        setModalVisible(data: never[]) {
-            console.log(data, 'utyutyuyut');
-            this.popupData = data;
-            this.modalStatus = true;
-        },
-        searchSubscriptionRequests(filter: any) {
-            const { loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, filter)
-            onResult((res) => {
-                this.dataSource = res.data.searchSubscriptionRequests.datas
-            })
 
-        }
-        ,
+
         formarDate(date: any) {
             return dayjs(date).format('MM/DD/YYYY')
         }
     },
+    setup() {
+        const popupData = ref();
+        const dataSource = ref([]);
+        const modalStatus = ref(false);
+        const getDetail = ref<Boolean>(false);
+        const idSubRequest = ref();
+
+
+        const setModalVisible = (data: any) => {
+            idSubRequest.value = data.data.id;
+            modalStatus.value = true;
+            getDetail.value = true
+        }
+        const {result, error, onResult } = useQuery(queries.getSubscriptionRequest,{ id: idSubRequest },{ enabled: getDetail});
+        popupData.value = result;
+        const searchSubscriptionRequests = (filter: any) => {
+            const { loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, filter)
+            onResult((res) => {
+                dataSource.value = res.data.searchSubscriptionRequests.datas
+            })
+        }
+        return {
+            dataSource,
+            popupData,
+            modalStatus,
+            searchSubscriptionRequests,
+            setModalVisible
+        }
+    }
 });
 </script>
 <style lang="scss" scoped>

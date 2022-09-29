@@ -151,8 +151,8 @@
                         <p class="red">⁙ 운영사업</p>
                     </div>
 
-                    <DxDataGrid id="gridContainer" :data-source="contractCreacted.facilityBusinesses"
-                        :show-borders="true" :selected-row-keys="selectedItemKeys">
+                    <DxDataGrid id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
+                        :selected-row-keys="selectedItemKeys">
                         <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true" :allow-deleting="true"
                             template="button-template" mode="cell">
                             <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -192,7 +192,7 @@
                     </div>
 
                     <div>
-                        <imgUpload :title="titleModal" @update-img="getImgUrl" style="margin-top: 10px;" />
+                        <imgUpload :title="titleModal" @update-img="getImgUrlAccounting" style="margin-top: 10px;" />
                     </div>
                     <div class="form-item">
                         <label>부가서비스:</label>
@@ -308,9 +308,8 @@ import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 
 import moment from 'moment'
 import { employees, states } from './data.js';
-import { useMutation } from "@vue/apollo-composable";
-import mutations from "../../graphql/mutations/RqContract/index";
-
+// import mutations from "../../graphql/mutations/RqContract/index";
+import { notification } from 'ant-design-vue';
 
 import {
     DxDataGrid,
@@ -330,6 +329,14 @@ import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "./postCode.vue"
 
+import { useMutation } from '@vue/apollo-composable'
+import gql from 'graphql-tag'
+
+import dayjs, { Dayjs } from 'dayjs';
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 export default {
     components: {
         CheckOutlined,
@@ -367,7 +374,9 @@ export default {
             dataInputCallApi: {
                 dossier: '',
                 applicationService: '',
-            }
+            },
+
+            messagePopup: '',
 
         }
     },
@@ -409,118 +418,337 @@ export default {
 
 
     setup() {
-        const contractCreacted = reactive({
-            terms: false,
-            personalInfo: false,
-            accountingService: false,
-            withholdingService: false,
+        const contractCreacted = reactive(
+            {
+                terms: false,
+                personalInfo: false,
+                accountingService: false,
+                withholdingService: false,
+                nameCompany: '',
+                zipcode: '',
+                roadAddress: '',
+                jibunAddress: '',
+                addressExtend: '',
+                bcode: '',
+                bname: '',
+                buildingCode: '',
+                buildingName: '',
+                roadname: '',
+                roadnameCode: '',
+                sido: '',
+                sigungu: '',
+                sigunguCode: '',
+                zonecode: '',
+                phone: '',
+                fax: '',
+                licenseFileStorageId: 10,
+                bizNumber: '',
+                bizType: 1,
+                residentId: '',
+                namePresident: '',
+                birthday: '',
+                mobilePhone: '',
+                email: '',
+                longTermCareInstitutionNumber: '',
+                facilityBizType: 1,
+                accountingServiceTypes: 1,
+                facilityBusinesses: [],
+                startYearMonthHolding: "",
+                capacityHolding: 10,
+                withholdingServiceTypes: 1,
+                bankType: "39",
+                accountNumber: '',
+                ownerBizNumber: '',
+                withdrawDay: '매월 5일',
+                salesRepresentativeId: 1,
+                comment: '',
+                ownerName: ''
+            }
+        )
 
-            nameCompany: '',
-            zipcode: '',
-            roadAddress: '',
-            jibunAddress: '',
-            addressExtend: '',
+        const valueFacilityBusinesses = ref([])
+        let formattedAttachments = '';
 
-            bcode: '',
-            bname: '',
-            buildingCode: '',
-            buildingName: '',
-            roadname: '',
-            roadnameCode: '',
-            sido: '',
-            sigungu: '',
-            sigunguCode: '',
-            zonecode: '',
-
-            phone: '',
-            fax: '',
-            licenseFileStorageId: 10,
-            bizNumber: '',
-            bizType: 1,
-            residentId: '',
-
-            namePresident: '',
-            birthday: '',
-            mobilePhone: '',
-            email: '',
-
-            longTermCareInstitutionNumber: '',
-            facilityBizType: 1,
-
-            registrationCardFileStorageId: null,
-            accountingServiceTypes: 1,
-
-            facilityBusinesses: [],
-
-            startYearMonthHolding: "1992/02/02",
-            capacityHolding: 10,
-            withholdingServiceTypes: 1,
-
-            bankType: null,
-            accountNumber: '',
-            ownerBizNumber: '',
-            withdrawDay: '매월 5일',
-
-            salesRepresentativeId: 1,
-            comment: '',
-
-
-            ownerName: ''
-
-        })
 
         const {
-            mutate: createContract,
-            loading,
-            onDone: creatDone,
-            onError : creactError,
-        } = useMutation(mutations.creactContract, () => ({
-            variables: contractCreacted,
-        }));
+            mutate: Creat,
+            loading: signinLoading,
+            onDone: signinDone,
+            onError: onError,
+            data
+        } = useMutation(
+            gql`
+        mutation createSubscriptionRequest(
+            $terms: Boolean!,
+            $personalInfo: Boolean!,
+            $accountingService: Boolean!,
+            $withholdingService: Boolean!,
+            $nameCompany:String!,
+            $zipcode:String!,
+            $roadAddress:String!,
+            $jibunAddress:String!,
+            $addressExtend:String!,
+            $bcode: String!,
+            $bname: String!,
+            $buildingCode:String!,
+            $buildingName:String!,
+            $roadname: String!,
+            $roadnameCode:String!,
+            $sido: String!,
+            $sigungu:String!,
+            $sigunguCode:String!,
+            $zonecode: String!,
+            $capacityHolding : Int!
+            $phone: String!,
+            $fax: String!,
+            $licenseFileStorageId: Int!,
+            $bizNumber: String!,
+            $residentId: String!,
+            $namePresident : String!,
+            $birthday : String!,
+            $mobilePhone : String!,
+            $email : String!,   
+            $startYearMonthHolding : String! ,  
+            $accountNumber : String! ,
+            $ownerBizNumber : String! ,
+            $ownerName : String!,
+            $withdrawDay : String!,
+            $salesRepresentativeId: Int! ,
+            $comment: String!,    
+            $bizType: BizTypeScalar!,
+            $accountingServiceTypes: [AccountingAdditionalServiceTypeScalar!]!,
+            $withholdingServiceTypes: [WithholdingAdditionalServiceTypeScalar!]!,
+            $bankType: BankTypeScalar!, 
 
-        creatDone((res) => {
-            console.log(res)
+            ) {
+        createSubscriptionRequest(
+            content :{
+                agreements: {
+                terms: $terms
+                personalInfo: $personalInfo
+                accountingService: $accountingService
+                withholdingService: $withholdingService
+                }
+                company: {
+                    name: $nameCompany
+                    zipcode: $zipcode
+                    roadAddress: $roadAddress
+                    jibunAddress: $jibunAddress
+                    addressExtend: $addressExtend
+                    addressDetail: {
+                        bcode: $bcode
+                        bname: $bname
+                        buildingCode: $buildingCode
+                        buildingName: $buildingName
+                        roadname: $roadname
+                        roadnameCode: $roadnameCode
+                        sido: $sido
+                        sigungu: $sigungu
+                        sigunguCode: $sigunguCode
+                        zonecode: $zonecode
+                    }
+                    phone: $phone
+                    fax: $fax
+                    licenseFileStorageId: $licenseFileStorageId
+                    bizNumber: $bizNumber
+                    bizType: $bizType
+                    residentId: $residentId
+                }
+                president: {
+                    name: $namePresident
+                    birthday: $birthday
+                    mobilePhone: $mobilePhone
+                    email: $email
+                }
+                accounting: {
+                    facilityBusinesses:  [${formattedAttachments}]
+                    accountingServiceTypes: $accountingServiceTypes
+                }
+                withholding: {
+                    startYearMonth: $startYearMonthHolding
+                    capacity: $capacityHolding
+                    withholdingServiceTypes: $withholdingServiceTypes
+                }
+                cmsBank: {
+                    bankType: $bankType
+                    accountNumber: $accountNumber
+                    ownerBizNumber: $ownerBizNumber
+                    ownerName: $ownerName
+                    withdrawDay: $withdrawDay
+                }
+                extra: {
+                    salesRepresentativeId: $salesRepresentativeId
+                    comment: $comment
+                }
+            },) {
+                    id
+                    status
+                    code
+            }
+        }
+            `,
+            () => ({
+                variables: {
+                    terms: contractCreacted.terms,
+                    personalInfo: contractCreacted.personalInfo,
+                    accountingService: contractCreacted.accountingService,
+                    withholdingService: contractCreacted.withholdingService,
+                    nameCompany: contractCreacted.nameCompany,
+                    zipcode: contractCreacted.zipcode,
+                    roadAddress: contractCreacted.roadAddress,
+                    jibunAddress: contractCreacted.jibunAddress,
+                    addressExtend: contractCreacted.addressExtend,
+                    bcode: contractCreacted.bcode,
+                    bname: contractCreacted.bname,
+                    buildingCode: contractCreacted.buildingCode,
+                    buildingName: contractCreacted.buildingName,
+                    roadname: contractCreacted.roadname,
+                    roadnameCode: contractCreacted.roadnameCode,
+                    sido: contractCreacted.sido,
+                    sigungu: contractCreacted.sigungu,
+                    sigunguCode: contractCreacted.sigunguCode,
+                    zonecode: contractCreacted.zonecode,
+                    phone: contractCreacted.phone,
+                    fax: contractCreacted.fax,
+                    licenseFileStorageId: contractCreacted.licenseFileStorageId,
+                    bizNumber: contractCreacted.bizNumber,
+                    bizType: contractCreacted.bizType,
+                    residentId: contractCreacted.residentId,
+                    namePresident: contractCreacted.namePresident,
+                    birthday: contractCreacted.birthday,
+                    mobilePhone: contractCreacted.mobilePhone,
+                    email: contractCreacted.email,
+                    accountingServiceTypes: contractCreacted.accountingServiceTypes,
+                    startYearMonthHolding: contractCreacted.startYearMonthHolding,
+                    capacityHolding: parseInt(contractCreacted.capacityHolding),
+                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
+                    bankType: contractCreacted.bankType,
+                    accountNumber: contractCreacted.accountNumber,
+                    ownerBizNumber: contractCreacted.ownerBizNumber,
+                    ownerName: contractCreacted.ownerName,
+                    withdrawDay: contractCreacted.withdrawDay,
+                    salesRepresentativeId: contractCreacted.salesRepresentativeId,
+                    comment: contractCreacted.comment,
+                }
+            })
+        )
+
+        signinDone((res) => { 
+            console.log("3");
+            console.log(res);
+            this.visible = true
         });
 
-        creactError((res) => {
-            console.log(res)
-        });
+        // if(data){
+        //     console.log("2"); 
+        //     console.log(data);
+        // }
+
+
+
+        onError((res) => {
+            console.log(res);
+            if (res.data == "") {
+                openNotificationWithIcon('error', res)
+            } else {
+                console.log("12412");
+                this.visible = true
+            }
+        })
+
+        const openNotificationWithIcon = (type, mes) => {
+            notification[type]({
+                message: { mes }.mes.message,
+            });
+        };
+
 
         return {
             contractCreacted,
-            createContract
+            Creat,
+            valueFacilityBusinesses,
+            formattedAttachments,
+            openNotificationWithIcon,
+            signinDone,
         }
     },
     watch: {
         'contractCreacted.longTermCareInstitutionNumber'(newVal) {
             let arrNew = [];
-            if (this.contractCreacted.facilityBusinesses.length > 0) {
-                this.contractCreacted.facilityBusinesses.forEach(element => {
-                    let obj = {
+            let dataAdd = ''
+            if (this.valueFacilityBusinesses.length > 0) {
+                this.valueFacilityBusinesses.forEach(element => {
+                    const obj = {
                         ...element,
-                        longTermCareInstitutionNumber: newVal
+                        longTermCareInstitutionNumber: newVal,
+                        registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
                     }
                     arrNew.push(obj)
                 });
             }
+            arrNew.map(attachment => {
+                dataAdd += `{ 
+                                longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
+                                facilityBizType: ${attachment.facilityBizType},
+                                name: "${attachment.name}",
+                                startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}",
+                                capacity: ${attachment.capacity},
+                                registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
+                            }`;
+            });
+
+            this.formattedAttachments = dataAdd
         },
-        'contractCreacted.facilityBusinesses': {
+        'contractCreacted.registrationCardFileStorageId'(newVal) {
+            let arrNew = [];
+            let dataAdd = ''
+            if (this.valueFacilityBusinesses.length > 0) {
+                this.valueFacilityBusinesses.forEach(element => {
+                    const obj = {
+                        ...element,
+                        longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                        registrationCardFileStorageId: newVal
+                    }
+                    arrNew.push(obj)
+                });
+            }
+            arrNew.map(attachment => {
+                dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},}`;
+            });
+
+            this.formattedAttachments = dataAdd
+        },
+        'valueFacilityBusinesses': {
             handler() {
                 let arrNew = [];
-                if (this.contractCreacted.facilityBusinesses.length > 0) {
-                    this.contractCreacted.facilityBusinesses.forEach(element => {
-                        let obj = {
+                let dataAdd = ''
+                if (this.valueFacilityBusinesses.length > 0) {
+                    this.valueFacilityBusinesses.forEach(element => {
+                        const obj = {
                             ...element,
-                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber
+                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                            registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
                         }
                         arrNew.push(obj)
                     });
                 }
+                arrNew.map(attachment => {
+                    dataAdd += `{ 
+                                longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
+                                facilityBizType: ${attachment.facilityBizType},
+                                name: "${attachment.name}",
+                                startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}",
+                                capacity: ${attachment.capacity},
+                                registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
+                            }`;
+                });
 
+                this.formattedAttachments = dataAdd
             },
             deep: true,
             immediate: true
-        }
+        },
+
     },
     methods: {
         changeValueDate(data) {
@@ -559,22 +787,21 @@ export default {
             this.step++
         },
         openPopup() {
-
-            this.createContract()
-
-
-
-            this.visible = true
+            this.Creat()
         },
         handleOk() {
             this.visible = false
         },
         getImgUrl(img) {
-            // console.log("imgUrl", img);
+            this.contractCreacted.licenseFileStorageId = img
+        },
+
+        getImgUrlAccounting(img) {
+            this.contractCreacted.registrationCardFileStorageId = img
         },
 
         getIDBank(data) {
-            console.log(data);
+            this.contractCreacted.bankType = data
         }
 
     },
