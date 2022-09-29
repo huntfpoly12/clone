@@ -2,9 +2,10 @@
 	<div id="modal-detail-bf-310">
 		<a-modal :mask-closable="false" :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기"
 			cancelText="그냥 나가기" @cancel="setModalVisible()" width="1000px">
-			<a-collapse v-model:activeKey="activeKey" accordion>
-				<a-collapse-panel key="1" header="심사정보">
-					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+			<a-form :data-source="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+				<a-collapse v-model:activeKey="activeKey" accordion>
+					<a-collapse-panel key="1" header="심사정보">
+
 						<a-form-item label="승인상태">
 							<a-dropdown>
 								<div v-html="yourVariable"></div>
@@ -55,10 +56,9 @@
 							|
 							<a-button type="link" style="padding: 0px">원천서비스약관동의</a-button>
 						</a-form-item>
-					</a-form>
-				</a-collapse-panel>
-				<a-collapse-panel key="2" header="사업자정보">
-					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+
+					</a-collapse-panel>
+					<a-collapse-panel key="2" header="사업자정보">
 						<a-form-item label="상 호" class="clr">
 							<a-input />
 						</a-form-item>
@@ -118,10 +118,10 @@
 							<imgUpload :title="titleModal" @update-img="getImgUrl" />
 
 						</a-row>
-					</a-form>
-				</a-collapse-panel>
-				<a-collapse-panel key="3" header="대표자정보">
-					<a-form :model="formState" v-bind="layout" name="nest-messages"
+
+					</a-collapse-panel>
+					<a-collapse-panel key="3" header="대표자정보">
+
 						:validate-messages="validateMessages" @finish="onFinish" :label-col="labelCol"
 						:wrapper-col="wrapperCol">
 						<a-form-item has-feedback label="대표자명" class="clr">
@@ -140,81 +140,80 @@
 						</a-form-item>
 
 
-						<!-- </a-form-item> -->
-					</a-form>
-				</a-collapse-panel>
-				<a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
-					<div>
-						<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
+
+					</a-collapse-panel>
+					<a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
 						<div>
-							<a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-								:headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
-							</a-card>
-							<div id="data-grid-demo">
-								<DxDataGrid id="gridContainer" :data-source="dataTableModal" :show-borders="true"
-									:selected-row-keys="selectedItemKeys">
-									<DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-										:allow-deleting="true" template="button-template" mode="cell">
-										<DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-									</DxEditing>
-									<template #button-template>
-										<DxButton icon="plus" />
-									</template>
-									<DxPaging :enabled="false" />
-									<DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
-										cell-template="indexCell" />
-									<template #indexCell="{ data }">
-										<div>{{data.rowIndex + 1}}</div>
-									</template>
-
-									<DxColumn data-field="심사상태" caption="사업명 (중복불가)" />
-									<DxColumn data-field="사업자코드" caption="사업분류" />
-									<DxColumn data-field="상호" caption="서비스시작년월" data-type="date"
-										:format="'yyyy-MM-dd'" />
-									<DxColumn :width="100" data-field="부가서비스" caption="정원수 (명)" />
-
-									<DxToolbar>
-										<DxItem name="addRowButton" />
-									</DxToolbar>
-								</DxDataGrid>
-							</div>
-
-							<imgUpload :title="titleModal2" @update-img="getImgUrl" />
+							<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
 							<div>
-								<a-row>
-									<a-col :span="12">
-										<p>부가서비스</p>
-									</a-col>
-									<a-col :span="12">
-										<a-checkbox v-model:checked="checked">회계입력대행서비스</a-checkbox>
-									</a-col>
-								</a-row>
+								<a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
+									:headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
+								</a-card>
+								<div id="data-grid-demo">
+									<DxDataGrid id="gridContainer" :data-source="dataTableModal" :show-borders="true"
+										:selected-row-keys="selectedItemKeys">
+										<DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+											:allow-deleting="true" template="button-template" mode="cell">
+											<DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+										</DxEditing>
+										<template #button-template>
+											<DxButton icon="plus" />
+										</template>
+										<DxPaging :enabled="false" />
+										<DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+											cell-template="indexCell" />
+										<template #indexCell="{ data }">
+											<div>{{data.rowIndex + 1}}</div>
+										</template>
+
+										<DxColumn data-field="심사상태" caption="사업명 (중복불가)" />
+										<DxColumn data-field="사업자코드" caption="사업분류" />
+										<DxColumn data-field="상호" caption="서비스시작년월" data-type="date"
+											:format="'yyyy-MM-dd'" />
+										<DxColumn :width="100" data-field="부가서비스" caption="정원수 (명)" />
+
+										<DxToolbar>
+											<DxItem name="addRowButton" />
+										</DxToolbar>
+									</DxDataGrid>
+								</div>
+
+								<imgUpload :title="titleModal2" @update-img="getImgUrl" />
+								<div>
+									<a-row>
+										<a-col :span="12">
+											<p>부가서비스</p>
+										</a-col>
+										<a-col :span="12">
+											<a-checkbox v-model:checked="checked">회계입력대행서비스</a-checkbox>
+										</a-col>
+									</a-row>
+								</div>
 							</div>
 						</div>
-					</div>
-				</a-collapse-panel>
-				<a-collapse-panel key="5" header="원천서비스신청">
-					<div>
-						<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
-						<div style="margin-top: 20px">
-							<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+					</a-collapse-panel>
+					<a-collapse-panel key="5" header="원천서비스신청">
+						<div>
+							<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
+							<div style="margin-top: 20px">
+
 								<a-form-item label="서비스 시작년월" class="clr">
 									<div style="width: 200px;">
 										<CustomDatepicker valueDate="2022/08/25" className="0" />
 									</div>
 								</a-form-item>
 								<a-form-item label="직 원 수" class="clr">
-									<a-input-number style="width: 100px" min="0"/>
+									<a-input-number style="width: 100px" min="0" />
 								</a-form-item>
 								<a-form-item label="부가서비스">
 									<a-checkbox>4대보험신고서비스</a-checkbox>
 								</a-form-item>
-							</a-form>
+
+							</div>
 						</div>
-					</div>
-				</a-collapse-panel>
-				<a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
-					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+					</a-collapse-panel>
+					<a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
+
 						<a-form-item label="출금은행" class="clr">
 							<a-select ref="select" v-model:value="은행선택" style="width: 200px">
 								<a-select-option value="은행선택">은행선택</a-select-option>
@@ -255,10 +254,10 @@
 								<a-radio class="clb" :style="radioStyle" :value="3">매월 19일</a-radio>
 							</a-radio-group>
 						</a-form-item>
-					</a-form>
-				</a-collapse-panel>
-				<a-collapse-panel key="7" header="기타">
-					<a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+
+					</a-collapse-panel>
+					<a-collapse-panel key="7" header="기타">
+
 						<a-form-item label="영업관리담당">
 							<a-select ref="select" v-model:value="영업관리담당" style="width: 200px">
 								<a-select-option value="영업자선택">영업자선택</a-select-option>
@@ -272,9 +271,10 @@
 						<a-form-item label="전달사항">
 							<a-textarea v-model="value" placeholder="전달사항입력" />
 						</a-form-item>
-					</a-form>
-				</a-collapse-panel>
-			</a-collapse>
+
+					</a-collapse-panel>
+				</a-collapse>
+			</a-form>
 		</a-modal>
 	</div>
 </template>
@@ -312,13 +312,22 @@ export default defineComponent({
 	data() {
 		return {
 			activeKey: 1,
-			text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
 			formState: {
-				name: "",
-				delivery: false,
-				type: [],
-				resource: "",
-				desc: "",
+				status: "",
+				code:"",
+				companyName: "",
+				companyBizNumber: "",
+				companyAddress: "",
+				presidentName:"",
+				simpleAccountingInfos: [],
+				simpleWithholdingInfoName: "",
+				simpleWithholdingInfoYearMonth: "",
+				processedAt: "",
+				approvedAt:"",
+				rejectedAt: "",
+				content:"",
+		
+
 			},
 			은행선택: '은행선택',
 			영업관리담당: '은행선택',
@@ -466,11 +475,13 @@ export default defineComponent({
 	},
 	computed: {
 		yourVariable() {
+
 			return this.dataSelectModal;
 		},
 	},
 
-	setup() {
+	setup(props) {
+
 		const layout = {
 			labelCol: { span: 8 },
 			wrapperCol: { span: 16 },
@@ -520,6 +531,7 @@ export default defineComponent({
 
 		},
 		setModalVisible() {
+			console.log(this.data.value.getSubscriptionRequest.id, 'fghfhfghgh')
 			this.$emit("closePopup", false);
 		},
 		getImgUrl(img: any) {
