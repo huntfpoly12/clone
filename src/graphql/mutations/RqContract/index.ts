@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-
 const mutations = {
 
   creactContract: gql`

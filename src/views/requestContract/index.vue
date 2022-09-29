@@ -647,9 +647,6 @@ export default {
             })
         )
 
-
-
-
         return {
             contractCreacted,
             Creat
