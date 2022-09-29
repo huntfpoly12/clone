@@ -268,7 +268,7 @@
                         <label>영업관리담당 :</label>
                         <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택">
                             <a-select-option :value="1">A 대리점</a-select-option>
-                            <a-select-option value="2">농협</a-select-option>
+                            <a-select-option :value="2">농협</a-select-option>
                             <a-select-option :value="3">C 영업사원</a-select-option>
                             <a-select-option :value="4">D 영업사원</a-select-option>
                             <a-select-option :value="5">E 본사영업사원</a-select-option>
@@ -287,7 +287,7 @@
 
                 </p>
             </template>
-            <a-modal v-model:visible="visible" :mask-closable="false" ok-text="확인" cancel-text="">
+            <a-modal v-model:visible="visibleModal" :mask-closable="false" ok-text="확인" cancel-text="">
                 <template #footer>
                     <a-button key="submit" type="primary" @click="handleOk">확인</a-button>
                 </template>
@@ -361,7 +361,7 @@ export default {
         return {
             textIDNo: '법인등록번호',
             step: 0,
-            visible: false,
+
             radio: '',
             radio1: '',
             radio2: '',
@@ -420,10 +420,10 @@ export default {
     setup() {
         const contractCreacted = reactive(
             {
-                terms: false,
-                personalInfo: false,
-                accountingService: false,
-                withholdingService: false,
+                terms: true,
+                personalInfo: true,
+                accountingService: true,
+                withholdingService: true,
                 nameCompany: '',
                 zipcode: '',
                 roadAddress: '',
@@ -466,6 +466,8 @@ export default {
             }
         )
 
+        var visibleModal = false
+
         const valueFacilityBusinesses = ref([])
         let formattedAttachments = '';
 
@@ -474,8 +476,7 @@ export default {
             mutate: Creat,
             loading: signinLoading,
             onDone: signinDone,
-            onError: onError,
-            data
+            onError: onError
         } = useMutation(
             gql`
         mutation createSubscriptionRequest(
@@ -634,33 +635,28 @@ export default {
         )
 
         signinDone((res) => { 
-            console.log("3");
-            console.log(res);
-            this.visible = true
+            visibleModal = true
+            openNotificationWithIcon('success', "Thành công")
         });
 
-        // if(data){
-        //     console.log("2"); 
-        //     console.log(data);
-        // }
-
-
-
         onError((res) => {
-            console.log(res);
-            if (res.data == "") {
-                openNotificationWithIcon('error', res)
-            } else {
-                console.log("12412");
-                this.visible = true
-            }
+            openNotificationWithIcon('error', res)
         })
 
         const openNotificationWithIcon = (type, mes) => {
-            notification[type]({
-                message: { mes }.mes.message,
-            });
+            if (type == 'error')
+                notification[type]({
+                    message: { mes }.mes.message,
+                });
+            else {
+                notification[type]({
+                    message: mes
+                });
+            }
         };
+
+
+
 
 
         return {
@@ -670,6 +666,8 @@ export default {
             formattedAttachments,
             openNotificationWithIcon,
             signinDone,
+            onError,
+            visibleModal
         }
     },
     watch: {
@@ -790,7 +788,7 @@ export default {
             this.Creat()
         },
         handleOk() {
-            this.visible = false
+            this.visibleModal = false
         },
         getImgUrl(img) {
             this.contractCreacted.licenseFileStorageId = img
@@ -802,7 +800,7 @@ export default {
 
         getIDBank(data) {
             this.contractCreacted.bankType = data
-        }
+        },
 
     },
 }
