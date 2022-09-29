@@ -93,7 +93,7 @@
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
                         <a-tooltip placement="top">
-                            <template #title>편집</template>
+                            <template #title>편집 {{data.data.id}}</template>
                             <EditOutlined @click="setModalVisible(data)" />
                         </a-tooltip>
                     </div>
@@ -112,7 +112,7 @@ import { ref, defineComponent } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
 
 import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery,useLazyQuery } from "@vue/apollo-composable";
 
 import DxButton from "devextreme-vue/button";
 import {
@@ -161,7 +161,7 @@ export default defineComponent({
         };
     },
     mounted() {
-        const originData = { page: 1, rows: 10 }
+        const originData = { page: 1, rows: 100 }
         this.searchSubscriptionRequests(originData)
     },
     methods: {
@@ -200,7 +200,7 @@ export default defineComponent({
 
 
         formarDate(date: any) {
-            return dayjs(date).format('MM/DD/YYYY')
+            return dayjs(date).format('YYYY/MM/DD')
         }
     },
     setup() {
@@ -217,7 +217,9 @@ export default defineComponent({
             getDetail.value = true
         }
         const {result, error, onResult } = useQuery(queries.getSubscriptionRequest,{ id: idSubRequest },{ enabled: getDetail});
+        //console.log(result,'fjfgjfgfgjfjfgj');
         popupData.value = result;
+        
         const searchSubscriptionRequests = (filter: any) => {
             const { loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, filter)
             onResult((res) => {
