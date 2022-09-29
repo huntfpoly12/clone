@@ -19,6 +19,7 @@
             파일선택...
           </a-button>
         </a-upload>
+
         <a-space :size="10" align="start" style="margin-top: 8px">
           <div>
             <warning-filled :style="{ fontSize: '15px' }" />
@@ -157,13 +158,13 @@ export default defineComponent({
       } catch (error) {
         dataImage = "";
       }
-
-      getBase64(info.file.originFileObj, (base64Url: string) => {
-        imageUrl.value = base64Url;
-        loading.value = false;
-        emit("update-img", dataImage);
-        console.log(dataImage);
-      });
+      if (info.file.status === "uploading" && info.file.percent === 100) {
+        getBase64(info.file.originFileObj, (base64Url: string) => {
+          imageUrl.value = base64Url;
+          loading.value = false;
+          emit("update-img", dataImage);
+        });
+      }
     };
 
     const handleCancel = () => {
