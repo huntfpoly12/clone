@@ -86,8 +86,8 @@ export default defineComponent({
     },
     category: {
       type: String,
-      default: 'SubscriptionRequestCompanyLicense'
-    }
+      default: "SubscriptionRequestCompanyLicense",
+    },
   },
 
   components: {
@@ -144,24 +144,25 @@ export default defineComponent({
       showImg.value = false;
     };
 
-    const handleChange = async(info: any, fileList: any) => {
+    const handleChange = async (info: any, fileList: any) => {
       fileName = info.file.name;
 
       const formData = new FormData();
-      formData.append('category', 'SubscriptionRequestCompanyLicense');
-      formData.append('file', info.file.originFileObj);
-      let dataImage = '';
+      formData.append("category", "SubscriptionRequestCompanyLicense");
+      formData.append("file", info.file.originFileObj);
+      let dataImage = "";
       try {
-        const data  = await uploadRepository.public(formData);
-        dataImage = data.id;
+        const data = await uploadRepository.public(formData);
+        dataImage = data.data.id;
       } catch (error) {
-        dataImage = '';
+        dataImage = "";
       }
-   
+
       getBase64(info.file.originFileObj, (base64Url: string) => {
         imageUrl.value = base64Url;
         loading.value = false;
         emit("update-img", dataImage);
+        console.log(dataImage);
       });
     };
 
