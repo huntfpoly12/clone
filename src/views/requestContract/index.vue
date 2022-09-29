@@ -465,7 +465,6 @@ export default {
         )
 
         const valueFacilityBusinesses = ref([])
-
         let formattedAttachments = '';
 
 
@@ -631,25 +630,31 @@ export default {
             })
         )
 
-        const changeDataTable = () => {
-            console.log('2');  
-            if (valueFacilityBusinesses.value.length > 0) {
-                console.log('3');
-                let dataAdd = ''
-                let arrNew = []
+      
 
-                valueFacilityBusinesses.value.map(element => {
-                    let obj = {
-                        ...element,
-                        longTermCareInstitutionNumber: contractCreacted.longTermCareInstitutionNumber,
-                        registrationCardFileStorageId: contractCreacted.registrationCardFileStorageId
-                    }
-                    arrNew.push(obj)
-                });
-
-                valueFacilityBusinesses = arrNew
-
-                valueFacilityBusinesses.value.map(attachment => {
+        return {
+            contractCreacted,
+            Creat,
+            valueFacilityBusinesses,
+            formattedAttachments,
+            
+        }
+    },
+    watch: {
+        'contractCreacted.longTermCareInstitutionNumber'(newVal) {
+            let arrNew = [];
+            let dataAdd = ''
+                if (this.valueFacilityBusinesses.length > 0) {
+                    this.valueFacilityBusinesses.forEach(element => {
+                        const obj= {
+                            ...element,
+                            longTermCareInstitutionNumber: newVal,
+                            registrationCardFileStorageId: this.contractCreacted.licenseFileStorageId
+                        }
+                        arrNew.push(obj)
+                    });
+                }
+                arrNew.map(attachment => {
                     dataAdd += `{ 
                                 longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
                                 facilityBizType: ${attachment.facilityBizType},
@@ -659,28 +664,61 @@ export default {
                                 registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
                             }`;
                 });
-                console.log('4');
-                formattedAttachments = dataAdd
-            }
-
-        }
-
-        return {
-            contractCreacted,
-            Creat,
-            valueFacilityBusinesses,
-            formattedAttachments,
-            changeDataTable
-        }
-    },
-    watch: {
-        'contractCreacted.longTermCareInstitutionNumber'() {
-            this.changeDataTable()
+              
+                this.formattedAttachments = dataAdd
+        },
+        'contractCreacted.licenseFileStorageId'(newVal) {
+            let arrNew = [];
+            let dataAdd = ''
+                if (this.valueFacilityBusinesses.length > 0) {
+                    this.valueFacilityBusinesses.forEach(element => {
+                        const obj= {
+                            ...element,
+                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                            registrationCardFileStorageId: newVal
+                        }
+                        arrNew.push(obj)
+                    });
+                }
+                arrNew.map(attachment => {
+                    dataAdd += `{ 
+                                longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
+                                facilityBizType: ${attachment.facilityBizType},
+                                name: "${attachment.name}",
+                                startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}",
+                                capacity: ${attachment.capacity},
+                                registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
+                            }`;
+                });
+              
+                this.formattedAttachments = dataAdd
         },
         'valueFacilityBusinesses': {
             handler() {
-                console.log('1');
-                this.changeDataTable()
+                let arrNew = [];
+                let dataAdd = ''
+                if (this.valueFacilityBusinesses.length > 0) {
+                    this.valueFacilityBusinesses.forEach(element => {
+                        const obj= {
+                            ...element,
+                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                            registrationCardFileStorageId: this.contractCreacted.licenseFileStorageId
+                        }
+                        arrNew.push(obj)
+                    });
+                }
+                arrNew.map(attachment => {
+                    dataAdd += `{ 
+                                longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
+                                facilityBizType: ${attachment.facilityBizType},
+                                name: "${attachment.name}",
+                                startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}",
+                                capacity: ${attachment.capacity},
+                                registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
+                            }`;
+                });
+              
+                this.formattedAttachments = dataAdd
             },
             deep: true,
             immediate: true
