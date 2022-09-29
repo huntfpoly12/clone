@@ -1,8 +1,14 @@
 import gql from "graphql-tag";
-import { FacilityBizTypeScalar } from "@bankda/jangbuda-common"
+
 
 const mutations = {
   creactContract: gql`
+  type Movie {
+        capacity: String,
+        facilityBizType: Int,
+        name: String,
+        startYearMonth: String
+ }
     mutation createSubscriptionRequest(
       $terms: Boolean!,
       $personalInfo: Boolean!,
@@ -40,8 +46,7 @@ const mutations = {
       $withdrawDay : String!,
       $salesRepresentativeId: Int! ,
       $comment: String!,  
-
-      $facilityBusinesses : [SubscriptionRequestFacilityBusinessInput!]
+      $facilityBusinesses : [String]!
     ) {
       createSubscriptionRequest(content :{
         agreements: {
