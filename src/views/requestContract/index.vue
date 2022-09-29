@@ -309,7 +309,7 @@ import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import moment from 'moment'
 import { employees, states } from './data.js';
 // import mutations from "../../graphql/mutations/RqContract/index";
-
+import { notification } from 'ant-design-vue';
 
 import {
     DxDataGrid,
@@ -374,7 +374,9 @@ export default {
             dataInputCallApi: {
                 dossier: '',
                 applicationService: '',
-            }
+            },
+
+            messagePopup: '',
 
         }
     },
@@ -472,7 +474,8 @@ export default {
             mutate: Creat,
             loading: signinLoading,
             onDone: signinDone,
-            onError,
+            onError: onError,
+            data
         } = useMutation(
             gql`
         mutation createSubscriptionRequest(
@@ -617,7 +620,7 @@ export default {
                     email: contractCreacted.email,
                     accountingServiceTypes: contractCreacted.accountingServiceTypes,
                     startYearMonthHolding: contractCreacted.startYearMonthHolding,
-                    capacityHolding: contractCreacted.capacityHolding,
+                    capacityHolding: parseInt(contractCreacted.capacityHolding),
                     withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
                     bankType: contractCreacted.bankType,
                     accountNumber: contractCreacted.accountNumber,
@@ -630,32 +633,61 @@ export default {
             })
         )
 
-      
+        signinDone((res) => { 
+            console.log("3");
+            console.log(res);
+            this.visible = true
+        });
+
+        // if(data){
+        //     console.log("2"); 
+        //     console.log(data);
+        // }
+
+
+
+        onError((res) => {
+            console.log(res);
+            if (res.data == "") {
+                openNotificationWithIcon('error', res)
+            } else {
+                console.log("12412");
+                this.visible = true
+            }
+        })
+
+        const openNotificationWithIcon = (type, mes) => {
+            notification[type]({
+                message: { mes }.mes.message,
+            });
+        };
+
 
         return {
             contractCreacted,
             Creat,
             valueFacilityBusinesses,
             formattedAttachments,
-            
+            openNotificationWithIcon,
+            signinDone,
         }
     },
     watch: {
         'contractCreacted.longTermCareInstitutionNumber'(newVal) {
             let arrNew = [];
             let dataAdd = ''
-                if (this.valueFacilityBusinesses.length > 0) {
-                    this.valueFacilityBusinesses.forEach(element => {
-                        const obj= {
-                            ...element,
-                            longTermCareInstitutionNumber: newVal,
-                            registrationCardFileStorageId: this.contractCreacted.licenseFileStorageId
-                        }
-                        arrNew.push(obj)
-                    });
-                }
-                arrNew.map(attachment => {
-                    dataAdd += `{ 
+            if (this.valueFacilityBusinesses.length > 0) {
+                this.valueFacilityBusinesses.forEach(element => {
+                    const obj = {
+                        ...element,
+                        longTermCareInstitutionNumber: newVal,
+                        registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
+                    }
+                    arrNew.push(obj)
+                });
+            }
+            arrNew.map(attachment => {
+                dataAdd += `{ 
                                 longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
                                 facilityBizType: ${attachment.facilityBizType},
                                 name: "${attachment.name}",
@@ -663,35 +695,28 @@ export default {
                                 capacity: ${attachment.capacity},
                                 registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
                             }`;
-                });
-              
-                this.formattedAttachments = dataAdd
+            });
+
+            this.formattedAttachments = dataAdd
         },
-        'contractCreacted.licenseFileStorageId'(newVal) {
+        'contractCreacted.registrationCardFileStorageId'(newVal) {
             let arrNew = [];
             let dataAdd = ''
-                if (this.valueFacilityBusinesses.length > 0) {
-                    this.valueFacilityBusinesses.forEach(element => {
-                        const obj= {
-                            ...element,
-                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
-                            registrationCardFileStorageId: newVal
-                        }
-                        arrNew.push(obj)
-                    });
-                }
-                arrNew.map(attachment => {
-                    dataAdd += `{ 
-                                longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
-                                facilityBizType: ${attachment.facilityBizType},
-                                name: "${attachment.name}",
-                                startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}",
-                                capacity: ${attachment.capacity},
-                                registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
-                            }`;
+            if (this.valueFacilityBusinesses.length > 0) {
+                this.valueFacilityBusinesses.forEach(element => {
+                    const obj = {
+                        ...element,
+                        longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                        registrationCardFileStorageId: newVal
+                    }
+                    arrNew.push(obj)
                 });
-              
-                this.formattedAttachments = dataAdd
+            }
+            arrNew.map(attachment => {
+                dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},}`;
+            });
+
+            this.formattedAttachments = dataAdd
         },
         'valueFacilityBusinesses': {
             handler() {
@@ -699,10 +724,10 @@ export default {
                 let dataAdd = ''
                 if (this.valueFacilityBusinesses.length > 0) {
                     this.valueFacilityBusinesses.forEach(element => {
-                        const obj= {
+                        const obj = {
                             ...element,
                             longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
-                            registrationCardFileStorageId: this.contractCreacted.licenseFileStorageId
+                            registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
                         }
                         arrNew.push(obj)
                     });
@@ -717,7 +742,7 @@ export default {
                                 registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
                             }`;
                 });
-              
+
                 this.formattedAttachments = dataAdd
             },
             deep: true,
@@ -763,7 +788,6 @@ export default {
         },
         openPopup() {
             this.Creat()
-            this.visible = true
         },
         handleOk() {
             this.visible = false
@@ -771,6 +795,7 @@ export default {
         getImgUrl(img) {
             this.contractCreacted.licenseFileStorageId = img
         },
+
         getImgUrlAccounting(img) {
             this.contractCreacted.registrationCardFileStorageId = img
         },
