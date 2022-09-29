@@ -57,7 +57,7 @@ import { reactive, ref } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-
+import { getJwtObject, AdminScreenRole } from "@bankda/jangbuda-common";
 import mutations from "../graphql/mutations/index";
 export default {
   setup() {
@@ -91,6 +91,8 @@ export default {
     signinDone((res) => {
       console.log(res)
       store.commit("auth/setAuthData", res.data.login.accessToken);
+      
+      console.log(getJwtObject(res.data.login.accessToken))
       router.push("/dashboard");
     });
     onError((error) => {
