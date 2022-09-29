@@ -679,7 +679,8 @@ export default {
                     this.contractCreacted.facilityBusinesses.forEach(element => {
                         let obj = {
                             ...element,
-                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber
+                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                            registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
                         }
                         arrNew.push(obj)
                     });
