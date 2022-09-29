@@ -1,14 +1,6 @@
 import gql from "graphql-tag";
-
-
 const mutations = {
   creactContract: gql`
-  type Movie {
-        capacity: String,
-        facilityBizType: Int,
-        name: String,
-        startYearMonth: String
- }
     mutation createSubscriptionRequest(
       $terms: Boolean!,
       $personalInfo: Boolean!,
@@ -46,7 +38,7 @@ const mutations = {
       $withdrawDay : String!,
       $salesRepresentativeId: Int! ,
       $comment: String!,  
-      $facilityBusinesses : [String]!
+      $facilityBusinesses : [SubscriptionRequestFacilityBusinessInput!]!
     ) {
       createSubscriptionRequest(content :{
         agreements: {
