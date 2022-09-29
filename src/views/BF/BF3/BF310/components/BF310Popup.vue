@@ -278,7 +278,9 @@
 </template>
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, reactive } from "vue";
+import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
+import { useQuery } from "@vue/apollo-composable";
+import { ref, defineComponent, reactive,watch } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
 	DxDataGrid,
@@ -303,13 +305,11 @@ import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import imgUpload from "../../../../../components/UploadImage.vue";
 export default defineComponent({
-	created() {
-		console.log(this.gridBoxValue);
-	},
 	props: ["modalStatus", "data"],
 	data() {
 		return {
 			activeKey: 1,
+			
 			formState: {
 				status: "",
 				code:"",
@@ -539,25 +539,18 @@ export default defineComponent({
 		DxItem,
 		DxTexts
 	},
-	watch:{
-		modalStatus(newData){
-			if(newData){
-				console.log(this.data.value,'kkkkkkkkkkkkkkkkkkkkkk');
-				// this.formState.code = this.data.value.getSubscriptionRequest.code;
-				// this.formState.companyBizNumber = this.data.value.getSubscriptionRequest.companyBizNumber;
-				// this.formState.createdAt = this.data.value.getSubscriptionRequest.createdAt;
-			}
-		}
-	},
 	computed: {
+		
 		yourVariable() {
 
 			return this.dataSelectModal;
 		},
 	},
 
-	setup(props) {
+	setup(props,{emit}) {
 
+		const formDetail = ref();
+		const trigger = ref(false);
 		const layout = {
 			labelCol: { span: 8 },
 			wrapperCol: { span: 16 },
@@ -585,18 +578,35 @@ export default defineComponent({
 				range: "${label} must be between ${min} and ${max}",
 			},
 		};
-
+		watch(()=>props.modalStatus, (newUsername,old) => {
+			if(newUsername){
+				trigger.value = true;
+				const {result, error, onResult } = useQuery(queries.getSubscriptionRequest,{ id: 1 },{ enabled: trigger});
+		onResult((res) => {
+			formDetail.value = res
+        })
+				console.log('sdfdsfsdfsdfffffffffffffffffff',old)
+			}else{
+				trigger.value = false;
+			}
+		
+		});
+	
+     
+		const setModalVisible = ()=>{
+			emit("closePopup", false);
+			trigger.value = false;
+		};
 		return {
 			formState,
 			onFinish,
 			layout,
 			validateMessages,
+			setModalVisible
 		};
 	},
 	methods: {
-		setModalVisible() {
-			this.$emit("closePopup", false);
-		},
+	
 		getImgUrl(img: any) {
 			// console.log("imgUrl", img);
 		},

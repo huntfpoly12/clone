@@ -108,7 +108,7 @@
 import { SearchOutlined, EditOutlined } from '@ant-design/icons-vue';
 import DxDateBox from 'devextreme-vue/date-box';
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
-import { ref, defineComponent } from 'vue';
+import { ref, defineComponent,watch } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
 
 import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
@@ -215,10 +215,9 @@ export default defineComponent({
             idSubRequest.value = data.data.id;
             modalStatus.value = true;
             getDetail.value = true
+       
         }
-        const {result, error, onResult } = useQuery(queries.getSubscriptionRequest,{ id: idSubRequest },{ enabled: getDetail});
-        //console.log(result,'fjfgjfgfgjfjfgj');
-        popupData.value = result;
+ 
         
         const searchSubscriptionRequests = (filter: any) => {
             const { loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, filter)
