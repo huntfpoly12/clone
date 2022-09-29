@@ -308,8 +308,7 @@ import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 
 import moment from 'moment'
 import { employees, states } from './data.js';
-import { useMutation } from "@vue/apollo-composable";
-import mutations from "../../graphql/mutations/RqContract/index";
+// import mutations from "../../graphql/mutations/RqContract/index";
 
 
 import {
@@ -329,6 +328,10 @@ import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "./postCode.vue"
+
+import { useMutation } from '@vue/apollo-composable'
+import gql from 'graphql-tag'
+
 
 export default {
     components: {
@@ -409,86 +412,257 @@ export default {
 
 
     setup() {
-        const contractCreacted = reactive({
-            terms: false,
-            personalInfo: false,
-            accountingService: false,
-            withholdingService: false,
+        const contractCreacted = reactive(
+            {
+                terms: false,
+                personalInfo: false,
+                accountingService: false,
+                withholdingService: false,
 
-            nameCompany: '',
-            zipcode: '',
-            roadAddress: '',
-            jibunAddress: '',
-            addressExtend: '',
+                nameCompany: '',
+                zipcode: '',
+                roadAddress: '',
+                jibunAddress: '',
+                addressExtend: '',
 
-            bcode: '',
-            bname: '',
-            buildingCode: '',
-            buildingName: '',
-            roadname: '',
-            roadnameCode: '',
-            sido: '',
-            sigungu: '',
-            sigunguCode: '',
-            zonecode: '',
+                bcode: '',
+                bname: '',
+                buildingCode: '',
+                buildingName: '',
+                roadname: '',
+                roadnameCode: '',
+                sido: '',
+                sigungu: '',
+                sigunguCode: '',
+                zonecode: '',
 
-            phone: '',
-            fax: '',
-            licenseFileStorageId: 10,
-            bizNumber: '',
-            bizType: 1,
-            residentId: '',
+                phone: '',
+                fax: '',
+                licenseFileStorageId: 10,
+                bizNumber: '',
+                bizType: 1,
+                residentId: '',
 
-            namePresident: '',
-            birthday: '',
-            mobilePhone: '',
-            email: '',
+                namePresident: '',
+                birthday: '',
+                mobilePhone: '',
+                email: '',
 
-            longTermCareInstitutionNumber: '',
-            facilityBizType: 1,
+                longTermCareInstitutionNumber: '',
+                facilityBizType: 1,
 
-            registrationCardFileStorageId: null,
-            accountingServiceTypes: 1,
+                registrationCardFileStorageId: null,
+                accountingServiceTypes: 1,
 
-            facilityBusinesses: [],
+                facilityBusinesses: [],
 
-            startYearMonthHolding: "1992/02/02",
-            capacityHolding: 10,
-            withholdingServiceTypes: 1,
+                startYearMonthHolding: "1992/02/02",
+                capacityHolding: 10,
+                withholdingServiceTypes: 1,
+                bankType: null,
+                accountNumber: '',
+                ownerBizNumber: '',
+                withdrawDay: '매월 5일',
+                salesRepresentativeId: 1,
+                comment: '',
+                ownerName: ''
+            }
+        )
 
-            bankType: null,
-            accountNumber: '',
-            ownerBizNumber: '',
-            withdrawDay: '매월 5일',
+        let dataaaa = [
+            {
+                longTermCareInstitutionNumber: "43534545",
+                facilityBizType: 1,
+                name: "nguynvan a",
+                startYearMonth: "1992/02/02",
+                capacity: 23,
+                registrationCardFileStorageId: 22,
+            }
+        ]
 
-            salesRepresentativeId: 1,
-            comment: '',
+        let formattedAttachments = '';
+        dataaaa.map(attachment => {
+            formattedAttachments += `{ 
+                longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
+                facilityBizType: ${attachment.facilityBizType},
+                name: "${attachment.name}",
+                startYearMonth: "${attachment.startYearMonth}",
+                capacity: ${attachment.capacity},
+                registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
+            }`; 
+        });
 
-
-            ownerName: ''
-
-        })
+        console.log(formattedAttachments);
 
         const {
-            mutate: createContract,
-            loading,
-            onDone: creatDone,
-            onError : creactError,
-        } = useMutation(mutations.creactContract, () => ({
-            variables: contractCreacted,
-        }));
+            mutate: Creat,
+            loading: signinLoading,
+            onDone: signinDone,
+            onError,
+        } = useMutation(
+            gql`
+            mutation createSubscriptionRequest(
+                $terms: Boolean!,
+                $personalInfo: Boolean!,
+                $accountingService: Boolean!,
+                $withholdingService: Boolean!,
+                $nameCompany:String!,
+                $zipcode:String!,
+                $roadAddress:String!,
+                $jibunAddress:String!,
+                $addressExtend:String!,
+                $bcode: String!,
+                $bname: String!,
+                $buildingCode:String!,
+                $buildingName:String!,
+                $roadname: String!,
+                $roadnameCode:String!,
+                $sido: String!,
+                $sigungu:String!,
+                $sigunguCode:String!,
+                $zonecode: String!,
+                $capacityHolding : Int!
+                $phone: String!,
+                $fax: String!,
+                $licenseFileStorageId: Int!,
+                $bizNumber: String!,
+                $residentId: String!,
+                $namePresident : String!,
+                $birthday : String!,
+                $mobilePhone : String!,
+                $email : String!,   
+                $startYearMonthHolding : String! ,  
+                $accountNumber : String! ,
+                $ownerBizNumber : String! ,
+                $ownerName : String!,
+                $withdrawDay : String!,
+                $salesRepresentativeId: Int! ,
+                $comment: String!,   
 
-        creatDone((res) => {
-            console.log(res)
-        });
+                $bizType: BizTypeScalar!,
+                $accountingServiceTypes: AccountingAdditionalServiceTypeScalar!,
+                $withholdingServiceTypes: WithholdingAdditionalServiceTypeScalar!,
+                $bankType: BankTypeScalar!,
 
-        creactError((res) => {
-            console.log(res[0].message)
-        });
+                ) {
+                createSubscriptionRequest(content :{
+                    agreements: {
+                    terms: $terms
+                    personalInfo: $personalInfo
+                    accountingService: $accountingService
+                    withholdingService: $withholdingService
+                    }
+                    company: {
+                        name: $nameCompany
+                        zipcode: $zipcode
+                        roadAddress: $roadAddress
+                        jibunAddress: $jibunAddress
+                        addressExtend: $addressExtend
+                        addressDetail: {
+                            bcode: $bcode
+                            bname: $bname
+                            buildingCode: $buildingCode
+                            buildingName: $buildingName
+                            roadname: $roadname
+                            roadnameCode: $roadnameCode
+                            sido: $sido
+                            sigungu: $sigungu
+                            sigunguCode: $sigunguCode
+                            zonecode: $zonecode
+                        }
+                        phone: $phone
+                        fax: $fax
+                        licenseFileStorageId: $licenseFileStorageId
+                        bizNumber: $bizNumber
+                        bizType: $bizType
+                        residentId: $residentId
+                    }
+                    president: {
+                        name: $namePresident
+                        birthday: $birthday
+                        mobilePhone: $mobilePhone
+                        email: $email
+                    }
+                    accounting: {
+                        facilityBusinesses:  [${formattedAttachments}]
+                        accountingServiceTypes: $accountingServiceTypes
+                    }
+                    withholding: {
+                        startYearMonth: $startYearMonthHolding
+                        capacity: $capacityHolding
+                        withholdingServiceTypes: $withholdingServiceTypes
+                    }
+                    cmsBank: {
+                        bankType: $bankType
+                        accountNumber: $accountNumber
+                        ownerBizNumber: $ownerBizNumber
+                        ownerName: $ownerName
+                        withdrawDay: $withdrawDay
+                    }
+                    extra: {
+                        salesRepresentativeId: $salesRepresentativeId
+                        comment: $comment
+                    }
+                },) {
+                        id
+                        status
+                        code
+                }
+            }
+            `
+            ,
+            () => ({
+                variables: {
+                    terms: contractCreacted.terms,
+                    personalInfo: contractCreacted.personalInfo,
+                    accountingService: contractCreacted.accountingService,
+                    withholdingService: contractCreacted.withholdingService,
+                    nameCompany: contractCreacted.nameCompany,
+                    zipcode: contractCreacted.zipcode,
+                    roadAddress: contractCreacted.roadAddress,
+                    jibunAddress: contractCreacted.jibunAddress,
+                    addressExtend: contractCreacted.addressExtend,
+                    bcode: contractCreacted.bcode,
+                    bname: contractCreacted.bname,
+                    buildingCode: contractCreacted.buildingCode,
+                    buildingName: contractCreacted.buildingName,
+                    roadname: contractCreacted.roadname,
+                    roadnameCode: contractCreacted.roadnameCode,
+                    sido: contractCreacted.sido,
+                    sigungu: contractCreacted.sigungu,
+                    sigunguCode: contractCreacted.sigunguCode,
+                    zonecode: contractCreacted.zonecode,
+                    phone: contractCreacted.phone,
+                    fax: contractCreacted.fax,
+                    licenseFileStorageId: contractCreacted.fax,
+                    bizNumber: contractCreacted.bizNumber,
+                    bizType: contractCreacted.bizType,
+                    residentId: contractCreacted.residentId,
+                    namePresident: contractCreacted.namePresident,
+                    birthday: contractCreacted.birthday,
+                    mobilePhone: contractCreacted.mobilePhone,
+                    email: contractCreacted.email,
+                    accountingServiceTypes: contractCreacted.accountingServiceTypes,
+                    startYearMonthHolding: contractCreacted.startYearMonthHolding,
+                    capacityHolding: contractCreacted.capacityHolding,
+                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
+                    bankType: contractCreacted.bankType,
+                    accountNumber: contractCreacted.accountNumber,
+                    ownerBizNumber: contractCreacted.ownerBizNumber,
+                    ownerName: contractCreacted.ownerName,
+                    withdrawDay: contractCreacted.withdrawDay,
+                    salesRepresentativeId: contractCreacted.salesRepresentativeId,
+                    comment: contractCreacted.comment,
+                }
+            })
+        )
+
+
+
 
         return {
             contractCreacted,
-            createContract
+            Creat
         }
     },
     watch: {
@@ -560,7 +734,9 @@ export default {
         },
         openPopup() {
 
-            this.createContract()
+            this.Creat()
+            // this.callApi()
+
 
 
 
