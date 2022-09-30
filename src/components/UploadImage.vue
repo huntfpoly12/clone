@@ -19,6 +19,7 @@
             파일선택...
           </a-button>
         </a-upload>
+
         <a-space :size="10" align="start" style="margin-top: 8px">
           <div>
             <warning-filled :style="{ fontSize: '15px' }" />
@@ -146,24 +147,25 @@ export default defineComponent({
 
     const handleChange = async (info: any, fileList: any) => {
       fileName = info.file.name;
+      if (info.file.status === "uploading" && info.file.percent === 100) {
+        const formData = new FormData();
+        formData.append("category", "SubscriptionRequestCompanyLicense");
+        formData.append("file", info.file.originFileObj);
+        let dataImage = "";
+        try {
+          const data = await uploadRepository.public(formData);
+          dataImage = data.data.id;
+        } catch (error) {
+          dataImage = "";
+        }
 
-      const formData = new FormData();
-      formData.append("category", "SubscriptionRequestCompanyLicense");
-      formData.append("file", info.file.originFileObj);
-      let dataImage = "";
-      try {
-        const data = await uploadRepository.public(formData);
-        dataImage = data.data.id;
-      } catch (error) {
-        dataImage = "";
+        getBase64(info.file.originFileObj, (base64Url: string) => {
+          imageUrl.value = base64Url;
+          loading.value = false;
+          emit("update-img", dataImage);
+          console.log("datta");
+        });
       }
-
-      getBase64(info.file.originFileObj, (base64Url: string) => {
-        imageUrl.value = base64Url;
-        loading.value = false;
-        emit("update-img", dataImage);
-        console.log(dataImage);
-      });
     };
 
     const handleCancel = () => {

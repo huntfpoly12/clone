@@ -20,7 +20,7 @@ export default defineComponent({
             type: String,
         },
         valueDate: {
-            type: Date,
+            type: Date || String,
             default: "",
         },
         id: {
