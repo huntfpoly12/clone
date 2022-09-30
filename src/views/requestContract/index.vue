@@ -131,8 +131,12 @@
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
-                            <a-input placeholder="abc123@mailaddress.com" style="width: 300px;"
-                                v-model:value="contractCreacted.email" />
+                            <a-form :model="formState" v-bind="layout" name="nest-messages"
+                                :validate-messages="validateMessages" @finish="onFinish">
+                                <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
+                                    <a-input v-model:value="formState.user.email" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                     </div>
                 </div>
@@ -466,7 +470,7 @@ export default {
             }
         )
 
-        var visibleModal = false
+        var visibleModal = ref(false)
 
         const valueFacilityBusinesses = ref([])
         let formattedAttachments = '';
@@ -618,7 +622,7 @@ export default {
                     namePresident: contractCreacted.namePresident,
                     birthday: contractCreacted.birthday,
                     mobilePhone: contractCreacted.mobilePhone,
-                    email: contractCreacted.email,
+                    email: formState.user.email,
                     accountingServiceTypes: contractCreacted.accountingServiceTypes,
                     startYearMonthHolding: contractCreacted.startYearMonthHolding,
                     capacityHolding: parseInt(contractCreacted.capacityHolding),
@@ -634,9 +638,8 @@ export default {
             })
         )
 
-        signinDone((res) => { 
-            visibleModal = true
-            openNotificationWithIcon('success', "Thành công")
+        signinDone((res) => {
+            visibleModal.value = true
         });
 
         onError((res) => {
@@ -655,9 +658,35 @@ export default {
             }
         };
 
+        const validateMessages = {
+            required: "${label} is required!",
+            types: {
+                email: "이메일 형식이 정확하지 않습니다",
+                number: "Numeric only!",
+            },
+            number: {
+                range: "${label} must be between ${min} and ${max}",
+            },
+        };
 
+        const onFinish = (values) => {
+            console.log('Success:', values);
+        };
 
+        const layout = {
+            labelCol: { span: 8 },
+            wrapperCol: { span: 16 },
+        };
 
+        const formState = reactive({
+            user: {
+                name: '',
+                age: undefined,
+                email: '',
+                website: '',
+                introduction: '',
+            },
+        });
 
         return {
             contractCreacted,
@@ -667,7 +696,11 @@ export default {
             openNotificationWithIcon,
             signinDone,
             onError,
-            visibleModal
+            visibleModal,
+            validateMessages,
+            onFinish,
+            layout,
+            formState
         }
     },
     watch: {
@@ -784,8 +817,22 @@ export default {
         nextStep() {
             this.step++
         },
-        openPopup() {
-            this.Creat()
+        openPopup() { 
+
+            //validate data call api
+            var obj = this.contractCreacted
+            let countNull = 0
+            for (const [key, value] of Object.entries(obj)) { 
+            
+            }
+            if (countNull > 0) {
+                notification['error']({
+                    message: 'Vui lòng nhập đầy đủ thông tin cần thiết'
+                });
+            } else {
+                this.Creat()
+            }
+
         },
         handleOk() {
             this.visibleModal = false
@@ -889,6 +936,10 @@ export default {
 ::v-deep input.dp__input.dp__input_icon_pad {
     width: 150px;
     max-width: 200px !important;
+}
+
+::v-deep #nest-messages_user_email {
+    min-width: 350px !important;
 }
 
 .form-item p {
