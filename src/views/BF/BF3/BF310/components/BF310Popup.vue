@@ -30,17 +30,18 @@
 						</a-form-item>
 
 						<a-form-item label="사업자코드">
-							<a-typography-title :level="5">C22020312</a-typography-title>
+							<a-typography-title :level="5">{{formState.companyBizNumber}}</a-typography-title>
 						</a-form-item>
 						<a-row>
 							<a-col :span="12">
 								<a-form-item label="신청코드">
-									<a-typography-title :level="5">R22012501</a-typography-title>
+									<a-typography-title :level="5">{{formState.code}}</a-typography-title>
 								</a-form-item>
 							</a-col>
 							<a-col :span="12">
 								<a-form-item label="신청일자">
-									<a-typography-title :level="5">2022-08-25</a-typography-title>
+									<a-typography-title :level="5">{{formarDate(formState.createdAt)}}
+									</a-typography-title>
 								</a-form-item>
 							</a-col>
 						</a-row>
@@ -257,7 +258,6 @@
 
 					</a-collapse-panel>
 					<a-collapse-panel key="7" header="기타">
-
 						<a-form-item label="영업관리담당">
 							<a-select ref="select" v-model:value="영업관리담당" style="width: 200px">
 								<a-select-option value="영업자선택">영업자선택</a-select-option>
@@ -271,7 +271,6 @@
 						<a-form-item label="전달사항">
 							<a-textarea v-model="value" placeholder="전달사항입력" />
 						</a-form-item>
-
 					</a-collapse-panel>
 				</a-collapse>
 			</a-form>
@@ -280,7 +279,9 @@
 </template>
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, reactive } from "vue";
+import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
+import { useQuery } from "@vue/apollo-composable";
+import { ref, defineComponent, reactive, watch, onUpdated } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
 	DxDataGrid,
@@ -305,29 +306,95 @@ import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import imgUpload from "../../../../../components/UploadImage.vue";
 export default defineComponent({
-	created() {
-		console.log(this.gridBoxValue);
-	},
 	props: ["modalStatus", "data"],
 	data() {
 		return {
 			activeKey: 1,
+
 			formState: {
 				status: "",
-				code:"",
+				code: "",
 				companyName: "",
 				companyBizNumber: "",
 				companyAddress: "",
-				presidentName:"",
+				presidentName: "",
 				simpleAccountingInfos: [],
 				simpleWithholdingInfoName: "",
 				simpleWithholdingInfoYearMonth: "",
 				processedAt: "",
-				approvedAt:"",
+				approvedAt: "",
 				rejectedAt: "",
-				content:"",
-		
 
+				agreementsTerms: true,
+				agreementsPersonalInfo: true,
+				agreementsAccountingService: true,
+				agreementsWithholdingService: true,
+
+				companyZipcode: "",
+				companyRoadAddress: "",
+				companyJibunAddress: "",
+
+				companyAddressExtend: "",
+				companyAddressDetailBcode: "",
+				companyAddressDetailBname: "",
+				companyAddressDetailBuildingCode: "",
+				companyAddressDetailRoadname: "",
+				companyAddressDetailRoadnameCode: "",
+				companyAddressDetailSido: "",
+				companyAddressDetailSigungu: "",
+				companyAddressDetailSigunguCode: "",
+				companyAddressDetailZonecode: "",
+
+				companyPhone: "",
+				companyFax: "",
+				companyLicenseFileStorageId: "",
+				companyBizType: 0,
+				companyResidentId: "",
+				companyLicense: "",
+
+				presidentBirthday: "",
+				presidentPhone: "",
+				presidentEmail: "",
+				accountingFblongTermCareInstitutionNumber: "",
+				accountingFbfacilityBizType: 1,
+				accountingFbName: "",
+				accountingFbYearMonth: "",
+				accountingFbcapacity: 23,
+				accountingFbregistrationCardFileStorageId: 22,
+				accountingFbregistrationCardName: "",
+				accountingFbregistrationCardurl: "",
+				accountingFbregistrationCardcreatedAt: 1664352972645,
+				accountingFbregistrationCardcreatedBy: "",
+				accountingFbregistrationCardupdatedAt: 1664352972645,
+				accountingFbregistrationCardupdatedBy: "",
+				accountingFbregistrationCardactive: true,
+				accountingFbregistrationCardip: "",
+				accountingServiceTypes: [],
+
+				withholdingYearMonth: "",
+				withholdingCapacity: 1234,
+				withholdingServiceTypes: [],
+
+				cmsBankType: "",
+				accountNumber: "",
+				ownerName: "",
+				ownerBizNumber: "",
+				withdrawDay: "",
+
+				compactSalesRepresentativeID: "",
+				compactSalesRepresentativeCode: "",
+				compactSalesRepresentativeName: "",
+				compactSalesRepresentativeActive: "",
+
+				memo: "",
+				createdAt: "",
+				createdBy: "",
+				updatedBy: "",
+				ip: "",
+				active: "",
+
+				extraSalesRepresentativeId: 1,
+				extraComment: '',
 			},
 			은행선택: '은행선택',
 			영업관리담당: '은행선택',
@@ -474,14 +541,17 @@ export default defineComponent({
 		DxTexts
 	},
 	computed: {
+
 		yourVariable() {
 
 			return this.dataSelectModal;
 		},
 	},
 
-	setup(props) {
-
+	setup(props, { emit }) {
+		const dataQuery = ref();
+		const formDetail = ref();
+		const trigger = ref(false);
 		const layout = {
 			labelCol: { span: 8 },
 			wrapperCol: { span: 16 },
@@ -509,31 +579,39 @@ export default defineComponent({
 				range: "${label} must be between ${min} and ${max}",
 			},
 		};
+		watch(() => [formDetail,props.modalStatus], (newUsername, old) => {
+			if (newUsername) {
+				dataQuery.value = { id: props.data }
+				trigger.value = true;
+				refetch()
+				
+			} else {
+				trigger.value = false;
+			}
 
+		});
+
+		const { result, error, onResult,refetch } = useQuery(queries.getSubscriptionRequest, dataQuery , { enabled: trigger });
+		onResult((res) => {
+			formDetail.value = res
+		});
+		
+
+		const setModalVisible = () => {
+			trigger.value = false;
+			emit("closePopup", false);
+			
+		};
 		return {
 			formState,
 			onFinish,
 			layout,
 			validateMessages,
+			setModalVisible
 		};
 	},
 	methods: {
-		handleCopy() {
-			this.keyNumber++;
-			let dataDef = {
-				key: this.keyNumber.toString(),
-				사업명: "가나다라마바 사업",
-				사업분류: "방문간호",
-				서비스시작년월: "2015/01/01",
-				정원수: 10,
-			};
-			this.dataTable.unshift(dataDef);
 
-		},
-		setModalVisible() {
-			console.log(this.data.value.getSubscriptionRequest.id, 'fghfhfghgh')
-			this.$emit("closePopup", false);
-		},
 		getImgUrl(img: any) {
 			// console.log("imgUrl", img);
 		},
@@ -600,6 +678,9 @@ export default defineComponent({
 				}
 			}
 		},
+		formarDate(date: any) {
+			return dayjs(date).format('YYYY/MM/DD')
+		}
 	},
 });
 </script> 
