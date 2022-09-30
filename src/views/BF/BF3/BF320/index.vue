@@ -24,9 +24,9 @@
                             <label class="lable-item">대표자:</label>
                             <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
                                 :clearButton="true" :nameService="'typeSevice'" style="width: 130px;" />
-
                         </div>
                     </a-col>
+                    
                     <a-col>
                         <label class="lable-item">해지:</label>
                         <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
@@ -41,16 +41,18 @@
                         </div>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">매니저명 :</label>
-                        <a-select style="width: 120px;height: 33px" v-model:value="dataSearch.manager" show-search
-                            placeholder="매니저명" :options="options">
-                        </a-select>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">매니저명 :</label>
+                            <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
+                                value-expr="value" />
+                        </div>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">영업자명 :</label>
-                        <a-select style="width: 120px;height: 33px" v-model:value="dataSearch.nameSale" show-search
-                            placeholder="영업자명" :options="options">
-                        </a-select>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">영업자명 :</label>
+                            <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
+                                value-expr="value" />
+                        </div>
                     </a-col>
                 </a-row>
             </div>
@@ -125,7 +127,7 @@ import inputFormat from '../../../../components/inputBoxFormat.vue'
 import DxTextBox from 'devextreme-vue/text-box';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
-
+import { DxSelectBox } from 'devextreme-vue/select-box';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF3/BF320/index"
 
@@ -144,7 +146,8 @@ export default defineComponent({
         HistoryOutlined,
         DxNumberBox,
         inputFormat,
-        DxTextBox
+        DxTextBox,
+        DxSelectBox
     },
     data() {
         return {
@@ -152,6 +155,16 @@ export default defineComponent({
             dataSource: employees,
             states,
             options: [{
+                value: 'jack',
+                label: 'Jack',
+            }, {
+                value: 'lucy',
+                label: 'Lucy',
+            }, {
+                value: 'tom',
+                label: 'Tom Halin Sin Han Bank',
+            }],
+            options2: [{
                 value: 'jack',
                 label: 'Jack',
             }, {

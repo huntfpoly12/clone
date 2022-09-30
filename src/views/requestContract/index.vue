@@ -131,8 +131,12 @@
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
-                            <a-input placeholder="abc123@mailaddress.com" style="width: 300px;"
-                                v-model:value="contractCreacted.email" />
+                            <a-form :model="formState" v-bind="layout" name="nest-messages"
+                                :validate-messages="validateMessages" @finish="onFinish">
+                                <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
+                                    <a-input v-model:value="formState.user.email" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                     </div>
                 </div>
@@ -268,7 +272,7 @@
                         <label>영업관리담당 :</label>
                         <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택">
                             <a-select-option :value="1">A 대리점</a-select-option>
-                            <a-select-option value="2">농협</a-select-option>
+                            <a-select-option :value="2">농협</a-select-option>
                             <a-select-option :value="3">C 영업사원</a-select-option>
                             <a-select-option :value="4">D 영업사원</a-select-option>
                             <a-select-option :value="5">E 본사영업사원</a-select-option>
@@ -287,7 +291,7 @@
 
                 </p>
             </template>
-            <a-modal v-model:visible="visible" :mask-closable="false" ok-text="확인" cancel-text="">
+            <a-modal v-model:visible="visibleModal" :mask-closable="false" ok-text="확인" cancel-text="">
                 <template #footer>
                     <a-button key="submit" type="primary" @click="handleOk">확인</a-button>
                 </template>
@@ -361,7 +365,7 @@ export default {
         return {
             textIDNo: '법인등록번호',
             step: 0,
-            visible: false,
+
             radio: '',
             radio1: '',
             radio2: '',
@@ -420,10 +424,10 @@ export default {
     setup() {
         const contractCreacted = reactive(
             {
-                terms: false,
-                personalInfo: false,
-                accountingService: false,
-                withholdingService: false,
+                terms: true,
+                personalInfo: true,
+                accountingService: true,
+                withholdingService: true,
                 nameCompany: '',
                 zipcode: '',
                 roadAddress: '',
@@ -466,6 +470,8 @@ export default {
             }
         )
 
+        var visibleModal = ref(false)
+
         const valueFacilityBusinesses = ref([])
         let formattedAttachments = '';
 
@@ -474,8 +480,7 @@ export default {
             mutate: Creat,
             loading: signinLoading,
             onDone: signinDone,
-            onError: onError,
-            data
+            onError: onError
         } = useMutation(
             gql`
         mutation createSubscriptionRequest(
@@ -617,7 +622,7 @@ export default {
                     namePresident: contractCreacted.namePresident,
                     birthday: contractCreacted.birthday,
                     mobilePhone: contractCreacted.mobilePhone,
-                    email: contractCreacted.email,
+                    email: formState.user.email,
                     accountingServiceTypes: contractCreacted.accountingServiceTypes,
                     startYearMonthHolding: contractCreacted.startYearMonthHolding,
                     capacityHolding: parseInt(contractCreacted.capacityHolding),
@@ -633,35 +638,55 @@ export default {
             })
         )
 
-        signinDone((res) => { 
-            console.log("3");
-            console.log(res);
-            this.visible = true
+        signinDone((res) => {
+            visibleModal.value = true
         });
 
-        // if(data){
-        //     console.log("2"); 
-        //     console.log(data);
-        // }
-
-
-
         onError((res) => {
-            console.log(res);
-            if (res.data == "") {
-                openNotificationWithIcon('error', res)
-            } else {
-                console.log("12412");
-                this.visible = true
-            }
+            openNotificationWithIcon('error', res)
         })
 
         const openNotificationWithIcon = (type, mes) => {
-            notification[type]({
-                message: { mes }.mes.message,
-            });
+            if (type == 'error')
+                notification[type]({
+                    message: { mes }.mes.message,
+                });
+            else {
+                notification[type]({
+                    message: mes
+                });
+            }
         };
 
+        const validateMessages = {
+            required: "${label} is required!",
+            types: {
+                email: "이메일 형식이 정확하지 않습니다",
+                number: "Numeric only!",
+            },
+            number: {
+                range: "${label} must be between ${min} and ${max}",
+            },
+        };
+
+        const onFinish = (values) => {
+            console.log('Success:', values);
+        };
+
+        const layout = {
+            labelCol: { span: 8 },
+            wrapperCol: { span: 16 },
+        };
+
+        const formState = reactive({
+            user: {
+                name: '',
+                age: undefined,
+                email: '',
+                website: '',
+                introduction: '',
+            },
+        });
 
         return {
             contractCreacted,
@@ -670,6 +695,12 @@ export default {
             formattedAttachments,
             openNotificationWithIcon,
             signinDone,
+            onError,
+            visibleModal,
+            validateMessages,
+            onFinish,
+            layout,
+            formState
         }
     },
     watch: {
@@ -786,11 +817,25 @@ export default {
         nextStep() {
             this.step++
         },
-        openPopup() {
-            this.Creat()
+        openPopup() { 
+
+            //validate data call api
+            var obj = this.contractCreacted
+            let countNull = 0
+            for (const [key, value] of Object.entries(obj)) { 
+            
+            }
+            if (countNull > 0) {
+                notification['error']({
+                    message: 'Vui lòng nhập đầy đủ thông tin cần thiết'
+                });
+            } else {
+                this.Creat()
+            }
+
         },
         handleOk() {
-            this.visible = false
+            this.visibleModal = false
         },
         getImgUrl(img) {
             this.contractCreacted.licenseFileStorageId = img
@@ -802,7 +847,7 @@ export default {
 
         getIDBank(data) {
             this.contractCreacted.bankType = data
-        }
+        },
 
     },
 }
@@ -891,6 +936,10 @@ export default {
 ::v-deep input.dp__input.dp__input_icon_pad {
     width: 150px;
     max-width: 200px !important;
+}
+
+::v-deep #nest-messages_user_email {
+    min-width: 350px !important;
 }
 
 .form-item p {
