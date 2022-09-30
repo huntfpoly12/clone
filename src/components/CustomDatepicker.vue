@@ -20,7 +20,7 @@ export default defineComponent({
             type: String,
         },
         valueDate: {
-            type: Date || String,
+            type: String,
             default: "",
         },
         id: {
@@ -40,7 +40,7 @@ export default defineComponent({
         let value = ref<Dayjs>();
         let dataInput: any = ''
         let classNameProps = "datepicker" + props.className
-        var date = ref(props.valueDate);
+        var date = ref(new Date(props.valueDate));
 
         const format = (date: any) => {
             const day = date.getDate();
