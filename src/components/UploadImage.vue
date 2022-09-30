@@ -72,7 +72,6 @@ import {
   PlusSquareOutlined,
   WarningFilled,
 } from "@ant-design/icons-vue";
-import { title } from "process";
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
   const reader = new FileReader();

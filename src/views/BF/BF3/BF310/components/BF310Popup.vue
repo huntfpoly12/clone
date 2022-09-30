@@ -1,284 +1,314 @@
 <template>
+
 	<div id="modal-detail-bf-310">
 		<a-modal :mask-closable="false" :visible="modalStatus" title="계약정보관리&심사 " centered okText="저장하고 나가기"
 			cancelText="그냥 나가기" @cancel="setModalVisible()" width="1000px">
-			<a-form :data-source="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-				<a-collapse v-model:activeKey="activeKey" accordion>
-					<a-collapse-panel key="1" header="심사정보">
-
-						<a-form-item label="승인상태">
-							<a-dropdown>
-								<div v-html="yourVariable"></div>
-								<template #overlay>
-									<DxDataGrid width="500px" :data-source="gridDataSource"
-										v-model:selected-row-keys="gridBoxValue"
-										@selection-changed="onGridSelectionChanged(gridBoxValue)" :show-borders="true"
-										key-expr="ID" :columns="gridColumns">
-										<DxSelection mode="single" />
-										<DxPaging :page-size="5" />
-										<DxColumn data-field="신청코드" />
-										<DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
-										<template #grid-cell="{ data }">
-											<a-tag :color="getColorTag(data.value)">{{
-											data.value
-											}}</a-tag>
+			<div v-if="error">
+				{{ error }}
+			</div>
+			<Suspense v-else-if="result && result.getSubscriptionRequest">
+				<template #default>
+					<a-form :data-source="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+						<a-collapse v-model:activeKey="activeKey" accordion>
+							<a-collapse-panel key="1" header="심사정보">
+								<a-form-item label="승인상태">
+									<a-dropdown>
+										<div v-html="yourVariable"></div>
+										<template #overlay>
+											<DxDataGrid width="500px" :data-source="gridDataSource"
+												v-model:selected-row-keys="gridBoxValue"
+												@selection-changed="onGridSelectionChanged(gridBoxValue)"
+												:show-borders="true" key-expr="ID" :columns="gridColumns">
+												<DxSelection mode="single" />
+												<DxPaging :page-size="5" />
+												<DxColumn data-field="신청코드" />
+												<DxColumn data-field="심사상태" data-type="date"
+													cell-template="grid-cell" />
+												<template #grid-cell="{ data }">
+													<a-tag :color="getColorTag(data.value)">{{
+													data.value
+													}}</a-tag>
+												</template>
+												<DxColumn data-field="상호" data-type="date" />
+											</DxDataGrid>
 										</template>
-										<DxColumn data-field="상호" data-type="date" />
-									</DxDataGrid>
-								</template>
-							</a-dropdown>
-						</a-form-item>
-
-						<a-form-item label="사업자코드">
-							<a-typography-title :level="5">{{formState.companyBizNumber}}</a-typography-title>
-						</a-form-item>
-						<a-row>
-							<a-col :span="12">
-								<a-form-item label="신청코드">
-									<a-typography-title :level="5">{{formState.code}}</a-typography-title>
+									</a-dropdown>
 								</a-form-item>
-							</a-col>
-							<a-col :span="12">
-								<a-form-item label="신청일자">
-									<a-typography-title :level="5">{{formarDate(formState.createdAt)}}
+
+								<a-form-item label="사업자코드">
+									<a-typography-title :level="5">
+										{{result.getSubscriptionRequest.companyBizNumber}}
 									</a-typography-title>
 								</a-form-item>
-							</a-col>
-						</a-row>
-						<a-form-item label="심사메모">
-							<a-input v-model:value="value" placeholder="Basic usage" />
-						</a-form-item>
-						<a-form-item label="약관동의">
-							<a-button type="link" style="padding: 0px">서비스약관</a-button>
-							|
-							<a-button type="link" style="padding: 0px">개인정보제공활용동의</a-button>
-							|
-							<a-button type="link" style="padding: 0px">회계서비스약관동의</a-button>
-							|
-							<a-button type="link" style="padding: 0px">원천서비스약관동의</a-button>
-						</a-form-item>
-
-					</a-collapse-panel>
-					<a-collapse-panel key="2" header="사업자정보">
-						<a-form-item label="상 호" class="clr">
-							<a-input />
-						</a-form-item>
-						<a-form-item label="사업자등록번호" class="clr">
-							<a-input style="width: 300px" />
-						</a-form-item>
-
-						<a-row>
-							<a-col :span="12">
-								<a-form-item label="사업자유형" class="clr">
-									<a-radio-group value="formState">
-										<a-radio value="1" class="clb">법인사업자</a-radio>
-										<a-radio value="2" class="clb">개인사업자</a-radio>
-									</a-radio-group>
-								</a-form-item>
-							</a-col>
-							<a-col :span="2">
-								<a-form-item label="{ $id no }">
-									<a-input placeholder="800123-1234567" style="width: 300px" />
-								</a-form-item>
-							</a-col>
-						</a-row>
-						<a-form-item label="주소" class="clr">
-							<a-row :gutter="[0, 4]">
-								<a-col :span="24">
-									<a-row>
-										<a-col :span="12">
-											<a-input style="width: 300px" />
-										</a-col>
-										<a-col :span="12">
-											<a-button type="primary">우편번호 검색</a-button>
-										</a-col>
-									</a-row>
-								</a-col>
-								<a-col :span="24">
-									<a-row>
-										<a-input />
-									</a-row>
-								</a-col>
-								<a-col :span="24">
-									<a-row>
-										<a-input />
-									</a-row>
-								</a-col>
-							</a-row>
-							<a-row> </a-row>
-						</a-form-item>
-						<a-row :gutter="[16, 16]">
-							<a-col :span="18">
-								<a-form-item label="연락처" class="clr">
-									<a-input />
-								</a-form-item>
-								<a-form-item label="팩 스">
-									<a-input />
-								</a-form-item>
-							</a-col>
-							<imgUpload :title="titleModal" @update-img="getImgUrl" />
-
-						</a-row>
-
-					</a-collapse-panel>
-					<a-collapse-panel key="3" header="대표자정보">
-
-						:validate-messages="validateMessages" @finish="onFinish" :label-col="labelCol"
-						:wrapper-col="wrapperCol">
-						<a-form-item has-feedback label="대표자명" class="clr">
-							<a-input placeholder="홍길동" autocomplete="off" style="width: 300px" />
-						</a-form-item>
-						<a-form-item has-feedback label="생년월일" class="clr">
-							<a-input placeholder="19620820" autocomplete="off" style="width: 300px" />
-						</a-form-item>
-						<a-form-item has-feedback label="휴대폰번호" class="clr">
-							<a-input-number placeholder="01098765432" style="width: 200px" />
-						</a-form-item>
-
-						<a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
-							:rules="[{ type: 'email' }]">
-							<a-input v-model:value="formState.user.email" style="width: 200px" />
-						</a-form-item>
-
-
-
-					</a-collapse-panel>
-					<a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
-						<div>
-							<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
-							<div>
-								<a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-									:headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
-								</a-card>
-								<div id="data-grid-demo">
-									<DxDataGrid id="gridContainer" :data-source="dataTableModal" :show-borders="true"
-										:selected-row-keys="selectedItemKeys">
-										<DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-											:allow-deleting="true" template="button-template" mode="cell">
-											<DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-										</DxEditing>
-										<template #button-template>
-											<DxButton icon="plus" />
-										</template>
-										<DxPaging :enabled="false" />
-										<DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
-											cell-template="indexCell" />
-										<template #indexCell="{ data }">
-											<div>{{data.rowIndex + 1}}</div>
-										</template>
-
-										<DxColumn data-field="심사상태" caption="사업명 (중복불가)" />
-										<DxColumn data-field="사업자코드" caption="사업분류" />
-										<DxColumn data-field="상호" caption="서비스시작년월" data-type="date"
-											:format="'yyyy-MM-dd'" />
-										<DxColumn :width="100" data-field="부가서비스" caption="정원수 (명)" />
-
-										<DxToolbar>
-											<DxItem name="addRowButton" />
-										</DxToolbar>
-									</DxDataGrid>
-								</div>
-
-								<imgUpload :title="titleModal2" @update-img="getImgUrl" />
-								<div>
-									<a-row>
-										<a-col :span="12">
-											<p>부가서비스</p>
-										</a-col>
-										<a-col :span="12">
-											<a-checkbox v-model:checked="checked">회계입력대행서비스</a-checkbox>
-										</a-col>
-									</a-row>
-								</div>
-							</div>
-						</div>
-					</a-collapse-panel>
-					<a-collapse-panel key="5" header="원천서비스신청">
-						<div>
-							<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
-							<div style="margin-top: 20px">
-
-								<a-form-item label="서비스 시작년월" class="clr">
-									<div style="width: 200px;">
-										<CustomDatepicker valueDate="2022/08/25" className="0" />
-									</div>
-								</a-form-item>
-								<a-form-item label="직 원 수" class="clr">
-									<a-input-number style="width: 100px" min="0" />
-								</a-form-item>
-								<a-form-item label="부가서비스">
-									<a-checkbox>4대보험신고서비스</a-checkbox>
-								</a-form-item>
-
-							</div>
-						</div>
-					</a-collapse-panel>
-					<a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
-
-						<a-form-item label="출금은행" class="clr">
-							<a-select ref="select" v-model:value="은행선택" style="width: 200px">
-								<a-select-option value="은행선택">은행선택</a-select-option>
-								<a-select-option value="국민은행">국민은행</a-select-option>
-								<a-select-option value="신한은행">신한은행</a-select-option>
-								<a-select-option value="우리은행">우리은행</a-select-option>
-								<a-select-option value="기업은행">기업은행</a-select-option>
-								<a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
-							</a-select>
-						</a-form-item>
-						<a-form-item label="출금계좌번호" class="clr">
-							<a-input placeholder="100100056489011" />
-						</a-form-item>
-						<a-form-item label="예금주명" class="clr">
-							<a-input placeholder="주식회사 타운소프트비나" />
-						</a-form-item>
-						<a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
-							<a-input placeholder="100100056489011" />
-							<div class="noteImage">
 								<a-row>
-									<a-col :span="1">
-										<div>
-											<InfoCircleFilled />
-										</div>
+									<a-col :span="12">
+										<a-form-item label="신청코드">
+											<a-typography-title :level="5">{{result.getSubscriptionRequest.code}}
+											</a-typography-title>
+										</a-form-item>
 									</a-col>
-									<a-col :span="22">
-										<div class="noteText">
-											<p>예금주의 사업자등록번호 또는 주민등록번호입니다.</p>
-										</div>
+									<a-col :span="12">
+										<a-form-item label="신청일자">
+											<a-typography-title :level="5">
+												{{formarDate(result.getSubscriptionRequest.createdAt)}}
+											</a-typography-title>
+										</a-form-item>
 									</a-col>
 								</a-row>
-							</div>
-						</a-form-item>
-						<a-form-item label="자동이체출금일자" class="clr">
-							<a-radio-group v-model:value="value">
-								<a-radio class="clb" :style="radioStyle" :value="1">매월 5일</a-radio>
-								<a-radio class="clb" :style="radioStyle" :value="2">매월 12일</a-radio>
-								<a-radio class="clb" :style="radioStyle" :value="3">매월 19일</a-radio>
-							</a-radio-group>
-						</a-form-item>
+								<a-form-item label="심사메모">
+									<a-input v-model:value="value" placeholder="Basic usage" />
+								</a-form-item>
+								<a-form-item label="약관동의">
+									<a-button type="link" style="padding: 0px">서비스약관</a-button>
+									|
+									<a-button type="link" style="padding: 0px">개인정보제공활용동의</a-button>
+									|
+									<a-button type="link" style="padding: 0px">회계서비스약관동의</a-button>
+									|
+									<a-button type="link" style="padding: 0px">원천서비스약관동의</a-button>
+								</a-form-item>
 
-					</a-collapse-panel>
-					<a-collapse-panel key="7" header="기타">
-						<a-form-item label="영업관리담당">
-							<a-select ref="select" v-model:value="영업관리담당" style="width: 200px">
-								<a-select-option value="영업자선택">영업자선택</a-select-option>
-								<a-select-option value="A_대리점">A 대리점</a-select-option>
-								<a-select-option value="B_대리점">B 대리점</a-select-option>
-								<a-select-option value="C 영업사원">C 영업사원</a-select-option>
-								<a-select-option value="D 영업사원">D 영업사원</a-select-option>
-								<a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
-							</a-select>
-						</a-form-item>
-						<a-form-item label="전달사항">
-							<a-textarea v-model="value" placeholder="전달사항입력" />
-						</a-form-item>
-					</a-collapse-panel>
-				</a-collapse>
-			</a-form>
+							</a-collapse-panel>
+							<a-collapse-panel key="2" header="사업자정보">
+								<a-form-item label="상 호" class="clr">
+									<a-input :value="result.getSubscriptionRequest.companyName" />
+								</a-form-item>
+								<a-form-item label="사업자등록번호" class="clr">
+									<a-input style="width: 300px" :value="result.getSubscriptionRequest.bizNumber" />
+								</a-form-item>
+
+								<a-row>
+									<a-col :span="12">
+										<a-form-item label="사업자유형" class="clr">
+											<a-radio-group
+												:value="result.getSubscriptionRequest.content.company.bizType">
+												<a-radio :value="1" class="clb" checked>법인사업자</a-radio>
+												<a-radio :value="2" class="clb">개인사업자</a-radio>
+											</a-radio-group>
+										</a-form-item>
+									</a-col>
+									<a-col :span="2">
+										<a-form-item
+											:label="changeTypeCompany(result.getSubscriptionRequest.content.company.bizType)">
+											<a-input placeholder="800123-1234567" style="width: 300px"
+												:value="result.getSubscriptionRequest.content.company.residentId" />
+										</a-form-item>
+									</a-col>
+								</a-row>
+								<a-form-item label="주소" class="clr">
+									<a-row :gutter="[0, 4]">
+										<a-col :span="24">
+											<a-row>
+												<a-col :span="12">
+													<a-input style="width: 300px"
+														:value="result.getSubscriptionRequest.content.company.zipcode" />
+												</a-col>
+												<a-col :span="12">
+													<a-button type="primary">우편번호 검색</a-button>
+												</a-col>
+											</a-row>
+										</a-col>
+										<a-col :span="24">
+											<a-row>
+												<a-input
+													:value="result.getSubscriptionRequest.content.company.roadAddress" />
+											</a-row>
+										</a-col>
+										<a-col :span="24">
+											<a-row>
+												<a-input
+													:value="result.getSubscriptionRequest.content.company.addressExtend" />
+											</a-row>
+										</a-col>
+									</a-row>
+									<a-row> </a-row>
+								</a-form-item>
+								<a-row :gutter="[16, 16]">
+									<a-col :span="18">
+										<a-form-item label="연락처" class="clr">
+											<a-input :value="result.getSubscriptionRequest.content.company.phone" />
+										</a-form-item>
+										<a-form-item label="팩 스">
+											<a-input :value="result.getSubscriptionRequest.content.company.fax" />
+										</a-form-item>
+									</a-col>
+									<imgUpload :title="titleModal" @update-img="getImgUrl" />
+
+								</a-row>
+
+							</a-collapse-panel>
+							<a-collapse-panel key="3" header="대표자정보">
+								<a-form-item has-feedback label="대표자명" class="clr">
+									<a-input placeholder="홍길동" autocomplete="off" style="width: 300px"
+										:value="result.getSubscriptionRequest.content.president.name" />
+								</a-form-item>
+								<a-form-item has-feedback label="생년월일" class="clr">
+									<a-input placeholder="19620820" autocomplete="off" style="width: 300px"
+										:value="result.getSubscriptionRequest.content.president.birthday" />
+								</a-form-item>
+								<a-form-item has-feedback label="휴대폰번호" class="clr">
+									<a-input placeholder="01098765432" style="width: 200px"
+										:value="result.getSubscriptionRequest.content.president.mobilePhone" />
+								</a-form-item>
+
+								<a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
+									:rules="[{ type: 'email' }]">
+									<a-input style="width: 200px"
+										:value="result.getSubscriptionRequest.content.president.email" />
+								</a-form-item>
+
+
+
+							</a-collapse-panel>
+							<a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
+								<div>
+									<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
+									<div>
+										<a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
+											:headStyle="{padding: '5px',color: 'red'}" bodyStyle="padding: 0px 0px">
+										</a-card>
+										<div id="data-grid-demo">
+											<DxDataGrid id="gridContainer"
+												:data-source="result.getSubscriptionRequest.content.accounting.facilityBusinesses"
+												:show-borders="true" :selected-row-keys="selectedItemKeys">
+												<DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+													:allow-deleting="true" template="button-template" mode="cell">
+													<DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+												</DxEditing>
+												<template #button-template>
+													<DxButton icon="plus" />
+												</template>
+												<DxPaging :enabled="false" />
+												<DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+													cell-template="indexCell" />
+												<template #indexCell="{ data }">
+													<div>{{data.rowIndex + 1}}</div>
+												</template>
+
+												<DxColumn data-field="registrationCard.name" caption="사업명 (중복불가)" />
+												<DxColumn data-field="facilityBizType" caption="사업분류" />
+												<DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
+													:format="'yyyy-MM-dd'" />
+												<DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
+
+												<DxToolbar>
+													<DxItem name="addRowButton" />
+												</DxToolbar>
+											</DxDataGrid>
+										</div>
+
+										<imgUpload :title="titleModal2" @update-img="getImgUrl" />
+										<div>
+											<a-row>
+												<a-col :span="12">
+													<p>부가서비스</p>
+												</a-col>
+												<a-col :span="12">
+													<a-checkbox
+														v-model:checked="result.getSubscriptionRequest.content.accounting.accountingServiceTypes[0]">
+														회계입력대행서비스</a-checkbox>
+												</a-col>
+											</a-row>
+										</div>
+									</div>
+								</div>
+							</a-collapse-panel>
+							<a-collapse-panel key="5" header="원천서비스신청">
+								<div>
+									<a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
+									<div style="margin-top: 20px">
+
+										<a-form-item label="서비스 시작년월" class="clr">
+											<div style="width: 200px;">
+												<CustomDatepicker
+													:valueDate="result.getSubscriptionRequest.content.withholding.startYearMonth"
+													className="0" />
+											</div>
+										</a-form-item>
+										<a-form-item label="직 원 수" class="clr">
+											<a-input-number style="width: 100px" min="0"
+												:value="result.getSubscriptionRequest.content.withholding.capacity" />
+										</a-form-item>
+										<a-form-item label="부가서비스">
+											<a-checkbox
+												v-model:checked="result.getSubscriptionRequest.content.withholding.withholdingServiceTypes[0]">
+												4대보험신고서비스</a-checkbox>
+										</a-form-item>
+
+									</div>
+								</div>
+							</a-collapse-panel>
+							<a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
+								<a-form-item label="출금은행" class="clr">
+									<selectBank :selectValue="result.getSubscriptionRequest.content.cmsBank.bankType" />
+								</a-form-item>
+								<a-form-item label="출금계좌번호" class="clr">
+									<a-input placeholder="100100056489011"
+										:value="result.getSubscriptionRequest.content.cmsBank.accountNumber" />
+								</a-form-item>
+								<a-form-item label="예금주명" class="clr">
+									<a-input placeholder="주식회사 타운소프트비나"
+										:value="result.getSubscriptionRequest.content.cmsBank.ownerName" />
+								</a-form-item>
+								<a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
+									<a-input placeholder="100100056489011"
+										:value="result.getSubscriptionRequest.content.cmsBank.ownerBizNumber" />
+									<div class="noteImage">
+										<a-row>
+											<a-col :span="1">
+												<div>
+													<InfoCircleFilled />
+												</div>
+											</a-col>
+											<a-col :span="22">
+												<div class="noteText">
+													<p>예금주의 사업자등록번호 또는 주민등록번호입니다.</p>
+												</div>
+											</a-col>
+										</a-row>
+									</div>
+								</a-form-item>
+								<a-form-item label="자동이체출금일자" class="clr">
+									<a-radio-group :value="result.getSubscriptionRequest.content.cmsBank.withdrawDay">
+										<a-radio class="clb" :style="radioStyle" value="매월 5일">매월 5일</a-radio>
+										<a-radio class="clb" :style="radioStyle" value="매월 12일">매월 12일</a-radio>
+										<a-radio class="clb" :style="radioStyle" value="매월 19일">매월 19일</a-radio>
+									</a-radio-group>
+								</a-form-item>
+
+							</a-collapse-panel>
+							<a-collapse-panel key="7" header="기타">
+								<a-form-item label="영업관리담당">
+									<a-select ref="select"
+										:value="result.getSubscriptionRequest.content.extra.salesRepresentativeId"
+										style="width: 200px">
+										<a-select-option :value="1">A 대리점</a-select-option>
+										<a-select-option :value="2">농협</a-select-option>
+										<a-select-option :value="3">C 영업사원</a-select-option>
+										<a-select-option :value="4">D 영업사원</a-select-option>
+										<a-select-option :value="5">E 본사영업사원</a-select-option>
+									</a-select>
+								</a-form-item>
+								<a-form-item label="전달사항">
+									<a-textarea :value="result.getSubscriptionRequest.content.extra.comment"
+										placeholder="전달사항입력" />
+								</a-form-item>
+							</a-collapse-panel>
+						</a-collapse>
+					</a-form>
+				</template>
+				<template #fallback>
+					<div>Loading...</div>
+				</template>
+			</Suspense>
 		</a-modal>
+
 	</div>
+
 </template>
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
+import selectBank from "../../../../../components/selectBank.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import { useQuery } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch, onUpdated } from "vue";
@@ -522,6 +552,9 @@ export default defineComponent({
 				'<button style="width:100%;height : 36px;text-align: left;background: white; border: 1px solid #d9d9d9; padding: 4px 6px; ">Select a value...</button>',
 		};
 	},
+	apollo: {
+
+	},
 	components: {
 		DxDropDownBox,
 		DxDataGrid,
@@ -538,12 +571,11 @@ export default defineComponent({
 		DxLookup,
 		DxToolbar,
 		DxItem,
-		DxTexts
+		DxTexts,
+		selectBank
 	},
 	computed: {
-
 		yourVariable() {
-
 			return this.dataSelectModal;
 		},
 	},
@@ -551,7 +583,7 @@ export default defineComponent({
 	setup(props, { emit }) {
 		const dataQuery = ref();
 		const formDetail = ref();
-		const trigger = ref(false);
+		let trigger = ref<boolean>(false);
 		const layout = {
 			labelCol: { span: 8 },
 			wrapperCol: { span: 16 },
@@ -579,36 +611,44 @@ export default defineComponent({
 				range: "${label} must be between ${min} and ${max}",
 			},
 		};
-		watch(() => [result,props.modalStatus], (newUsername, old) => {
+		watch(() => props.modalStatus, (newUsername, old) => {
 			if (newUsername) {
 				dataQuery.value = { id: props.data }
 				trigger.value = true;
 				refetch()
-				
+
 			} else {
 				trigger.value = false;
 			}
-
 		});
 
-		const { result, error, onResult,refetch } = useQuery(queries.getSubscriptionRequest, dataQuery , { enabled: trigger.value });
-		onResult((res) => {
-
-			formDetail.value = res
-		});
-		
+		const { result, loading, error, onResult, refetch } = useQuery(queries.getSubscriptionRequest, dataQuery, () => ({
+			enabled: trigger.value,
+		}));
 
 		const setModalVisible = () => {
 			trigger.value = false;
 			emit("closePopup", false);
-			
+
 		};
+
+		const changeTypeCompany = (bizType: number) => {
+			if (bizType == 2) {
+				return '주민등록번호'
+			} else {
+				return '법인등록번호'
+			}
+		}
 		return {
 			formState,
 			onFinish,
 			layout,
 			validateMessages,
-			setModalVisible
+			setModalVisible,
+			changeTypeCompany,
+			result,
+			error,
+			loading
 		};
 	},
 	methods: {
