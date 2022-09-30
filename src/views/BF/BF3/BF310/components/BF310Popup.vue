@@ -70,7 +70,7 @@
 						<a-row>
 							<a-col :span="12">
 								<a-form-item label="사업자유형" class="clr">
-									<a-radio-group v-model:value="formState.resource">
+									<a-radio-group value="formState">
 										<a-radio value="1" class="clb">법인사업자</a-radio>
 										<a-radio value="2" class="clb">개인사업자</a-radio>
 									</a-radio-group>
