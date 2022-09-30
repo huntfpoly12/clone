@@ -7,11 +7,11 @@
           type="file"
           v-model:file-list="fileList"
           :show-upload-list="true"
-          name="fileUpload"
           :before-upload="beforeUpload"
           :on-remove="onRemove"
           @change="handleChange"
           :max-count="1"
+          action=""
           accept=".tiff,.png,.jpeg,.jpg"
         >
           <a-button class="button-upload">
@@ -40,6 +40,8 @@
           :src="imageUrl"
           @click="handlePreview"
         />
+
+        <!-- <img v-if="!imageUrl && srcimg" :src="srcimg" /> -->
         <img v-else src="../assets/images/imgdefault.jpg" />
       </div>
     </a-col>
@@ -89,6 +91,10 @@ export default defineComponent({
       type: String,
       default: "SubscriptionRequestCompanyLicense",
     },
+    srcimg: {
+      type: String,
+      default: "../assets/images/imgdefault.jpg",
+    },
   },
 
   components: {
@@ -99,6 +105,11 @@ export default defineComponent({
     DeleteOutlined,
     PlusSquareOutlined,
     WarningFilled,
+  },
+  created() {
+    //@ts-ignore
+    // this.$props.srcimg = "../assets/images/imgdefault.jpg";
+    this.imageUrl = this.$props.srcimg;
   },
   methods: {
     onFileChange(e: any) {
@@ -139,10 +150,14 @@ export default defineComponent({
         message.error("Image must smaller than 5MB!");
       }
       fileName = file.name;
-      return isLt5M && true;
+
+      return isLt5M;
     };
     const onRemove = () => {
       showImg.value = false;
+      imageUrl.value = "";
+      //@ts-ignore
+      props.srcimg = "";
     };
 
     const handleChange = async (info: any, fileList: any) => {
@@ -164,10 +179,16 @@ export default defineComponent({
           loading.value = false;
           emit("update-img", dataImage);
           console.log("datta");
+          //@ts-ignore
         });
       }
     };
-
+    const handlelayer = () => {
+      if (imageUrl) {
+        //@ts-ignore
+        this.$props.srcimg = "";
+      }
+    };
     const handleCancel = () => {
       previewVisible.value = false;
     };
@@ -188,6 +209,7 @@ export default defineComponent({
       file,
       fileName,
       showImg,
+      handlelayer,
     };
   },
 });
