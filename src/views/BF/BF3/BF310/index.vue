@@ -1,118 +1,165 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div id="bf-310">
-        <div class="search-form">
-            <a-row :gutter="[8,8]">
-                <a-col>
-                    <label class="lable-item">서비스종류 :</label>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
-                    <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
-                </a-col>
-                <a-col>
-                    <label class="lable-item">심사상태/결과 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.status">
-                        <a-select-option value="10">신청</a-select-option>
-                        <a-select-option value="20">심사중</a-select-option>
-                        <a-select-option value="30">승인</a-select-option>
-                        <a-select-option value="99 ">반려</a-select-option>
-                    </a-select>
-                </a-col>
-                <a-col>
-                    <label class="lable-item">영업자 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.select1" placeholder="전체">
-                        <a-select-option value="A 대리점">A 대리점</a-select-option>
-                        <a-select-option value="C 영업사원">C 영업사원</a-select-option>
-                        <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-                        <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
-                    </a-select>
-                </a-col>
-                <a-col>
-                    <label class="lable-item">신청기간 :</label>
-                    <a-range-picker v-model:value="value4" width="50%" />
-                </a-col>
-            </a-row>
-
+    <a-spin :spinning="spinning" size="large">
+        <div class="top-content">
+            <a-typography-title :level="3"> 계약정보관리&심사
+            </a-typography-title>
+            <div class="list-action">
+                <a-tooltip>
+                    <template #title>조회</template>
+                    <a-button @click="searching">
+                        <SearchOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>저장</template>
+                    <a-button>
+                        <SaveOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>삭제</template>
+                    <a-button>
+                        <DeleteOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>출력</template>
+                    <a-button>
+                        <PrinterOutlined />
+                    </a-button>
+                </a-tooltip>
+            </div>
         </div>
-        <div class="page-content">
-            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
-                <DxSelection mode="multiple" />
 
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                <DxExport :enabled="true" :allow-export-selected-data="true" />
-                <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
-                <template #createdat-cell="{ data }">
-                    {{ formarDate(data.value) }}
-                </template>
-                <DxColumn data-field="code" caption="신청코드" />
-                <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
-                <template #grid-cell="{ data }">
-                    <a-tag :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
-                </template>
-                <DxColumn :width="170" data-field="compactSalesRepresentative.code" caption="사업자코드"
-                    css-class="cell-center" />
-                <DxColumn data-field="companyName" caption="상호" />
-                <DxColumn data-field="companyAddress" caption="주소" />
-                <DxColumn data-field="presidentName" caption="대표자" />
-                <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                <DxColumn caption="신청서비스" cell-template="acc-service" />
-                <template #acc-service="{ data }">
-                    <span>회계
-                        <a-popover>
-                            <template #content>
-                                <a-table :columns="[ {
-                                  title: 'Name',
-                                  dataIndex: 'name',
-                                },
-                                {
-                                  title: 'Year Month',
-                                  dataIndex: 'startYearMonth',
-                                }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
-                                </a-table>
-                            </template>
-                            <a-tag>{{data.data.simpleAccountingInfos.length}}</a-tag>
-                        </a-popover>
-                    </span>
-                    <span>원천
-                        <a-popover>
-                            <template #content>
-                                <a-table :columns="[ {
-                                  title: 'Name',
-                                  dataIndex: 'name',
-                                },
-                                {
-                                  title: 'Year Month',
-                                  dataIndex: 'startYearMonth',
-                                }]" :data-source="[data.data.simpleWithholdingInfo]" bordered :pagination="false">
-                                </a-table>
-                            </template>
-                            <a-tag>1</a-tag>
-                        </a-popover>
-                    </span>
-                </template>
-                <DxColumn :width="50" cell-template="pupop" type="buttons" />
-                <template #pupop="{ data }" class="custom-action">
-                    <div class="custom-action">
-                        <a-tooltip placement="top">
-                            <template #title>편집 {{data.data.id}}</template>
-                            <EditOutlined @click="setModalVisible(data)" />
-                        </a-tooltip>
-                    </div>
-                </template>
-            </DxDataGrid>
-            <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
+        <div id="bf-310">
+            <div class="search-form">
+                <a-row :gutter="[8,8]">
+                    <a-col>
+                        <label class="lable-item">서비스종류 :</label>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
+                        <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                    </a-col>
+                    <a-col>
+                        <label class="lable-item">심사상태/결과 :</label>
+                        <a-select mode="tags" ref="select" style="width: auto; min-width: 135px;"
+                            v-model:value="dataSearch.status" placeholder="전체">
+                            <a-select-option :value="10">신청</a-select-option>
+                            <a-select-option :value="20">심사중</a-select-option>
+                            <a-select-option :value="30">승인</a-select-option>
+                            <a-select-option :value="99 ">반려</a-select-option>
+                        </a-select>
+                    </a-col>
+                    <a-col>
+                        <label class="lable-item">영업자 :</label>
+                        <a-select v-model="originData.salesRepresentativeId" :options="arraySale" placeholder="전체">
+                        </a-select>
+                    </a-col>
+                    <a-col>
+                        <label class="lable-item">신청기간 :</label>
+                        <a-range-picker v-model:value="dateSearch" width="50%" :placeholder="['Start', 'End']" />
+                    </a-col>
+                    <a-col>
+                        <a-button @click="searching">Tìm kiếm</a-button>
+                    </a-col>
+                </a-row>
+
+            </div>
+            <div class="page-content">
+                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
+                    <DxSelection mode="multiple" />
+                    <DxPaging :page-size="10" />
+
+                    <DxPager :visible="true" :allowed-page-sizes="pageSizes" :display-mode="displayMode"
+                        :show-page-size-selector="showPageSizeSelector" :show-info="showInfo"
+                        :show-navigation-buttons="showNavButtons" />
+
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
+                    <template #createdat-cell="{ data }">
+                        {{ formarDate(data.value) }}
+                    </template>
+                    <DxColumn data-field="code" caption="신청코드" />
+                    <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
+                    <template #grid-cell="{ data }">
+                        <a-tag :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
+                    </template>
+                    <DxColumn :width="170" data-field="compactSalesRepresentative.code" caption="사업자코드"
+                        css-class="cell-center" />
+                    <DxColumn data-field="companyName" caption="상호" />
+                    <DxColumn data-field="companyAddress" caption="주소" />
+                    <DxColumn data-field="presidentName" caption="대표자" />
+                    <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
+                    <DxColumn caption="신청서비스" cell-template="acc-service" />
+                    <template #acc-service="{ data }">
+                        <span>회계
+                            <a-popover>
+                                <template #content>
+                                    <a-table :columns="[ {
+                                      title: 'Name',
+                                      dataIndex: 'name',
+                                    },
+                                    {
+                                      title: 'Year Month',
+                                      dataIndex: 'startYearMonth',
+                                    }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
+                                    </a-table>
+                                </template>
+                                <a-tag>{{data.data.simpleAccountingInfos.length}}</a-tag>
+                            </a-popover>
+                        </span>
+                        <span>원천
+                            <a-popover>
+                                <template #content>
+                                    <a-table :columns="[ {
+                                      title: 'Name',
+                                      dataIndex: 'name',
+                                    },
+                                    {
+                                      title: 'Year Month',
+                                      dataIndex: 'startYearMonth',
+                                    }]" :data-source="[data.data.simpleWithholdingInfo]" bordered :pagination="false">
+                                    </a-table>
+                                </template>
+                                <a-tag>1</a-tag>
+                            </a-popover>
+                        </span>
+                    </template>
+                    <DxColumn :width="50" cell-template="pupop" type="buttons" />
+                    <template #pupop="{ data }" class="custom-action">
+                        <div class="custom-action">
+                            <a-tooltip placement="top">
+                                <template #title>편집 {{data.data.id}}</template>
+                                <EditOutlined @click="setModalVisible(data)" />
+                            </a-tooltip>
+                        </div>
+                    </template>
+                </DxDataGrid>
+                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
+            </div>
         </div>
-    </div>
+    </a-spin>
 
 </template>
 <script lang="ts">
-import { SearchOutlined, EditOutlined } from '@ant-design/icons-vue';
+import {
+    SearchOutlined,
+    EditOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeleteOutlined,
+    SaveOutlined,
+} from '@ant-design/icons-vue';
 import DxDateBox from 'devextreme-vue/date-box';
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
-import { ref, defineComponent,watch } from 'vue';
+import { ref, defineComponent, watch } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
 
 import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
-import { useQuery,useLazyQuery } from "@vue/apollo-composable";
+import { useQuery, useLazyQuery } from "@vue/apollo-composable";
 
 import DxButton from "devextreme-vue/button";
 import {
@@ -122,6 +169,7 @@ import {
     DxExport,
     DxSelection,
     DxSearchPanel,
+    DxPager,
 } from "devextreme-vue/data-grid";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
@@ -145,25 +193,115 @@ export default defineComponent({
         locale,
         DxDateBox,
         SearchOutlined,
-        EditOutlined
+        EditOutlined,
+        DxPager,
+        MenuFoldOutlined,
+        MenuUnfoldOutlined,
+        MailOutlined,
+        PrinterOutlined,
+        DeleteOutlined,
+        SaveOutlined,
     },
     data() {
         return {
-            value4: [dayjs().subtract(1, 'year'), dayjs()],
-
+            dateSearch: [dayjs().subtract(1, 'year'), dayjs()],
             dataSearch: {
                 typeSevice1: true,
                 typeSevice2: true,
-                status: '신청',
-                staff: '',
-                select1: 'A 대리점'
+                status: ref([]),
             },
+            startDate: '',
+            finishDate: '',
+            pageSizes: [5, 10, 15],
+            displayMode: 'full',
+            showPageSizeSelector: true,
+            showInfo: false,
+            showNavButtons: true,
+            // activeTab.name 
         };
     },
-    mounted() {
-        const originData = { page: 1, rows: 100 }
-        this.searchSubscriptionRequests(originData)
+    setup() {
+        const popupData = ref();
+        const dataSource = ref([]);
+        const modalStatus = ref(false);
+        const idSubRequest = ref();
+        const spinning = ref<boolean>(true);
+        const arraySale = ref([])
+        const requestDataSale = ref({
+            page: 1,
+            rows: 1000,
+            statuses: [1, 2, 3],
+            grade: 1,
+            name: "",
+            code: ""
+        })
+        const originData = {
+            page: 1,
+            rows: 100,
+            salesRepresentativeId: null,
+            startDate: '',
+            finishDate: ''
+        }
+
+        const setModalVisible = (data: any,) => {
+            idSubRequest.value = data.data.id;
+            modalStatus.value = true;
+        }
+
+
+        const { onResult: resultSale } = useQuery(queries.getSale, requestDataSale)
+
+        resultSale((res) => {
+            var dataRes = res.data.searchSalesRepresentatives.datas
+            let arrayAdd: any = []
+            if (dataRes.length > 0) {
+                dataRes.map((x: any, index: any) => {
+                    arrayAdd.push({
+                        value: x.code,
+                        label: x.name,
+                    })
+                })
+            }
+            arraySale.value = arrayAdd
+        })
+
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originData)
+
+        onResult((res) => {
+            dataSource.value = res.data.searchSubscriptionRequests.datas
+        })
+
+        setTimeout(() => {
+            spinning.value = !spinning.value;
+        }, 1000);
+
+        return {
+            idSubRequest,
+            dataSource,
+            popupData,
+            modalStatus,
+
+            setModalVisible,
+            spinning,
+            arraySale,
+            originData,
+            requestDataSale,
+            refetchData
+        }
     },
+    mounted() {
+        // this.searchSubscriptionRequests(this.originData)
+        // this.searchSaleRequests(this.requestDataSale)
+    },
+    watch: {
+        'dateSearch'(newVal) {
+            if (newVal != null) {
+                this.originData.startDate = this.formarDate(newVal[0].$d)
+                this.originData.finishDate = this.formarDate(newVal[1].$d)
+            }
+        },
+    },
+
     methods: {
         onExporting(e: { component: any; cancel: boolean; }) {
             const workbook = new Workbook();
@@ -197,40 +335,22 @@ export default defineComponent({
                 return { "name": "grey", "tag_name": "반려" };
             }
         },
-
-
         formarDate(date: any) {
             return dayjs(date).format('YYYY/MM/DD')
+        },
+
+        searching() {
+            this.spinning = true
+            let dataStatus = this.dataSearch.status
+            let status = dataStatus.length > 0 ? Object.keys(dataStatus).map((key: any) => dataStatus[key]) : [10, 20, 30, 99]
+
+            this.refetchData(this.originData)
+            setTimeout(() => {
+                this.spinning = false
+            }, 1000);
         }
     },
-    setup() {
-        const popupData = ref();
-        const dataSource = ref([]);
-        const modalStatus = ref(false);
-        const idSubRequest = ref();
 
-
-        const setModalVisible = (data: any) => {
-            idSubRequest.value = data.data.id;
-            modalStatus.value = true;
-        }
- 
-        
-        const searchSubscriptionRequests = (filter: any) => {
-            const { loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, filter)
-            onResult((res) => {
-                dataSource.value = res.data.searchSubscriptionRequests.datas
-            })
-        }
-        return {
-            idSubRequest,
-            dataSource,
-            popupData,
-            modalStatus,
-            searchSubscriptionRequests,
-            setModalVisible
-        }
-    }
 });
 </script>
 <style lang="scss" scoped>
