@@ -99,7 +99,7 @@
                     </div>
                 </template>
             </DxDataGrid>
-            <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
+            <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
         </div>
     </div>
 
@@ -207,15 +207,12 @@ export default defineComponent({
         const popupData = ref();
         const dataSource = ref([]);
         const modalStatus = ref(false);
-        const getDetail = ref<Boolean>(false);
         const idSubRequest = ref();
 
 
         const setModalVisible = (data: any) => {
             idSubRequest.value = data.data.id;
             modalStatus.value = true;
-            getDetail.value = true
-       
         }
  
         
@@ -226,6 +223,7 @@ export default defineComponent({
             })
         }
         return {
+            idSubRequest,
             dataSource,
             popupData,
             modalStatus,

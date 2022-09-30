@@ -40,7 +40,8 @@
 							</a-col>
 							<a-col :span="12">
 								<a-form-item label="신청일자">
-									<a-typography-title :level="5">{{formarDate(formState.createdAt)}}</a-typography-title>
+									<a-typography-title :level="5">{{formarDate(formState.createdAt)}}
+									</a-typography-title>
 								</a-form-item>
 							</a-col>
 						</a-row>
@@ -280,7 +281,7 @@
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import { useQuery } from "@vue/apollo-composable";
-import { ref, defineComponent, reactive,watch } from "vue";
+import { ref, defineComponent, reactive, watch, onUpdated } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import {
 	DxDataGrid,
@@ -309,91 +310,91 @@ export default defineComponent({
 	data() {
 		return {
 			activeKey: 1,
-			
+
 			formState: {
 				status: "",
-				code:"",
+				code: "",
 				companyName: "",
 				companyBizNumber: "",
 				companyAddress: "",
-				presidentName:"",
+				presidentName: "",
 				simpleAccountingInfos: [],
 				simpleWithholdingInfoName: "",
 				simpleWithholdingInfoYearMonth: "",
 				processedAt: "",
-				approvedAt:"",
+				approvedAt: "",
 				rejectedAt: "",
-			
-				agreementsTerms:true,
-				agreementsPersonalInfo:true,
-				agreementsAccountingService:true,
-				agreementsWithholdingService:true,
 
-				companyZipcode:"",
-				companyRoadAddress:"",
-				companyJibunAddress:"",
+				agreementsTerms: true,
+				agreementsPersonalInfo: true,
+				agreementsAccountingService: true,
+				agreementsWithholdingService: true,
 
-				companyAddressExtend:"",
-				companyAddressDetailBcode:"",
-				companyAddressDetailBname:"",
-				companyAddressDetailBuildingCode:"",
-				companyAddressDetailRoadname:"",
-				companyAddressDetailRoadnameCode:"",
-				companyAddressDetailSido:"",
-				companyAddressDetailSigungu:"",
-				companyAddressDetailSigunguCode:"",
-				companyAddressDetailZonecode:"",
+				companyZipcode: "",
+				companyRoadAddress: "",
+				companyJibunAddress: "",
 
-				companyPhone:"",
-				companyFax:"",
-				companyLicenseFileStorageId:"",
-				companyBizType:0,
-				companyResidentId:"",
-				companyLicense:"",
+				companyAddressExtend: "",
+				companyAddressDetailBcode: "",
+				companyAddressDetailBname: "",
+				companyAddressDetailBuildingCode: "",
+				companyAddressDetailRoadname: "",
+				companyAddressDetailRoadnameCode: "",
+				companyAddressDetailSido: "",
+				companyAddressDetailSigungu: "",
+				companyAddressDetailSigunguCode: "",
+				companyAddressDetailZonecode: "",
 
-				presidentBirthday:"",
-				presidentPhone:"",
-				presidentEmail:"",
-				accountingFblongTermCareInstitutionNumber:"",
-				accountingFbfacilityBizType:1,
-				accountingFbName:"",
-				accountingFbYearMonth:"",
-				accountingFbcapacity:23,
-				accountingFbregistrationCardFileStorageId:22,
-				accountingFbregistrationCardName:"",
+				companyPhone: "",
+				companyFax: "",
+				companyLicenseFileStorageId: "",
+				companyBizType: 0,
+				companyResidentId: "",
+				companyLicense: "",
+
+				presidentBirthday: "",
+				presidentPhone: "",
+				presidentEmail: "",
+				accountingFblongTermCareInstitutionNumber: "",
+				accountingFbfacilityBizType: 1,
+				accountingFbName: "",
+				accountingFbYearMonth: "",
+				accountingFbcapacity: 23,
+				accountingFbregistrationCardFileStorageId: 22,
+				accountingFbregistrationCardName: "",
 				accountingFbregistrationCardurl: "",
-				accountingFbregistrationCardcreatedAt:1664352972645,
-				accountingFbregistrationCardcreatedBy:"",
-				accountingFbregistrationCardupdatedAt:1664352972645,
-				accountingFbregistrationCardupdatedBy:"",
-				accountingFbregistrationCardactive:true,
-				accountingFbregistrationCardip:"",
-				accountingServiceTypes:[],
+				accountingFbregistrationCardcreatedAt: 1664352972645,
+				accountingFbregistrationCardcreatedBy: "",
+				accountingFbregistrationCardupdatedAt: 1664352972645,
+				accountingFbregistrationCardupdatedBy: "",
+				accountingFbregistrationCardactive: true,
+				accountingFbregistrationCardip: "",
+				accountingServiceTypes: [],
 
-				withholdingYearMonth:"",
-				withholdingCapacity:1234,
-				withholdingServiceTypes:[],
+				withholdingYearMonth: "",
+				withholdingCapacity: 1234,
+				withholdingServiceTypes: [],
 
-				cmsBankType:"",
-				accountNumber:"",
-				ownerName:"",
-				ownerBizNumber:"",
-				withdrawDay:"",
+				cmsBankType: "",
+				accountNumber: "",
+				ownerName: "",
+				ownerBizNumber: "",
+				withdrawDay: "",
 
 				compactSalesRepresentativeID: "",
-				compactSalesRepresentativeCode:"",
-				compactSalesRepresentativeName:"",
-				compactSalesRepresentativeActive:"",
+				compactSalesRepresentativeCode: "",
+				compactSalesRepresentativeName: "",
+				compactSalesRepresentativeActive: "",
 
-				memo:"",
-				createdAt:"",
-				createdBy:"",
-				updatedBy:"",
-				ip:"",
-				active:"",
+				memo: "",
+				createdAt: "",
+				createdBy: "",
+				updatedBy: "",
+				ip: "",
+				active: "",
 
-				extraSalesRepresentativeId:1,
-				extraComment:'',
+				extraSalesRepresentativeId: 1,
+				extraComment: '',
 			},
 			은행선택: '은행선택',
 			영업관리담당: '은행선택',
@@ -540,15 +541,15 @@ export default defineComponent({
 		DxTexts
 	},
 	computed: {
-		
+
 		yourVariable() {
 
 			return this.dataSelectModal;
 		},
 	},
 
-	setup(props,{emit}) {
-
+	setup(props, { emit }) {
+		const dataQuery = ref();
 		const formDetail = ref();
 		const trigger = ref(false);
 		const layout = {
@@ -578,24 +579,28 @@ export default defineComponent({
 				range: "${label} must be between ${min} and ${max}",
 			},
 		};
-		watch(()=>props.modalStatus, (newUsername,old) => {
-			if(newUsername){
+		watch(() => [formDetail,props.modalStatus], (newUsername, old) => {
+			if (newUsername) {
+				dataQuery.value = { id: props.data }
 				trigger.value = true;
-				const {result, error, onResult } = useQuery(queries.getSubscriptionRequest,{ id: 1 },{ enabled: trigger});
-		onResult((res) => {
-			formDetail.value = res
-        })
-				console.log('sdfdsfsdfsdfffffffffffffffffff',old)
-			}else{
+				refetch()
+				
+			} else {
 				trigger.value = false;
 			}
-		
+
 		});
-	
-     
-		const setModalVisible = ()=>{
-			emit("closePopup", false);
+
+		const { result, error, onResult,refetch } = useQuery(queries.getSubscriptionRequest, dataQuery , { enabled: trigger });
+		onResult((res) => {
+			formDetail.value = res
+		});
+		
+
+		const setModalVisible = () => {
 			trigger.value = false;
+			emit("closePopup", false);
+			
 		};
 		return {
 			formState,
@@ -606,7 +611,7 @@ export default defineComponent({
 		};
 	},
 	methods: {
-	
+
 		getImgUrl(img: any) {
 			// console.log("imgUrl", img);
 		},
@@ -674,8 +679,8 @@ export default defineComponent({
 			}
 		},
 		formarDate(date: any) {
-            return dayjs(date).format('YYYY/MM/DD')
-        }
+			return dayjs(date).format('YYYY/MM/DD')
+		}
 	},
 });
 </script> 
