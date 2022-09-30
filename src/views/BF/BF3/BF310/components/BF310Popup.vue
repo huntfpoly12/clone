@@ -579,7 +579,7 @@ export default defineComponent({
 				range: "${label} must be between ${min} and ${max}",
 			},
 		};
-		watch(() => [formDetail,props.modalStatus], (newUsername, old) => {
+		watch(() => [result,props.modalStatus], (newUsername, old) => {
 			if (newUsername) {
 				dataQuery.value = { id: props.data }
 				trigger.value = true;
@@ -591,8 +591,9 @@ export default defineComponent({
 
 		});
 
-		const { result, error, onResult,refetch } = useQuery(queries.getSubscriptionRequest, dataQuery , { enabled: trigger });
+		const { result, error, onResult,refetch } = useQuery(queries.getSubscriptionRequest, dataQuery , { enabled: trigger.value });
 		onResult((res) => {
+
 			formDetail.value = res
 		});
 		
