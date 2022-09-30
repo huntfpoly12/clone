@@ -40,7 +40,7 @@ export default defineComponent({
         let value = ref<Dayjs>();
         let dataInput: any = ''
         let classNameProps = "datepicker" + props.className
-        var date = ref();
+        var date = ref(new Date(props.valueDate));
 
         const format = (date: any) => {
             const day = date.getDate();
@@ -49,8 +49,15 @@ export default defineComponent({
             return `${year}/${month}/${day}`;
         }
 
-        const alertDate = () => {
+        const emitData = () => {
+            let classDate = '.' + classNameProps + ' .dp__input'
+            var Url = document.querySelector(classDate) as HTMLInputElement;
+            console.log("start");
+            emit("valueDateChange", Url.value)
+            console.log('end');
+        }
 
+        const alertDate = () => {
             if (dataInput) {
                 let dateInput = ''
                 if (dataInput.length == 8) {
@@ -62,6 +69,7 @@ export default defineComponent({
                 let dat = new Date(dateInput);
                 date.value = dat
             }
+            emitData()
         }
 
         const closeDateTime = () => {
@@ -76,7 +84,6 @@ export default defineComponent({
             let classDate = '.' + classNameProps + ' .dp__input'
             var Url = document.querySelector(classDate) as HTMLInputElement;
             dataInput = Url.value
-
         }
 
         const focusDatetime = () => {
@@ -95,7 +102,8 @@ export default defineComponent({
             date,
             className,
             value,
-            format
+            format,
+            emitData
         };
     },
 });

@@ -19,6 +19,7 @@
             파일선택...
           </a-button>
         </a-upload>
+
         <a-space :size="10" align="start" style="margin-top: 8px">
           <div>
             <warning-filled :style="{ fontSize: '15px' }" />
@@ -59,6 +60,9 @@
 import { ref, defineComponent } from "vue";
 import { message, Upload } from "ant-design-vue";
 import type { UploadProps } from "ant-design-vue";
+import Repository from "../repositories/index";
+const uploadRepository = Repository.get("upload");
+
 import {
   UploadOutlined,
   MinusCircleOutlined,
@@ -80,6 +84,10 @@ export default defineComponent({
   props: {
     title: {
       type: String,
+    },
+    category: {
+      type: String,
+      default: "SubscriptionRequestCompanyLicense",
     },
   },
 
@@ -137,13 +145,27 @@ export default defineComponent({
       showImg.value = false;
     };
 
-    const handleChange = (info: any, fileList: any) => {
+    const handleChange = async (info: any, fileList: any) => {
       fileName = info.file.name;
-      getBase64(info.file.originFileObj, (base64Url: string) => {
-        imageUrl.value = base64Url;
-        loading.value = false;
-        emit("update-img", imageUrl.value);
-      });
+      if (info.file.status === "uploading" && info.file.percent === 100) {
+        const formData = new FormData();
+        formData.append("category", "SubscriptionRequestCompanyLicense");
+        formData.append("file", info.file.originFileObj);
+        let dataImage = "";
+        try {
+          const data = await uploadRepository.public(formData);
+          dataImage = data.data.id;
+        } catch (error) {
+          dataImage = "";
+        }
+
+        getBase64(info.file.originFileObj, (base64Url: string) => {
+          imageUrl.value = base64Url;
+          loading.value = false;
+          emit("update-img", dataImage);
+          console.log("datta");
+        });
+      }
     };
 
     const handleCancel = () => {

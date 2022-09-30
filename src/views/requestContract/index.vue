@@ -60,35 +60,43 @@
                         </div>
                         <div class="form-item">
                             <label class="red">사업자유형 :</label>
-                            <a-radio-group v-model:value="contractCreacted.bizType" name="radioGroup"
-                                @change="changeTypeCompany">
-                                <a-radio value="1">법인사업자</a-radio>
-                                <a-radio value="2">개인사업자</a-radio>
+                            <a-radio-group v-model:value="contractCreacted.bizType" @change="changeTypeCompany">
+                                <a-radio :value="1">법인사업자</a-radio>
+                                <a-radio :value="2">개인사업자</a-radio>
                             </a-radio-group>
+
                             <div class="group-label">
                                 <p>{{textIDNo}}:</p>
                                 <a-input class="width-auto" v-model:value="contractCreacted.residentId"
                                     placeholder="800123-1234567" />
                             </div>
                         </div>
+
+
                         <div class="form-item">
                             <label class="red">주 소 :</label>
                             <div class="group-label">
-                                <a-input class="width-auto" placeholder="" />
-                                <a-button>우편번호 검색</a-button>
+                                <a-input class="width-auto" placeholder="검색어입력" v-model:value="contractCreacted.zipcode"
+                                    disabled />
+                                <a-button>
+                                    <postCode @dataAddress="funcAddress" />
+                                </a-button>
                             </div>
                         </div>
+
+
                         <div class="form-item">
                             <label></label>
-                            <a-input placeholder="ADDR1" />
+                            <a-input placeholder="도로명 주소" v-model:value="contractCreacted.roadAddress" disabled />
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input placeholder="ADDR2" />
+                            <a-input placeholder="확장 주소" v-model:value="contractCreacted.addressExtend" />
                         </div>
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <a-input class="width-auto" v-model:value="contractCreacted.phone" placeholder="0298765432" />
+                            <a-input class="width-auto" v-model:value="contractCreacted.phone"
+                                placeholder="0298765432" />
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
@@ -104,19 +112,31 @@
                     <div class="info-box">
                         <div class="form-item">
                             <label class="red">대표자명:</label>
-                            <a-input placeholder="홍길동" />
+                            <a-input placeholder="홍길동" style="width: 150px"
+                                v-model:value="contractCreacted.namePresident" />
                         </div>
                         <div class="form-item">
                             <label class="red">생년월일 :</label>
-                            <a-input placeholder="19620820" />
+                            <div>
+                                <CustomDatepicker v-if="contractCreacted.birthday == ''"
+                                    @valueDateChange="changeValueDate" />
+                                <CustomDatepicker v-else :valueDate="contractCreacted.birthday"
+                                    @valueDateChange="changeValueDate" />
+                            </div>
                         </div>
                         <div class="form-item">
                             <label class="red">휴대폰번호:</label>
-                            <a-input placeholder="01098765432" />
+                            <a-input placeholder="01098765432" style="width: 150px"
+                                v-model:value="contractCreacted.mobilePhone" />
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
-                            <a-input placeholder="abc123@mailaddress.com" />
+                            <a-form :model="formState" v-bind="layout" name="nest-messages"
+                                :validate-messages="validateMessages" @finish="onFinish">
+                                <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
+                                    <a-input v-model:value="formState.user.email" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                     </div>
                 </div>
@@ -135,7 +155,7 @@
                         <p class="red">⁙ 운영사업</p>
                     </div>
 
-                    <DxDataGrid id="gridContainer" :data-source="dataModal" :show-borders="true"
+                    <DxDataGrid id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
                         :selected-row-keys="selectedItemKeys">
                         <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true" :allow-deleting="true"
                             template="button-template" mode="cell">
@@ -148,29 +168,42 @@
                         <DxPaging :enabled="false" />
                         <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                             cell-template="indexCell" />
+
                         <template #indexCell="{ data }">
                             <div>{{data.rowIndex + 1}}</div>
                         </template>
 
-                        <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
-                        <DxColumn :width="225" data-field="StateID" caption="사업분류">
+                        <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                        <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                             <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                         </DxColumn>
-                        <DxColumn data-field="서비스시작년월" data-type="date" :format="'yyyy-MM-dd'" />
-                        <DxColumn :width="100" data-field="정원수" caption="정원수 (명)" />
+
+
+                        <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
+                            :format="'yyyy-MM-dd'" />
+
+
+                        <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
                         <DxToolbar>
                             <DxItem name="addRowButton" />
                         </DxToolbar>
                     </DxDataGrid>
+
                     <div class="form-item">
                         <label class="red">장기요양기관등록번호 :</label>
-                        <a-input placeholder="09xx-xxx-xxx" v-model:value="dataInputCallApi.numberPhone" />
+                        <a-input placeholder="1234567898"
+                            v-model:value="contractCreacted.longTermCareInstitutionNumber" />
+                    </div>
+
+                    <div>
+                        <imgUpload :title="titleModal" @update-img="getImgUrlAccounting" style="margin-top: 10px;" />
                     </div>
                     <div class="form-item">
-                        <label class="red">부가서비스</label>
-                        <a-checkbox v-model:checked="dataInputCallApi.agentService">회계입력대행서비스</a-checkbox>
+                        <label>부가서비스:</label>
+                        <a-checkbox v-model:checked="contractCreacted.accountingServiceTypes">회계입력대행서비스</a-checkbox>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>2. 원천서비스 신청</label>
                     <div class="list-checkbox">
@@ -180,72 +213,74 @@
                         </a-radio-group>
                     </div>
 
-                    <div class="date-picker">
-                        <label class="red">서비스 시작년월 :</label>
-                        <a-date-picker placeholder="날짜 선택" v-model="dataInputCallApi.dateStartService"
-                            @change="dataInputCallApi.dateStartService = moment($event.$d).format('YYYY-MM-DD')" />
+                    <div class="form-item">
+                        <label>서비스 시작년월 :</label>
+                        <div style="position: relative;">
+                            <CustomDatepicker v-if="contractCreacted.startYearMonthHolding == ''"
+                                @valueDateChange="changeValueDateHoding" />
+                            <CustomDatepicker v-else :valueDate="contractCreacted.startYearMonthHolding"
+                                @valueDateChange="changeValueDateHoding" />
+                        </div>
                     </div>
 
                     <div class="form-item">
-                        <label class="red">장기요양기관등록번호 :</label>
-                        <a-input placeholder="장기요양기관등록번호" v-model:value="dataInputCallApi.registrationNumber" />
+                        <label>직 원 수:</label>
+                        <a-input placeholder="장기요양기관등록번호" style="width: 150px;"
+                            v-model:value="contractCreacted.capacityHolding" />
                     </div>
                     <div class="form-item">
-                        <label>부가서비스</label>
-                        <a-checkbox v-model:checked="dataInputCallApi.declarationService">4대보험신고서비스</a-checkbox>
+                        <label>부가서비스 :</label>
+                        <a-checkbox v-model:checked="contractCreacted.withholdingServiceTypes">4대보험신고서비스</a-checkbox>
                     </div>
                 </div>
+
+
                 <div class="form-group">
                     <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                     <div class="form-item">
-                        <label class="red">서비스 시작년월 :</label>
-                        <a-select v-model:value="dataInputCallApi.bankName">
-                            <a-select-option value="은행선택">은행선택</a-select-option>
-                            <a-select-option value="농협">농협</a-select-option>
-                            <a-select-option value="신한은행">신한은행</a-select-option>
-                            <a-select-option value="우리은행">우리은행</a-select-option>
-                            <a-select-option value="기업은행">기업은행</a-select-option>
-                            <a-select-option value="카카오뱅크">카카오뱅크</a-select-option>
-                        </a-select>
+                        <label class="red">출금은행 :</label>
+                        <selectBank @bank="getIDBank" />
                     </div>
                     <div class="form-item">
                         <label class="red">출금계좌번호 :</label>
-                        <a-input placeholder="출금계좌번호" v-model:value="dataInputCallApi.numberAccount" />
+                        <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" />
                     </div>
                     <div class="form-item">
                         <label class="red">예금주명 :</label>
-                        <a-input placeholder="주식회사 타운소프트비나" v-model:value="dataInputCallApi.accountHolder" />
+                        <a-input placeholder="주식회사 타운소프트비나" v-model:value="contractCreacted.ownerName" />
                     </div>
                     <div class="form-item">
                         <label class="red">사업자(주민)등록번호:</label>
                         <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다"
-                            v-model:value="dataInputCallApi.numberBusiness" />
-                        <p>예금주의 사업자등록번호 또는 주민등록번호입니다</p>
+                            v-model:value="contractCreacted.ownerBizNumber" />
+                        <p>i: 예금주의 사업자등록번호 또는 주민등록번호입니다</p>
                     </div>
+
                     <div class="form-item">
                         <label class="red">자동이체출금일자 :</label>
-                        <a-radio-group v-model:value="dataInputCallApi.debtWithdrawalDate">
-                            <a-radio :value="'매월 5일'">매월 5일</a-radio>
-                            <a-radio :value="'매월 12일'">매월 12일</a-radio>
-                            <a-radio :value="'매월 19일'">매월 19일</a-radio>
+                        <a-radio-group v-model:value="contractCreacted.withdrawDay">
+                            <a-radio value="매월 5일">매월 5일</a-radio>
+                            <a-radio value="매월 12일">매월 12일</a-radio>
+                            <a-radio value="매월 19일">매월 19일</a-radio>
                         </a-radio-group>
                     </div>
+
                 </div>
                 <div class="form-group">
                     <label>4. 기타</label>
                     <div class="form-item">
                         <label>영업관리담당 :</label>
-                        <a-select v-model:value="dataInputCallApi.salesAgent">
-                            <a-select-option value="은행선택">A 대리점</a-select-option>
-                            <a-select-option value="농협">농협</a-select-option>
-                            <a-select-option value="신한은행">C 영업사원</a-select-option>
-                            <a-select-option value="우리은행">D 영업사원</a-select-option>
-                            <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
+                        <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택">
+                            <a-select-option :value="1">A 대리점</a-select-option>
+                            <a-select-option :value="2">농협</a-select-option>
+                            <a-select-option :value="3">C 영업사원</a-select-option>
+                            <a-select-option :value="4">D 영업사원</a-select-option>
+                            <a-select-option :value="5">E 본사영업사원</a-select-option>
                         </a-select>
                     </div>
                     <div class="form-item">
                         <label>전달사항 :</label>
-                        <a-textarea v-model:value="dataInputCallApi.note" placeholder="전달사항입력" allow-clear />
+                        <a-textarea v-model:value="contractCreacted.comment" placeholder="전달사항입력" allow-clear />
                     </div>
                 </div>
             </template>
@@ -256,7 +291,7 @@
 
                 </p>
             </template>
-            <a-modal v-model:visible="visible" :mask-closable="false" ok-text="확인" cancel-text="">
+            <a-modal v-model:visible="visibleModal" :mask-closable="false" ok-text="확인" cancel-text="">
                 <template #footer>
                     <a-button key="submit" type="primary" @click="handleOk">확인</a-button>
                 </template>
@@ -277,8 +312,8 @@ import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 
 import moment from 'moment'
 import { employees, states } from './data.js';
-import { useMutation } from "@vue/apollo-composable";
-import mutations from "../../graphql/mutations/RqContract/index";
+// import mutations from "../../graphql/mutations/RqContract/index";
+import { notification } from 'ant-design-vue';
 
 import {
     DxDataGrid,
@@ -289,11 +324,23 @@ import {
     DxLookup,
     DxToolbar,
     DxItem,
-    DxTexts
+    DxTexts,
 
 } from "devextreme-vue/data-grid"
 import { DxButton } from 'devextreme-vue/button';
 import imgUpload from "../../components/UploadImage.vue";
+import CustomDatepicker from "../../components/CustomDatepicker.vue";
+import selectBank from "../../components/selectBank.vue";
+import postCode from "./postCode.vue"
+
+import { useMutation } from '@vue/apollo-composable'
+import gql from 'graphql-tag'
+
+import dayjs, { Dayjs } from 'dayjs';
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 export default {
     components: {
         CheckOutlined,
@@ -308,70 +355,36 @@ export default {
         DxItem,
         DxTexts,
         DxButton,
-        imgUpload
+        imgUpload,
+        CustomDatepicker,
+        moment,
+        selectBank,
+        postCode
     },
     data() {
         return {
             textIDNo: '법인등록번호',
             step: 0,
-            visible: false,
+
             radio: '',
             radio1: '',
             radio2: '',
             radio3: '',
             radio4: '',
-            dataModal: employees,
+            dataModal: [],
             states,
             marginTopModal: "margin-top : 10px",
             titleModal: "사업자등록증",
             dataInputCallApi: {
                 dossier: '',
-                businessActivities: [
-                    {
-                        key: '0',
-                        name: '가나다라마바 사업',
-                        select: "주•야간보호",
-                        date: '2022-08-25',
-                        number: '10'
-                    }, {
-                        key: '1',
-                        name: '다라마 사업',
-                        select: "방문요양",
-                        date: '2022-08-25',
-                        number: '10'
-                    },
-                    {
-                        key: '2',
-                        name: '사하자차카타파하 사업',
-                        select: '방문간호',
-                        date: '2022-08-25',
-                        number: '10'
-                    }
-                ],
-                numberPhone: "",
-                agentService: false,
                 applicationService: '',
-                dateStartService: '2022-10-10',
-                registrationNumber: '',
-                declarationService: false,
-                bankName: '은행선택',
-                numberAccount: '',
-                accountHolder: '',
-                numberBusiness: '',
-                debtWithdrawalDate: '매월 5일',
-                salesAgent: 'A 대리점',
-                note: '',
-            }
+            },
+
+            messagePopup: '',
 
         }
     },
-    mounted() {
-        // useMutation(mutations.customerWorkLogin, () => ({
-        //     variables: {
-        //         companyId: 5,
-        //     },
-        // }))
-    },
+
     computed: {
         checkStepTwo() {
             if (this.step === 0) {
@@ -399,14 +412,401 @@ export default {
             } else {
                 return 'finish'
             }
+        },
+        changeValueInputEmit(data) {
+            if (data.name == 'nameCompany') {
+                this.dataSearch.nameCompany = data.value
+            }
+        },
+    },
+
+
+    setup() {
+        const contractCreacted = reactive(
+            {
+                terms: true,
+                personalInfo: true,
+                accountingService: true,
+                withholdingService: true,
+                nameCompany: '',
+                zipcode: '',
+                roadAddress: '',
+                jibunAddress: '',
+                addressExtend: '',
+                bcode: '',
+                bname: '',
+                buildingCode: '',
+                buildingName: '',
+                roadname: '',
+                roadnameCode: '',
+                sido: '',
+                sigungu: '',
+                sigunguCode: '',
+                zonecode: '',
+                phone: '',
+                fax: '',
+                licenseFileStorageId: 10,
+                bizNumber: '',
+                bizType: 1,
+                residentId: '',
+                namePresident: '',
+                birthday: '',
+                mobilePhone: '',
+                email: '',
+                longTermCareInstitutionNumber: '',
+                facilityBizType: 1,
+                accountingServiceTypes: 1,
+                facilityBusinesses: [],
+                startYearMonthHolding: "",
+                capacityHolding: 10,
+                withholdingServiceTypes: 1,
+                bankType: "39",
+                accountNumber: '',
+                ownerBizNumber: '',
+                withdrawDay: '매월 5일',
+                salesRepresentativeId: 1,
+                comment: '',
+                ownerName: ''
+            }
+        )
+
+        var visibleModal = ref(false)
+
+        const valueFacilityBusinesses = ref([])
+        let formattedAttachments = '';
+
+
+        const {
+            mutate: Creat,
+            loading: signinLoading,
+            onDone: signinDone,
+            onError: onError
+        } = useMutation(
+            gql`
+        mutation createSubscriptionRequest(
+            $terms: Boolean!,
+            $personalInfo: Boolean!,
+            $accountingService: Boolean!,
+            $withholdingService: Boolean!,
+            $nameCompany:String!,
+            $zipcode:String!,
+            $roadAddress:String!,
+            $jibunAddress:String!,
+            $addressExtend:String!,
+            $bcode: String!,
+            $bname: String!,
+            $buildingCode:String!,
+            $buildingName:String!,
+            $roadname: String!,
+            $roadnameCode:String!,
+            $sido: String!,
+            $sigungu:String!,
+            $sigunguCode:String!,
+            $zonecode: String!,
+            $capacityHolding : Int!
+            $phone: String!,
+            $fax: String!,
+            $licenseFileStorageId: Int!,
+            $bizNumber: String!,
+            $residentId: String!,
+            $namePresident : String!,
+            $birthday : String!,
+            $mobilePhone : String!,
+            $email : String!,   
+            $startYearMonthHolding : String! ,  
+            $accountNumber : String! ,
+            $ownerBizNumber : String! ,
+            $ownerName : String!,
+            $withdrawDay : String!,
+            $salesRepresentativeId: Int! ,
+            $comment: String!,    
+            $bizType: BizTypeScalar!,
+            $accountingServiceTypes: [AccountingAdditionalServiceTypeScalar!]!,
+            $withholdingServiceTypes: [WithholdingAdditionalServiceTypeScalar!]!,
+            $bankType: BankTypeScalar!, 
+
+            ) {
+        createSubscriptionRequest(
+            content :{
+                agreements: {
+                terms: $terms
+                personalInfo: $personalInfo
+                accountingService: $accountingService
+                withholdingService: $withholdingService
+                }
+                company: {
+                    name: $nameCompany
+                    zipcode: $zipcode
+                    roadAddress: $roadAddress
+                    jibunAddress: $jibunAddress
+                    addressExtend: $addressExtend
+                    addressDetail: {
+                        bcode: $bcode
+                        bname: $bname
+                        buildingCode: $buildingCode
+                        buildingName: $buildingName
+                        roadname: $roadname
+                        roadnameCode: $roadnameCode
+                        sido: $sido
+                        sigungu: $sigungu
+                        sigunguCode: $sigunguCode
+                        zonecode: $zonecode
+                    }
+                    phone: $phone
+                    fax: $fax
+                    licenseFileStorageId: $licenseFileStorageId
+                    bizNumber: $bizNumber
+                    bizType: $bizType
+                    residentId: $residentId
+                }
+                president: {
+                    name: $namePresident
+                    birthday: $birthday
+                    mobilePhone: $mobilePhone
+                    email: $email
+                }
+                accounting: {
+                    facilityBusinesses:  [${formattedAttachments}]
+                    accountingServiceTypes: $accountingServiceTypes
+                }
+                withholding: {
+                    startYearMonth: $startYearMonthHolding
+                    capacity: $capacityHolding
+                    withholdingServiceTypes: $withholdingServiceTypes
+                }
+                cmsBank: {
+                    bankType: $bankType
+                    accountNumber: $accountNumber
+                    ownerBizNumber: $ownerBizNumber
+                    ownerName: $ownerName
+                    withdrawDay: $withdrawDay
+                }
+                extra: {
+                    salesRepresentativeId: $salesRepresentativeId
+                    comment: $comment
+                }
+            },) {
+                    id
+                    status
+                    code
+            }
+        }
+            `,
+            () => ({
+                variables: {
+                    terms: contractCreacted.terms,
+                    personalInfo: contractCreacted.personalInfo,
+                    accountingService: contractCreacted.accountingService,
+                    withholdingService: contractCreacted.withholdingService,
+                    nameCompany: contractCreacted.nameCompany,
+                    zipcode: contractCreacted.zipcode,
+                    roadAddress: contractCreacted.roadAddress,
+                    jibunAddress: contractCreacted.jibunAddress,
+                    addressExtend: contractCreacted.addressExtend,
+                    bcode: contractCreacted.bcode,
+                    bname: contractCreacted.bname,
+                    buildingCode: contractCreacted.buildingCode,
+                    buildingName: contractCreacted.buildingName,
+                    roadname: contractCreacted.roadname,
+                    roadnameCode: contractCreacted.roadnameCode,
+                    sido: contractCreacted.sido,
+                    sigungu: contractCreacted.sigungu,
+                    sigunguCode: contractCreacted.sigunguCode,
+                    zonecode: contractCreacted.zonecode,
+                    phone: contractCreacted.phone,
+                    fax: contractCreacted.fax,
+                    licenseFileStorageId: contractCreacted.licenseFileStorageId,
+                    bizNumber: contractCreacted.bizNumber,
+                    bizType: contractCreacted.bizType,
+                    residentId: contractCreacted.residentId,
+                    namePresident: contractCreacted.namePresident,
+                    birthday: contractCreacted.birthday,
+                    mobilePhone: contractCreacted.mobilePhone,
+                    email: formState.user.email,
+                    accountingServiceTypes: contractCreacted.accountingServiceTypes,
+                    startYearMonthHolding: contractCreacted.startYearMonthHolding,
+                    capacityHolding: parseInt(contractCreacted.capacityHolding),
+                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
+                    bankType: contractCreacted.bankType,
+                    accountNumber: contractCreacted.accountNumber,
+                    ownerBizNumber: contractCreacted.ownerBizNumber,
+                    ownerName: contractCreacted.ownerName,
+                    withdrawDay: contractCreacted.withdrawDay,
+                    salesRepresentativeId: contractCreacted.salesRepresentativeId,
+                    comment: contractCreacted.comment,
+                }
+            })
+        )
+
+        signinDone((res) => {
+            visibleModal.value = true
+        });
+
+        onError((res) => {
+            openNotificationWithIcon('error', res)
+        })
+
+        const openNotificationWithIcon = (type, mes) => {
+            if (type == 'error')
+                notification[type]({
+                    message: { mes }.mes.message,
+                });
+            else {
+                notification[type]({
+                    message: mes
+                });
+            }
+        };
+
+        const validateMessages = {
+            required: "${label} is required!",
+            types: {
+                email: "이메일 형식이 정확하지 않습니다",
+                number: "Numeric only!",
+            },
+            number: {
+                range: "${label} must be between ${min} and ${max}",
+            },
+        };
+
+        const onFinish = (values) => {
+            console.log('Success:', values);
+        };
+
+        const layout = {
+            labelCol: { span: 8 },
+            wrapperCol: { span: 16 },
+        };
+
+        const formState = reactive({
+            user: {
+                name: '',
+                age: undefined,
+                email: '',
+                website: '',
+                introduction: '',
+            },
+        });
+
+        return {
+            contractCreacted,
+            Creat,
+            valueFacilityBusinesses,
+            formattedAttachments,
+            openNotificationWithIcon,
+            signinDone,
+            onError,
+            visibleModal,
+            validateMessages,
+            onFinish,
+            layout,
+            formState
         }
     },
+    watch: {
+        'contractCreacted.longTermCareInstitutionNumber'(newVal) {
+            let arrNew = [];
+            let dataAdd = ''
+            if (this.valueFacilityBusinesses.length > 0) {
+                this.valueFacilityBusinesses.forEach(element => {
+                    const obj = {
+                        ...element,
+                        longTermCareInstitutionNumber: newVal,
+                        registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
+                    }
+                    arrNew.push(obj)
+                });
+            }
+            arrNew.map(attachment => {
+                dataAdd += `{ 
+                                longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
+                                facilityBizType: ${attachment.facilityBizType},
+                                name: "${attachment.name}",
+                                startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}",
+                                capacity: ${attachment.capacity},
+                                registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
+                            }`;
+            });
+
+            this.formattedAttachments = dataAdd
+        },
+        'contractCreacted.registrationCardFileStorageId'(newVal) {
+            let arrNew = [];
+            let dataAdd = ''
+            if (this.valueFacilityBusinesses.length > 0) {
+                this.valueFacilityBusinesses.forEach(element => {
+                    const obj = {
+                        ...element,
+                        longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                        registrationCardFileStorageId: newVal
+                    }
+                    arrNew.push(obj)
+                });
+            }
+            arrNew.map(attachment => {
+                dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},}`;
+            });
+
+            this.formattedAttachments = dataAdd
+        },
+        'valueFacilityBusinesses': {
+            handler() {
+                let arrNew = [];
+                let dataAdd = ''
+                if (this.valueFacilityBusinesses.length > 0) {
+                    this.valueFacilityBusinesses.forEach(element => {
+                        const obj = {
+                            ...element,
+                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                            registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
+                        }
+                        arrNew.push(obj)
+                    });
+                }
+                arrNew.map(attachment => {
+                    dataAdd += `{ 
+                                longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}",
+                                facilityBizType: ${attachment.facilityBizType},
+                                name: "${attachment.name}",
+                                startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}",
+                                capacity: ${attachment.capacity},
+                                registrationCardFileStorageId: ${attachment.registrationCardFileStorageId},
+                            }`;
+                });
+
+                this.formattedAttachments = dataAdd
+            },
+            deep: true,
+            immediate: true
+        },
+
+    },
     methods: {
+        changeValueDate(data) {
+            this.contractCreacted.birthday = data
+        },
+        changeValueDateHoding(data) {
+            this.contractCreacted.startYearMonthHolding = data
+        },
+        funcAddress(data) {
+            this.contractCreacted.zipcode = data.zonecode
+            this.contractCreacted.roadAddress = data.roadAddress
+            this.contractCreacted.jibunAddress = data.jibunAddress
+            this.contractCreacted.bcode = data.bcode
+            this.contractCreacted.bname = data.bname
+            this.contractCreacted.buildingCode = data.buildingCode
+            this.contractCreacted.buildingName = data.buildingName
+            this.contractCreacted.roadname = data.roadname
+            this.contractCreacted.roadnameCode = data.roadnameCode
+            this.contractCreacted.sido = data.sido
+            this.contractCreacted.sigungu = data.sigungu
+            this.contractCreacted.sigunguCode = data.sigunguCode
+            this.contractCreacted.zonecode = data.zonecode
+        },
         changeTypeCompany() {
-            console.log(this.contractCreacted.bizType);
             if (this.contractCreacted.bizType == 2) {
                 this.textIDNo = '주민등록번호'
-            }else {
+            } else {
                 this.textIDNo = '법인등록번호'
             }
         },
@@ -417,100 +817,38 @@ export default {
         nextStep() {
             this.step++
         },
-        openPopup() {
-            this.visible = true
+        openPopup() { 
+
+            //validate data call api
+            var obj = this.contractCreacted
+            let countNull = 0
+            for (const [key, value] of Object.entries(obj)) { 
+            
+            }
+            if (countNull > 0) {
+                notification['error']({
+                    message: 'Vui lòng nhập đầy đủ thông tin cần thiết'
+                });
+            } else {
+                this.Creat()
+            }
+
         },
         handleOk() {
-            this.visible = false
-
-            // this.$router.push('/login')
+            this.visibleModal = false
         },
         getImgUrl(img) {
-            // console.log("imgUrl", img);
+            this.contractCreacted.licenseFileStorageId = img
         },
 
-    },
+        getImgUrlAccounting(img) {
+            this.contractCreacted.registrationCardFileStorageId = img
+        },
 
-    setup() {
-        const contractCreacted = reactive({
-            terms: false,
-            personalInfo: false,
-            accountingService: false,
-            withholdingService: false,
+        getIDBank(data) {
+            this.contractCreacted.bankType = data
+        },
 
-            nameCompany: 'nameCompany',
-            zipcode: 'zipcode',
-            roadAddress: 'roadAddress',
-            jibunAddress: 'jibunAddress',
-            addressExtend: 'addressExtend',
-
-            bcode: 'bcode',
-            bname: 'bname',
-            buildingCode: 'buildingCode',
-            buildingName: 'buildingName',
-            roadname: 'roadname',
-            roadnameCode: 'roadnameCode',
-            sido: 'sido',
-            sigungu: 'sigungu',
-            sigunguCode: 'sigunguCode',
-            zonecode: 'zonecode',
-
-            phone: 'phone',
-            fax: 'fax',
-            licenseFileStorageId: 10,
-            bizNumber: 'bizNumber',
-            bizType: 1,
-            residentId: 'residentId',
-
-
-            name: 'name',
-            birthday: 'birthday',
-            mobilePhone: 'mobilePhone',
-            email: 'email@gmail.com',
-
-            longTermCareInstitutionNumber: 'longTermCareInstitutionNumber',
-            facilityBizType: 1,
-            name: 'name',
-            startYearMonth: 'startYearMonth',
-            capacity: 10,
-            registrationCardFileStorageId: 10,
-            accountingServiceTypes: 1,
-
-            startYearMonthHolding: 'startYearMonthHolding',
-            capacityHolding: 10,
-            withholdingServiceTypes: 1,
-
-            bankType: "bankType",
-            accountNumber: 'accountNumber',
-            ownerBizNumber: 'ownerBizNumber',
-            ownerName: 'ownerName',
-            withdrawDay: 'withdrawDay',
-
-            salesRepresentativeId: 10,
-            comment: 'comment',
-        })
-        // const {
-        //     mutate: createContract,
-        //     loading,
-        //     onDone: creatDone,
-        //     onError,
-        // } = useMutation(mutations.creactContract, () => ({
-        //     variables: {
-
-
-        //     },
-        // }));
-
-        // creatDone((res) => {
-        //     console.log(res)
-        // });
-
-        // onMounted(() => {
-        //     createContract()
-        // })
-        return {
-            contractCreacted
-        }
     },
 }
 </script>
@@ -591,8 +929,17 @@ export default {
 }
 
 .form-item ::v-deep input,
-.form-item ::v-deep .ant-input-affix-wrapper {
+.form-item .ant-input-affix-wrapper ::v-deep {
     max-width: calc(100% - 165px);
+}
+
+::v-deep input.dp__input.dp__input_icon_pad {
+    width: 150px;
+    max-width: 200px !important;
+}
+
+::v-deep #nest-messages_user_email {
+    min-width: 350px !important;
 }
 
 .form-item p {
@@ -678,6 +1025,7 @@ export default {
     margin-top: 30px;
     position: relative;
     z-index: 20;
+    width: 200px;
 }
 
 #gridContainer {

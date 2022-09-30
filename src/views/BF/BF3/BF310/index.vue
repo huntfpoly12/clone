@@ -11,10 +11,10 @@
                 <a-col>
                     <label class="lable-item">심사상태/결과 :</label>
                     <a-select ref="select" v-model:value="dataSearch.status">
-                        <a-select-option value="신청">신청</a-select-option>
-                        <a-select-option value="심사중">심사중</a-select-option>
-                        <a-select-option value="승인">승인</a-select-option>
-                        <a-select-option value="반려 ">반려</a-select-option>
+                        <a-select-option value="10">신청</a-select-option>
+                        <a-select-option value="20">심사중</a-select-option>
+                        <a-select-option value="30">승인</a-select-option>
+                        <a-select-option value="99 ">반려</a-select-option>
                     </a-select>
                 </a-col>
                 <a-col>
@@ -34,43 +34,86 @@
 
         </div>
         <div class="page-content">
-            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
-                :columns="gridColumns">
+            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
                 <DxSelection mode="multiple" />
-                <DxPaging :page-size="5" />
+
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
-                <DxColumn data-field="신청일자" />
-                <DxColumn data-field="신청코드" />
-                <DxColumn data-field="심사상태" data-type="date" cell-template="grid-cell" />
-                <template #grid-cell="{ data }">
-                    <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+                <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
+                <template #createdat-cell="{ data }">
+                    {{ formarDate(data.value) }}
                 </template>
-                <DxColumn :width="170" data-field="사업자코드" />
-                <DxColumn data-field="상호" data-type="date" />
-                <DxColumn data-field="주소" data-type="date" />
-                <DxColumn data-field="대표자" />
-                <DxColumn data-field="영업자" />
-                <DxColumn data-field="신청서비스" />
-                <DxColumn data-field="부가서비스" />
-                <DxColumn :width="110" cell-template="pupop" type="buttons" />
-                <template #pupop="{ data }">
-                    <DxButton @click="setModalVisible(data)" class="button-popup" text="편집" type="default"
-                        styling-mode="outlined" height="20px" />
+                <DxColumn data-field="code" caption="신청코드" />
+                <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
+                <template #grid-cell="{ data }">
+                    <a-tag :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
+                </template>
+                <DxColumn :width="170" data-field="compactSalesRepresentative.code" caption="사업자코드"
+                    css-class="cell-center" />
+                <DxColumn data-field="companyName" caption="상호" />
+                <DxColumn data-field="companyAddress" caption="주소" />
+                <DxColumn data-field="presidentName" caption="대표자" />
+                <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
+                <DxColumn caption="신청서비스" cell-template="acc-service" />
+                <template #acc-service="{ data }">
+                    <span>회계
+                        <a-popover>
+                            <template #content>
+                                <a-table :columns="[ {
+                                  title: 'Name',
+                                  dataIndex: 'name',
+                                },
+                                {
+                                  title: 'Year Month',
+                                  dataIndex: 'startYearMonth',
+                                }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
+                                </a-table>
+                            </template>
+                            <a-tag>{{data.data.simpleAccountingInfos.length}}</a-tag>
+                        </a-popover>
+                    </span>
+                    <span>원천
+                        <a-popover>
+                            <template #content>
+                                <a-table :columns="[ {
+                                  title: 'Name',
+                                  dataIndex: 'name',
+                                },
+                                {
+                                  title: 'Year Month',
+                                  dataIndex: 'startYearMonth',
+                                }]" :data-source="[data.data.simpleWithholdingInfo]" bordered :pagination="false">
+                                </a-table>
+                            </template>
+                            <a-tag>1</a-tag>
+                        </a-popover>
+                    </span>
+                </template>
+                <DxColumn :width="50" cell-template="pupop" type="buttons" />
+                <template #pupop="{ data }" class="custom-action">
+                    <div class="custom-action">
+                        <a-tooltip placement="top">
+                            <template #title>편집 {{data.data.id}}</template>
+                            <EditOutlined @click="setModalVisible(data)" />
+                        </a-tooltip>
+                    </div>
                 </template>
             </DxDataGrid>
-
-            <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="popupData" />
+            <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
         </div>
     </div>
 
 </template>
 <script lang="ts">
-import { SearchOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, EditOutlined } from '@ant-design/icons-vue';
 import DxDateBox from 'devextreme-vue/date-box';
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
-import { ref, defineComponent } from 'vue';
+import { ref, defineComponent,watch } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
+
+import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
+import { useQuery,useLazyQuery } from "@vue/apollo-composable";
+
 import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
@@ -80,7 +123,6 @@ import {
     DxSelection,
     DxSearchPanel,
 } from "devextreme-vue/data-grid";
-import { employees, states } from "../BF310/data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
@@ -102,32 +144,13 @@ export default defineComponent({
         BF310Popup,
         locale,
         DxDateBox,
-        SearchOutlined
+        SearchOutlined,
+        EditOutlined
     },
     data() {
         return {
-            dataSource: employees,
-            states,
-            value1: "신청",
-            value2: "A 대리점",
-            dateFormat: "YYYY/MM/DD",
-            checbox1: true,
-            checbox2: true,
             value4: [dayjs().subtract(1, 'year'), dayjs()],
-            gridColumns: ["심사상태", "사업자코드", "상호"],
-            gridBoxValue: [3],
-            gridDataSource: employees,
-            modalStatus: false,
-            text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
-            formState: {
-                name: "",
-                delivery: false,
-                type: [],
-                resource: "",
-                desc: "",
-            },
-            popupData: [],
-            valueDate: ref<Dayjs>(),
+
             dataSearch: {
                 typeSevice1: true,
                 typeSevice2: true,
@@ -135,8 +158,11 @@ export default defineComponent({
                 staff: '',
                 select1: 'A 대리점'
             },
-            sizeButton: 'small'
         };
+    },
+    mounted() {
+        const originData = { page: 1, rows: 100 }
+        this.searchSubscriptionRequests(originData)
     },
     methods: {
         onExporting(e: { component: any; cancel: boolean; }) {
@@ -160,22 +186,51 @@ export default defineComponent({
         customClass(cellInfo: { value: any; }) {
             return cellInfo.value;
         },
-        getColorTag(data: string) {
-            if (data === "신청") {
-                return "red";
-            } else if (data === "심사중") {
-                return "blue";
-            } else if (data === "승인") {
-                return "green";
-            } else if (data === "반려") {
-                return "grey";
+        getColorTag(data: any) {
+            if (data == 10) {
+                return { "name": "red", "tag_name": "신청" };
+            } else if (data == 20) {
+                return { "name": "blue", "tag_name": "심사중" };
+            } else if (data == 30) {
+                return { "name": "green", "tag_name": "승인" };
+            } else if (data == 99) {
+                return { "name": "grey", "tag_name": "반려" };
             }
         },
-        setModalVisible(data: never[]) {
-            this.popupData = data;
-            this.modalStatus = true;
+
+
+        formarDate(date: any) {
+            return dayjs(date).format('YYYY/MM/DD')
         }
     },
+    setup() {
+        const popupData = ref();
+        const dataSource = ref([]);
+        const modalStatus = ref(false);
+        const idSubRequest = ref();
+
+
+        const setModalVisible = (data: any) => {
+            idSubRequest.value = data.data.id;
+            modalStatus.value = true;
+        }
+ 
+        
+        const searchSubscriptionRequests = (filter: any) => {
+            const { loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, filter)
+            onResult((res) => {
+                dataSource.value = res.data.searchSubscriptionRequests.datas
+            })
+        }
+        return {
+            idSubRequest,
+            dataSource,
+            popupData,
+            modalStatus,
+            searchSubscriptionRequests,
+            setModalVisible
+        }
+    }
 });
 </script>
 <style lang="scss" scoped>
@@ -300,5 +355,9 @@ export default defineComponent({
             padding: 7px;
         }
     }
+}
+
+::v-deep .cell-center {
+    text-align: center !important
 }
 </style>

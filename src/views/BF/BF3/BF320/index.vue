@@ -24,9 +24,9 @@
                             <label class="lable-item">대표자:</label>
                             <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
                                 :clearButton="true" :nameService="'typeSevice'" style="width: 130px;" />
-
                         </div>
                     </a-col>
+                    
                     <a-col>
                         <label class="lable-item">해지:</label>
                         <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
@@ -41,38 +41,43 @@
                         </div>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">매니저명 :</label>
-                        <a-select style="width: 120px;height: 33px" v-model:value="dataSearch.manager" show-search
-                            placeholder="매니저명" :options="options">
-                        </a-select>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">매니저명 :</label>
+                            <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
+                                value-expr="value" />
+                        </div>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">영업자명 :</label>
-                        <a-select style="width: 120px;height: 33px" v-model:value="dataSearch.nameSale" show-search
-                            placeholder="영업자명" :options="options">
-                        </a-select>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">영업자명 :</label>
+                            <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
+                                value-expr="value" />
+                        </div>
                     </a-col>
                 </a-row>
             </div>
         </div>
         <div class="page-content">
-            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting"
-                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+            <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
+                @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
+                :column-auto-width="true">
                 <DxSelection mode="multiple" />
                 <DxPaging :page-size="10" />
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                 <DxExport :enabled="true" :allow-export-selected-data="true" />
-                <DxColumn data-field="사업자코드" :fixed="true" />
-                <DxColumn data-field="상호" data-type="date" />
-                <DxColumn data-field="대표자" data-type="date" />
-                <DxColumn data-field="주소" data-type="date" />
-                <DxColumn data-field="연락처" :width="230" />
-                <DxColumn data-field="매니저" />
-                <DxColumn data-field="관리시작일" />
-                <DxColumn data-field="영업자" />
-                <DxColumn data-field="해지일자" />
-                <DxColumn data-field="이용료" :format="amountFormat" data-type="number" />
+
+                <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
+                <DxColumn data-field="name" caption="상호" />
+                <DxColumn data-field="presidentName" caption="대표자" />
+                <DxColumn data-field="address" caption="주소" data-type="date" />
+                <DxColumn data-field="phone" caption="연락처" :width="230" />
+                <DxColumn data-field="manageCompactUser.name" caption="매니저" />
+                <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
+                <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
+                <DxColumn data-field="#" caption="해지일자" />
+                <DxColumn data-field="#" caption="이용료" :format="amountFormat" data-type="number" />
                 <DxColumn :width="80" cell-template="pupop" />
+
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action">
                         <a-space :size="10">
@@ -87,6 +92,7 @@
                         </a-space>
                     </div>
                 </template>
+
             </DxDataGrid>
             <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
@@ -96,7 +102,7 @@
 </template> 
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, reactive } from 'vue';
 import {
     DxDataGrid,
     DxColumn,
@@ -121,7 +127,7 @@ import inputFormat from '../../../../components/inputBoxFormat.vue'
 import DxTextBox from 'devextreme-vue/text-box';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
-
+import { DxSelectBox } from 'devextreme-vue/select-box';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF3/BF320/index"
 
@@ -140,7 +146,8 @@ export default defineComponent({
         HistoryOutlined,
         DxNumberBox,
         inputFormat,
-        DxTextBox
+        DxTextBox,
+        DxSelectBox
     },
     data() {
         return {
@@ -157,18 +164,19 @@ export default defineComponent({
                 value: 'tom',
                 label: 'Tom Halin Sin Han Bank',
             }],
+            options2: [{
+                value: 'jack',
+                label: 'Jack',
+            }, {
+                value: 'lucy',
+                label: 'Lucy',
+            }, {
+                value: 'tom',
+                label: 'Tom Halin Sin Han Bank',
+            }],
             popupData: [],
             modalStatus: false,
             modalHistoryStatus: false,
-            dataSearch: {
-                typeSevice: '',
-                nameCompany: '',
-                surrogate: '',
-                status: false,
-                address: '',
-                manager: 'Jack',
-                nameSale: 'Jack'
-            },
             value: '',
             typeInputCall: 1,
 
@@ -210,28 +218,64 @@ export default defineComponent({
                 this.dataSearch.nameCompany = data.value
             }
         },
-        creactCompanyManageMemo(){
-            
+        creactCompanyManageMemo() {
+
         }
     },
     setup() {
-        let data = {
+        var dataSearch = reactive({
+            typeSevice: '',
+            nameCompany: '',
+            surrogate: '',
+            status: false,
+            address: '',
+            manager: 'Jack',
+            nameSale: 'Jack',
             page: 1,
             rows: 10,
             code: '',
             name: '',
             presidentName: '',
-            address: '',
             manageUserId: '',
             salesRepresentativeId: '',
-            excludeCancel: true
-        }
+            excludeCancel: true,
+        })
+
+        var responApiSearchCompanies = [
+            {
+                id: 10,
+                code: "han",
+                name: "han",
+                address: "han",
+                phone: "han",
+                presidentName: "han",
+                presidentMobilePhone: "han",
+                manageStartDate: "2022-1-1",
+                usedAccountingCount: 10,
+                usedWithholding: true,
+                servicePrice: 10000,
+                active: true,
+                compactSalesRepresentative: {
+                    id: 10,
+                    code: "han",
+                    name: "han",
+                    active: true,
+                },
+                manageCompactUser: {
+                    id: 10,
+                    type: "han",
+                    username: "han",
+                    name: "han",
+                    active: true,
+                },
+            }
+        ]
 
         onMounted(() => {
-            try { 
-                const { loading, error, onResult } = useQuery(queries.getData.findParters, data) 
+            try {
+                const { loading, error, onResult } = useQuery(queries.getData.searchCompanies, dataSearch)
                 onResult((res) => {
-                    console.log(res.data.findParters)
+                    console.log(res.data)
                 })
             } catch (error) {
                 console.log(error);
@@ -241,6 +285,8 @@ export default defineComponent({
 
         return {
             // getCartItems
+            dataSearch,
+            responApiSearchCompanies
         }
     }
 
