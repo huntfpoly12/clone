@@ -1,42 +1,22 @@
 <template>
   <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
     <a-col :span="16">
-      <a-form-item class="clb-label title" :label="title">
-        <a-upload
-          single
-          type="file"
-          v-model:file-list="fileList"
-          :show-upload-list="true"
-          name="fileUpload"
-          :before-upload="beforeUpload"
-          :on-remove="onRemove"
-          @change="handleChange"
-          :max-count="1"
-          accept=".tiff,.png,.jpeg,.jpg"
-        >
-          <a-button class="button-upload">
-            <upload-outlined></upload-outlined>
-            파일선택...
-          </a-button>
-        </a-upload>
+      
+      <input type="file" @change="onFileChange" />
 
         <a-space :size="10" align="start" style="margin-top: 8px">
-          <div>
-            <warning-filled :style="{ fontSize: '15px' }" />
-          </div>
           <div :span="22" class="warring-modal">
             <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
             <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
             <p>파일용량 : 최대 5MB</p>
           </div>
         </a-space>
-      </a-form-item>
     </a-col>
 
     <a-col :span="7">
       <div class="img-preview">
         <img
-          v-if="imageUrl && showImg == true"
+          v-if="imageUrl && showImg"
           :src="imageUrl"
           @click="handlePreview"
         />
@@ -90,7 +70,6 @@ export default defineComponent({
       default: "SubscriptionRequestCompanyLicense",
     },
   },
-
   components: {
     UploadOutlined,
     MinusCircleOutlined,
@@ -144,7 +123,26 @@ export default defineComponent({
     const onRemove = () => {
       showImg.value = false;
     };
-
+    let preview = ref<any>('')
+    const onFileChange = async (e: { target: { files: any[]; }; }) => {
+      const file = e.target.files[0];
+      getBase64(file, (base64Url: string) => {
+          imageUrl.value = base64Url;
+          loading.value = false;
+          //emit("update-img", dataImage);
+          console.log("datta");
+        });
+   
+      const formData = new FormData();
+        formData.append("category", "SubscriptionRequestCompanyLicense");
+        formData.append("file", file);
+      try {
+          const data = await uploadRepository.public(formData);
+          console.log(data)
+        } catch (error) {
+          
+        }
+    }
     const handleChange = async (info: any, fileList: any) => {
       fileName = info.file.name;
       if (info.file.status === "uploading" && info.file.percent === 100) {
@@ -188,6 +186,8 @@ export default defineComponent({
       file,
       fileName,
       showImg,
+      onFileChange,
+      preview
     };
   },
 });
