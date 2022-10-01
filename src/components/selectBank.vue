@@ -1,12 +1,8 @@
 <template>
   <div>
     <a-space>
-      <a-select
-        ref="select"
-        @change="handleChange"
-        v-model="bankType.label"
-        :options="bankType"
-      >
+      <a-select ref="select" @change="handleChange" v-model="bankType.label" :options="bankType" style="width: {{width}}px"
+        v-model:value="selectValue">
       </a-select>
     </a-space>
   </div>
@@ -16,11 +12,21 @@ import { ref } from "vue";
 import type { SelectProps } from "ant-design-vue";
 import { log } from "console";
 export default {
+  props: {
+    selectValue: {
+      default: "39",
+    },
+    width:{
+      type: String,
+      required: false,
+      default: "100",
+    }
+  },
   components: {},
   data() {
     return {};
   },
-  mounted() {},
+  mounted() { },
   methods: {
     onChange(data: any) {
       // this.bankType = data;
