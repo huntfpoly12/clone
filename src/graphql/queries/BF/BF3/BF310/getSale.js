@@ -20,7 +20,7 @@ export default gql`
                 }
                 ) {
                     datas {
-                        code
+                        id
                         name
                     }
                 }

@@ -7,7 +7,7 @@
             <div class="list-action">
                 <a-tooltip>
                     <template #title>조회</template>
-                    <a-button @click="searching">
+                    <a-button>
                         <SearchOutlined />
                     </a-button>
                 </a-tooltip>
@@ -52,7 +52,8 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">영업자 :</label>
-                        <a-select v-model="originData.salesRepresentativeId" :options="arraySale" placeholder="전체">
+                        <a-select v-model:value="originData.salesRepresentativeId" :options="arraySale"
+                            placeholder="전체">
                         </a-select>
                     </a-col>
                     <a-col>
@@ -63,17 +64,12 @@
                         <a-button @click="searching">Tìm kiếm</a-button>
                     </a-col>
                 </a-row>
-
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
+                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
+                    :column-auto-width="true">
                     <DxSelection mode="multiple" />
-                    <DxPaging :page-size="10" />
-
-                    <DxPager :visible="true" :allowed-page-sizes="pageSizes" :display-mode="displayMode"
-                        :show-page-size-selector="showPageSizeSelector" :show-info="showInfo"
-                        :show-navigation-buttons="showNavButtons" />
-
+                    <DxPaging :page-size="rowTable" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
@@ -136,8 +132,15 @@
                         </div>
                     </template>
                 </DxDataGrid>
+
+                <div class="pagination-table">
+                    <a-pagination v-model:current="originData.page" v-model:page-size="pageSize" :total="rowTable"
+                        show-less-items @change="changePage" />
+                </div>
+
                 <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
             </div>
+
         </div>
     </a-spin>
 
@@ -215,13 +218,10 @@ export default defineComponent({
             pageSizes: [5, 10, 15],
             displayMode: 'full',
             showPageSizeSelector: true,
-            showInfo: false,
             showNavButtons: true,
-            // activeTab.name 
         };
     },
     setup() {
-        const popupData = ref();
         const dataSource = ref([]);
         const modalStatus = ref(false);
         const idSubRequest = ref();
@@ -235,29 +235,32 @@ export default defineComponent({
             name: "",
             code: ""
         })
-        const originData = {
+        const rowTable = ref(10)
+        const originData = ref({
             page: 1,
-            rows: 100,
+            rows: 20,
             salesRepresentativeId: null,
             startDate: '',
             finishDate: ''
-        }
+        })
 
         const setModalVisible = (data: any,) => {
             idSubRequest.value = data.data.id;
             modalStatus.value = true;
         }
 
+        const pageSize = ref(20)
+
 
         const { onResult: resultSale } = useQuery(queries.getSale, requestDataSale)
 
         resultSale((res) => {
-            var dataRes = res.data.searchSalesRepresentatives.datas
+            var dataRes = res.data.searchSalesRepresentatives.datas 
             let arrayAdd: any = []
             if (dataRes.length > 0) {
                 dataRes.map((x: any, index: any) => {
                     arrayAdd.push({
-                        value: x.code,
+                        value: x.id,
                         label: x.name,
                     })
                 })
@@ -265,10 +268,16 @@ export default defineComponent({
             arraySale.value = arrayAdd
         })
 
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originData)
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originData.value)
 
         onResult((res) => {
-            dataSource.value = res.data.searchSubscriptionRequests.datas
+            if (res.loading) {
+            } else {
+                console.log(res);
+                rowTable.value = res.data.searchSubscriptionRequests.totalCount
+                dataSource.value = res.data.searchSubscriptionRequests.datas
+            }
+
         })
 
         setTimeout(() => {
@@ -278,21 +287,18 @@ export default defineComponent({
         return {
             idSubRequest,
             dataSource,
-            popupData,
             modalStatus,
-
+            rowTable,
             setModalVisible,
             spinning,
             arraySale,
             originData,
             requestDataSale,
-            refetchData
+            refetchData,
+            pageSize
         }
     },
-    mounted() {
-        // this.searchSubscriptionRequests(this.originData)
-        // this.searchSaleRequests(this.requestDataSale)
-    },
+
     watch: {
         'dateSearch'(newVal) {
             if (newVal != null) {
@@ -348,16 +354,31 @@ export default defineComponent({
             setTimeout(() => {
                 this.spinning = false
             }, 1000);
+        },
+
+        changePage() {
+            this.spinning = !this.spinning;
+            setTimeout(() => {
+                this.spinning = !this.spinning;
+            }, 1000);
         }
     },
 
 });
 </script>
+
 <style lang="scss" scoped>
+.page-content {
+    padding-top: 10px;
+}
+
+.pagination-table {
+    margin-top: 10px;
+}
+
 .dx-button-has-text .dx-button-content {
     padding: 0px 15px !important;
 }
-
 
 ::v-deep .dx-toolbar-after {
     display: flex;
@@ -479,5 +500,10 @@ export default defineComponent({
 
 ::v-deep .cell-center {
     text-align: center !important
+}
+
+
+::v-deep .ant-pagination-options {
+    display: none;
 }
 </style>

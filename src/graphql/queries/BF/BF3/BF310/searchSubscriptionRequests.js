@@ -33,7 +33,16 @@ export default gql`
                 name
                 startYearMonth
             }
-            
+            # compactSalesRepresentative{
+            #     id
+            #     code
+            #     name
+            #     active
+            # }
+            simpleWithholdingInfo {
+                name
+                startYearMonth
+            }
         }
         }
     }`
