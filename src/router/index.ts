@@ -70,10 +70,6 @@ const routes = [
       {
         path: "cm-130",
         component: () => import('../views/CM/CM1/CM130/index.vue')
-      },
-      {
-        path: "test",
-        component: () => import('../views/TestCommon.vue')
       }
     ]
   }
