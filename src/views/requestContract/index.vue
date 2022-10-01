@@ -335,7 +335,7 @@ import postCode from "./postCode.vue"
 
 import { useMutation } from '@vue/apollo-composable'
 import gql from 'graphql-tag'
-
+import { useRouter } from "vue-router";
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -422,6 +422,7 @@ export default {
 
 
     setup() {
+        const router = useRouter();
         const contractCreacted = reactive(
             {
                 terms: true,
