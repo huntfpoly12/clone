@@ -8,6 +8,7 @@
             <a-step :status="checkStepFour" title="신청완료!" />
         </a-steps>
         <div class="step-content">
+            
             <template v-if="step === 0">
                 <div class="form-group">
                     <label>1. 서비스약관 동의</label>
@@ -103,7 +104,9 @@
                             <a-input class="width-auto" v-model:value="contractCreacted.fax" placeholder="0212345678" />
                         </div>
                         <div>
-                            <imgUpload :title="titleModal" @update-img="getImgUrl" style="margin-top: 10px;" />
+                            <keep-alive>
+                                <imgUpload :title="titleModal" @update-img="getImgUrl" style="margin-top: 10px;" />
+                            </keep-alive>
                         </div>
                     </div>
                 </div>
@@ -196,7 +199,9 @@
                     </div>
 
                     <div>
-                        <imgUpload :title="titleModal" @update-img="getImgUrlAccounting" style="margin-top: 10px;" />
+                        <keep-alive>
+                            <imgUpload :title="titleModal" @update-img="getImgUrlAccounting" style="margin-top: 10px;" />
+                        </keep-alive>
                     </div>
                     <div class="form-item">
                         <label>부가서비스:</label>

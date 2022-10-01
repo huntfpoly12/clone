@@ -19,12 +19,7 @@
                 </a-col>
                 <a-col>
                     <label class="lable-item">영업자 :</label>
-                    <a-select ref="select" v-model:value="dataSearch.select1" placeholder="전체">
-                        <a-select-option value="A 대리점">A 대리점</a-select-option>
-                        <a-select-option value="C 영업사원">C 영업사원</a-select-option>
-                        <a-select-option value="D 영업사원">D 영업사원</a-select-option>
-                        <a-select-option value="E 본사영업사원">E 본사영업사원</a-select-option>
-                    </a-select>
+                    <ListSalesDropdown />
                 </a-col>
                 <a-col>
                     <label class="lable-item">신청기간 :</label>
@@ -126,7 +121,7 @@ import {
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-
+import ListSalesDropdown from '../../../../components/ListSalesDropdown.vue';
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -145,7 +140,8 @@ export default defineComponent({
         locale,
         DxDateBox,
         SearchOutlined,
-        EditOutlined
+        EditOutlined,
+        ListSalesDropdown
     },
     data() {
         return {
