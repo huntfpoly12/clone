@@ -12,25 +12,75 @@
 						<a-collapse v-model:activeKey="activeKey" accordion>
 							<a-collapse-panel key="1" header="심사정보">
 								<a-form-item label="승인상태">
-									<a-dropdown>
-										<div v-html="yourVariable"></div>
+									<a-dropdown :trigger="['click']">
+										<div v-html="dataSelectModal" style="width: 200px"></div>
 										<template #overlay>
-											<DxDataGrid width="500px" :data-source="gridDataSource"
-												v-model:selected-row-keys="gridBoxValue"
-												@selection-changed="onGridSelectionChanged(gridBoxValue)"
-												:show-borders="true" key-expr="ID" :columns="gridColumns">
-												<DxSelection mode="single" />
-												<DxPaging :page-size="5" />
-												<DxColumn data-field="신청코드" />
-												<DxColumn data-field="심사상태" data-type="date"
-													cell-template="grid-cell" />
-												<template #grid-cell="{ data }">
-													<a-tag :color="getColorTag(data.value)">{{
-													data.value
-													}}</a-tag>
+											<a-table :columns="[{name: 'Name',dataIndex: 'name',key: 'name',},{title: 'date',dataIndex: 'date',key: 'date'},]" :data-source="[{ name: 'John Brown',date: '32'},{ name: 'John Brown',date: '32'}]" :pagination="false" bordered :showHeader="false">
+												<template #bodyCell="{ column, record }">
+													<template v-if="column.key === 'name'">
+														<a>
+														{{ record.name }}
+														</a>
+													</template>
+													<template v-if="column.key === 'date'">
+														<a>
+														{{ record.date }}
+														</a>
+													</template>
 												</template>
-												<DxColumn data-field="상호" data-type="date" />
-											</DxDataGrid>
+											</a-table>
+											<!-- <a-menu @click="onClick">
+												<a-menu-item key="1">
+													<div style="display: flex;padding: 6px;">
+														<div
+															style="width: 60px; padding-right: 6px; margin-right: 0px;">
+															<span>
+																<a-tag color="green">승인</a-tag>
+															</span>
+														</div>
+														<span
+															style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">2022-08-25</span>
+													</div>
+												</a-menu-item>
+												<a-menu-item key="2">
+													<div style="display: flex;padding: 6px;">
+														<div
+															style="width: 60px; padding-right: 6px; margin-right: 0px;">
+															<span>
+																<a-tag color="red">신청</a-tag>
+															</span>
+														</div>
+
+														<span
+															style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">2022-08-25</span>
+													</div>
+												</a-menu-item>
+												<a-menu-item key="3">
+													<div style="display: flex;padding: 6px;">
+														<div
+															style="width: 60px; padding-right: 6px; margin-right: 0px;">
+															<span>
+																<a-tag color="blue">심사중</a-tag>
+															</span>
+														</div>
+
+														<span
+															style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">2022-08-25</span>
+													</div>
+												</a-menu-item>
+												<a-menu-item key="3">
+													<div style="display: flex;padding: 6px;">
+														<div
+															style="width: 60px; padding-right: 6px; margin-right: 0px;">
+															<span>
+																<a-tag color="grey">반려</a-tag>
+															</span>
+														</div>
+														<span
+															style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">2022-08-25</span>
+													</div>
+												</a-menu-item>
+											</a-menu> -->
 										</template>
 									</a-dropdown>
 								</a-form-item>
@@ -80,18 +130,16 @@
 								<a-row>
 									<a-col :span="12">
 										<a-form-item label="사업자유형" class="clr">
-											<a-radio-group
-											v-model:value="formState.companyBizType">
+											<a-radio-group v-model:value="formState.companyBizType">
 												<a-radio :value="1" class="clb" checked>법인사업자</a-radio>
 												<a-radio :value="2" class="clb">개인사업자</a-radio>
 											</a-radio-group>
 										</a-form-item>
 									</a-col>
 									<a-col :span="2">
-										<a-form-item
-											:label="changeTypeCompany(formState.companyBizType)">
+										<a-form-item :label="changeTypeCompany(formState.companyBizType)">
 											<a-input placeholder="800123-1234567" style="width: 300px"
-											v-model:value="formState.companyResidentId" />
+												v-model:value="formState.companyResidentId" />
 										</a-form-item>
 									</a-col>
 								</a-row>
@@ -110,14 +158,12 @@
 										</a-col>
 										<a-col :span="24">
 											<a-row>
-												<a-input
-													v-model:value="formState.companyRoadAddress" />
+												<a-input v-model:value="formState.companyRoadAddress" />
 											</a-row>
 										</a-col>
 										<a-col :span="24">
 											<a-row>
-												<a-input
-													v-model:value="formState.companyAddressExtend" />
+												<a-input v-model:value="formState.companyAddressExtend" />
 											</a-row>
 										</a-col>
 									</a-row>
@@ -143,17 +189,16 @@
 								</a-form-item>
 								<a-form-item has-feedback label="생년월일" class="clr">
 									<a-input placeholder="19620820" autocomplete="off" style="width: 300px"
-									v-model:value="formState.presidentBirthday" />
+										v-model:value="formState.presidentBirthday" />
 								</a-form-item>
 								<a-form-item has-feedback label="휴대폰번호" class="clr">
 									<a-input placeholder="01098765432" style="width: 200px"
-									v-model:value="formState.presidentPhone" />
+										v-model:value="formState.presidentPhone" />
 								</a-form-item>
 
 								<a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
 									:rules="[{ type: 'email' }]">
-									<a-input style="width: 200px"
-									v-model:value="formState.presidentEmail" />
+									<a-input style="width: 200px" v-model:value="formState.presidentEmail" />
 								</a-form-item>
 
 
@@ -203,8 +248,7 @@
 													<p>부가서비스</p>
 												</a-col>
 												<a-col :span="12">
-													<a-checkbox
-														v-model:checked="formState.accountingServiceTypes[0]">
+													<a-checkbox v-model:checked="formState.accountingServiceTypes[0]">
 														회계입력대행서비스</a-checkbox>
 												</a-col>
 											</a-row>
@@ -219,8 +263,7 @@
 
 										<a-form-item label="서비스 시작년월" class="clr">
 											<div style="width: 200px;">
-												<CustomDatepicker
-													:valueDate="formState.withholdingYearMonth"
+												<CustomDatepicker :valueDate="formState.withholdingYearMonth"
 													className="0" />
 											</div>
 										</a-form-item>
@@ -229,8 +272,7 @@
 												v-model:value="formState.withholdingCapacity" />
 										</a-form-item>
 										<a-form-item label="부가서비스">
-											<a-checkbox
-												v-model:checked="formState.withholdingServiceTypes[0]">
+											<a-checkbox v-model:checked="formState.withholdingServiceTypes[0]">
 												4대보험신고서비스</a-checkbox>
 										</a-form-item>
 
@@ -242,16 +284,13 @@
 									<selectBank :selectValue="formState.cmsBankType" />
 								</a-form-item>
 								<a-form-item label="출금계좌번호" class="clr">
-									<a-input placeholder="100100056489011"
-										v-model:value="formState.accountNumber" />
+									<a-input placeholder="100100056489011" v-model:value="formState.accountNumber" />
 								</a-form-item>
 								<a-form-item label="예금주명" class="clr">
-									<a-input placeholder="주식회사 타운소프트비나"
-										v-model:value="formState.ownerName" />
+									<a-input placeholder="주식회사 타운소프트비나" v-model:value="formState.ownerName" />
 								</a-form-item>
 								<a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
-									<a-input placeholder="100100056489011"
-										v-model:value="formState.ownerBizNumber" />
+									<a-input placeholder="100100056489011" v-model:value="formState.ownerBizNumber" />
 									<div class="noteImage">
 										<a-row>
 											<a-col :span="1">
@@ -278,8 +317,7 @@
 							</a-collapse-panel>
 							<a-collapse-panel key="7" header="기타">
 								<a-form-item label="영업관리담당">
-									<a-select ref="select"
-										v-model:value="formState.extraSalesRepresentativeId"
+									<a-select ref="select" v-model:value="formState.extraSalesRepresentativeId"
 										style="width: 200px">
 										<a-select-option :value="1">A 대리점</a-select-option>
 										<a-select-option :value="2">농협</a-select-option>
@@ -289,8 +327,7 @@
 									</a-select>
 								</a-form-item>
 								<a-form-item label="전달사항">
-									<a-textarea v-model:value="formState.extraComment"
-										placeholder="전달사항입력" />
+									<a-textarea v-model:value="formState.extraComment" placeholder="전달사항입력" />
 								</a-form-item>
 							</a-collapse-panel>
 						</a-collapse>
@@ -312,6 +349,7 @@ import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import { useQuery } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch, onUpdated } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
+import type { MenuProps } from 'ant-design-vue';
 import {
 	DxDataGrid,
 	DxColumn,
@@ -343,7 +381,7 @@ export default defineComponent({
 			은행선택: '은행선택',
 			영업관리담당: '은행선택',
 			gridDataSource: employees,
-		
+
 			gridBoxValue: [],
 			fileList: [],
 			gridColumns: ["심사상태", "사업자코드", "상호"],
@@ -414,8 +452,7 @@ export default defineComponent({
 			titleModal: "사업자등록증",
 			titleModal2: "장기요양기관등록증",
 			states,
-			dataSelectModal:
-				'<button style="width:100%;height : 36px;text-align: left;background: white; border: 1px solid #d9d9d9; padding: 4px 6px; ">Select a value...</button>',
+			
 		};
 	},
 	apollo: {
@@ -455,80 +492,80 @@ export default defineComponent({
 			wrapperCol: { span: 16 },
 		};
 
-		
-		const formState =  reactive({
-				status: "",
-				code: "",
-				companyName: "",
-				companyBizNumber: "",
-				companyAddress: "",
-				presidentName: "",
-				simpleAccountingInfos: [],
-				simpleWithholdingInfoName: "",
-				simpleWithholdingInfoYearMonth: "",
-				processedAt: "",
-				approvedAt: "",
-				rejectedAt: "",
+		const dataSelectModal = ref('<button style="width:100%;height : 36px;text-align: left;background: white; border: 1px solid #d9d9d9; padding: 4px 6px; ">Select a value...x</button>');
+		const formState = reactive({
+			status: "",
+			code: "",
+			companyName: "",
+			companyBizNumber: "",
+			companyAddress: "",
+			presidentName: "",
+			simpleAccountingInfos: [],
+			simpleWithholdingInfoName: "",
+			simpleWithholdingInfoYearMonth: "",
+			processedAt: "",
+			approvedAt: "",
+			rejectedAt: "",
 
-				agreementsTerms: true,
-				agreementsPersonalInfo: true,
-				agreementsAccountingService: true,
-				agreementsWithholdingService: true,
+			agreementsTerms: true,
+			agreementsPersonalInfo: true,
+			agreementsAccountingService: true,
+			agreementsWithholdingService: true,
 
-				companyZipcode: "",
-				companyRoadAddress: "",
-				companyJibunAddress: "",
+			companyZipcode: "",
+			companyRoadAddress: "",
+			companyJibunAddress: "",
 
-				companyAddressExtend: "",
-				companyAddressDetailBcode: "",
-				companyAddressDetailBname: "",
-				companyAddressDetailBuildingCode: "",
-				companyAddressDetailBuildingName: "",
-				companyAddressDetailRoadname: "",
-				companyAddressDetailRoadnameCode: "",
-				companyAddressDetailSido: "",
-				companyAddressDetailSigungu: "",
-				companyAddressDetailSigunguCode: "",
-				companyAddressDetailZonecode: "",
+			companyAddressExtend: "",
+			companyAddressDetailBcode: "",
+			companyAddressDetailBname: "",
+			companyAddressDetailBuildingCode: "",
+			companyAddressDetailBuildingName: "",
+			companyAddressDetailRoadname: "",
+			companyAddressDetailRoadnameCode: "",
+			companyAddressDetailSido: "",
+			companyAddressDetailSigungu: "",
+			companyAddressDetailSigunguCode: "",
+			companyAddressDetailZonecode: "",
 
-				companyPhone: "",
-				companyFax: "",
-				companyLicenseFileStorageId: "",
-				companyBizType: 0,
-				companyResidentId: "",
-				companyLicense: "",
+			companyPhone: "",
+			companyFax: "",
+			companyLicenseFileStorageId: "",
+			companyBizType: 0,
+			companyResidentId: "",
+			companyLicense: "",
 
-				presidentContentName: "",
-				presidentBirthday: "",
-				presidentPhone: "",
-				presidentEmail: "",
-				accountingfacilityBusinesses: [],
-				accountingServiceTypes:[],
+			presidentContentName: "",
+			presidentBirthday: "",
+			presidentPhone: "",
+			presidentEmail: "",
+			accountingfacilityBusinesses: [],
+			accountingServiceTypes: [],
 
-				withholdingYearMonth: "",
-				withholdingCapacity: 1234,
-				withholdingServiceTypes: [],
+			withholdingYearMonth: "",
+			withholdingCapacity: 1234,
+			withholdingServiceTypes: [],
 
-				cmsBankType: "",
-				accountNumber: "",
-				ownerName: "",
-				ownerBizNumber: "",
-				withdrawDay: "",
+			cmsBankType: "",
+			accountNumber: "",
+			ownerName: "",
+			ownerBizNumber: "",
+			withdrawDay: "",
 
-				compactSalesRepresentativeID: "",
-				compactSalesRepresentativeCode: "",
-				compactSalesRepresentativeName: "",
-				compactSalesRepresentativeActive: "",
+			compactSalesRepresentativeID: "",
+			compactSalesRepresentativeCode: "",
+			compactSalesRepresentativeName: "",
+			compactSalesRepresentativeActive: "",
 
-				memo: "",
-				createdAt: "",
-				createdBy: "",
-				updatedBy: "",
-				ip: "",
-				active: "",
+			memo: "",
+			createdAt: "",
+			createdBy: "",
+			updatedBy: "",
+			ip: "",
+			active: "",
 
-				extraSalesRepresentativeId: 1,
-				extraComment: '',
+			extraSalesRepresentativeId: 1,
+			extraComment: '',
 		});
 
 		const onFinish = (values: any) => {
@@ -555,96 +592,91 @@ export default defineComponent({
 				trigger.value = false;
 			}
 		});
-
-	
-		
-
-	
 		const { result, loading, error, onResult, refetch } = useQuery(queries.getSubscriptionRequest, dataQuery, () => ({
 			enabled: trigger.value,
 		}));
 
 		watch(result, value => {
-			if(value && value.getSubscriptionRequest){
+			if (value && value.getSubscriptionRequest) {
 
-			formState.status = value.getSubscriptionRequest.companyBizNumber;
-			formState.code = value.getSubscriptionRequest.code;
-			formState.companyName = value.getSubscriptionRequest.companyBizNumber;
-			formState.companyBizNumber= value.getSubscriptionRequest.companyBizNumber;
-			formState.companyAddress = value.getSubscriptionRequest.companyAddress;
-			formState.presidentName = value.getSubscriptionRequest.presidentName;
-		
-			formState.simpleWithholdingInfoName = value.getSubscriptionRequest.simpleAccountingInfos.name;
-			formState.simpleWithholdingInfoYearMonth = value.getSubscriptionRequest.simpleAccountingInfos.startYearMonth;
+				formState.status = value.getSubscriptionRequest.companyBizNumber;
+				formState.code = value.getSubscriptionRequest.code;
+				formState.companyName = value.getSubscriptionRequest.companyBizNumber;
+				formState.companyBizNumber = value.getSubscriptionRequest.companyBizNumber;
+				formState.companyAddress = value.getSubscriptionRequest.companyAddress;
+				formState.presidentName = value.getSubscriptionRequest.presidentName;
 
-			formState.processedAt = value.getSubscriptionRequest.processedAt;
-			formState.approvedAt = value.getSubscriptionRequest.approvedAt;
-			formState.rejectedAt = value.getSubscriptionRequest.rejectedAt;
+				formState.simpleWithholdingInfoName = value.getSubscriptionRequest.simpleAccountingInfos.name;
+				formState.simpleWithholdingInfoYearMonth = value.getSubscriptionRequest.simpleAccountingInfos.startYearMonth;
 
-			formState.agreementsTerms= value.getSubscriptionRequest.content.agreements.terms;
-			formState.agreementsPersonalInfo= value.getSubscriptionRequest.content.agreements.personalInfo;
-			formState.agreementsAccountingService= value.getSubscriptionRequest.content.agreements.accountingService;
-			formState.agreementsWithholdingService= value.getSubscriptionRequest.content.agreements.withholdingService;
+				formState.processedAt = value.getSubscriptionRequest.processedAt;
+				formState.approvedAt = value.getSubscriptionRequest.approvedAt;
+				formState.rejectedAt = value.getSubscriptionRequest.rejectedAt;
 
-			formState.companyZipcode = value.getSubscriptionRequest.content.company.zipcode;
-			formState.companyRoadAddress = value.getSubscriptionRequest.content.company.roadAddress;
-			formState.companyJibunAddress = value.getSubscriptionRequest.content.company.jibunAddress;
+				formState.agreementsTerms = value.getSubscriptionRequest.content.agreements.terms;
+				formState.agreementsPersonalInfo = value.getSubscriptionRequest.content.agreements.personalInfo;
+				formState.agreementsAccountingService = value.getSubscriptionRequest.content.agreements.accountingService;
+				formState.agreementsWithholdingService = value.getSubscriptionRequest.content.agreements.withholdingService;
 
-			formState.companyAddressExtend = value.getSubscriptionRequest.content.company.addressExtend;
-			formState.companyAddressDetailBcode = value.getSubscriptionRequest.content.company.addressDetail.bcode;
-			formState.companyAddressDetailBname = value.getSubscriptionRequest.content.company.addressDetail.bname;
-			formState.companyAddressDetailBuildingCode = value.getSubscriptionRequest.content.company.addressDetail.buildingCode;
-			formState.companyAddressDetailBuildingName = value.getSubscriptionRequest.content.company.addressDetail.buildingName;
-			formState.companyAddressDetailRoadname = value.getSubscriptionRequest.content.company.addressDetail.roadname;
-			formState.companyAddressDetailRoadnameCode = value.getSubscriptionRequest.content.company.addressDetail.roadnameCode;
-			formState.companyAddressDetailSido = value.getSubscriptionRequest.content.company.addressDetail.sido;
-			formState.companyAddressDetailSigungu = value.getSubscriptionRequest.content.company.addressDetail.sigungu;
-			formState.companyAddressDetailSigunguCode = value.getSubscriptionRequest.content.company.addressDetail.sigunguCode;
-			formState.companyAddressDetailZonecode = value.getSubscriptionRequest.content.company.addressDetail.zonecode;
+				formState.companyZipcode = value.getSubscriptionRequest.content.company.zipcode;
+				formState.companyRoadAddress = value.getSubscriptionRequest.content.company.roadAddress;
+				formState.companyJibunAddress = value.getSubscriptionRequest.content.company.jibunAddress;
 
-			formState.companyPhone = value.getSubscriptionRequest.content.company.phone;
-			formState.companyFax = value.getSubscriptionRequest.content.company.fax;
-			formState.companyLicenseFileStorageId = value.getSubscriptionRequest.content.company.licenseFileStorageId;
-			formState.companyBizType= value.getSubscriptionRequest.content.company.bizType;
-			formState.companyResidentId = value.getSubscriptionRequest.content.company.residentId;
-			formState.companyLicense = value.getSubscriptionRequest.content.company.license;
+				formState.companyAddressExtend = value.getSubscriptionRequest.content.company.addressExtend;
+				formState.companyAddressDetailBcode = value.getSubscriptionRequest.content.company.addressDetail.bcode;
+				formState.companyAddressDetailBname = value.getSubscriptionRequest.content.company.addressDetail.bname;
+				formState.companyAddressDetailBuildingCode = value.getSubscriptionRequest.content.company.addressDetail.buildingCode;
+				formState.companyAddressDetailBuildingName = value.getSubscriptionRequest.content.company.addressDetail.buildingName;
+				formState.companyAddressDetailRoadname = value.getSubscriptionRequest.content.company.addressDetail.roadname;
+				formState.companyAddressDetailRoadnameCode = value.getSubscriptionRequest.content.company.addressDetail.roadnameCode;
+				formState.companyAddressDetailSido = value.getSubscriptionRequest.content.company.addressDetail.sido;
+				formState.companyAddressDetailSigungu = value.getSubscriptionRequest.content.company.addressDetail.sigungu;
+				formState.companyAddressDetailSigunguCode = value.getSubscriptionRequest.content.company.addressDetail.sigunguCode;
+				formState.companyAddressDetailZonecode = value.getSubscriptionRequest.content.company.addressDetail.zonecode;
 
-			formState.presidentContentName = value.getSubscriptionRequest.content.president.name;
-			formState.presidentBirthday = value.getSubscriptionRequest.content.president.birthday;
-			formState.presidentPhone = value.getSubscriptionRequest.content.president.mobilePhone;
-			formState.presidentEmail = value.getSubscriptionRequest.content.president.email;
+				formState.companyPhone = value.getSubscriptionRequest.content.company.phone;
+				formState.companyFax = value.getSubscriptionRequest.content.company.fax;
+				formState.companyLicenseFileStorageId = value.getSubscriptionRequest.content.company.licenseFileStorageId;
+				formState.companyBizType = value.getSubscriptionRequest.content.company.bizType;
+				formState.companyResidentId = value.getSubscriptionRequest.content.company.residentId;
+				formState.companyLicense = value.getSubscriptionRequest.content.company.license;
 
-			formState.accountingfacilityBusinesses = value.getSubscriptionRequest.content.accounting.facilityBusinesses;
-			formState.accountingServiceTypes= value.getSubscriptionRequest.content.accounting.accountingServiceTypes;
+				formState.presidentContentName = value.getSubscriptionRequest.content.president.name;
+				formState.presidentBirthday = value.getSubscriptionRequest.content.president.birthday;
+				formState.presidentPhone = value.getSubscriptionRequest.content.president.mobilePhone;
+				formState.presidentEmail = value.getSubscriptionRequest.content.president.email;
 
-			formState.withholdingYearMonth = value.getSubscriptionRequest.content.withholding.startYearMonth;
-			formState.withholdingCapacity = value.getSubscriptionRequest.content.withholding.capacity;
-			formState.withholdingServiceTypes = value.getSubscriptionRequest.content.withholding.withholdingServiceTypes;
+				formState.accountingfacilityBusinesses = value.getSubscriptionRequest.content.accounting.facilityBusinesses;
+				formState.accountingServiceTypes = value.getSubscriptionRequest.content.accounting.accountingServiceTypes;
 
-			formState.cmsBankType = value.getSubscriptionRequest.content.cmsBank.bankType;
-			formState.accountNumber = value.getSubscriptionRequest.content.cmsBank.accountNumber;
-			formState.ownerName = value.getSubscriptionRequest.content.cmsBank.ownerName;
-			formState.ownerBizNumber = value.getSubscriptionRequest.content.cmsBank.ownerBizNumber;
-			formState.withdrawDay = value.getSubscriptionRequest.content.cmsBank.withdrawDay;
+				formState.withholdingYearMonth = value.getSubscriptionRequest.content.withholding.startYearMonth;
+				formState.withholdingCapacity = value.getSubscriptionRequest.content.withholding.capacity;
+				formState.withholdingServiceTypes = value.getSubscriptionRequest.content.withholding.withholdingServiceTypes;
 
-			formState.extraSalesRepresentativeId= value.getSubscriptionRequest.content.extra.salesRepresentativeId;
-			formState.extraComment= value.getSubscriptionRequest.content.extra.comment;
+				formState.cmsBankType = value.getSubscriptionRequest.content.cmsBank.bankType;
+				formState.accountNumber = value.getSubscriptionRequest.content.cmsBank.accountNumber;
+				formState.ownerName = value.getSubscriptionRequest.content.cmsBank.ownerName;
+				formState.ownerBizNumber = value.getSubscriptionRequest.content.cmsBank.ownerBizNumber;
+				formState.withdrawDay = value.getSubscriptionRequest.content.cmsBank.withdrawDay;
 
-			formState.compactSalesRepresentativeID = value.getSubscriptionRequest.compactSalesRepresentative.id;
-			formState.compactSalesRepresentativeCode = value.getSubscriptionRequest.compactSalesRepresentative.code;
-			formState.compactSalesRepresentativeName = value.getSubscriptionRequest.compactSalesRepresentative.name;
-			formState.compactSalesRepresentativeActive = value.getSubscriptionRequest.compactSalesRepresentative.active;
+				formState.extraSalesRepresentativeId = value.getSubscriptionRequest.content.extra.salesRepresentativeId;
+				formState.extraComment = value.getSubscriptionRequest.content.extra.comment;
 
-			formState.memo = value.getSubscriptionRequest.memo;
-			formState.createdAt = value.getSubscriptionRequest.createdAt;
-			formState.createdBy = value.getSubscriptionRequest.createdBy;
-			formState.updatedBy = value.getSubscriptionRequest.updatedBy;
-			formState.ip = value.getSubscriptionRequest.ip;
-			formState.active = value.getSubscriptionRequest.active;
+				formState.compactSalesRepresentativeID = value.getSubscriptionRequest.compactSalesRepresentative.id;
+				formState.compactSalesRepresentativeCode = value.getSubscriptionRequest.compactSalesRepresentative.code;
+				formState.compactSalesRepresentativeName = value.getSubscriptionRequest.compactSalesRepresentative.name;
+				formState.compactSalesRepresentativeActive = value.getSubscriptionRequest.compactSalesRepresentative.active;
 
-		}
-			console.log(value,'gjgjhgj')
-    	})
+				formState.memo = value.getSubscriptionRequest.memo;
+				formState.createdAt = value.getSubscriptionRequest.createdAt;
+				formState.createdBy = value.getSubscriptionRequest.createdBy;
+				formState.updatedBy = value.getSubscriptionRequest.updatedBy;
+				formState.ip = value.getSubscriptionRequest.ip;
+				formState.active = value.getSubscriptionRequest.active;
+
+			}
+			console.log(value, 'gjgjhgj')
+		})
 
 		const setModalVisible = () => {
 			trigger.value = false;
@@ -658,6 +690,27 @@ export default defineComponent({
 				return '법인등록번호'
 			}
 		}
+
+		const onClick: MenuProps['onClick'] = ({  key }) => {
+			console.log( key);
+			switch (key) {
+				case '1':
+					dataSelectModal.value = 	'<div style="display: flex;padding: 6px;"><divstyle="width: 60px; padding-right: 6px; margin-right: 0px;"><span><a-tag color="green">승인</a-tag></span></div><span style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">2022-08-25</span></div>';
+					break;
+				case '2':
+					dataSelectModal.value = 	'<div style="display: flex;padding: 6px;"><divstyle="width: 60px; padding-right: 6px; margin-right: 0px;"><span><a-tag color="green">승인</a-tag></span></div><span style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">2022-08-25</span></div>';
+					break;
+				case '3':
+					dataSelectModal.value = 	'<div style="display: flex;padding: 6px;"><divstyle="width: 60px; padding-right: 6px; margin-right: 0px;"><span><a-tag color="green">승인</a-tag></span></div><span style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">2022-08-25</span></div>';
+					break;
+				case '4':
+					dataSelectModal.value = 	'<div style="display: flex;padding: 6px;"><divstyle="width: 60px; padding-right: 6px; margin-right: 0px;"><span><a-tag color="green">승인</a-tag></span></div><span style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">2022-08-25</span></div>';
+					break;
+				default:
+					break;
+			}
+
+		};
 		return {
 			formState,
 			onFinish,
@@ -667,7 +720,9 @@ export default defineComponent({
 			changeTypeCompany,
 			result,
 			error,
-			loading
+			loading,
+			onClick,
+			dataSelectModal
 		};
 	},
 	methods: {
@@ -688,7 +743,7 @@ export default defineComponent({
 			}
 		},
 		onGridSelectionChanged(value: any) {
-			let html  = value.getSubscriptionRequest.companyBizNumber;
+			let html = value.getSubscriptionRequest.companyBizNumber;
 			this.gridDataSource.map((element) => {
 				if (element.ID == value) {
 					console.log(element);
