@@ -3,7 +3,7 @@
     <a-col :span="16">
       
       <input type="file" @change="onFileChange" />
-
+      <p v-if="messageUpload">{{messageUpload}}</p>
         <a-space :size="10" align="start" style="margin-top: 8px">
           <div :span="22" class="warring-modal">
             <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
@@ -96,6 +96,7 @@ export default defineComponent({
     const fileList = ref<UploadProps["fileList"]>([]);
     const loading = ref<boolean>(false);
     let imageUrl = ref<any>("");
+    let messageUpload = ref<any>("");
     const file = ref<any>("");
     const previewVisible = ref(false);
     var fileName = ref<any>("");
@@ -124,8 +125,15 @@ export default defineComponent({
       showImg.value = false;
     };
     let preview = ref<any>('')
-    const onFileChange = async (e: { target: { files: any[]; }; }) => {
+    const onFileChange = async (e: {
+[x: string]: any; target: { files: any[]; }; 
+}) => {
       const file = e.target.files[0];
+      if (file.size > 1024 * 1024 * 5) {
+        e.preventDefault();
+        messageUpload = 'File must smaller than 5MB!';
+        return;
+      }
       const formData = new FormData();
         formData.append("category", "SubscriptionRequestCompanyLicense");
         formData.append("file", file);
@@ -141,28 +149,6 @@ export default defineComponent({
         }
       
     }
-    // const handleChange = async (info: any, fileList: any) => {
-    //   fileName = info.file.name;
-    //   if (info.file.status === "uploading" && info.file.percent === 100) {
-    //     const formData = new FormData();
-    //     formData.append("category", "SubscriptionRequestCompanyLicense");
-    //     formData.append("file", info.file.originFileObj);
-    //     let dataImage = "";
-    //     try {
-    //       const data = await uploadRepository.public(formData);
-    //       dataImage = data.data.id;
-    //     } catch (error) {
-    //       dataImage = "";
-    //     }
-
-    //     getBase64(info.file.originFileObj, (base64Url: string) => {
-    //       imageUrl.value = base64Url;
-    //       loading.value = false;
-    //       emit("update-img", dataImage);
-    //       console.log("datta");
-    //     });
-    //   }
-    // };
 
     const handleCancel = () => {
       previewVisible.value = false;
@@ -177,6 +163,7 @@ export default defineComponent({
       handlePreview,
       imageUrl,
       // handleChange,
+      messageUpload,
       beforeUpload,
       fileList,
       onRemove,
@@ -196,12 +183,6 @@ export default defineComponent({
   width: 100%;
 }
 
-// .imgPreview {
-//   cursor: pointer;
-//   //   width: 100%;
-//   width: 50px;
-//   height: 350px;
-// }
 .img-preview {
   position: relative;
   width: 100%;
