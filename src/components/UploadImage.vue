@@ -126,45 +126,43 @@ export default defineComponent({
     let preview = ref<any>('')
     const onFileChange = async (e: { target: { files: any[]; }; }) => {
       const file = e.target.files[0];
-      getBase64(file, (base64Url: string) => {
-          imageUrl.value = base64Url;
-          loading.value = false;
-          //emit("update-img", dataImage);
-          console.log("datta");
-        });
-   
       const formData = new FormData();
         formData.append("category", "SubscriptionRequestCompanyLicense");
         formData.append("file", file);
       try {
           const data = await uploadRepository.public(formData);
-          console.log(data)
-        } catch (error) {
-          
-        }
-    }
-    const handleChange = async (info: any, fileList: any) => {
-      fileName = info.file.name;
-      if (info.file.status === "uploading" && info.file.percent === 100) {
-        const formData = new FormData();
-        formData.append("category", "SubscriptionRequestCompanyLicense");
-        formData.append("file", info.file.originFileObj);
-        let dataImage = "";
-        try {
-          const data = await uploadRepository.public(formData);
-          dataImage = data.data.id;
-        } catch (error) {
-          dataImage = "";
-        }
-
-        getBase64(info.file.originFileObj, (base64Url: string) => {
+          getBase64(file, (base64Url: string) => {
           imageUrl.value = base64Url;
           loading.value = false;
-          emit("update-img", dataImage);
-          console.log("datta");
-        });
-      }
-    };
+          emit("update-img", data.data.id);
+        })
+        } catch (error) {
+          console.log(error)
+        }
+      
+    }
+    // const handleChange = async (info: any, fileList: any) => {
+    //   fileName = info.file.name;
+    //   if (info.file.status === "uploading" && info.file.percent === 100) {
+    //     const formData = new FormData();
+    //     formData.append("category", "SubscriptionRequestCompanyLicense");
+    //     formData.append("file", info.file.originFileObj);
+    //     let dataImage = "";
+    //     try {
+    //       const data = await uploadRepository.public(formData);
+    //       dataImage = data.data.id;
+    //     } catch (error) {
+    //       dataImage = "";
+    //     }
+
+    //     getBase64(info.file.originFileObj, (base64Url: string) => {
+    //       imageUrl.value = base64Url;
+    //       loading.value = false;
+    //       emit("update-img", dataImage);
+    //       console.log("datta");
+    //     });
+    //   }
+    // };
 
     const handleCancel = () => {
       previewVisible.value = false;
@@ -178,7 +176,7 @@ export default defineComponent({
       handleCancel,
       handlePreview,
       imageUrl,
-      handleChange,
+      // handleChange,
       beforeUpload,
       fileList,
       onRemove,
