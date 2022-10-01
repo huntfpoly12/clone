@@ -2,7 +2,7 @@
   <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
     <a-col :span="16">
       
-      <input type="file" @change="onFileChange" />
+      <input class="custom-file-input" type="file" @change="onFileChange" />
       <p v-if="messageUpload">{{messageUpload}}</p>
         <a-space :size="10" align="start" style="margin-top: 8px">
           <div :span="22" class="warring-modal">
@@ -182,7 +182,25 @@ export default defineComponent({
 .container_upload {
   width: 100%;
 }
-
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-file-input::before {
+  content: '파일선택...';
+  display: inline-block;
+  width: 200px;
+  text-align: left;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+  line-height: 1.5715;
+  padding: 5px 10px;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
 .img-preview {
   position: relative;
   width: 100%;
