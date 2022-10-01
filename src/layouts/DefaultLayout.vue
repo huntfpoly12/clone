@@ -482,7 +482,7 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped lang="scss">
+<style lang="scss">
 .ant-layout.ant-layout-has-sider {
   min-height: calc(100vh - 64px);
 }
