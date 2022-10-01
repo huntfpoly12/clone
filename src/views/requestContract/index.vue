@@ -335,7 +335,6 @@ import postCode from "./postCode.vue"
 
 import { useMutation } from '@vue/apollo-composable'
 import gql from 'graphql-tag'
-
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -836,6 +835,7 @@ export default {
         },
         handleOk() {
             this.visibleModal = false
+            this.$router.push("/login");
         },
         getImgUrl(img) {
             this.contractCreacted.licenseFileStorageId = img

@@ -178,7 +178,7 @@
           <a-layout-content
             :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
           >
-            <div class="top-content">
+            <!-- <div class="top-content">
               <a-typography-title :level="3"
                 >{{ activeTab.name }}
               </a-typography-title>
@@ -208,7 +208,7 @@
                   </a-button>
                 </a-tooltip>
               </div>
-            </div>
+            </div> -->
             <div class="main-content">
               <template v-if="activeTab">
                 <keep-alive>
@@ -482,7 +482,7 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped lang="scss">
+<style lang="scss">
 .ant-layout.ant-layout-has-sider {
   min-height: calc(100vh - 64px);
 }
