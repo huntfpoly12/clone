@@ -1,29 +1,10 @@
 <template>
   <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
-    <a-col :span="16">
-      <a-form-item class="clb-label title" :label="title">
-        <a-upload
-          single
-          type="file"
-          v-model:file-list="fileList"
-          :show-upload-list="true"
-          :before-upload="beforeUpload"
-          :on-remove="onRemove"
-          @change="handleChange"
-          :max-count="1"
-          action=""
-          accept=".tiff,.png,.jpeg,.jpg"
-        >
-          <a-button class="button-upload">
-            <upload-outlined></upload-outlined>
-            파일선택...
-          </a-button>
-        </a-upload>
-
+    <a-col>
+      <a-form-item class="title" :label="title">
+        <input class="custom-file-input" type="file" @change="onFileChange" />
+        <p v-if="messageUpload">{{ messageUpload }}</p>
         <a-space :size="10" align="start" style="margin-top: 8px">
-          <div>
-            <warning-filled :style="{ fontSize: '15px' }" />
-          </div>
           <div :span="22" class="warring-modal">
             <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
             <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
@@ -36,7 +17,7 @@
     <a-col :span="7">
       <div class="img-preview">
         <img
-          v-if="imageUrl && showImg == true"
+          v-if="imageUrl && showImg"
           :src="imageUrl"
           @click="handlePreview"
         />
@@ -74,7 +55,6 @@ import {
   PlusSquareOutlined,
   WarningFilled,
 } from "@ant-design/icons-vue";
-import { title } from "process";
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
   const reader = new FileReader();
@@ -96,7 +76,6 @@ export default defineComponent({
       default: "../assets/images/imgdefault.jpg",
     },
   },
-
   components: {
     UploadOutlined,
     MinusCircleOutlined,
@@ -128,6 +107,7 @@ export default defineComponent({
     const fileList = ref<UploadProps["fileList"]>([]);
     const loading = ref<boolean>(false);
     let imageUrl = ref<any>("");
+    let messageUpload = ref<any>("");
     const file = ref<any>("");
     const previewVisible = ref(false);
     var fileName = ref<any>("");
@@ -159,36 +139,32 @@ export default defineComponent({
       //@ts-ignore
       props.srcimg = "";
     };
-
-    const handleChange = async (info: any, fileList: any) => {
-      fileName = info.file.name;
-      if (info.file.status === "uploading" && info.file.percent === 100) {
-        const formData = new FormData();
-        formData.append("category", "SubscriptionRequestCompanyLicense");
-        formData.append("file", info.file.originFileObj);
-        let dataImage = "";
-        try {
-          const data = await uploadRepository.public(formData);
-          dataImage = data.data.id;
-        } catch (error) {
-          dataImage = "";
-        }
-
-        getBase64(info.file.originFileObj, (base64Url: string) => {
+    let preview = ref<any>("");
+    const onFileChange = async (e: {
+      [x: string]: any;
+      target: { files: any[] };
+    }) => {
+      const file = e.target.files[0];
+      if (file.size > 1024 * 1024 * 5) {
+        e.preventDefault();
+        messageUpload = "File must smaller than 5MB!";
+        return;
+      }
+      const formData = new FormData();
+      formData.append("category", "SubscriptionRequestCompanyLicense");
+      formData.append("file", file);
+      try {
+        const data = await uploadRepository.public(formData);
+        getBase64(file, (base64Url: string) => {
           imageUrl.value = base64Url;
           loading.value = false;
-          emit("update-img", dataImage);
-          console.log("datta");
-          //@ts-ignore
+          emit("update-img", data.data.id);
         });
+      } catch (error) {
+        console.log(error);
       }
     };
-    const handlelayer = () => {
-      if (imageUrl) {
-        //@ts-ignore
-        this.$props.srcimg = "";
-      }
-    };
+
     const handleCancel = () => {
       previewVisible.value = false;
     };
@@ -201,7 +177,8 @@ export default defineComponent({
       handleCancel,
       handlePreview,
       imageUrl,
-      handleChange,
+      // handleChange,
+      messageUpload,
       beforeUpload,
       fileList,
       onRemove,
@@ -209,7 +186,8 @@ export default defineComponent({
       file,
       fileName,
       showImg,
-      handlelayer,
+      onFileChange,
+      preview,
     };
   },
 });
@@ -219,13 +197,29 @@ export default defineComponent({
 .container_upload {
   width: 100%;
 }
-
-// .imgPreview {
-//   cursor: pointer;
-//   //   width: 100%;
-//   width: 50px;
-//   height: 350px;
-// }
+.ant-form input[type="file"] {
+  display: block;
+  width: 200px;
+}
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-file-input::before {
+  content: "파일선택...";
+  display: inline-block;
+  width: 200px;
+  text-align: left;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+  line-height: 1.5715;
+  padding: 5px 10px;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
 .img-preview {
   position: relative;
   width: 100%;
