@@ -37,20 +37,20 @@
 
 								<a-form-item label="사업자코드">
 									<a-typography-title :level="5">
-										{{result.getSubscriptionRequest.companyBizNumber}}
+										{{formState.companyBizNumber}}
 									</a-typography-title>
 								</a-form-item>
 								<a-row>
 									<a-col :span="12">
 										<a-form-item label="신청코드">
-											<a-typography-title :level="5">{{result.getSubscriptionRequest.code}}
+											<a-typography-title :level="5">{{formState.code}}
 											</a-typography-title>
 										</a-form-item>
 									</a-col>
 									<a-col :span="12">
 										<a-form-item label="신청일자">
 											<a-typography-title :level="5">
-												{{formarDate(result.getSubscriptionRequest.createdAt)}}
+												{{formarDate(formState.createdAt)}}
 											</a-typography-title>
 										</a-form-item>
 									</a-col>
@@ -71,17 +71,17 @@
 							</a-collapse-panel>
 							<a-collapse-panel key="2" header="사업자정보">
 								<a-form-item label="상 호" class="clr">
-									<a-input :value="result.getSubscriptionRequest.companyName" />
+									<a-input v-model:value="formState.companyName" />
 								</a-form-item>
 								<a-form-item label="사업자등록번호" class="clr">
-									<a-input style="width: 300px" :value="result.getSubscriptionRequest.bizNumber" />
+									<a-input style="width: 300px" :value="formState.companyBizNumber" />
 								</a-form-item>
 
 								<a-row>
 									<a-col :span="12">
 										<a-form-item label="사업자유형" class="clr">
 											<a-radio-group
-												:value="result.getSubscriptionRequest.content.company.bizType">
+											v-model:value="formState.companyBizType">
 												<a-radio :value="1" class="clb" checked>법인사업자</a-radio>
 												<a-radio :value="2" class="clb">개인사업자</a-radio>
 											</a-radio-group>
@@ -89,9 +89,9 @@
 									</a-col>
 									<a-col :span="2">
 										<a-form-item
-											:label="changeTypeCompany(result.getSubscriptionRequest.content.company.bizType)">
+											:label="changeTypeCompany(formState.companyBizType)">
 											<a-input placeholder="800123-1234567" style="width: 300px"
-												:value="result.getSubscriptionRequest.content.company.residentId" />
+											v-model:value="formState.companyResidentId" />
 										</a-form-item>
 									</a-col>
 								</a-row>
@@ -101,7 +101,7 @@
 											<a-row>
 												<a-col :span="12">
 													<a-input style="width: 300px"
-														:value="result.getSubscriptionRequest.content.company.zipcode" />
+														v-model:value="formState.companyZipcode" />
 												</a-col>
 												<a-col :span="12">
 													<a-button type="primary">우편번호 검색</a-button>
@@ -111,13 +111,13 @@
 										<a-col :span="24">
 											<a-row>
 												<a-input
-													:value="result.getSubscriptionRequest.content.company.roadAddress" />
+													v-model:value="formState.companyRoadAddress" />
 											</a-row>
 										</a-col>
 										<a-col :span="24">
 											<a-row>
 												<a-input
-													:value="result.getSubscriptionRequest.content.company.addressExtend" />
+													v-model:value="formState.companyAddressExtend" />
 											</a-row>
 										</a-col>
 									</a-row>
@@ -126,35 +126,34 @@
 								<a-row :gutter="[16, 16]">
 									<a-col :span="18">
 										<a-form-item label="연락처" class="clr">
-											<a-input :value="result.getSubscriptionRequest.content.company.phone" />
+											<a-input v-model:value="formState.companyPhone" />
 										</a-form-item>
 										<a-form-item label="팩 스">
-											<a-input :value="result.getSubscriptionRequest.content.company.fax" />
+											<a-input v-model:value="formState.companyFax" />
 										</a-form-item>
 									</a-col>
 									<imgUpload :title="titleModal" @update-img="getImgUrl" />
-
 								</a-row>
 
 							</a-collapse-panel>
 							<a-collapse-panel key="3" header="대표자정보">
 								<a-form-item has-feedback label="대표자명" class="clr">
 									<a-input placeholder="홍길동" autocomplete="off" style="width: 300px"
-										:value="result.getSubscriptionRequest.content.president.name" />
+										v-model:value="formState.presidentContentName" />
 								</a-form-item>
 								<a-form-item has-feedback label="생년월일" class="clr">
 									<a-input placeholder="19620820" autocomplete="off" style="width: 300px"
-										:value="result.getSubscriptionRequest.content.president.birthday" />
+									v-model:value="formState.presidentBirthday" />
 								</a-form-item>
 								<a-form-item has-feedback label="휴대폰번호" class="clr">
 									<a-input placeholder="01098765432" style="width: 200px"
-										:value="result.getSubscriptionRequest.content.president.mobilePhone" />
+									v-model:value="formState.presidentPhone" />
 								</a-form-item>
 
 								<a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
 									:rules="[{ type: 'email' }]">
 									<a-input style="width: 200px"
-										:value="result.getSubscriptionRequest.content.president.email" />
+									v-model:value="formState.presidentEmail" />
 								</a-form-item>
 
 
@@ -169,7 +168,7 @@
 										</a-card>
 										<div id="data-grid-demo">
 											<DxDataGrid id="gridContainer"
-												:data-source="result.getSubscriptionRequest.content.accounting.facilityBusinesses"
+												:data-source="formState.accountingfacilityBusinesses"
 												:show-borders="true" :selected-row-keys="selectedItemKeys">
 												<DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
 													:allow-deleting="true" template="button-template" mode="cell">
@@ -205,7 +204,7 @@
 												</a-col>
 												<a-col :span="12">
 													<a-checkbox
-														v-model:checked="result.getSubscriptionRequest.content.accounting.accountingServiceTypes[0]">
+														v-model:checked="formState.accountingServiceTypes[0]">
 														회계입력대행서비스</a-checkbox>
 												</a-col>
 											</a-row>
@@ -221,17 +220,17 @@
 										<a-form-item label="서비스 시작년월" class="clr">
 											<div style="width: 200px;">
 												<CustomDatepicker
-													:valueDate="result.getSubscriptionRequest.content.withholding.startYearMonth"
+													:valueDate="formState.withholdingYearMonth"
 													className="0" />
 											</div>
 										</a-form-item>
 										<a-form-item label="직 원 수" class="clr">
 											<a-input-number style="width: 100px" min="0"
-												:value="result.getSubscriptionRequest.content.withholding.capacity" />
+												v-model:value="formState.withholdingCapacity" />
 										</a-form-item>
 										<a-form-item label="부가서비스">
 											<a-checkbox
-												v-model:checked="result.getSubscriptionRequest.content.withholding.withholdingServiceTypes[0]">
+												v-model:checked="formState.withholdingServiceTypes[0]">
 												4대보험신고서비스</a-checkbox>
 										</a-form-item>
 
@@ -240,19 +239,19 @@
 							</a-collapse-panel>
 							<a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
 								<a-form-item label="출금은행" class="clr">
-									<selectBank :selectValue="result.getSubscriptionRequest.content.cmsBank.bankType" />
+									<selectBank :selectValue="formState.cmsBankType" />
 								</a-form-item>
 								<a-form-item label="출금계좌번호" class="clr">
 									<a-input placeholder="100100056489011"
-										:value="result.getSubscriptionRequest.content.cmsBank.accountNumber" />
+										v-model:value="formState.accountNumber" />
 								</a-form-item>
 								<a-form-item label="예금주명" class="clr">
 									<a-input placeholder="주식회사 타운소프트비나"
-										:value="result.getSubscriptionRequest.content.cmsBank.ownerName" />
+										v-model:value="formState.ownerName" />
 								</a-form-item>
 								<a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
 									<a-input placeholder="100100056489011"
-										:value="result.getSubscriptionRequest.content.cmsBank.ownerBizNumber" />
+										v-model:value="formState.ownerBizNumber" />
 									<div class="noteImage">
 										<a-row>
 											<a-col :span="1">
@@ -269,7 +268,7 @@
 									</div>
 								</a-form-item>
 								<a-form-item label="자동이체출금일자" class="clr">
-									<a-radio-group :value="result.getSubscriptionRequest.content.cmsBank.withdrawDay">
+									<a-radio-group v-model:value="formState.withdrawDay">
 										<a-radio class="clb" :style="radioStyle" value="매월 5일">매월 5일</a-radio>
 										<a-radio class="clb" :style="radioStyle" value="매월 12일">매월 12일</a-radio>
 										<a-radio class="clb" :style="radioStyle" value="매월 19일">매월 19일</a-radio>
@@ -280,7 +279,7 @@
 							<a-collapse-panel key="7" header="기타">
 								<a-form-item label="영업관리담당">
 									<a-select ref="select"
-										:value="result.getSubscriptionRequest.content.extra.salesRepresentativeId"
+										v-model:value="formState.extraSalesRepresentativeId"
 										style="width: 200px">
 										<a-select-option :value="1">A 대리점</a-select-option>
 										<a-select-option :value="2">농협</a-select-option>
@@ -290,7 +289,7 @@
 									</a-select>
 								</a-form-item>
 								<a-form-item label="전달사항">
-									<a-textarea :value="result.getSubscriptionRequest.content.extra.comment"
+									<a-textarea v-model:value="formState.extraComment"
 										placeholder="전달사항입력" />
 								</a-form-item>
 							</a-collapse-panel>
@@ -341,143 +340,10 @@ export default defineComponent({
 		return {
 			activeKey: 1,
 
-			formState: {
-				status: "",
-				code: "",
-				companyName: "",
-				companyBizNumber: "",
-				companyAddress: "",
-				presidentName: "",
-				simpleAccountingInfos: [],
-				simpleWithholdingInfoName: "",
-				simpleWithholdingInfoYearMonth: "",
-				processedAt: "",
-				approvedAt: "",
-				rejectedAt: "",
-
-				agreementsTerms: true,
-				agreementsPersonalInfo: true,
-				agreementsAccountingService: true,
-				agreementsWithholdingService: true,
-
-				companyZipcode: "",
-				companyRoadAddress: "",
-				companyJibunAddress: "",
-
-				companyAddressExtend: "",
-				companyAddressDetailBcode: "",
-				companyAddressDetailBname: "",
-				companyAddressDetailBuildingCode: "",
-				companyAddressDetailRoadname: "",
-				companyAddressDetailRoadnameCode: "",
-				companyAddressDetailSido: "",
-				companyAddressDetailSigungu: "",
-				companyAddressDetailSigunguCode: "",
-				companyAddressDetailZonecode: "",
-
-				companyPhone: "",
-				companyFax: "",
-				companyLicenseFileStorageId: "",
-				companyBizType: 0,
-				companyResidentId: "",
-				companyLicense: "",
-
-				presidentBirthday: "",
-				presidentPhone: "",
-				presidentEmail: "",
-				accountingFblongTermCareInstitutionNumber: "",
-				accountingFbfacilityBizType: 1,
-				accountingFbName: "",
-				accountingFbYearMonth: "",
-				accountingFbcapacity: 23,
-				accountingFbregistrationCardFileStorageId: 22,
-				accountingFbregistrationCardName: "",
-				accountingFbregistrationCardurl: "",
-				accountingFbregistrationCardcreatedAt: 1664352972645,
-				accountingFbregistrationCardcreatedBy: "",
-				accountingFbregistrationCardupdatedAt: 1664352972645,
-				accountingFbregistrationCardupdatedBy: "",
-				accountingFbregistrationCardactive: true,
-				accountingFbregistrationCardip: "",
-				accountingServiceTypes: [],
-
-				withholdingYearMonth: "",
-				withholdingCapacity: 1234,
-				withholdingServiceTypes: [],
-
-				cmsBankType: "",
-				accountNumber: "",
-				ownerName: "",
-				ownerBizNumber: "",
-				withdrawDay: "",
-
-				compactSalesRepresentativeID: "",
-				compactSalesRepresentativeCode: "",
-				compactSalesRepresentativeName: "",
-				compactSalesRepresentativeActive: "",
-
-				memo: "",
-				createdAt: "",
-				createdBy: "",
-				updatedBy: "",
-				ip: "",
-				active: "",
-
-				extraSalesRepresentativeId: 1,
-				extraComment: '',
-			},
 			은행선택: '은행선택',
 			영업관리담당: '은행선택',
 			gridDataSource: employees,
-			dataTableModal: [{
-				ID: 1,
-				신청일자: 'John',
-				신청코드: 'Heart',
-				심사상태: '신청',
-				사업자코드: 'CEO',
-				상호: '1964/03/16',
-				주소: '1964/03/16',
-				대표자: '1995/01/15',
-				영업자: 'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
-				신청서비스: '351 S Hill St.',
-				부가서비스: 5,
-			}, {
-				ID: 2,
-				신청일자: 'Olivia',
-				신청코드: 'Peyton',
-				심사상태: '심사중',
-				사업자코드: 'Sales Assistant',
-				상호: '1964/03/16',
-				주소: '1964/03/16',
-				대표자: '2012/05/14',
-				영업자: 'Olivia loves to sell. She has been selling DevAV products since 2012. \r\n\r\nOlivia was homecoming queen in high school. She is expecting her first child in 6 months. Good Luck Olivia.',
-				신청서비스: '807 W Paseo Del Mar',
-				부가서비스: 5,
-			}, {
-				ID: 3,
-				신청일자: 'Robert',
-				신청코드: 'Reagan',
-				심사상태: '승인',
-				사업자코드: 'CMO',
-				상호: '1964/03/16',
-				주소: '1964/03/16',
-				대표자: '2002/11/08',
-				영업자: 'Robert was recently voted the CMO of the year by CMO Magazine. He is a proud member of the DevAV Management Team.\r\n\r\nRobert is a championship BBQ chef, so when you get the chance ask him for his secret recipe.',
-				신청서비스: '4 Westmoreland Pl.',
-				부가서비스: 4,
-			}, {
-				ID: 4,
-				신청일자: 'Greta',
-				신청코드: 'Sims',
-				심사상태: '반려',
-				사업자코드: 'HR Manager',
-				상호: '1964/03/16',
-				주소: '1964/03/16',
-				대표자: '1998/04/23',
-				영업자: "Greta has been DevAV's HR Manager since 2003. She joined DevAV from Sonee Corp.\r\n\r\nGreta is currently training for the NYC marathon. Her best marathon time is 4 hours. Go Greta.",
-				신청서비스: '1700 S Grandview Dr.',
-				부가서비스: 11,
-			},],
+		
 			gridBoxValue: [],
 			fileList: [],
 			gridColumns: ["심사상태", "사업자코드", "상호"],
@@ -588,15 +454,83 @@ export default defineComponent({
 			labelCol: { span: 8 },
 			wrapperCol: { span: 16 },
 		};
-		const formState = reactive({
-			user: {
-				name: '',
-				age: undefined,
-				email: '',
-				website: '',
-				introduction: '',
-			},
+
+		
+		const formState =  reactive({
+				status: "",
+				code: "",
+				companyName: "",
+				companyBizNumber: "",
+				companyAddress: "",
+				presidentName: "",
+				simpleAccountingInfos: [],
+				simpleWithholdingInfoName: "",
+				simpleWithholdingInfoYearMonth: "",
+				processedAt: "",
+				approvedAt: "",
+				rejectedAt: "",
+
+				agreementsTerms: true,
+				agreementsPersonalInfo: true,
+				agreementsAccountingService: true,
+				agreementsWithholdingService: true,
+
+				companyZipcode: "",
+				companyRoadAddress: "",
+				companyJibunAddress: "",
+
+				companyAddressExtend: "",
+				companyAddressDetailBcode: "",
+				companyAddressDetailBname: "",
+				companyAddressDetailBuildingCode: "",
+				companyAddressDetailBuildingName: "",
+				companyAddressDetailRoadname: "",
+				companyAddressDetailRoadnameCode: "",
+				companyAddressDetailSido: "",
+				companyAddressDetailSigungu: "",
+				companyAddressDetailSigunguCode: "",
+				companyAddressDetailZonecode: "",
+
+				companyPhone: "",
+				companyFax: "",
+				companyLicenseFileStorageId: "",
+				companyBizType: 0,
+				companyResidentId: "",
+				companyLicense: "",
+
+				presidentContentName: "",
+				presidentBirthday: "",
+				presidentPhone: "",
+				presidentEmail: "",
+				accountingfacilityBusinesses: [],
+				accountingServiceTypes:[],
+
+				withholdingYearMonth: "",
+				withholdingCapacity: 1234,
+				withholdingServiceTypes: [],
+
+				cmsBankType: "",
+				accountNumber: "",
+				ownerName: "",
+				ownerBizNumber: "",
+				withdrawDay: "",
+
+				compactSalesRepresentativeID: "",
+				compactSalesRepresentativeCode: "",
+				compactSalesRepresentativeName: "",
+				compactSalesRepresentativeActive: "",
+
+				memo: "",
+				createdAt: "",
+				createdBy: "",
+				updatedBy: "",
+				ip: "",
+				active: "",
+
+				extraSalesRepresentativeId: 1,
+				extraComment: '',
 		});
+
 		const onFinish = (values: any) => {
 			console.log('Success:', values);
 		};
@@ -622,14 +556,99 @@ export default defineComponent({
 			}
 		});
 
+	
+		
+
+	
 		const { result, loading, error, onResult, refetch } = useQuery(queries.getSubscriptionRequest, dataQuery, () => ({
 			enabled: trigger.value,
 		}));
 
+		watch(result, value => {
+			if(value && value.getSubscriptionRequest){
+
+			formState.status = value.getSubscriptionRequest.companyBizNumber;
+			formState.code = value.getSubscriptionRequest.code;
+			formState.companyName = value.getSubscriptionRequest.companyBizNumber;
+			formState.companyBizNumber= value.getSubscriptionRequest.companyBizNumber;
+			formState.companyAddress = value.getSubscriptionRequest.companyAddress;
+			formState.presidentName = value.getSubscriptionRequest.presidentName;
+		
+			formState.simpleWithholdingInfoName = value.getSubscriptionRequest.simpleAccountingInfos.name;
+			formState.simpleWithholdingInfoYearMonth = value.getSubscriptionRequest.simpleAccountingInfos.startYearMonth;
+
+			formState.processedAt = value.getSubscriptionRequest.processedAt;
+			formState.approvedAt = value.getSubscriptionRequest.approvedAt;
+			formState.rejectedAt = value.getSubscriptionRequest.rejectedAt;
+
+			formState.agreementsTerms= value.getSubscriptionRequest.content.agreements.terms;
+			formState.agreementsPersonalInfo= value.getSubscriptionRequest.content.agreements.personalInfo;
+			formState.agreementsAccountingService= value.getSubscriptionRequest.content.agreements.accountingService;
+			formState.agreementsWithholdingService= value.getSubscriptionRequest.content.agreements.withholdingService;
+
+			formState.companyZipcode = value.getSubscriptionRequest.content.company.zipcode;
+			formState.companyRoadAddress = value.getSubscriptionRequest.content.company.roadAddress;
+			formState.companyJibunAddress = value.getSubscriptionRequest.content.company.jibunAddress;
+
+			formState.companyAddressExtend = value.getSubscriptionRequest.content.company.addressExtend;
+			formState.companyAddressDetailBcode = value.getSubscriptionRequest.content.company.addressDetail.bcode;
+			formState.companyAddressDetailBname = value.getSubscriptionRequest.content.company.addressDetail.bname;
+			formState.companyAddressDetailBuildingCode = value.getSubscriptionRequest.content.company.addressDetail.buildingCode;
+			formState.companyAddressDetailBuildingName = value.getSubscriptionRequest.content.company.addressDetail.buildingName;
+			formState.companyAddressDetailRoadname = value.getSubscriptionRequest.content.company.addressDetail.roadname;
+			formState.companyAddressDetailRoadnameCode = value.getSubscriptionRequest.content.company.addressDetail.roadnameCode;
+			formState.companyAddressDetailSido = value.getSubscriptionRequest.content.company.addressDetail.sido;
+			formState.companyAddressDetailSigungu = value.getSubscriptionRequest.content.company.addressDetail.sigungu;
+			formState.companyAddressDetailSigunguCode = value.getSubscriptionRequest.content.company.addressDetail.sigunguCode;
+			formState.companyAddressDetailZonecode = value.getSubscriptionRequest.content.company.addressDetail.zonecode;
+
+			formState.companyPhone = value.getSubscriptionRequest.content.company.phone;
+			formState.companyFax = value.getSubscriptionRequest.content.company.fax;
+			formState.companyLicenseFileStorageId = value.getSubscriptionRequest.content.company.licenseFileStorageId;
+			formState.companyBizType= value.getSubscriptionRequest.content.company.bizType;
+			formState.companyResidentId = value.getSubscriptionRequest.content.company.residentId;
+			formState.companyLicense = value.getSubscriptionRequest.content.company.license;
+
+			formState.presidentContentName = value.getSubscriptionRequest.content.president.name;
+			formState.presidentBirthday = value.getSubscriptionRequest.content.president.birthday;
+			formState.presidentPhone = value.getSubscriptionRequest.content.president.mobilePhone;
+			formState.presidentEmail = value.getSubscriptionRequest.content.president.email;
+
+			formState.accountingfacilityBusinesses = value.getSubscriptionRequest.content.accounting.facilityBusinesses;
+			formState.accountingServiceTypes= value.getSubscriptionRequest.content.accounting.accountingServiceTypes;
+
+			formState.withholdingYearMonth = value.getSubscriptionRequest.content.withholding.startYearMonth;
+			formState.withholdingCapacity = value.getSubscriptionRequest.content.withholding.capacity;
+			formState.withholdingServiceTypes = value.getSubscriptionRequest.content.withholding.withholdingServiceTypes;
+
+			formState.cmsBankType = value.getSubscriptionRequest.content.cmsBank.bankType;
+			formState.accountNumber = value.getSubscriptionRequest.content.cmsBank.accountNumber;
+			formState.ownerName = value.getSubscriptionRequest.content.cmsBank.ownerName;
+			formState.ownerBizNumber = value.getSubscriptionRequest.content.cmsBank.ownerBizNumber;
+			formState.withdrawDay = value.getSubscriptionRequest.content.cmsBank.withdrawDay;
+
+			formState.extraSalesRepresentativeId= value.getSubscriptionRequest.content.extra.salesRepresentativeId;
+			formState.extraComment= value.getSubscriptionRequest.content.extra.comment;
+
+			formState.compactSalesRepresentativeID = value.getSubscriptionRequest.compactSalesRepresentative.id;
+			formState.compactSalesRepresentativeCode = value.getSubscriptionRequest.compactSalesRepresentative.code;
+			formState.compactSalesRepresentativeName = value.getSubscriptionRequest.compactSalesRepresentative.name;
+			formState.compactSalesRepresentativeActive = value.getSubscriptionRequest.compactSalesRepresentative.active;
+
+			formState.memo = value.getSubscriptionRequest.memo;
+			formState.createdAt = value.getSubscriptionRequest.createdAt;
+			formState.createdBy = value.getSubscriptionRequest.createdBy;
+			formState.updatedBy = value.getSubscriptionRequest.updatedBy;
+			formState.ip = value.getSubscriptionRequest.ip;
+			formState.active = value.getSubscriptionRequest.active;
+
+		}
+			console.log(value,'gjgjhgj')
+    	})
+
 		const setModalVisible = () => {
 			trigger.value = false;
 			emit("closePopup", false);
-
 		};
 
 		const changeTypeCompany = (bizType: number) => {
@@ -669,7 +688,7 @@ export default defineComponent({
 			}
 		},
 		onGridSelectionChanged(value: any) {
-			let html = "";
+			let html  = value.getSubscriptionRequest.companyBizNumber;
 			this.gridDataSource.map((element) => {
 				if (element.ID == value) {
 					console.log(element);

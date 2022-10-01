@@ -2,7 +2,7 @@
   <div>
     <a-space>
       <a-select ref="select" @change="handleChange" v-model="bankType.label" :options="bankType" style="width: {{width}}px"
-        :value="selectValue">
+        v-model:value="selectValue">
       </a-select>
     </a-space>
   </div>
