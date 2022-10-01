@@ -596,49 +596,7 @@ export default {
         }
             `,
             () => ({
-                variables: {
-                    terms: contractCreacted.terms,
-                    personalInfo: contractCreacted.personalInfo,
-                    accountingService: contractCreacted.accountingService,
-                    withholdingService: contractCreacted.withholdingService,
-                    nameCompany: contractCreacted.nameCompany,
-                    zipcode: contractCreacted.zipcode,
-                    roadAddress: contractCreacted.roadAddress,
-                    jibunAddress: contractCreacted.jibunAddress,
-                    addressExtend: contractCreacted.addressExtend,
-                    bcode: contractCreacted.bcode,
-                    bname: contractCreacted.bname,
-                    buildingCode: contractCreacted.buildingCode,
-                    buildingName: contractCreacted.buildingName,
-                    roadname: contractCreacted.roadname,
-                    roadnameCode: contractCreacted.roadnameCode,
-                    sido: contractCreacted.sido,
-                    sigungu: contractCreacted.sigungu,
-                    sigunguCode: contractCreacted.sigunguCode,
-                    zonecode: contractCreacted.zonecode,
-                    phone: contractCreacted.phone,
-                    fax: contractCreacted.fax,
-                    licenseFileStorageId: contractCreacted.licenseFileStorageId,
-                    bizNumber: contractCreacted.bizNumber,
-                    bizType: contractCreacted.bizType,
-                    residentId: contractCreacted.residentId,
-                    namePresident: contractCreacted.namePresident,
-                    birthday: contractCreacted.birthday,
-                    mobilePhone: contractCreacted.mobilePhone,
-                    email: formState.user.email,
-                    accountingServiceTypes: contractCreacted.accountingServiceTypes,
-                    startYearMonthHolding: contractCreacted.startYearMonthHolding,
-                    capacityHolding: parseInt(contractCreacted.capacityHolding),
-                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
-                    bankType: contractCreacted.bankType,
-                    accountNumber: contractCreacted.accountNumber,
-                    ownerBizNumber: contractCreacted.ownerBizNumber,
-                    ownerName: contractCreacted.ownerName,
-                    withdrawDay: contractCreacted.withdrawDay,
-                    salesRepresentativeId: contractCreacted.salesRepresentativeId,
-                    comment: contractCreacted.comment,
-
-                }
+                variables: contractCreacted
             })
         )
 
