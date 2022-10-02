@@ -336,7 +336,7 @@ import { DxButton } from 'devextreme-vue/button';
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
-import postCode from "./postCode.vue"
+import postCode from "../../components/postCode.vue"
 
 import { useMutation } from '@vue/apollo-composable'
 import gql from 'graphql-tag'
