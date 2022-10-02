@@ -22,7 +22,12 @@ query searchSubscriptionRequests($page: Int!, $rows: Int!, $companyName: String,
         name
         startYearMonth
       }
-
+  		compactSalesRepresentative{
+        id
+        code
+        name
+        active
+      }
     
     }
   }

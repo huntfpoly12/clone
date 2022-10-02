@@ -73,7 +73,7 @@
               <a-col :span="24">
                 <a-row>
                   <a-col :span="6">
-                    <a-upload v-model:file-list="fileList" :headers="headers" @change="handleChange"
+                    <a-upload v-model:file-list="fileList" name="file" :headers="headers" @change="handleChange"
                       :multiple="false" :showUploadList="false" accept=".png,.jpeg,.jpg">
                       <a-button class="btn-upload-image">직인업로드</a-button>
                     </a-upload>
@@ -118,7 +118,7 @@
             </div>
             <div style="display: flex;">
               <a-form-item label="이메일">
-                <a-input v-model:value="formState.이메일" style="width: 300px" @change="validateEmail" :before-upload="beforeUpload"
+                <a-input v-model:value="formState.이메일" style="width: 300px" @change="validateEmail"
                   :style="!statusMailValidate ? { borderColor: 'red'}: ''" />
               </a-form-item>
               <p class="validate-message" v-if="!statusMailValidate">
@@ -436,10 +436,7 @@ export default defineComponent({
         statusMailValidate.value = true;
       }
     }
-    const beforeUpload: UploadProps['beforeUpload'] = file => {
-      
-      return false;
-    };
+
     return {
       labelCol: { style: { width: "150px" } },
       formState,
@@ -469,8 +466,7 @@ export default defineComponent({
       validateNumber,
       validateEmail,
       statusMailValidate,
-      changeValueInputEmit,
-      beforeUpload
+      changeValueInputEmit
     };
   },
 });

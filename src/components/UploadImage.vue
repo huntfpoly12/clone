@@ -1,9 +1,9 @@
 <template>
   <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
-    <a-col :span="16">
-      
-      <input class="custom-file-input" type="file" @change="onFileChange" />
-      <p v-if="messageUpload">{{messageUpload}}</p>
+    <a-col>
+      <a-form-item class="title" :label="title">
+        <input class="custom-file-input" type="file" @change="onFileChange" />
+        <p v-if="messageUpload">{{ messageUpload }}</p>
         <a-space :size="10" align="start" style="margin-top: 8px">
           <div :span="22" class="warring-modal">
             <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
@@ -11,6 +11,7 @@
             <p>파일용량 : 최대 5MB</p>
           </div>
         </a-space>
+      </a-form-item>
     </a-col>
 
     <a-col :span="7">
@@ -20,6 +21,8 @@
           :src="imageUrl"
           @click="handlePreview"
         />
+
+        <!-- <img v-if="!imageUrl && srcimg" :src="srcimg" /> -->
         <img v-else src="../assets/images/imgdefault.jpg" />
       </div>
     </a-col>
@@ -68,6 +71,10 @@ export default defineComponent({
       type: String,
       default: "SubscriptionRequestCompanyLicense",
     },
+    srcimg: {
+      type: String,
+      default: "../assets/images/imgdefault.jpg",
+    },
   },
   components: {
     UploadOutlined,
@@ -77,6 +84,11 @@ export default defineComponent({
     DeleteOutlined,
     PlusSquareOutlined,
     WarningFilled,
+  },
+  created() {
+    //@ts-ignore
+    // this.$props.srcimg = "../assets/images/imgdefault.jpg";
+    this.imageUrl = this.$props.srcimg;
   },
   methods: {
     onFileChange(e: any) {
@@ -118,36 +130,40 @@ export default defineComponent({
         message.error("Image must smaller than 5MB!");
       }
       fileName = file.name;
-      return isLt5M && true;
+
+      return isLt5M;
     };
     const onRemove = () => {
       showImg.value = false;
+      imageUrl.value = "";
+      //@ts-ignore
+      props.srcimg = "";
     };
-    let preview = ref<any>('')
+    let preview = ref<any>("");
     const onFileChange = async (e: {
-[x: string]: any; target: { files: any[]; }; 
-}) => {
+      [x: string]: any;
+      target: { files: any[] };
+    }) => {
       const file = e.target.files[0];
       if (file.size > 1024 * 1024 * 5) {
         e.preventDefault();
-        messageUpload = 'File must smaller than 5MB!';
+        messageUpload = "File must smaller than 5MB!";
         return;
       }
       const formData = new FormData();
-        formData.append("category", "SubscriptionRequestCompanyLicense");
-        formData.append("file", file);
+      formData.append("category", "SubscriptionRequestCompanyLicense");
+      formData.append("file", file);
       try {
-          const data = await uploadRepository.public(formData);
-          getBase64(file, (base64Url: string) => {
+        const data = await uploadRepository.public(formData);
+        getBase64(file, (base64Url: string) => {
           imageUrl.value = base64Url;
           loading.value = false;
           emit("update-img", data.data.id);
-        })
-        } catch (error) {
-          console.log(error)
-        }
-      
-    }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     const handleCancel = () => {
       previewVisible.value = false;
@@ -171,7 +187,7 @@ export default defineComponent({
       fileName,
       showImg,
       onFileChange,
-      preview
+      preview,
     };
   },
 });
@@ -181,11 +197,15 @@ export default defineComponent({
 .container_upload {
   width: 100%;
 }
+.ant-form input[type="file"] {
+  display: block;
+  width: 200px;
+}
 .custom-file-input::-webkit-file-upload-button {
   visibility: hidden;
 }
 .custom-file-input::before {
-  content: '파일선택...';
+  content: "파일선택...";
   display: inline-block;
   width: 200px;
   text-align: left;
