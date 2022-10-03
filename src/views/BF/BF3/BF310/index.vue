@@ -59,10 +59,7 @@
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
                         <a-range-picker v-model:value="dateSearch" width="50%" :placeholder="['Start', 'End']" />
-                    </a-col>
-                    <a-col>
-                        <a-button @click="searching">Tìm kiếm</a-button>
-                    </a-col>
+                    </a-col> 
                 </a-row>
             </div>
             <div class="page-content">
@@ -133,7 +130,7 @@
                     </template>
                 </DxDataGrid>
 
-                <div class="pagination-table">
+                <div class="pagination-table" v-if="rowTable > 20">
                     <a-pagination v-model:current="originData.page" v-model:page-size="pageSize" :total="rowTable"
                         show-less-items @change="changePage" />
                 </div>
