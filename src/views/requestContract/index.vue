@@ -161,13 +161,6 @@
                   @update-img="getImgUrl"
                   style="margin-top: 10px"
                 />
-                <div v-if="this.fileName">
-                  <span style="padding-right: 10px">{{ this.fileName }}</span>
-                  <delete-outlined
-                    @click="removeImg"
-                    style="color: red; cursor: pointer"
-                  />
-                </div>
               </div>
 
               <a-col :span="7">
@@ -176,6 +169,13 @@
                 </div>
                 <div v-else class="img-preview">
                   <img src="../../assets/images/imgdefault.jpg" />
+                </div>
+                <div v-if="this.fileName">
+                  <span style="padding-right: 10px">{{ this.fileName }}</span>
+                  <delete-outlined
+                    @click="removeImg"
+                    style="color: red; cursor: pointer"
+                  />
                 </div>
               </a-col>
             </div>
@@ -331,18 +331,18 @@
             </div>
 
             <a-col :span="7">
+              <div v-if="this.imagestep" class="img-preview">
+                <img :src="this.imagestep" @click="handlePreview" />
+              </div>
+              <div v-else class="img-preview">
+                <img src="../../assets/images/imgdefault.jpg" />
+              </div>
               <div v-if="this.fileNamestep">
                 <span style="padding-right: 10px">{{ this.fileNamestep }}</span>
                 <delete-outlined
                   @click="removeImg"
                   style="color: red; cursor: pointer"
                 />
-              </div>
-              <div v-if="this.imagestep" class="img-preview">
-                <img :src="this.imagestep" @click="handlePreview" />
-              </div>
-              <div v-else class="img-preview">
-                <img src="../../assets/images/imgdefault.jpg" />
               </div>
             </a-col>
           </div>
