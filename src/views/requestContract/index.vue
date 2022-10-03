@@ -546,49 +546,8 @@ export default {
             mutations.creactContract,
             () => ({
                 variables: {
-                terms: true,
-                personalInfo: true,
-                accountingService: true,
-                withholdingService: true,
-                nameCompany: '',
-                zipcode: '',
-                roadAddress: '',
-                jibunAddress: '',
-                addressExtend: '',
-                bcode: '',
-                bname: '',
-                buildingCode: '',
-                buildingName: '',
-                roadname: '',
-                roadnameCode: '',
-                sido: '',
-                sigungu: '',
-                sigunguCode: '',
-                zonecode: '',
-                phone: '',
-                fax: '',
-                licenseFileStorageId: 10,
-                bizNumber: '222232634343',
-                bizType: 1,
-                residentId: '',
-                namePresident: '',
-                birthday: '',
-                mobilePhone: '',
-                email: '',
-                longTermCareInstitutionNumber: '',
-                facilityBizType: 1,
-                accountingServiceTypes: 1,
-                facilityBusinesses: list.value,
-                startYearMonthHolding: "",
-                capacityHolding: 10,
-                withholdingServiceTypes: 1,
-                bankType: "39",
-                accountNumber: '',
-                ownerBizNumber: '',
-                withdrawDay: '매월 5일',
-                salesRepresentativeId: 1,
-                comment: '',
-                ownerName: ''
+                    ...contractCreacted,
+                    facilityBusinesses: list.value,
                 }
             })
         )
@@ -704,15 +663,15 @@ export default {
         // },
         valueFacilityBusinesses: {
             handler(newVal) {
+                this.list = []
               newVal.forEach((item) => {
                 this.list.push({
-                    longTermCareInstitutionNumber: "", facilityBizType: 2, name: item.name,startYearMonth: "2022/10/11", capacity: 10, registrationCardFileStorageId: null,
+                    longTermCareInstitutionNumber: "", facilityBizType: item?.facilityBizType, name: item?.name,startYearMonth: dayjs(item?.startYearMonth).format('YYYY/MM/DD'), capacity: parseInt(item?.capacity), registrationCardFileStorageId: null,
                 })
               })
-             
+             console.log(this.list)
             },
-            deep: true,
-            immediate: true
+            deep: true
         },
 
     },
