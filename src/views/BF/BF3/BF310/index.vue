@@ -51,10 +51,7 @@
                         </a-select>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">영업자 :</label>
-                        <a-select v-model:value="originData.salesRepresentativeId" :options="arraySale"
-                            placeholder="전체">
-                        </a-select>
+                        <ListSalesDropdownVue />
                     </a-col>
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
@@ -160,10 +157,9 @@ import DxDateBox from 'devextreme-vue/date-box';
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
 import { ref, defineComponent, watch } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
-
+import ListSalesDropdownVue from '../../../../components/ListSalesDropdown.vue';
 import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
 import { useQuery, useLazyQuery } from "@vue/apollo-composable";
-
 import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
@@ -204,6 +200,7 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
+        ListSalesDropdownVue
     },
     data() {
         return {
