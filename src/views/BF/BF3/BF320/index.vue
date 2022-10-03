@@ -49,8 +49,12 @@
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <label class="lable-item">영업자명 :</label>
                             <ListManagerDropdown />
+                        </div>
+                    </a-col>
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <ListPartner />
                         </div>
                     </a-col>
                 </a-row>
@@ -125,6 +129,7 @@ import DxNumberBox from 'devextreme-vue/number-box';
 import inputFormat from '../../../../components/inputBoxFormat.vue'
 import DxTextBox from 'devextreme-vue/text-box';
 import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
+import ListPartner from '../../../../components/ListPartner.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 import { DxSelectBox } from 'devextreme-vue/select-box';
@@ -148,7 +153,8 @@ export default defineComponent({
         inputFormat,
         DxTextBox,
         ListManagerDropdown,
-        DxSelectBox
+        DxSelectBox,
+        ListPartner
     },
     data() {
         return {

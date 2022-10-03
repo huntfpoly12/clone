@@ -45,6 +45,13 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
     background-color: #a8bbbf;
 }
+.ant-select {
+  width: auto;
+  min-width: 135px;
+}
+.lable-item {
+    margin-right: 10px;
+  }
 body {
   margin: 0;
   padding: 0;
