@@ -11,13 +11,13 @@
                 @change="onFileChange"
               />
               <p v-if="messageUpload">{{ messageUpload }}</p>
-              <div v-if="fileName" class="fileName">
+              <!-- <div v-if="fileName" class="fileName">
                 <span style="padding-right: 10px">{{ fileName }}</span>
                 <delete-outlined
                   @click="onRemove"
                   style="color: red; cursor: pointer"
                 />
-              </div>
+              </div> -->
             </div>
           </a-row>
           <a-row>
@@ -34,15 +34,9 @@
     </a-col>
     <a-col> </a-col>
     <a-col :span="7">
-      <div class="img-preview">
+      <!-- <div class="img-preview">
         <img :src="imageUrl" @click="handlePreview" />
-
-        <!-- <img v-if="imageUrl === '' || srcimg === ''" src="imageUrl" /> -->
-        <!-- <img
-          v-if="imageUrl === '' || srcimg === ''"
-          src="../assets/images/imgdefault.jpg"
-        /> -->
-      </div>
+      </div> -->
     </a-col>
 
     <a-modal
@@ -183,7 +177,16 @@ export default defineComponent({
         getBase64(file, (base64Url: string) => {
           imageUrl.value = base64Url;
           loading.value = false;
-          emit("update-img", data.data.id);
+          emit("update-img", {
+            url: imageUrl.value,
+            id: data.data.id,
+            fileName: fileName.value,
+          });
+          emit("update-step", {
+            url: imageUrl.value,
+            id: data.data.id,
+            fileNamestep: fileName.value,
+          });
         });
       } catch (error) {
         console.log(error);
@@ -251,9 +254,11 @@ export default defineComponent({
   font-size: 10pt;
 }
 .img-preview {
+  margin-top: 20px;
   position: relative;
   width: 100%;
   padding-top: 142%;
+
   img {
     position: absolute;
     left: 0;
