@@ -96,7 +96,7 @@
                                     }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
                                     </a-table>
                                 </template>
-                                <a-tag>{{data.data.simpleAccountingInfos.length}}</a-tag>
+                                <a-tag v-if="data.data.simpleAccountingInfos">{{data.data.simpleAccountingInfos.length}}</a-tag>
                             </a-popover>
                         </span>
                         <span>원천
@@ -267,11 +267,9 @@ export default defineComponent({
         onResult((res) => {
             if (res.loading) {
             } else {
-                console.log(res);
                 rowTable.value = res.data.searchSubscriptionRequests.totalCount
                 dataSource.value = res.data.searchSubscriptionRequests.datas
             }
-
         })
 
         setTimeout(() => {
