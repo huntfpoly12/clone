@@ -664,12 +664,11 @@ export default {
         valueFacilityBusinesses: {
             handler(newVal) {
                 this.list = []
-              newVal.forEach((item) => {
-                this.list.push({
-                    longTermCareInstitutionNumber: "", facilityBizType: item?.facilityBizType, name: item?.name,startYearMonth: dayjs(item?.startYearMonth).format('YYYY/MM/DD'), capacity: parseInt(item?.capacity), registrationCardFileStorageId: null,
+                newVal.forEach((item) => {
+                    this.list.push({
+                        longTermCareInstitutionNumber: "", facilityBizType: item?.facilityBizType, name: item?.name,startYearMonth: dayjs(item?.startYearMonth).format('YYYY/MM/DD'), capacity: parseInt(item?.capacity), registrationCardFileStorageId: null,
+                    })
                 })
-              })
-             console.log(this.list)
             },
             deep: true
         },
