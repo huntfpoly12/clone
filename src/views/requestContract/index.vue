@@ -735,7 +735,8 @@ export default {
 
     var visibleModal = ref(false);
 
-<<<<<<< HEAD
+    var visibleModal = ref(false);
+
     const valueFacilityBusinesses = ref([]);
     const list = [
       {
@@ -776,23 +777,6 @@ export default {
       onError: onError,
     } = useMutation(
       gql`
-=======
-        var visibleModal = ref(false)
-
-        const valueFacilityBusinesses = ref([])
-        const list = [{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "12314124",startYearMonth: "2022/10/11", capacity: 123123, registrationCardFileStorageId: null,},{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "4234523",startYearMonth: "2022/11/11", capacity: 123123, registrationCardFileStorageId: null,}]
-        let formattedAttachments = '';
-        list.forEach(attachment => {
-            formattedAttachments += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
-        })
-        const {
-            mutate: Creat,
-            loading: signinLoading,
-            onDone: signinDone,
-            onError: onError
-        } = useMutation(
-            gql`
->>>>>>> develop
         mutation createSubscriptionRequest(
             $terms: Boolean!,
             $personalInfo: Boolean!,
@@ -1119,11 +1103,6 @@ export default {
         this.Creat();
       }
     },
-<<<<<<< HEAD
-    handleOk() {
-      this.visibleModal = false;
-      this.$router.push("/login");
-=======
     // watch: {
     //     'contractCreacted.longTermCareInstitutionNumber'(newVal) {
     //         let arrNew = [];
@@ -1176,100 +1155,100 @@ export default {
 
     // },
     methods: {
-        changeValueDate(data) {
-            this.contractCreacted.birthday = data
-        },
-        changeValueDateHoding(data) {
-            this.contractCreacted.startYearMonthHolding = data
-        },
-        funcAddress(data) {
-            this.contractCreacted.zipcode = data.zonecode
-            this.contractCreacted.roadAddress = data.roadAddress
-            this.contractCreacted.jibunAddress = data.jibunAddress
-            this.contractCreacted.bcode = data.bcode
-            this.contractCreacted.bname = data.bname
-            this.contractCreacted.buildingCode = data.buildingCode
-            this.contractCreacted.buildingName = data.buildingName
-            this.contractCreacted.roadname = data.roadname
-            this.contractCreacted.roadnameCode = data.roadnameCode
-            this.contractCreacted.sido = data.sido
-            this.contractCreacted.sigungu = data.sigungu
-            this.contractCreacted.sigunguCode = data.sigunguCode
-            this.contractCreacted.zonecode = data.zonecode
-        },
-        changeTypeCompany() {
-            if (this.contractCreacted.bizType == 2) {
-                this.textIDNo = '주민등록번호'
-            } else {
-                this.textIDNo = '법인등록번호'
-            }
-        },
-        prevStep() {
-            this.step--
-        },
+      changeValueDate(data) {
+        this.contractCreacted.birthday = data;
+      },
+      changeValueDateHoding(data) {
+        this.contractCreacted.startYearMonthHolding = data;
+      },
+      funcAddress(data) {
+        this.contractCreacted.zipcode = data.zonecode;
+        this.contractCreacted.roadAddress = data.roadAddress;
+        this.contractCreacted.jibunAddress = data.jibunAddress;
+        this.contractCreacted.bcode = data.bcode;
+        this.contractCreacted.bname = data.bname;
+        this.contractCreacted.buildingCode = data.buildingCode;
+        this.contractCreacted.buildingName = data.buildingName;
+        this.contractCreacted.roadname = data.roadname;
+        this.contractCreacted.roadnameCode = data.roadnameCode;
+        this.contractCreacted.sido = data.sido;
+        this.contractCreacted.sigungu = data.sigungu;
+        this.contractCreacted.sigunguCode = data.sigunguCode;
+        this.contractCreacted.zonecode = data.zonecode;
+      },
+      changeTypeCompany() {
+        if (this.contractCreacted.bizType == 2) {
+          this.textIDNo = "주민등록번호";
+        } else {
+          this.textIDNo = "법인등록번호";
+        }
+      },
+      prevStep() {
+        this.step--;
+      },
 
-        nextStep() {
-            this.step++
-        },
-        openPopup() {
+      nextStep() {
+        this.step++;
+      },
+      openPopup() {
+        //validate data call api
+        var obj = this.contractCreacted;
+        let countNull = 0;
+        for (const [key, value] of Object.entries(obj)) {
+        }
+        if (countNull > 0) {
+          notification["error"]({
+            message: "Vui lòng nhập đầy đủ thông tin cần thiết",
+          });
+        } else {
+          let arrNew = [];
+          let dataAdd = "";
+          if (this.valueFacilityBusinesses.length > 0) {
+            this.valueFacilityBusinesses.forEach((element) => {
+              const obj = {
+                ...element,
+                longTermCareInstitutionNumber:
+                  this.contractCreacted.longTermCareInstitutionNumber,
+                registrationCardFileStorageId:
+                  this.contractCreacted.registrationCardFileStorageId,
+              };
+              arrNew.push(obj);
+            });
+          }
+          arrNew.map((attachment) => {
+            console.log(attachment.registrationCardFileStorageId);
+            dataAdd += `{longTermCareInstitutionNumber: "${
+              attachment.longTermCareInstitutionNumber
+            }", facilityBizType: ${attachment.facilityBizType}, name: "${
+              attachment.name
+            }",startYearMonth: "${dayjs(attachment.startYearMonth).format(
+              "YYYY/MM/DD"
+            )}", capacity: ${
+              attachment.capacity
+            }, registrationCardFileStorageId: ${
+              typeof attachment.registrationCardFileStorageId != "undefined"
+                ? attachment.registrationCardFileStorageId
+                : null
+            },}`;
+          });
+          this.formattedAttachments = dataAdd;
 
-            //validate data call api
-            var obj = this.contractCreacted
-            let countNull = 0
-            for (const [key, value] of Object.entries(obj)) {
+          console.log(this.formattedAttachments);
+          this.Creat();
+        }
+      },
+      handleOk() {
+        this.visibleModal = false;
+        this.$router.push("/login");
+      },
 
-            }
-            if (countNull > 0) {
-                notification['error']({
-                    message: 'Vui lòng nhập đầy đủ thông tin cần thiết'
-                });
-            } else {
+      getIDBank(data) {
+        this.contractCreacted.bankType = data;
+      },
 
-                let arrNew = [];
-                let dataAdd = ''
-                if (this.valueFacilityBusinesses.length > 0) {
-                    this.valueFacilityBusinesses.forEach(element => {
-                        const obj = {
-                            ...element,
-                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
-                            registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
-                        }
-                        arrNew.push(obj)
-                    });
-                }
-                arrNew.map(attachment => {
-                    console.log(attachment.registrationCardFileStorageId);
-                    dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
-                });
-                this.formattedAttachments = dataAdd
-
-                console.log(this.formattedAttachments);
-                this.Creat()
-            }
-
-        },
-        handleOk() {
-            this.visibleModal = false
-            this.$router.push("/login");
-        },
-        getImgUrl(img) {
-            this.contractCreacted.licenseFileStorageId = img
-        },
-
-        getImgUrlAccounting(img) {
-            this.contractCreacted.registrationCardFileStorageId = img
-        },
-
-        getIDBank(data) {
-            this.contractCreacted.bankType = data
-        },
-
-
-        passwordComparison() {
-            return this.password;
-        },
-
->>>>>>> develop
+      passwordComparison() {
+        return this.password;
+      },
     },
     getImgUrl(img) {
       this.contractCreacted.licenseFileStorageId = img;
@@ -1283,14 +1262,6 @@ export default {
       this.fileNamestep = img.fileNamestep;
       console.log(img);
       this.contractCreacted.registrationCardFileStorageId = img;
-    },
-
-    getIDBank(data) {
-      this.contractCreacted.bankType = data;
-    },
-
-    passwordComparison() {
-      return this.password;
     },
   },
 };
