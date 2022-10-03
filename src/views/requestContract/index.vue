@@ -537,8 +537,11 @@ export default {
         var visibleModal = ref(false)
 
         const valueFacilityBusinesses = ref([])
-        const formattedAttachments = ref('{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "12314124",startYearMonth: "2022/10/11", capacity: 123123, registrationCardFileStorageId: null,}{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "4234523",startYearMonth: "2022/11/11", capacity: 123123, registrationCardFileStorageId: null,}');
-
+        const list = [{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "12314124",startYearMonth: "2022/10/11", capacity: 123123, registrationCardFileStorageId: null,},{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "4234523",startYearMonth: "2022/11/11", capacity: 123123, registrationCardFileStorageId: null,}]
+        let formattedAttachments = '';
+        list.forEach(attachment => {
+            formattedAttachments += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
+        })
         const {
             mutate: Creat,
             loading: signinLoading,
@@ -629,7 +632,7 @@ export default {
                     email: $email
                 }
                 accounting: {
-                    facilityBusinesses:  [${formattedAttachments.value}]
+                    facilityBusinesses:  [${formattedAttachments}]
                     accountingServiceTypes: $accountingServiceTypes
                 }
                 withholding: {
@@ -845,7 +848,7 @@ export default {
                     console.log(attachment.registrationCardFileStorageId);
                     dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
                 });
-                // this.formattedAttachments = dataAdd
+                this.formattedAttachments = dataAdd
 
                 console.log(this.formattedAttachments);
                 this.Creat()
