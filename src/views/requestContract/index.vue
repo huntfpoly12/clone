@@ -8,7 +8,6 @@
             <a-step :status="checkStepFour" title="신청완료!" />
         </a-steps>
         <div class="step-content">
-            
             <template v-if="step === 0">
                 <div class="form-group">
                     <label>1. 서비스약관 동의</label>
@@ -53,11 +52,30 @@
                     <div class="info-box">
                         <div class="form-item">
                             <label class="red">상 호 :</label>
-                            <a-input v-model:value="contractCreacted.nameCompany" placeholder="가나다라마바사아자차카타파하 요양병원" />
+                            <!-- <a-input v-model:value="contractCreacted.nameCompany" placeholder="가나다라마바사아자차카타파하 요양병원"
+                                style="width: 40%;" /> -->
+                            <div>
+                                <DxTextBox style="width: 400px;" v-model:value="contractCreacted.nameCompany"
+                                    placeholder="가나다라마바사아자차카타파하 요양병원">
+                                    <DxValidator>
+                                        <DxRequiredRule message="Name is required" />
+                                        <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" />
+                                        <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
+                                    </DxValidator>
+                                </DxTextBox>
+                            </div>
                         </div>
                         <div class="form-item">
                             <label class="red">사업자등록번호 :</label>
-                            <a-input v-model:value="contractCreacted.bizNumber" placeholder="123-45-67890" />
+
+                            <DxTextBox mask="000-00-00000" v-model:value="contractCreacted.bizNumber"
+                                mask-invalid-message="Chưa nhập đủ thông tin">
+                                <DxValidator>
+                                    <DxPatternRule message="The phone must have a correct USA phone format" />
+                                </DxValidator>
+                            </DxTextBox>
+
+
                         </div>
                         <div class="form-item">
                             <label class="red">사업자유형 :</label>
@@ -68,8 +86,15 @@
 
                             <div class="group-label">
                                 <p>{{textIDNo}}:</p>
-                                <a-input class="width-auto" v-model:value="contractCreacted.residentId"
-                                    placeholder="800123-1234567" />
+                                <!-- <a-input class="width-auto" v-model:value="contractCreacted.residentId"
+                                    placeholder="800123-1234567" /> -->
+
+                                <DxTextBox mask="000000-0000000" v-model:value="contractCreacted.residentId"
+                                    mask-invalid-message="Chưa nhập đủ thông tin">
+                                    <DxValidator>
+                                        <DxPatternRule message="The phone must have a correct USA phone format" />
+                                    </DxValidator>
+                                </DxTextBox>
                             </div>
                         </div>
 
@@ -84,24 +109,36 @@
                                 </a-button>
                             </div>
                         </div>
-
-
                         <div class="form-item">
                             <label></label>
                             <a-input placeholder="도로명 주소" v-model:value="contractCreacted.roadAddress" disabled />
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input placeholder="확장 주소" v-model:value="contractCreacted.addressExtend" />
+                            <!-- <a-input placeholder="확장 주소" v-model:value="contractCreacted.addressExtend" /> -->
+                            <DxTextBox style="width: 100%;" v-model:value="contractCreacted.addressExtend"
+                                placeholder="확장 주소">
+                                <DxValidator>
+                                    <DxRequiredRule message="Name is required" />
+                                    <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
+                                    <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
+                                </DxValidator>
+                            </DxTextBox>
                         </div>
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <a-input class="width-auto" v-model:value="contractCreacted.phone"
-                                placeholder="0298765432" />
+                            <DxNumberBox placeholder="0298765432" v-model:value="contractCreacted.phone">
+                                <DxValidator>
+                                    <DxRequiredRule message="Name is required" />
+                                    <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
+                                    <!-- <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" /> -->
+                                </DxValidator>
+                            </DxNumberBox>
+
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
-                            <a-input class="width-auto" v-model:value="contractCreacted.fax" placeholder="0212345678" />
+                            <DxNumberBox placeholder="0212345678" v-model:value="contractCreacted.fax" />
                         </div>
                         <div>
                             <keep-alive>
@@ -114,9 +151,14 @@
                     <label>2. 대표자정보</label>
                     <div class="info-box">
                         <div class="form-item">
-                            <label class="red">대표자명:</label>
-                            <a-input placeholder="홍길동" style="width: 150px"
-                                v-model:value="contractCreacted.namePresident" />
+                            <label class="red">대표자명:</label> 
+                            <DxNumberBox placeholder="홍길동" v-model:value="contractCreacted.namePresident">
+                                <DxValidator>
+                                    <DxRequiredRule message="Name is required" />
+                                    <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
+                                    <!-- <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" /> -->
+                                </DxValidator>
+                            </DxNumberBox>
                         </div>
                         <div class="form-item">
                             <label class="red">생년월일 :</label>
@@ -200,7 +242,8 @@
 
                     <div>
                         <keep-alive>
-                            <imgUpload :title="titleModal" @update-img="getImgUrlAccounting" style="margin-top: 10px;" />
+                            <imgUpload :title="titleModal" @update-img="getImgUrlAccounting"
+                                style="margin-top: 10px;" />
                         </keep-alive>
                     </div>
                     <div class="form-item">
@@ -345,6 +388,17 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
+
+import { DxNumberBox } from 'devextreme-vue/number-box';
+import DxTextBox from 'devextreme-vue/text-box';
+import {
+    DxValidator,
+    DxRequiredRule,
+    DxCompareRule,
+    DxPatternRule,
+    DxStringLengthRule
+} from 'devextreme-vue/validator';
+
 export default {
     components: {
         CheckOutlined,
@@ -363,13 +417,19 @@ export default {
         CustomDatepicker,
         moment,
         selectBank,
-        postCode
+        postCode,
+        DxRequiredRule,
+        DxCompareRule,
+        DxValidator,
+        DxPatternRule,
+        DxTextBox,
+        DxStringLengthRule,
+        DxNumberBox
     },
     data() {
         return {
             textIDNo: '법인등록번호',
             step: 0,
-
             radio: '',
             radio1: '',
             radio2: '',
@@ -383,7 +443,7 @@ export default {
                 dossier: '',
                 applicationService: '',
             },
-
+            namePattern: /^[^0-9]+$/,
             messagePopup: '',
 
         }
@@ -650,6 +710,9 @@ export default {
             },
         });
 
+
+
+
         return {
             contractCreacted,
             Creat,
@@ -708,7 +771,7 @@ export default {
     //     },
     //     'valueFacilityBusinesses': {
     //         handler() {
-                
+
     //             // this.formattedAttachments = dataAdd
     //         },
     //         deep: true,
@@ -764,7 +827,7 @@ export default {
                 notification['error']({
                     message: 'Vui lòng nhập đầy đủ thông tin cần thiết'
                 });
-            } else { 
+            } else {
 
                 let arrNew = [];
                 let dataAdd = ''
@@ -803,6 +866,11 @@ export default {
 
         getIDBank(data) {
             this.contractCreacted.bankType = data
+        },
+
+
+        passwordComparison() {
+            return this.password;
         },
 
     },
@@ -869,7 +937,7 @@ export default {
 }
 
 .form-item label {
-    width: 165px;
+    min-width: 165px;
 }
 
 .red {
@@ -884,10 +952,10 @@ export default {
     margin-left: 5px;
 }
 
-.form-item ::v-deep input,
+/* .form-item ::v-deep input,
 .form-item .ant-input-affix-wrapper ::v-deep {
     max-width: calc(100% - 165px);
-}
+} */
 
 ::v-deep input.dp__input.dp__input_icon_pad {
     width: 150px;

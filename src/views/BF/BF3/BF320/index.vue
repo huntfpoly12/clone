@@ -1,4 +1,35 @@
 <template>
+    <div class="top-content">
+        <a-typography-title :level="3"> 사업자관리
+        </a-typography-title>
+        <div class="list-action">
+            <a-tooltip>
+                <template #title>조회</template>
+                <a-button>
+                    <SearchOutlined />
+                </a-button>
+            </a-tooltip>
+            <a-tooltip>
+                <template #title>저장</template>
+                <a-button>
+                    <SaveOutlined />
+                </a-button>
+            </a-tooltip>
+            <a-tooltip>
+                <template #title>삭제</template>
+                <a-button>
+                    <DeleteOutlined />
+                </a-button>
+            </a-tooltip>
+            <a-tooltip>
+                <template #title>출력</template>
+                <a-button>
+                    <PrinterOutlined />
+                </a-button>
+            </a-tooltip>
+        </div>
+    </div>
+
     <div id="bf-320">
         <div class="search-form">
             <div id="components-grid-demo-flex">
@@ -26,7 +57,7 @@
                                 :clearButton="true" :nameService="'typeSevice'" style="width: 130px;" />
                         </div>
                     </a-col>
-                    
+
                     <a-col>
                         <label class="lable-item">해지:</label>
                         <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
@@ -109,6 +140,7 @@ import {
     DxExport,
     DxSelection,
     DxSearchPanel,
+
 } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
@@ -117,7 +149,17 @@ import { employees, states } from '../data.js';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
-import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import {
+    EditOutlined,
+    HistoryOutlined,
+    SearchOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeleteOutlined,
+    SaveOutlined,
+} from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
@@ -148,7 +190,14 @@ export default defineComponent({
         inputFormat,
         DxTextBox,
         ListManagerDropdown,
-        DxSelectBox
+        DxSelectBox,
+        SearchOutlined,
+        MenuFoldOutlined,
+        MenuUnfoldOutlined,
+        MailOutlined,
+        PrinterOutlined,
+        DeleteOutlined,
+        SaveOutlined,
     },
     data() {
         return {
@@ -316,6 +365,7 @@ export default defineComponent({
 
 ::v-deep .dx-texteditor-input {
     min-height: 30px !important;
+    padding: 0px 10px;
 }
 
 .modal-note {
