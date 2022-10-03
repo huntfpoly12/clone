@@ -6,6 +6,8 @@
         @change="handleChange"
         v-model="bankType.label"
         :options="bankType"
+        :style="styleBank"
+        v-model:value="selectValue"
       >
       </a-select>
     </a-space>
@@ -14,8 +16,17 @@
 <script lang="ts">
 import { ref } from "vue";
 import type { SelectProps } from "ant-design-vue";
-import { log } from "console";
 export default {
+  props: {
+    selectValue: {
+      default: "39",
+      type: String,
+    },
+    width: {
+      default: "100%",
+      type: String,
+    },
+  },
   components: {},
   data() {
     return {};
@@ -28,6 +39,9 @@ export default {
     },
   },
   setup(props: any, { emit }: any) {
+    const styleBank = ref({
+      width: props.width
+    })
     const bankType = ref<SelectProps["options"]>([
       { label: "경남은행", value: "39" },
       { label: "광주은행", value: "34" },
@@ -52,12 +66,12 @@ export default {
       { label: "하나은행", value: "81" },
     ]);
     const handleChange = (value: any) => {
-      console.log(`selected ${value}`);
       emit("bank", value);
     };
     return {
       bankType,
       handleChange,
+      styleBank
     };
   },
 };
