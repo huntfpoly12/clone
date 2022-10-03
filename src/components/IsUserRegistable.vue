@@ -1,5 +1,5 @@
 <template>
-    <a-checkbox v-model:checked="result.isUserRegistableUsername">Checkbox</a-checkbox>
+    <a-checkbox v-model:checked="result.isUserRegistableUsername">로그인아이디가 등록가능한지 여부를 반환한다</a-checkbox>
   </template>
   <script lang="ts">
   import { defineComponent, ref } from 'vue'
