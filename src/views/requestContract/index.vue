@@ -568,7 +568,7 @@ export default {
                 phone: '',
                 fax: '',
                 licenseFileStorageId: 10,
-                bizNumber: '34434232634343',
+                bizNumber: '222232634343',
                 bizType: 1,
                 residentId: '',
                 namePresident: '',
@@ -703,9 +703,13 @@ export default {
         //     // this.formattedAttachments = dataAdd
         // },
         valueFacilityBusinesses: {
-            handler() {
-
-              this.list =  [{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "12314124",startYearMonth: "2022/10/11", capacity: 123123, registrationCardFileStorageId: null,},{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "4234523",startYearMonth: "2022/11/11", capacity: 123123, registrationCardFileStorageId: null,}]
+            handler(newVal) {
+              newVal.forEach((item) => {
+                this.list.push({
+                    longTermCareInstitutionNumber: "", facilityBizType: 2, name: item.name,startYearMonth: "2022/10/11", capacity: 10, registrationCardFileStorageId: null,
+                })
+              })
+             
             },
             deep: true,
             immediate: true
