@@ -199,8 +199,13 @@
                             <div>{{ data.rowIndex + 1 }}</div>
                           </template>
 
-                          <DxColumn data-field="registrationCard.name" caption="사업명 (중복불가)" />
-                          <DxColumn data-field="facilityBizType" caption="사업분류" />
+                          <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                          <DxColumn data-field="facilityBizType" caption="사업분류" >
+                            <DxLookup
+                                :data-source="facilityBizType"
+                                value-expr="ID" display-expr="Name" 
+                            />
+                          </DxColumn>
                           <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                             :format="'yyyy-MM-dd'" />
                           <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
@@ -366,7 +371,6 @@ export default defineComponent({
       titleModal2: "장기요양기관등록증",
     };
   },
-  apollo: {},
   components: {
     DxDropDownBox,
     DxDataGrid,
@@ -388,6 +392,38 @@ export default defineComponent({
     postCode,
   },
   setup(props, { emit }) {
+    const facilityBizType = [
+      {
+        ID: 1,
+        Name: "주·야간보호",
+      },
+      {
+        ID: 2,
+        Name: "방문요양",
+      },
+      {
+        ID: 3,
+        Name: "인지활동형 방문요양",
+      },
+      {
+        ID: 4,
+        Name: "방문간호",
+      },
+      {
+        ID: 5,
+        Name: "방문목욕",
+      },
+      {
+        ID: 6,
+        Name: "단기보호",
+      },
+      {
+        ID: 7,
+        Name: "복지용구",
+      }
+    ];
+
+
     let visible = ref(false);
     let activeKey = ref(1);
     const dataQuery = ref();
@@ -524,6 +560,14 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
+
+    // const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
+    //   queries.isSubscriptionRequestChangeableBizNumber,{},
+    //   () => ({
+    //     enabled: trigger.value,
+    //     fetchPolicy: "no-cache",
+    //   })
+    // );
 
     watch(result, (value) => {
       if (value && value.getSubscriptionRequest) {
@@ -691,6 +735,9 @@ export default defineComponent({
           default:
             break;
         }
+
+        // check if can be change business registration number 
+        //refetchCheckPer({id: value.getSubscriptionRequest.id ,bizNumber: value.getSubscriptionRequest.companyBizNumber})
       }
     });
 
@@ -747,8 +794,16 @@ export default defineComponent({
       onDone: updateDone,
     } = useMutation(mutations.updateSubscriptionRequest);
 
+    // query create company by subscription 
+    const {
+      mutate: actionCreateCompany
+    } = useMutation(mutations.createCompanyBySubscriptionRequest);
+
     updateDone((res) => {
-      message.success(` update was successful`, 4);
+      if(res.data.updateSubscriptionRequest.status == 30){
+        actionCreateCompany({id: res.data.updateSubscriptionRequest.id});
+      }
+      message.success(`Update was successful`, 4);
       setModalVisible();
     });
 
@@ -820,7 +875,7 @@ export default defineComponent({
       const cleanData = JSON.parse(
         JSON.stringify(contentData, (name, val) => {
           if (val == null) {
-            message.error(`${name} is null`, 4);
+            //message.error(`${name} is null`, 4);
             return;
           }
           if (
@@ -861,6 +916,7 @@ export default defineComponent({
       activeKey,
       funcAddress,
       updateSubscriptionRequest,
+      facilityBizType
     };
   },
   methods: {
