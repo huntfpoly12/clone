@@ -382,7 +382,7 @@ import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue"
 
 import { useMutation } from '@vue/apollo-composable'
-import gql from 'graphql-tag'
+import mutations from '../../graphql/mutations/RqContract/index'
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -535,137 +535,61 @@ export default {
         )
 
         var visibleModal = ref(false)
-
-        const valueFacilityBusinesses = ref([])
-        const list = [{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "12314124",startYearMonth: "2022/10/11", capacity: 123123, registrationCardFileStorageId: null,},{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "4234523",startYearMonth: "2022/11/11", capacity: 123123, registrationCardFileStorageId: null,}]
-        let formattedAttachments = '';
-        // list.forEach(attachment => {
-        //     formattedAttachments += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
-        // })
-        watch(() => [...valueFacilityBusinesses.value], (currentValue) => {
-            currentValue.forEach(attachment => {
-            formattedAttachments += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}}`;
-            console.log(formattedAttachments)
-        })
-        })
+        const list =  ref([])
+       const valueFacilityBusinesses = ref([])
         const {
             mutate: Creat,
             loading: signinLoading,
             onDone: signinDone,
             onError: onError
         } = useMutation(
-            gql`
-        mutation createSubscriptionRequest(
-            $terms: Boolean!,
-            $personalInfo: Boolean!,
-            $accountingService: Boolean!,
-            $withholdingService: Boolean!,
-            $nameCompany:String!,
-            $zipcode:String!,
-            $roadAddress:String!,
-            $jibunAddress:String!,
-            $addressExtend:String!,
-            $bcode: String!,
-            $bname: String!,
-            $buildingCode:String!,
-            $buildingName:String!,
-            $roadname: String!,
-            $roadnameCode:String!,
-            $sido: String!,
-            $sigungu:String!,
-            $sigunguCode:String!,
-            $zonecode: String!,
-            $capacityHolding : Int!
-            $phone: String!,
-            $fax: String!,
-            $licenseFileStorageId: Int!,
-            $bizNumber: String!,
-            $residentId: String!,
-            $namePresident : String!,
-            $birthday : String!,
-            $mobilePhone : String!,
-            $email : String!,   
-            $startYearMonthHolding : String! ,  
-            $accountNumber : String! ,
-            $ownerBizNumber : String! ,
-            $ownerName : String!,
-            $withdrawDay : String!,
-            $salesRepresentativeId: Int! ,
-            $comment: String!,    
-            $bizType: BizTypeScalar!,
-            $accountingServiceTypes: [AccountingAdditionalServiceTypeScalar!]!,
-            $withholdingServiceTypes: [WithholdingAdditionalServiceTypeScalar!]!,
-            $bankType: BankTypeScalar!, 
-
-            ) {
-        createSubscriptionRequest(
-            content :{
-                agreements: {
-                terms: $terms
-                personalInfo: $personalInfo
-                accountingService: $accountingService
-                withholdingService: $withholdingService
-                }
-                company: {
-                    name: $nameCompany
-                    zipcode: $zipcode
-                    roadAddress: $roadAddress
-                    jibunAddress: $jibunAddress
-                    addressExtend: $addressExtend
-                    addressDetail: {
-                        bcode: $bcode
-                        bname: $bname
-                        buildingCode: $buildingCode
-                        buildingName: $buildingName
-                        roadname: $roadname
-                        roadnameCode: $roadnameCode
-                        sido: $sido
-                        sigungu: $sigungu
-                        sigunguCode: $sigunguCode
-                        zonecode: $zonecode
-                    }
-                    phone: $phone
-                    fax: $fax
-                    licenseFileStorageId: $licenseFileStorageId
-                    bizNumber: $bizNumber
-                    bizType: $bizType
-                    residentId: $residentId
-                }
-                president: {
-                    name: $namePresident
-                    birthday: $birthday
-                    mobilePhone: $mobilePhone
-                    email: $email
-                }
-                accounting: {
-                    facilityBusinesses:  [${formattedAttachments}]
-                    accountingServiceTypes: $accountingServiceTypes
-                }
-                withholding: {
-                    startYearMonth: $startYearMonthHolding
-                    capacity: $capacityHolding
-                    withholdingServiceTypes: $withholdingServiceTypes
-                }
-                cmsBank: {
-                    bankType: $bankType
-                    accountNumber: $accountNumber
-                    ownerBizNumber: $ownerBizNumber
-                    ownerName: $ownerName
-                    withdrawDay: $withdrawDay
-                }
-                extra: {
-                    salesRepresentativeId: $salesRepresentativeId
-                    comment: $comment
-                }
-            },) {
-                    id
-                    status
-                    code
-            }
-        }
-            `,
+            mutations.creactContract,
             () => ({
-                variables: contractCreacted
+                variables: {
+                terms: true,
+                personalInfo: true,
+                accountingService: true,
+                withholdingService: true,
+                nameCompany: '',
+                zipcode: '',
+                roadAddress: '',
+                jibunAddress: '',
+                addressExtend: '',
+                bcode: '',
+                bname: '',
+                buildingCode: '',
+                buildingName: '',
+                roadname: '',
+                roadnameCode: '',
+                sido: '',
+                sigungu: '',
+                sigunguCode: '',
+                zonecode: '',
+                phone: '',
+                fax: '',
+                licenseFileStorageId: 10,
+                bizNumber: '34434232634343',
+                bizType: 1,
+                residentId: '',
+                namePresident: '',
+                birthday: '',
+                mobilePhone: '',
+                email: '',
+                longTermCareInstitutionNumber: '',
+                facilityBizType: 1,
+                accountingServiceTypes: 1,
+                facilityBusinesses: list.value,
+                startYearMonthHolding: "",
+                capacityHolding: 10,
+                withholdingServiceTypes: 1,
+                bankType: "39",
+                accountNumber: '',
+                ownerBizNumber: '',
+                withdrawDay: '매월 5일',
+                salesRepresentativeId: 1,
+                comment: '',
+                ownerName: ''
+                }
             })
         )
 
@@ -726,7 +650,6 @@ export default {
             contractCreacted,
             Creat,
             valueFacilityBusinesses,
-            formattedAttachments,
             openNotificationWithIcon,
             signinDone,
             onError,
@@ -734,60 +657,61 @@ export default {
             validateMessages,
             onFinish,
             layout,
+            list,
             formState
         }
     },
-    // watch: {
-    //     'contractCreacted.longTermCareInstitutionNumber'(newVal) {
-    //         let arrNew = [];
-    //         let dataAdd = ''
-    //         if (this.valueFacilityBusinesses.length > 0) {
-    //             this.valueFacilityBusinesses.forEach(element => {
-    //                 const obj = {
-    //                     ...element,
-    //                     longTermCareInstitutionNumber: newVal,
-    //                     registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
-    //                 }
-    //                 arrNew.push(obj)
-    //             });
-    //         }
-    //         arrNew.map(attachment => {
-    //             console.log(attachment.registrationCardFileStorageId);
-    //             dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
-    //         });
+    watch: {
+        // 'contractCreacted.longTermCareInstitutionNumber'(newVal) {
+        //     let arrNew = [];
+        //     let dataAdd = ''
+        //     if (this.valueFacilityBusinesses.length > 0) {
+        //         this.valueFacilityBusinesses.forEach(element => {
+        //             const obj = {
+        //                 ...element,
+        //                 longTermCareInstitutionNumber: newVal,
+        //                 registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
+        //             }
+        //             arrNew.push(obj)
+        //         });
+        //     }
+        //     arrNew.map(attachment => {
+        //         console.log(attachment.registrationCardFileStorageId);
+        //         dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
+        //     });
 
-    //         // this.formattedAttachments = dataAdd
-    //     },
-    //     'contractCreacted.registrationCardFileStorageId'(newVal) {
-    //         let arrNew = [];
-    //         let dataAdd = ''
-    //         if (this.valueFacilityBusinesses.length > 0) {
-    //             this.valueFacilityBusinesses.forEach(element => {
-    //                 const obj = {
-    //                     ...element,
-    //                     longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
-    //                     registrationCardFileStorageId: newVal
-    //                 }
-    //                 arrNew.push(obj)
-    //             });
-    //         }
-    //         arrNew.map(attachment => {
-    //             console.log(attachment.registrationCardFileStorageId);
-    //             dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
-    //         });
+        //     // this.formattedAttachments = dataAdd
+        // },
+        // 'contractCreacted.registrationCardFileStorageId'(newVal) {
+        //     let arrNew = [];
+        //     let dataAdd = ''
+        //     if (this.valueFacilityBusinesses.length > 0) {
+        //         this.valueFacilityBusinesses.forEach(element => {
+        //             const obj = {
+        //                 ...element,
+        //                 longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+        //                 registrationCardFileStorageId: newVal
+        //             }
+        //             arrNew.push(obj)
+        //         });
+        //     }
+        //     arrNew.map(attachment => {
+        //         console.log(attachment.registrationCardFileStorageId);
+        //         dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
+        //     });
 
-    //         // this.formattedAttachments = dataAdd
-    //     },
-    //     'valueFacilityBusinesses': {
-    //         handler() {
+        //     // this.formattedAttachments = dataAdd
+        // },
+        valueFacilityBusinesses: {
+            handler() {
 
-    //             // this.formattedAttachments = dataAdd
-    //         },
-    //         deep: true,
-    //         immediate: true
-    //     },
+              this.list =  [{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "12314124",startYearMonth: "2022/10/11", capacity: 123123, registrationCardFileStorageId: null,},{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "4234523",startYearMonth: "2022/11/11", capacity: 123123, registrationCardFileStorageId: null,}]
+            },
+            deep: true,
+            immediate: true
+        },
 
-    // },
+    },
     methods: {
         changeValueDate(data) {
             this.contractCreacted.birthday = data
