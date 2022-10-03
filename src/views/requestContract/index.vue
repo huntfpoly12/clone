@@ -8,6 +8,7 @@
             <a-step :status="checkStepFour" title="신청완료!" />
         </a-steps>
         <div class="step-content">
+            
             <template v-if="step === 0">
                 <div class="form-group">
                     <label>1. 서비스약관 동의</label>
@@ -103,7 +104,9 @@
                             <a-input class="width-auto" v-model:value="contractCreacted.fax" placeholder="0212345678" />
                         </div>
                         <div>
-                            <imgUpload :title="titleModal" @update-img="getImgUrl" style="margin-top: 10px;" />
+                            <keep-alive>
+                                <imgUpload :title="titleModal" @update-img="getImgUrl" style="margin-top: 10px;" />
+                            </keep-alive>
                         </div>
                     </div>
                 </div>
@@ -196,7 +199,9 @@
                     </div>
 
                     <div>
-                        <imgUpload :title="titleModal" @update-img="getImgUrlAccounting" style="margin-top: 10px;" />
+                        <keep-alive>
+                            <imgUpload :title="titleModal" @update-img="getImgUrlAccounting" style="margin-top: 10px;" />
+                        </keep-alive>
                     </div>
                     <div class="form-item">
                         <label>부가서비스:</label>
@@ -331,7 +336,7 @@ import { DxButton } from 'devextreme-vue/button';
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
-import postCode from "./postCode.vue"
+import postCode from "../../components/postCode.vue"
 
 import { useMutation } from '@vue/apollo-composable'
 import gql from 'graphql-tag'
@@ -591,49 +596,7 @@ export default {
         }
             `,
             () => ({
-                variables: {
-                    terms: contractCreacted.terms,
-                    personalInfo: contractCreacted.personalInfo,
-                    accountingService: contractCreacted.accountingService,
-                    withholdingService: contractCreacted.withholdingService,
-                    nameCompany: contractCreacted.nameCompany,
-                    zipcode: contractCreacted.zipcode,
-                    roadAddress: contractCreacted.roadAddress,
-                    jibunAddress: contractCreacted.jibunAddress,
-                    addressExtend: contractCreacted.addressExtend,
-                    bcode: contractCreacted.bcode,
-                    bname: contractCreacted.bname,
-                    buildingCode: contractCreacted.buildingCode,
-                    buildingName: contractCreacted.buildingName,
-                    roadname: contractCreacted.roadname,
-                    roadnameCode: contractCreacted.roadnameCode,
-                    sido: contractCreacted.sido,
-                    sigungu: contractCreacted.sigungu,
-                    sigunguCode: contractCreacted.sigunguCode,
-                    zonecode: contractCreacted.zonecode,
-                    phone: contractCreacted.phone,
-                    fax: contractCreacted.fax,
-                    licenseFileStorageId: contractCreacted.licenseFileStorageId,
-                    bizNumber: contractCreacted.bizNumber,
-                    bizType: contractCreacted.bizType,
-                    residentId: contractCreacted.residentId,
-                    namePresident: contractCreacted.namePresident,
-                    birthday: contractCreacted.birthday,
-                    mobilePhone: contractCreacted.mobilePhone,
-                    email: formState.user.email,
-                    accountingServiceTypes: contractCreacted.accountingServiceTypes,
-                    startYearMonthHolding: contractCreacted.startYearMonthHolding,
-                    capacityHolding: parseInt(contractCreacted.capacityHolding),
-                    withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
-                    bankType: contractCreacted.bankType,
-                    accountNumber: contractCreacted.accountNumber,
-                    ownerBizNumber: contractCreacted.ownerBizNumber,
-                    ownerName: contractCreacted.ownerName,
-                    withdrawDay: contractCreacted.withdrawDay,
-                    salesRepresentativeId: contractCreacted.salesRepresentativeId,
-                    comment: contractCreacted.comment,
-
-                }
+                variables: contractCreacted
             })
         )
 

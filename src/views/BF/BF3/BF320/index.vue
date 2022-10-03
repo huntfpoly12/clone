@@ -50,8 +50,7 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">영업자명 :</label>
-                            <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
-                                value-expr="value" />
+                            <ListManagerDropdown />
                         </div>
                     </a-col>
                 </a-row>
@@ -125,6 +124,7 @@ import localeData from "dayjs/plugin/localeData"
 import DxNumberBox from 'devextreme-vue/number-box';
 import inputFormat from '../../../../components/inputBoxFormat.vue'
 import DxTextBox from 'devextreme-vue/text-box';
+import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 import { DxSelectBox } from 'devextreme-vue/select-box';
@@ -147,6 +147,7 @@ export default defineComponent({
         DxNumberBox,
         inputFormat,
         DxTextBox,
+        ListManagerDropdown,
         DxSelectBox
     },
     data() {
