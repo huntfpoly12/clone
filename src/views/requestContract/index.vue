@@ -544,7 +544,7 @@ export default {
         // })
         watch(() => [...valueFacilityBusinesses.value], (currentValue) => {
             currentValue.forEach(attachment => {
-            formattedAttachments += `{ facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}}`;
+            formattedAttachments += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}}`;
             console.log(formattedAttachments)
         })
         })
