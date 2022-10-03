@@ -76,17 +76,42 @@
           <div class="info-box">
             <div class="form-item">
               <label class="red">상 호 :</label>
-              <a-input
-                v-model:value="contractCreacted.nameCompany"
-                placeholder="가나다라마바사아자차카타파하 요양병원"
-              />
+              <!-- <a-input v-model:value="contractCreacted.nameCompany" placeholder="가나다라마바사아자차카타파하 요양병원"
+                                style="width: 40%;" /> -->
+              <div>
+                <DxTextBox
+                  style="width: 400px"
+                  v-model:value="contractCreacted.nameCompany"
+                  placeholder="가나다라마바사아자차카타파하 요양병원"
+                >
+                  <DxValidator>
+                    <DxRequiredRule message="Name is required" />
+                    <DxPatternRule
+                      :pattern="namePattern"
+                      message="Do not use digits in the Name"
+                    />
+                    <DxStringLengthRule
+                      :min="2"
+                      message="Name must have at least 2 symbols"
+                    />
+                  </DxValidator>
+                </DxTextBox>
+              </div>
             </div>
             <div class="form-item">
               <label class="red">사업자등록번호 :</label>
-              <a-input
+
+              <DxTextBox
+                mask="000-00-00000"
                 v-model:value="contractCreacted.bizNumber"
-                placeholder="123-45-67890"
-              />
+                mask-invalid-message="Chưa nhập đủ thông tin"
+              >
+                <DxValidator>
+                  <DxPatternRule
+                    message="The phone must have a correct USA phone format"
+                  />
+                </DxValidator>
+              </DxTextBox>
             </div>
             <div class="form-item">
               <label class="red">사업자유형 :</label>
@@ -100,11 +125,20 @@
 
               <div class="group-label">
                 <p>{{ textIDNo }}:</p>
-                <a-input
-                  class="width-auto"
+                <!-- <a-input class="width-auto" v-model:value="contractCreacted.residentId"
+                                    placeholder="800123-1234567" /> -->
+
+                <DxTextBox
+                  mask="000000-0000000"
                   v-model:value="contractCreacted.residentId"
-                  placeholder="800123-1234567"
-                />
+                  mask-invalid-message="Chưa nhập đủ thông tin"
+                >
+                  <DxValidator>
+                    <DxPatternRule
+                      message="The phone must have a correct USA phone format"
+                    />
+                  </DxValidator>
+                </DxTextBox>
               </div>
             </div>
 
@@ -122,7 +156,6 @@
                 </a-button>
               </div>
             </div>
-
             <div class="form-item">
               <label></label>
               <a-input
@@ -133,25 +166,40 @@
             </div>
             <div class="form-item">
               <label></label>
-              <a-input
-                placeholder="확장 주소"
+              <!-- <a-input placeholder="확장 주소" v-model:value="contractCreacted.addressExtend" /> -->
+              <DxTextBox
+                style="width: 100%"
                 v-model:value="contractCreacted.addressExtend"
-              />
+                placeholder="확장 주소"
+              >
+                <DxValidator>
+                  <DxRequiredRule message="Name is required" />
+                  <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
+                  <DxStringLengthRule
+                    :min="2"
+                    message="Name must have at least 2 symbols"
+                  />
+                </DxValidator>
+              </DxTextBox>
             </div>
             <div class="form-item">
               <label class="red">연락처 :</label>
-              <a-input
-                class="width-auto"
-                v-model:value="contractCreacted.phone"
+              <DxNumberBox
                 placeholder="0298765432"
-              />
+                v-model:value="contractCreacted.phone"
+              >
+                <DxValidator>
+                  <DxRequiredRule message="Name is required" />
+                  <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
+                  <!-- <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" /> -->
+                </DxValidator>
+              </DxNumberBox>
             </div>
             <div class="form-item">
               <label>팩 스 :</label>
-              <a-input
-                class="width-auto"
-                v-model:value="contractCreacted.fax"
+              <DxNumberBox
                 placeholder="0212345678"
+                v-model:value="contractCreacted.fax"
               />
             </div>
             <div style="display: flex">
@@ -186,11 +234,16 @@
           <div class="info-box">
             <div class="form-item">
               <label class="red">대표자명:</label>
-              <a-input
+              <DxNumberBox
                 placeholder="홍길동"
-                style="width: 150px"
                 v-model:value="contractCreacted.namePresident"
-              />
+              >
+                <DxValidator>
+                  <DxRequiredRule message="Name is required" />
+                  <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
+                  <!-- <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" /> -->
+                </DxValidator>
+              </DxNumberBox>
             </div>
             <div class="form-item">
               <label class="red">생년월일 :</label>
@@ -498,7 +551,11 @@
 </template>
 <script>
 import { computed, reactive, ref, onMounted } from "vue";
-import { CheckOutlined, EditOutlined } from "@ant-design/icons-vue";
+import {
+  CheckOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons-vue";
 
 import moment from "moment";
 import { employees, states } from "./data.js";
@@ -521,7 +578,7 @@ import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
-import { DeleteOutlined } from "@ant-design/icons-vue";
+
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import dayjs, { Dayjs } from "dayjs";
@@ -529,6 +586,17 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
+
+import { DxNumberBox } from "devextreme-vue/number-box";
+import DxTextBox from "devextreme-vue/text-box";
+import {
+  DxValidator,
+  DxRequiredRule,
+  DxCompareRule,
+  DxPatternRule,
+  DxStringLengthRule,
+} from "devextreme-vue/validator";
+
 export default {
   components: {
     CheckOutlined,
@@ -548,6 +616,13 @@ export default {
     moment,
     selectBank,
     postCode,
+    DxRequiredRule,
+    DxCompareRule,
+    DxValidator,
+    DxPatternRule,
+    DxTextBox,
+    DxStringLengthRule,
+    DxNumberBox,
     DeleteOutlined,
   },
   data() {
@@ -567,7 +642,7 @@ export default {
         dossier: "",
         applicationService: "",
       },
-
+      namePattern: /^[^0-9]+$/,
       messagePopup: "",
     };
   },
@@ -661,19 +736,38 @@ export default {
     var visibleModal = ref(false);
 
     const valueFacilityBusinesses = ref([]);
-    const formattedAttachments = ref(
-      '{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "12314124",startYearMonth: "2022/10/11", capacity: 123123, registrationCardFileStorageId: null,}{longTermCareInstitutionNumber: "", facilityBizType: 2, name: "4234523",startYearMonth: "2022/11/11", capacity: 123123, registrationCardFileStorageId: null,}'
-    );
-
-    const removeImg = () => {
-      //   this.imagestep.value = "";
-      //   this.imageValue.value = "";
-      imageValue.value = "";
-      imagestep.value = "";
-      fileName.value = "";
-      fileNamestep.value = "";
-      console.log(fileNamestep);
-    };
+    const list = [
+      {
+        longTermCareInstitutionNumber: "",
+        facilityBizType: 2,
+        name: "12314124",
+        startYearMonth: "2022/10/11",
+        capacity: 123123,
+        registrationCardFileStorageId: null,
+      },
+      {
+        longTermCareInstitutionNumber: "",
+        facilityBizType: 2,
+        name: "4234523",
+        startYearMonth: "2022/11/11",
+        capacity: 123123,
+        registrationCardFileStorageId: null,
+      },
+    ];
+    let formattedAttachments = "";
+    list.forEach((attachment) => {
+      formattedAttachments += `{longTermCareInstitutionNumber: "${
+        attachment.longTermCareInstitutionNumber
+      }", facilityBizType: ${attachment.facilityBizType}, name: "${
+        attachment.name
+      }",startYearMonth: "${dayjs(attachment.startYearMonth).format(
+        "YYYY/MM/DD"
+      )}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${
+        typeof attachment.registrationCardFileStorageId != "undefined"
+          ? attachment.registrationCardFileStorageId
+          : null
+      },}`;
+    });
     const {
       mutate: Creat,
       loading: signinLoading,
@@ -764,7 +858,7 @@ export default {
                     email: $email
                 }
                 accounting: {
-                    facilityBusinesses:  [${formattedAttachments.value}]
+                    facilityBusinesses:  [${formattedAttachments}]
                     accountingServiceTypes: $accountingServiceTypes
                 }
                 withholding: {
@@ -844,7 +938,15 @@ export default {
         introduction: "",
       },
     });
-
+    const removeImg = () => {
+      //   this.imagestep.value = "";
+      //   this.imageValue.value = "";
+      imageValue.value = "";
+      imagestep.value = "";
+      fileName.value = "";
+      fileNamestep.value = "";
+      console.log(fileNamestep);
+    };
     return {
       contractCreacted,
       Creat,
@@ -993,7 +1095,7 @@ export default {
               : null
           },}`;
         });
-        // this.formattedAttachments = dataAdd
+        this.formattedAttachments = dataAdd;
 
         console.log(this.formattedAttachments);
         this.Creat();
@@ -1019,6 +1121,10 @@ export default {
 
     getIDBank(data) {
       this.contractCreacted.bankType = data;
+    },
+
+    passwordComparison() {
+      return this.password;
     },
   },
 };
@@ -1084,7 +1190,7 @@ export default {
 }
 
 .form-item label {
-  width: 165px;
+  min-width: 165px;
 }
 
 .red {
@@ -1099,10 +1205,10 @@ export default {
   margin-left: 5px;
 }
 
-.form-item ::v-deep input,
+/* .form-item ::v-deep input,
 .form-item .ant-input-affix-wrapper ::v-deep {
-  max-width: calc(100% - 165px);
-}
+    max-width: calc(100% - 165px);
+} */
 
 ::v-deep input.dp__input.dp__input_icon_pad {
   width: 150px;
