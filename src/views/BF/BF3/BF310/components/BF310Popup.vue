@@ -97,7 +97,7 @@
                     <a-input v-model:value="formState.companyName" />
                   </a-form-item>
                   <a-form-item label="사업자등록번호" class="clr">
-                    <a-input style="width: 300px" :value="formState.companyBizNumber" />
+                    <a-input style="width: 300px" :value="formState.companyBizNumber" :disabled="!canChangeableBizNumber"/>
                   </a-form-item>
 
                   <a-row>
@@ -427,7 +427,10 @@ export default defineComponent({
     let visible = ref(false);
     let activeKey = ref(1);
     const dataQuery = ref();
+    const dataQueryCheckPer = ref({});
     let trigger = ref<boolean>(false);
+    let triggerCheckPer = ref<boolean>(false);
+    let canChangeableBizNumber = ref<boolean>(false);
     const layout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 16 },
@@ -539,6 +542,8 @@ export default defineComponent({
         range: "${label} must be between ${min} and ${max}",
       },
     };
+
+    // watch event modal popup
     watch(
       () => props.modalStatus,
       (newValue, old) => {
@@ -562,13 +567,20 @@ export default defineComponent({
       })
     );
 
-    // const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
-    //   queries.isSubscriptionRequestChangeableBizNumber,{},
-    //   () => ({
-    //     enabled: trigger.value,
-    //     fetchPolicy: "no-cache",
-    //   })
-    // );
+    // query check if can be change business registration number 
+    const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
+      queries.isSubscriptionRequestChangeableBizNumber,dataQueryCheckPer,
+      () => ({
+        enabled: triggerCheckPer.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+
+    // watch result resCheckPerEdit
+    watch(resCheckPerEdit, (value) => {
+      console.log(value,'dfghdggfdgdfgdffff');
+      canChangeableBizNumber.value = value.isSubscriptionRequestChangeableBizNumber;
+    });
 
     watch(result, (value) => {
       if (value && value.getSubscriptionRequest) {
@@ -737,13 +749,15 @@ export default defineComponent({
           default:
             break;
         }
-
-        // check if can be change business registration number 
-        //refetchCheckPer({id: value.getSubscriptionRequest.id ,bizNumber: value.getSubscriptionRequest.companyBizNumber})
+        triggerCheckPer.value = true;
+        dataQueryCheckPer.value = {id: value.getSubscriptionRequest.id ,bizNumber: value.getSubscriptionRequest.companyBizNumber};
+        // trigger query check if can be change business registration number 
+        refetchCheckPer()
       }
     });
 
     const setModalVisible = () => {
+      triggerCheckPer.value = false;
       trigger.value = false;
       emit("closePopup", false);
     };
@@ -931,7 +945,8 @@ export default defineComponent({
       activeKey,
       funcAddress,
       updateSubscriptionRequest,
-      facilityBizType
+      facilityBizType,
+      canChangeableBizNumber
     };
   },
   methods: {
