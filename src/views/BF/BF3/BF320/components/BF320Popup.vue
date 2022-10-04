@@ -190,10 +190,12 @@ import {
     InfoCircleFilled
 } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
+import { any } from "vue-types";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
         modalStatusHistory: Boolean,
+        idRowEdit : Number
     },
     components: {
         DxDropDownBox,

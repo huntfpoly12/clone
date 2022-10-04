@@ -2,7 +2,7 @@
     <template v-if="result?.findSalesRepresentatives?.length > 0">
         <label class="lable-item">영업자 :</label>
         <a-select ref="select" v-model:value="sale" placeholder="전체" show-search> 
-            <a-select-option v-for="item in result.findSalesRepresentatives" :key="item.id" :value="item.id">
+            <a-select-option v-for="item in result?.findSalesRepresentatives" :key="item.id" :value="item.id">
                 {{item.name}}</a-select-option>
         </a-select>
     </template>

@@ -10,7 +10,6 @@ query findParters {
      createdBy
      updatedAt
      updatedBy
-     cancelDate
      ip
      active
   }

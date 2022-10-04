@@ -44,7 +44,7 @@
                         <label class="lable-item">심사상태/결과 :</label>
                         <a-select mode="tags" ref="select" style="width: auto; min-width: 135px;"
                             v-model:value="statuses" placeholder="전체">
-                            <a-select-option @click="chooseAll" value="전체">전체</a-select-option>
+                            <a-select-option @click="chooseAll"  value="전체">전체</a-select-option>
                             <a-select-option :value="10">신청</a-select-option>
                             <a-select-option :value="20">심사중</a-select-option>
                             <a-select-option :value="30">승인</a-select-option>
