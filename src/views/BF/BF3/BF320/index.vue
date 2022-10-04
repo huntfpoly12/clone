@@ -6,9 +6,8 @@
             <div class="list-action">
                 <a-tooltip>
                     <template #title>조회</template>
-                    <a-button>
+                    <a-button @click="searching">
                         <SearchOutlined />
-                        <!-- <SearchOutlined @click="searching" /> -->
                     </a-button>
                 </a-tooltip>
                 <a-tooltip>
@@ -77,6 +76,7 @@
                     </a-row>
                 </div>
             </div>
+
             <div class="page-content">
                 <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
@@ -134,7 +134,6 @@ import {
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
-import { employees, states } from '../data.js';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
@@ -189,102 +188,94 @@ export default defineComponent({
     data() {
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
-            dataSource: employees,
-            states,
-            options: [{
-                value: 'jack',
-                label: 'Jack',
-            }, {
-                value: 'lucy',
-                label: 'Lucy',
-            }, {
-                value: 'tom',
-                label: 'Tom Halin Sin Han Bank',
-            }],
-            options2: [{
-                value: 'jack',
-                label: 'Jack',
-            }, {
-                value: 'lucy',
-                label: 'Lucy',
-            }, {
-                value: 'tom',
-                label: 'Tom Halin Sin Han Bank',
-            }],
             popupData: [],
             modalStatus: false,
             modalHistoryStatus: false,
-            value: '',
-            typeInputCall: 1,
         };
     },
 
     setup() {
         const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
-        var dataSearchDef = reactive({
-            typeSevice: '',
-            nameCompany: '',
-            surrogate: '',
-            status: false,
-            address: '',
-            manager: 'Jack',
-            nameSale: 'Jack',
-            page: 1,
-            rows: 10,
-            code: '',
-            name: '',
-            presidentName: '',
-            manageUserId: '',
-            salesRepresentativeId: '',
-            excludeCancel: true,
-        })
 
-        var dataSearch = reactive({
-            typeSevice: '',
-            nameCompany: '',
-            surrogate: '',
-            status: false,
-            address: '',
-            manager: 'Jack',
-            nameSale: 'Jack',
+        var dataSearchDef = ref({
             page: 1,
             rows: 10,
-            code: '',
-            name: '',
-            presidentName: '',
-            manageUserId: '',
-            salesRepresentativeId: '',
-            excludeCancel: true,
+            code: "",
+            name: "",
+            presidentName: "",
+            address: "",
+            manageUserId: null,
+            salesRepresentativeId: null,
+            excludeCancel: true
         })
 
         var responApiSearchCompanies = ref([])
 
-        onMounted(() => {
-            try {
-                const { loading, error, onResult } = useQuery(queries.getData.searchCompanies, dataSearch)
-                onResult((res) => {
-                    console.log(res.data.searchCompanies.datas);
+        const originData = ref({
+            page: 1,
+            rows: 10,
+            code: "",
+            name: "",
+            presidentName: "",
+            address: "",
+            manageUserId: null,
+            salesRepresentativeId: null,
+            excludeCancel: true
+        })
 
-                    responApiSearchCompanies.value = res.data.searchCompanies.datas
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        });
+        const {refetch: refetchData, loading, error, onResult } = useQuery(queries.getData.searchCompanies, originData)
+
+        onResult((res) => {
+            responApiSearchCompanies.value = res.data.searchCompanies.datas
+        })
 
         setTimeout(() => {
             spinning.value = !spinning.value;
         }, 1000);
 
+        const searching = () => {
+            spinning.value = !spinning.value;
+            originData.value = {
+                page: 1,
+                rows: 10,
+                code: "",
+                name: "",
+                presidentName: "",
+                address: "",
+                manageUserId: null,
+                salesRepresentativeId: null,
+                excludeCancel: true
+            }
+
+            let dataNew = {
+                page: dataSearchDef.value.page,
+                rows: dataSearchDef.value.rows,
+                code: dataSearchDef.value.code,
+                name: dataSearchDef.value.name,
+                presidentName: dataSearchDef.value.presidentName,
+                address: dataSearchDef.value.address,
+                manageUserId: dataSearchDef.value.manageUserId,
+                salesRepresentativeId: dataSearchDef.value.salesRepresentativeId,
+                excludeCancel: dataSearchDef.value.excludeCancel
+            }
+
+            // originData.value = dataNew
+            refetchData(dataNew)
+
+            setTimeout(() => {
+                spinning.value = !spinning.value;
+            }, 1000);
+        }
 
         return {
-            // getCartItems
-            dataSearch,
             idRowEdit,
             spinning,
             responApiSearchCompanies,
-            dataSearchDef
+            dataSearchDef,
+            searching,
+            originData,
+            refetchData
         }
     },
 
@@ -314,22 +305,8 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        updateInput(data: any) {
-            this.dataSearch.nameCompany = data
-        },
-        changeValueInput() {
-            if (this.dataSearch.typeSevice == '0') {
-                this.dataSearch.typeSevice = ''
-            }
-        },
-        changeValueInputEmit(data: any) {
-            if (data.name == 'nameCompany') {
-                this.dataSearch.nameCompany = data.value
-            }
-        },
-        creactCompanyManageMemo() {
 
-        }
+
     },
 
 });
