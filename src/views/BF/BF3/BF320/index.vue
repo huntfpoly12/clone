@@ -131,7 +131,8 @@
                     </template>
 
                 </DxDataGrid>
-                <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
+                <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :idRowEdit="idRowEdit"
+                    :data="popupData" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력[cm-000-pop]" />
             </div>
@@ -238,9 +239,53 @@ export default defineComponent({
             modalHistoryStatus: false,
             value: '',
             typeInputCall: 1,
-            spinning : false
+            spinning: false,
+
         };
     },
+
+    setup() {
+        var idRowEdit = ref<number>(0)
+        var dataSearch = reactive({
+            typeSevice: '',
+            nameCompany: '',
+            surrogate: '',
+            status: false,
+            address: '',
+            manager: 'Jack',
+            nameSale: 'Jack',
+            page: 1,
+            rows: 10,
+            code: '',
+            name: '',
+            presidentName: '',
+            manageUserId: '',
+            salesRepresentativeId: '',
+            excludeCancel: true,
+        })
+
+        var responApiSearchCompanies = ref([])
+
+        onMounted(() => {
+            try {
+                const { loading, error, onResult } = useQuery(queries.getData.searchCompanies, dataSearch)
+                onResult((res) => {
+                    responApiSearchCompanies.value = res.data.searchCompanies.datas
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        });
+
+
+        return {
+            // getCartItems
+            dataSearch,
+            idRowEdit,
+            responApiSearchCompanies
+        }
+    },
+
     methods: {
         onExporting(e: any) {
             const workbook = new Workbook();
@@ -257,8 +302,11 @@ export default defineComponent({
             e.cancel = true;
         },
         setModalVisible(data: any) {
+            console.log(data.data.id);
+            this.idRowEdit = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
+
         },
         modalHistory(data: any) {
             this.modalHistoryStatus = true;
@@ -281,78 +329,15 @@ export default defineComponent({
 
         }
     },
-    setup() {
-        var dataSearch = reactive({
-            typeSevice: '',
-            nameCompany: '',
-            surrogate: '',
-            status: false,
-            address: '',
-            manager: 'Jack',
-            nameSale: 'Jack',
-            page: 1,
-            rows: 10,
-            code: '',
-            name: '',
-            presidentName: '',
-            manageUserId: '',
-            salesRepresentativeId: '',
-            excludeCancel: true,
-        })
-
-        var responApiSearchCompanies = [
-            {
-                id: 10,
-                code: "han",
-                name: "han",
-                address: "han",
-                phone: "han",
-                presidentName: "han",
-                presidentMobilePhone: "han",
-                manageStartDate: "2022-1-1",
-                usedAccountingCount: 10,
-                usedWithholding: true,
-                servicePrice: 10000,
-                active: true,
-                compactSalesRepresentative: {
-                    id: 10,
-                    code: "han",
-                    name: "han",
-                    active: true,
-                },
-                manageCompactUser: {
-                    id: 10,
-                    type: "han",
-                    username: "han",
-                    name: "han",
-                    active: true,
-                },
-            }
-        ]
-
-        onMounted(() => {
-            try {
-                const { loading, error, onResult } = useQuery(queries.getData.searchCompanies, dataSearch)
-                onResult((res) => {
-                    console.log(res.data)
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        });
-
-
-        return {
-            // getCartItems
-            dataSearch,
-            responApiSearchCompanies
-        }
-    }
 
 });
 </script>
 
 <style lang="scss" scoped>
+.page-content {
+    padding: 10px 10px;
+}
+
 #data-grid-demo {
     min-height: 700px;
 }

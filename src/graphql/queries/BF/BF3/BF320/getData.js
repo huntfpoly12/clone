@@ -4,7 +4,18 @@ const queries = {
       query searchCompanies ($page: Int!, $rows: Int!, $excludeCancel: Boolean!) {
         searchCompanies (filter: { page: $page, rows: $rows, excludeCancel: $excludeCancel }) {
           datas {
+            id
+            code
             name
+            address
+            phone
+            presidentName
+            presidentMobilePhone
+            manageStartDate
+            usedAccountingCount
+            usedWithholding
+            servicePrice
+            active
           }
         }
       }
