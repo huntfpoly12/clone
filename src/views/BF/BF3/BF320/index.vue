@@ -6,9 +6,8 @@
             <div class="list-action">
                 <a-tooltip>
                     <template #title>조회</template>
-                    <a-button>
+                    <a-button @click="searching">
                         <SearchOutlined />
-                        <!-- <SearchOutlined @click="searching" /> -->
                     </a-button>
                 </a-tooltip>
                 <a-tooltip>
@@ -41,59 +40,43 @@
                                 <label class="lable-item">
                                     사업자코드 :
                                 </label>
-                                <DxTextBox v-model:value="dataSearch.typeSevice" style="width: 130px;" />
+                                <a-input v-model:value="dataSearchDef.code" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">상호:</label>
-                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                    :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"
-                                    style="width: 130px;" />
+                                <a-input v-model:value="dataSearchDef.name" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">대표자:</label>
-                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
-                                    :clearButton="true" :nameService="'typeSevice'" style="width: 130px;" />
+                                <a-input v-model:value="dataSearchDef.presidentName" style="width: 130px;" />
                             </div>
                         </a-col>
-
                         <a-col>
                             <label class="lable-item">해지:</label>
-                            <a-switch v-model:checked="dataSearch.status" checked-children="포함"
+                            <a-switch v-model:checked="dataSearchDef.excludeCancel" checked-children="포함"
                                 un-checked-children="제외" />
                         </a-col>
-
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">주소 :</label>
-                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                    :spinButtons="false" :clearButton="true" :nameService="'address'"
-                                    style="width: 130px;" />
+                                <a-input v-model:value="dataSearchDef.address" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
-                            <div class="dflex custom-flex">
-                                <label class="lable-item">매니저명 :</label>
-                                <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
-                                    value-expr="value" />
-                            </div>
+                            <ListManagerDropdown />
                         </a-col>
                         <a-col>
-                            <div class="dflex custom-flex">
-                                <ListManagerDropdown />
-                            </div>
-                        </a-col>
-                        <a-col>
-                            <div class="dflex custom-flex">
-                                <ListPartner />
-                            </div>
+                            <!-- Doanh nghiệp -->
+                            <ListSalesDropdownVue :textLabel="'영업자명'" />
                         </a-col>
                     </a-row>
                 </div>
             </div>
+
             <div class="page-content">
                 <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
@@ -102,7 +85,6 @@
                     <DxPaging :page-size="10" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
-
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
                     <DxColumn data-field="name" caption="상호" />
                     <DxColumn data-field="presidentName" caption="대표자" />
@@ -111,10 +93,9 @@
                     <DxColumn data-field="manageCompactUser.name" caption="매니저" />
                     <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                    <DxColumn data-field="#" caption="해지일자" />
-                    <DxColumn data-field="#" caption="이용료" :format="amountFormat" data-type="number" />
+                    <DxColumn data-field="canceledAt" caption="해지일자" />
+                    <DxColumn data-field="unpaidMonths" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn :width="80" cell-template="pupop" />
-
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
@@ -131,7 +112,8 @@
                     </template>
 
                 </DxDataGrid>
-                <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
+                <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :idRowEdit="idRowEdit"
+                    :data="popupData" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력[cm-000-pop]" />
             </div>
@@ -152,7 +134,6 @@ import {
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
-import { employees, states } from '../data.js';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
@@ -170,10 +151,8 @@ import {
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
-import DxNumberBox from 'devextreme-vue/number-box';
-import inputFormat from '../../../../components/inputBoxFormat.vue'
-import DxTextBox from 'devextreme-vue/text-box';
 import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
+import ListSalesDropdownVue from '../../../../components/ListSalesDropdown.vue';
 import ListPartner from '../../../../components/ListPartner.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
@@ -194,9 +173,6 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        DxNumberBox,
-        inputFormat,
-        DxTextBox,
         ListManagerDropdown,
         DxSelectBox,
         ListPartner,
@@ -207,40 +183,102 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
+        ListSalesDropdownVue
     },
     data() {
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
-            dataSource: employees,
-            states,
-            options: [{
-                value: 'jack',
-                label: 'Jack',
-            }, {
-                value: 'lucy',
-                label: 'Lucy',
-            }, {
-                value: 'tom',
-                label: 'Tom Halin Sin Han Bank',
-            }],
-            options2: [{
-                value: 'jack',
-                label: 'Jack',
-            }, {
-                value: 'lucy',
-                label: 'Lucy',
-            }, {
-                value: 'tom',
-                label: 'Tom Halin Sin Han Bank',
-            }],
             popupData: [],
             modalStatus: false,
             modalHistoryStatus: false,
-            value: '',
-            typeInputCall: 1,
-            spinning : false
         };
     },
+
+    setup() {
+        const spinning = ref<boolean>(true);
+        var idRowEdit = ref<number>(0)
+
+        var dataSearchDef = ref({
+            page: 1,
+            rows: 10,
+            code: "",
+            name: "",
+            presidentName: "",
+            address: "",
+            manageUserId: null,
+            salesRepresentativeId: null,
+            excludeCancel: true
+        })
+
+        var responApiSearchCompanies = ref([])
+
+        const originData = ref({
+            page: 1,
+            rows: 10,
+            code: "",
+            name: "",
+            presidentName: "",
+            address: "",
+            manageUserId: null,
+            salesRepresentativeId: null,
+            excludeCancel: true
+        })
+
+        const {refetch: refetchData, loading, error, onResult } = useQuery(queries.getData.searchCompanies, originData)
+
+        onResult((res) => {
+            responApiSearchCompanies.value = res.data.searchCompanies.datas
+        })
+
+        setTimeout(() => {
+            spinning.value = !spinning.value;
+        }, 1000);
+
+        const searching = () => {
+            spinning.value = !spinning.value;
+            originData.value = {
+                page: 1,
+                rows: 10,
+                code: "",
+                name: "",
+                presidentName: "",
+                address: "",
+                manageUserId: null,
+                salesRepresentativeId: null,
+                excludeCancel: true
+            }
+
+            let dataNew = {
+                page: dataSearchDef.value.page,
+                rows: dataSearchDef.value.rows,
+                code: dataSearchDef.value.code,
+                name: dataSearchDef.value.name,
+                presidentName: dataSearchDef.value.presidentName,
+                address: dataSearchDef.value.address,
+                manageUserId: dataSearchDef.value.manageUserId,
+                salesRepresentativeId: dataSearchDef.value.salesRepresentativeId,
+                excludeCancel: dataSearchDef.value.excludeCancel
+            }
+
+            // originData.value = dataNew
+            refetchData(dataNew)
+
+            setTimeout(() => {
+                spinning.value = !spinning.value;
+            }, 1000);
+        }
+
+        return {
+            idRowEdit,
+            spinning,
+            responApiSearchCompanies,
+            dataSearchDef,
+            searching,
+            originData,
+            refetchData
+        }
+    },
+
     methods: {
         onExporting(e: any) {
             const workbook = new Workbook();
@@ -257,30 +295,20 @@ export default defineComponent({
             e.cancel = true;
         },
         setModalVisible(data: any) {
+            console.log(data.data.id);
+            this.idRowEdit = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
+
         },
         modalHistory(data: any) {
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        updateInput(data: any) {
-            this.dataSearch.nameCompany = data
-        },
-        changeValueInput() {
-            if (this.dataSearch.typeSevice == '0') {
-                this.dataSearch.typeSevice = ''
-            }
-        },
-        changeValueInputEmit(data: any) {
-            if (data.name == 'nameCompany') {
-                this.dataSearch.nameCompany = data.value
-            }
-        },
-        creactCompanyManageMemo() {
 
-        }
+
     },
+<<<<<<< HEAD
     setup() {
         var dataSearch = reactive({
             typeSevice: '',
@@ -348,11 +376,17 @@ export default defineComponent({
             responApiSearchCompanies
         }
     }
+=======
+>>>>>>> develop
 
 });
 </script>
 
 <style lang="scss" scoped>
+.page-content {
+    padding: 10px 10px;
+}
+
 #data-grid-demo {
     min-height: 700px;
 }
