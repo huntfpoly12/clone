@@ -41,51 +41,38 @@
                                 <label class="lable-item">
                                     사업자코드 :
                                 </label>
-                                <DxTextBox v-model:value="dataSearchDef.code" style="width: 130px;" />
+                                <a-input v-model:value="dataSearchDef.code" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">상호:</label>
-                                <DxTextBox v-model:value="dataSearchDef.name" style="width: 130px;" />
+                                <a-input v-model:value="dataSearchDef.name" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">대표자:</label>
-                                <DxTextBox v-model:value="dataSearchDef.presidentName" style="width: 130px;" />
+                                <a-input v-model:value="dataSearchDef.presidentName" style="width: 130px;" />
                             </div>
                         </a-col>
-
                         <a-col>
                             <label class="lable-item">해지:</label>
                             <a-switch v-model:checked="dataSearchDef.excludeCancel" checked-children="포함"
                                 un-checked-children="제외" />
                         </a-col>
-
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">주소 :</label>
-                                <DxTextBox v-model:value="dataSearchDef.address" style="width: 130px;" />
+                                <a-input v-model:value="dataSearchDef.address" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
-                            <div class="dflex custom-flex">
-                                <label class="lable-item">매니저명 :</label>
-                                <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
-                                    value-expr="value" v-model:value="dataSearchDef.manageUserId" />
-                            </div>
+                            <ListManagerDropdown />
                         </a-col>
-                        <a-col> 
-                            <div class="dflex custom-flex">
-                                <ListManagerDropdown />
-                            </div>
-                        </a-col>
-
-                        <a-col> 
-                            <div class="dflex custom-flex">
-                                <ListPartner />
-                            </div> 
+                        <a-col>
+                            <!-- Doanh nghiệp -->
+                            <ListSalesDropdownVue :textLabel="'영업자명'" />
                         </a-col>
                     </a-row>
                 </div>
@@ -98,7 +85,6 @@
                     <DxPaging :page-size="10" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
-
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
                     <DxColumn data-field="name" caption="상호" />
                     <DxColumn data-field="presidentName" caption="대표자" />
@@ -109,7 +95,6 @@
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn data-field="unpaidMonths" caption="이용료" :format="amountFormat" data-type="number" />
-
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
@@ -167,10 +152,8 @@ import {
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
-import DxNumberBox from 'devextreme-vue/number-box';
-import inputFormat from '../../../../components/inputBoxFormat.vue'
-import DxTextBox from 'devextreme-vue/text-box';
 import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
+import ListSalesDropdownVue from '../../../../components/ListSalesDropdown.vue';
 import ListPartner from '../../../../components/ListPartner.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
@@ -191,9 +174,6 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        DxNumberBox,
-        inputFormat,
-        DxTextBox,
         ListManagerDropdown,
         DxSelectBox,
         ListPartner,
@@ -204,6 +184,7 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
+        ListSalesDropdownVue
     },
     data() {
         return {

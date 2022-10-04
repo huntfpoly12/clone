@@ -52,7 +52,7 @@
                         </a-select>
                     </a-col>
                     <a-col>
-                        <ListSalesDropdownVue />
+                        <ListSalesDropdownVue :textLabel="'영업자'"/>
                     </a-col>
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
