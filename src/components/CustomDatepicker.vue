@@ -1,6 +1,6 @@
 <template>
     <Datepicker v-model="date" :class="classNameProps" textInput autoApply :format="format" @focus="focusDatetime"
-        v-on:blur="alertDate" @keyup="getdata" @update:modelValue="closeDateTime">
+        v-on:blur="alertDate" @keyup="getdata" @update:modelValue="closeDateTime" style="width: 100%;">
     </Datepicker>
 </template>
 <script lang="ts">

@@ -251,7 +251,7 @@ export default defineComponent({
         resultSale((res) => {
             var dataRes = res.data.searchSalesRepresentatives.datas 
             let arrayAdd: any = []
-            if (dataRes.length > 0) {
+            if (dataRes && dataRes.length > 0) {
                 dataRes.map((x: any, index: any) => {
                     arrayAdd.push({
                         value: x.id,
@@ -340,7 +340,7 @@ export default defineComponent({
         searching() {
             this.spinning = true
             let dataStatus = this.dataSearch.status
-            let status = dataStatus.length > 0 ? Object.keys(dataStatus).map((key: any) => dataStatus[key]) : [10, 20, 30, 99]
+            // let status = dataStatus.length > 0 ? Object.keys(dataStatus).map((key: any) => dataStatus[key]) : [10, 20, 30, 99]
 
             this.refetchData(this.originData)
             setTimeout(() => {

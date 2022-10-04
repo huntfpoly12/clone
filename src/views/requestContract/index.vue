@@ -127,18 +127,18 @@
                         </div>
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <DxNumberBox placeholder="0298765432" v-model:value="contractCreacted.phone">
+                            <DxTextBox placeholder="0298765432" v-model:value="contractCreacted.phone">
                                 <DxValidator>
                                     <DxRequiredRule message="Name is required" />
                                     <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
                                     <!-- <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" /> -->
                                 </DxValidator>
-                            </DxNumberBox>
+                            </DxTextBox>
 
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
-                            <DxNumberBox placeholder="0212345678" v-model:value="contractCreacted.fax" />
+                            <DxTextBox placeholder="0212345678" v-model:value="contractCreacted.fax" />
                         </div>
                         <div>
                             <keep-alive>
@@ -151,18 +151,19 @@
                     <label>2. 대표자정보</label>
                     <div class="info-box">
                         <div class="form-item">
-                            <label class="red">대표자명:</label> 
-                            <DxNumberBox placeholder="홍길동" v-model:value="contractCreacted.namePresident">
+                            <label class="red">대표자명:</label>
+                            <DxTextBox placeholder="홍길동" style="width: 150px"
+                                v-model:value="contractCreacted.namePresident">
                                 <DxValidator>
                                     <DxRequiredRule message="Name is required" />
                                     <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
                                     <!-- <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" /> -->
                                 </DxValidator>
-                            </DxNumberBox>
+                            </DxTextBox>
                         </div>
                         <div class="form-item">
                             <label class="red">생년월일 :</label>
-                            <div>
+                            <div style="width: 150px;">
                                 <CustomDatepicker v-if="contractCreacted.birthday == ''"
                                     @valueDateChange="changeValueDate" />
                                 <CustomDatepicker v-else :valueDate="contractCreacted.birthday"
@@ -171,7 +172,7 @@
                         </div>
                         <div class="form-item">
                             <label class="red">휴대폰번호:</label>
-                            <a-input placeholder="01098765432" style="width: 150px"
+                            <DxNumberBox style="width: 150px" placeholder="01098765432"
                                 v-model:value="contractCreacted.mobilePhone" />
                         </div>
                         <div class="form-item">
@@ -179,7 +180,8 @@
                             <a-form :model="formState" v-bind="layout" name="nest-messages"
                                 :validate-messages="validateMessages" @finish="onFinish">
                                 <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="formState.user.email" />
+                                    <a-input v-model:value="formState.user.email"
+                                        placeholder="abc123@mailaddress.com" />
                                 </a-form-item>
                             </a-form>
                         </div>
@@ -190,10 +192,7 @@
                 <div class="form-group">
                     <label>1. 회계서비스 신청</label>
                     <div class="list-checkbox">
-                        <a-radio-group v-model:value="dataInputCallApi.dossier">
-                            <a-radio :value="'신청합니다'">신청합니다</a-radio>
-                            <a-radio :value="'신청하지 않습니다'">신청하지 않습니다</a-radio>
-                        </a-radio-group>
+                        <a-radio-group v-model:value="dataInputCallApi.dossier" :options="plainOptions" />
                     </div>
 
                     <div class="group-title">
@@ -236,7 +235,7 @@
 
                     <div class="form-item">
                         <label class="red">장기요양기관등록번호 :</label>
-                        <a-input placeholder="1234567898"
+                        <DxNumberBox placeholder="1234567898"
                             v-model:value="contractCreacted.longTermCareInstitutionNumber" />
                     </div>
 
@@ -255,15 +254,12 @@
                 <div class="form-group">
                     <label>2. 원천서비스 신청</label>
                     <div class="list-checkbox">
-                        <a-radio-group v-model:value="dataInputCallApi.applicationService">
-                            <a-radio :value="'신청합니다'">신청합니다</a-radio>
-                            <a-radio :value="'신청하지 않습니다'">신청하지 않습니다</a-radio>
-                        </a-radio-group>
+                        <a-radio-group v-model:value="dataInputCallApi.applicationService" :options="plainOptions" />
                     </div>
 
                     <div class="form-item">
                         <label>서비스 시작년월 :</label>
-                        <div style="position: relative;">
+                        <div style="width: 170px">
                             <CustomDatepicker v-if="contractCreacted.startYearMonthHolding == ''"
                                 @valueDateChange="changeValueDateHoding" />
                             <CustomDatepicker v-else :valueDate="contractCreacted.startYearMonthHolding"
@@ -273,7 +269,7 @@
 
                     <div class="form-item">
                         <label>직 원 수:</label>
-                        <a-input placeholder="장기요양기관등록번호" style="width: 150px;"
+                        <DxNumberBox placeholder="장기요양기관등록번호" style="width: 170px;"
                             v-model:value="contractCreacted.capacityHolding" />
                     </div>
                     <div class="form-item">
@@ -287,11 +283,12 @@
                     <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                     <div class="form-item">
                         <label class="red">출금은행 :</label>
-                        <selectBank @bank="getIDBank" />
+                        <selectBank @bank="getIDBank"  :width="'178px'"/>
                     </div>
                     <div class="form-item">
                         <label class="red">출금계좌번호 :</label>
-                        <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" />
+                        <!-- <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" /> -->
+                        <DxNumberBox placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" />
                     </div>
                     <div class="form-item">
                         <label class="red">예금주명 :</label>
@@ -440,15 +437,14 @@ export default {
             marginTopModal: "margin-top : 10px",
             titleModal: "사업자등록증",
             dataInputCallApi: {
-                dossier: '',
-                applicationService: '',
+                dossier: '신청합니다',
+                applicationService: '신청합니다',
             },
             namePattern: /^[^0-9]+$/,
             messagePopup: '',
-
+            plainOptions: ['신청합니다', '신청하지않습니다']
         }
     },
-
     computed: {
         checkStepTwo() {
             if (this.step === 0) {
@@ -483,8 +479,6 @@ export default {
             }
         },
     },
-
-
     setup() {
         const contractCreacted = reactive(
             {
@@ -522,7 +516,7 @@ export default {
                 accountingServiceTypes: 1,
                 facilityBusinesses: [],
                 startYearMonthHolding: "",
-                capacityHolding: 10,
+                capacityHolding: null,
                 withholdingServiceTypes: 1,
                 bankType: "39",
                 accountNumber: '',
@@ -535,8 +529,8 @@ export default {
         )
 
         var visibleModal = ref(false)
-        const list =  ref([])
-       const valueFacilityBusinesses = ref([])
+        const listDataConvert = ref([])
+        const valueFacilityBusinesses = ref([])
         const {
             mutate: Creat,
             loading: signinLoading,
@@ -547,7 +541,7 @@ export default {
             () => ({
                 variables: {
                     ...contractCreacted,
-                    facilityBusinesses: list.value,
+                    facilityBusinesses: listDataConvert.value,
                 }
             })
         )
@@ -602,9 +596,6 @@ export default {
             },
         });
 
-
-
-
         return {
             contractCreacted,
             Creat,
@@ -616,57 +607,45 @@ export default {
             validateMessages,
             onFinish,
             layout,
-            list,
+            listDataConvert,
             formState
         }
     },
     watch: {
-        // 'contractCreacted.longTermCareInstitutionNumber'(newVal) {
-        //     let arrNew = [];
-        //     let dataAdd = ''
-        //     if (this.valueFacilityBusinesses.length > 0) {
-        //         this.valueFacilityBusinesses.forEach(element => {
-        //             const obj = {
-        //                 ...element,
-        //                 longTermCareInstitutionNumber: newVal,
-        //                 registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
-        //             }
-        //             arrNew.push(obj)
-        //         });
-        //     }
-        //     arrNew.map(attachment => {
-        //         console.log(attachment.registrationCardFileStorageId);
-        //         dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
-        //     });
-
-        //     // this.formattedAttachments = dataAdd
-        // },
-        // 'contractCreacted.registrationCardFileStorageId'(newVal) {
-        //     let arrNew = [];
-        //     let dataAdd = ''
-        //     if (this.valueFacilityBusinesses.length > 0) {
-        //         this.valueFacilityBusinesses.forEach(element => {
-        //             const obj = {
-        //                 ...element,
-        //                 longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
-        //                 registrationCardFileStorageId: newVal
-        //             }
-        //             arrNew.push(obj)
-        //         });
-        //     }
-        //     arrNew.map(attachment => {
-        //         console.log(attachment.registrationCardFileStorageId);
-        //         dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
-        //     });
-
-        //     // this.formattedAttachments = dataAdd
-        // },
+        'contractCreacted.longTermCareInstitutionNumber'(newVal) {
+            console.log(newVal)
+            if(this.listDataConvert.length > 0) {
+                this.listDataConvert.forEach(item => {
+                    item.longTermCareInstitutionNumber = newVal
+                })
+            }
+        },
+        'contractCreacted.registrationCardFileStorageId'(newVal) {
+            console.log(newVal)
+            if(this.listDataConvert.length > 0) {
+                this.listDataConvert.forEach(item => {
+                    item.registrationCardFileStorageId = newVal
+                })
+            }
+        },
+        registrationCardFileStorageId(newVal) {
+            if(this.listDataConvert.length > 0) {
+                this.listDataConvert.forEach(item => {
+                    item.registrationCardFileStorageId = newVal
+                })
+            }
+        },
         valueFacilityBusinesses: {
             handler(newVal) {
-                this.list = []
+                this.listDataConvert = []
                 newVal.forEach((item) => {
-                    this.list.push({
-                        longTermCareInstitutionNumber: "", facilityBizType: item?.facilityBizType, name: item?.name,startYearMonth: dayjs(item?.startYearMonth).format('YYYY/MM/DD'), capacity: parseInt(item?.capacity), registrationCardFileStorageId: null,
+                    this.listDataConvert.push({
+                        longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                        facilityBizType: item?.facilityBizType,
+                        name: item?.name,
+                        startYearMonth: dayjs(item?.startYearMonth).format('YYYY/MM/DD'),
+                        capacity: parseInt(item?.capacity),
+                        registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId,
                     })
                 })
             },
@@ -723,26 +702,6 @@ export default {
                     message: 'Vui lòng nhập đầy đủ thông tin cần thiết'
                 });
             } else {
-
-                let arrNew = [];
-                let dataAdd = ''
-                if (this.valueFacilityBusinesses.length > 0) {
-                    this.valueFacilityBusinesses.forEach(element => {
-                        const obj = {
-                            ...element,
-                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
-                            registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
-                        }
-                        arrNew.push(obj)
-                    });
-                }
-                arrNew.map(attachment => {
-                    console.log(attachment.registrationCardFileStorageId);
-                    dataAdd += `{longTermCareInstitutionNumber: "${attachment.longTermCareInstitutionNumber}", facilityBizType: ${attachment.facilityBizType}, name: "${attachment.name}",startYearMonth: "${dayjs(attachment.startYearMonth).format('YYYY/MM/DD')}", capacity: ${attachment.capacity}, registrationCardFileStorageId: ${typeof (attachment.registrationCardFileStorageId) != "undefined" ? attachment.registrationCardFileStorageId : null},}`;
-                });
-                // this.formattedAttachments = dataAdd
-
-                console.log(this.formattedAttachments);
                 this.Creat()
             }
 
@@ -852,10 +811,10 @@ export default {
     max-width: calc(100% - 165px);
 } */
 
-::v-deep input.dp__input.dp__input_icon_pad {
+/* ::v-deep input.dp__input.dp__input_icon_pad {
     width: 150px;
     max-width: 200px !important;
-}
+} */
 
 ::v-deep #nest-messages_user_email {
     min-width: 350px !important;
