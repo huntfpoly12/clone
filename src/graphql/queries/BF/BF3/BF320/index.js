@@ -1,6 +1,11 @@
-import getData from "./getData"; 
+import getCompany from "./getCompany"; 
+import searchCompanies from "./getData"; 
+import getCompanyManageMemos from "./getCompanyManageMemos"; 
+
 const queries = {
-    getData: getData
+    searchCompanies: searchCompanies,
+    getCompany: getCompany,
+    getCompanyManageMemos:getCompanyManageMemos
 };
 
 export default queries;

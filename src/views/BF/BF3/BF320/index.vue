@@ -49,12 +49,12 @@
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <ListManagerDropdown />
+                        
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <ListPartner />
+              
                         </div>
                     </a-col>
                 </a-row>
@@ -280,7 +280,7 @@ export default defineComponent({
 
         onMounted(() => {
             try {
-                const { loading, error, onResult } = useQuery(queries.getData.searchCompanies, dataSearch)
+                const { loading, error, onResult } = useQuery(queries.searchCompanies, dataSearch,)
                 onResult((res) => {
                     console.log(res.data)
                 })

@@ -262,7 +262,7 @@ export default defineComponent({
             arraySale.value = arrayAdd
         })
 
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originData.value)
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originData.value,)
 
         onResult((res) => {
             if (res.loading) {
