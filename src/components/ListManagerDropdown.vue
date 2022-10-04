@@ -1,7 +1,7 @@
 <template>
     <template>
         <label v-if="result?.findManagerUsers?.length > 0" class="lable-item">영업자명 :</label>
-        <a-select ref="select" v-model:value="manager" placeholder="전체" @change="$emit(slected, $event.target.value)">
+        <a-select ref="select" v-model:value="manager" placeholder="전체" show-search @change="$emit(slected, $event.target.value)">
         
         <a-select-option v-for="item in result?.findManagerUsers" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
     </a-select>
