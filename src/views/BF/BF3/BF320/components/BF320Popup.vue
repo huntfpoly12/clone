@@ -189,8 +189,7 @@ import {
     WarningFilled,
     InfoCircleFilled
 } from "@ant-design/icons-vue";
-import type { UploadProps } from "ant-design-vue";
-import { any } from "vue-types";
+import type { UploadProps } from "ant-design-vue"; 
 export default defineComponent({
     props: {
         modalStatus: Boolean,
