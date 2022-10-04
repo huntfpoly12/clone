@@ -97,7 +97,7 @@
                     <a-input v-model:value="formState.companyName" />
                   </a-form-item>
                   <a-form-item label="사업자등록번호" class="clr">
-                    <a-input style="width: 300px" :value="formState.companyBizNumber" />
+                    <a-input style="width: 300px" :value="formState.companyBizNumber" :disabled="!canChangeableBizNumber"/>
                   </a-form-item>
 
                   <a-row>
@@ -199,8 +199,10 @@
                             <div>{{ data.rowIndex + 1 }}</div>
                           </template>
 
-                          <DxColumn data-field="registrationCard.name" caption="사업명 (중복불가)" />
-                          <DxColumn data-field="facilityBizType" caption="사업분류" />
+                          <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                          <DxColumn data-field="facilityBizType" caption="사업분류">
+                            <DxLookup :data-source="facilityBizType" value-expr="ID" display-expr="Name" />
+                          </DxColumn>
                           <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                             :format="'yyyy-MM-dd'" />
                           <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
@@ -210,7 +212,10 @@
                           </DxToolbar>
                         </DxDataGrid>
                       </div>
-
+                      <a-form-item label="장기요양기관등록번호" class="clr">
+                        <a-input placeholder="1234567898" style="width: 250px"
+                          v-model:value="formState.accountinglongTermCareInstitutionNumber" />
+                      </a-form-item>
                       <imgUpload :title="titleModal2" @update-img="getImgUrl" :srcimg="'scsadsaf'" />
                       <div>
                         <a-row>
@@ -366,7 +371,6 @@ export default defineComponent({
       titleModal2: "장기요양기관등록증",
     };
   },
-  apollo: {},
   components: {
     DxDropDownBox,
     DxDataGrid,
@@ -388,10 +392,45 @@ export default defineComponent({
     postCode,
   },
   setup(props, { emit }) {
+    const facilityBizType = [
+      {
+        ID: 1,
+        Name: "주·야간보호",
+      },
+      {
+        ID: 2,
+        Name: "방문요양",
+      },
+      {
+        ID: 3,
+        Name: "인지활동형 방문요양",
+      },
+      {
+        ID: 4,
+        Name: "방문간호",
+      },
+      {
+        ID: 5,
+        Name: "방문목욕",
+      },
+      {
+        ID: 6,
+        Name: "단기보호",
+      },
+      {
+        ID: 7,
+        Name: "복지용구",
+      }
+    ];
+
+
     let visible = ref(false);
     let activeKey = ref(1);
     const dataQuery = ref();
+    const dataQueryCheckPer = ref({});
     let trigger = ref<boolean>(false);
+    let triggerCheckPer = ref<boolean>(false);
+    let canChangeableBizNumber = ref<boolean>(false);
     const layout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 16 },
@@ -460,6 +499,7 @@ export default defineComponent({
       presidentPhone: "",
       presidentEmail: "",
       accountingfacilityBusinesses: [],
+      accountinglongTermCareInstitutionNumber: '',
       accountingServiceTypes: [],
 
       withholdingYearMonth: "",
@@ -502,6 +542,8 @@ export default defineComponent({
         range: "${label} must be between ${min} and ${max}",
       },
     };
+
+    // watch event modal popup
     watch(
       () => props.modalStatus,
       (newValue, old) => {
@@ -524,6 +566,21 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
+
+    // query check if can be change business registration number 
+    const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
+      queries.isSubscriptionRequestChangeableBizNumber,dataQueryCheckPer,
+      () => ({
+        enabled: triggerCheckPer.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+
+    // watch result resCheckPerEdit
+    watch(resCheckPerEdit, (value) => {
+      console.log(value,'dfghdggfdgdfgdffff');
+      canChangeableBizNumber.value = value.isSubscriptionRequestChangeableBizNumber;
+    });
 
     watch(result, (value) => {
       if (value && value.getSubscriptionRequest) {
@@ -609,6 +666,7 @@ export default defineComponent({
           value.getSubscriptionRequest.content.accounting.facilityBusinesses;
         formState.accountingServiceTypes =
           value.getSubscriptionRequest.content.accounting.accountingServiceTypes;
+        formState.accountinglongTermCareInstitutionNumber = value.getSubscriptionRequest.content.accounting.facilityBusinesses.length > 0 ? value.getSubscriptionRequest.content.accounting.facilityBusinesses[0].longTermCareInstitutionNumber : '';
 
         formState.withholdingYearMonth =
           value.getSubscriptionRequest.content.withholding.startYearMonth;
@@ -691,10 +749,15 @@ export default defineComponent({
           default:
             break;
         }
+        triggerCheckPer.value = true;
+        dataQueryCheckPer.value = {id: value.getSubscriptionRequest.id ,bizNumber: value.getSubscriptionRequest.companyBizNumber};
+        // trigger query check if can be change business registration number 
+        refetchCheckPer()
       }
     });
 
     const setModalVisible = () => {
+      triggerCheckPer.value = false;
       trigger.value = false;
       emit("closePopup", false);
     };
@@ -747,8 +810,16 @@ export default defineComponent({
       onDone: updateDone,
     } = useMutation(mutations.updateSubscriptionRequest);
 
+    // query create company by subscription 
+    const {
+      mutate: actionCreateCompany
+    } = useMutation(mutations.createCompanyBySubscriptionRequest);
+
     updateDone((res) => {
-      message.success(` update was successful`, 4);
+      if (res.data.updateSubscriptionRequest.status == 30) {
+        actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
+      }
+      message.success(`Update was successful`, 4);
       setModalVisible();
     });
 
@@ -757,6 +828,19 @@ export default defineComponent({
     });
 
     const updateSubscriptionRequest = (e: any) => {
+      let customAccountingfacilityBusinesses: any = [];
+      if (formState.accountingfacilityBusinesses) {
+          customAccountingfacilityBusinesses = formState.accountingfacilityBusinesses.map((facilityBusinesses: any) => ({
+          longTermCareInstitutionNumber: formState.accountinglongTermCareInstitutionNumber,
+          capacity: facilityBusinesses.capacity,
+          facilityBizType: facilityBusinesses.facilityBizType,
+          name: facilityBusinesses.name,
+          registrationCard: facilityBusinesses.registrationCard,
+          registrationCardFileStorageId: facilityBusinesses.registrationCardFileStorageId,
+          startYearMonth: facilityBusinesses.startYearMonth,
+        }));
+      }
+
       let contentData = {
         agreements: {
           terms: formState.agreementsTerms,
@@ -797,7 +881,7 @@ export default defineComponent({
           email: formState.presidentEmail,
         },
         accounting: {
-          facilityBusinesses: formState.accountingfacilityBusinesses,
+          facilityBusinesses: customAccountingfacilityBusinesses,
           accountingServiceTypes: formState.accountingServiceTypes,
         },
         withholding: {
@@ -820,7 +904,7 @@ export default defineComponent({
       const cleanData = JSON.parse(
         JSON.stringify(contentData, (name, val) => {
           if (val == null) {
-            message.error(`${name} is null`, 4);
+            //message.error(`${name} is null`, 4);
             return;
           }
           if (
@@ -861,6 +945,8 @@ export default defineComponent({
       activeKey,
       funcAddress,
       updateSubscriptionRequest,
+      facilityBizType,
+      canChangeableBizNumber
     };
   },
   methods: {
@@ -877,13 +963,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 // ::v-deep #modal-detail-bf-310 {
-.clr {
+::v-deep .clr {
   label {
     color: red;
   }
 }
 
-.clr-text {
+::v-deep .clr-text {
   color: red;
 }
 

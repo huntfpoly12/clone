@@ -208,7 +208,8 @@ import {
 } from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
 import { any } from "vue-types";
-
+import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
+import { useQuery, useLazyQuery } from "@vue/apollo-composable";
 interface FormState {
   name: string;
   영업자코드: string;
@@ -376,6 +377,17 @@ export default defineComponent({
       mobilePhone: "123456789",
       email: "",
     });
+    const {
+      refetch: refetchData,
+      loading,
+      error,
+      onResult,
+    } = useQuery(queries.searchScreenRoleGroups);
+    onResult((res) => {
+      if (res.loading) {
+      } else {
+      }
+    });
     return {
       labelCol,
       wrapperCol,
@@ -400,6 +412,7 @@ export default defineComponent({
       createUser,
     };
   },
+
   methods: {
     onlyNumber(e: any) {
       let keyCode = e.keyCode ? e.keyCode : e.which;
