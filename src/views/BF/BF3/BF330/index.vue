@@ -158,6 +158,7 @@ export default defineComponent({
             },
         };
     },
+   
     mounted() {
         const originData = {page: 1,rows: 10,excludeCancel: true}
         this.searchServiceContract(originData)
