@@ -2,7 +2,7 @@
     <template  v-if="result?.findParters?.length > 0">
         <label class="lable-item">파트너 :</label>
         <a-select ref="select" v-model:value="partner" placeholder="전체">
-            <a-select-option v-for="item in result.findParters" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
+            <a-select-option v-for="item in result?.findParters" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
         </a-select>
     </template>
 </template>

@@ -83,7 +83,7 @@
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
-                                <!-- <ListManagerDropdown /> -->
+                                <ListManagerDropdown />
                             </div>
                         </a-col>
                         <a-col>
@@ -174,7 +174,7 @@ import localeData from "dayjs/plugin/localeData"
 import DxNumberBox from 'devextreme-vue/number-box';
 import inputFormat from '../../../../components/inputBoxFormat.vue'
 import DxTextBox from 'devextreme-vue/text-box';
-// import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
+import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
 import ListPartner from '../../../../components/ListPartner.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
@@ -198,7 +198,7 @@ export default defineComponent({
         DxNumberBox,
         inputFormat,
         DxTextBox,
-        // ListManagerDropdown,
+        ListManagerDropdown,
         DxSelectBox,
         ListPartner,
         SearchOutlined,
