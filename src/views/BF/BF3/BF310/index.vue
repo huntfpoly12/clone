@@ -267,11 +267,9 @@ export default defineComponent({
         onResult((res) => {
             if (res.loading) {
             } else {
-                console.log(res);
                 rowTable.value = res.data.searchSubscriptionRequests.totalCount
                 dataSource.value = res.data.searchSubscriptionRequests.datas
             }
-
         })
 
         setTimeout(() => {
