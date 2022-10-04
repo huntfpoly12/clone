@@ -395,7 +395,7 @@
               <div v-if="this.fileNamestep">
                 <span style="padding-right: 10px">{{ this.fileNamestep }}</span>
                 <delete-outlined
-                  @click="removeImg"
+                  @click="removeImgStep"
                   style="color: red; cursor: pointer"
                 />
               </div>
@@ -743,10 +743,11 @@ export default {
       //   this.imagestep.value = "";
       //   this.imageValue.value = "";
       imageValue.value = "";
-      imagestep.value = "";
       fileName.value = "";
+    };
+    const removeImgStep = () => {
+      imagestep.value = "";
       fileNamestep.value = "";
-      console.log(fileNamestep);
     };
     const {
       mutate: Creat,
@@ -828,6 +829,7 @@ export default {
       imageValue,
       fileName,
       fileNamestep,
+      removeImgStep,
     };
   },
   watch: {
