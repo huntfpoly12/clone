@@ -334,7 +334,7 @@ export default defineComponent({
             try {
                 const { loading, error, onResult } = useQuery(queries.getData.searchCompanies, dataSearch)
                 onResult((res) => {
-                    console.log(res.data)
+                    console.log(res)
                 })
             } catch (error) {
                 console.log(error);
