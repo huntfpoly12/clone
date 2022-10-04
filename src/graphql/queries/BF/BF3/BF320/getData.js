@@ -16,6 +16,14 @@ const queries = {
             usedWithholding
             servicePrice
             active
+            compactSalesRepresentative {
+              name
+            }
+            manageCompactUser{
+              name
+            }
+            canceledAt
+            unpaidMonths
           }
         }
       }

@@ -41,55 +41,51 @@
                                 <label class="lable-item">
                                     사업자코드 :
                                 </label>
-                                <DxTextBox v-model:value="dataSearch.typeSevice" style="width: 130px;" />
+                                <DxTextBox v-model:value="dataSearchDef.code" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">상호:</label>
-                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                    :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"
-                                    style="width: 130px;" />
+                                <DxTextBox v-model:value="dataSearchDef.name" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">대표자:</label>
-                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
-                                    :clearButton="true" :nameService="'typeSevice'" style="width: 130px;" />
+                                <DxTextBox v-model:value="dataSearchDef.presidentName" style="width: 130px;" />
                             </div>
                         </a-col>
 
                         <a-col>
                             <label class="lable-item">해지:</label>
-                            <a-switch v-model:checked="dataSearch.status" checked-children="포함"
+                            <a-switch v-model:checked="dataSearchDef.excludeCancel" checked-children="포함"
                                 un-checked-children="제외" />
                         </a-col>
 
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">주소 :</label>
-                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                    :spinButtons="false" :clearButton="true" :nameService="'address'"
-                                    style="width: 130px;" />
+                                <DxTextBox v-model:value="dataSearchDef.address" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">매니저명 :</label>
                                 <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
-                                    value-expr="value" />
+                                    value-expr="value" v-model:value="dataSearchDef.manageUserId" />
                             </div>
                         </a-col>
-                        <a-col>
+                        <a-col> 
                             <div class="dflex custom-flex">
                                 <ListManagerDropdown />
                             </div>
                         </a-col>
-                        <a-col>
+
+                        <a-col> 
                             <div class="dflex custom-flex">
                                 <ListPartner />
-                            </div>
+                            </div> 
                         </a-col>
                     </a-row>
                 </div>
@@ -111,10 +107,10 @@
                     <DxColumn data-field="manageCompactUser.name" caption="매니저" />
                     <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                    <DxColumn data-field="#" caption="해지일자" />
-                    <DxColumn data-field="#" caption="이용료" :format="amountFormat" data-type="number" />
-                    <DxColumn :width="80" cell-template="pupop" />
+                    <DxColumn data-field="canceledAt" caption="해지일자" />
+                    <DxColumn data-field="unpaidMonths" caption="이용료" :format="amountFormat" data-type="number" />
 
+                    <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
@@ -239,13 +235,30 @@ export default defineComponent({
             modalHistoryStatus: false,
             value: '',
             typeInputCall: 1,
-            spinning: false,
-
         };
     },
 
     setup() {
+        const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
+        var dataSearchDef = reactive({
+            typeSevice: '',
+            nameCompany: '',
+            surrogate: '',
+            status: false,
+            address: '',
+            manager: 'Jack',
+            nameSale: 'Jack',
+            page: 1,
+            rows: 10,
+            code: '',
+            name: '',
+            presidentName: '',
+            manageUserId: '',
+            salesRepresentativeId: '',
+            excludeCancel: true,
+        })
+
         var dataSearch = reactive({
             typeSevice: '',
             nameCompany: '',
@@ -270,6 +283,8 @@ export default defineComponent({
             try {
                 const { loading, error, onResult } = useQuery(queries.getData.searchCompanies, dataSearch)
                 onResult((res) => {
+                    console.log(res.data.searchCompanies.datas);
+
                     responApiSearchCompanies.value = res.data.searchCompanies.datas
                 })
             } catch (error) {
@@ -277,12 +292,18 @@ export default defineComponent({
             }
         });
 
+        setTimeout(() => {
+            spinning.value = !spinning.value;
+        }, 1000);
+
 
         return {
             // getCartItems
             dataSearch,
             idRowEdit,
-            responApiSearchCompanies
+            spinning,
+            responApiSearchCompanies,
+            dataSearchDef
         }
     },
 
