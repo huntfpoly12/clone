@@ -612,6 +612,29 @@ export default {
         }
     },
     watch: {
+        'contractCreacted.longTermCareInstitutionNumber'(newVal) {
+            console.log(newVal)
+            if(this.listDataConvert.length > 0) {
+                this.listDataConvert.forEach(item => {
+                    item.longTermCareInstitutionNumber = newVal
+                })
+            }
+        },
+        'contractCreacted.registrationCardFileStorageId'(newVal) {
+            console.log(newVal)
+            if(this.listDataConvert.length > 0) {
+                this.listDataConvert.forEach(item => {
+                    item.registrationCardFileStorageId = newVal
+                })
+            }
+        },
+        registrationCardFileStorageId(newVal) {
+            if(this.listDataConvert.length > 0) {
+                this.listDataConvert.forEach(item => {
+                    item.registrationCardFileStorageId = newVal
+                })
+            }
+        },
         valueFacilityBusinesses: {
             handler(newVal) {
                 this.listDataConvert = []
@@ -679,19 +702,6 @@ export default {
                     message: 'Vui lòng nhập đầy đủ thông tin cần thiết'
                 });
             } else {
-                let arrNew = [];
-                if (this.listDataConvert.length > 0) {
-                    this.listDataConvert.forEach(element => {
-                        const obj = {
-                            ...element,
-                            longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
-                            registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId
-                        }
-                        arrNew.push(obj)
-                    });
-                }
-
-                this.listDataConvert = arrNew
                 this.Creat()
             }
 
