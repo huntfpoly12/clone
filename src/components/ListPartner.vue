@@ -10,6 +10,13 @@ import { defineComponent, ref, onMounted } from 'vue'
 import queries from "../graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 export default defineComponent({
+    props: {
+        slected: {
+            type: String,
+            default: '',
+            required: true
+        }
+    },
     setup() {
         const partner = ref('')
         const { result, loading, error, onResult, refetch } = useQuery(queries.getListPartner);

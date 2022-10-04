@@ -147,7 +147,6 @@
           <DxDataGrid
             :data-source="dataSource"
             :show-borders="true"
-            key-expr="ID"
             :allow-column-reordering="true"
             :allow-column-resizing="true"
             :column-auto-width="true"
@@ -155,9 +154,14 @@
             <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
 
-            <DxColumn data-field="코드" :width="80" :fixed="true" />
+            <DxColumn
+              data-field="screenRoles"
+              caption="코드"
+              :width="200"
+              :fixed="true"
+            />
 
-            <DxColumn data-field="권한그룹명" />
+            <DxColumn data-field="name" caption="권한그룹명" />
 
             <DxColumn data-field="권한그룹설명" />
             <DxColumn :width="50" cell-template="modal-table" />
@@ -191,7 +195,7 @@ import { ref, defineComponent, reactive } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
 import type { SelectProps } from "ant-design-vue";
-
+import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 import {
   DxDataGrid,
   DxColumn,
@@ -209,7 +213,8 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { any } from "vue-types";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
-import { useQuery, useLazyQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+
 interface FormState {
   name: string;
   영업자코드: string;
@@ -254,7 +259,6 @@ export default defineComponent({
     return {
       isShow: ref<boolean>(false),
 
-      dataSource: employees,
       states,
       dataMode: {
         color: "",
@@ -268,6 +272,16 @@ export default defineComponent({
   },
 
   setup(props) {
+    const userCreated = reactive({
+      type: "r",
+      username: "",
+      name: "",
+      salesRepresentativeId: null,
+      screenRoleGroupIds: ["CONFIG_ACCOUNTING", "CONFIG_ACCOUNTING_CODE"],
+      mobilePhone: "",
+      email: "",
+    });
+    const dataSource = ref([]);
     const selectSearch = ref<SelectProps["options"]>([
       { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
       { value: "C20235301", label: "C20225301     효사랑노인요양전문병원" },
@@ -370,26 +384,43 @@ export default defineComponent({
     const createUser = reactive({
       type: "type test",
       username: "Hoang Thanh Trang",
-      name: "name",
-      managerGrade: 1,
-      salesRepresentativeId: 1,
-      screenRoleGroupIds: "screenRoleGroupIds",
+      name: "회계설정",
+      screenRoleGroupIds: ["r", "m", "c", "p", "s"],
       mobilePhone: "123456789",
       email: "",
     });
-    const {
-      refetch: refetchData,
-      loading,
-      error,
-      onResult,
-    } = useQuery(queries.searchScreenRoleGroups);
+    const originData = ref({
+      page: 1,
+      rows: 20,
+      types: ["r", "m", "c", "p", "s"],
+    });
+    const { onResult } = useQuery(
+      queries.searchScreenRoleGroups,
+      originData.value
+    );
+    // const {
+    //   mutate: Creat,
+    //   loading: signinLoading,
+    //   onDone: signinDone,
+    //   onError: onError,
+    // } = useMutation(mutations.createUser.createUser, () => ({
+    //   variables: {
+    //     ...userCreated,
+    //   },
+    // }));
+
     onResult((res) => {
-      if (res.loading) {
-      } else {
-      }
+      // if (res.loading) {
+      //   console.log(originData.value);
+      // } else {
+      // }
+      dataSource.value = res.data.searchScreenRoleGroups.datas;
+
+      console.log(dataSource.value, "data");
     });
     return {
       labelCol,
+
       wrapperCol,
       bf310Detail,
       layout,
@@ -410,6 +441,8 @@ export default defineComponent({
       handleBlur,
       handleChange,
       createUser,
+      dataSource,
+      userCreated,
     };
   },
 
