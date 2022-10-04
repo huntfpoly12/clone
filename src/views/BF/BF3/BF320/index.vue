@@ -1,107 +1,142 @@
 <template>
-    <div id="bf-320">
-        <div class="search-form">
-            <div id="components-grid-demo-flex">
-                <a-row justify="start" :gutter="[16,8]">
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">
-                                사업자코드 :
-                            </label>
-                            <DxTextBox v-model:value="dataSearch.typeSevice" style="width: 130px;" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">상호:</label>
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"
-                                style="width: 130px;" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">대표자:</label>
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
-                                :clearButton="true" :nameService="'typeSevice'" style="width: 130px;" />
-                        </div>
-                    </a-col>
-                    
-                    <a-col>
-                        <label class="lable-item">해지:</label>
-                        <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
-                    </a-col>
-
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">주소 :</label>
-                            <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
-                                :spinButtons="false" :clearButton="true" :nameService="'address'"
-                                style="width: 130px;" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <label class="lable-item">매니저명 :</label>
-                            <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
-                                value-expr="value" />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <ListManagerDropdown />
-                        </div>
-                    </a-col>
-                    <a-col>
-                        <div class="dflex custom-flex">
-                            <ListPartner />
-                        </div>
-                    </a-col>
-                </a-row>
+    <a-spin :spinning="spinning" size="large">
+        <div class="top-content">
+            <a-typography-title :level="3"> 계약정보관리&심사
+            </a-typography-title>
+            <div class="list-action">
+                <a-tooltip>
+                    <template #title>조회</template>
+                    <a-button>
+                        <SearchOutlined />
+                        <!-- <SearchOutlined @click="searching" /> -->
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>저장</template>
+                    <a-button>
+                        <SaveOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>삭제</template>
+                    <a-button>
+                        <DeleteOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>출력</template>
+                    <a-button>
+                        <PrinterOutlined />
+                    </a-button>
+                </a-tooltip>
             </div>
         </div>
-        <div class="page-content">
-            <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
-                @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
-                :column-auto-width="true">
-                <DxSelection mode="multiple" />
-                <DxPaging :page-size="10" />
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                <DxExport :enabled="true" :allow-export-selected-data="true" />
 
-                <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
-                <DxColumn data-field="name" caption="상호" />
-                <DxColumn data-field="presidentName" caption="대표자" />
-                <DxColumn data-field="address" caption="주소" data-type="date" />
-                <DxColumn data-field="phone" caption="연락처" :width="230" />
-                <DxColumn data-field="manageCompactUser.name" caption="매니저" />
-                <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
-                <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                <DxColumn data-field="#" caption="해지일자" />
-                <DxColumn data-field="#" caption="이용료" :format="amountFormat" data-type="number" />
-                <DxColumn :width="80" cell-template="pupop" />
+        <div id="bf-320">
+            <div class="search-form">
+                <div id="components-grid-demo-flex">
+                    <a-row justify="start" :gutter="[16,8]">
+                        <a-col>
+                            <div class="dflex custom-flex">
+                                <label class="lable-item">
+                                    사업자코드 :
+                                </label>
+                                <DxTextBox v-model:value="dataSearch.typeSevice" style="width: 130px;" />
+                            </div>
+                        </a-col>
+                        <a-col>
+                            <div class="dflex custom-flex">
+                                <label class="lable-item">상호:</label>
+                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
+                                    :spinButtons="true" :clearButton="false" :nameService="'nameCompany'"
+                                    style="width: 130px;" />
+                            </div>
+                        </a-col>
+                        <a-col>
+                            <div class="dflex custom-flex">
+                                <label class="lable-item">대표자:</label>
+                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :spinButtons="false"
+                                    :clearButton="true" :nameService="'typeSevice'" style="width: 130px;" />
+                            </div>
+                        </a-col>
 
-                <template #pupop="{ data }" class="custom-action">
-                    <div class="custom-action">
-                        <a-space :size="10">
-                            <a-tooltip placement="top">
-                                <template #title>편집</template>
-                                <EditOutlined @click="setModalVisible(data)" />
-                            </a-tooltip>
-                            <a-tooltip placement="top">
-                                <template #title>변경이력</template>
-                                <HistoryOutlined @click="modalHistory(data)" />
-                            </a-tooltip>
-                        </a-space>
-                    </div>
-                </template>
+                        <a-col>
+                            <label class="lable-item">해지:</label>
+                            <a-switch v-model:checked="dataSearch.status" checked-children="포함"
+                                un-checked-children="제외" />
+                        </a-col>
 
-            </DxDataGrid>
-            <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
-            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-                title="변경이력[cm-000-pop]" />
+                        <a-col>
+                            <div class="dflex custom-flex">
+                                <label class="lable-item">주소 :</label>
+                                <inputFormat @valueInput="changeValueInputEmit" :format="'#,##0'" :min="''" :max="''"
+                                    :spinButtons="false" :clearButton="true" :nameService="'address'"
+                                    style="width: 130px;" />
+                            </div>
+                        </a-col>
+                        <a-col>
+                            <div class="dflex custom-flex">
+                                <label class="lable-item">매니저명 :</label>
+                                <DxSelectBox :search-enabled="true" :data-source="options" display-expr="label"
+                                    value-expr="value" />
+                            </div>
+                        </a-col>
+                        <a-col>
+                            <div class="dflex custom-flex">
+                                <!-- <ListManagerDropdown /> -->
+                            </div>
+                        </a-col>
+                        <a-col>
+                            <div class="dflex custom-flex">
+                                <ListPartner />
+                            </div>
+                        </a-col>
+                    </a-row>
+                </div>
+            </div>
+            <div class="page-content">
+                <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
+                    @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
+                    :column-auto-width="true">
+                    <DxSelection mode="multiple" />
+                    <DxPaging :page-size="10" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+
+                    <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
+                    <DxColumn data-field="name" caption="상호" />
+                    <DxColumn data-field="presidentName" caption="대표자" />
+                    <DxColumn data-field="address" caption="주소" data-type="date" />
+                    <DxColumn data-field="phone" caption="연락처" :width="230" />
+                    <DxColumn data-field="manageCompactUser.name" caption="매니저" />
+                    <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
+                    <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
+                    <DxColumn data-field="#" caption="해지일자" />
+                    <DxColumn data-field="#" caption="이용료" :format="amountFormat" data-type="number" />
+                    <DxColumn :width="80" cell-template="pupop" />
+
+                    <template #pupop="{ data }" class="custom-action">
+                        <div class="custom-action">
+                            <a-space :size="10">
+                                <a-tooltip placement="top">
+                                    <template #title>편집</template>
+                                    <EditOutlined @click="setModalVisible(data)" />
+                                </a-tooltip>
+                                <a-tooltip placement="top">
+                                    <template #title>변경이력</template>
+                                    <HistoryOutlined @click="modalHistory(data)" />
+                                </a-tooltip>
+                            </a-space>
+                        </div>
+                    </template>
+
+                </DxDataGrid>
+                <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :data="popupData" />
+                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    :data="popupData" title="변경이력[cm-000-pop]" />
+            </div>
         </div>
-    </div>
+    </a-spin>
 </template> 
 
 <script lang="ts">
@@ -121,14 +156,24 @@ import { employees, states } from '../data.js';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
-import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import {
+    EditOutlined,
+    HistoryOutlined,
+    SearchOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeleteOutlined,
+    SaveOutlined,
+} from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
 import DxNumberBox from 'devextreme-vue/number-box';
 import inputFormat from '../../../../components/inputBoxFormat.vue'
 import DxTextBox from 'devextreme-vue/text-box';
-import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
+// import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
 import ListPartner from '../../../../components/ListPartner.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
@@ -152,9 +197,16 @@ export default defineComponent({
         DxNumberBox,
         inputFormat,
         DxTextBox,
-        ListManagerDropdown,
+        // ListManagerDropdown,
         DxSelectBox,
-        ListPartner
+        ListPartner,
+        SearchOutlined,
+        MenuFoldOutlined,
+        MenuUnfoldOutlined,
+        MailOutlined,
+        PrinterOutlined,
+        DeleteOutlined,
+        SaveOutlined,
     },
     data() {
         return {
@@ -186,7 +238,7 @@ export default defineComponent({
             modalHistoryStatus: false,
             value: '',
             typeInputCall: 1,
-
+            spinning : false
         };
     },
     methods: {
