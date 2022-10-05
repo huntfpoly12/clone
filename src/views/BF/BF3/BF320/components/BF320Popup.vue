@@ -169,27 +169,6 @@
                 </a-collapse>
             </a-spin>
         </a-modal>
-
-        <a-modal :mask-closable="false" :visible="modalStatusHistory" footer="" @cancel="setModalVisibleHis()"
-            width="1000px">
-            <div style="margin-top: 20px">
-                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
-                    <DxColumn data-field="기록일시" />
-                    <DxColumn data-field="비고" />
-                    <DxColumn data-field="생성일시" />
-                    <DxColumn data-field="생성자ID" />
-                    <DxColumn data-field="삭제여부" />
-                    <DxColumn data-field="IP주소" />
-                    <DxColumn data-field="상세" cell-template="detail" />
-                    <template #detail="{}">
-                        <a-space :size="8">
-                            <zoom-in-outlined :style="{ fontSize: '15px' }" />
-                        </a-space>
-                    </template>
-                </DxDataGrid>
-            </div>
-        </a-modal>
-
     </div>
 </template>
 
@@ -201,11 +180,11 @@ import queries from "../../../../../graphql/queries/BF/BF3/BF320/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF320/index";
 import postCode from "../../../../../components/postCode.vue";
 import selectBank from "../../../../../components/selectBank.vue";
+
+import { message } from "ant-design-vue";
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-
-import { message } from "ant-design-vue";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -329,7 +308,7 @@ export default defineComponent({
         });
         const formStateMomes = ref([
                     {
-                        memoId: 0,
+                        memoId: null,
                         ownerUserId: 0,
                         ownerName: "",
                         ownerUsername: "",
@@ -397,7 +376,7 @@ export default defineComponent({
         });
 
         // get list memo of company
-        const { result, loading, error, refetch } = useQuery(
+        const { result, loading, refetch } = useQuery(
             queries.getCompany,
             dataQuery,
             () => ({
@@ -407,16 +386,21 @@ export default defineComponent({
         );
 
         // mutation create memo 
+        
         const {
             mutate: actionCreateMemo,
+          onError : onErrorMemo,
             onDone: onCreatedMemo
         } = useMutation(mutations.createCompanyManageMemo);
 
-        onCreatedMemo(() => {
+        onCreatedMemo((res) => {
             refetchMemo();
+            message.success('Created memo successfully', 4);
         });
-
-        // mutation create memo 
+        onErrorMemo((res)=>{
+            console.log(res,'dfdfggdgdfgfdgfg')
+        });
+        // mutation update memo 
         const {
             mutate: actionUpdateMemo,
             onDone: onUpdatedMemo
@@ -445,7 +429,7 @@ export default defineComponent({
 
         const handleAdd = () => {
             const newMemo: any = {
-                memoId: 0,
+                memoId: null,
                 ownerUserId: 0,
                 ownerName: "",
                 ownerUsername: "",
@@ -464,8 +448,10 @@ export default defineComponent({
         const handleAddMemo = (note: any, mmId: any = null) => {
 
             if (note !== '' && mmId == null) {
+                console.log(note,mmId,'add memo');
                 actionCreateMemo({ companyId: formState.id, memo: note });
             } else {
+                console.log(note,mmId,'update memo');
                 actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         }
@@ -554,7 +540,6 @@ export default defineComponent({
         // Update Company 
         const {
             mutate: actionUpdate,
-            onError,
             loading: loadingUpdate,
             onDone: updateDone,
         } = useMutation(mutations.updateCompany);

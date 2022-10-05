@@ -104,7 +104,11 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="popupData" />
+                <div class="pagination-table" v-if="rowTable > originData.rows">
+                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
+                        show-less-items @change="changePage" />
+                </div>
+                <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :rowId="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                     title="변경이력[cm-000-pop]" />
             </div>
@@ -173,7 +177,7 @@ export default defineComponent({
     setup() {
         const spinning = ref(true);
         const idRowEdit = ref(0)
-
+        const idSubRequest = ref();
         const dataSearchDef = ref({
             page: 1,
             rows: 10,
@@ -187,7 +191,7 @@ export default defineComponent({
         })
 
         const listServiceContract = ref([])
-
+        const rowTable = ref(10)
         const originData = ref({
             page: 1,
             rows: 10,
@@ -201,10 +205,8 @@ export default defineComponent({
         })
 
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchServiceContract, originData)
-        const changeSaleId = (value) => {
-            dataSearchDef._value.salesRepresentativeId = value
-        }
         onResult((res) => {
+            rowTable.value = res.data.searchServiceContracts.totalCount
             listServiceContract.value = res.data.searchServiceContracts.datas
         })
 
@@ -254,7 +256,8 @@ export default defineComponent({
             searching,
             originData,
             refetchData,
-            changeSaleId
+            rowTable,
+            idSubRequest 
         }
     },
     methods: {
@@ -276,13 +279,34 @@ export default defineComponent({
             e.cancel = true;
         },
         setModalVisible(data) {
+            this.idSubRequest = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
         },
         modalHistory(data) {
             this.modalHistoryStatus = true;
             this.popupData = data;
-        }
+        },
+        changePage() {
+            let dataNew = {
+                page: this.dataSearchDef.page,
+                rows: this.dataSearchDef.rows,
+                code: this.dataSearchDef.code,
+                name: this.dataSearchDef.name,
+                presidentName: this.dataSearchDef.presidentName,
+                address: this.dataSearchDef.address,
+                manageUserId: this.dataSearchDef.manageUserId,
+                salesRepresentativeId: this.dataSearchDef.salesRepresentativeId,
+                excludeCancel: this.dataSearchDef.excludeCancel
+            }
+
+            this.refetchData(dataNew)
+
+            this.spinning = !this.spinning;
+            setTimeout(() => {
+                this.spinning = !this.spinning;
+            }, 1000);
+        },
     },
 });
 </script>
