@@ -1,6 +1,6 @@
 <template>
     <div ref="root">
-        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+        <a-modal :visible="modalStatus" title="영업자관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" :mask-closable="false" :width="1028" :afterClose="afterPopupClose">
             <a-form :model="bf340Detail" v-bind="layout" label-align="right" name="nest-messages"
                 :validate-messages="validateMessages" @finish="onFinish">
@@ -172,7 +172,7 @@
                 </div>
             </a-row>
             <template #footer>
-                
+
             </template>
         </a-modal>
     </div>
@@ -180,36 +180,9 @@
 
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, reactive, onMounted, computed } from 'vue'
-import type { UnwrapRef } from 'vue';
+import { ref, defineComponent, reactive, onMounted, computed } from 'vue' 
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import dayjs, { Dayjs } from 'dayjs';
-interface FormState {
-    name: string;
-    영업자코드: string;
-    영업자명: string;
-    사업자유형: string;
-    상태: string;
-    등급: string;
-    주소: string;
-    은행: string;
-    계좌번호: string;
-    등록번호: string;
-    예금주: string;
-    사업자등록번호: string;
-    휴대폰: string;
-    비고: string;
-    이메일: string;
-    연락처: string;
-    팩스: string;
-    전자세금계산서수신이메일: string;
-    세금계산서발행여부: string;
-    법인주민등록번호: string;
-    result_address: string;
-    detail_address: string;
-    해지일자: string;
-    가입일자: string;
-}
 
 export default defineComponent({
     props: {
@@ -236,7 +209,7 @@ export default defineComponent({
             },
         };
 
-        const bf340Detail: UnwrapRef<FormState> = reactive({
+        const bf340Detail = reactive({
             name: '',
             사업자유형: '',
             상태: '',
@@ -289,30 +262,7 @@ export default defineComponent({
         }
 
         const afterPopupClose = () => {
-            confirm.value = '';
-            bf340Detail.사업자유형 = '';
-            bf340Detail.상태 = '';
-            bf340Detail.등급 = '';
-            bf340Detail.주소 = '';
-            bf340Detail.은행 = '';
-            bf340Detail.계좌번호 = '';
-            bf340Detail.예금주 = '';
-            bf340Detail.비고 = '';
-            bf340Detail.영업자코드 = '';
-            bf340Detail.영업자명 = '';
-            bf340Detail.등록번호 = '';
-            bf340Detail.사업자등록번호 = '';
-            bf340Detail.휴대폰 = '';
-            bf340Detail.이메일 = '';
-            bf340Detail.연락처 = '';
-            bf340Detail.팩스 = '';
-            bf340Detail.전자세금계산서수신이메일 = '';
-            bf340Detail.세금계산서발행여부 = '';
-            bf340Detail.법인주민등록번호 = '';
-            bf340Detail.result_address = '';
-            bf340Detail.detail_address = '';
-            bf340Detail.가입일자 = '';
-            bf340Detail.해지일자 = '';
+
         };
 
         const onFinish = (values: any) => {
