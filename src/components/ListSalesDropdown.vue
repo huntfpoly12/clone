@@ -1,7 +1,7 @@
 <template>
     <template v-if="result?.findSalesRepresentatives?.length > 0">
-        <label class="lable-item">영업자 :</label>
-        <a-select ref="select" v-model:value="sale" placeholder="전체" show-search> 
+        <label class="lable-item">{{textLabel}} :</label>
+        <a-select ref="select" v-model:value="sale" placeholder="전체" show-search @change="updateSale(sale)">
             <a-select-option v-for="item in result?.findSalesRepresentatives" :key="item.id" :value="item.id">
                 {{item.name}}</a-select-option>
         </a-select>
@@ -12,18 +12,29 @@ import { defineComponent, ref, onMounted } from 'vue'
 import queries from "../graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 export default defineComponent({
-    setup() {
-        const sale = ref<string[]>([]);
+    props: {
+        textLabel: String,
+        selected: {
+            type: Number,
+            default: null,
+            required: true
+        }
+    },
+    setup(props, { emit }) {
+        const sale = ref();
         const { result, loading, error, onResult, refetch } = useQuery(queries.getListSale);
         const checkAll = () => {
             console.log("123412");
-            
+
         }
-        
+        const updateSale = (value: any) => {
+            emit('update:selected', value)
+        }
         return {
             result,
             checkAll,
-            sale
+            sale,
+            updateSale
         }
     },
 })

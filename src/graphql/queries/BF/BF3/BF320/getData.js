@@ -1,26 +1,52 @@
 import gql from "graphql-tag";
-const queries = {
-  searchCompanies: gql`
-      query searchCompanies ($page: Int!, $rows: Int!, $excludeCancel: Boolean!) {
-        searchCompanies (filter: { page: $page, rows: $rows, excludeCancel: $excludeCancel }) {
-          datas {
-            id
-            code
-            name
-            address
-            phone
-            presidentName
-            presidentMobilePhone
-            manageStartDate
-            usedAccountingCount
-            usedWithholding
-            servicePrice
-            active
-          }
+export default gql`
+      query searchCompanies (
+          $page: Int!, 
+          $rows: Int!,
+          $excludeCancel: Boolean!
+          $code: String
+          $name: String
+          $presidentName: String
+          $address: String
+          $manageUserId: Int
+          $salesRepresentativeId: Int 
+        ) {
+        searchCompanies (filter: { 
+          page: $page,
+          rows: $rows, 
+          excludeCancel: $excludeCancel,
+          code: $code
+          name: $name
+          presidentName: $presidentName
+          address: $address
+          manageUserId: $manageUserId
+          salesRepresentativeId: $salesRepresentativeId
+          }) {
+            totalCount
+            page
+            rows
+            datas {
+              id
+              code
+              name
+              address
+              phone
+              presidentName
+              presidentMobilePhone
+              manageStartDate
+              usedAccountingCount
+              usedWithholding
+              servicePrice
+              active
+              compactSalesRepresentative {
+                name
+              }
+              manageCompactUser{
+                name
+              }
+              canceledAt
+              unpaidMonths
+            }
         }
       }
-    `,
-
-};
-
-export default queries;
+    `

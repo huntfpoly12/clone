@@ -262,7 +262,7 @@
             </div>
             <div class="form-item">
               <label class="red">휴대폰번호:</label>
-              <DxNumberBox
+              <DxTextBox
                 style="width: 150px"
                 placeholder="01098765432"
                 v-model:value="contractCreacted.mobilePhone"
@@ -370,7 +370,7 @@
 
           <div class="form-item">
             <label class="red">장기요양기관등록번호 :</label>
-            <DxNumberBox
+            <DxTextBox
               placeholder="1234567898"
               v-model:value="contractCreacted.longTermCareInstitutionNumber"
             />
@@ -436,7 +436,7 @@
 
           <div class="form-item">
             <label>직 원 수:</label>
-            <DxNumberBox
+            <DxTextBox
               placeholder="장기요양기관등록번호"
               style="width: 170px"
               v-model:value="contractCreacted.capacityHolding"
@@ -460,7 +460,7 @@
           <div class="form-item">
             <label class="red">출금계좌번호 :</label>
             <!-- <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" /> -->
-            <DxNumberBox
+            <DxTextBox
               placeholder="출금계좌번호"
               v-model:value="contractCreacted.accountNumber"
             />
