@@ -1,8 +1,27 @@
 import gql from "graphql-tag";
-const queries = {
-  searchCompanies: gql`
-      query searchCompanies ($page: Int!, $rows: Int!, $excludeCancel: Boolean!) {
-        searchCompanies (filter: { page: $page, rows: $rows, excludeCancel: $excludeCancel }) {
+export default gql`
+      query searchCompanies (
+          $page: Int!, 
+          $rows: Int!,
+          $excludeCancel: Boolean!
+          $code: String
+          $name: String
+          $presidentName: String
+          $address: String
+          $manageUserId: Int
+          $salesRepresentativeId: Int 
+        ) {
+        searchCompanies (filter: { 
+          page: $page,
+          rows: $rows, 
+          excludeCancel: $excludeCancel,
+          code: $code
+          name: $name
+          presidentName: $presidentName
+          address: $address
+          manageUserId: $manageUserId
+          salesRepresentativeId: $salesRepresentativeId
+          }) {
           datas {
             id
             code
@@ -27,8 +46,4 @@ const queries = {
           }
         }
       }
-    `,
-
-};
-
-export default queries;
+    `
