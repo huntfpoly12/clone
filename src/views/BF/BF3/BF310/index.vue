@@ -349,7 +349,7 @@ export default defineComponent({
         },
         formarDate(date: any) {
             return dayjs(date).format('YYYY/MM/DD')
-        },
+        }, 
 
         searching() {
             if (!this.originData.startDate && !this.originData.finishDate) {
@@ -361,12 +361,8 @@ export default defineComponent({
             let arrayNew = {
                 ...this.originData,
                 statuses: this.statuses.length > 0 ? this.statuses : [10, 20, 30, 99]
-            }
-
-            // console.log(arrayNew);
-
+            } 
             this.refetchData(arrayNew)
-
             setTimeout(() => {
                 this.spinning = false
             }, 1000);
