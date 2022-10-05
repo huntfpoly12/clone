@@ -23,28 +23,31 @@ const queries = {
           manageUserId: $manageUserId
           salesRepresentativeId: $salesRepresentativeId
           }) {
-          datas {
-            id
-            code
-            name
-            address
-            phone
-            presidentName
-            presidentMobilePhone
-            manageStartDate
-            usedAccountingCount
-            usedWithholding
-            servicePrice
-            active
-            compactSalesRepresentative {
+            totalCount
+            page
+            rows
+            datas {
+              id
+              code
               name
+              address
+              phone
+              presidentName
+              presidentMobilePhone
+              manageStartDate
+              usedAccountingCount
+              usedWithholding
+              servicePrice
+              active
+              compactSalesRepresentative {
+                name
+              }
+              manageCompactUser{
+                name
+              }
+              canceledAt
+              unpaidMonths
             }
-            manageCompactUser{
-              name
-            }
-            canceledAt
-            unpaidMonths
-          }
         }
       }
     `,

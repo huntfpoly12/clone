@@ -207,7 +207,6 @@ export default defineComponent({
             status: ref([]),
             startDate: '',
             finishDate: '',
-            pageSizes: [5, 10, 15],
             displayMode: 'full',
             showPageSizeSelector: true,
             showNavButtons: true,
