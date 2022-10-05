@@ -1,8 +1,12 @@
 <template>
     <div id="components-modal-demo-position">
-
-        <a-modal :mask-closable="false" v-model:visible="visible" title="사업자관리 " okText="저장하고 나가기" cancelText="그냥 나가기"
-            width="1000px" @cancel="setModalVisible()">
+        <a-modal :mask-closable="false" v-model:visible="visible" title="사업자관리 " width="1000px"
+            @cancel="setModalVisible()">
+            <template #footer>
+                <a-button @click="setModalVisible">그냥 나가기</a-button>
+                <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateCompany">
+                    저장하고 나가기</a-button>
+            </template>
             <a-spin tip="Loading..." :spinning="loading">
                 <a-collapse v-model:activeKey="activeKey" accordion>
                     <a-collapse-panel key="1" header="사업자정보">
@@ -10,7 +14,7 @@
                             <a-row>
                                 <a-col :span="18">
                                     <a-form-item label="상 호" class="clr">
-                                        <a-input v-model:value="formState.name" />
+                                        <a-input v-model:value="formState.extendInfoDetailName" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="6"></a-col>
@@ -43,7 +47,7 @@
                                             <a-row>
                                                 <a-col :span="12">
                                                     <a-input style="width: 100%"
-                                                        v-model:value="formState.extendInfo.detail.zipcode" disabled />
+                                                        v-model:value="formState.extendInfoDetailZipcode" disabled />
                                                 </a-col>
                                                 <a-col :span="12">
                                                     <div style="margin-left: 5px">
@@ -56,27 +60,27 @@
                                         </a-col>
                                         <a-col :span="24">
                                             <a-row>
-                                                <a-input v-model:value="formState.extendInfo.detail.roadAddress"
+                                                <a-input v-model:value="formState.extendInfoDetailRoadAddress"
                                                     disabled />
                                             </a-row>
                                         </a-col>
                                         <a-col :span="24">
                                             <a-row>
-                                                <a-input v-model:value="formState.extendInfo.detail.addressExtend" />
+                                                <a-input v-model:value="formState.extendInfoDetailAddressExtend" />
                                             </a-row>
                                         </a-col>
                                     </a-row>
                                 </a-form-item>
                                 <a-col :span="8">
                                     <a-form-item label="연락처" class="clr">
-                                        <a-input v-model:value="formState.extendInfo.detail.phone" />
+                                        <a-input v-model:value="formState.extendInfoDetailPhone" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
 
                                 <a-col :span="8">
                                     <a-form-item label="팩 스">
-                                        <a-input v-model:value="formState.extendInfo.detail.fax" />
+                                        <a-input v-model:value="formState.extendInfoDetailFax" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
@@ -88,45 +92,45 @@
                         <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                             <a-form-item has-feedback label="대표자명" class="clr">
                                 <a-input placeholder="홍길동" autocomplete="off" style="width: 200px"
-                                    v-model:value="formState.extendInfo.president.name" />
+                                    v-model:value="formState.extendInfoPresidentName" />
                             </a-form-item>
                             <a-form-item has-feedback label="생년월일" class="clr">
                                 <a-input placeholder="19620820" autocomplete="off" style="width: 200px"
-                                    v-model:value="formState.extendInfo.president.birthday" />
+                                    v-model:value="formState.extendInfoPresidentBirthday" />
                             </a-form-item>
                             <a-form-item has-feedback label="휴대폰번호" class="clr">
                                 <a-input-number placeholder="1098765432" style="width: 200px"
-                                    v-model:value="formState.extendInfo.president.mobilePhone" />
+                                    v-model:value="formState.extendInfoPresidentMobilePhone" />
                             </a-form-item>
                             <a-form-item has-feedback label="이메일" class="clr">
                                 <a-input placeholder="abc123@mailaddress.com" style="width: 400px"
-                                    v-model:value="formState.extendInfo.president.email" />
+                                    v-model:value="formState.extendInfoPresidentEmail" />
                             </a-form-item>
                         </a-form>
                     </a-collapse-panel>
                     <a-collapse-panel key="3" header="CMS (자동이체출금) 계좌 정보 입력">
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                             <a-form-item label="출금은행" class="clr">
-                                <selectBank :selectValue="formState.extendInfo.cmsBank.bankType" width="150px" />
+                                <selectBank :selectValue="formState.extendInfoCmsBankBankType" width="150px" />
                             </a-form-item>
                             <a-form-item label="출금계좌번호" class="clr">
                                 <a-input placeholder="100100056489011" style="width: 300px"
-                                    v-model:value="formState.extendInfo.cmsBank.accountNumber" />
+                                    v-model:value="formState.extendInfoCmsBankAccountNumber" />
                             </a-form-item>
                             <a-form-item label="예금주명" class="clr">
                                 <a-input placeholder="주식회사 타운소프트비나" style="width: 300px"
-                                    v-model:value="formState.extendInfo.cmsBank.ownerName" />
+                                    v-model:value="formState.extendInfoCmsBankOwnerName" />
                             </a-form-item>
                             <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
                                 <a-input style="width: 250px"
-                                    v-model:value="formState.extendInfo.cmsBank.ownerBizNumber" />
+                                    v-model:value="formState.extendInfoCmsBankOwnerBizNumber" />
                                 <div class="warring-bank">
                                     <InfoCircleFilled />
                                     <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>
                                 </div>
                             </a-form-item>
                             <a-form-item label="자동이체출금일자" class="clr custom-flex">
-                                <a-radio-group v-model:value="formState.extendInfo.cmsBank.withdrawDay"
+                                <a-radio-group v-model:value="formState.extendInfoCmsBankWithdrawDay"
                                     class="custom-lineHeight">
                                     <a-radio class="clb" :style="radioStyle" value="매월 5일" style="height: 22px;">매월 5일
                                     </a-radio>
@@ -200,6 +204,8 @@ import selectBank from "../../../../../components/selectBank.vue";
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+
+import { message } from "ant-design-vue";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -231,7 +237,7 @@ export default defineComponent({
             type: Boolean,
         },
         modalStatusHistory: Boolean,
-        idRowEdit : Number
+        idRowEdit: Number
     },
     components: {
         DxDropDownBox,
@@ -257,7 +263,7 @@ export default defineComponent({
             은행선택: "은행선택"
         };
     },
-    setup(props) {
+    setup(props, { emit }) {
         let visible = ref(false);
         const dataQuery = ref();
         const dataQueryMemos = ref();
@@ -278,43 +284,38 @@ export default defineComponent({
             phone: "",
             presidentName: "",
             presidentMobilePhone: "",
-            extendInfo: {
-                detail: {
-                    name: "",
-                    zipcode: "",
-                    roadAddress: "",
-                    jibunAddress: "",
-                    addressExtend: "",
-                    addressDetail: {
-                        bcode: "",
-                        bname: "",
-                        buildingCode: "",
-                        buildingName: "",
-                        roadname: "",
-                        roadnameCode: "",
-                        sido: "",
-                        sigungu: "",
-                        sigunguCode: "",
-                        zonecode: ""
-                    },
-                    phone: "",
-                    fax: "",
-                    licenseFileStorageId: 10
-                },
-                president: {
-                    name: "",
-                    birthday: "",
-                    mobilePhone: "",
-                    email: ""
-                },
-                cmsBank: {
-                    bankType: "39",
-                    accountNumber: "",
-                    ownerBizNumber: "",
-                    ownerName: "",
-                    withdrawDay: "매월 5일"
-                }
-            },
+            extendInfoDetailName: "",
+            extendInfoDetailZipcode: "",
+            extendInfoDetailRoadAddress: "",
+            extendInfoDetailJibunAddress: "",
+            extendInfoDetailAddressExtend: "",
+
+            extendInfoDetailAddressDetailBcode: "",
+            extendInfoDetailAddressDetailBname: "",
+            extendInfoDetailAddressDetailBuildingCode: "",
+            extendInfoDetailAddressDetailBuildingName: "",
+            extendInfoDetailAddressDetailRoadname: "",
+            extendInfoDetailAddressDetailRoadnameCode: "",
+            extendInfoDetailAddressDetailSido: "",
+            extendInfoDetailAddressDetailSigungu: "",
+            extendInfoDetailAddressDetailSigunguCode: "",
+            extendInfoDetailAddressDetailZonecode: "",
+
+            extendInfoDetailPhone: "",
+            extendInfoDetailFax: "",
+            extendInfoDetailLicenseFileStorageId: "",
+
+            extendInfoPresidentName: "",
+            extendInfoPresidentBirthday: "",
+            extendInfoPresidentMobilePhone: "",
+            extendInfoPresidentEmail: "",
+
+            extendInfoCmsBankBankType: "",
+            extendInfoCmsBankAccountNumber: "",
+            extendInfoCmsBankOwnerBizNumber: "",
+            extendInfoCmsBankOwnerName: "",
+            extendInfoCmsBankWithdrawDay: "",
+
             sealFileStorageId: null,
             createdAt: 0,
             createdBy: "",
@@ -326,7 +327,21 @@ export default defineComponent({
             canceledAt: null,
             unpaidMonths: 0
         });
-        const formStateMomes = ref([]);
+        const formStateMomes = ref([
+                    {
+                        memoId: 0,
+                        ownerUserId: 0,
+                        ownerName: "",
+                        ownerUsername: "",
+                        memo: "",
+                        createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
+                        createdBy: "",
+                        updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
+                        updatedBy: "",
+                        ip: "",
+                        active: "",
+                    }
+                ]);
         const labelCol = ref({ style: { width: "150px" } });
         const wrapperCol = ref({ span: 14 });
         const radioStyle = ref({
@@ -354,8 +369,8 @@ export default defineComponent({
             (newValue, old) => {
                 if (newValue) {
                     visible.value = newValue;
-                    dataQuery.value = { id: 1 };
-                    dataQueryMemos.value = { companyId: 1 };
+                    dataQuery.value = { id: props.idRowEdit };
+                    dataQueryMemos.value = { companyId: props.idRowEdit };
                     trigger.value = true;
                     refetchMemo();
                     refetch();
@@ -376,9 +391,9 @@ export default defineComponent({
             })
         );
         watch(resultMemo, (value) => {
-            if (value && value.getCompanyManageMemos) {
+            if (value && value.getCompanyManageMemos.length > 0) {
                 formStateMomes.value = value.getCompanyManageMemos;
-            }
+            } 
         });
 
         // get list memo of company
@@ -429,17 +444,29 @@ export default defineComponent({
         }
 
         const handleAdd = () => {
-            formStateMomes.value.unshift({});
+            const newMemo: any = {
+                memoId: 0,
+                ownerUserId: 0,
+                ownerName: "",
+                ownerUsername: "",
+                memo: "",
+                createdAt:  dayjs(new Date()).format('YYYY/MM/DD'),
+                createdBy: "",
+                updatedAt:  dayjs(new Date()).format('YYYY/MM/DD'),
+                updatedBy: "",
+                ip: "",
+                active: "",
+            };
+            formStateMomes.value.unshift(newMemo);
+
         }
 
         const handleAddMemo = (note: any, mmId: any = null) => {
 
             if (note !== '' && mmId == null) {
-                console.log(note,mmId,'tao comment');
                 actionCreateMemo({ companyId: formState.id, memo: note });
             } else {
-                console.log(note,mmId,'updated comment');
-                actionUpdateMemo({ companyId: formState.id, memo: note,memoId: mmId });
+                actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         }
 
@@ -455,37 +482,37 @@ export default defineComponent({
                 formState.presidentName = value.getCompany.presidentName;
                 formState.presidentMobilePhone = value.getCompany.presidentMobilePhone;
 
-                formState.extendInfo.detail.name = value.getCompany.extendInfo.detail.name;
-                formState.extendInfo.detail.zipcode = value.getCompany.extendInfo.detail.name;
-                formState.extendInfo.detail.roadAddress = value.getCompany.extendInfo.detail.roadAddress;
-                formState.extendInfo.detail.jibunAddress = value.getCompany.extendInfo.detail.jibunAddress;
-                formState.extendInfo.detail.addressExtend = value.getCompany.extendInfo.detail.addressExtend;
+                formState.extendInfoDetailName = value.getCompany.extendInfo.detail.name;
+                formState.extendInfoDetailZipcode = value.getCompany.extendInfo.detail.name;
+                formState.extendInfoDetailRoadAddress = value.getCompany.extendInfo.detail.roadAddress;
+                formState.extendInfoDetailJibunAddress = value.getCompany.extendInfo.detail.jibunAddress;
+                formState.extendInfoDetailAddressExtend = value.getCompany.extendInfo.detail.addressExtend;
 
-                formState.extendInfo.detail.addressDetail.bcode = value.getCompany.extendInfo.detail.addressDetail.bcode;
-                formState.extendInfo.detail.addressDetail.bname = value.getCompany.extendInfo.detail.addressDetail.bname;
-                formState.extendInfo.detail.addressDetail.buildingCode = value.getCompany.extendInfo.detail.addressDetail.buildingCode;
-                formState.extendInfo.detail.addressDetail.buildingName = value.getCompany.extendInfo.detail.addressDetail.buildingName;
-                formState.extendInfo.detail.addressDetail.roadname = value.getCompany.extendInfo.detail.addressDetail.roadname;
-                formState.extendInfo.detail.addressDetail.roadnameCode = value.getCompany.extendInfo.detail.addressDetail.roadnameCode;
-                formState.extendInfo.detail.addressDetail.sido = value.getCompany.extendInfo.detail.addressDetail.sido;
-                formState.extendInfo.detail.addressDetail.sigungu = value.getCompany.extendInfo.detail.addressDetail.sigungu;
-                formState.extendInfo.detail.addressDetail.sigunguCode = value.getCompany.extendInfo.detail.addressDetail.sigunguCode;
-                formState.extendInfo.detail.addressDetail.zonecode = value.getCompany.extendInfo.detail.addressDetail.zonecode;
+                formState.extendInfoDetailAddressDetailBcode = value.getCompany.extendInfo.detail.addressDetail.bcode;
+                formState.extendInfoDetailAddressDetailBname = value.getCompany.extendInfo.detail.addressDetail.bname;
+                formState.extendInfoDetailAddressDetailBuildingCode = value.getCompany.extendInfo.detail.addressDetail.buildingCode;
+                formState.extendInfoDetailAddressDetailBuildingName = value.getCompany.extendInfo.detail.addressDetail.buildingName;
+                formState.extendInfoDetailAddressDetailRoadname = value.getCompany.extendInfo.detail.addressDetail.roadname;
+                formState.extendInfoDetailAddressDetailRoadnameCode = value.getCompany.extendInfo.detail.addressDetail.roadnameCode;
+                formState.extendInfoDetailAddressDetailSido = value.getCompany.extendInfo.detail.addressDetail.sido;
+                formState.extendInfoDetailAddressDetailSigungu = value.getCompany.extendInfo.detail.addressDetail.sigungu;
+                formState.extendInfoDetailAddressDetailSigunguCode = value.getCompany.extendInfo.detail.addressDetail.sigunguCode;
+                formState.extendInfoDetailAddressDetailZonecode = value.getCompany.extendInfo.detail.addressDetail.zonecode;
 
-                formState.extendInfo.detail.phone = value.getCompany.extendInfo.detail.phone;
-                formState.extendInfo.detail.fax = value.getCompany.extendInfo.detail.fax;
-                formState.extendInfo.detail.licenseFileStorageId = value.getCompany.extendInfo.detail.licenseFileStorageId;
+                formState.extendInfoDetailPhone = value.getCompany.extendInfo.detail.phone;
+                formState.extendInfoDetailFax = value.getCompany.extendInfo.detail.fax;
+                formState.extendInfoDetailLicenseFileStorageId = value.getCompany.extendInfo.detail.licenseFileStorageId;
 
-                formState.extendInfo.president.name = value.getCompany.extendInfo.president.name;
-                formState.extendInfo.president.birthday = value.getCompany.extendInfo.president.birthday;
-                formState.extendInfo.president.mobilePhone = value.getCompany.extendInfo.president.mobilePhone;
-                formState.extendInfo.president.email = value.getCompany.extendInfo.president.email;
+                formState.extendInfoPresidentName = value.getCompany.extendInfo.president.name;
+                formState.extendInfoPresidentBirthday = value.getCompany.extendInfo.president.birthday;
+                formState.extendInfoPresidentMobilePhone = value.getCompany.extendInfo.president.mobilePhone;
+                formState.extendInfoPresidentEmail = value.getCompany.extendInfo.president.email;
 
-                formState.extendInfo.cmsBank.bankType = value.getCompany.extendInfo.cmsBank.bankType;
-                formState.extendInfo.cmsBank.accountNumber = value.getCompany.extendInfo.cmsBank.accountNumber;
-                formState.extendInfo.cmsBank.ownerBizNumber = value.getCompany.extendInfo.cmsBank.ownerBizNumber;
-                formState.extendInfo.cmsBank.ownerName = value.getCompany.extendInfo.cmsBank.ownerName;
-                formState.extendInfo.cmsBank.withdrawDay = value.getCompany.extendInfo.cmsBank.withdrawDay;
+                formState.extendInfoCmsBankBankType = value.getCompany.extendInfo.cmsBank.bankType;
+                formState.extendInfoCmsBankAccountNumber = value.getCompany.extendInfo.cmsBank.accountNumber;
+                formState.extendInfoCmsBankOwnerBizNumber = value.getCompany.extendInfo.cmsBank.ownerBizNumber;
+                formState.extendInfoCmsBankOwnerName = value.getCompany.extendInfo.cmsBank.ownerName;
+                formState.extendInfoCmsBankWithdrawDay = value.getCompany.extendInfo.cmsBank.withdrawDay;
 
                 formState.sealFileStorageId = value.getCompany.sealFileStorageId;
                 formState.createdAt = value.getCompany.createdAt;
@@ -498,7 +525,7 @@ export default defineComponent({
                 formState.canceledAt = value.getCompany.canceledAt;
                 formState.unpaidMonths = value.getCompany.unpaidMonths;
             }
-
+            
         });
         const changeTypeCompany = (bizType: number) => {
             if (bizType == 2) {
@@ -509,25 +536,89 @@ export default defineComponent({
         };
 
         const funcAddress = (data: any) => {
-            formState.extendInfo.detail.zipcode = data.zonecode;
-            formState.extendInfo.detail.roadAddress = data.roadAddress;
-            formState.extendInfo.detail.jibunAddress = data.jibunAddress;
-            formState.extendInfo.detail.addressDetail.bcode = data.bcode;
-            formState.extendInfo.detail.addressDetail.bname = data.bname;
-            formState.extendInfo.detail.addressDetail.buildingCode = data.buildingCode;
-            formState.extendInfo.detail.addressDetail.buildingName = data.buildingName;
-            formState.extendInfo.detail.addressDetail.roadname = data.roadname;
-            formState.extendInfo.detail.addressDetail.roadnameCode = data.roadnameCode;
-            formState.extendInfo.detail.addressDetail.sido = data.sido;
-            formState.extendInfo.detail.addressDetail.sigungu = data.sigungu;
-            formState.extendInfo.detail.addressDetail.sigunguCode = data.sigunguCode;
-            formState.extendInfo.detail.addressDetail.zonecode = data.zonecode;
+            formState.extendInfoDetailZipcode = data.zonecode;
+            formState.extendInfoDetailRoadAddress = data.roadAddress;
+            formState.extendInfoDetailJibunAddress = data.jibunAddress;
+            formState.extendInfoDetailAddressDetailBcode = data.bcode;
+            formState.extendInfoDetailAddressDetailBname = data.bname;
+            formState.extendInfoDetailAddressDetailBuildingCode = data.buildingCode;
+            formState.extendInfoDetailAddressDetailBuildingName = data.buildingName;
+            formState.extendInfoDetailAddressDetailRoadname = data.roadname;
+            formState.extendInfoDetailAddressDetailRoadnameCode = data.roadnameCode;
+            formState.extendInfoDetailAddressDetailSido = data.sido;
+            formState.extendInfoDetailAddressDetailSigungu = data.sigungu;
+            formState.extendInfoDetailAddressDetailSigunguCode = data.sigunguCode;
+            formState.extendInfoDetailAddressDetailZonecode = data.zonecode;
         };
 
+        // Update Company 
+        const {
+            mutate: actionUpdate,
+            onError,
+            loading: loadingUpdate,
+            onDone: updateDone,
+        } = useMutation(mutations.updateCompany);
+
+        const updateCompany = () => {
+
+            let extendInfoDetail = {
+                name: formState.extendInfoDetailName,
+                zipcode: formState.extendInfoDetailZipcode,
+                roadAddress: formState.extendInfoDetailRoadAddress,
+                jibunAddress: formState.extendInfoDetailJibunAddress,
+                addressExtend: formState.extendInfoDetailAddressExtend,
+                addressDetail: {
+                    bcode: formState.extendInfoDetailAddressDetailBcode,
+                    bname: formState.extendInfoDetailAddressDetailBname,
+                    buildingCode: formState.extendInfoDetailAddressDetailBuildingCode,
+                    buildingName: formState.extendInfoDetailAddressDetailBuildingName,
+                    roadname: formState.extendInfoDetailAddressDetailRoadname,
+                    roadnameCode: formState.extendInfoDetailAddressDetailRoadnameCode,
+                    sido: formState.extendInfoDetailAddressDetailSido,
+                    sigungu: formState.extendInfoDetailAddressDetailSigungu,
+                    sigunguCode: formState.extendInfoDetailAddressDetailSigunguCode,
+                    zonecode: formState.extendInfoDetailAddressDetailZonecode
+                },
+                phone: formState.extendInfoDetailPhone,
+                fax: formState.extendInfoDetailFax,
+                licenseFileStorageId: formState.extendInfoDetailLicenseFileStorageId
+            };
+
+            let extendInfoPresident = {
+                name: formState.extendInfoPresidentName,
+                birthday: formState.extendInfoPresidentBirthday,
+                mobilePhone: formState.extendInfoPresidentMobilePhone,
+                email: formState.extendInfoPresidentEmail
+            };
+
+            let extendInfoCmsBank = {
+                bankType: formState.extendInfoCmsBankBankType,
+                accountNumber: formState.extendInfoCmsBankAccountNumber,
+                ownerBizNumber: formState.extendInfoCmsBankOwnerBizNumber,
+                ownerName: formState.extendInfoCmsBankOwnerName,
+                withdrawDay: formState.extendInfoCmsBankWithdrawDay
+            };
+
+            let variables = {
+                id: formState.id,
+                detail: extendInfoDetail,
+                president: extendInfoPresident,
+                cmsBank: extendInfoCmsBank,
+            };
+            actionUpdate(variables);
+        }
+
+        updateDone((res) => {
+            message.success(`Update was successful`, 4);
+            setModalVisible();
+        });
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
 
+        const setModalVisible = () => {
+            emit("closePopup", false);
+        }
         return {
             fileList,
             loading,
@@ -548,7 +639,9 @@ export default defineComponent({
             formarDate,
             handleAdd,
             handleDeleteMemo,
-            handleAddMemo
+            handleAddMemo,
+            loadingUpdate,
+            updateCompany
         };
     },
     methods: {
