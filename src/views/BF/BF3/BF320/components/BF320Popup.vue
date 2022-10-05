@@ -263,7 +263,7 @@ export default defineComponent({
             은행선택: "은행선택"
         };
     },
-    setup(props,{emit}) {
+    setup(props, { emit }) {
         let visible = ref(false);
         const dataQuery = ref();
         const dataQueryMemos = ref();
@@ -310,11 +310,11 @@ export default defineComponent({
             extendInfoPresidentMobilePhone: "",
             extendInfoPresidentEmail: "",
 
-            extendInfoCmsBankBankType:"",
-            extendInfoCmsBankAccountNumber:"",
-            extendInfoCmsBankOwnerBizNumber:"",
-            extendInfoCmsBankOwnerName:"",
-            extendInfoCmsBankWithdrawDay:"",
+            extendInfoCmsBankBankType: "",
+            extendInfoCmsBankAccountNumber: "",
+            extendInfoCmsBankOwnerBizNumber: "",
+            extendInfoCmsBankOwnerName: "",
+            extendInfoCmsBankWithdrawDay: "",
 
             sealFileStorageId: null,
             createdAt: 0,
@@ -327,7 +327,21 @@ export default defineComponent({
             canceledAt: null,
             unpaidMonths: 0
         });
-        const formStateMomes = ref([]);
+        const formStateMomes = ref([
+                    {
+                        memoId: 0,
+                        ownerUserId: 0,
+                        ownerName: "",
+                        ownerUsername: "",
+                        memo: "",
+                        createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
+                        createdBy: "",
+                        updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
+                        updatedBy: "",
+                        ip: "",
+                        active: "",
+                    }
+                ]);
         const labelCol = ref({ style: { width: "150px" } });
         const wrapperCol = ref({ span: 14 });
         const radioStyle = ref({
@@ -377,9 +391,9 @@ export default defineComponent({
             })
         );
         watch(resultMemo, (value) => {
-            if (value && value.getCompanyManageMemos) {
+            if (value && value.getCompanyManageMemos.length > 0) {
                 formStateMomes.value = value.getCompanyManageMemos;
-            }
+            } 
         });
 
         // get list memo of company
@@ -430,7 +444,21 @@ export default defineComponent({
         }
 
         const handleAdd = () => {
-            formStateMomes.value.unshift({});
+            const newMemo: any = {
+                memoId: 0,
+                ownerUserId: 0,
+                ownerName: "",
+                ownerUsername: "",
+                memo: "",
+                createdAt:  dayjs(new Date()).format('YYYY/MM/DD'),
+                createdBy: "",
+                updatedAt:  dayjs(new Date()).format('YYYY/MM/DD'),
+                updatedBy: "",
+                ip: "",
+                active: "",
+            };
+            formStateMomes.value.unshift(newMemo);
+
         }
 
         const handleAddMemo = (note: any, mmId: any = null) => {
@@ -497,7 +525,7 @@ export default defineComponent({
                 formState.canceledAt = value.getCompany.canceledAt;
                 formState.unpaidMonths = value.getCompany.unpaidMonths;
             }
-
+            
         });
         const changeTypeCompany = (bizType: number) => {
             if (bizType == 2) {
@@ -530,45 +558,45 @@ export default defineComponent({
             loading: loadingUpdate,
             onDone: updateDone,
         } = useMutation(mutations.updateCompany);
-        
+
         const updateCompany = () => {
 
             let extendInfoDetail = {
-                name:formState.extendInfoDetailName,
-                zipcode:formState.extendInfoDetailZipcode,
-                roadAddress:formState.extendInfoDetailRoadAddress,
-                jibunAddress:formState.extendInfoDetailJibunAddress,
-                addressExtend:formState.extendInfoDetailAddressExtend,
-                addressDetail:{
-                bcode:formState.extendInfoDetailAddressDetailBcode,
-                bname:formState.extendInfoDetailAddressDetailBname,
-                buildingCode:formState.extendInfoDetailAddressDetailBuildingCode,
-                buildingName:formState.extendInfoDetailAddressDetailBuildingName,
-                roadname:formState.extendInfoDetailAddressDetailRoadname,
-                roadnameCode:formState.extendInfoDetailAddressDetailRoadnameCode,
-                sido:formState.extendInfoDetailAddressDetailSido,
-                sigungu:formState.extendInfoDetailAddressDetailSigungu,
-                sigunguCode:formState.extendInfoDetailAddressDetailSigunguCode,
-                zonecode:formState.extendInfoDetailAddressDetailZonecode
+                name: formState.extendInfoDetailName,
+                zipcode: formState.extendInfoDetailZipcode,
+                roadAddress: formState.extendInfoDetailRoadAddress,
+                jibunAddress: formState.extendInfoDetailJibunAddress,
+                addressExtend: formState.extendInfoDetailAddressExtend,
+                addressDetail: {
+                    bcode: formState.extendInfoDetailAddressDetailBcode,
+                    bname: formState.extendInfoDetailAddressDetailBname,
+                    buildingCode: formState.extendInfoDetailAddressDetailBuildingCode,
+                    buildingName: formState.extendInfoDetailAddressDetailBuildingName,
+                    roadname: formState.extendInfoDetailAddressDetailRoadname,
+                    roadnameCode: formState.extendInfoDetailAddressDetailRoadnameCode,
+                    sido: formState.extendInfoDetailAddressDetailSido,
+                    sigungu: formState.extendInfoDetailAddressDetailSigungu,
+                    sigunguCode: formState.extendInfoDetailAddressDetailSigunguCode,
+                    zonecode: formState.extendInfoDetailAddressDetailZonecode
                 },
-                phone:formState.extendInfoDetailPhone,
-                fax:formState.extendInfoDetailFax,
-                licenseFileStorageId:formState.extendInfoDetailLicenseFileStorageId
+                phone: formState.extendInfoDetailPhone,
+                fax: formState.extendInfoDetailFax,
+                licenseFileStorageId: formState.extendInfoDetailLicenseFileStorageId
             };
-    
+
             let extendInfoPresident = {
-                name:formState.extendInfoPresidentName,
-                birthday:formState.extendInfoPresidentBirthday,
-                mobilePhone:formState.extendInfoPresidentMobilePhone,
-                email:formState.extendInfoPresidentEmail
+                name: formState.extendInfoPresidentName,
+                birthday: formState.extendInfoPresidentBirthday,
+                mobilePhone: formState.extendInfoPresidentMobilePhone,
+                email: formState.extendInfoPresidentEmail
             };
-    
+
             let extendInfoCmsBank = {
-                bankType:formState.extendInfoCmsBankBankType,
-                accountNumber:formState.extendInfoCmsBankAccountNumber,
-                ownerBizNumber:formState.extendInfoCmsBankOwnerBizNumber,
-                ownerName:formState.extendInfoCmsBankOwnerName,
-                withdrawDay:formState.extendInfoCmsBankWithdrawDay
+                bankType: formState.extendInfoCmsBankBankType,
+                accountNumber: formState.extendInfoCmsBankAccountNumber,
+                ownerBizNumber: formState.extendInfoCmsBankOwnerBizNumber,
+                ownerName: formState.extendInfoCmsBankOwnerName,
+                withdrawDay: formState.extendInfoCmsBankWithdrawDay
             };
 
             let variables = {
@@ -588,7 +616,7 @@ export default defineComponent({
             return dayjs(date).format('YYYY/MM/DD')
         };
 
-        const setModalVisible = ()=>{
+        const setModalVisible = () => {
             emit("closePopup", false);
         }
         return {
