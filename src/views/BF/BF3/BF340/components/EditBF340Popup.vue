@@ -375,16 +375,16 @@ export default defineComponent({
             if (confirm.value == '확인') {
                 visible.value = false;
             } else {
-                formState.상태 = '정상';
+                formState.status = 1;
                 visible.value = false;
             }
         }
 
         const afterConfirmClose = () => {
             if (confirm.value == '확인') {
-                formState.상태 = '해지';
+                formState.status = 1;
             } else {
-                formState.상태 = '정상';
+                formState.status = 1;
             }
         }
 
