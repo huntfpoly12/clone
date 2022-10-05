@@ -45,6 +45,12 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
     background-color: #a8bbbf;
 }
+.ant-menu-item-selected-active {
+  background: #1890ff;
+}
+.ant-menu-item-selected-active a {
+  color: #fff;
+}
 .ant-select {
   width: auto;
   min-width: 135px;

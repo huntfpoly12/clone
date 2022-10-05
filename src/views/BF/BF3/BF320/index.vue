@@ -82,7 +82,6 @@
                     @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
                     :column-auto-width="true">
                     <DxSelection mode="multiple" />
-                    <DxPaging :page-size="10" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
@@ -110,8 +109,12 @@
                             </a-space>
                         </div>
                     </template>
-
                 </DxDataGrid>
+                <div class="pagination-table" v-if="rowTable > originData.rows">
+                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
+                        show-less-items @change="changePage" />
+                </div>
+
                 <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :idRowEdit="idRowEdit"
                     :data="popupData" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -195,6 +198,7 @@ export default defineComponent({
     },
 
     setup() {
+        const rowTable = ref(10)
         const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
 
@@ -224,18 +228,21 @@ export default defineComponent({
             excludeCancel: true
         })
 
-        const {refetch: refetchData, loading, error, onResult } = useQuery(queries.getData.searchCompanies, originData)
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchCompanies, originData)
 
         onResult((res) => {
+            rowTable.value = res.data.searchCompanies.totalCount
             responApiSearchCompanies.value = res.data.searchCompanies.datas
         })
 
         setTimeout(() => {
+
             spinning.value = !spinning.value;
         }, 1000);
 
         const searching = () => {
             spinning.value = !spinning.value;
+
             originData.value = {
                 page: 1,
                 rows: 10,
@@ -260,13 +267,15 @@ export default defineComponent({
                 excludeCancel: dataSearchDef.value.excludeCancel
             }
 
-            // originData.value = dataNew
             refetchData(dataNew)
 
             setTimeout(() => {
                 spinning.value = !spinning.value;
             }, 1000);
         }
+
+
+        const pageSize = ref(5)
 
         return {
             idRowEdit,
@@ -275,7 +284,9 @@ export default defineComponent({
             dataSearchDef,
             searching,
             originData,
-            refetchData
+            refetchData,
+            rowTable,
+            pageSize
         }
     },
 
@@ -306,6 +317,26 @@ export default defineComponent({
             this.popupData = data;
         },
 
+        changePage() {
+            let dataNew = {
+                page: this.dataSearchDef.page,
+                rows: this.dataSearchDef.rows,
+                code: this.dataSearchDef.code,
+                name: this.dataSearchDef.name,
+                presidentName: this.dataSearchDef.presidentName,
+                address: this.dataSearchDef.address,
+                manageUserId: this.dataSearchDef.manageUserId,
+                salesRepresentativeId: this.dataSearchDef.salesRepresentativeId,
+                excludeCancel: this.dataSearchDef.excludeCancel
+            }
+
+            this.refetchData(dataNew)
+
+            this.spinning = !this.spinning;
+            setTimeout(() => {
+                this.spinning = !this.spinning;
+            }, 1000);
+        },
 
     },
 <<<<<<< HEAD
@@ -383,6 +414,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.ant-pagination {
+    margin-top: 10px;
+}
+
 .page-content {
     padding: 10px 10px;
 }
