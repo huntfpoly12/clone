@@ -5,11 +5,7 @@
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
             <label class="lable-item">회원종류 :</label>
-            <a-select
-              style="width: 130px"
-              v-model:value="dataSearch.nameSale"
-              option-label-prop="children"
-            >
+            <a-select style="width: 130px" v-model:value="dataSearch.nameSale" option-label-prop="children">
               <a-select-option value="고객사" label="고객사">
                 <a-tag :color="getColorTag('고객사')">고객사</a-tag>
               </a-select-option>
@@ -26,17 +22,11 @@
           </a-col>
           <a-col>
             <label class="lable-item">소속코드:</label>
-            <a-input
-              style="width: 150px"
-              v-model:value="dataSearch.nameCompany"
-            />
+            <a-input style="width: 150px" v-model:value="dataSearch.nameCompany" />
           </a-col>
           <a-col>
             <label class="lable-item">소속명:</label>
-            <a-input
-              style="width: 150px"
-              v-model:value="dataSearch.surrogate"
-            />
+            <a-input style="width: 150px" v-model:value="dataSearch.surrogate" />
           </a-col>
           <a-col>
             <label class="lable-item">회원ID :</label>
@@ -58,23 +48,14 @@
       </div>
     </div>
     <div class="page-content">
-      <DxDataGrid
-        :data-source="dataSource"
-        :show-borders="true"
-        key-expr="ID"
-        @exporting="onExporting"
-      >
+      <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
         <DxPaging :page-size="5" />
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
         <DxExport :enabled="true" :allow-export-selected-data="true" />
         <DxToolbar>
           <DxItem name="searchPanel" />
           <DxItem name="exportButton" />
-          <DxItem
-            location="after"
-            template="button-template"
-            css-class="cell-button-add"
-          />
+          <DxItem location="after" template="button-template" css-class="cell-button-add" />
           <DxItem name="groupPanel" />
           <DxItem name="addRowButton" show-text="always" />
           <DxItem name="columnChooserButton" />
@@ -82,29 +63,19 @@
         <template #button-template>
           <DxButton icon="plus" @click="openAddNewModal" />
         </template>
-        <DxColumn
-          data-field="상태"
-          css-class="cell-center"
-          cell-template="check-box"
-          :width="100"
-        />
+        <DxColumn data-field="active" caption="상태" css-class="cell-center" cell-template="check-box" :width="100" />
         <template #check-box="{ data }">
           <a-tag :color="getAbleDisable(data.value)">{{ data.value }}</a-tag>
         </template>
-        <DxColumn data-field="회원ID" :width="80" css-class="cell-center" />
-        <DxColumn data-field="회원명" :width="100" />
-        <DxColumn
-          data-field="회원종류"
-          cell-template="grid-cell"
-          css-class="cell-center"
-          :width="150"
-        />
+        <DxColumn data-field="id" caption="회원ID" :width="80" css-class="cell-center" />
+        <DxColumn data-field="username" caption="회원명" :width="100" />
+        <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" :width="150" />
         <template #grid-cell="{ data }">
           <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
         </template>
-        <DxColumn data-field="휴대폰" :width="200" />
-        <DxColumn data-field="소속코드" :width="200" />
-        <DxColumn data-field="소속명" />
+        <DxColumn data-field="mobilePhone" caption="휴대폰" :width="200" />
+        <DxColumn data-field="groupCode" caption="소속코드" :width="200" />
+        <DxColumn data-field="groupName" caption="소속명"/>
         <DxColumn cell-template="pupop" :width="100" />
         <template #pupop="{ data }" class="custom-action">
           <div class="custom-action">
@@ -126,28 +97,13 @@
         </template>
       </DxDataGrid>
 
-      <AddNew210Poup
-        :modalStatus="modalAddNewStatus"
-        @closePopup="modalAddNewStatus = false"
-      />
-      <EditBF210Popup
-        :modalStatus="modalEditStatus"
-        @closePopup="modalEditStatus = false"
-        :data="popupData"
-        title="회원관리 [ bf-210 –pop ]"
-      />
-      <HistoryPopup
-        :modalStatus="modalHistoryStatus"
-        @closePopup="modalHistoryStatus = false"
-        :data="popupData"
-        title="변경이력[cm-000-pop]"
-      />
-      <PopLogin
-        :modalStatus="modalLoginStatus"
-        @closePopup="modalLoginStatus = false"
-        :data="popupData"
-        title="로그인이력 [ cm-000-popLogin ]"
-      />
+      <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+      <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
+        title="회원관리 [ bf-210 –pop ]" />
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+        title="변경이력[cm-000-pop]" />
+      <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
+        title="로그인이력 [ cm-000-popLogin ]" />
     </div>
   </div>
 </template>
@@ -214,7 +170,18 @@ export default defineComponent({
   },
   data() {
     return {
-      dataSource: [],
+      dataSource: {
+        id: 1,
+        type: "",
+        username: "",
+        name: "",
+        mobilePhone: "",
+        groupCode: "",
+        groupName: "",
+        managerGrade: 1,
+        active: true,
+        facilityBusinesses: []
+      },
 
       popupData: [],
       modalAddNewStatus: false,
@@ -237,6 +204,18 @@ export default defineComponent({
     const originData = { page: 1, rows: 10, type: "", active: true };
     this.searchUsers(originData);
   },
+  // onMounted(() => {
+        //     try {
+        //         const {} = useQuery(queries.searchUsers, dataSource)
+        //         onResult((res) => {
+        //             console.log(res)
+        //         })
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // });
+
+
   methods: {
     onExporting(e) {
       const workbook = new Workbook();
