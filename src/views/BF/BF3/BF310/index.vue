@@ -207,7 +207,6 @@ export default defineComponent({
             status: ref([]),
             startDate: '',
             finishDate: '',
-            pageSizes: [5, 10, 15],
             displayMode: 'full',
             showPageSizeSelector: true,
             showNavButtons: true,
@@ -309,6 +308,10 @@ export default defineComponent({
                 this.originData.finishDate = this.formarDate(newVal[1].$d)
             }
         },
+
+        modalStatus() {
+            this.searching()
+        }
     },
 
     methods: {
@@ -357,8 +360,10 @@ export default defineComponent({
             this.spinning = true
             let arrayNew = {
                 ...this.originData,
-                statuses: this.statuses
+                statuses: this.statuses.length > 0 ? this.statuses : [10, 20, 30, 99]
             }
+
+            // console.log(arrayNew);
 
             this.refetchData(arrayNew)
 
