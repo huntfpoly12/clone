@@ -1,6 +1,5 @@
 import gql from "graphql-tag";
-const queries = {
-  searchCompanies: gql`
+export default gql`
       query searchCompanies (
           $page: Int!, 
           $rows: Int!,
@@ -50,8 +49,4 @@ const queries = {
             }
         }
       }
-    `,
-
-};
-
-export default queries;
+    `

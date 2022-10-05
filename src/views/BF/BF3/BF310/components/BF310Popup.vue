@@ -422,8 +422,7 @@ export default defineComponent({
         Name: "복지용구",
       }
     ];
-
-
+    
     let visible = ref(false);
     let activeKey = ref(1);
     const dataQuery = ref();
@@ -446,6 +445,7 @@ export default defineComponent({
       { name: "심사중", date: "2022-08-25", color: "blue", value: 20 },
       { name: "반려", date: "2022-08-25", color: "grey", value: 99 },
     ]);
+
     let dataSelectStatus = reactive({
       name: "승인",
       date: "2022-08-25",
@@ -817,6 +817,7 @@ export default defineComponent({
 
     updateDone((res) => {
       if (res.data.updateSubscriptionRequest.status == 30) {
+        console.log(res.data.updateSubscriptionRequest,'fgfggdgdgfgfg');
         actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
       }
       message.success(`Update was successful`, 4);

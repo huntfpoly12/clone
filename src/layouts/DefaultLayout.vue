@@ -178,37 +178,6 @@
           <a-layout-content
             :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
           >
-            <!-- <div class="top-content">
-              <a-typography-title :level="3"
-                >{{ activeTab.name }}
-              </a-typography-title>
-              <div class="list-action">
-                <a-tooltip>
-                  <template #title>조회</template>
-                  <a-button>
-                    <SearchOutlined />
-                  </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                  <template #title>저장</template>
-                  <a-button>
-                    <SaveOutlined />
-                  </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                  <template #title>삭제</template>
-                  <a-button>
-                    <DeleteOutlined />
-                  </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                  <template #title>출력</template>
-                  <a-button>
-                    <PrinterOutlined />
-                  </a-button>
-                </a-tooltip>
-              </div>
-            </div> -->
             <div class="main-content">
               <template v-if="activeTab">
                 <keep-alive>
@@ -604,11 +573,7 @@ export default defineComponent({
   .ant-menu-item-selected {
   background: none;
 }
-::v-deep
-  .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
-  .ant-menu-item-selected-active {
-  background: #1890ff;
-}
+
 ::v-deep
   .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
   .ant-menu-item-selected-active
