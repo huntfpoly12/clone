@@ -235,8 +235,7 @@ export default defineComponent({
             responApiSearchCompanies.value = res.data.searchCompanies.datas
         })
 
-        setTimeout(() => {
-
+        setTimeout(() => { 
             spinning.value = !spinning.value;
         }, 1000);
 
@@ -305,8 +304,7 @@ export default defineComponent({
             });
             e.cancel = true;
         },
-        setModalVisible(data: any) {
-            console.log(data.data.id);
+        setModalVisible(data: any) { 
             this.idRowEdit = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
