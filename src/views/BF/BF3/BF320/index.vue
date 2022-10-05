@@ -228,7 +228,7 @@ export default defineComponent({
             excludeCancel: true
         })
 
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getData.searchCompanies, originData)
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchCompanies, originData)
 
         onResult((res) => {
             rowTable.value = res.data.searchCompanies.totalCount
