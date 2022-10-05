@@ -7,6 +7,9 @@
                 <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateCompany">
                     저장하고 나가기</a-button>
             </template>
+            <div v-if="error">
+          {{ error }}
+        </div>
             <a-spin tip="Loading..." :spinning="loading">
                 <a-collapse v-model:activeKey="activeKey" accordion>
                     <a-collapse-panel key="1" header="사업자정보">
@@ -329,7 +332,7 @@ export default defineComponent({
         });
         const formStateMomes = ref([
                     {
-                        memoId: 0,
+                        memoId: null,
                         ownerUserId: 0,
                         ownerName: "",
                         ownerUsername: "",
@@ -397,7 +400,7 @@ export default defineComponent({
         });
 
         // get list memo of company
-        const { result, loading, error, refetch } = useQuery(
+        const { result, loading, refetch } = useQuery(
             queries.getCompany,
             dataQuery,
             () => ({
@@ -407,16 +410,21 @@ export default defineComponent({
         );
 
         // mutation create memo 
+        
         const {
             mutate: actionCreateMemo,
+          onError : onErrorMemo,
             onDone: onCreatedMemo
         } = useMutation(mutations.createCompanyManageMemo);
 
-        onCreatedMemo(() => {
+        onCreatedMemo((res) => {
             refetchMemo();
+            message.success('Created memo successfully', 4);
         });
-
-        // mutation create memo 
+        onErrorMemo((res)=>{
+            console.log(res,'dfdfggdgdfgfdgfg')
+        });
+        // mutation update memo 
         const {
             mutate: actionUpdateMemo,
             onDone: onUpdatedMemo
@@ -445,7 +453,7 @@ export default defineComponent({
 
         const handleAdd = () => {
             const newMemo: any = {
-                memoId: 0,
+                memoId: null,
                 ownerUserId: 0,
                 ownerName: "",
                 ownerUsername: "",
@@ -464,8 +472,10 @@ export default defineComponent({
         const handleAddMemo = (note: any, mmId: any = null) => {
 
             if (note !== '' && mmId == null) {
+                console.log(note,mmId,'add memo');
                 actionCreateMemo({ companyId: formState.id, memo: note });
             } else {
+                console.log(note,mmId,'update memo');
                 actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         }
@@ -554,7 +564,6 @@ export default defineComponent({
         // Update Company 
         const {
             mutate: actionUpdate,
-            onError,
             loading: loadingUpdate,
             onDone: updateDone,
         } = useMutation(mutations.updateCompany);
