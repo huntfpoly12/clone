@@ -45,6 +45,9 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
     background-color: #a8bbbf;
 }
+.pagination-table {
+  margin-top: 10px;
+}
 .ant-menu-item-selected-active {
   background: #1890ff;
 }
