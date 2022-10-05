@@ -7,9 +7,6 @@
                 <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateCompany">
                     저장하고 나가기</a-button>
             </template>
-            <div v-if="error">
-          {{ error }}
-        </div>
             <a-spin tip="Loading..." :spinning="loading">
                 <a-collapse v-model:activeKey="activeKey" accordion>
                     <a-collapse-panel key="1" header="사업자정보">
@@ -172,27 +169,6 @@
                 </a-collapse>
             </a-spin>
         </a-modal>
-
-        <a-modal :mask-closable="false" :visible="modalStatusHistory" footer="" @cancel="setModalVisibleHis()"
-            width="1000px">
-            <div style="margin-top: 20px">
-                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="key">
-                    <DxColumn data-field="기록일시" />
-                    <DxColumn data-field="비고" />
-                    <DxColumn data-field="생성일시" />
-                    <DxColumn data-field="생성자ID" />
-                    <DxColumn data-field="삭제여부" />
-                    <DxColumn data-field="IP주소" />
-                    <DxColumn data-field="상세" cell-template="detail" />
-                    <template #detail="{}">
-                        <a-space :size="8">
-                            <zoom-in-outlined :style="{ fontSize: '15px' }" />
-                        </a-space>
-                    </template>
-                </DxDataGrid>
-            </div>
-        </a-modal>
-
     </div>
 </template>
 
@@ -204,11 +180,11 @@ import queries from "../../../../../graphql/queries/BF/BF3/BF320/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF320/index";
 import postCode from "../../../../../components/postCode.vue";
 import selectBank from "../../../../../components/selectBank.vue";
+
+import { message } from "ant-design-vue";
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-
-import { message } from "ant-design-vue";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 

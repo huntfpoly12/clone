@@ -4,7 +4,7 @@ export default gql`
         searchSalesRepresentatives(
             $page: Int, 
             $rows: Int!, 
-            $grade: Int!
+            $grade: Int
             $name: String
             $code: String
             $statuses: [Int!]!
