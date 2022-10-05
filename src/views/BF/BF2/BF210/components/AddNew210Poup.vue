@@ -253,7 +253,7 @@ export default defineComponent({
     DxSearchPanel,
   },
   created() {
-    console.log("createUser", this.createUser);
+    // console.log("createUser", this.createUser);
   },
   data() {
     return {
@@ -414,9 +414,7 @@ export default defineComponent({
       //   console.log(originData.value);
       // } else {
       // }
-      dataSource.value = res.data.searchScreenRoleGroups.datas;
-
-      console.log(dataSource.value, "data");
+      dataSource.value = res.data.searchScreenRoleGroups.datas; 
     });
     return {
       labelCol,

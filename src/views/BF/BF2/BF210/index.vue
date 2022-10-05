@@ -1,4 +1,34 @@
 <template>
+  <div class="top-content">
+    <a-typography-title :level="3"> 회원관리
+    </a-typography-title>
+    <div class="list-action">
+      <a-tooltip>
+        <template #title>조회</template>
+        <a-button>
+          <SearchOutlined />
+        </a-button>
+      </a-tooltip>
+      <a-tooltip>
+        <template #title>저장</template>
+        <a-button>
+          <SaveOutlined />
+        </a-button>
+      </a-tooltip>
+      <a-tooltip>
+        <template #title>삭제</template>
+        <a-button>
+          <DeleteOutlined />
+        </a-button>
+      </a-tooltip>
+      <a-tooltip>
+        <template #title>출력</template>
+        <a-button>
+          <PrinterOutlined />
+        </a-button>
+      </a-tooltip>
+    </div>
+  </div>
   <div id="bf-210">
     <div class="search-form">
       <div id="components-grid-demo-flex">
@@ -48,7 +78,7 @@
       </div>
     </div>
     <div class="page-content">
-      <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
+      <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
         <DxPaging :page-size="5" />
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
         <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -75,7 +105,7 @@
         </template>
         <DxColumn data-field="mobilePhone" caption="휴대폰" :width="200" />
         <DxColumn data-field="groupCode" caption="소속코드" :width="200" />
-        <DxColumn data-field="groupName" caption="소속명"/>
+        <DxColumn data-field="groupName" caption="소속명" />
         <DxColumn cell-template="pupop" :width="100" />
         <template #pupop="{ data }" class="custom-action">
           <div class="custom-action">
@@ -107,8 +137,8 @@
     </div>
   </div>
 </template>
-<script>
-import { defineComponent, onMounted } from "vue";
+<script lang="ts">
+import { defineComponent, onMounted, ref } from "vue";
 import {
   DxDataGrid,
   DxColumn,
@@ -126,9 +156,7 @@ import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import PopLogin from "./components/PopLogin.vue";
-import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
-import { employees } from "./data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
@@ -136,13 +164,19 @@ import {
   EditOutlined,
   HistoryOutlined,
   LoginOutlined,
+  SearchOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  MailOutlined,
+  PrinterOutlined,
+  DeleteOutlined,
+  SaveOutlined,
 } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
-import filters from "../../../../helpers/filters";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -158,7 +192,6 @@ export default defineComponent({
     EditOutlined,
     HistoryOutlined,
     LoginOutlined,
-    Style,
     DxToolbar,
     DxEditing,
     DxGrouping,
@@ -167,6 +200,13 @@ export default defineComponent({
     EditBF210Popup,
     HistoryPopup,
     PopLogin,
+    SearchOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeleteOutlined,
+    SaveOutlined,
   },
   data() {
     return {
@@ -196,28 +236,40 @@ export default defineComponent({
         typeSevice1: "이용중",
         userid: "",
         username: "",
+        nameCompany: "",
+        surrogate: "",
+        typeSevice2: ""
       },
     };
   },
 
-  mounted() {
-    const originData = { page: 1, rows: 10, type: "", active: true };
-    this.searchUsers(originData);
-  },
-  // onMounted(() => {
-        //     try {
-        //         const {} = useQuery(queries.searchUsers, dataSource)
-        //         onResult((res) => {
-        //             console.log(res)
-        //         })
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // });
+  setup() {
+    const spinning = ref<boolean>(true);
+    var idRowEdit = ref<number>(0)
+    const originData = { page: 1, rows: 10, type: "m", active: true }
 
+    setTimeout(() => {
+      spinning.value = !spinning.value;
+    }, 1000);
+    const dataSource = ref([])
+    const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchUsers, originData)
+
+
+    onResult((res) => {
+      console.log(res);
+      dataSource.value = res.data.searchUsers.datas
+    })
+
+    return {
+      spinning,
+      dataSource,
+      idRowEdit,
+      refetchData
+    }
+  },
 
   methods: {
-    onExporting(e) {
+    onExporting(e: any) {
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("employees");
       exportDataGrid({
@@ -237,19 +289,19 @@ export default defineComponent({
     openAddNewModal() {
       this.modalAddNewStatus = true;
     },
-    setModalEditVisible(data) {
+    setModalEditVisible(data: any) {
       this.modalEditStatus = true;
       this.popupData = data;
     },
-    modalHistory(data) {
+    modalHistory(data: any) {
       this.modalHistoryStatus = true;
       this.popupData = data;
     },
-    modalLogin(data) {
+    modalLogin(data: any) {
       this.modalLoginStatus = true;
       this.popupData = data;
     },
-    getColorTag(data) {
+    getColorTag(data: any) {
       if (data === "고객사") {
         return "blue";
       } else if (data === "매니저") {
@@ -260,14 +312,14 @@ export default defineComponent({
         return "#cdc71c";
       }
     },
-    getAbleDisable(data) {
+    getAbleDisable(data: any) {
       if (data === "이용중") {
         return "blue";
       } else if (data === "이용중지") {
         return "#d5a7a7";
       }
     },
-    searchUsers(filter) {
+    searchUsers(filter: any) {
       const { loading, error, onResult } = useQuery(
         queries.searchUsers,
         filter
@@ -276,12 +328,60 @@ export default defineComponent({
         this.dataSource = res.data.searchUsers.datas;
       });
     },
-    getUsers() {
-      const { loading, error, onResult } = useQuery(queries.getUsers);
-      onResult((res) => {
-        return res;
-      });
-    },
+    // getUsers() {
+    //   const { loading, error, onResult } = useQuery(queries.getUsers);
+    //   onResult((res) => {
+    //     return res;
+    //   });
+    // },
   },
 });
 </script>
+<style scoped>
+  .page-content {
+      padding: 10px 10px;
+  }
+  
+  .cell-button-add {
+      padding-left: 100px !important;
+  }
+  
+  .cell-center {
+      text-align: center !important
+  }
+  
+  .dx-button-has-text .dx-button-content {
+      padding: 0px 15px !important;
+  }
+  
+  .search-form {
+      background: #f1f3f4;
+      padding: 10px 24px;
+  }
+  
+  .dx-select-checkbox {
+      display: inline-block !important;
+  }
+  
+  #data-grid-demo {
+      min-height: 700px;
+  }
+  
+  .search-form .col {
+      display: flex;
+      align-items: center;
+  }
+  
+  .search-form .col {
+      margin-top: 20px;
+  }
+  
+  .search-form .col .lable-item {
+      width: 110px;
+      display: inline-block;
+  }
+  
+  .search-form .col .item:nth-child(2) {
+      margin-left: 30px;
+  }
+  </style>
