@@ -817,7 +817,6 @@ export default defineComponent({
 
     updateDone((res) => {
       if (res.data.updateSubscriptionRequest.status == 30) {
-        console.log(res.data.updateSubscriptionRequest,'fgfggdgdgfgfg');
         actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
       }
       message.success(`Update was successful`, 4);

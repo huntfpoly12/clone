@@ -1,122 +1,122 @@
 <template>
-    <div id="bf-310">
-        <div class="top-content">
-            <a-typography-title :level="3"> 서비스관리
-            </a-typography-title>
-            <div class="list-action">
-                <a-tooltip>
-                    <template #title>조회</template>
-                    <a-button>
-                        <SearchOutlined />
-                        <!-- <SearchOutlined @click="searching" /> -->
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>저장</template>
-                    <a-button>
-                        <SaveOutlined />
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>삭제</template>
-                    <a-button>
-                        <DeleteOutlined />
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>출력</template>
-                    <a-button>
-                        <PrinterOutlined />
-                    </a-button>
-                </a-tooltip>
+    <a-spin :spinning="spinning" size="large">
+        <div id="bf-310">
+            <div class="top-content">
+                <a-typography-title :level="3"> 서비스관리
+                </a-typography-title>
+                <div class="list-action">
+                    <a-tooltip>
+                        <template #title>조회</template>
+                        <a-button @click="searching">
+                            <SearchOutlined />
+                            <!-- <SearchOutlined @click="searching" /> -->
+                        </a-button>
+                    </a-tooltip>
+                    <a-tooltip>
+                        <template #title>저장</template>
+                        <a-button>
+                            <SaveOutlined />
+                        </a-button>
+                    </a-tooltip>
+                    <a-tooltip>
+                        <template #title>삭제</template>
+                        <a-button>
+                            <DeleteOutlined />
+                        </a-button>
+                    </a-tooltip>
+                    <a-tooltip>
+                        <template #title>출력</template>
+                        <a-button>
+                            <PrinterOutlined />
+                        </a-button>
+                    </a-tooltip>
+                </div>
             </div>
-        </div>
-        <div class="search-form">
-            <div class="components-grid-demo-flex">
-                <a-row justify="start" :gutter="[16, 8]">
-                    <a-col>
-                        <label class="lable-item"> 사업자코드 : </label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.typeSevice" />
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">상호:</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.nameCompany" />
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">대표자:</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.surrogate" />
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">해지:</label>
-                        <a-switch v-model:checked="dataSearch.status" checked-children="포함" un-checked-children="제외" />
-                    </a-col>
+            <div class="search-form">
+                <div class="components-grid-demo-flex">
+                    <a-row justify="start" :gutter="[16, 8]">
+                        <a-col>
+                            <label class="lable-item"> 사업자코드 : </label>
+                            <a-input style="width: 120px" v-model:value="dataSearchDef.code" />
+                        </a-col>
+                        <a-col>
+                            <label class="lable-item">상호:</label>
+                            <a-input style="width: 120px" v-model:value="dataSearchDef.name" />
+                        </a-col>
+                        <a-col>
+                            <label class="lable-item">대표자:</label>
+                            <a-input style="width: 120px" v-model:value="dataSearchDef.presidentName" />
+                        </a-col>
+                        <a-col>
+                            <label class="lable-item">해지:</label>
+                            <a-switch v-model:checked="dataSearchDef.excludeCancel" checked-children="포함" un-checked-children="제외" />
+                        </a-col>
 
-                    <a-col>
-                        <label class="lable-item">주소 :</label>
-                        <a-input style="width: 120px" v-model:value="dataSearch.address" />
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">매니저명 :</label>
-                        <a-select style="width: 120px" v-model:value="dataSearch.manager" show-search placeholder="매니저명"
-                            :options="options">
-                        </a-select>
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item">영업자명 :</label>
-                        <a-select style="width: 120px" v-model:value="dataSearch.nameSale" show-search
-                            placeholder="영업자명" :options="options">
-                        </a-select>
-                    </a-col>
-                    <a-col>
-                        <label class="lable-item"></label>
-                        <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
-                        <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
-                    </a-col>
-                </a-row>
+                        <a-col>
+                            <label class="lable-item">주소 :</label>
+                            <a-input style="width: 120px" v-model:value="dataSearchDef.address" />
+                        </a-col>
+                        <a-col>
+                            <label class="lable-item">매니저명 :</label>
+                            <ListManagerDropdown v-model:selected="dataSearchDef.manageUserId"/>
+                        </a-col>
+                        <a-col>
+                            <ListSalesDropdownVue v-model:selected="dataSearchDef.salesRepresentativeId"/>
+                        </a-col>
+                        <!-- <a-col>
+                            <label class="lable-item"></label>
+                            <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
+                            <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
+                        </a-col> -->
+                    </a-row>
+                </div>
+            </div>
+            <div class="page-content">
+                <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id" @exporting="onExporting">
+                    <DxSelection mode="multiple" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxColumn data-field="code" caption="사업자코드"/>
+                    <DxColumn data-field="status" caption="상태"/>
+                    <DxColumn data-field="name" caption="상호" data-type="date" />
+                    <DxColumn data-field="presidentName" caption="대표자" />
+                    <DxColumn data-field="address"  caption="주소" data-type="date" />
+                    <DxColumn data-field="phone" caption="연락처" />
+                    <DxColumn data-field="매니저" caption="매니저"/>
+                    <DxColumn data-field="manageStartDate"  caption="관리시작일" data-type="date" />
+                    <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
+                    <DxColumn data-field="서비스" caption="서비스" />
+                    <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number"/>
+                    <DxColumn data-field="canceledAt" caption="해지일자" />
+                    <DxColumn :width="80" cell-template="pupop" />
+                    <template #pupop="{ data }" class="custom-action">
+                        <div class="custom-action">
+                            <a-space :size="10">
+                                <a-tooltip placement="top">
+                                    <template #title>편집</template>
+                                    <EditOutlined @click="setModalVisible(data)" />
+                                </a-tooltip>
+                                <a-tooltip placement="top">
+                                    <template #title>변경이력</template>
+                                    <HistoryOutlined @click="modalHistory(data)" />
+                                </a-tooltip>
+                            </a-space>
+                        </div>
+                    </template>
+                </DxDataGrid>
+                <div class="pagination-table" v-if="rowTable > originData.rows">
+                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
+                        show-less-items @change="changePage" />
+                </div>
+                <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :rowId="idSubRequest" />
+                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+                    title="변경이력[cm-000-pop]" />
             </div>
         </div>
-        <div class="page-content">
-            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" @exporting="onExporting">
-                <DxSelection mode="multiple" />
-                <DxPaging :page-size="5" />
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                <DxExport :enabled="true" :allow-export-selected-data="true" />
-                <DxColumn data-field="사업자코드" />
-                <DxColumn data-field="상태" />
-                <DxColumn data-field="상호" data-type="date" />
-                <DxColumn data-field="대표자" />
-                <DxColumn data-field="주소" data-type="date" />
-                <DxColumn data-field="연락처" />
-                <DxColumn data-field="매니저" />
-                <DxColumn data-field="관리시작일" data-type="date" />
-                <DxColumn data-field="영업자" />
-                <DxColumn data-field="서비스" />
-                <DxColumn data-field="이용료" :format="amountFormat" data-type="number"/>
-                <DxColumn data-field="해지일자"/>
-                <DxColumn :width="80" cell-template="pupop" />
-                <template #pupop="{ data }" class="custom-action">
-                    <div class="custom-action">
-                        <a-space :size="10">
-                            <a-tooltip placement="top">
-                                <template #title>편집</template>
-                                <EditOutlined @click="setModalVisible(data)" />
-                            </a-tooltip>
-                            <a-tooltip placement="top">
-                                <template #title>변경이력</template>
-                                <HistoryOutlined @click="modalHistory(data)" />
-                            </a-tooltip>
-                        </a-space>
-                    </div>
-                </template>
-            </DxDataGrid>
-            <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="popupData" />
-            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-                title="변경이력[cm-000-pop]" />
-        </div>
-    </div>
+    </a-spin>
 </template>
 <script>
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import {
     DxDataGrid,
     DxColumn,
@@ -141,7 +141,8 @@ import queries from "../../../../graphql/queries/BF/BF3/BF330/index"
 import filters from "../../../../helpers/filters";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-
+import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
+import ListSalesDropdownVue from '../../../../components/ListSalesDropdown.vue';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -158,45 +159,106 @@ export default defineComponent({
         SearchOutlined, 
         SaveOutlined, 
         DeleteOutlined, 
-        PrinterOutlined
+        PrinterOutlined,
+        ListManagerDropdown,
+        ListSalesDropdownVue
     },
     data() {
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
             dataSource: employees,
             states,
-            options: [
-                {
-                    value: "jack",
-                    label: "Jack",
-                },
-                {
-                    value: "lucy",
-                    label: "Lucy",
-                },
-                {
-                    value: "tom",
-                    label: "Tom Halin Sin Han Bank",
-                },
-            ],
+
             popupData: [],
             modalStatus: false,
             modalHistoryStatus: false,
-            dataSearch: {
-                typeSevice: "",
-                nameCompany: "",
-                surrogate: "",
-                status: false,
-                address: "",
-                manager: "",
-                nameSale: "",
-            },
         };
     },
-   
-    mounted() {
-        const originData = {page: 1,rows: 10,excludeCancel: true}
-        this.searchServiceContract(originData)
+    setup() {
+        const spinning = ref(true);
+        const idRowEdit = ref(0)
+        const idSubRequest = ref();
+        const dataSearchDef = ref({
+            page: 1,
+            rows: 10,
+            code: "",
+            name: "",
+            presidentName: "",
+            address: "",
+            manageUserId: null,
+            salesRepresentativeId: null,
+            excludeCancel: true
+        })
+
+        const listServiceContract = ref([])
+        const rowTable = ref(10)
+        const originData = ref({
+            page: 1,
+            rows: 10,
+            code: "",
+            name: "",
+            presidentName: "",
+            address: "",
+            manageUserId: null,
+            salesRepresentativeId: null,
+            excludeCancel: true
+        })
+
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchServiceContract, originData)
+        onResult((res) => {
+            rowTable.value = res.data.searchServiceContracts.totalCount
+            listServiceContract.value = res.data.searchServiceContracts.datas
+        })
+
+        setTimeout(() => {
+            spinning.value = !spinning.value;
+        }, 1000);
+
+        const searching = () => {
+            spinning.value = !spinning.value;
+
+            originData.value = {
+                page: 1,
+                rows: 10,
+                code: "",
+                name: "",
+                presidentName: "",
+                address: "",
+                manageUserId: null,
+                salesRepresentativeId: null,
+                excludeCancel: true
+            }
+
+            let dataNew = {
+                page: dataSearchDef.value.page,
+                rows: dataSearchDef.value.rows,
+                code: dataSearchDef.value.code,
+                name: dataSearchDef.value.name,
+                presidentName: dataSearchDef.value.presidentName,
+                address: dataSearchDef.value.address,
+                manageUserId: dataSearchDef.value.manageUserId,
+                salesRepresentativeId: dataSearchDef.value.salesRepresentativeId,
+                excludeCancel: dataSearchDef.value.excludeCancel
+            }
+
+            refetchData(dataNew)
+
+            setTimeout(() => {
+                spinning.value = !spinning.value;
+            }, 1000);
+        }
+
+        return {
+            idRowEdit,
+            spinning,
+            listServiceContract,
+            dataSearchDef,
+            searching,
+            originData,
+            refetchData,
+            rowTable,
+            idSubRequest 
+        }
     },
     methods: {
         onExporting(e) {
@@ -217,6 +279,7 @@ export default defineComponent({
             e.cancel = true;
         },
         setModalVisible(data) {
+            this.idSubRequest = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
         },
@@ -224,14 +287,26 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        searchServiceContract(filter) {
-            const { loading, error, onResult } = useQuery(queries.searchServiceContract, filter)
-            console.log(useQuery(queries.searchServiceContract, filter))
-            onResult((res) => {
-                console.log(res.data.searchServiceContracts.datas)
-            })
-           
-        }
+        changePage() {
+            let dataNew = {
+                page: this.dataSearchDef.page,
+                rows: this.dataSearchDef.rows,
+                code: this.dataSearchDef.code,
+                name: this.dataSearchDef.name,
+                presidentName: this.dataSearchDef.presidentName,
+                address: this.dataSearchDef.address,
+                manageUserId: this.dataSearchDef.manageUserId,
+                salesRepresentativeId: this.dataSearchDef.salesRepresentativeId,
+                excludeCancel: this.dataSearchDef.excludeCancel
+            }
+
+            this.refetchData(dataNew)
+
+            this.spinning = !this.spinning;
+            setTimeout(() => {
+                this.spinning = !this.spinning;
+            }, 1000);
+        },
     },
 });
 </script>

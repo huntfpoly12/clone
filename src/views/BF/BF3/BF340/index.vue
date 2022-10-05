@@ -37,33 +37,32 @@
                     <a-row justify="start" :gutter="[16, 8]">
                         <a-col>
                             <label class="lable-item"> 영업자등급 : </label>
-                            <a-select ref="select" v-model:value="dataSearch.status" style="width: 100px">
-                                <a-select-option value="전체">전체</a-select-option>
-                                <a-select-option value="본사">본사</a-select-option>
-                                <a-select-option value="지사">지사</a-select-option>
-                                <a-select-option value="대리점">대리점</a-select-option>
+                            <a-select ref="select" v-model:value="dataSearch.grade" style="width: 100px"
+                                placeholder="전체">
+                                <a-select-option :value="1">지사</a-select-option>
+                                <a-select-option :value="2">대리점</a-select-option>
                             </a-select>
                         </a-col>
                         <a-col>
                             <label class="lable-item">영업자명:</label>
-                            <a-input style="width: 120px" v-model:value="dataSearch.nameCompany" />
+                            <a-input style="width: 120px" v-model:value="dataSearch.code" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">영업자코드:</label>
-                            <a-input style="width: 120px" v-model:value="dataSearch.surrogate" />
+                            <a-input style="width: 120px" v-model:value="dataSearch.name" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">상태 :</label>
-                            <a-select style="width: 100px" v-model:value="dataSearch.nameSale"
-                                option-label-prop="children">
-                                <a-select-option value="정상" label="정상">
-                                    <a-tag :color="getColorTag('정상')">정상</a-tag>
+                            <a-select mode="tags" ref="select" style="width: auto; min-width: 135px;"
+                                v-model:value="statuses" placeholder="전체">
+                                <a-select-option :value="1" label="정상">
+                                    <a-tag :color="getColorTag(1)">정상</a-tag>
                                 </a-select-option>
-                                <a-select-option value="전체" label="전체">
-                                    <a-tag :color="getColorTag('전체')">전체</a-tag>
+                                <a-select-option :value="2" label="전체">
+                                    <a-tag :color="getColorTag(2)">전체</a-tag>
                                 </a-select-option>
-                                <a-select-option value="해지" label="해지">
-                                    <a-tag :color="getColorTag('해지')">해지</a-tag>
+                                <a-select-option :value="3" label="해지">
+                                    <a-tag :color="getColorTag(3)">해지</a-tag>
                                 </a-select-option>
                             </a-select>
                         </a-col>
@@ -93,7 +92,9 @@
                     <DxColumn caption="영업자코드" data-field="code" />
                     <DxColumn caption="상태" data-field="status" data-type="text" cell-template="grid-cell" />
                     <template #grid-cell="{ data }">
-                        <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+                        <a-tag :color="getColorTag(data.value)">
+                            {{ data.value == 1 ? "정상" : (data.value == 2 ? "해지" : "전체") }}
+                        </a-tag>
                     </template>
                     <DxColumn caption="영업자명" data-field="name" />
                     <DxColumn caption="등급" data-field="grade" data-type="text" />
@@ -106,7 +107,6 @@
                     <template #grid-number="{ data }">
                         {{ $filters.formatCurrency(data.value) }}
                     </template>
-
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
@@ -208,26 +208,25 @@ export default defineComponent({
             modalAddNewStatus: false,
             modalEditStatus: false,
             modalHistoryStatus: false,
-            dataSearch: {
-                typeSevice: "전체",
-                nameCompany: "",
-                surrogate: "",
-                status: "전체",
-                address: "",
-                manager: "",
-                nameSale: "정상",
-            },
+
         };
     },
 
     setup() {
+        const statuses: any = ref([])
         const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
+        const dataSearch = ref({
+            grade: null,
+            name: "",
+            code: "",
+        })
+
         const originData = {
             page: 1,
-            rows: 2,
+            rows: 10,
             statuses: [1, 2, 3],
-            grade: 1,
+            grade: null,
             name: "",
             code: "",
         }
@@ -236,8 +235,8 @@ export default defineComponent({
             spinning.value = !spinning.value;
         }, 1000);
         const dataSource = ref([])
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDataSale, originData, () => ({ fetchPolicy: "no-cache", }))
 
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDataSale, originData, () => ({ fetchPolicy: "no-cache", }))
         onResult((res) => {
             dataSource.value = res.data.searchSalesRepresentatives.datas
         })
@@ -246,7 +245,10 @@ export default defineComponent({
             spinning,
             dataSource,
             idRowEdit,
-            refetchData
+            refetchData,
+            statuses,
+            originData,
+            dataSearch
         }
     },
     methods: {
@@ -279,17 +281,38 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        getColorTag(data: string) {
-            if (data === "정상") {
+        getColorTag(data: any) {
+            if (data === 1) {
                 return "#108ee9";
-            } else if (data === "해지") {
+            } else if (data === 2) {
                 return "#cd201f";
-            } else if (data === "전체") {
+            } else if (data === 3) {
                 return "grey";
             }
         },
         searching() {
-
+            this.spinning = true
+            if (this.dataSearch.grade) {
+                let arrayNew = {
+                    ...this.dataSearch,
+                    page: this.originData.page,
+                    rows: this.originData.rows,
+                    grade: this.dataSearch.grade,
+                    statuses: this.statuses.length > 0 ? this.statuses : [1, 2, 3]
+                }
+                this.refetchData(arrayNew)
+            } else {
+                let arrayNew = {
+                    ...this.dataSearch,
+                    page: this.originData.page,
+                    rows: this.originData.rows,
+                    statuses: this.statuses.length > 0 ? this.statuses : [1, 2, 3]
+                }
+                this.refetchData(arrayNew)
+            }
+            setTimeout(() => {
+                this.spinning = false
+            }, 1000);
         }
     },
 });

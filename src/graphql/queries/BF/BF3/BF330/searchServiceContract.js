@@ -31,6 +31,8 @@ query searchServiceContracts($page: Int!, $rows: Int!, $excludeCancel: Boolean!)
         name
         active
       }
+      canceledAt
+      unpaidMonths
     }
   }
 }
