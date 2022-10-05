@@ -131,7 +131,7 @@
                 </DxDataGrid>
 
                 <div class="pagination-table" v-if="rowTable > 20">
-                    <a-pagination v-model:current="originData.page" v-model:page-size="pageSize" :total="rowTable"
+                    <a-pagination v-model:current="originDataCall.page" v-model:page-size="pageSize" :total="rowTable"
                         show-less-items @change="changePage" />
                 </div>
 
@@ -296,6 +296,7 @@ export default defineComponent({
             requestDataSale,
             refetchData,
             pageSize,
+            originDataCall,
             statuses
         }
     },
