@@ -272,6 +272,7 @@ export default defineComponent({
 
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originDataCall.value)
 
+
         onResult((res) => {
             if (res.loading) {
             } else {

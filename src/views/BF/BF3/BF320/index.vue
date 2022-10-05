@@ -306,6 +306,67 @@ export default defineComponent({
             this.popupData = data;
         },
 
+        }
+    },
+    setup() {
+        var dataSearch = reactive({
+            typeSevice: '',
+            nameCompany: '',
+            surrogate: '',
+            status: false,
+            address: '',
+            manager: 'Jack',
+            nameSale: 'Jack',
+            page: 1,
+            rows: 10,
+            code: '',
+            name: '',
+            presidentName: '',
+            manageUserId: '',
+            salesRepresentativeId: '',
+            excludeCancel: true,
+        })
+
+        var responApiSearchCompanies = [
+            {
+                id: 10,
+                code: "han",
+                name: "han",
+                address: "han",
+                phone: "han",
+                presidentName: "han",
+                presidentMobilePhone: "han",
+                manageStartDate: "2022-1-1",
+                usedAccountingCount: 10,
+                usedWithholding: true,
+                servicePrice: 10000,
+                active: true,
+                compactSalesRepresentative: {
+                    id: 10,
+                    code: "han",
+                    name: "han",
+                    active: true,
+                },
+                manageCompactUser: {
+                    id: 10,
+                    type: "han",
+                    username: "han",
+                    name: "han",
+                    active: true,
+                },
+            }
+        ]
+
+        onMounted(() => {
+            try {
+                const { loading, error, onResult } = useQuery(queries.searchCompanies, dataSearch,)
+                onResult((res) => {
+                    console.log(res.data)
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        });
 
     },
 
