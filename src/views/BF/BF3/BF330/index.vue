@@ -1,5 +1,36 @@
 <template>
     <div id="bf-310">
+        <div class="top-content">
+            <a-typography-title :level="3"> 서비스관리
+            </a-typography-title>
+            <div class="list-action">
+                <a-tooltip>
+                    <template #title>조회</template>
+                    <a-button>
+                        <SearchOutlined />
+                        <!-- <SearchOutlined @click="searching" /> -->
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>저장</template>
+                    <a-button>
+                        <SaveOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>삭제</template>
+                    <a-button>
+                        <DeleteOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>출력</template>
+                    <a-button>
+                        <PrinterOutlined />
+                    </a-button>
+                </a-tooltip>
+            </div>
+        </div>
         <div class="search-form">
             <div class="components-grid-demo-flex">
                 <a-row justify="start" :gutter="[16, 8]">
@@ -101,7 +132,7 @@ import { employees, states } from "../data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-import { EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined,SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -124,6 +155,10 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
+        SearchOutlined, 
+        SaveOutlined, 
+        DeleteOutlined, 
+        PrinterOutlined
     },
     data() {
         return {
