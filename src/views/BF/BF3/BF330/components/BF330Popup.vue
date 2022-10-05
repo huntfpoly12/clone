@@ -449,7 +449,7 @@
 
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, watch } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
@@ -481,7 +481,9 @@ import {
 import { message } from "ant-design-vue";
 import inputFormat from "../../../../../components/inputBoxFormat.vue";
 import type { UploadProps } from "ant-design-vue";
-
+import queries from "../../../../../graphql/queries/BF/BF3/BF330/index";
+// import mutations from "../../../../../graphql/mutations/BF/BF3/BF330/index";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result as string));
@@ -517,6 +519,10 @@ export default defineComponent({
   props: {
     modalStatus: Boolean,
     modalStatusHistory: Boolean,
+    rowId: {
+      type: Number,
+      default: null
+    }
   },
 
   data() {
@@ -729,18 +735,43 @@ export default defineComponent({
       }
     },
   },
-  setup() {
+  setup(props) {
     const imageValue = ref("");
     const fileName = ref("");
-
+    const dataQuery = ref()
     const loading = ref<boolean>(false);
     const imageUrl = ref<string>("");
+    let trigger = ref<boolean>(false);
     const previewTitle = ref("");
     const fileList = ref<UploadProps["fileList"]>([]);
     const removeImg = () => {
       imageValue.value = "";
       fileName.value = "";
     };
+    watch(
+      () => props.modalStatus,
+      (newValue) => {
+        if (newValue) {
+          console.log(props.rowId)
+          dataQuery.value = { id: props.rowId };
+          trigger.value = true;
+        } else {
+          dataQuery.value = {}
+          trigger.value = false;
+        }
+      }
+    );
+    const { result, error, refetch, onResult } = useQuery(
+      queries.getServiceContract,
+      dataQuery,
+      () => ({
+        enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    onResult((res) => {
+      console.log(res)
+    })
     const handleChange = (info: any) => {
       if (info.file.status === "uploading") {
         loading.value = true;
@@ -888,6 +919,9 @@ export default defineComponent({
       fileName,
       removeImg,
       imageValue,
+      dataQuery,
+      result,
+      trigger
     };
   },
 });
