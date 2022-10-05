@@ -87,6 +87,11 @@ export default defineComponent({
       type: String,
       // default: "../assets/images/imgdefault.jpg",
     },
+    uploaded: {
+      type: Object,
+      default: {},
+      require: true
+    }
   },
   components: {
     UploadOutlined,
@@ -130,26 +135,7 @@ export default defineComponent({
     const fileName = ref<any>("");
     const previewVisible = ref(false);
     var showImg = ref<boolean>(true);
-    const beforeUpload = (file: any) => {
-      showImg.value = true;
-      const isJpgOrPng =
-        file.type === "image/png" ||
-        file.type === "image/jpg" ||
-        file.type === "image/jpeg" ||
-        file.type === "application/pdf" ||
-        file.type === "image/tiff";
-      if (!isJpgOrPng) {
-        message.error("You can not upload file!");
-      }
 
-      const isLt5M = file.size / 1024 / 1024 < 5;
-      if (!isLt5M) {
-        loading.value = false;
-        message.error("Image must smaller than 5MB!");
-      }
-
-      return isLt5M;
-    };
     const onRemove = () => {
       showImg.value = false;
       imageUrl.value = "";
@@ -177,6 +163,7 @@ export default defineComponent({
         getBase64(file, (base64Url: string) => {
           imageUrl.value = base64Url;
           loading.value = false;
+          emit('update:uploaded', '121212121')
           emit("update-img", {
             url: imageUrl.value,
             id: data.data.id,
@@ -207,7 +194,6 @@ export default defineComponent({
       imageUrl,
       // handleChange,
       messageUpload,
-      beforeUpload,
       fileList,
       onRemove,
       Upload,
