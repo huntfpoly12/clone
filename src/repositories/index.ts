@@ -1,9 +1,9 @@
 import uploadRepository from "./uploadRepository";
 import setupRepository from "./setupRepository";
-const repositories = {
+const repositories: any = {
     'upload': uploadRepository,
     'setup': setupRepository
 }
 export default {
-    get: name => repositories[name]
+    get: (name: any) => repositories[name]
 };
