@@ -220,8 +220,10 @@ import {
     WarningFilled,
     InfoCircleFilled
 } from "@ant-design/icons-vue";
+
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
+
 export default defineComponent({
     props: {
         modalStatus: {
@@ -229,6 +231,7 @@ export default defineComponent({
             type: Boolean,
         },
         modalStatusHistory: Boolean,
+        idRowEdit : Number
     },
     components: {
         DxDropDownBox,
