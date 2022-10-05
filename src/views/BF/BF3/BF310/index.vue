@@ -7,8 +7,8 @@
             <div class="list-action">
                 <a-tooltip>
                     <template #title>조회</template>
-                    <a-button>
-                        <SearchOutlined @click="searching" />
+                    <a-button @click="searching">
+                        <SearchOutlined />
                     </a-button>
                 </a-tooltip>
                 <a-tooltip>
@@ -44,7 +44,7 @@
                         <label class="lable-item">심사상태/결과 :</label>
                         <a-select mode="tags" ref="select" style="width: auto; min-width: 135px;"
                             v-model:value="statuses" placeholder="전체">
-                            <a-select-option @click="chooseAll"  value="전체">전체</a-select-option>
+                            <a-select-option @click="chooseAll" value="전체">전체</a-select-option>
                             <a-select-option :value="10">신청</a-select-option>
                             <a-select-option :value="20">심사중</a-select-option>
                             <a-select-option :value="30">승인</a-select-option>
@@ -52,7 +52,7 @@
                         </a-select>
                     </a-col>
                     <a-col>
-                        <ListSalesDropdownVue :textLabel="'영업자'"/>
+                        <ListSalesDropdownVue :textLabel="'영업자'" />
                     </a-col>
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
@@ -220,7 +220,7 @@ export default defineComponent({
         const idSubRequest = ref();
         const spinning = ref<boolean>(true);
         const arraySale = ref([])
-        const statuses:any = ref([])
+        const statuses: any = ref([])
         const requestDataSale = ref({
             page: 1,
             rows: 1000,
@@ -231,6 +231,16 @@ export default defineComponent({
         })
         const rowTable = ref(10)
         const originData = ref({
+            page: 1,
+            rows: 20,
+            salesRepresentativeId: null,
+            startDate: '',
+            finishDate: '',
+            accounting: true,
+            withholding: true,
+            statuses: [10, 20, 30, 99]
+        })
+        const originDataCall = ref({
             page: 1,
             rows: 20,
             salesRepresentativeId: null,
@@ -260,7 +270,7 @@ export default defineComponent({
             arraySale.value = arrayAdd
         })
 
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originData.value)
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originDataCall.value)
 
         onResult((res) => {
             if (res.loading) {
@@ -343,7 +353,12 @@ export default defineComponent({
                 this.originData.startDate = date
             }
             this.spinning = true
-            // this.refetchData(this.originData)
+            let arrayNew = {
+                ...this.originData,
+                statuses: this.statuses
+            }
+
+            this.refetchData(arrayNew)
 
             setTimeout(() => {
                 this.spinning = false

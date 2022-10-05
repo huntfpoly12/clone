@@ -236,6 +236,7 @@ export default defineComponent({
 
         const searching = () => {
             spinning.value = !spinning.value;
+
             originData.value = {
                 page: 1,
                 rows: 10,
@@ -259,8 +260,7 @@ export default defineComponent({
                 salesRepresentativeId: dataSearchDef.value.salesRepresentativeId,
                 excludeCancel: dataSearchDef.value.excludeCancel
             }
-
-            // originData.value = dataNew
+ 
             refetchData(dataNew)
 
             setTimeout(() => {
