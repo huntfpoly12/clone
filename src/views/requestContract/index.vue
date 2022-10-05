@@ -561,7 +561,7 @@ import {
 } from "@ant-design/icons-vue";
 
 import moment from "moment";
-import { employees, states } from "./data.js";
+import { employees, states } from "./data.ts";
 // import mutations from "../../graphql/mutations/RqContract/index";
 import { notification } from "ant-design-vue";
 

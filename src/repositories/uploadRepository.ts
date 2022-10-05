@@ -1,7 +1,7 @@
-import Client from '../axiosClient';
+import Client from '../axiosClient.d';
 const resource = '/upload';
 export default {
-    public(payload) {
+    public(payload: string) {
         return Client.post(`${resource}/public`, payload);
     },
     seal() {

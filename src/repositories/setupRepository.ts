@@ -1,4 +1,4 @@
-import Client from '../axiosClient';
+import Client from '../axiosClient.d';
 const resource = '/setup';
 export default {
     init() {
