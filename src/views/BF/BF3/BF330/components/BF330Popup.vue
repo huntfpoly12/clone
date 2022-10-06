@@ -17,7 +17,7 @@
               <a-col :span="10">
                 <a-form-item label="총일용료" style="font-weight: bold">
                   <p class="input-disble">
-                    {{ $filters.formatCurrency(total) }}
+                    {{ $filters.formatCurrency(formState.totalFee) }}
                   </p>
                 </a-form-item>
               </a-col>
@@ -28,7 +28,7 @@
                   style="padding-left: 50px"
                 >
                   <p class="input-disble">
-                    {{ $filters.formatCurrency(total1) }}
+                    {{ $filters.formatCurrency(formState.accountingPrice) }}
                   </p>
                 </a-form-item>
               </a-col>
@@ -39,7 +39,7 @@
                   style="padding-left: 50px"
                 >
                   <p class="input-disble">
-                    {{ $filters.formatCurrency(total2) }}
+                    {{ $filters.formatCurrency(formState.withholdingPrice) }}
                   </p>
                 </a-form-item>
               </a-col>
@@ -65,7 +65,7 @@
               <div id="data-grid-demo">
                 <DxDataGrid
                   id="gridContainer"
-                  :data-source="dataModal"
+                  :data-source="formState.accountingfacilityBusinesses"
                   :show-borders="true"
                   :selected-row-keys="selectedItemKeys"
                 >
@@ -94,26 +94,28 @@
                     <div>{{ data.rowIndex + 1 }}</div>
                   </template>
 
-                  <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
+                  <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                  
                   <DxColumn
                     :width="225"
-                    data-field="StateID"
+                    data-field="facilityBizType"
                     caption="사업분류"
                   >
                     <DxLookup
-                      :data-source="states"
-                      value-expr="ID"
-                      display-expr="Name"
+                      :data-source="facilityBizType"
+                      value-expr="v"
+                      display-expr="n"
                     />
                   </DxColumn>
                   <DxColumn
-                    data-field="서비스시작년월"
+                    data-field="startYearMonth"
+                    caption="서비스시작년월"
                     data-type="date"
                     :format="'yyyy-MM-dd'"
                   />
                   <DxColumn
                     :width="100"
-                    data-field="정원수"
+                    data-field="capacity"
                     caption="정원수 (명)"
                   />
                   <DxToolbar>
@@ -448,8 +450,9 @@
 </template>
 
 <script lang="ts">
+import { FacilityBizType } from "@bankda/jangbuda-common";
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, watch } from "vue";
+import { ref, defineComponent, watch,reactive } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
@@ -519,7 +522,7 @@ export default defineComponent({
   props: {
     modalStatus: Boolean,
     modalStatusHistory: Boolean,
-    rowId: {
+    idRowEdit: {
       type: Number,
       default: null
     }
@@ -736,6 +739,9 @@ export default defineComponent({
     },
   },
   setup(props) {
+
+    const facilityBizType = FacilityBizType.all();
+  
     const imageValue = ref("");
     const fileName = ref("");
     const dataQuery = ref()
@@ -748,30 +754,20 @@ export default defineComponent({
       imageValue.value = "";
       fileName.value = "";
     };
+
     watch(
       () => props.modalStatus,
       (newValue) => {
+        
         if (newValue) {
-          console.log(props.rowId)
-          dataQuery.value = { id: props.rowId };
+          dataQuery.value = { id: props.idRowEdit };
           trigger.value = true;
         } else {
-          dataQuery.value = {}
           trigger.value = false;
         }
       }
     );
-    const { result, error, refetch, onResult } = useQuery(
-      queries.getServiceContract,
-      dataQuery,
-      () => ({
-        enabled: trigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    onResult((res) => {
-      console.log(res)
-    })
+
     const handleChange = (info: any) => {
       if (info.file.status === "uploading") {
         loading.value = true;
@@ -800,8 +796,13 @@ export default defineComponent({
       }
       return isJpgOrPng && isLt2M;
     };
+
     const activeKey = ref([1]);
-    const formState = ref({
+    const formState = reactive({
+      totalFee:0,
+      accountingPrice:0,
+      withholdingPrice:0,
+      accountingfacilityBusinesses:[],
       name: "",
       name2: "",
       name3: "",
@@ -838,6 +839,31 @@ export default defineComponent({
       numberBox5: 0,
       numberBox6: 0,
     });
+
+        // get service contract
+        const { result, error, refetch, onResult } = useQuery(
+      queries.getServiceContract,
+      dataQuery,
+      () => ({
+        enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    onResult((res) => {
+      console.log(res)
+    });
+
+    watch(result, (value) => {
+      if (value && value.getServiceContract) {
+        console.log(value.getServiceContract,'fgghgfhfhfgh');
+        formState.totalFee = value.getServiceContract.usedServiceInfo.totalPrice;
+        formState.accountingPrice = value.getServiceContract.usedServiceInfo.accountingPrice;
+        formState.withholdingPrice = value.getServiceContract.usedServiceInfo.withholdingPrice;
+        formState.accountingfacilityBusinesses = value.getServiceContract.usedServiceInfo.accounting;
+      }
+    });
+
+
     const labelCol = ref({ style: { width: "150px" } });
     const wrapperCol = ref({ span: 14 });
     const radioStyle = ref({
@@ -921,7 +947,8 @@ export default defineComponent({
       imageValue,
       dataQuery,
       result,
-      trigger
+      trigger,
+      facilityBizType
     };
   },
 });
