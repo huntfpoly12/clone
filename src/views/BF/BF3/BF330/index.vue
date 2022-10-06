@@ -108,7 +108,7 @@
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
                         show-less-items @change="changePage" />
                 </div>
-                <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="popupData" />
+                <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :rowId="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                     title="변경이력[cm-000-pop]" />
             </div>
@@ -128,7 +128,7 @@ import {
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import DxButton from "devextreme-vue/button";
-import { employees, states } from "../data.js";
+import { employees, states } from "../data.ts";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
@@ -177,7 +177,7 @@ export default defineComponent({
     setup() {
         const spinning = ref(true);
         const idRowEdit = ref(0)
-
+        const idSubRequest = ref();
         const dataSearchDef = ref({
             page: 1,
             rows: 10,
@@ -256,7 +256,8 @@ export default defineComponent({
             searching,
             originData,
             refetchData,
-            rowTable
+            rowTable,
+            idSubRequest 
         }
     },
     methods: {
@@ -278,6 +279,7 @@ export default defineComponent({
             e.cancel = true;
         },
         setModalVisible(data) {
+            this.idSubRequest = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
         },
