@@ -1,7 +1,12 @@
 <template>
     <div ref="root">
-        <a-modal :visible="modalStatus" title="영업자관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" :mask-closable="false" :width="1028" :afterClose="afterPopupClose">
+        <a-modal :visible="modalStatus" title="영업자관리" centered @cancel="setModalVisible()" :mask-closable="false"
+            :width="1028" :afterClose="afterPopupClose">
+            <template #footer>
+                <a-button @click="setModalVisible">그냥 나가기</a-button>
+                <a-button key="submit" type="primary" @click="creactedSaleSetValue">
+                    저장하고 나가기</a-button>
+            </template>
             <a-form :model="bf340Detail" v-bind="layout" label-align="right" name="nest-messages"
                 :validate-messages="validateMessages" @finish="onFinish">
                 <a-row :gutter="24">
@@ -178,7 +183,8 @@ import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import dayjs, { Dayjs } from 'dayjs';
 import selectBank from "../../../../../components/selectBank.vue";
 import postCode from "./postCode.vue";
-
+import { useMutation } from "@vue/apollo-composable";
+import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -250,6 +256,7 @@ export default defineComponent({
             }
         }
         const handleOkConfirm = () => {
+            console.log('12314');
 
         }
 
@@ -269,20 +276,18 @@ export default defineComponent({
             console.log("Success:", values);
         };
 
-        // const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
-        //     queries.isSubscriptionRequestChangeableBizNumber, dataQueryCheckPer,
-        //     () => ({
-        //         enabled: triggerCheckPer.value,
-        //         fetchPolicy: "no-cache",
-        //     })
-        // );
+        const {
+            mutate: creactSale,
+            loading: loadingUpdate,
+            onDone: updateDone,
+        } = useMutation(mutations.creactedSale);
+
 
         return {
             labelCol,
             wrapperCol,
             bf340Detail,
-            layout,
-            value1: ref<Dayjs>(),
+            layout, 
             visible,
             confirmPopup,
             confirm,
@@ -291,7 +296,8 @@ export default defineComponent({
             afterPopupClose,
             dateValue,
             validateMessages,
-            onFinish
+            onFinish,
+            creactSale
         }
     },
     methods: {
@@ -307,13 +313,12 @@ export default defineComponent({
                 return "grey";
             }
         },
+
         getIDBank(data: any) {
             this.bf340Detail.bankType = data;
         },
 
         funcAddress(data: any) {
-            console.log(data);
-
             this.bf340Detail.zipcode = data.zonecode;
             this.bf340Detail.roadAddress = data.roadAddress;
             this.bf340Detail.jibunAddress = data.jibunAddress;
@@ -329,6 +334,11 @@ export default defineComponent({
             this.bf340Detail.addressDetail.zonecode = data.zonecode;
         },
 
+        creactedSaleSetValue() { 
+            console.log(this.bf340Detail);
+            
+            this.creactSale(this.bf340Detail)
+        }
     }
 })
 </script>
