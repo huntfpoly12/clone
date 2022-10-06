@@ -134,7 +134,8 @@
                 <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
                     :idSaleEdit="idRowEdit" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력[cm-000-pop]" />
+                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-340"/>
+                    
             </div>
         </div>
     </a-spin>

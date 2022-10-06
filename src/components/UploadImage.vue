@@ -2,17 +2,28 @@
     <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
         <a-col>
             <div>
+<<<<<<< HEAD
                 <a-form-item class="title" :label="title">
                     <a-row>
                         <div>
                             <input class="custom-file-input" type="file" @change="onFileChange" />
                             <p v-if="messageUpload">{{ messageUpload }}</p>
                             <!-- <div v-if="fileName" class="fileName">
+=======
+              <input
+                class="custom-file-input"
+                type="file"
+                @change="onFileChange"
+              />
+              <p v-if="messageUpload">{{ messageUpload }}</p>
+              <div v-if="fileName" class="fileName">
+>>>>>>> develop
                 <span style="padding-right: 10px">{{ fileName }}</span>
                 <delete-outlined
                   @click="onRemove"
                   style="color: red; cursor: pointer"
                 />
+<<<<<<< HEAD
               </div> -->
                         </div>
                     </a-row>
@@ -31,6 +42,26 @@
         <a-col> </a-col>
         <a-col :span="7">
             <!-- <div class="img-preview">
+=======
+              </div>
+            </div>
+          </a-row>
+          <a-row>
+            <a-space :size="10" style="margin-top: 8px">
+              <div class="warring-modal">
+                <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
+                <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
+                <p>파일용량 : 최대 5MB</p>
+              </div>
+            </a-space>
+          </a-row>
+        </a-form-item>
+      </div>
+    </a-col>
+    <a-col> </a-col>
+    <a-col :span="7">
+      <!-- <div class="img-preview">
+>>>>>>> develop
         <img :src="imageUrl" @click="handlePreview" />
       </div> -->
         </a-col>
@@ -49,6 +80,49 @@ import Repository from "../repositories/index";
 const uploadRepository = Repository.get("upload");
 
 import {
+<<<<<<< HEAD
+=======
+  UploadOutlined,
+  MinusCircleOutlined,
+  ZoomInOutlined,
+  SaveOutlined,
+  DeleteOutlined,
+  PlusSquareOutlined,
+  WarningFilled,
+} from "@ant-design/icons-vue";
+
+function getBase64(img: Blob, callback: (base64Url: string) => void) {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+}
+
+export default defineComponent({
+  props: {
+    title: {
+      type: String,
+    },
+    category: {
+      type: String,
+      default: "SubscriptionRequestCompanyLicense",
+    },
+    srcimg: {
+      type: String,
+      // default: "../assets/images/imgdefault.jpg",
+    },
+    imageId: {
+      type: Number,
+      default: null,
+      require: true
+    },
+    imageSource: {
+      type: String,
+      default: null,
+      require: true
+    }
+  },
+  components: {
+>>>>>>> develop
     UploadOutlined,
     MinusCircleOutlined,
     ZoomInOutlined,
@@ -56,6 +130,7 @@ import {
     DeleteOutlined,
     PlusSquareOutlined,
     WarningFilled,
+<<<<<<< HEAD
 } from "@ant-design/icons-vue";
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
@@ -82,6 +157,18 @@ export default defineComponent({
             default: {},
             require: true
         }
+=======
+  },
+  data() {
+    return {
+      uploadedFileName: null,
+    };
+  },
+  methods: {
+    onFileChange(e: any) {
+      const file = e.target.files[0];
+      this.imageUrl = URL.createObjectURL(file);
+>>>>>>> develop
     },
     components: {
         UploadOutlined,
@@ -108,6 +195,7 @@ export default defineComponent({
             this.imageUrl = URL.createObjectURL(file);
         },
 
+<<<<<<< HEAD
         typeFIle(file: any) {
             const isJpgOrPng =
                 file.type === "image/png" ||
@@ -125,6 +213,52 @@ export default defineComponent({
         const fileName = ref<any>("");
         const previewVisible = ref(false);
         var showImg = ref<boolean>(true);
+=======
+    const onRemove = () => {
+      showImg.value = false;
+      imageUrl.value = "";
+      //@ts-ignore
+      props.srcimg = "";
+      fileName.value = "";
+    };
+    let preview = ref<any>("");
+    const onFileChange = async (e: {
+      [x: string]: any;
+      target: { files: any[] };
+    }) => {
+      const file = e.target.files[0];
+      if (file.size > 1024 * 1024 * 5) {
+        e.preventDefault();
+        messageUpload = "File must smaller than 5MB!";
+        return;
+      }
+      const formData = new FormData();
+      formData.append("category", "SubscriptionRequestCompanyLicense");
+      formData.append("file", file);
+      fileName.value = file.name;
+      try {
+        const data = await uploadRepository.public(formData);
+        getBase64(file, (base64Url: string) => {
+          imageUrl.value = base64Url;
+          loading.value = false;
+          emit('update:imageId', 10)
+          emit('update:imageSource', imageUrl.value)
+          emit("update-img", {
+            url: imageUrl.value,
+            id: data.data.id,
+            fileName: fileName.value,
+          });
+          emit("update-step", {
+            url: imageUrl.value,
+            id: data.data.id,
+            fileNamestep: fileName.value,
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+>>>>>>> develop
 
         const onRemove = () => {
             showImg.value = false;

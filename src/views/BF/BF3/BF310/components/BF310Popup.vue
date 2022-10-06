@@ -578,7 +578,6 @@ export default defineComponent({
 
     // watch result resCheckPerEdit
     watch(resCheckPerEdit, (value) => {
-      console.log(value,'dfghdggfdgdfgdffff');
       canChangeableBizNumber.value = value.isSubscriptionRequestChangeableBizNumber;
     });
 
