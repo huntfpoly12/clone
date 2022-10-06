@@ -73,7 +73,6 @@
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
                     :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                     <DxScrolling column-rendering-mode="virtual" />
-                    <DxPaging :page-size="5" />
 
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -125,11 +124,18 @@
 
                 </DxDataGrid>
 
-                <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+                <div class="pagination-table" v-if="rowTable > originData.rows">
+                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                        :total="rowTable" show-less-items style="margin-top: 10px;" @change="changePage" />
+                </div>
+
+                <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false"
+                    @addNewDone="refetchData" />
                 <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
                     :idSaleEdit="idRowEdit" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력[cm-000-pop]" />
+                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-340" />
+
             </div>
         </div>
     </a-spin>
@@ -203,7 +209,6 @@ export default defineComponent({
     },
     data() {
         return {
-            // dataSource: employees,
             popupData: [],
             modalAddNewStatus: false,
             modalEditStatus: false,
@@ -231,6 +236,8 @@ export default defineComponent({
             code: "",
         }
 
+        const rowTable = ref(0)
+
         setTimeout(() => {
             spinning.value = !spinning.value;
         }, 1000);
@@ -238,6 +245,7 @@ export default defineComponent({
 
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDataSale, originData, () => ({ fetchPolicy: "no-cache", }))
         onResult((res) => {
+            rowTable.value = res.data.searchSalesRepresentatives.totalCount
             dataSource.value = res.data.searchSalesRepresentatives.datas
         })
 
@@ -248,7 +256,8 @@ export default defineComponent({
             refetchData,
             statuses,
             originData,
-            dataSearch
+            dataSearch,
+            rowTable,
         }
     },
     methods: {
@@ -277,7 +286,7 @@ export default defineComponent({
             this.modalEditStatus = true;
             this.popupData = data;
         },
-        modalHistory(data: never[]) {
+        modalHistory(data: any) {
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
@@ -313,6 +322,10 @@ export default defineComponent({
             setTimeout(() => {
                 this.spinning = false
             }, 1000);
+        },
+
+        changePage() {
+            this.searching()
         }
     },
 });

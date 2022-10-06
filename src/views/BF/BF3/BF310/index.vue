@@ -349,7 +349,7 @@ export default defineComponent({
         },
         formarDate(date: any) {
             return dayjs(date).format('YYYY/MM/DD')
-        }, 
+        },
 
         searching() {
             if (!this.originData.startDate && !this.originData.finishDate) {

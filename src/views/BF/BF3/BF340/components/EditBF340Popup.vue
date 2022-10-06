@@ -1,93 +1,99 @@
 <template>
     <div ref="root">
-        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" :mask-closable="false" :width="1028">
-            <a-form :model="bf340Detail" v-bind="layout" label-align="right" name="nest-messages"
-                :validate-messages="validateMessages" @finish="onFinish">
+        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered @cancel="setModalVisible()"
+            :mask-closable="false" :width="1028">
+            <template #footer>
+                <a-button @click="setModalVisible">그냥 나가기</a-button>
+                <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateSale">
+                    저장하고 나가기</a-button>
+            </template>
+            <a-form :model="formState" v-bind="layout" label-align="right" name="nest-messages"
+                :validate-messages="validateMessages">
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
                         <a-form-item label="영업자코드">
-                            <a-input v-model:value="bf340Detail.영업자코드" style="width: 200px" />
+                            <a-input v-model:value="formState.code" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="영업자명">
-                            <a-input v-model:value="bf340Detail.영업자명" style="width: 200px" />
+                            <a-input v-model:value="formState.detailName" style="width: 200px" :disabled="!canChangeCompanyName"/>
                         </a-form-item>
                         <a-form-item label="사업자유형" class="label-br">
-                            <a-select ref="select" v-model:value="bf340Detail.사업자유형" style="width: 200px">
-                                <a-select-option value="법인">법인</a-select-option>
-                                <a-select-option value="개인사업자">개인사업자</a-select-option>
-                                <a-select-option value="개인">개인</a-select-option>
+                            <a-select ref="select" v-model:value="formState.detailBizType" style="width: 200px">
+                                <a-select-option :value="1">법인사업자</a-select-option>
+                                <a-select-option :value="2">개인사업자</a-select-option>
                             </a-select>
                         </a-form-item>
 
                         <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]">
-                            <a-input v-model:value="bf340Detail.이메일" style="width: 250px" />
+                            <a-input v-model:value="formState.detailEmail" style="width: 250px" />
                         </a-form-item>
                         <a-form-item label="연락처">
-                            <a-input v-model:value="bf340Detail.연락처" style="width: 200px" />
+                            <a-input v-model:value="formState.detailPhone" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="팩스">
-                            <a-input v-model:value="bf340Detail.팩스" style="width: 200px" />
+                            <a-input v-model:value="formState.detailFax" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="주소">
-                            <a-input-search v-model:value="bf340Detail.주소" placeholder="우편번호검색..." style="width: 200px">
-                                <template #prefix>
-                                    <search-outlined />
-                                </template>
-                                <template #enterButton>
-                                    <a-button>
-                                        <search-outlined />
-                                    </a-button>
-                                </template>
-                            </a-input-search>
+                            <a-row>
+                                <a-col :span="12">
+                                    <a-input style="width: 100%" v-model:value="formState.detailZipcode" disabled />
+                                </a-col>
+                                <a-col :span="12">
+                                    <div style="margin-left: 5px">
+                                        <a-button type="primary" ghost>
+                                            <postCode @dataAddress="funcAddress" />
+                                        </a-button>
+                                    </div>
+                                </a-col>
+                            </a-row>
                         </a-form-item>
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
                         <a-form-item label="상태">
-                            <a-select style="width: 100px" v-model:value="bf340Detail.상태" option-label-prop="children"
+                            <a-select style="width: 100px" v-model:value="formState.status" option-label-prop="children"
                                 @select="confirmPopup">
-                                <a-select-option value="정상" label="정상">
+                                <a-select-option :value="1" label="정상">
                                     <a-tag :color="getColorTag('정상')">정상</a-tag>
                                 </a-select-option>
-                                <a-select-option value="해지" label="해지">
+                                <a-select-option :value="2" label="해지">
                                     <a-tag :color="getColorTag('해지')">해지</a-tag>
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
                         <a-form-item label="등급">
-                            <a-select ref="select" v-model:value="bf340Detail.등급" style="width: 100px">
-                                <a-select-option value="본사">본사</a-select-option>
-                                <a-select-option value="지사">지사</a-select-option>
-                                <a-select-option value="대리점">대리점</a-select-option>
+                            <a-select ref="select" v-model:value="formState.detailGrade" style="width: 100px">
+                                <a-select-option :value="0">본사</a-select-option>
+                                <a-select-option :value="1">지사</a-select-option>
+                                <a-select-option :value="2">대리점</a-select-option>
                             </a-select>
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="label-br">
-                            <a-input v-model:value="bf340Detail.법인주민등록번호" />
+                            <a-input v-model:value="formState.detailResidentId" />
                         </a-form-item>
                         <a-form-item label="사업자등록번호" class="label-br">
-                            <a-input v-model:value="bf340Detail.사업자등록번호" />
+                            <a-input v-model:value="formState.detailBizNumber" />
                         </a-form-item>
                         <a-form-item label="휴대폰">
-                            <a-input v-model:value="bf340Detail.휴대폰" />
+                            <a-input v-model:value="formState.detailMobilePhone" />
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="15" :md="13" :lg="12">
                         <a-form-item class="result-address" :wrapper-col="{ span: 24 }">
-                            <a-input v-model:value="bf340Detail.result_address" style="width: 100%" :disabled="true" />
+                            <a-input v-model:value="formState.detailRoadAddress" style="width: 100%" :disabled="true" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8" :md="13" :lg="11">
                         <a-form-item :wrapper-col="{ span: 24}" class="detail-address">
-                            <a-input v-model:value="bf340Detail.detail_address" placeholder="상세주소" />
+                            <a-input v-model:value="formState.detailAddressExtend" placeholder="상세주소" />
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12">
                         <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }" class="label-br">
-                            <a-switch v-model:checked="bf340Detail.세금계산서발행여부" checked-children="발행"
+                            <a-switch v-model:checked="formState.detailTaxInvoice" checked-children="발행"
                                 un-checked-children="미발행" style="width: 80px" />
                         </a-form-item>
                     </a-col>
@@ -97,9 +103,9 @@
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
                             <a-col :span="16" :md="16" :lg="17">
-                                <a-form-item class="email-input" :wrapper-col="{ span: 24 }" :name="['전자세금계산서수신이메일']"
-                                    :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="bf340Detail.전자세금계산서수신이메일" placeholder=""
+                                <a-form-item class="email-input" :wrapper-col="{ span: 24 }"
+                                    :name="['detailEmailTaxInvoice']" :rules="[{ type: 'email' }]">
+                                    <a-input v-model:value="formState.detailEmailTaxInvoice" placeholder=""
                                         style="width: 100%" />
                                 </a-form-item>
                             </a-col>
@@ -109,35 +115,28 @@
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
                         <a-form-item label="은행">
-                            <a-select ref="select" v-model:value="bf340Detail.은행" style="width: 200px">
-                                <a-select-option value="농협">농협</a-select-option>
-                                <a-select-option value="신한은행">신한은행</a-select-option>
-                                <a-select-option value="국민은행">국민은행</a-select-option>
-                                <a-select-option value="우리은행">우리은행</a-select-option>
-                                <a-select-option value="기업은행">기업은행</a-select-option>
-                                <a-select-option value="하나은행">하나은행</a-select-option>
-                            </a-select>
+                            <selectBank :selectValue="formState.detailBankType" width="200px" />
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
                         <a-form-item label="계좌번호">
-                            <a-input v-model:value="bf340Detail.계좌번호" style="width: 200px" />
+                            <a-input v-model:value="formState.detailAccountNumber" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="가입일자">
                             <div style="width: 150px">
-                                <CustomDatepicker :valueDate="bf340Detail.가입일자" />
+                                <CustomDatepicker :valueDate="formState.detailRegisterDate" />
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="12" :md="13" :lg="14">
                         <a-form-item label="예금주">
-                            <a-input v-model:value="bf340Detail.예금주" />
+                            <a-input v-model:value="formState.detailAccountOwner" />
                         </a-form-item>
                         <a-form-item label="해지일자">
                             <div style="width: 150px">
-                                <CustomDatepicker :valueDate="bf340Detail.해지일자" />
+                                <CustomDatepicker :valueDate="formState.detailCancelDate" />
                             </div>
                         </a-form-item>
                     </a-col>
@@ -147,15 +146,15 @@
                     <a-col :span="24" :md="24" :lg="24">
                         <a-form-item label="비고" :label-col="{ span: 2 }" :wrapper-col="{ span: 24 }"
                             class="textarea_340">
-                            <a-textarea v-model:value="bf340Detail.비고" placeholder="500자 이내" />
+                            <a-textarea v-model:value="formState.detailRemark" placeholder="500자 이내" />
                         </a-form-item>
                     </a-col>
                 </a-row>
             </a-form>
         </a-modal>
 
-        <a-modal v-model:visible="visible" :mask-closable="false" :afterClose="afterConfirmClose" class="confirm-md"
-            :width="521">
+        <a-modal v-model:visible="visibleConfirm" :mask-closable="false" :afterClose="afterConfirmClose"
+            class="confirm-md" :width="521">
             <a-row>
                 <a-col :span="4">
                     <warning-outlined :style="{fontSize: '70px', color: '#faad14',paddingTop: '20px'}" />
@@ -181,55 +180,39 @@
 
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, reactive, onMounted } from 'vue'
-import type { UnwrapRef } from 'vue';
+import queries from "../../../../../graphql/queries/BF/BF3/BF340/index";
+import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
+import selectBank from "../../../../../components/selectBank.vue";
+import postCode from "../../../../../components/postCode.vue";
+import { ref, defineComponent, reactive, watch } from 'vue';
 import { SearchOutlined, WarningOutlined, } from '@ant-design/icons-vue';
 import dayjs, { Dayjs } from 'dayjs';
-interface FormState {
-    name: string;
-    영업자코드: string;
-    영업자명: string;
-    사업자유형: string;
-    상태: string;
-    등급: string;
-    주소: string;
-    은행: string;
-    계좌번호: string;
-    등록번호: string;
-    예금주: string;
-    사업자등록번호: string;
-    휴대폰: string;
-    비고: string;
-    이메일: string;
-    연락처: string;
-    팩스: string;
-    전자세금계산서수신이메일: string;
-    세금계산서발행여부: string;
-    법인주민등록번호: string;
-    result_address: string;
-    detail_address: string;
-    해지일자: string;
-    가입일자: string;
-}
+import { message } from "ant-design-vue";
 
+import { useQuery, useMutation } from "@vue/apollo-composable";
 export default defineComponent({
-    props: ['modalStatus', 'data']
+    props: ['modalStatus', 'data', 'idSaleEdit']
     ,
     components: {
         SearchOutlined,
         WarningOutlined,
-        CustomDatepicker
+        CustomDatepicker,
+        selectBank,
+        postCode
     },
 
-    setup(props) {
-        const data = props.data;
-
+    setup(props, { emit }) {
+        const dataQuery = ref();
+        let trigger = ref<boolean>(false);
+        let triggerCheckPer = ref<boolean>(false);
+        const dataQueryCheckPer = ref({});
+        let canChangeCompanyName =  ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         };
         const visible = ref<boolean>(false);
-
+        const visibleConfirm = ref<boolean>(false);
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
@@ -239,76 +222,248 @@ export default defineComponent({
                 email: "이메일 형식이 정확하지 않습니다",
             },
         };
-        let bf340Detail: UnwrapRef<FormState> = reactive({
+
+
+        // watch event modal popup
+        watch(
+            () => props.modalStatus,
+            (newValue, old) => {
+                if (newValue) {
+                    visible.value = newValue;
+                    dataQuery.value = { id: props.idSaleEdit };
+                    trigger.value = true;
+                    refetch();
+                } else {
+                    visible.value = newValue;
+                    trigger.value = false;
+                }
+            }
+        );
+
+        let formState = reactive({
+            id: '',
+            code: '',
+            status: 0,
             name: '',
-            사업자유형: '개인',
-            상태: '정상',
-            등급: '본사',
-            주소: '',
-            은행: '농협',
-            계좌번호: '',
-            예금주: '',
-            비고: '',
-            영업자코드: '',
-            영업자명: '',
-            등록번호: '',
-            사업자등록번호: '',
-            휴대폰: '',
-            이메일: '',
-            연락처: '',
-            팩스: '',
-            전자세금계산서수신이메일: '',
-            세금계산서발행여부: '',
-            법인주민등록번호: '',
-            result_address: '',
-            detail_address: '',
-            가입일자: '',
-            해지일자: '',
+            address: '',
+            grade: 0,
+            phone: '',
+            mobilePhone: '',
+            registerDate: '',
+            cancelDate: null,
+
+            detailStatus: 0,
+            detailName: '',
+            detailGrade: 0,
+            detailBizType: 0,
+            detailBizNumber: '',
+            detailResidentId: null,
+            detailEmail: '',
+            detailMobilePhone: '',
+            detailPhone: '',
+            detailFax: '',
+            detailZipcode: '',
+            detailRoadAddress: '',
+            detailJibunAddress: '',
+            detailAddressExtend: '',
+
+            detailAddressDetailBcode: '',
+            detailAddressDetailBname: '',
+            detailAddressDetailBuildingCode: '',
+            detailAddressDetailBuildingName: '',
+            detailAddressDetailRoadname: '',
+            detailAddressDetailRoadnameCode: '',
+            detailAddressDetailSido: '',
+            detailAddressDetailSigungu: '',
+            detailAddressDetailSigunguCode: '',
+            detailAddressDetailZonecode: '',
+
+            detailTaxInvoice: false,
+            detailEmailTaxInvoice: '',
+            detailBankType: '',
+            detailAccountNumber: '',
+            detailAccountOwner: '',
+            detailRegisterDate: '',
+            detailCancelDate: '',
+            detailRemark: '',
+
+            createdAt: 0,
+            createdBy: '',
+            updatedAt: 0,
+            updatedBy: '',
+            ip: '',
+            active: false,
         });
-        onMounted(() => {
-            bf340Detail.사업자유형 = '개인';
-            bf340Detail.상태 = '정상';
-            bf340Detail.등급 = '지사';
-            bf340Detail.주소 = '';
-            bf340Detail.은행 = '국민은행';
-            bf340Detail.계좌번호 = '1000985-87-12547';
-            bf340Detail.예금주 = '홍길동 (소프트파워독산점)';
-            bf340Detail.비고 = '';
-            bf340Detail.영업자코드 = 'S0001';
-            bf340Detail.영업자명 = '김영업자';
-            bf340Detail.등록번호 = '';
-            bf340Detail.사업자등록번호 = '215-87-68108';
-            bf340Detail.휴대폰 = '01056478852';
-            bf340Detail.이메일 = 'abcd_efgh@bankda.com';
-            bf340Detail.연락처 = '0415628841';
-            bf340Detail.팩스 = '0415630041';
-            bf340Detail.전자세금계산서수신이메일 = 'abcd_efgh@bankda.com';
-            bf340Detail.세금계산서발행여부 = '';
-            bf340Detail.법인주민등록번호 = '110111-2154800';
-            bf340Detail.result_address = '';
-            bf340Detail.detail_address = '';
-            bf340Detail.가입일자 = '2021-08-15';
-            bf340Detail.해지일자 = '2021-08-14';
+
+        // query check if can be change name company 
+        const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
+            queries.isSalesRepresentativeChangableName, dataQueryCheckPer,
+            () => ({
+                enabled: triggerCheckPer.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        // watch result resCheckPerEdit
+        watch(resCheckPerEdit, (value) => {
+            canChangeCompanyName.value = value.isSalesRepresentativeChangableName;
         });
+
+        // get  sale representative
+        const { result, loading, error, refetch } = useQuery(
+            queries.getSalesRepresentative,
+            dataQuery,
+            () => ({
+                enabled: trigger.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        watch(result, (value) => {
+            if (value && value.getSalesRepresentative) {
+                formState.id = value.getSalesRepresentative.id;
+                formState.code = value.getSalesRepresentative.code;
+                formState.status = value.getSalesRepresentative.status;
+                formState.name = value.getSalesRepresentative.name;
+                formState.address = value.getSalesRepresentative.address;
+                formState.grade = value.getSalesRepresentative.grade;
+                formState.phone = value.getSalesRepresentative.phone;
+                formState.mobilePhone = value.getSalesRepresentative.mobilePhone;
+                formState.registerDate = value.getSalesRepresentative.registerDate;
+                formState.cancelDate = value.getSalesRepresentative.cancelDate;
+
+                formState.detailStatus = value.getSalesRepresentative.detail.status;
+                formState.detailName = value.getSalesRepresentative.detail.name;
+                formState.detailGrade = value.getSalesRepresentative.detail.grade;
+                formState.detailBizType = value.getSalesRepresentative.detail.bizType;
+                formState.detailBizNumber = value.getSalesRepresentative.detail.bizNumber;
+                formState.detailResidentId = value.getSalesRepresentative.detail.residentId;
+                formState.detailEmail = value.getSalesRepresentative.detail.email;
+                formState.detailMobilePhone = value.getSalesRepresentative.detail.mobilePhone;
+                formState.detailPhone = value.getSalesRepresentative.detail.phone;
+                formState.detailFax = value.getSalesRepresentative.detail.fax;
+                formState.detailZipcode = value.getSalesRepresentative.detail.zipcode;
+                formState.detailRoadAddress = value.getSalesRepresentative.detail.roadAddress;
+                formState.detailJibunAddress = value.getSalesRepresentative.detail.jibunAddress;
+                formState.detailAddressExtend = value.getSalesRepresentative.detail.addressExtend;
+
+                formState.detailAddressDetailBcode = value.getSalesRepresentative.detail.addressDetail.bcode;
+                formState.detailAddressDetailBname = value.getSalesRepresentative.detail.addressDetail.bname;
+                formState.detailAddressDetailBuildingCode = value.getSalesRepresentative.detail.addressDetail.buildingCode;
+                formState.detailAddressDetailBuildingName = value.getSalesRepresentative.detail.addressDetail.buildingName;
+                formState.detailAddressDetailRoadname = value.getSalesRepresentative.detail.addressDetail.roadname;
+                formState.detailAddressDetailRoadnameCode = value.getSalesRepresentative.detail.addressDetail.roadnameCode;
+                formState.detailAddressDetailSido = value.getSalesRepresentative.detail.addressDetail.sido;
+                formState.detailAddressDetailSigungu = value.getSalesRepresentative.detail.addressDetail.sigungu;
+                formState.detailAddressDetailSigunguCode = value.getSalesRepresentative.detail.addressDetail.sigunguCode;
+                formState.detailAddressDetailZonecode = value.getSalesRepresentative.detail.addressDetail.zonecode;
+
+                formState.detailTaxInvoice = value.getSalesRepresentative.detail.taxInvoice;
+                formState.detailEmailTaxInvoice = value.getSalesRepresentative.detail.emailTaxInvoice;
+                formState.detailBankType = value.getSalesRepresentative.detail.bankType;
+                formState.detailAccountNumber = value.getSalesRepresentative.detail.accountNumber;
+                formState.detailAccountOwner = value.getSalesRepresentative.detail.accountOwner;
+                formState.detailRegisterDate = value.getSalesRepresentative.detail.registerDate;
+                formState.detailCancelDate = value.getSalesRepresentative.detail.cancelDate;
+                formState.detailRemark = value.getSalesRepresentative.detail.remark;
+
+                formState.createdAt = value.getSalesRepresentative.createdAt;
+                formState.createdBy = value.getSalesRepresentative.createdBy;
+                formState.updatedAt = value.getSalesRepresentative.updatedAt;
+                formState.updatedBy = value.getSalesRepresentative.updatedBy;
+                formState.ip = value.getSalesRepresentative.ip;
+                formState.active = value.getSalesRepresentative.active;
+
+                triggerCheckPer.value = true;
+                dataQueryCheckPer.value = { id: value.getSalesRepresentative.id, name: value.getSalesRepresentative.name };
+                // trigger query check if can be change business registration number 
+                refetchCheckPer()
+            }
+        });
+
+
+        // update sale representative
+        const {
+            mutate: actionUpdate,
+            onError,
+            loading: loadingUpdate,
+            onDone: updateDone,
+        } = useMutation(mutations.updateSalesRepresentative);
+
+
+        const updateSale = () => {
+
+            let salesRepresentativeDetailInput = {
+                status: formState.status,
+                name: formState.detailName,
+                grade: formState.detailGrade,
+                bizType: formState.detailBizType,
+                bizNumber: formState.detailBizNumber,
+                residentId: formState.detailResidentId,
+                email: formState.detailEmail,
+                mobilePhone: formState.mobilePhone,
+                phone: formState.detailPhone,
+                fax: formState.detailFax,
+                zipcode: formState.detailZipcode,
+                roadAddress: formState.detailRoadAddress,
+                jibunAddress: formState.detailJibunAddress,
+                addressExtend: formState.detailAddressExtend,
+                addressDetail: {
+                    bcode: formState.detailAddressDetailBcode,
+                    bname: formState.detailAddressDetailBname,
+                    buildingCode: formState.detailAddressDetailBuildingName,
+                    buildingName: formState.detailAddressDetailBuildingName,
+                    roadname: formState.detailAddressDetailRoadname,
+                    roadnameCode: formState.detailAddressDetailRoadnameCode,
+                    sido: formState.detailAddressDetailSido,
+                    sigungu: formState.detailAddressDetailSigungu,
+                    sigunguCode: formState.detailAddressDetailSigunguCode,
+                    zonecode: formState.detailAddressDetailZonecode,
+                },
+                taxInvoice: formState.detailTaxInvoice,
+                emailTaxInvoice: formState.detailEmailTaxInvoice,
+                bankType: formState.detailBankType,
+                accountNumber: formState.detailAccountNumber,
+                accountOwner: formState.detailAccountOwner,
+                registerDate: formState.detailRegisterDate,
+                cancelDate: formState.detailCancelDate,
+                remark: formState.detailRemark,
+            };
+
+            let variables = {
+                id: formState.id,
+                input: salesRepresentativeDetailInput
+            };
+
+            actionUpdate(variables);
+        }
+
+        updateDone((res) => {
+            message.success(`Update was successful`, 4);
+            setModalVisible();
+        });
+
+        // confirm popup 
         const confirmPopup = (value: any) => {
-            if (value == '해지') {
-                visible.value = true;
+            if (value == 2) {
+                visibleConfirm.value = true;
             }
         }
+
         const handleOkConfirm = () => {
             if (confirm.value == '확인') {
-                visible.value = false;
+                visibleConfirm.value = false;
             } else {
-                bf340Detail.상태 = '정상';
-                visible.value = false;
+                formState.status = 1;
+                visibleConfirm.value = false;
             }
         }
 
         const afterConfirmClose = () => {
             if (confirm.value == '확인') {
-                bf340Detail.상태 = '해지';
+                formState.status = 2;
             } else {
-                bf340Detail.상태 = '정상';
+                formState.status = 1;
             }
         }
 
@@ -316,29 +471,48 @@ export default defineComponent({
             return dayjs(date, "YYYY-MM-DD");
         }
 
-        const onFinish = (values: any) => {
-            console.log("Success:", values);
+        const funcAddress = (data: any) => {
+            formState.detailZipcode = data.zonecode;
+            formState.detailRoadAddress = data.roadAddress;
+            formState.detailJibunAddress = data.jibunAddress;
+            formState.detailAddressDetailBcode = data.bcode;
+            formState.detailAddressDetailBname = data.bname;
+            formState.detailAddressDetailBuildingName = data.buildingName;
+            formState.detailAddressDetailRoadname = data.roadname;
+            formState.detailAddressDetailRoadnameCode = data.roadnameCode;
+            formState.detailAddressDetailSido = data.sido;
+            formState.detailAddressDetailSigungu = data.sigungu;
+            formState.detailAddressDetailSigunguCode = data.sigunguCode;
+            formState.detailAddressDetailZonecode = data.zonecode;
         };
+
+        const setModalVisible = () => {
+            emit('closePopup', false)
+        }
+
         return {
             labelCol,
             wrapperCol,
-            bf340Detail,
+            formState,
             layout,
             value1: ref<Dayjs>(),
             visible,
+            visibleConfirm,
             confirmPopup,
             confirm,
             handleOkConfirm,
             afterConfirmClose,
             dateValue,
-            onFinish,
-            validateMessages
+            validateMessages,
+            funcAddress,
+            loading,
+            updateSale,
+            loadingUpdate,
+            canChangeCompanyName,
+            setModalVisible
         }
     },
     methods: {
-        setModalVisible() {
-            this.$emit('closePopup', false)
-        },
         getColorTag(data: string) {
             if (data === "정상") {
                 return "#108ee9";

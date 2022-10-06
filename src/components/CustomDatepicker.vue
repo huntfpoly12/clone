@@ -51,10 +51,8 @@ export default defineComponent({
 
         const emitData = () => {
             let classDate = '.' + classNameProps + ' .dp__input'
-            var Url = document.querySelector(classDate) as HTMLInputElement;
-            console.log("start");
-            emit("valueDateChange", Url.value)
-            console.log('end');
+            var Url = document.querySelector(classDate) as HTMLInputElement; 
+            emit("valueDateChange", Url.value) 
         }
 
         const alertDate = () => {
