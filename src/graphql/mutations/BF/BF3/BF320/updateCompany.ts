@@ -1,6 +1,12 @@
 import gql from "graphql-tag";
 export default gql`
-mutation updateCompany( $id: Int!, $detail: CompanyDetailInput, $president: CompanyPresidentInput, $cmsBank: CompanyCmsBankInput) {
+mutation updateCompany( 
+  $id: Int!, 
+  $detail: CompanyDetailInput, 
+  $president: CompanyPresidentInput, 
+  $cmsBank: CompanyCmsBankInput) 
+  {
+
     updateCompany(id: $id, detail: $detail, president: $president,cmsBank: $cmsBank){
         id
     code

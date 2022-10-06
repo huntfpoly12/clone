@@ -29,17 +29,7 @@ export default {
     },
     
   },
-  components: {},
-  data() {
-    return {};
-  },
-  mounted() {},
-  methods: {
-    onChange(data: any) {
-      // this.bankType = data;
-      console.log(data);
-    },
-  },
+  mounted() { },
   setup(props: any, { emit }: any) {
     const styleBank = ref({
       width: props.width
