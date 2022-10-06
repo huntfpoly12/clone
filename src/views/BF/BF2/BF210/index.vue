@@ -40,16 +40,16 @@
                 <a-tag :color="getColorTag('고객사')">전체</a-tag>
               </a-select-option> -->
               <a-select-option value="c" label="고객사">
-                <a-tag :color="getColorTag('고객사')">고객사</a-tag>
+                <a-tag :color="getColorTag('c')">고객사</a-tag>
               </a-select-option>
-              <a-select-option value="m" label="전체">
-                <a-tag :color="getColorTag('매니저')">매니저</a-tag>
+              <a-select-option value="m" label="매니저">
+                <a-tag :color="getColorTag('m')">매니저</a-tag>
               </a-select-option>
               <a-select-option value="r" label="영업자">
-                <a-tag :color="getColorTag('영업자')">영업자</a-tag>
+                <a-tag :color="getColorTag('r')">영업자</a-tag>
               </a-select-option>
               <a-select-option value="p" label="파트너">
-                <a-tag :color="getColorTag('파트너')">파트너</a-tag>
+                <a-tag :color="getColorTag('p')">파트너</a-tag>
               </a-select-option>
             </a-select>
           </a-col>
@@ -69,11 +69,11 @@
             <label class="lable-item">회원명 :</label>
             <a-input style="width: 150px" v-model:value="dataSearch.name" />
           </a-col>
-          <a-col style="display: flex; align-items: center">
-            <a-checkbox v-model:checked="dataSearch.active">
+          <a-col v-model:checked="dataSearch.active" style="display: flex; align-items: center">
+            <a-checkbox >
               <a-tag :color="getAbleDisable(true)">이용중</a-tag>
             </a-checkbox>
-            <a-checkbox v-model:checked="dataSearch.active">
+            <a-checkbox>
               <a-tag :color="getAbleDisable(false)">이용중지</a-tag>
             </a-checkbox>
           </a-col>
@@ -104,7 +104,7 @@
         <DxColumn data-field="username" caption="회원명" :width="100" />
         <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" :width="150" />
         <template #grid-cell="{ data }">
-          <a-tag :color="getColorTag(data.value)">{{ data.value = "매니저" ? "매니저" : (data.value == "고객사"? "고객사" : (data.value == "파트너"? "파트너": "ㅁ")) }}</a-tag>
+          <a-tag :color="getColorTag(data.value)">{{ data.value == "m" ? "매니저" : (data.value == "c"? "고객사" : (data.value == "p"? "파트너": "영업자")) }}</a-tag>
         </template>
         <DxColumn data-field="mobilePhone" caption="휴대폰" :width="200" />
         <DxColumn data-field="groupCode" caption="소속코드" :width="200" />
@@ -354,13 +354,13 @@ export default defineComponent({
       this.popupData = data;
     },
     getColorTag(data: any) {
-      if (data === "고객사") {
+      if (data === "c") {
         return "blue";
-      } else if (data === "매니저") {
+      } else if (data === "m") {
         return "black";
-      } else if (data === "영업자") {
+      } else if (data === "r") {
         return "grey";
-      } else if (data === "파트너") {
+      } else if (data === "p") {
         return "#cdc71c";
       }
     },

@@ -67,7 +67,7 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4">
               <div style="display: flex; align-items: flex-end">
-                <a-input @keypress="onlyNumber" type="text" v-model:value="formState.user.mobilePhone"
+                <a-input @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
                   style="width: 150px; margin-right: 8px" />
               </div>
               <div :class="{ active: toggleActive }" class="toggle_container">
@@ -75,13 +75,13 @@
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" :span="8">
-              <a-input v-model:value="formState.user.email" style="width: 250px" />
+              <a-input v-model:value="formState.email" style="width: 250px" />
               <a-button :disabled="!validated" html-type="submit" danger class="btn_sendemail" @click="showModal">비밀번호
                 변경
               </a-button>
             </a-form-item>
             <a-form-item>
-              <a-modal :disabled="!formState.user.email" class="container_email" v-model:visible="isShow"
+              <a-modal :disabled="!formState.email" class="container_email" v-model:visible="isShow"
                 @ok="handleSuccsess">
                 <div id="modal_email" class="modal_email">
                   <mail-outlined style="padding-right: 10px" />
@@ -223,7 +223,7 @@ export default defineComponent({
   },
   computed: {
     validated() {
-      return this.validateEmail(this.formState.user.email);
+      return this.validateEmail(this.formState.email);
     },
   },
   setup(props) {
@@ -280,8 +280,7 @@ export default defineComponent({
       },
     };
 
-    const formState = reactive({
-      user: {
+    const formState = {
         id: 1,
         type: "",
         username: "",
@@ -300,8 +299,7 @@ export default defineComponent({
         active: true,
         facilityBusinesses: [],
         screenRoleGroups: [],
-      },
-    });
+    };
     const onFinish = (values: any) => {
       console.log("Success:", values);
     };
