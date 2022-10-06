@@ -172,7 +172,6 @@ import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import PopLogin from "./components/PopLogin.vue";
 import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
-import { employees } from "./data.js";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
