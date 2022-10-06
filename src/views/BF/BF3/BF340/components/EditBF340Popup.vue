@@ -1,7 +1,12 @@
 <template>
     <div ref="root">
-        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" :mask-closable="false" :width="1028">
+        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered @cancel="setModalVisible()"
+            :mask-closable="false" :width="1028">
+            <template #footer>
+                <a-button @click="setModalVisible">그냥 나가기</a-button>
+                <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateSale">
+                    저장하고 나가기</a-button>
+            </template>
             <a-form :model="formState" v-bind="layout" label-align="right" name="nest-messages"
                 :validate-messages="validateMessages" @finish="onFinish">
                 <a-row :gutter="24">
@@ -10,7 +15,7 @@
                             <a-input v-model:value="formState.code" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="영업자명">
-                            <a-input v-model:value="formState.detailName" style="width: 200px" />
+                            <a-input v-model:value="formState.detailName" style="width: 200px" :disabled="!canChangeCompanyName"/>
                         </a-form-item>
                         <a-form-item label="사업자유형" class="label-br">
                             <a-select ref="select" v-model:value="formState.detailBizType" style="width: 200px">
@@ -148,8 +153,8 @@
             </a-form>
         </a-modal>
 
-        <a-modal v-model:visible="visible" :mask-closable="false" :afterClose="afterConfirmClose" class="confirm-md"
-            :width="521">
+        <a-modal v-model:visible="visibleConfirm" :mask-closable="false" :afterClose="afterConfirmClose"
+            class="confirm-md" :width="521">
             <a-row>
                 <a-col :span="4">
                     <warning-outlined :style="{fontSize: '70px', color: '#faad14',paddingTop: '20px'}" />
@@ -176,11 +181,13 @@
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF340/index";
+import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 import selectBank from "../../../../../components/selectBank.vue";
 import postCode from "../../../../../components/postCode.vue";
 import { ref, defineComponent, reactive, watch } from 'vue';
 import { SearchOutlined, WarningOutlined, } from '@ant-design/icons-vue';
 import dayjs, { Dayjs } from 'dayjs';
+import { message } from "ant-design-vue";
 
 import { useQuery, useMutation } from "@vue/apollo-composable";
 export default defineComponent({
@@ -194,15 +201,18 @@ export default defineComponent({
         postCode
     },
 
-    setup(props) {
+    setup(props, { emit }) {
         const dataQuery = ref();
         let trigger = ref<boolean>(false);
+        let triggerCheckPer = ref<boolean>(false);
+        const dataQueryCheckPer = ref({});
+        let canChangeCompanyName =  ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         };
         const visible = ref<boolean>(false);
-
+        const visibleConfirm = ref<boolean>(false);
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
@@ -285,6 +295,21 @@ export default defineComponent({
             active: false,
         });
 
+        // query check if can be change name company 
+        const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
+            queries.isSalesRepresentativeChangableName, dataQueryCheckPer,
+            () => ({
+                enabled: triggerCheckPer.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        // watch result resCheckPerEdit
+        watch(resCheckPerEdit, (value) => {
+            canChangeCompanyName.value = value.isSalesRepresentativeChangableName;
+        });
+
+        // get  sale representative
         const { result, loading, error, refetch } = useQuery(
             queries.getSalesRepresentative,
             dataQuery,
@@ -293,21 +318,6 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-
-        const funcAddress = (data: any) => {
-            formState.detailZipcode = data.zonecode;
-            formState.detailRoadAddress = data.roadAddress;
-            formState.detailJibunAddress = data.jibunAddress;
-            formState.detailAddressDetailBcode = data.bcode;
-            formState.detailAddressDetailBname = data.bname;
-            formState.detailAddressDetailBuildingName = data.buildingName;
-            formState.detailAddressDetailRoadname = data.roadname;
-            formState.detailAddressDetailRoadnameCode = data.roadnameCode;
-            formState.detailAddressDetailSido = data.sido;
-            formState.detailAddressDetailSigungu = data.sigungu;
-            formState.detailAddressDetailSigunguCode = data.sigunguCode;
-            formState.detailAddressDetailZonecode = data.zonecode;
-        };
 
         watch(result, (value) => {
             if (value && value.getSalesRepresentative) {
@@ -363,26 +373,95 @@ export default defineComponent({
                 formState.updatedBy = value.getSalesRepresentative.updatedBy;
                 formState.ip = value.getSalesRepresentative.ip;
                 formState.active = value.getSalesRepresentative.active;
+
+                triggerCheckPer.value = true;
+                dataQueryCheckPer.value = { id: value.getSalesRepresentative.id, name: value.getSalesRepresentative.name };
+                // trigger query check if can be change business registration number 
+                refetchCheckPer()
             }
         });
+
+
+        // update sale representative
+        const {
+            mutate: actionUpdate,
+            onError,
+            loading: loadingUpdate,
+            onDone: updateDone,
+        } = useMutation(mutations.updateSalesRepresentative);
+
+
+        const updateSale = () => {
+
+            let salesRepresentativeDetailInput = {
+                status: formState.status,
+                name: formState.detailName,
+                grade: formState.detailGrade,
+                bizType: formState.detailBizType,
+                bizNumber: formState.detailBizNumber,
+                residentId: formState.detailResidentId,
+                email: formState.detailEmail,
+                mobilePhone: formState.mobilePhone,
+                phone: formState.detailPhone,
+                fax: formState.detailFax,
+                zipcode: formState.detailZipcode,
+                roadAddress: formState.detailRoadAddress,
+                jibunAddress: formState.detailJibunAddress,
+                addressExtend: formState.detailAddressExtend,
+                addressDetail: {
+                    bcode: formState.detailAddressDetailBcode,
+                    bname: formState.detailAddressDetailBname,
+                    buildingCode: formState.detailAddressDetailBuildingName,
+                    buildingName: formState.detailAddressDetailBuildingName,
+                    roadname: formState.detailAddressDetailRoadname,
+                    roadnameCode: formState.detailAddressDetailRoadnameCode,
+                    sido: formState.detailAddressDetailSido,
+                    sigungu: formState.detailAddressDetailSigungu,
+                    sigunguCode: formState.detailAddressDetailSigunguCode,
+                    zonecode: formState.detailAddressDetailZonecode,
+                },
+                taxInvoice: formState.detailTaxInvoice,
+                emailTaxInvoice: formState.detailEmailTaxInvoice,
+                bankType: formState.detailBankType,
+                accountNumber: formState.detailAccountNumber,
+                accountOwner: formState.detailAccountOwner,
+                registerDate: formState.detailRegisterDate,
+                cancelDate: formState.detailCancelDate,
+                remark: formState.detailRemark,
+            };
+
+            let variables = {
+                id: formState.id,
+                input: salesRepresentativeDetailInput
+            };
+
+            actionUpdate(variables);
+        }
+
+        updateDone((res) => {
+            message.success(`Update was successful`, 4);
+            setModalVisible();
+        });
+
+        // confirm popup 
         const confirmPopup = (value: any) => {
-            if (value == '해지') {
-                visible.value = true;
+            if (value == 2) {
+                visibleConfirm.value = true;
             }
         }
 
         const handleOkConfirm = () => {
             if (confirm.value == '확인') {
-                visible.value = false;
+                visibleConfirm.value = false;
             } else {
                 formState.status = 1;
-                visible.value = false;
+                visibleConfirm.value = false;
             }
         }
 
         const afterConfirmClose = () => {
             if (confirm.value == '확인') {
-                formState.status = 1;
+                formState.status = 2;
             } else {
                 formState.status = 1;
             }
@@ -395,6 +474,26 @@ export default defineComponent({
         const onFinish = (values: any) => {
             console.log("Success:", values);
         };
+
+        const funcAddress = (data: any) => {
+            formState.detailZipcode = data.zonecode;
+            formState.detailRoadAddress = data.roadAddress;
+            formState.detailJibunAddress = data.jibunAddress;
+            formState.detailAddressDetailBcode = data.bcode;
+            formState.detailAddressDetailBname = data.bname;
+            formState.detailAddressDetailBuildingName = data.buildingName;
+            formState.detailAddressDetailRoadname = data.roadname;
+            formState.detailAddressDetailRoadnameCode = data.roadnameCode;
+            formState.detailAddressDetailSido = data.sido;
+            formState.detailAddressDetailSigungu = data.sigungu;
+            formState.detailAddressDetailSigunguCode = data.sigunguCode;
+            formState.detailAddressDetailZonecode = data.zonecode;
+        };
+
+        const setModalVisible = () => {
+            emit('closePopup', false)
+        }
+
         return {
             labelCol,
             wrapperCol,
@@ -402,6 +501,7 @@ export default defineComponent({
             layout,
             value1: ref<Dayjs>(),
             visible,
+            visibleConfirm,
             confirmPopup,
             confirm,
             handleOkConfirm,
@@ -409,13 +509,15 @@ export default defineComponent({
             dateValue,
             onFinish,
             validateMessages,
-            funcAddress
+            funcAddress,
+            loading,
+            updateSale,
+            loadingUpdate,
+            canChangeCompanyName,
+            setModalVisible
         }
     },
     methods: {
-        setModalVisible() {
-            this.$emit('closePopup', false)
-        },
         getColorTag(data: string) {
             if (data === "정상") {
                 return "#108ee9";
