@@ -248,6 +248,7 @@ export default defineComponent({
             rowTable.value = res.data.searchSalesRepresentatives.totalCount
             dataSource.value = res.data.searchSalesRepresentatives.datas
         })
+
         return {
             spinning,
             dataSource,
@@ -285,7 +286,7 @@ export default defineComponent({
             this.modalEditStatus = true;
             this.popupData = data;
         },
-        modalHistory(data: never[]) {
+        modalHistory(data: any) {
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
