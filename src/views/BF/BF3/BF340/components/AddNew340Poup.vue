@@ -19,9 +19,9 @@
                         </a-form-item>
                         <a-form-item label="사업자유형" class="label-br">
                             <a-select ref="select" v-model:value="bf340Detail.bizType" style="width: 200px">
-                                <a-select-option value="법인">법인</a-select-option>
-                                <a-select-option value="개인사업자">개인사업자</a-select-option>
-                                <a-select-option value="개인">개인</a-select-option>
+                                <!-- <a-select-option value="법인">법인</a-select-option> -->
+                                <a-select-option :value="1">개인사업자</a-select-option>
+                                <a-select-option :value="2">개인</a-select-option>
                             </a-select>
                         </a-form-item>
 
@@ -52,10 +52,10 @@
                         <a-form-item label="상태">
                             <a-select style="width: 100px" v-model:value="bf340Detail.status"
                                 option-label-prop="children" @select="confirmPopup">
-                                <a-select-option value="정상" label="정상">
+                                <a-select-option :value="1" label="정상">
                                     <a-tag :color="getColorTag('정상')">정상</a-tag>
                                 </a-select-option>
-                                <a-select-option value="해지" label="해지">
+                                <a-select-option :value="2" label="해지">
                                     <a-tag :color="getColorTag('해지')">해지</a-tag>
                                 </a-select-option>
                             </a-select>
@@ -125,7 +125,8 @@
                         </a-form-item>
                         <a-form-item label="가입일자">
                             <div style="width: 150px">
-                                <CustomDatepicker :valueDate="bf340Detail.registerDate" />
+                                <CustomDatepicker :valueDate="bf340Detail.registerDate"
+                                    @valueDateChange="dataDateStart" />
                             </div>
                         </a-form-item>
                     </a-col>
@@ -135,7 +136,7 @@
                         </a-form-item>
                         <a-form-item label="해지일자">
                             <div style="width: 150px">
-                                <CustomDatepicker :valueDate="bf340Detail.cancelDate" />
+                                <CustomDatepicker :valueDate="bf340Detail.cancelDate" @valueDateChange="dataDateEnd" />
                             </div>
                         </a-form-item>
                     </a-col>
@@ -162,29 +163,26 @@
                     <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
                     <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을 </p>
                     <p>누르세요</p>
-
                 </a-col>
                 <div style="text-align: center;width: 100%;margin-left: 100px;">
                     <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
                     <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px;">완료</a-button>
                 </div>
             </a-row>
-            <template #footer>
-
-            </template>
         </a-modal>
     </div>
 </template>
 
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, reactive, onMounted, computed } from 'vue'
-import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
-import dayjs, { Dayjs } from 'dayjs';
+import { ref, defineComponent, computed } from 'vue'
+import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue'; 
 import selectBank from "../../../../../components/selectBank.vue";
 import postCode from "./postCode.vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
+import { message } from "ant-design-vue";
+
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -196,7 +194,7 @@ export default defineComponent({
         selectBank,
         postCode
     },
-    setup() {
+    setup(props, { emit }) {
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
@@ -212,7 +210,7 @@ export default defineComponent({
             },
         };
 
-        const bf340Detail = reactive({
+        const bf340Detail = ref<any>({
             status: 1,
             name: "",
             grade: 1,
@@ -257,17 +255,11 @@ export default defineComponent({
         }
         const handleOkConfirm = () => {
             console.log('12314');
-
         }
 
         const afterConfirmClose = computed(() => {
 
-        });
-
-        const dateValue = (date: string | number | Date | dayjs.Dayjs | null | undefined) => {
-            return dayjs(date, "YYYY-MM-DD");
-        }
-
+        });  
         const afterPopupClose = () => {
 
         };
@@ -279,22 +271,27 @@ export default defineComponent({
         const {
             mutate: creactSale,
             loading: loadingUpdate,
-            onDone: updateDone,
+            onDone: onDoneAdd,
         } = useMutation(mutations.creactedSale);
 
+
+        onDoneAdd((res) => {
+            message.success(`Add new sale success !`, 5);
+            emit("closePopup", false);
+            emit("addNewDone", false);
+        })
 
         return {
             labelCol,
             wrapperCol,
             bf340Detail,
-            layout, 
+            layout,
             visible,
             confirmPopup,
             confirm,
             handleOkConfirm,
             afterConfirmClose,
-            afterPopupClose,
-            dateValue,
+            afterPopupClose, 
             validateMessages,
             onFinish,
             creactSale
@@ -315,7 +312,7 @@ export default defineComponent({
         },
 
         getIDBank(data: any) {
-            this.bf340Detail.bankType = data;
+            this.bf340Detail.bankType = data
         },
 
         funcAddress(data: any) {
@@ -334,10 +331,21 @@ export default defineComponent({
             this.bf340Detail.addressDetail.zonecode = data.zonecode;
         },
 
-        creactedSaleSetValue() { 
-            console.log(this.bf340Detail);
-            
-            this.creactSale(this.bf340Detail)
+        creactedSaleSetValue() {
+            let dataNew = {
+                input: {
+                    ...this.bf340Detail
+                }
+            }
+            this.creactSale(dataNew)
+        },
+
+        dataDateStart(data: any) {
+            this.bf340Detail.registerDate = data
+        },
+
+        dataDateEnd(data: any) {
+            this.bf340Detail.cancelDate = data
         }
     }
 })

@@ -1,11 +1,10 @@
 import gql from "graphql-tag";
 export default gql`
 mutation createSalesRepresentative(
-    $data : SalesRepresentativeDetailInput!
+    $input : SalesRepresentativeDetailInput!
   ) {
     createSalesRepresentative(
-      input :  $data
-     
+      input :  $input
     ){
       code
       status
