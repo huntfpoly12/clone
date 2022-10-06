@@ -11,17 +11,17 @@
                 @change="onFileChange"
               />
               <p v-if="messageUpload">{{ messageUpload }}</p>
-              <!-- <div v-if="fileName" class="fileName">
+              <div v-if="fileName" class="fileName">
                 <span style="padding-right: 10px">{{ fileName }}</span>
                 <delete-outlined
                   @click="onRemove"
                   style="color: red; cursor: pointer"
                 />
-              </div> -->
+              </div>
             </div>
           </a-row>
           <a-row>
-            <a-space :size="10" align="start" style="margin-top: 8px">
+            <a-space :size="10" style="margin-top: 8px">
               <div class="warring-modal">
                 <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
                 <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
@@ -87,9 +87,14 @@ export default defineComponent({
       type: String,
       // default: "../assets/images/imgdefault.jpg",
     },
-    uploaded: {
-      type: Object,
-      default: {},
+    imageId: {
+      type: Number,
+      default: null,
+      require: true
+    },
+    imageSource: {
+      type: String,
+      default: null,
       require: true
     }
   },
@@ -102,11 +107,6 @@ export default defineComponent({
     PlusSquareOutlined,
     WarningFilled,
   },
-  // created() {
-  //   //@ts-ignore
-  //   this.$props.srcimg = "../assets/images/imgdefault.jpg";
-  //   this.imageUrl = this.$props.srcimg;
-  // },
   data() {
     return {
       uploadedFileName: null,
@@ -163,7 +163,8 @@ export default defineComponent({
         getBase64(file, (base64Url: string) => {
           imageUrl.value = base64Url;
           loading.value = false;
-          emit('update:uploaded', '121212121')
+          emit('update:imageId', 10)
+          emit('update:imageSource', imageUrl.value)
           emit("update-img", {
             url: imageUrl.value,
             id: data.data.id,

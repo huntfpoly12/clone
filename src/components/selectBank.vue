@@ -1,20 +1,21 @@
 <template>
   <div>
     <a-space>
-      <a-select
-        ref="select"
-        @change="handleChange"
-        v-model="bankType.label"
-        :options="bankType"
-        :style="styleBank"
-        v-model:value="selectValue"
-      >
-      </a-select>
-    </a-space>
+    <a-select
+      ref="select"
+      v-model:value="selectValue"
+      style="width: 120px"
+      @change="handleChange"
+    >
+      <a-select-option v-for="item in bankTypeSelect" :key="item.c" :value="item.c">{{item.n}}</a-select-option>
+    </a-select>
+  
+  </a-space>
   </div>
 </template>
 <script lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { BankType } from "@bankda/jangbuda-common";
 import type { SelectProps } from "ant-design-vue";
 export default {
   props: {
@@ -26,6 +27,7 @@ export default {
       default: "100%",
       type: String,
     },
+    
   },
   components: {},
   data() {
@@ -42,34 +44,15 @@ export default {
     const styleBank = ref({
       width: props.width
     })
-    const bankType = ref<SelectProps["options"]>([
-      { label: "경남은행", value: "39" },
-      { label: "광주은행", value: "34" },
-      { label: "국민은행", value: "04" },
-      { label: "기업은행", value: "03" },
-      { label: "농협", value: "13" },
-      { label: "대구은행", value: "31" },
-      { label: "부산은행", value: "32" },
-      { label: "산업은행", value: "89" },
-      { label: "새마을금고", value: "45" },
-      { label: "수협", value: "88" },
-      { label: "신한은행", value: "26" },
-      { label: "신협", value: "48" },
-      { label: "씨티은행", value: "28" },
-      { label: "우리은행", value: "20" },
-      { label: "우체국", value: "71" },
-      { label: "전북은행", value: "37" },
-      { label: "전북은행", value: "23" },
-      { label: "제주은행", value: "35" },
-      { label: "카카오뱅크", value: "92" },
-      { label: "케이뱅크", value: "91" },
-      { label: "하나은행", value: "81" },
-    ]);
+    const bankTypeSelect = ref<SelectProps["options"]>([]);
+    onMounted(() => {
+      bankTypeSelect.value = BankType.all()
+    })
     const handleChange = (value: any) => {
       emit("bank", value);
     };
     return {
-      bankType,
+      bankTypeSelect,
       handleChange,
       styleBank
     };
