@@ -215,6 +215,7 @@ import { any } from "vue-types";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 
+
 interface FormState {
   name: string;
   영업자코드: string;

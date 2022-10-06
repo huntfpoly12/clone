@@ -5,7 +5,7 @@
     <div class="list-action">
       <a-tooltip>
         <template #title>조회</template>
-        <a-button>
+        <a-button @click="searching">
           <SearchOutlined />
         </a-button>
       </a-tooltip>
@@ -35,43 +35,46 @@
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
             <label class="lable-item">회원종류 :</label>
-            <a-select style="width: 130px" v-model:value="dataSearch.nameSale" option-label-prop="children">
-              <a-select-option value="고객사" label="고객사">
+            <a-select style="width: 130px" v-model:value="dataSearch.type" option-label-prop="children">
+              <!-- <a-select-option value="" label="고객사">
+                <a-tag :color="getColorTag('고객사')">전체</a-tag>
+              </a-select-option> -->
+              <a-select-option value="c" label="고객사">
                 <a-tag :color="getColorTag('고객사')">고객사</a-tag>
               </a-select-option>
-              <a-select-option value="매니저" label="전체">
+              <a-select-option value="m" label="전체">
                 <a-tag :color="getColorTag('매니저')">매니저</a-tag>
               </a-select-option>
-              <a-select-option value="영업자" label="영업자">
+              <a-select-option value="r" label="영업자">
                 <a-tag :color="getColorTag('영업자')">영업자</a-tag>
               </a-select-option>
-              <a-select-option value="파트너" label="파트너">
-                <a-tag :color="getColorTag('파트너')">영업자</a-tag>
+              <a-select-option value="p" label="파트너">
+                <a-tag :color="getColorTag('파트너')">파트너</a-tag>
               </a-select-option>
             </a-select>
           </a-col>
           <a-col>
             <label class="lable-item">소속코드:</label>
-            <a-input style="width: 150px" v-model:value="dataSearch.nameCompany" />
+            <a-input style="width: 150px" v-model:value="dataSearch.groupCode" />
           </a-col>
           <a-col>
             <label class="lable-item">소속명:</label>
-            <a-input style="width: 150px" v-model:value="dataSearch.surrogate" />
+            <a-input style="width: 150px" v-model:value="dataSearch.groupName" />
           </a-col>
           <a-col>
             <label class="lable-item">회원ID :</label>
-            <a-input style="width: 150px" v-model:value="dataSearch.userid" />
+            <a-input style="width: 150px" v-model:value="dataSearch.username" />
           </a-col>
           <a-col>
             <label class="lable-item">회원명 :</label>
-            <a-input style="width: 150px" v-model:value="dataSearch.username" />
+            <a-input style="width: 150px" v-model:value="dataSearch.name" />
           </a-col>
           <a-col style="display: flex; align-items: center">
-            <a-checkbox v-model:checked="dataSearch.typeSevice1">
-              <a-tag :color="getAbleDisable('이용중')">이용중</a-tag>
+            <a-checkbox v-model:checked="dataSearch.active">
+              <a-tag :color="getAbleDisable(true)">이용중</a-tag>
             </a-checkbox>
-            <a-checkbox v-model:checked="dataSearch.typeSevice2">
-              <a-tag :color="getAbleDisable('이용중지')">이용중지</a-tag>
+            <a-checkbox v-model:checked="dataSearch.active">
+              <a-tag :color="getAbleDisable(false)">이용중지</a-tag>
             </a-checkbox>
           </a-col>
         </a-row>
@@ -95,13 +98,13 @@
         </template>
         <DxColumn data-field="active" caption="상태" css-class="cell-center" cell-template="check-box" :width="100" />
         <template #check-box="{ data }">
-          <a-tag :color="getAbleDisable(data.value)">{{ data.value }}</a-tag>
+          <a-tag :color="getAbleDisable(data.value)">{{ data.value == true ? "이용중" : "이용중지" }}</a-tag>
         </template>
         <DxColumn data-field="id" caption="회원ID" :width="80" css-class="cell-center" />
         <DxColumn data-field="username" caption="회원명" :width="100" />
         <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" :width="150" />
         <template #grid-cell="{ data }">
-          <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+          <a-tag :color="getColorTag(data.value)">{{ data.value = "매니저" ? "매니저" : (data.value == "고객사"? "고객사" : (data.value == "파트너"? "파트너": "ㅁ")) }}</a-tag>
         </template>
         <DxColumn data-field="mobilePhone" caption="휴대폰" :width="200" />
         <DxColumn data-field="groupCode" caption="소속코드" :width="200" />
@@ -219,8 +222,7 @@ export default defineComponent({
         groupCode: "",
         groupName: "",
         managerGrade: 1,
-        active: true,
-        facilityBusinesses: []
+        active: true, 
       },
 
       popupData: [],
@@ -229,24 +231,33 @@ export default defineComponent({
       modalHistoryStatus: false,
       modalLoginStatus: false,
 
-      dataSearch: {
-        typeSevice: "이용중",
-        status: "전체",
-        nameSale: "고객사",
-        typeSevice1: "이용중",
-        userid: "",
-        username: "",
-        nameCompany: "",
-        surrogate: "",
-        typeSevice2: ""
-      },
+
     };
   },
 
   setup() {
     const spinning = ref<boolean>(true);
+    const dataSearch = ref({
+      page: 1,
+      rows: 1,
+      type: "",
+      groupCode: "",
+      groupName: "",
+      username: "",
+      name: "",
+      active: true
+    })
     var idRowEdit = ref<number>(0)
-    const originData = { page: 1, rows: 10, type: "m", active: true }
+    const originData = ref({
+      page: 1,
+      rows: 10,
+      type: "m",
+      groupCode: "",
+      groupName: "",
+      username: "",
+      name: "",
+      active: true
+    })
 
     setTimeout(() => {
       spinning.value = !spinning.value;
@@ -259,12 +270,53 @@ export default defineComponent({
       console.log(res);
       dataSource.value = res.data.searchUsers.datas
     })
+    setTimeout(() => {
+      spinning.value = !spinning.value;
+    }, 1000);
+
+    const searching = () => {
+      spinning.value = !spinning.value;
+
+      originData.value = {
+        page: 1,
+        rows: 10,
+        type: "m",
+        groupCode: "",
+        groupName: "",
+        username: "",
+        name: "",
+        active: true
+      }
+
+      let dataNew = {
+        page: dataSearch.value.page,
+        rows: dataSearch.value.rows,
+        type: dataSearch.value.type,
+        groupCode: dataSearch.value.groupCode,
+        groupName: dataSearch.value.groupName,
+        username: dataSearch.value.username,
+        name: dataSearch.value.name,
+        active: dataSearch.value.active,
+      }
+
+      console.log(dataNew);
+
+
+      refetchData(dataNew)
+
+      setTimeout(() => {
+        spinning.value = !spinning.value;
+      }, 1000);
+    }
 
     return {
       spinning,
       dataSource,
       idRowEdit,
-      refetchData
+      refetchData,
+      originData,
+      searching,
+      dataSearch
     }
   },
 
@@ -313,9 +365,9 @@ export default defineComponent({
       }
     },
     getAbleDisable(data: any) {
-      if (data === "이용중") {
+      if (data === true) {
         return "blue";
-      } else if (data === "이용중지") {
+      } else if (data === false) {
         return "#d5a7a7";
       }
     },
@@ -334,54 +386,66 @@ export default defineComponent({
     //     return res;
     //   });
     // },
+
+    // searching() {
+    //   console.log(this.dataSearch);
+
+    //   let dataNew = {
+    //     ...this.dataSearch
+    //   }
+
+    //   this.refetchData(dataNew)
+    // }
+
+
   },
 });
 </script>
 <style scoped>
-  .page-content {
-      padding: 10px 10px;
-  }
-  
-  .cell-button-add {
-      padding-left: 100px !important;
-  }
-  
-  .cell-center {
-      text-align: center !important
-  }
-  
-  .dx-button-has-text .dx-button-content {
-      padding: 0px 15px !important;
-  }
-  
-  .search-form {
-      background: #f1f3f4;
-      padding: 10px 24px;
-  }
-  
-  .dx-select-checkbox {
-      display: inline-block !important;
-  }
-  
-  #data-grid-demo {
-      min-height: 700px;
-  }
-  
-  .search-form .col {
-      display: flex;
-      align-items: center;
-  }
-  
-  .search-form .col {
-      margin-top: 20px;
-  }
-  
-  .search-form .col .lable-item {
-      width: 110px;
-      display: inline-block;
-  }
-  
-  .search-form .col .item:nth-child(2) {
-      margin-left: 30px;
-  }
-  </style>
+.page-content {
+  padding: 10px 10px;
+}
+
+.cell-button-add {
+  padding-left: 100px !important;
+}
+
+.cell-center {
+  text-align: center !important
+}
+
+.dx-button-has-text .dx-button-content {
+  padding: 0px 15px !important;
+}
+
+.search-form {
+  background: #f1f3f4;
+  padding: 10px 24px;
+}
+
+.dx-select-checkbox {
+  display: inline-block !important;
+}
+
+#data-grid-demo {
+  min-height: 700px;
+}
+
+.search-form .col {
+  display: flex;
+  align-items: center;
+}
+
+.search-form .col {
+  margin-top: 20px;
+}
+
+.search-form .col .lable-item {
+  width: 110px;
+  display: inline-block;
+}
+
+.search-form .col .item:nth-child(2) {
+  margin-left: 30px;
+}
+</style>
