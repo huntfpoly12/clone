@@ -8,7 +8,7 @@
                     저장하고 나가기</a-button>
             </template>
             <a-form :model="formState" v-bind="layout" label-align="right" name="nest-messages"
-                :validate-messages="validateMessages" @finish="onFinish">
+                :validate-messages="validateMessages">
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
                         <a-form-item label="영업자코드">
@@ -471,10 +471,6 @@ export default defineComponent({
             return dayjs(date, "YYYY-MM-DD");
         }
 
-        const onFinish = (values: any) => {
-            console.log("Success:", values);
-        };
-
         const funcAddress = (data: any) => {
             formState.detailZipcode = data.zonecode;
             formState.detailRoadAddress = data.roadAddress;
@@ -507,7 +503,6 @@ export default defineComponent({
             handleOkConfirm,
             afterConfirmClose,
             dateValue,
-            onFinish,
             validateMessages,
             funcAddress,
             loading,
