@@ -189,7 +189,7 @@ import { SearchOutlined, WarningOutlined, } from '@ant-design/icons-vue';
 import dayjs, { Dayjs } from 'dayjs';
 import { message } from "ant-design-vue";
 
-import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useQuery, useMutation ,useLazyQuery } from "@vue/apollo-composable";
 export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
@@ -296,7 +296,7 @@ export default defineComponent({
         });
 
         // query check if can be change name company 
-        const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
+        const { result: resCheckPerEdit, refetch: refetchCheckPer } = useLazyQuery(
             queries.isSalesRepresentativeChangableName, dataQueryCheckPer,
             () => ({
                 enabled: triggerCheckPer.value,

@@ -8,7 +8,7 @@
       okText="저장하고 나가기"
       cancelText="그냥 나가기"
       @cancel="setModalVisible()"
-      width="50%"
+      width="920px"
     >
       <a-collapse v-model:activeKey="activeKey" accordion>
         <a-collapse-panel key="1" header="이용서비스" class="popup-scroll">
@@ -17,7 +17,7 @@
               <a-col :span="10">
                 <a-form-item label="총일용료" style="font-weight: bold">
                   <p class="input-disble">
-                    {{ $filters.formatCurrency(total) }}
+                    {{ $filters.formatCurrency(totalPriceByDay) }}
                   </p>
                 </a-form-item>
               </a-col>
@@ -28,7 +28,7 @@
                   style="padding-left: 50px"
                 >
                   <p class="input-disble">
-                    {{ $filters.formatCurrency(total1) }}
+                    {{ $filters.formatCurrency(formState.accountingPrice) }}
                   </p>
                 </a-form-item>
               </a-col>
@@ -39,7 +39,7 @@
                   style="padding-left: 50px"
                 >
                   <p class="input-disble">
-                    {{ $filters.formatCurrency(total2) }}
+                    {{ $filters.formatCurrency(formState.withholdingPrice) }}
                   </p>
                 </a-form-item>
               </a-col>
@@ -49,7 +49,9 @@
             <a-row>
               <a-col :span="12">
                 <a-form-item label="회계서비스" style="font-weight: bold">
-                  <a-checkbox>회계서비스 신청</a-checkbox>
+                  <a-checkbox v-model:checked="formState.usedAccountingCount"
+                    >회계서비스 신청</a-checkbox
+                  >
                 </a-form-item>
               </a-col>
             </a-row>
@@ -65,7 +67,7 @@
               <div id="data-grid-demo">
                 <DxDataGrid
                   id="gridContainer"
-                  :data-source="dataModal"
+                  :data-source="formState.accountingfacilityBusinesses"
                   :show-borders="true"
                   :selected-row-keys="selectedItemKeys"
                 >
@@ -94,26 +96,28 @@
                     <div>{{ data.rowIndex + 1 }}</div>
                   </template>
 
-                  <DxColumn data-field="사업명" caption="사업명 (중복불가)" />
+                  <DxColumn data-field="name" caption="사업명 (중복불가)" />
+
                   <DxColumn
                     :width="225"
-                    data-field="StateID"
+                    data-field="facilityBizType"
                     caption="사업분류"
                   >
                     <DxLookup
-                      :data-source="states"
-                      value-expr="ID"
-                      display-expr="Name"
+                      :data-source="facilityBizType"
+                      value-expr="v"
+                      display-expr="n"
                     />
                   </DxColumn>
                   <DxColumn
-                    data-field="서비스시작년월"
+                    data-field="startYearMonth"
+                    caption="서비스시작년월"
                     data-type="date"
                     :format="'yyyy-MM-dd'"
                   />
                   <DxColumn
                     :width="100"
-                    data-field="정원수"
+                    data-field="capacity"
                     caption="정원수 (명)"
                   />
                   <DxToolbar>
@@ -130,7 +134,7 @@
                   style="margin-top: 10px; font-weight: bold"
                 >
                   <p class="input-disble">
-                    {{ $filters.formatCurrency(total1) }}
+                    {{ $filters.formatCurrency(totalPriceAccountingService) }}
                   </p>
                 </a-form-item>
               </a-col>
@@ -144,7 +148,7 @@
                     >기본이용료</a-checkbox
                   >
                   <DxNumberBox
-                    v-model="formState.numberBox1"
+                    v-model="formState.usedServiceInfoAccountingPrice"
                     :format="'#,##0'"
                     :disabled="formState.disableNumber1"
                   />
@@ -162,7 +166,7 @@
                     >입력대행</a-checkbox
                   >
                   <DxNumberBox
-                    v-model="formState.numberBox2"
+                    v-model="formState.inputAgent"
                     :format="'#,##0'"
                     :disabled="formState.disableNumber2"
                   />
@@ -179,7 +183,7 @@
                     >계좌통합</a-checkbox
                   >
                   <DxNumberBox
-                    v-model="formState.numberBox3"
+                    v-model="formState.accountIntegration"
                     :format="'#,##0'"
                     :disabled="formState.disableNumber3"
                   />
@@ -201,7 +205,7 @@
                     >W4C</a-checkbox
                   >
                   <DxNumberBox
-                    v-model="formState.numberBox4"
+                    v-model="formState.sSIS"
                     :format="'#,##0'"
                     :disabled="formState.disableNumber4"
                   />
@@ -448,8 +452,10 @@
 </template>
 
 <script lang="ts">
+import { AccountingAdditionalServiceType } from "@bankda/jangbuda-common";
+import { FacilityBizType } from "@bankda/jangbuda-common";
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, watch } from "vue";
+import { ref, defineComponent, watch, reactive } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
@@ -519,10 +525,10 @@ export default defineComponent({
   props: {
     modalStatus: Boolean,
     modalStatusHistory: Boolean,
-    rowId: {
+    idRowEdit: {
       type: Number,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
@@ -546,12 +552,15 @@ export default defineComponent({
     };
   },
   computed: {
-    total1() {
+    totalPriceByDay(){
+      return this.formState.accountingPrice + this.formState.withholdingPrice;
+    },
+    totalPriceAccountingService() {
       return (
-        this.formState.numberBox1 +
-        this.formState.numberBox2 +
-        this.formState.numberBox3 +
-        this.formState.numberBox4
+        this.formState.usedServiceInfoAccountingPrice +
+        this.formState.inputAgent +
+        this.formState.accountIntegration +
+        this.formState.sSIS
       );
     },
     total2() {
@@ -559,10 +568,10 @@ export default defineComponent({
     },
     total() {
       return (
-        this.formState.numberBox1 +
-        this.formState.numberBox2 +
-        this.formState.numberBox3 +
-        this.formState.numberBox4 +
+        this.formState.usedServiceInfoAccountingPrice +
+        this.formState.inputAgent +
+        this.formState.accountIntegration +
+        this.formState.sSIS +
         this.formState.numberBox5 +
         this.formState.numberBox6
       );
@@ -658,37 +667,12 @@ export default defineComponent({
           : parseInt(this.formState.majorInsurance);
       this.formState.taxFeeSevice = basicFee + majorInsurance;
     },
-    changeValueInputEmit(data: any) {
-      if (data.name === "accBasicFee") {
-        this.formState.accBasicFee = data.value;
-        this.handleInputACCService();
-      }
-      if (data.name === "accInput") {
-        this.formState.accInput = data.value;
-        this.handleInputACCService();
-      }
-      if (data.name === "accConsolidation") {
-        this.formState.accConsolidation = data.value;
-        this.handleInputACCService();
-      }
-      if (data.name === "acc4wc") {
-        this.formState.acc4wc = data.value;
-        this.handleInputACCService();
-      }
-      if (data.name === "majorInsurance") {
-        this.formState.majorInsurance = data.value;
-        this.handleInputACCService();
-      }
-      if (data.name === "basicFee") {
-        this.formState.basicFee = data.value;
-        this.handleInputACCService();
-      }
-    },
+   
   },
   watch: {
     "formState.checkBoxAccBasicFee"(newVal) {
       if (newVal === false) {
-        this.formState.numberBox1 = 0;
+        this.formState.usedServiceInfoAccountingPrice = 0;
         this.formState.disableNumber1 = true;
       } else {
         this.formState.disableNumber1 = false;
@@ -696,7 +680,7 @@ export default defineComponent({
     },
     "formState.checkBoxAccInput"(newVal) {
       if (newVal === false) {
-        this.formState.numberBox2 = 0;
+        this.formState.inputAgent = 0;
         this.formState.disableNumber2 = true;
       } else {
         this.formState.disableNumber2 = false;
@@ -704,7 +688,7 @@ export default defineComponent({
     },
     "formState.checkBoxAccConso"(newVal) {
       if (newVal === false) {
-        this.formState.numberBox3 = 0;
+        this.formState.accountIntegration = 0;
         this.formState.disableNumber3 = true;
       } else {
         this.formState.disableNumber3 = false;
@@ -712,7 +696,7 @@ export default defineComponent({
     },
     "formState.checkBoxAcc4wc"(newVal) {
       if (newVal === false) {
-        this.formState.numberBox4 = 0;
+        this.formState.sSIS = 0;
         this.formState.disableNumber4 = true;
       } else {
         this.formState.disableNumber4 = false;
@@ -736,9 +720,11 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const facilityBizType = FacilityBizType.all();
+
     const imageValue = ref("");
     const fileName = ref("");
-    const dataQuery = ref()
+    const dataQuery = ref();
     const loading = ref<boolean>(false);
     const imageUrl = ref<string>("");
     let trigger = ref<boolean>(false);
@@ -748,30 +734,19 @@ export default defineComponent({
       imageValue.value = "";
       fileName.value = "";
     };
+
     watch(
       () => props.modalStatus,
       (newValue) => {
         if (newValue) {
-          console.log(props.rowId)
-          dataQuery.value = { id: props.rowId };
+          dataQuery.value = { id: props.idRowEdit };
           trigger.value = true;
         } else {
-          dataQuery.value = {}
           trigger.value = false;
         }
       }
     );
-    const { result, error, refetch, onResult } = useQuery(
-      queries.getServiceContract,
-      dataQuery,
-      () => ({
-        enabled: trigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    onResult((res) => {
-      console.log(res)
-    })
+
     const handleChange = (info: any) => {
       if (info.file.status === "uploading") {
         loading.value = true;
@@ -800,8 +775,18 @@ export default defineComponent({
       }
       return isJpgOrPng && isLt2M;
     };
+
     const activeKey = ref([1]);
-    const formState = ref({
+    const formState = reactive({
+      totalFee: 0,
+      accountingPrice: 0,
+      withholdingPrice: 0,
+      accountingfacilityBusinesses: [],
+      usedAccountingCount: false,
+      usedServiceInfoAccountingPrice: 0,
+      inputAgent:0,
+      accountIntegration:0,
+      sSIS:0,
       name: "",
       name2: "",
       name3: "",
@@ -831,13 +816,46 @@ export default defineComponent({
       disableNumber4: false,
       disableNumber5: false,
       disableNumber6: false,
-      numberBox1: 0,
-      numberBox2: 0,
-      numberBox3: 0,
-      numberBox4: 0,
       numberBox5: 0,
       numberBox6: 0,
     });
+
+    // get service contract
+    const { result, error, refetch, onResult } = useQuery(
+      queries.getServiceContract,
+      dataQuery,
+      () => ({
+        enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    onResult((res) => {
+      console.log(res);
+    });
+
+    watch(result, (value) => {
+      if (value && value.getServiceContract) {
+        formState.totalFee =
+          value.getServiceContract.usedServiceInfo.totalPrice;
+        formState.accountingPrice =
+          value.getServiceContract.usedServiceInfo.accountingPrice;
+        formState.withholdingPrice =
+          value.getServiceContract.usedServiceInfo.withholdingPrice;
+        formState.accountingfacilityBusinesses =
+          value.getServiceContract.usedServiceInfo.accounting;
+        formState.usedAccountingCount =
+          value.getServiceContract.usedAccountingCount > 0 ? true : false;
+
+        if(value.getServiceContract.usedServiceInfo.accounting.options.length > 0){
+          value.getServiceContract.usedServiceInfo.accounting.options.map((el)=>{
+            
+          })
+        }
+        
+        
+      }
+    });
+
     const labelCol = ref({ style: { width: "150px" } });
     const wrapperCol = ref({ span: 14 });
     const radioStyle = ref({
@@ -921,7 +939,8 @@ export default defineComponent({
       imageValue,
       dataQuery,
       result,
-      trigger
+      trigger,
+      facilityBizType,
     };
   },
 });
