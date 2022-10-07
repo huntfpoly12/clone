@@ -70,7 +70,7 @@
             <a-input style="width: 150px" v-model:value="dataSearch.name" />
           </a-col>
           <a-col v-model:checked="dataSearch.active" style="display: flex; align-items: center">
-            <a-checkbox >
+            <a-checkbox>
               <a-tag :color="getAbleDisable(true)">이용중</a-tag>
             </a-checkbox>
             <a-checkbox>
@@ -104,7 +104,8 @@
         <DxColumn data-field="username" caption="회원명" :width="100" />
         <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" :width="150" />
         <template #grid-cell="{ data }">
-          <a-tag :color="getColorTag(data.value)">{{ data.value == "m" ? "매니저" : (data.value == "c"? "고객사" : (data.value == "p"? "파트너": "영업자")) }}</a-tag>
+          <a-tag :color="getColorTag(data.value)">{{ data.value == "m" ? "매니저" : (data.value == "c"? "고객사" : (data.value
+          == "p"? "파트너": "영업자")) }}</a-tag>
         </template>
         <DxColumn data-field="mobilePhone" caption="휴대폰" :width="200" />
         <DxColumn data-field="groupCode" caption="소속코드" :width="200" />
@@ -136,7 +137,7 @@
       <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
         title="변경이력[cm-000-pop]" />
       <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
-        title="로그인이력 [ cm-000-popLogin ]" />
+        title="로그인이력 [ cm-000-popLogin ]" :idRow="rowChoose" />
     </div>
   </div>
 </template>
@@ -222,7 +223,7 @@ export default defineComponent({
         groupCode: "",
         groupName: "",
         managerGrade: 1,
-        active: true, 
+        active: true,
       },
 
       popupData: [],
@@ -237,6 +238,8 @@ export default defineComponent({
 
   setup() {
     const spinning = ref<boolean>(true);
+
+    const rowChoose = ref()
     const dataSearch = ref({
       page: 1,
       rows: 1,
@@ -316,7 +319,8 @@ export default defineComponent({
       refetchData,
       originData,
       searching,
-      dataSearch
+      dataSearch,
+      rowChoose
     }
   },
 
@@ -349,7 +353,8 @@ export default defineComponent({
       this.modalHistoryStatus = true;
       this.popupData = data;
     },
-    modalLogin(data: any) {
+    modalLogin(data: any) { 
+      this.rowChoose = data.key
       this.modalLoginStatus = true;
       this.popupData = data;
     },
@@ -380,22 +385,7 @@ export default defineComponent({
         this.dataSource = res.data.searchUsers.datas;
       });
     },
-    // getUsers() {
-    //   const { loading, error, onResult } = useQuery(queries.getUsers);
-    //   onResult((res) => {
-    //     return res;
-    //   });
-    // },
 
-    // searching() {
-    //   console.log(this.dataSearch);
-
-    //   let dataNew = {
-    //     ...this.dataSearch
-    //   }
-
-    //   this.refetchData(dataNew)
-    // }
 
 
   },

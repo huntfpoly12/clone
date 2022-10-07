@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf340">
+            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf340 || loadingBf210">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts">
                     <DxColumn caption="기록일시" data-field="loggedAt" />
                     <DxColumn caption="비고" data-field="remark" />
@@ -67,6 +67,7 @@ export default defineComponent({
         const dataQuery = ref();
         let trigger320 = ref<boolean>(false);
         let trigger340 = ref<boolean>(false);
+        let trigger210 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         watch(
@@ -85,6 +86,10 @@ export default defineComponent({
                             trigger340.value = true;
                             refetchBf340();
                             break;
+                        case 'bf-210':
+                            trigger210.value = true;
+                            refetchBf210();
+                            break;
                         default:
                             break;
                     }
@@ -92,10 +97,11 @@ export default defineComponent({
                     visible.value = newValue;
                     trigger320.value = false;
                     trigger340.value = false;
+                    trigger210.value = false;
                 }
             }
         );
-        
+
         // get getCompanyLogs 320
         const { result: resultBf320, loading: loadingBf320, refetch: refetchBf320 } = useQuery(
             queries.getCompanyLogs,
@@ -127,6 +133,26 @@ export default defineComponent({
             }
         });
 
+        // get getUserLogs  210
+        const { result: resultBf210, loading: loadingBf210, refetch: refetchBf210 } = useQuery(
+            queries.getUserLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger210.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultBf210, (value) => {
+            if (value && value.getUserLogs) {
+                dataTableShow.value = value.getUserLogs;
+            }
+        });
+
+
+
+
+
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -136,6 +162,7 @@ export default defineComponent({
             visible,
             loadingBf320,
             loadingBf340,
+            loadingBf210,
             formarDate
         }
     },
