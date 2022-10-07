@@ -382,10 +382,10 @@ import {
 } from "@ant-design/icons-vue";
 
 import moment from "moment";
-import { employees, states } from "./data.ts";
+import { states } from "./data.ts";
 // import mutations from "../../graphql/mutations/RqContract/index";
 import { notification } from "ant-design-vue";
-
+import bizTyleList from "../../constants/fancilityBizType";
 import {
     DxDataGrid,
     DxColumn,
@@ -695,6 +695,9 @@ export default {
             },
             deep: true,
         },
+    },
+    mounted() {
+        console.log(bizTyleList)
     },
     methods: {
         changeValueDate(data) {
