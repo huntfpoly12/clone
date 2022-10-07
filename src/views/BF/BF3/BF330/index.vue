@@ -124,7 +124,7 @@
                         <div class="custom-action">
                             <a-tooltip placement="top">
                                 <template #title>편집 {{data.data.id}}</template>
-                                <EditOutlined @click="setModalVisible(data)" />
+                                <EditOutlined @click="setModalVisible(data.data)" />
                             </a-tooltip>
                         </div>
                     </template>
@@ -135,7 +135,7 @@
                         show-less-items @change="changePage" />
                 </div>
 
-                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
+                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :idRowEdit="idSubRequest" />
             </div>
 
         </div>
@@ -201,6 +201,7 @@ export default defineComponent({
         SaveOutlined,
         ListSalesDropdownVue
     },
+
     data() {
         return {
             dateSearch: [dayjs().subtract(1, 'year'), dayjs()],
@@ -249,8 +250,8 @@ export default defineComponent({
             withholding: true,
             statuses: [10, 20, 30, 99]
         })
-        const setModalVisible = (data: any,) => {
-            idSubRequest.value = data.data.id;
+        const setModalVisible = (data: any,) => {   
+            idSubRequest.value = data.compactSalesRepresentative.id;
             modalStatus.value = true;
         }
         const pageSize = ref(20)
