@@ -108,7 +108,7 @@
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
                         show-less-items @change="changePage" />
                 </div>
-                <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :rowId="idSubRequest" />
+                <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :idRowEdit="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                     title="변경이력[cm-000-pop]" />
             </div>
@@ -138,7 +138,6 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF3/BF330/index"
-import filters from "../../../../helpers/filters";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
@@ -212,7 +211,7 @@ export default defineComponent({
 
         setTimeout(() => {
             spinning.value = !spinning.value;
-        }, 1000);
+        }, 1);
 
         const searching = () => {
             spinning.value = !spinning.value;

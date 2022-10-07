@@ -201,7 +201,7 @@
 
                           <DxColumn data-field="name" caption="사업명 (중복불가)" />
                           <DxColumn data-field="facilityBizType" caption="사업분류">
-                            <DxLookup :data-source="facilityBizType" value-expr="ID" display-expr="Name" />
+                            <DxLookup :data-source="facilityBizType" value-expr="v" display-expr="n" />
                           </DxColumn>
                           <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                             :format="'yyyy-MM-dd'" />
@@ -315,6 +315,7 @@
   </div>
 </template>
 <script lang="ts">
+import { FacilityBizType } from "@bankda/jangbuda-common";
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import selectBank from "../../../../../components/selectBank.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
@@ -392,37 +393,7 @@ export default defineComponent({
     postCode,
   },
   setup(props, { emit }) {
-    const facilityBizType = [
-      {
-        ID: 1,
-        Name: "주·야간보호",
-      },
-      {
-        ID: 2,
-        Name: "방문요양",
-      },
-      {
-        ID: 3,
-        Name: "인지활동형 방문요양",
-      },
-      {
-        ID: 4,
-        Name: "방문간호",
-      },
-      {
-        ID: 5,
-        Name: "방문목욕",
-      },
-      {
-        ID: 6,
-        Name: "단기보호",
-      },
-      {
-        ID: 7,
-        Name: "복지용구",
-      }
-    ];
-    
+    const facilityBizType = FacilityBizType.all();
     let visible = ref(false);
     let activeKey = ref(1);
     const dataQuery = ref();
@@ -548,6 +519,7 @@ export default defineComponent({
       () => props.modalStatus,
       (newValue, old) => {
         if (newValue) {
+          console.log(FacilityBizType.all(),'hkhjkhjk');
           visible.value = newValue;
           dataQuery.value = { id: props.data };
           trigger.value = true;
