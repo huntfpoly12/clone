@@ -289,7 +289,7 @@
 
                     <div class="form-item">
                         <label>직 원 수:</label>
-                        <a-input placeholder="장기요양기관등록번호" style="width: 170px"
+                        <a-input-number placeholder="장기요양기관등록번호" style="width: 170px"
                             v-model:value="contractCreacted.capacityHolding" />
                     </div>
                     <div class="form-item">

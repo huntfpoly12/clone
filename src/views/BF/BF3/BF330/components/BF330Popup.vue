@@ -17,7 +17,7 @@
                             <a-col :span="10">
                                 <a-form-item label="회계서비스 이용료" style="padding-left: 50px">
                                     <p class="input-disble">
-                                        {{ $filters.formatCurrency(formState.accountingPrice) }}
+                                        {{ $filters.formatCurrency(formStateRes.accountingPrice) }}
                                     </p>
                                 </a-form-item>
                             </a-col>
@@ -25,7 +25,7 @@
                             <a-col :span="10">
                                 <a-form-item label="원천서비스 이용료" style="padding-left: 50px">
                                     <p class="input-disble">
-                                        {{ $filters.formatCurrency(formState.withholdingPrice) }}
+                                        {{ $filters.formatCurrency(formStateRes.withholdingPrice) }}
                                     </p>
                                 </a-form-item>
                             </a-col>
@@ -35,7 +35,7 @@
                         <a-row>
                             <a-col :span="12">
                                 <a-form-item label="회계서비스" style="font-weight: bold">
-                                    <a-checkbox v-model:checked="formState.usedAccountingCount">회계서비스 신청</a-checkbox>
+                                    <a-checkbox v-model:checked="formStateRes.usedAccountingCount">회계서비스 신청</a-checkbox>
                                 </a-form-item>
                             </a-col>
                         </a-row>
@@ -44,7 +44,7 @@
                                 :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                             </a-card>
                             <div id="data-grid-demo">
-                                <DxDataGrid id="gridContainer" :data-source="formState.accountingfacilityBusinesses"
+                                <DxDataGrid id="gridContainer" :data-source="formStateRes.facilityBusinesses"
                                     :show-borders="true" :selected-row-keys="selectedItemKeys">
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                         :allow-deleting="true" template="button-template" mode="cell">
@@ -54,6 +54,7 @@
                                         <DxButton icon="plus" />
                                     </template>
                                     <DxPaging :enabled="false" />
+
                                     <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                         cell-template="indexCell" />
                                     <template #indexCell="{ data }">
@@ -61,7 +62,6 @@
                                     </template>
 
                                     <DxColumn data-field="name" caption="사업명 (중복불가)" />
-
                                     <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                         <DxLookup :data-source="facilityBizType" value-expr="v" display-expr="n" />
                                     </DxColumn>
@@ -94,7 +94,7 @@
                             </a-col>
                             <a-col :sapn="10"></a-col>
                             <a-col :span="14">
-                                <div style="display: flex; padding-left: 155px; margin-top: 5px">
+                                <div style="display: flex ;padding-left: 155px; margin-top: 5px">
                                     <a-checkbox v-model:checked="formState.checkBoxAccInput"
                                         @change="handleInputACCService()" style="width: 180px">입력대행</a-checkbox>
                                     <DxNumberBox v-model="formState.inputAgent" :format="'#,##0'"
@@ -102,7 +102,7 @@
                                 </div>
                             </a-col>
                             <a-col :span="14">
-                                <div style="display: flex; padding-left: 155px; margin-top: 5px">
+                                <div style="display: flex ;padding-left: 155px ;margin-top: 5px">
                                     <a-checkbox v-model:checked="formState.checkBoxAccConso"
                                         @change="handleInputACCService()" style="width: 180px">계좌통합</a-checkbox>
                                     <DxNumberBox v-model="formState.accountIntegration" :format="'#,##0'"
@@ -110,8 +110,7 @@
                                 </div>
                             </a-col>
                             <a-col :span="14">
-                                <div
-                                    style=" display: flex;  padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
+                                <div style=" display: flex ; padding-left: 155px; margin-top: 5px; margin-bottom: 10px">
                                     <a-checkbox v-model:checked="formState.checkBoxAcc4wc"
                                         @change="handleInputACCService()" style="width: 180px">W4C</a-checkbox>
                                     <DxNumberBox v-model="formState.sSIS" :format="'#,##0'"
@@ -133,7 +132,7 @@
                                 </div>
                                 <div v-if="fileName">
                                     <span style="padding-right: 10px">{{ fileName }}</span>
-                                    <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
+                                    <delete-outlined @click="removeImg" style="color: red ;cursor: pointer" />
                                 </div>
                             </a-col>
                         </div>
@@ -141,19 +140,19 @@
                         <a-row>
                             <a-col>
                                 <a-form-item label="원천서비스" style="font-weight: bold">
-                                    <a-checkbox>원천서비스</a-checkbox>
+                                    <a-checkbox v-model:checked="formStateRes.usedWithholding">원천서비스</a-checkbox>
                                 </a-form-item>
                             </a-col>
                         </a-row>
                         <div>
                             <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                                 <a-form-item label="서비스 시작년월" style="width: 300px">
-                                    <CustomDatepicker valueDate="2022/08/25" />
+                                    <CustomDatepicker :valueDate="formStateRes.withholding.manageStartDate" />
                                 </a-form-item>
                                 <a-form-item label="직 원 수 ">
-                                    <a-input-number type="number" min="0" v-model:value="직원수" style="width: 150px" />
+                                    <a-input-number type="number" min="0" v-model:value="formStateRes.withholding.capacity" style="width: 150px" />
                                 </a-form-item>
-                                <a-form-item label="원천서비스 이용료:" style="font-weight: bold; width: 605px">
+                                <a-form-item label="원천서비스 이용료:" style="font-weight: bold; width: 570px">
                                     <p class="input-disble">
                                         {{ $filters.formatCurrency(total2) }}
                                     </p>
@@ -167,28 +166,14 @@
                             <a-coll :span="10"></a-coll>
                             <a-col :span="14">
                                 <div style="display: flex; padding-left: 155px">
-                                    <!-- <span style="width:180px"> -->
-                                    <!-- <input type="checkbox" v-model="formState.checkBoxBasicFee"
-                                            @change=handleInputTexService() />
-                                        기본이용료</span> -->
                                     <a-checkbox v-model:checked="formState.checkBoxBasicFee"
                                         @change="handleInputTexService()" style="width: 180px">기본이용료</a-checkbox>
-                                    <DxNumberBox v-model="formState.numberBox5" :format="'#,##0'"
-                                        :disabled="formState.disableNumber5" />
+                                    <DxNumberBox v-model="formState.numberBox5" :format="'#,##0'" :disabled="formState.disableNumber5" />
                                 </div>
                             </a-col>
                             <a-coll :span="8"></a-coll>
                             <a-col :span="14">
-                                <div style="
-                    display: flex;
-                    padding-left: 155px;
-                    margin-top: 5px;
-                    margin-bottom: 10px;
-                  ">
-                                    <!-- <span style="width:180px">
-                                        <input type="checkbox" v-model="formState.checkBoxMajorInsurance"
-                                            @change=handleInputTexService()>
-                                        4대보험</span> -->
+                                <div style=" display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px; "> 
                                     <a-checkbox v-model:checked="formState.checkBoxMajorInsurance"
                                         @change="handleInputTexService()" style="width: 180px">4대보험</a-checkbox>
                                     <DxNumberBox v-model="formState.numberBox6" :format="'#,##0'"
@@ -207,13 +192,13 @@
                             </a-select>
                         </a-form-item>
                         <a-form-item label="영업자">
-                            <a-select ref="select" v-model:value="영업자선택" style="width: 200px">
-                                <a-select-option value="장영업">장영업</a-select-option>
-                                <a-select-option value="박혁서세">박혁서세</a-select-option>
-                                <a-select-option value="강감찬">강감찬</a-select-option>
-                                <a-select-option value="달나라 대리점">달나라 대리점</a-select-option>
-                                <a-select-option value="타운소프트비나">타운소프트비나</a-select-option>
-                                <a-select-option value="다우데이터스스템">다우데이터스스템</a-select-option>
+                            <a-select ref="select" v-model:value="formStateRes.salesRepresentativeId" style="width: 200px">
+                                <a-select-option :value="1">장영업</a-select-option>
+                                <a-select-option :value="2">박혁서세</a-select-option>
+                                <a-select-option :value="3">강감찬</a-select-option>
+                                <a-select-option :value="4">달나라 대리점</a-select-option>
+                                <a-select-option :value="5">타운소프트비나</a-select-option>
+                                <a-select-option :value="6">다우데이터스스템</a-select-option>
                             </a-select>
                         </a-form-item>
                     </a-form>
@@ -275,12 +260,12 @@
 </template>
 
 <script lang="ts">
-import { FacilityBizType } from "@bankda/jangbuda-common";
-import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, watch, reactive } from "vue";
-import DxDropDownBox from "devextreme-vue/drop-down-box";
-import imgUpload from "../../../../../components/UploadImage.vue";
-import DxNumberBox from "devextreme-vue/number-box";
+import { FacilityBizType } from "@bankda/jangbuda-common"
+import CustomDatepicker from "../../../../../components/CustomDatepicker.vue"
+import { ref, defineComponent, watch, reactive } from "vue"
+import DxDropDownBox from "devextreme-vue/drop-down-box"
+import imgUpload from "../../../../../components/UploadImage.vue"
+import DxNumberBox from "devextreme-vue/number-box"
 import {
     DxDataGrid,
     DxColumn,
@@ -291,11 +276,11 @@ import {
     DxToolbar,
     DxItem,
     DxTexts,
-} from "devextreme-vue/data-grid";
-import { DxButton } from "devextreme-vue/button";
-import DataSource from "devextreme/data/data_source";
-import ArrayStore from "devextreme/data/array_store";
-import { employees, states } from "./data.js";
+} from "devextreme-vue/data-grid"
+import { DxButton } from "devextreme-vue/button"
+import DataSource from "devextreme/data/data_source"
+import ArrayStore from "devextreme/data/array_store"
+import { employees, states } from "./data.js"
 import {
     UploadOutlined,
     MinusCircleOutlined,
@@ -305,17 +290,17 @@ import {
     PlusSquareOutlined,
     WarningFilled,
     PlusOutlined,
-} from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
-import inputFormat from "../../../../../components/inputBoxFormat.vue";
-import type { UploadProps } from "ant-design-vue";
-import queries from "../../../../../graphql/queries/BF/BF3/BF330/index";
-import { useQuery, useMutation } from "@vue/apollo-composable";
+} from "@ant-design/icons-vue"
+import { message } from "ant-design-vue"
+import inputFormat from "../../../../../components/inputBoxFormat.vue"
+import type { UploadProps } from "ant-design-vue"
+import queries from "../../../../../graphql/queries/BF/BF3/BF330/index"
+import { useQuery, useMutation } from "@vue/apollo-composable"
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => callback(reader.result as string));
-    reader.readAsDataURL(img);
+    const reader = new FileReader()
+    reader.addEventListener("load", () => callback(reader.result as string))
+    reader.readAsDataURL(img)
 }
 
 export default defineComponent({
@@ -361,7 +346,7 @@ export default defineComponent({
             영업자선택: "영업자선택",
             직원수: "직원수",
             selectionChanged: (data: any) => {
-                this.selectedItemKeys = data.selectedRowKeys;
+                this.selectedItemKeys = data.selectedRowKeys
             },
             dataModal: employees,
             dataTable: new DataSource({
@@ -372,11 +357,11 @@ export default defineComponent({
             }),
             selectedItemKeys: [],
             states,
-        };
+        }
     },
     computed: {
         totalPriceByDay() {
-            return this.formState.accountingPrice + this.formState.withholdingPrice;
+            return this.formState.accountingPrice + this.formState.withholdingPrice
         },
         totalPriceAccountingService() {
             return (
@@ -384,10 +369,10 @@ export default defineComponent({
                 this.formState.inputAgent +
                 this.formState.accountIntegration +
                 this.formState.sSIS
-            );
+            )
         },
         total2() {
-            return this.formState.numberBox5 + this.formState.numberBox6;
+            return this.formState.numberBox5 + this.formState.numberBox6
         },
         total() {
             return (
@@ -397,30 +382,30 @@ export default defineComponent({
                 this.formState.sSIS +
                 this.formState.numberBox5 +
                 this.formState.numberBox6
-            );
+            )
         },
     },
     methods: {
         getImgUrl(img: any) {
-            this.imageValue = img.url;
-            this.fileName = img.fileName;
-            console.log(img);
+            this.imageValue = img.url
+            this.fileName = img.fileName
+            console.log(img)
         },
         setModalVisible() {
-            this.$emit("closePopup", false);
+            this.$emit("closePopup", false)
         },
         setModalVisibleHis() {
-            this.$emit("closePopupHis", false);
+            this.$emit("closePopupHis", false)
         },
         getColorTag(data: string) {
             if (data === "신청") {
-                return "red";
+                return "red"
             } else if (data === "심사중") {
-                return "blue";
+                return "blue"
             } else if (data === "승인") {
-                return "green";
+                return "green"
             } else if (data === "반려") {
-                return "grey";
+                return "grey"
             }
         },
         addNew() {
@@ -431,29 +416,29 @@ export default defineComponent({
                 StateID: 4,
                 서비스시작년월: "2015/01/13",
                 정원수: 10,
-            };
-            this.dataModal.push(add);
-            console.log(this.dataModal);
+            }
+            this.dataModal.push(add)
+            console.log(this.dataModal)
         },
         handleAdd() {
-            this.keyNumber++;
+            this.keyNumber++
             let dataDef = {
                 key: this.keyNumber,
                 note: "",
-            };
-            this.dataSource.unshift(dataDef);
+            }
+            this.dataSource.unshift(dataDef)
         },
         handleDelete(key: number) {
             if (this.dataSource.length > 1) {
                 this.dataSource = this.dataSource.filter(function (obj: {
-                    key: number;
+                    key: number
                 }) {
-                    return obj.key != key;
-                });
+                    return obj.key != key
+                })
             }
         },
         handleCopy() {
-            this.keyNumber++;
+            this.keyNumber++
             let dataDef = {
                 key: this.keyNumber.toString(),
                 No: this.keyNumber.toString(),
@@ -461,84 +446,84 @@ export default defineComponent({
                 사업분류: "방문요양",
                 서비스시작년월: "2015/01/01",
                 정원수: 10,
-            };
+            }
         },
 
         handleInputACCService() {
             let accBasicFee =
                 this.formState.accBasicFee == ""
                     ? 0
-                    : parseInt(this.formState.accBasicFee);
+                    : parseInt(this.formState.accBasicFee)
             let accConsolidation =
                 this.formState.accConsolidation == ""
                     ? 0
-                    : parseInt(this.formState.accConsolidation);
+                    : parseInt(this.formState.accConsolidation)
             let accInput =
-                this.formState.accInput == "" ? 0 : parseInt(this.formState.accInput);
+                this.formState.accInput == "" ? 0 : parseInt(this.formState.accInput)
             let acc4wc =
-                this.formState.acc4wc == "" ? 0 : parseInt(this.formState.acc4wc);
+                this.formState.acc4wc == "" ? 0 : parseInt(this.formState.acc4wc)
 
             this.formState.accFeeService =
-                accBasicFee + accConsolidation + accInput + acc4wc;
+                accBasicFee + accConsolidation + accInput + acc4wc
         },
         handleInputTexService() {
             let basicFee =
-                this.formState.basicFee == "" ? 0 : parseInt(this.formState.basicFee);
+                this.formState.basicFee == "" ? 0 : parseInt(this.formState.basicFee)
             let majorInsurance =
                 this.formState.majorInsurance == ""
                     ? 0
-                    : parseInt(this.formState.majorInsurance);
-            this.formState.taxFeeSevice = basicFee + majorInsurance;
+                    : parseInt(this.formState.majorInsurance)
+            this.formState.taxFeeSevice = basicFee + majorInsurance
         },
 
     },
     watch: {
         "formState.checkBoxAccBasicFee"(newVal) {
             if (newVal === false) {
-                this.formState.usedServiceInfoAccountingPrice = 0;
-                this.formState.disableNumber1 = true;
+                this.formState.usedServiceInfoAccountingPrice = 0
+                this.formState.disableNumber1 = true
             } else {
-                this.formState.disableNumber1 = false;
+                this.formState.disableNumber1 = false
             }
         },
         "formState.checkBoxAccInput"(newVal) {
             if (newVal === false) {
-                this.formState.inputAgent = 0;
-                this.formState.disableNumber2 = true;
+                this.formState.inputAgent = 0
+                this.formState.disableNumber2 = true
             } else {
-                this.formState.disableNumber2 = false;
+                this.formState.disableNumber2 = false
             }
         },
         "formState.checkBoxAccConso"(newVal) {
             if (newVal === false) {
-                this.formState.accountIntegration = 0;
-                this.formState.disableNumber3 = true;
+                this.formState.accountIntegration = 0
+                this.formState.disableNumber3 = true
             } else {
-                this.formState.disableNumber3 = false;
+                this.formState.disableNumber3 = false
             }
         },
         "formState.checkBoxAcc4wc"(newVal) {
             if (newVal === false) {
-                this.formState.sSIS = 0;
-                this.formState.disableNumber4 = true;
+                this.formState.sSIS = 0
+                this.formState.disableNumber4 = true
             } else {
-                this.formState.disableNumber4 = false;
+                this.formState.disableNumber4 = false
             }
         },
         "formState.checkBoxBasicFee"(newVal) {
             if (newVal === false) {
-                this.formState.numberBox5 = 0;
-                this.formState.disableNumber5 = true;
+                this.formState.numberBox5 = 0
+                this.formState.disableNumber5 = true
             } else {
-                this.formState.disableNumber5 = false;
+                this.formState.disableNumber5 = false
             }
         },
         "formState.checkBoxMajorInsurance"(newVal) {
             if (newVal === false) {
-                this.formState.numberBox6 = 0;
-                this.formState.disableNumber6 = true;
+                this.formState.numberBox6 = 0
+                this.formState.disableNumber6 = true
             } else {
-                this.formState.disableNumber6 = false;
+                this.formState.disableNumber6 = false
             }
         },
         idRowEdit(newQuestion, oldQuestion) {
@@ -546,58 +531,60 @@ export default defineComponent({
                 id: newQuestion
             }
             this.refetchData(dataQuery)
+        },
+        result(newVal) {
+            this.formStateRes = newVal.getServiceContract
         }
     },
     setup(props) {
-        const facilityBizType = FacilityBizType.all();
-        const imageValue = ref("");
-        const fileName = ref("");
-        const loading = ref<boolean>(false);
-        const imageUrl = ref<string>("");
-        let trigger = ref<boolean>(false);
-        const previewTitle = ref("");
-        const fileList = ref<UploadProps["fileList"]>([]);
+        const facilityBizType = FacilityBizType.all()
+        const imageValue = ref("")
+        const fileName = ref("")
+        const loading = ref<boolean>(false)
+        const imageUrl = ref<string>("")
+        let trigger = ref<boolean>(false)
+        const previewTitle = ref("")
+        const fileList = ref<UploadProps["fileList"]>([])
         const removeImg = () => {
-            imageValue.value = "";
-            fileName.value = "";
-        };
+            imageValue.value = ""
+            fileName.value = ""
+        }
 
         const handleChange = (info: any) => {
             if (info.file.status === "uploading") {
-                loading.value = true;
-                return;
+                loading.value = true
+                return
             }
             if (info.file.status === "done") {
                 getBase64(info.file.originFileObj, (base64Url: string) => {
-                    imageUrl.value = base64Url;
-                    loading.value = false;
-                });
+                    imageUrl.value = base64Url
+                    loading.value = false
+                })
             }
             if (info.file.status === "error") {
-                loading.value = false;
-                message.error("upload error");
+                loading.value = false
+                message.error("upload error")
             }
-        };
+        }
         const beforeUpload = (file: any) => {
             const isJpgOrPng =
-                file.type === "image/jpeg" || file.type === "image/png";
+                file.type === "image/jpeg" || file.type === "image/png"
             if (!isJpgOrPng) {
-                message.error("You can only upload JPG file!");
+                message.error("You can only upload JPG file!")
             }
-            const isLt2M = file.size / 1024 / 1024 < 2;
+            const isLt2M = file.size / 1024 / 1024 < 2
             if (!isLt2M) {
-                message.error("Image must smaller than 2MB!");
+                message.error("Image must smaller than 2MB!")
             }
-            return isJpgOrPng && isLt2M;
-        };
-
-        const activeKey = ref([1]);
-        const formState = reactive({
+            return isJpgOrPng && isLt2M
+        }
+        const activeKey = ref([1])
+        const formState = ref({
+            usedAccountingCount: true,
+            facilityBusinesses: [],
             totalFee: 0,
             accountingPrice: 0,
             withholdingPrice: 0,
-            accountingfacilityBusinesses: [],
-            usedAccountingCount: false,
             usedServiceInfoAccountingPrice: 0,
             inputAgent: 0,
             accountIntegration: 0,
@@ -633,30 +620,39 @@ export default defineComponent({
             disableNumber6: false,
             numberBox5: 0,
             numberBox6: 0,
-        });
+        })
 
-
+        const formStateRes = ref({
+            usedAccountingCount: true,
+            facilityBusinesses: [],
+            accountingPrice: 0,
+            withholdingPrice: 0,
+            usedWithholding : true,
+            withholding: {
+                manageStartDate : "2022/10/01",
+                capacity: 10
+            },
+            salesRepresentativeId : 1,
+            manageUserId :1 ,
+        })
 
         // get service contract
-        // if (props.idRowEdit != null) { 
-        const { result, error, refetch, refetch: refetchData } = useQuery(queries.getServiceContract);
-        // } 
+        const { result, error, refetch: refetchData, onResult } = useQuery(queries.getServiceContract)
 
-
-        const labelCol = ref({ style: { width: "150px" } });
-        const wrapperCol = ref({ span: 14 });
+        const labelCol = ref({ style: { width: "150px" } })
+        const wrapperCol = ref({ span: 14 })
         const radioStyle = ref({
             display: "flex",
             height: "30px",
             lineHeight: "30px",
-        });
-        const value = ref<number>(1);
+        })
+        const value = ref<number>(1)
         const dataSource = ref([
             {
                 key: 0,
                 note: "",
             },
-        ]);
+        ])
         const dataTableShow = ref([
             {
                 key: 0,
@@ -667,9 +663,9 @@ export default defineComponent({
                 삭제여부: "1",
                 IP주소: "123.451.342.1",
             },
-        ]);
-        const keyNumber = ref(5);
-        const titleModal = "사업자등록증";
+        ])
+        const keyNumber = ref(5)
+        const titleModal = "사업자등록증"
         const columns = [
             {
                 title: "No",
@@ -700,7 +696,7 @@ export default defineComponent({
                 title: "",
                 key: "action",
             },
-        ];
+        ]
         return {
             fileList,
             loading,
@@ -726,10 +722,12 @@ export default defineComponent({
             imageValue,
             trigger,
             facilityBizType,
-            refetchData
-        };
+            refetchData,
+            result,
+            formStateRes
+        }
     },
-});
+})
 </script>
 <style lang="scss" scoped>
 .warring-modal {
@@ -848,3 +846,4 @@ export default defineComponent({
     text-align: right;
 }
 </style>
+    
