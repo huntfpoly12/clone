@@ -239,7 +239,6 @@ export default defineComponent({
     data() {
         return {
             marginTopModal: "margin-top : -67px",
-            은행선택: "은행선택"
         };
     },
     setup(props, { emit }) {
@@ -328,19 +327,6 @@ export default defineComponent({
             height: "30px",
             lineHeight: "30px",
         });
-        const value = ref<number>(1);
-        const dataTableShow = ref([
-            {
-                key: 0,
-                기록일시: "2022-09-05 13:52:09",
-                비고: "승인>사업자등록번호 등록",
-                생성일시: "2022-09-05 13:52:09",
-                생성자ID: "@mdo",
-                삭제여부: "1",
-                IP주소: "123.451.342.1",
-            },
-        ]);
-        const keyNumber = ref(0);
         const titleModal = "사업자등록증";
 
         watch(
@@ -397,9 +383,7 @@ export default defineComponent({
             refetchMemo();
             message.success('Created memo successfully', 4);
         });
-        onErrorMemo((res)=>{
-            console.log(res,'dfdfggdgdfgfdgfg')
-        });
+     
         // mutation update memo 
         const {
             mutate: actionUpdateMemo,
@@ -613,9 +597,6 @@ export default defineComponent({
             labelCol,
             wrapperCol,
             radioStyle,
-            value,
-            dataTableShow,
-            keyNumber,
             titleModal,
             visible,
             changeTypeCompany,
