@@ -385,7 +385,7 @@ import moment from "moment";
 import { states } from "./data.ts";
 // import mutations from "../../graphql/mutations/RqContract/index";
 import { notification } from "ant-design-vue";
-import bizTyleList from "../../constants/facilityBizType";
+import bizTypeList from "../../constants/facilityBizType";
 import {
     DxDataGrid,
     DxColumn,
@@ -458,7 +458,7 @@ export default {
             radio3: "",
             radio4: "",
             dataModal: [],
-            states: bizTyleList,
+            states: bizTypeList,
             marginTopModal: "margin-top : 10px",
             titleModal: "사업자등록증",
             dataInputCallApi: {
@@ -694,9 +694,6 @@ export default {
             },
             deep: true,
         },
-    },
-    mounted() {
-        console.log('facilityBizType',bizTyleList)
     },
     methods: {
         changeValueDate(data) {
