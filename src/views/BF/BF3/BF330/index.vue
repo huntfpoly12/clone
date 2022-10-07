@@ -49,7 +49,8 @@
                         </a-col>
                         <a-col>
                             <label class="lable-item">해지:</label>
-                            <a-switch v-model:checked="dataSearchDef.excludeCancel" checked-children="포함" un-checked-children="제외" />
+                            <a-switch v-model:checked="dataSearchDef.excludeCancel" checked-children="포함"
+                                un-checked-children="제외" />
                         </a-col>
 
                         <a-col>
@@ -58,10 +59,10 @@
                         </a-col>
                         <a-col>
                             <label class="lable-item">매니저명 :</label>
-                            <ListManagerDropdown v-model:selected="dataSearchDef.manageUserId"/>
+                            <ListManagerDropdown v-model:selected="dataSearchDef.manageUserId" />
                         </a-col>
                         <a-col>
-                            <ListSalesDropdownVue v-model:selected="dataSearchDef.salesRepresentativeId"/>
+                            <ListSalesDropdownVue v-model:selected="dataSearchDef.salesRepresentativeId" />
                         </a-col>
                         <!-- <a-col>
                             <label class="lable-item"></label>
@@ -72,21 +73,22 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id" @exporting="onExporting">
+                <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
+                    @exporting="onExporting">
                     <DxSelection mode="multiple" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
-                    <DxColumn data-field="code" caption="사업자코드"/>
-                    <DxColumn data-field="status" caption="상태"/>
+                    <DxColumn data-field="code" caption="사업자코드" />
+                    <DxColumn data-field="status" caption="상태" />
                     <DxColumn data-field="name" caption="상호" data-type="date" />
                     <DxColumn data-field="presidentName" caption="대표자" />
-                    <DxColumn data-field="address"  caption="주소" data-type="date" />
+                    <DxColumn data-field="address" caption="주소" data-type="date" />
                     <DxColumn data-field="phone" caption="연락처" />
-                    <DxColumn data-field="매니저" caption="매니저"/>
-                    <DxColumn data-field="manageStartDate"  caption="관리시작일" data-type="date" />
+                    <DxColumn data-field="매니저" caption="매니저" />
+                    <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn data-field="서비스" caption="서비스" />
-                    <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number"/>
+                    <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
@@ -105,12 +107,12 @@
                     </template>
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
-                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
-                        show-less-items @change="changePage" />
+                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                        :total="rowTable" show-less-items @change="changePage" />
                 </div>
                 <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :idRowEdit="idSubRequest" />
-                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-                    title="변경이력[cm-000-pop]" />
+                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    :data="popupData" title="변경이력[cm-000-pop]" />
             </div>
         </div>
     </a-spin>
@@ -127,11 +129,11 @@ import {
 } from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
-import DxButton from "devextreme-vue/button"; 
+import DxButton from "devextreme-vue/button";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-import { EditOutlined, HistoryOutlined,SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -154,16 +156,16 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        SearchOutlined, 
-        SaveOutlined, 
-        DeleteOutlined, 
+        SearchOutlined,
+        SaveOutlined,
+        DeleteOutlined,
         PrinterOutlined,
         ListManagerDropdown,
         ListSalesDropdownVue
     },
     data() {
         return {
-            amountFormat: { currency: 'VND', useGrouping: true },   
+            amountFormat: { currency: 'VND', useGrouping: true },
             popupData: [],
             modalStatus: false,
             modalHistoryStatus: false,
@@ -252,7 +254,7 @@ export default defineComponent({
             originData,
             refetchData,
             rowTable,
-            idSubRequest 
+            idSubRequest
         }
     },
     methods: {
@@ -323,6 +325,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
 }
+
 ::v-deep .dx-toolbar-after {
     display: flex;
 
