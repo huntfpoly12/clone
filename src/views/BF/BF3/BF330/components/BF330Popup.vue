@@ -847,7 +847,7 @@ export default defineComponent({
           value.getServiceContract.usedAccountingCount > 0 ? true : false;
 
         if(value.getServiceContract.usedServiceInfo.accounting.options.length > 0){
-          value.getServiceContract.usedServiceInfo.accounting.options.map((el)=>{
+          value.getServiceContract.usedServiceInfo.accounting.options.map((el: any)=>{
             
           })
         }
