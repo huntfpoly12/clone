@@ -11,22 +11,22 @@ query findManagerUsers  {
      groupName
      managerGrade
      active
-     facilityBusinesses {
-        facilityBusinessId
-        name
-        longTermCareInstitutionNumber
-        facilityBizType
-        startYearMonth
-        capacity
-        registrationCardFileStorageId
-        price
-        createdAt
-        createdBy
-        updatedAt
-        updatedBy
-        ip
-        active
-     }
+   #   facilityBusinesses {
+   #      facilityBusinessId
+   #      name
+   #      longTermCareInstitutionNumber
+   #      facilityBizType
+   #      startYearMonth
+   #      capacity
+   #      registrationCardFileStorageId
+   #      price
+   #      createdAt
+   #      createdBy
+   #      updatedAt
+   #      updatedBy
+   #      ip
+   #      active
+   #   }
   }
 }
 `
