@@ -181,7 +181,7 @@
                         </div>
                         <div class="form-item">
                             <label class="red">휴대폰번호:</label>
-                            <DxNumberBox style="width: 150px" placeholder="01098765432"
+                            <a-input style="width: 150px" placeholder="01098765432"
                                 v-model:value="contractCreacted.mobilePhone" />
                         </div>
                         <div class="form-item">
@@ -242,7 +242,7 @@
 
                     <div class="form-item">
                         <label class="red">장기요양기관등록번호 :</label>
-                        <DxNumberBox placeholder="1234567898"
+                        <a-input placeholder="1234567898"
                             v-model:value="contractCreacted.longTermCareInstitutionNumber" />
                     </div>
 
@@ -289,7 +289,7 @@
 
                     <div class="form-item">
                         <label>직 원 수:</label>
-                        <DxNumberBox placeholder="장기요양기관등록번호" style="width: 170px"
+                        <a-input placeholder="장기요양기관등록번호" style="width: 170px"
                             v-model:value="contractCreacted.capacityHolding" />
                     </div>
                     <div class="form-item">
@@ -307,7 +307,7 @@
                     <div class="form-item">
                         <label class="red">출금계좌번호 :</label>
                         <!-- <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" /> -->
-                        <DxNumberBox placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" />
+                        <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" />
                     </div>
                     <div class="form-item">
                         <label class="red">예금주명 :</label>
@@ -410,7 +410,7 @@ import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
-import { DxNumberBox } from "devextreme-vue/number-box";
+// import { DxNumberBox } from "devextreme-vue/number-box";
 import DxTextBox from "devextreme-vue/text-box";
 import {
     DxValidator,
@@ -444,8 +444,7 @@ export default {
         DxValidator,
         DxPatternRule,
         DxTextBox,
-        DxStringLengthRule,
-        DxNumberBox,
+        DxStringLengthRule, 
         DeleteOutlined,
     },
     data() {
@@ -696,7 +695,7 @@ export default {
         },
     },
     mounted() {
-        console.log('facilityBizType',bizTyleList)
+        console.log('facilityBizType', bizTyleList)
     },
     methods: {
         changeValueDate(data) {
