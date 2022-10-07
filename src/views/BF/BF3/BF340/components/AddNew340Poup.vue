@@ -153,7 +153,8 @@
             </a-form>
         </a-modal>
 
-        <a-modal v-model:visible="visible" :mask-closable="false" :afterClose="afterConfirmClose" :width="521">
+        <a-modal v-model:visible="visible" :mask-closable="false" :afterClose="afterConfirmClose" class="confirm-md"
+            :width="521">
             <a-row>
                 <a-col :span="4">
                     <warning-outlined :style="{fontSize: '70px', color: '#faad14',paddingTop: '20px'}" />
@@ -163,12 +164,15 @@
                     <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
                     <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을 </p>
                     <p>누르세요</p>
+
                 </a-col>
                 <div style="text-align: center;width: 100%;margin-left: 100px;">
                     <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
                     <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px;">완료</a-button>
                 </div>
             </a-row>
+            <template #footer>
+            </template>
         </a-modal>
     </div>
 </template>
@@ -176,7 +180,7 @@
 <script lang="ts">
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent, computed } from 'vue'
-import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue'; 
+import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import selectBank from "../../../../../components/selectBank.vue";
 import postCode from "./postCode.vue";
 import { useMutation } from "@vue/apollo-composable";
@@ -249,17 +253,30 @@ export default defineComponent({
 
 
         const confirmPopup = (value: any) => {
-            if (value == '해지') {
+            if (value == 2) {
                 visible.value = true;
             }
         }
+
         const handleOkConfirm = () => {
-            console.log('12314');
+            if (confirm.value == '확인') {
+                bf340Detail.value.status = 2;
+                visible.value = false;
+            } else {
+                bf340Detail.value.status = 1;
+                visible.value = false;
+            }
         }
 
-        const afterConfirmClose = computed(() => {
+        const afterConfirmClose = () => {  
+            if (confirm.value == '확인') { 
+                bf340Detail.value.status = 2;
+            } else { 
+                bf340Detail.value.status = 1;
+                console.log(bf340Detail.status); 
+            }
+        };
 
-        });  
         const afterPopupClose = () => {
 
         };
@@ -291,7 +308,7 @@ export default defineComponent({
             confirm,
             handleOkConfirm,
             afterConfirmClose,
-            afterPopupClose, 
+            afterPopupClose,
             validateMessages,
             onFinish,
             creactSale

@@ -134,8 +134,8 @@
                 <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
                     :idSaleEdit="idRowEdit" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-340"/>
-                    
+                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-340" />
+
             </div>
         </div>
     </a-spin>
@@ -249,6 +249,7 @@ export default defineComponent({
             rowTable.value = res.data.searchSalesRepresentatives.totalCount
             dataSource.value = res.data.searchSalesRepresentatives.datas
         })
+
         return {
             spinning,
             dataSource,
@@ -286,8 +287,7 @@ export default defineComponent({
             this.modalEditStatus = true;
             this.popupData = data;
         },
-        modalHistory(data: never[]) {
-            this.idRowEdit = data.data.id
+        modalHistory(data: any) {
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
