@@ -385,7 +385,7 @@ import moment from "moment";
 import { states } from "./data.ts";
 // import mutations from "../../graphql/mutations/RqContract/index";
 import { notification } from "ant-design-vue";
-import bizTyleList from "../../constants/fancilityBizType";
+import bizTyleList from "../../constants/facilityBizType";
 import {
     DxDataGrid,
     DxColumn,
@@ -402,7 +402,6 @@ import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
-
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../graphql/mutations/RqContract/index";
 import dayjs, { Dayjs } from "dayjs";
@@ -459,7 +458,7 @@ export default {
             radio3: "",
             radio4: "",
             dataModal: [],
-            states,
+            states: bizTyleList,
             marginTopModal: "margin-top : 10px",
             titleModal: "사업자등록증",
             dataInputCallApi: {
@@ -697,7 +696,7 @@ export default {
         },
     },
     mounted() {
-        console.log(bizTyleList)
+        console.log('facilityBizType',bizTyleList)
     },
     methods: {
         changeValueDate(data) {
