@@ -150,7 +150,8 @@
                                     <CustomDatepicker :valueDate="formStateRes.withholding.manageStartDate" />
                                 </a-form-item>
                                 <a-form-item label="직 원 수 ">
-                                    <a-input-number type="number" min="0" v-model:value="formStateRes.withholding.capacity" style="width: 150px" />
+                                    <a-input-number type="number" min="0"
+                                        v-model:value="formStateRes.withholding.capacity" style="width: 150px" />
                                 </a-form-item>
                                 <a-form-item label="원천서비스 이용료:" style="font-weight: bold; width: 570px">
                                     <p class="input-disble">
@@ -168,12 +169,14 @@
                                 <div style="display: flex; padding-left: 155px">
                                     <a-checkbox v-model:checked="formState.checkBoxBasicFee"
                                         @change="handleInputTexService()" style="width: 180px">기본이용료</a-checkbox>
-                                    <DxNumberBox v-model="formState.numberBox5" :format="'#,##0'" :disabled="formState.disableNumber5" />
+                                    <DxNumberBox v-model="formState.numberBox5" :format="'#,##0'"
+                                        :disabled="formState.disableNumber5" />
                                 </div>
                             </a-col>
                             <a-coll :span="8"></a-coll>
                             <a-col :span="14">
-                                <div style=" display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px; "> 
+                                <div
+                                    style=" display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px; ">
                                     <a-checkbox v-model:checked="formState.checkBoxMajorInsurance"
                                         @change="handleInputTexService()" style="width: 180px">4대보험</a-checkbox>
                                     <DxNumberBox v-model="formState.numberBox6" :format="'#,##0'"
@@ -186,47 +189,70 @@
                 <a-collapse-panel key="2" header="담당매니저/ 영업자">
                     <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                         <a-form-item label="담당매니저">
-                            <a-select ref="select" v-model:value="담당자선택" style="width: 200px">
-                                <a-select-option value="김매니저 kim5604">김매니저 kim5604</a-select-option>
-                                <a-select-option value="유하람 haram.interpreter">유하람 haram.interpreter</a-select-option>
-                            </a-select>
+                            <div style="width: 200px;">
+                                <ListManagerDropdown />
+                            </div>
                         </a-form-item>
+
                         <a-form-item label="영업자">
-                            <a-select ref="select" v-model:value="formStateRes.salesRepresentativeId" style="width: 200px">
-                                <a-select-option :value="1">장영업</a-select-option>
-                                <a-select-option :value="2">박혁서세</a-select-option>
-                                <a-select-option :value="3">강감찬</a-select-option>
-                                <a-select-option :value="4">달나라 대리점</a-select-option>
-                                <a-select-option :value="5">타운소프트비나</a-select-option>
-                                <a-select-option :value="6">다우데이터스스템</a-select-option>
-                            </a-select>
+                            <div style="width: 200px;">
+                                <ListSalesDropdownVue />
+                            </div>
                         </a-form-item>
                     </a-form>
                 </a-collapse-panel>
 
-                <a-collapse-panel key="3" header="메모" :extra="dataSource.length > 0 ? dataSource.length : ''"
-                    :style="{ position: 'relative' }">
-                    <a-table bordered :data-source="dataSource" :pagination="false" :showHeader="false">
-                        <template #bodyCell="{ text, index }">
-                            <div>
-                                <div class="title-note">
-                                    <div>Han Aram 수정 2022-09-05 게시 2022-09-05</div>
-                                    <div v-if="index == 0">
-                                        <PlusSquareOutlined :style="{ fontSize: '25px' }" @click="handleAdd" />
-                                    </div>
-                                </div>
+
+                <a-collapse-panel key="3" header="메모" :style="{ position: 'relative' }">
+
+                    <div v-if="dataNoteRes && dataNoteRes.length > 0">
+                        <a-table bordered :data-source="dataNoteRes" :pagination="false" :showHeader="false">
+                            <template #bodyCell="{ text, index }">
                                 <div>
-                                    <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.note" />
-                                </div>
-                                <a-space :size="8" style="margin-top: 7px">
-                                    <save-outlined :style="{ fontSize: '20px' }" @click="handleCopy()" />
-                                    <div v-if="dataSource.length > 1">
-                                        <DeleteOutlined :style="{ fontSize: '20px' }" @click="handleDelete(text.key)" />
+                                    <div class="title-note">
+                                        <div>Han Aram 수정 2022-09-05 게시 2022-09-05</div>
+                                        <div v-if="index == 0">
+                                            <PlusSquareOutlined :style="{ fontSize: '25px' }" @click="handleAdd" />
+                                        </div>
                                     </div>
-                                </a-space>
-                            </div>
-                        </template>
-                    </a-table>
+                                    <div>
+                                        <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.note" />
+                                    </div>
+                                    <a-space :size="8" style="margin-top: 7px">
+                                        <save-outlined :style="{ fontSize: '20px' }" @click="handleCopy()" />
+                                        <div v-if="dataSource.length > 1">
+                                            <DeleteOutlined :style="{ fontSize: '20px' }"
+                                                @click="handleDelete(text.key)" />
+                                        </div>
+                                    </a-space>
+                                </div>
+                            </template>
+                        </a-table>
+                    </div>
+                    <div v-else>
+                        <a-table bordered :data-source="formNote" :pagination="false" :showHeader="false">
+                            <template #bodyCell="{ text, index }">
+                                <div>
+                                    <div class="title-note">
+                                        <div>Han Aram 수정 2022-09-05 게시 2022-09-05</div>
+                                        <div v-if="index == 0">
+                                            <PlusSquareOutlined :style="{ fontSize: '25px' }" @click="handleAdd" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.note" />
+                                    </div>
+                                    <a-space :size="8" style="margin-top: 7px">
+                                        <save-outlined :style="{ fontSize: '20px' }" @click="handleCopy()" />
+                                        <div v-if="formNote.length > 1">
+                                            <DeleteOutlined :style="{ fontSize: '20px' }"
+                                                @click="handleDelete(text.key)" />
+                                        </div>
+                                    </a-space>
+                                </div>
+                            </template>
+                        </a-table>
+                    </div>
                 </a-collapse-panel>
 
             </a-collapse>
@@ -266,6 +292,8 @@ import { ref, defineComponent, watch, reactive } from "vue"
 import DxDropDownBox from "devextreme-vue/drop-down-box"
 import imgUpload from "../../../../../components/UploadImage.vue"
 import DxNumberBox from "devextreme-vue/number-box"
+import ListSalesDropdownVue from '../../../../../components/ListSalesDropdown.vue';
+import ListManagerDropdown from '../../../../../components/ListManagerDropdown.vue';
 import {
     DxDataGrid,
     DxColumn,
@@ -291,17 +319,9 @@ import {
     WarningFilled,
     PlusOutlined,
 } from "@ant-design/icons-vue"
-import { message } from "ant-design-vue"
 import inputFormat from "../../../../../components/inputBoxFormat.vue"
-import type { UploadProps } from "ant-design-vue"
 import queries from "../../../../../graphql/queries/BF/BF3/BF330/index"
 import { useQuery, useMutation } from "@vue/apollo-composable"
-
-function getBase64(img: Blob, callback: (base64Url: string) => void) {
-    const reader = new FileReader()
-    reader.addEventListener("load", () => callback(reader.result as string))
-    reader.readAsDataURL(img)
-}
 
 export default defineComponent({
     components: {
@@ -328,6 +348,8 @@ export default defineComponent({
         inputFormat,
         DxNumberBox,
         DxTexts,
+        ListSalesDropdownVue,
+        ListManagerDropdown
     },
 
     props: {
@@ -361,7 +383,7 @@ export default defineComponent({
     },
     computed: {
         totalPriceByDay() {
-            return this.formState.accountingPrice + this.formState.withholdingPrice
+            return this.formStateRes.accountingPrice + this.formStateRes.withholdingPrice
         },
         totalPriceAccountingService() {
             return (
@@ -426,11 +448,11 @@ export default defineComponent({
                 key: this.keyNumber,
                 note: "",
             }
-            this.dataSource.unshift(dataDef)
+            this.formNote.unshift(dataDef)
         },
         handleDelete(key: number) {
-            if (this.dataSource.length > 1) {
-                this.dataSource = this.dataSource.filter(function (obj: {
+            if (this.formNote.length > 1) {
+                this.formNote = this.formNote.filter(function (obj: {
                     key: number
                 }) {
                     return obj.key != key
@@ -438,15 +460,7 @@ export default defineComponent({
             }
         },
         handleCopy() {
-            this.keyNumber++
-            let dataDef = {
-                key: this.keyNumber.toString(),
-                No: this.keyNumber.toString(),
-                사업명: "가나다라마바 사업",
-                사업분류: "방문요양",
-                서비스시작년월: "2015/01/01",
-                정원수: 10,
-            }
+            this.keyNumber++ 
         },
 
         handleInputACCService() {
@@ -530,73 +544,39 @@ export default defineComponent({
             const dataQuery: any = {
                 id: newQuestion
             }
+
+            const dataQueryNote: any = {
+                companyId: newQuestion
+            }
+
             this.refetchData(dataQuery)
+            this.refetchNote(dataQueryNote)
         },
         result(newVal) {
             this.formStateRes = newVal.getServiceContract
+        },
+        dataNote(newVal) {
+            this.dataNoteRes = newVal.getServiceContractManageMemos
         }
     },
-    setup(props) {
+    setup() {
         const facilityBizType = FacilityBizType.all()
         const imageValue = ref("")
         const fileName = ref("")
-        const loading = ref<boolean>(false)
-        const imageUrl = ref<string>("")
         let trigger = ref<boolean>(false)
-        const previewTitle = ref("")
-        const fileList = ref<UploadProps["fileList"]>([])
         const removeImg = () => {
             imageValue.value = ""
             fileName.value = ""
         }
-
-        const handleChange = (info: any) => {
-            if (info.file.status === "uploading") {
-                loading.value = true
-                return
-            }
-            if (info.file.status === "done") {
-                getBase64(info.file.originFileObj, (base64Url: string) => {
-                    imageUrl.value = base64Url
-                    loading.value = false
-                })
-            }
-            if (info.file.status === "error") {
-                loading.value = false
-                message.error("upload error")
-            }
-        }
-        const beforeUpload = (file: any) => {
-            const isJpgOrPng =
-                file.type === "image/jpeg" || file.type === "image/png"
-            if (!isJpgOrPng) {
-                message.error("You can only upload JPG file!")
-            }
-            const isLt2M = file.size / 1024 / 1024 < 2
-            if (!isLt2M) {
-                message.error("Image must smaller than 2MB!")
-            }
-            return isJpgOrPng && isLt2M
-        }
         const activeKey = ref([1])
         const formState = ref({
-            usedAccountingCount: true,
-            facilityBusinesses: [],
             totalFee: 0,
-            accountingPrice: 0,
-            withholdingPrice: 0,
             usedServiceInfoAccountingPrice: 0,
             inputAgent: 0,
             accountIntegration: 0,
             sSIS: 0,
             name: "",
-            name2: "",
-            name3: "",
-            delivery: false,
             type: [],
-            resource: "",
-            desc: "",
-            totalService: 0,
             accFeeService: 0,
             accBasicFee: "",
             accInput: "",
@@ -605,7 +585,6 @@ export default defineComponent({
             basicFee: "",
             majorInsurance: "",
             taxFeeSevice: 0,
-            checkBox: true,
             checkBoxAccBasicFee: true,
             checkBoxAccInput: true,
             checkBoxAccConso: true,
@@ -622,30 +601,42 @@ export default defineComponent({
             numberBox6: 0,
         })
 
+        const dataNoteRes = ref([])
+
         const formStateRes = ref({
             usedAccountingCount: true,
             facilityBusinesses: [],
             accountingPrice: 0,
             withholdingPrice: 0,
-            usedWithholding : true,
+            usedWithholding: true,
             withholding: {
-                manageStartDate : "2022/10/01",
+                manageStartDate: "2022/10/01",
                 capacity: 10
             },
-            salesRepresentativeId : 1,
-            manageUserId :1 ,
+            salesRepresentativeId: 1,
+            manageUserId: 1,
         })
 
+
+        const formNote = ref([
+            {
+                key: 0,
+                note: ''
+            }
+        ])
+
+
+
         // get service contract
-        const { result, error, refetch: refetchData, onResult } = useQuery(queries.getServiceContract)
+        const { result, error, refetch: refetchData, onResult } = useQuery(queries.getServiceContract, {}, () => ({
+            fetchPolicy: "no-cache",
+        }))
+        const { result: dataNote, refetch: refetchNote } = useQuery(queries.getNote, {}, () => ({
+            fetchPolicy: "no-cache",
+        }))
 
         const labelCol = ref({ style: { width: "150px" } })
         const wrapperCol = ref({ span: 14 })
-        const radioStyle = ref({
-            display: "flex",
-            height: "30px",
-            lineHeight: "30px",
-        })
         const value = ref<number>(1)
         const dataSource = ref([
             {
@@ -653,68 +644,17 @@ export default defineComponent({
                 note: "",
             },
         ])
-        const dataTableShow = ref([
-            {
-                key: 0,
-                기록일시: "2022-09-05 13:52:09",
-                비고: "승인>사업자등록번호 등록",
-                생성일시: "2022-09-05 13:52:09",
-                생성자ID: "@mdo",
-                삭제여부: "1",
-                IP주소: "123.451.342.1",
-            },
-        ])
         const keyNumber = ref(5)
         const titleModal = "사업자등록증"
-        const columns = [
-            {
-                title: "No",
-                dataIndex: "No",
-                key: "No",
-            },
-            {
-                name: "사업명 (중복불가)",
-                dataIndex: "사업명",
-                key: "사업명",
-            },
-            {
-                title: "사업분류",
-                dataIndex: "사업분류",
-                key: "사업분류",
-            },
-            {
-                title: "서비스시작년월",
-                dataIndex: "서비스시작년월",
-                key: "서비스시작년월",
-            },
-            {
-                title: "정원수(명)",
-                dataIndex: "정원수",
-                key: "정원수",
-            },
-            {
-                title: "",
-                key: "action",
-            },
-        ]
         return {
-            fileList,
-            loading,
-            imageUrl,
-            handleChange,
-            beforeUpload,
-            previewTitle,
             activeKey,
             formState,
             labelCol,
             wrapperCol,
-            radioStyle,
             value,
             dataSource,
-            dataTableShow,
             keyNumber,
             titleModal,
-            columns,
             PlusSquareOutlined,
             PlusOutlined,
             fileName,
@@ -724,7 +664,11 @@ export default defineComponent({
             facilityBizType,
             refetchData,
             result,
-            formStateRes
+            formStateRes,
+            refetchNote,
+            dataNote,
+            dataNoteRes,
+            formNote
         }
     },
 })
