@@ -304,7 +304,7 @@ export default defineComponent({
             if (this.dataSearch.grade) {
                 let arrayNew = {
                     ...this.dataSearch,
-                    page: this.originData.page,
+                    page: 1,
                     rows: this.originData.rows,
                     grade: this.dataSearch.grade,
                     statuses: this.statuses.length > 0 ? this.statuses : [1, 2, 3]
@@ -313,7 +313,7 @@ export default defineComponent({
             } else {
                 let arrayNew = {
                     ...this.dataSearch,
-                    page: this.originData.page,
+                    page: 1,
                     rows: this.originData.rows,
                     statuses: this.statuses.length > 0 ? this.statuses : [1, 2, 3]
                 }

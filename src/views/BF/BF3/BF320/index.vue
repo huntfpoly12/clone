@@ -111,14 +111,14 @@
                     </template>
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
-                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
-                        show-less-items @change="changePage" />
+                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                        :total="rowTable" show-less-items @change="changePage" />
                 </div>
 
                 <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :idRowEdit="idRowEdit"
                     :data="popupData" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-320"/>
+                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-320" />
             </div>
         </div>
     </a-spin>
@@ -235,7 +235,7 @@ export default defineComponent({
             responApiSearchCompanies.value = res.data.searchCompanies.datas
         })
 
-        setTimeout(() => { 
+        setTimeout(() => {
             spinning.value = !spinning.value;
         }, 1000);
 
@@ -255,7 +255,7 @@ export default defineComponent({
             }
 
             let dataNew = {
-                page: dataSearchDef.value.page,
+                page: 1,
                 rows: dataSearchDef.value.rows,
                 code: dataSearchDef.value.code,
                 name: dataSearchDef.value.name,
@@ -304,7 +304,7 @@ export default defineComponent({
             });
             e.cancel = true;
         },
-        setModalVisible(data: any) { 
+        setModalVisible(data: any) {
             this.idRowEdit = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
