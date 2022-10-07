@@ -2,7 +2,7 @@
     <div id="cm-130" class="cm-130" style="padding: 24px;">
         <a-tabs v-model:activeKey="activeKey" type="card">
             <a-tab-pane key="1" tab="기본">
-                <a-row >
+                <a-row>
                     <a-col :span="24">
                         <div class="container">
                             <a-form :model="formState" :label-col="labelCol">
@@ -14,7 +14,9 @@
                                     <a-col :span="12">
                                         <a-form-item label="급여신고주기">
                                             <a-space direction="vertical">
-                                                <a-radio-group v-model:value="value1" :options="plainOptions" />
+                                                <a-radio-group v-model:value="dataRes.reportType"
+                                                    :options="plainOptions" />
+                                                    
                                             </a-space>
                                         </a-form-item>
                                     </a-col>
@@ -30,7 +32,7 @@
                                 </a-row>
                                 <a-row>
                                     <a-col :span="16">
-                                        <a-form-item label="급여지급형태">
+                                        <a-form-item label="급여지급일자">
                                             <div style="display: flex; align-items: center">
                                                 <DxNumberBox :value="0" :min="0" :max="30" :show-spin-buttons="true"
                                                     :width="150" />
@@ -228,7 +230,7 @@ import type { UnwrapRef } from "vue";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
-const plainOptions = ["매월", "반기"];
+
 const options = [
     { label: "매월", value: "매월" },
     { label: "반기", value: "반기" },
@@ -297,7 +299,6 @@ export default defineComponent({
             popupData: [],
             dataSource: employees,
             isShow: ref<boolean>(false),
-            plainOptions,
             options,
             value1,
             value2,
@@ -327,6 +328,35 @@ export default defineComponent({
             이메일: "bankda.jangbuda@gmail.com",
             switch: false,
         });
+
+
+        // reportType: 1 or 6
+        // paymentType: 1 or 2
+        const plainOptions = ["매월", "반기"];
+        const dataRes = ref({
+            reportType: 1,
+            paymentType: 1,
+            paymentDay: 0,
+            insuranceSupport: true,
+            competentTaxOfficeCode: "",
+            localIncomeTaxArea: "",
+            collectivePayment: true,
+            taxForEachBusiness: true,
+            createdAt: "",
+            createdBy: "",
+            updatedAt: "",
+            updatedBy: "",
+            ip: "",
+            active: true,
+            companyAddressInfo: {
+                address: "",
+                roadAddress: "",
+                addressExtend: "",
+                zipcode: "",
+                bcode: "",
+            }
+        })
+
         const isSwitch = ref<boolean>(false);
         const isShow = ref<boolean>(false);
         const showModal = () => {
@@ -358,9 +388,11 @@ export default defineComponent({
             previewImage,
             SwitchButton,
             isSwitch,
+            plainOptions,
             isShow,
             showModal,
             handleSuccsess,
+            dataRes
         };
     },
     methods: {
@@ -406,8 +438,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped> 
-
+<style lang="scss" scoped>
 ::v-deep .ant-tag-red {
     border: none;
 }
