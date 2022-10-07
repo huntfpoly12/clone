@@ -241,8 +241,8 @@ export default defineComponent({
 
     const rowChoose = ref()
     const dataSearch = ref({
-      page: 1,
-      rows: 1,
+      page: 10,
+      rows: 1000,
       type: "",
       groupCode: "",
       groupName: "",
@@ -253,7 +253,7 @@ export default defineComponent({
     var idRowEdit = ref<number>(0)
     const originData = ref({
       page: 1,
-      rows: 10,
+      rows: 20,
       type: "m",
       groupCode: "",
       groupName: "",

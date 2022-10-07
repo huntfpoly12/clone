@@ -94,11 +94,11 @@
             <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
 
-            <DxColumn data-field="screenRoles" caption="코드" :width="200" :fixed="true" />
+            <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="권한그룹설명" />
+            <DxColumn data-field="screenRoles" caption="권한그룹설명"/>
             <DxColumn :width="50" cell-template="modal-table" />
             <template #modal-table="{}">
               <div class="action-menu">
@@ -320,11 +320,11 @@ export default defineComponent({
       }
     };
     const createUser = reactive({
-      type: "type test",
-      username: "Hoang Thanh Trang",
-      name: "회계설정",
+      type: "",
+      username: "",
+      name: "",
       screenRoleGroupIds: ["r", "m", "c", "p", "s"],
-      mobilePhone: "123456789",
+      mobilePhone: "",
       email: "",
     });
     const originData = ref({
