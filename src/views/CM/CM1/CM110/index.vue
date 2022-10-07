@@ -97,7 +97,7 @@
                             </div>
 
                             <div style="display: flex; margin-left: 150px;">
-                                <a-form-item label="휴대폰"> 
+                                <a-form-item label="휴대폰">
                                     <a-input v-model:value="formState.extendInfo.president.mobilePhone" />
                                 </a-form-item>
                                 <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>

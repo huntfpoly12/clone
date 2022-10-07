@@ -23,7 +23,7 @@ query getServiceContract($id: Int!) {
         price
         options {
           accountingServiceType
-          accountingServiceType
+          price
         }
       }
       withholding {
