@@ -58,6 +58,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import mutations from "../graphql/mutations/index";
+import { getJwtObject } from "@bankda/jangbuda-common";
 export default {
   setup() {
     const store = useStore();
@@ -88,7 +89,12 @@ export default {
       },
     }));
     signinDone((res) => {
-      store.commit("auth/setAuthData", res.data.login.accessToken);
+      const jwtObject = getJwtObject(res.data.login.accessToken);
+      if(!jwtObject.isExpired()) {
+        store.commit("auth/setAuthData", res.data.login.accessToken);
+      } else {
+        store.commit("auth/setAuthData", res.data.login.refreshToken);
+      }
       router.push("/dashboard");
     });
     onError((error) => {
