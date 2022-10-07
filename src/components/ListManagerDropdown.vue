@@ -1,7 +1,7 @@
 <template>
     <label class="lable-item">매니저명 :</label>
     <a-select ref="select" v-model:value="manager" placeholder="전체"  @change="updateManager(manager)">
-        <a-select-option v-for="item in result?.findManagerUsers" :key="item.id" :value="item.id">{{item.name}} {{hasEmail? item.email: ''}}
+        <a-select-option v-for="item in result?.findManagerUsers" :key="item.id" :value="item.id">{{item.name}} {{hasUsername? item.username: ''}}
         </a-select-option>
     </a-select>
 </template>
@@ -16,7 +16,7 @@ export default defineComponent({
             default: null,
             required: true
         },
-        hasEmail: {
+        hasUsername: {
             type: Boolean,
             default: false
         }
