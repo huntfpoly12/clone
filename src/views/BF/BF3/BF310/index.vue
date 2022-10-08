@@ -360,6 +360,7 @@ export default defineComponent({
             this.spinning = true
             let arrayNew = {
                 ...this.originData,
+                page : 1,
                 statuses: this.statuses.length > 0 ? this.statuses : [10, 20, 30, 99]
             } 
             this.refetchData(arrayNew)
