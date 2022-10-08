@@ -272,7 +272,7 @@ export default defineComponent({
     onResult((res) => {
       console.log(res);
       dataSource.value = res.data.searchUsers.datas
-    })
+    })   
     setTimeout(() => {
       spinning.value = !spinning.value;
     }, 1000);
@@ -385,9 +385,6 @@ export default defineComponent({
         this.dataSource = res.data.searchUsers.datas;
       });
     },
-
-
-
   },
 });
 </script>
