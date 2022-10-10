@@ -228,7 +228,9 @@ import { message } from 'ant-design-vue';
 import mutations from "../../../../graphql/mutations/CM/CM110/index";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/CM/CM110/index"
+
 import { useMutation } from "@vue/apollo-composable";
+import { getJwtObject } from "@bankda/jangbuda-common";
 
 function getBase64(file: File) {
     return new Promise((resolve, reject) => {
@@ -262,7 +264,8 @@ export default defineComponent({
         AddNewCM110Poup,
         EditCM110Popup,
         ListLoginPopup,
-        inputFormat
+        inputFormat,
+        getJwtObject
     },
     setup() {
         let modalAddNewStatus = ref(false);
@@ -368,6 +371,14 @@ export default defineComponent({
         const modalLogin = (data: any) => {
             modalLoginStatus.value = true;
             popupData.value = data;
+        }
+
+        const token = sessionStorage.getItem("token");
+        const jwtObject = getJwtObject(token);
+
+        let companyId = null
+        if (jwtObject.userType === 'c') {
+            companyId = jwtObject.companyId
         }
 
         //Submit form detail company
@@ -485,7 +496,8 @@ export default defineComponent({
             statusMailValidate,
             changeValueInputEmit,
             listDataMyCompanyUser,
-            updateDataCompany
+            updateDataCompany,
+            companyId
         };
     },
 });
