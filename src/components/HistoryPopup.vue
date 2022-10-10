@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf340">
+            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf330 || loadingBf340">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts">
                     <DxColumn caption="기록일시" data-field="loggedAt" />
                     <DxColumn caption="비고" data-field="remark" />
@@ -66,6 +66,7 @@ export default defineComponent({
         let visible = ref(false);
         const dataQuery = ref();
         let trigger320 = ref<boolean>(false);
+        let trigger330 = ref<boolean>(false);
         let trigger340 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
@@ -81,6 +82,10 @@ export default defineComponent({
                             trigger320.value = true;
                             refetchBf320();
                             break;
+                        case 'bf-330':
+                            trigger330.value = true;
+                            refetchBf330();
+                            break;
                         case 'bf-340':
                             trigger340.value = true;
                             refetchBf340();
@@ -95,7 +100,7 @@ export default defineComponent({
                 }
             }
         );
-        
+
         // get getCompanyLogs 320
         const { result: resultBf320, loading: loadingBf320, refetch: refetchBf320 } = useQuery(
             queries.getCompanyLogs,
@@ -111,6 +116,22 @@ export default defineComponent({
                 dataTableShow.value = value.getCompanyLogs;
             }
         });
+
+      // get getSalesRepresentativeLogs  340
+      const { result: resultBf330, loading: loadingBf330, refetch: refetchBf330 } = useQuery(
+            queries.getServiceContractLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger330.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultBf330, (value) => {
+            if (value && value.getServiceContractLogs) {
+                dataTableShow.value = value.getServiceContractLogs;
+            }
+        });
+
 
         // get getSalesRepresentativeLogs  340
         const { result: resultBf340, loading: loadingBf340, refetch: refetchBf340 } = useQuery(
@@ -135,6 +156,7 @@ export default defineComponent({
             dataTableShow,
             visible,
             loadingBf320,
+            loadingBf330,
             loadingBf340,
             formarDate
         }
