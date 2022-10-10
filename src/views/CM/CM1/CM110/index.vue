@@ -202,10 +202,10 @@
                     </a-form-item>
 
                     <AddNewCM110Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-                    
-                    <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+
+                    <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit"
                         :data="popupData" />
-                        
+
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                         :data="popupData" title="변경이력[cm-000-pop]" />
                     <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false"
@@ -376,8 +376,11 @@ export default defineComponent({
             modalAddNewStatus.value = true;
         }
         const openEditModal = (data: any) => {
-            modalEditStatus.value = true; 
-            popupData.value = data.data.id;
+            modalEditStatus.value = true;
+            popupData.value = {
+                userId: data.data.id,
+                companyId: companyId
+            };
         }
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = true;
@@ -487,7 +490,7 @@ export default defineComponent({
 
         const { refetch: refetchDataUsers, onResult: resultUsers, result: resultDataUsers } = useQuery(queries.getListUserCompany, dataGetListUsers, () => ({ fetchPolicy: "no-cache", }))
         resultUsers((res) => {
-            console.log(resultDataUsers);
+            // console.log(resultDataUsers);
         })
 
         return {
@@ -551,6 +554,11 @@ export default defineComponent({
                     stringConvert += '복지용구'
             })
             return stringConvert
+        },
+
+        closePopupEdit(){
+            this.modalEditStatus = false
+            this.refetchDataUsers()
         }
     },
 
