@@ -28,7 +28,7 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
-        const sale = ref();
+        const sale = ref(props.selected);
         const { result, loading, error, onResult, refetch } = useQuery(queries.getListSale);
         const checkAll = () => {
             console.log("123412");

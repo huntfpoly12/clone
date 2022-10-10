@@ -1,0 +1,53 @@
+import gql from "graphql-tag";
+export default gql`
+query getServiceContractLogs ($id: Int!) {
+    getServiceContractLogs (id: $id) {
+    companyId
+    ts
+    servicePrice
+    accountingPrice
+    withholdingPrice
+    usedAccountingCount
+    usedWithholding
+    usedServiceInfo{
+        totalPrice
+        accountingPrice
+        withholdingPrice
+        accounting{
+            longTermCareInstitutionNumber
+            facilityBizType
+            name
+            startYearMonth
+            capacity
+            registrationCardFileStorageId
+            facilityBusinessId
+            price
+            options{
+                accountingServiceType
+                price
+            }
+        }
+        withholding{
+            startYearMonth
+            capacity
+            price
+            options{
+                withholdingServiceType
+                price
+            }
+        }
+    }
+    salesRepresentativeId
+    manageUserId
+    manageStartDate
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+    ip
+    active
+    loggedAt
+    remark
+  }
+}
+`

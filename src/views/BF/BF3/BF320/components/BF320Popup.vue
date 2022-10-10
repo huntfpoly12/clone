@@ -340,13 +340,37 @@ export default defineComponent({
                     refetchMemo();
                     refetch();
                 } else {
+                    formStateMomes.value = [{
+                        memoId: null,
+                        ownerUserId: 0,
+                        ownerName: "",
+                        ownerUsername: "",
+                        memo: "",
+                        createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
+                        createdBy: "",
+                        updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
+                        updatedBy: "",
+                        ip: "",
+                        active: "",
+                    }];
                     visible.value = newValue;
                     trigger.value = false;
                 }
             }
         );
 
-        //get detail company
+        // get company
+        const { result, loading, refetch } = useQuery(
+            queries.getCompany,
+            dataQuery,
+            () => ({
+                enabled: trigger.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        
+        // get list memo of company
         const { result: resultMemo, refetch: refetchMemo } = useQuery(
             queries.getCompanyManageMemos,
             dataQueryMemos,
@@ -361,15 +385,7 @@ export default defineComponent({
             }
         });
 
-        // get list memo of company
-        const { result, loading, refetch } = useQuery(
-            queries.getCompany,
-            dataQuery,
-            () => ({
-                enabled: trigger.value,
-                fetchPolicy: "no-cache",
-            })
-        );
+
 
         // mutation create memo 
 

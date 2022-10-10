@@ -14,6 +14,6 @@
     "skipLibCheck": true,
     "allowJs": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/mixins/uploadImage.js"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/mixins/uploadImage.js", "src/graphql/queries/common"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
