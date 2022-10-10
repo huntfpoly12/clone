@@ -509,7 +509,6 @@ export default defineComponent({
         watch(
             () => props.modalStatus,
             (newValue) => {
-                console.log(formState,'data state');
                 if (newValue) {
                     dataQuery.value = { id: props.idRowEdit };
                     dataQueryMemos.value = { companyId: props.idRowEdit };
@@ -652,7 +651,6 @@ export default defineComponent({
                 formState.manageUserId = value.getServiceContract.manageUserId;
                 // process price Company / Accounting facility business list
                 if (value.getServiceContract.usedServiceInfo.accounting.length > 0) {
-                    console.log(value.getServiceContract.usedServiceInfo.accounting,'accounting.....');
                     value.getServiceContract.usedServiceInfo.accounting.map((el: any) => {
                         formState.usedServiceInfoAccountingPrice += el.price;
                         formState.checkBoxAccBasicFee = true;

@@ -74,7 +74,6 @@ export default defineComponent({
             () => props.modalStatus,
             (newValue, old) => {
                 if (newValue) {
-                    console.log(props.idRowEdit);
                     visible.value = newValue;
                     dataQuery.value = { id: props.idRowEdit };
                     switch (props.typeHistory) {
