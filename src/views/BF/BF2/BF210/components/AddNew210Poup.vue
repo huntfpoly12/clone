@@ -31,10 +31,13 @@
             </a-form-item>
 
             <a-form-item label="회원종류">
-              <a-select style="width: 150px" v-model:value="dataMode.color" option-label-prop="children">
-                <a-select-option value="중간매니저" label="중간매니저">
-                  <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
-                </a-select-option>
+              <a-select ref="select" v-model:value="dataMode.color" style="width: 120px" :options="options"
+                :field-names="{ label: 'name', value: 'id', options: 'children' }" @focus="focus"
+                @change="handleChange"> 
+              </a-select>
+
+
+              <a-select style="width: 150px" v-model:value="dataMode.color">
                 <a-select-option value="담당매니저" label="담당매니저">
                   <a-tag :color="getColorTag('담당매니저')">담당매니저</a-tag>
                 </a-select-option>
@@ -98,7 +101,7 @@
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="screenRoles" caption="권한그룹설명"/>
+            <DxColumn data-field="screenRoles" caption="권한그룹설명" />
             <DxColumn :width="50" cell-template="modal-table" />
             <template #modal-table="{}">
               <div class="action-menu">
@@ -228,7 +231,7 @@ export default defineComponent({
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
-    const handleChange = (value: string) => {
+    const handleChange = (value: any) => {
       console.log(`selected ${value}`);
     };
     const handleBlur = () => {
@@ -258,6 +261,31 @@ export default defineComponent({
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
     };
+    const focus = () => {
+      console.log('focus');
+    };
+    const options = ref<SelectProps['options']>([
+      {
+        id: 'jack',
+        name: 'Jack',
+        children: [
+          {
+            id: 'small jack',
+            name: 'samll Jack',
+          },
+        ],
+      },
+      {
+        id: 'jack',
+        name: 'Jack',
+        children: [
+          {
+            id: 'small jack',
+            name: 'samll Jack',
+          },
+        ],
+      },
+    ]);
 
     const dateFormat = "YYYY-MM-DD";
 
@@ -356,7 +384,7 @@ export default defineComponent({
     });
     return {
       labelCol,
-
+      focus,
       wrapperCol,
       bf310Detail,
       layout,
@@ -379,6 +407,7 @@ export default defineComponent({
       createUser,
       dataSource,
       userCreated,
+      options,
     };
   },
 

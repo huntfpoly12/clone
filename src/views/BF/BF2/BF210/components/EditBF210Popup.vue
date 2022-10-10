@@ -148,11 +148,13 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, reactive, computed } from "vue";
+import { ref, defineComponent, reactive, computed, watch } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import type { SelectProps } from "ant-design-vue";
+import { useQuery } from "@vue/apollo-composable";
+import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import {
   DxDataGrid,
   DxColumn,
@@ -239,7 +241,7 @@ export default defineComponent({
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
-    const handleChange = (value: string) => {
+    const handleChange = (value: any) => {
       console.log(`selected ${value}`);
     };
     const handleBlur = () => {
@@ -280,26 +282,59 @@ export default defineComponent({
       },
     };
 
-    const formState = {
-        id: 1,
-        type: "",
-        username: "",
-        name: "",
-        mobilePhone: "",
-        email: "",
-        president: true,
-        managerGrade: 1,
-        accountingRole: true,
-        withholdingRole: true,
-        createdAt: 1,
-        createdBy: "",
-        updatedAt: 1,
-        updatedBy: "",
-        ip: "",
-        active: true,
-        facilityBusinesses: [],
-        screenRoleGroups: [],
-    };
+    const formState = reactive({
+      id: 1,
+      type: "",
+      username: "",
+      name: "",
+      mobilePhone: "",
+      email: "",
+      president: true,
+      managerGrade: 1,
+      accountingRole: true,
+      withholdingRole: true,
+      createdAt: 1,
+      createdBy: "",
+      updatedAt: 1,
+      updatedBy: "",
+      ip: "",
+      active: true,
+      facilityBusinesses: [],
+      screenRoleGroups: [],
+    });
+    const dataQuery = ref();
+    let trigger = ref<boolean>(false);
+    const { result, loading, refetch } = useQuery(
+      queries.getUser,
+      dataQuery,
+      () => ({
+        enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    watch(result, (value) => {
+      if (value && value.getUser) {
+        formState.id = value.getUser.id;
+        formState.type = value.getUser.type;
+        formState.username = value.getUser.username;
+        formState.mobilePhone = value.getUser.mobilePhone;
+        formState.email = value.getUser.email;
+        formState.president = value.getUser.president;
+        formState.managerGrade = value.getUser.managerGrade;
+        formState.accountingRole = value.getUser.accountingRole;
+        formState.createdAt = value.getUser.createdAt;
+        formState.updatedAt = value.getUser.updatedAt;
+        formState.updatedBy = value.getUser.updatedBy;
+        formState.ip = value.getUser.ip;
+        formState.active = value.getUser.active;
+        formState.facilityBusinesses = value.getUser.facilityBusinesses;
+        formState.screenRoleGroups = value.getUser.screenRoleGroups;
+
+      }
+
+    });
+
+
     const onFinish = (values: any) => {
       console.log("Success:", values);
     };
@@ -399,7 +434,7 @@ export default defineComponent({
         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     },
-    
+
   },
 });
 </script>

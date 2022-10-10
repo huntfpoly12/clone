@@ -35,10 +35,10 @@
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
             <label class="lable-item">회원종류 :</label>
-            <a-select style="width: 130px" v-model:value="dataSearch.type" option-label-prop="children">
-              <!-- <a-select-option value="" label="고객사">
-                <a-tag :color="getColorTag('고객사')">전체</a-tag>
-              </a-select-option> -->
+            <a-select style="width: 10px" v-model:value="dataSearch.type" option-label-prop="children">
+              <a-select-option value="" label="전체">
+                <a-tag style="width: 52px" :color="getColorTag('전체')"> 전체 </a-tag>
+              </a-select-option>
               <a-select-option value="c" label="고객사">
                 <a-tag :color="getColorTag('c')">고객사</a-tag>
               </a-select-option>
@@ -132,10 +132,10 @@
       </DxDataGrid>
 
       <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-      <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
+      <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" :idUserEdit="idRowEdit"
         title="회원관리 [ bf-210 –pop ]" />
       <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-        title="변경이력[cm-000-pop]" />
+        title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" />
       <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
         title="로그인이력 [ cm-000-popLogin ]" :idRow="rowChoose" />
     </div>
@@ -280,29 +280,18 @@ export default defineComponent({
     const searching = () => {
       spinning.value = !spinning.value;
 
-      originData.value = {
-        page: 1,
-        rows: 10,
-        type: "m",
-        groupCode: "",
-        groupName: "",
-        username: "",
-        name: "",
-        active: true
-      }
+     
 
       let dataNew = {
-        page: dataSearch.value.page,
-        rows: dataSearch.value.rows,
+        page: 1,
+        rows: 10,
         type: dataSearch.value.type,
         groupCode: dataSearch.value.groupCode,
         groupName: dataSearch.value.groupName,
         username: dataSearch.value.username,
         name: dataSearch.value.name,
         active: dataSearch.value.active,
-      }
-
-      console.log(dataNew);
+      } 
 
 
       refetchData(dataNew)
@@ -346,6 +335,7 @@ export default defineComponent({
       this.modalAddNewStatus = true;
     },
     setModalEditVisible(data: any) {
+      this.idRowEdit = data.data.id
       this.modalEditStatus = true;
       this.popupData = data;
     },
@@ -367,6 +357,8 @@ export default defineComponent({
         return "grey";
       } else if (data === "p") {
         return "#cdc71c";
+      } else if (data === "") {
+        return "9999";        
       }
     },
     getAbleDisable(data: any) {
