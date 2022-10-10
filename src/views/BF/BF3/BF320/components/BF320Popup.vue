@@ -306,20 +306,20 @@ export default defineComponent({
             unpaidMonths: 0
         });
         const formStateMomes = ref([
-                    {
-                        memoId: null,
-                        ownerUserId: 0,
-                        ownerName: "",
-                        ownerUsername: "",
-                        memo: "",
-                        createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
-                        createdBy: "",
-                        updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
-                        updatedBy: "",
-                        ip: "",
-                        active: "",
-                    }
-                ]);
+            {
+                memoId: null,
+                ownerUserId: 0,
+                ownerName: "",
+                ownerUsername: "",
+                memo: "",
+                createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
+                createdBy: "",
+                updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
+                updatedBy: "",
+                ip: "",
+                active: "",
+            }
+        ]);
         const labelCol = ref({ style: { width: "150px" } });
         const wrapperCol = ref({ span: 14 });
         const radioStyle = ref({
@@ -358,7 +358,7 @@ export default defineComponent({
         watch(resultMemo, (value) => {
             if (value && value.getCompanyManageMemos.length > 0) {
                 formStateMomes.value = value.getCompanyManageMemos;
-            } 
+            }
         });
 
         // get list memo of company
@@ -372,10 +372,10 @@ export default defineComponent({
         );
 
         // mutation create memo 
-        
+
         const {
             mutate: actionCreateMemo,
-          onError : onErrorMemo,
+            onError: onErrorMemo,
             onDone: onCreatedMemo
         } = useMutation(mutations.createCompanyManageMemo);
 
@@ -383,7 +383,7 @@ export default defineComponent({
             refetchMemo();
             message.success('Created memo successfully', 4);
         });
-     
+
         // mutation update memo 
         const {
             mutate: actionUpdateMemo,
@@ -418,9 +418,9 @@ export default defineComponent({
                 ownerName: "",
                 ownerUsername: "",
                 memo: "",
-                createdAt:  dayjs(new Date()).format('YYYY/MM/DD'),
+                createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
                 createdBy: "",
-                updatedAt:  dayjs(new Date()).format('YYYY/MM/DD'),
+                updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
                 updatedBy: "",
                 ip: "",
                 active: "",
@@ -432,10 +432,10 @@ export default defineComponent({
         const handleAddMemo = (note: any, mmId: any = null) => {
 
             if (note !== '' && mmId == null) {
-                console.log(note,mmId,'add memo');
+                console.log(note, mmId, 'add memo');
                 actionCreateMemo({ companyId: formState.id, memo: note });
             } else {
-                console.log(note,mmId,'update memo');
+                console.log(note, mmId, 'update memo');
                 actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         }
@@ -495,7 +495,7 @@ export default defineComponent({
                 formState.canceledAt = value.getCompany.canceledAt;
                 formState.unpaidMonths = value.getCompany.unpaidMonths;
             }
-            
+
         });
         const changeTypeCompany = (bizType: number) => {
             if (bizType == 2) {
