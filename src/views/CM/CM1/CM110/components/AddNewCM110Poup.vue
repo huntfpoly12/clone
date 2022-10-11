@@ -137,13 +137,13 @@ export default defineComponent({
 		const statusMailValidate = ref<boolean>(true);
 		const options = ref<SelectProps['options']>([]);
 		let companyId = 0
+		let triggers = ref<boolean>(false);
+		let dataQuery = ref()
 
 		watch(() => props.modalStatus, (value) => {
-			companyId = props.data.companyId
-			let dataCall = {
-				companyId: companyId
-			}
-			refetchData(dataCall)
+			dataQuery.value = { companyId: props.data.companyId };
+			triggers.value = true;
+			refetchData()
 		})
 
 		for (let i = 10; i < 36; i++) {
@@ -190,7 +190,7 @@ export default defineComponent({
 		}
 
 		let bizTypeList = ref([])
-		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, {}, () => ({ fetchPolicy: "no-cache", }))
+		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
 		onResult(e => {
 			let dataRes: any = []
 			e.data.getMyCompanyFacilityBusinesses.map((val: any) => {

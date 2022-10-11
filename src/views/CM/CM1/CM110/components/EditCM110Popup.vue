@@ -149,6 +149,10 @@ export default defineComponent({
         const options = ref<SelectProps['options']>([]);
         let formState: any = ref({});
         let valueFacilyti = ref([]);
+        let trigger = ref<boolean>(false);
+        let dataCall = ref()
+        let dataUser = ref()
+
         for (let i = 10; i < 36; i++) {
             const value = i.toString(36) + i;
             options?.value?.push({
@@ -158,7 +162,7 @@ export default defineComponent({
         }
 
         // Get detail user
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDetailUser, {}, () => ({ fetchPolicy: "no-cache", }))
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDetailUser, dataUser, () => ({ enabled: trigger.value, fetchPolicy: "no-cache", }))
 
         //Update info user
         const {
@@ -215,7 +219,7 @@ export default defineComponent({
         })
 
         let bizTypeList = ref([])
-        const { refetch: refetchFacility, onResult: resultFacility } = useQuery(queries.getDataFacilityBusiness, {}, () => ({ fetchPolicy: "no-cache", }))
+        const { refetch: refetchFacility, onResult: resultFacility } = useQuery(queries.getDataFacilityBusiness, dataCall, () => ({ enabled: trigger.value, fetchPolicy: "no-cache", }))
         resultFacility(e => {
             let dataRes: any = []
             e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
@@ -228,11 +232,14 @@ export default defineComponent({
         })
 
         watch(() => props.data, (value) => {
-            refetchData(value)
-            let dataCall = {
+            dataCall.value = {
                 companyId: props.data.companyId
             }
-            refetchFacility(dataCall)
+            dataUser.value = value
+
+            trigger.value = true;
+            refetchData()
+            refetchFacility()
         })
 
         const confirmUpdate = () => {

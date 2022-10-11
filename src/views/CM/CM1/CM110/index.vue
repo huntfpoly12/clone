@@ -391,6 +391,9 @@ export default defineComponent({
             popupData.value = data;
         }
         const modalLogin = (data: any) => {
+            console.log(data);
+            console.log(modalLoginStatus, "modalLoginStatus");
+            
             modalLoginStatus.value = true;
             popupData.value = data;
         }
@@ -472,7 +475,6 @@ export default defineComponent({
                 statusMailValidate.value = true;
             }
         }
-
 
         const originData = {
             companyId: companyId
