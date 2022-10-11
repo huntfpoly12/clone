@@ -45,7 +45,7 @@
         <DxButton
           id="button"
           :use-submit-behavior="true"
-          text="Reset Password"
+          text="비밀번호 리셋"
           type="success"
         />
       </div>
