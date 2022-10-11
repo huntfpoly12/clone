@@ -35,8 +35,8 @@
                     <a-row>
                         <a-col :span="24">
                             <a-form-item label="회계권한(담당사업)">
-                                <a-select v-model:value="valueFacilyti" :options="bizTypeListArr" mode="tags"
-                                    placeholder="Please select" max-tag-count="responsive">
+                                <a-select v-model:value="valueFacilyti" :options="bizTypeList" mode="tags"
+                                    placeholder="선택하십시오" max-tag-count="responsive">
                                 </a-select>
                             </a-form-item>
                         </a-col>
@@ -108,7 +108,7 @@
                 </a-row>
                 <template #footer>
                     <a-button>아니오</a-button>
-                    <a-button type="primary">네. 발송합니다</a-button>
+                    <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button>
                 </template>
             </a-modal>
         </div>
@@ -122,7 +122,6 @@ import { MailOutlined } from '@ant-design/icons-vue';
 import type { SelectProps } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/CM/CM110/index"
-import bizTypeList from "../../../../../constants/facilityBizType";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import { message } from 'ant-design-vue';
 
@@ -148,18 +147,12 @@ export default defineComponent({
         const visible = ref<boolean>(false);
         const statusMailValidate = ref<boolean>(true);
         const options = ref<SelectProps['options']>([]);
+        let formState: any = ref({});
+        let valueFacilyti = ref([]);
+        let trigger = ref<boolean>(false);
+        let dataCall = ref()
+        let dataUser = ref()
 
-        const {
-            mutate: updateUser,
-            onDone: onDoneUpdate,
-            onError: onErrorUpdate
-        } = useMutation(mutations.updateInfoUser);
-
-
-        onDoneUpdate((e) => {
-            message.success(`Update success!`);
-            emit("closePopup", false)
-        })
         for (let i = 10; i < 36; i++) {
             const value = i.toString(36) + i;
             options?.value?.push({
@@ -167,14 +160,34 @@ export default defineComponent({
                 value,
             });
         }
-        let formState: any = ref({});
 
+        // Get detail user
+        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDetailUser, dataUser, () => ({ enabled: trigger.value, fetchPolicy: "no-cache", }))
+
+        //Update info user
+        const {
+            mutate: updateUser,
+            onDone: onDoneUpdate,
+            onError: onErrorUpdate
+        } = useMutation(mutations.updateInfoUser);
+
+        //Send mail 
+        const {
+            mutate: sendGmail,
+            onDone: doneSendGmail,
+            onError: errorSendGmail
+        } = useMutation(mutations.sendEmail);
+
+
+        onDoneUpdate((e) => {
+            message.success(`Update success!`);
+            emit("closePopup", false)
+        })
 
         const confirmPopup = () => {
             visible.value = true;
         }
 
-        let valueFacilyti = ref([]);
         const validateNumber = (e: any, name: string) => {
             let valNumberOnly = e.target.value.replace(/\D+/g, '');
             switch (name) {
@@ -196,35 +209,40 @@ export default defineComponent({
             }
         }
 
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDetailUser, {}, () => ({ fetchPolicy: "no-cache", }))
-
         onResult((res) => {
             let newFaci: any = []
             res.data.getMyCompanyUser.facilityBusinesses.map((e: any) => {
-                console.log(e);
-
                 newFaci.push(e.facilityBusinessId)
             })
             valueFacilyti.value = newFaci
             formState.value = res.data.getMyCompanyUser
         })
 
-        let bizTypeListArr: any = []
-        bizTypeList.map(e => {
-            let rowNew = {
-                label: e.Name,
-                value: e.ID
-            }
-            bizTypeListArr.push(rowNew)
+        let bizTypeList = ref([])
+        const { refetch: refetchFacility, onResult: resultFacility } = useQuery(queries.getDataFacilityBusiness, dataCall, () => ({ enabled: trigger.value, fetchPolicy: "no-cache", }))
+        resultFacility(e => {
+            let dataRes: any = []
+            e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
+                dataRes.push({
+                    label: val.name,
+                    value: val.facilityBusinessId
+                })
+            })
+            bizTypeList.value = dataRes
         })
 
-
         watch(() => props.data, (value) => {
-            refetchData(value)
-        });
+            dataCall.value = {
+                companyId: props.data.companyId
+            }
+            dataUser.value = value
+
+            trigger.value = true;
+            refetchData()
+            refetchFacility()
+        })
 
         const confirmUpdate = () => {
-            console.log('Confirm', props.data);
             let dataUpdate = {
                 companyId: props.data.companyId,
                 userId: props.data.userId,
@@ -239,8 +257,21 @@ export default defineComponent({
                 }
             }
             updateUser(dataUpdate)
-
         }
+
+        doneSendGmail((e) => {
+            message.success(`Send email success!`);
+            // emit("closePopup", false)
+        })
+
+        const sendMessToGmail = () => {
+            let dataCallSendEmail = {
+                companyId: props.data.companyId,
+                userId: props.data.userId,
+            }
+            sendGmail(dataCallSendEmail)
+        }
+
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -251,10 +282,12 @@ export default defineComponent({
             validateNumber,
             validateEmail,
             statusMailValidate,
-            bizTypeListArr,
             valueFacilyti,
-            confirmUpdate
-
+            confirmUpdate,
+            sendGmail,
+            sendMessToGmail,
+            bizTypeList,
+            refetchFacility
         };
     },
 
@@ -262,8 +295,6 @@ export default defineComponent({
         setModalVisible() {
             this.$emit('closePopup', false)
         },
-
-
     }
 });
 </script>
