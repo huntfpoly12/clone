@@ -110,7 +110,7 @@
                 </div>
                 <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :idRowEdit="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-                    title="변경이력[cm-000-pop]" />
+                    title="변경이력[cm-000-pop]" :idRowEdit="idSubRequest" typeHistory="bf-330"/>
             </div>
         </div>
     </a-spin>
@@ -283,6 +283,7 @@ export default defineComponent({
             this.popupData = data;
         },
         modalHistory(data) {
+            this.idSubRequest = data.data.id;
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
