@@ -138,7 +138,7 @@
                         </div>
                         <div style="display: flex">
                             <div>
-                                <imgUpload :title="titleModal" @update-img="getImgUrl" style="margin-top: 10px" />
+                                <imgUpload :title="titleModal" v-model:imageId="imageId" @update-img="getImgUrl" style="margin-top: 10px" />
                             </div>
 
                             <a-col :span="7">
@@ -467,6 +467,7 @@ export default {
             namePattern: /^[^0-9]+$/,
             messagePopup: "",
             plainOptions: ["신청합니다", "신청하지않습니다"],
+            imageId: null
         };
     },
     computed: {

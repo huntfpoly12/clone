@@ -9,6 +9,11 @@ const mutations = {
       }
     }
   `,
+  ResetPassword: gql`
+  mutation resetPassword($key: String!, $password: String!) {
+    resetPassword(key: $key, password: $password)
+  }
+`,
 };
 
 export default mutations;

@@ -4,7 +4,7 @@ import getServiceContractManageMemos from "./getServiceContractManageMemos";
 const queries = {
     getServiceContract: getServiceContract,
     searchServiceContract: searchServiceContract,
-    getNote : getServiceContractManageMemos
+    getServiceContractManageMemos : getServiceContractManageMemos
 };
 
 export default queries;
