@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="auth-form">
-    <div class="dx-fieldset-header">비밀번호 설정</div>
+    <div class="dx-fieldset-header">로그인</div>
     <form @submit="submitForm">
       <p v-if="errors" class="invalid">
         {{ errors }}
