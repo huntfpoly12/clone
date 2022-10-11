@@ -4,11 +4,12 @@ import LoginLayout from '../layouts/LoginLayout.vue'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import RquestContract from "../views/requestContract/index.vue"
 import ResetPassword from "../views/ResetPassword.vue"
+import ChangePassword from "../views/ChangePassword.vue"
 const routes = [
   { path: "/", component: DefaultLayout, 
     meta: {
-    needAuth: true,
-    title: 'Home'
+      needAuth: true,
+      title: 'Home'
     } 
   },
   {
@@ -28,6 +29,16 @@ const routes = [
       {
         path: "recovery/:key",
         component: ResetPassword
+      }
+    ]
+  },
+  {
+    path: "/change-password",
+    component: LoginLayout,
+    children: [
+      {
+        path: "",
+        component: ChangePassword
       }
     ]
   },
