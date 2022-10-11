@@ -125,12 +125,14 @@
                             </div>
                         </a-form>
                     </div>
+
                     <a-form-item class="btn-submit">
                         <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
                     <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false"
                         :data="fileImage" />
+
                 </a-tab-pane>
 
                 <a-tab-pane key="2" tab="이용자">
@@ -201,15 +203,14 @@
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
 
-                    <AddNewCM110Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+                    <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" @closePopup="closePopupAdd" />
 
-                    <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit"
-                        :data="popupData" />
+                    <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :data="popupData" />
 
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        :data="popupData" title="변경이력[cm-000-pop]" />
+                        :data="popupData" title="변경이력" />
                     <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false"
-                        :data="popupData" title="로그인이력 [ cm-000-popLogin ]" />
+                        :data="popupData" title="로그인이력" />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -308,7 +309,7 @@ export default defineComponent({
             message.success(`Update successfully`);
         })
 
-        onError: onErrorUpdate((res) => {
+        onErrorUpdate((res) => {
             spinning.value = !spinning.value;
             message.error(`Update false`);
         })
@@ -373,6 +374,9 @@ export default defineComponent({
             modalStampReviewStatus.value = true;
         };
         const openAddNewModal = () => {
+            popupData.value = {
+                companyId: companyId
+            };
             modalAddNewStatus.value = true;
         }
         const openEditModal = (data: any) => {
@@ -556,8 +560,13 @@ export default defineComponent({
             return stringConvert
         },
 
-        closePopupEdit(){
+        closePopupEdit() {
             this.modalEditStatus = false
+            this.refetchDataUsers()
+        },
+
+        closePopupAdd() {
+            this.modalAddNewStatus = false
             this.refetchDataUsers()
         }
     },
@@ -565,6 +574,7 @@ export default defineComponent({
 
 });
 </script>
+
 <style scoped>
 .page-content>>>.cell-button-add {
     padding-left: 100px !important;
