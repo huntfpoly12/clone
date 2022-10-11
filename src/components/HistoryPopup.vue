@@ -77,6 +77,7 @@ export default defineComponent({
                 if (newValue) {
                     visible.value = newValue;
                     dataQuery.value = { id: props.idRowEdit };
+                    
                     switch (props.typeHistory) {
                         case 'bf-320':
                             trigger320.value = true;
@@ -122,8 +123,8 @@ export default defineComponent({
             }
         });
 
-      // get getSalesRepresentativeLogs  340
-      const { result: resultBf330, loading: loadingBf330, refetch: refetchBf330 } = useQuery(
+        // get getSalesRepresentativeLogs  340
+        const { result: resultBf330, loading: loadingBf330, refetch: refetchBf330 } = useQuery(
             queries.getServiceContractLogs,
             dataQuery,
             () => ({
@@ -169,10 +170,6 @@ export default defineComponent({
         });
 
 
-
-
-
-
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -184,7 +181,8 @@ export default defineComponent({
             loadingBf330,
             loadingBf340,
             loadingBf210,
-            formarDate
+            formarDate,
+            dataQuery
         }
     },
     methods: {
