@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf330 || loadingBf340">
+            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts">
                     <DxColumn caption="기록일시" data-field="loggedAt" />
                     <DxColumn caption="비고" data-field="remark" />
@@ -68,6 +68,7 @@ export default defineComponent({
         let trigger320 = ref<boolean>(false);
         let trigger330 = ref<boolean>(false);
         let trigger340 = ref<boolean>(false);
+        let trigger210 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         watch(
@@ -76,6 +77,7 @@ export default defineComponent({
                 if (newValue) {
                     visible.value = newValue;
                     dataQuery.value = { id: props.idRowEdit };
+                    
                     switch (props.typeHistory) {
                         case 'bf-320':
                             trigger320.value = true;
@@ -89,6 +91,10 @@ export default defineComponent({
                             trigger340.value = true;
                             refetchBf340();
                             break;
+                        case 'bf-210':
+                            trigger210.value = true;
+                            refetchBf210();
+                            break;
                         default:
                             break;
                     }
@@ -96,6 +102,7 @@ export default defineComponent({
                     visible.value = newValue;
                     trigger320.value = false;
                     trigger340.value = false;
+                    trigger210.value = false;
                 }
             }
         );
@@ -116,8 +123,8 @@ export default defineComponent({
             }
         });
 
-      // get getSalesRepresentativeLogs  340
-      const { result: resultBf330, loading: loadingBf330, refetch: refetchBf330 } = useQuery(
+        // get getSalesRepresentativeLogs  340
+        const { result: resultBf330, loading: loadingBf330, refetch: refetchBf330 } = useQuery(
             queries.getServiceContractLogs,
             dataQuery,
             () => ({
@@ -147,6 +154,22 @@ export default defineComponent({
             }
         });
 
+        // get getUserLogs  210
+        const { result: resultBf210, loading: loadingBf210, refetch: refetchBf210 } = useQuery(
+            queries.getUserLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger210.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultBf210, (value) => {
+            if (value && value.getUserLogs) {
+                dataTableShow.value = value.getUserLogs;
+            }
+        });
+
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -157,7 +180,9 @@ export default defineComponent({
             loadingBf320,
             loadingBf330,
             loadingBf340,
-            formarDate
+            loadingBf210,
+            formarDate,
+            dataQuery
         }
     },
     methods: {

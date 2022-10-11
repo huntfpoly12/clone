@@ -1,22 +1,10 @@
 <template>
   <div id="components-modal-demo-position">
-    <a-modal
-      :visible="modalStatus"
-      centered
-      okText="저장하고 나가기"
-      cancelText="그냥 나가기"
-      @cancel="setModalVisible()"
-      width="50%"
-      :mask-closable="false"
-    >
+    <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
+      width="50%" :mask-closable="false">
       <h2 class="title_modal">회원정보</h2>
-      <a-form
-        v-bind="layout"
-        name="nest-messages"
-        :model="formState"
-        :validate-messages="validateMessages"
-        @finish="onFinish"
-      >
+      <a-form v-bind="layout" name="nest-messages" :model="formState" :validate-messages="validateMessages"
+        @finish="onFinish">
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID ">
@@ -24,49 +12,32 @@
               <button style="border: 1px solid grey">중복체크</button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input
-                style="width: 150px; margin-right: 10px"
-                v-model:value="createUser.username"
-              />
+              <a-input style="width: 150px; margin-right: 10px" v-model:value="createUser.username" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select
-                v-model:value="bf310Detail.name"
-                show-search
-                placeholder="Select a person"
-                style="width: 300px"
-                :options="selectSearch"
-                :filter-option="filterOption"
-                @focus="handleFocus"
-                @blur="handleBlur"
-                @change="handleChange"
-                class="select-search"
-              >
-                <template #suffixIcon
-                  ><search-outlined :size="14" class="ant-select-suffix"
-                /></template>
+              <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 300px"
+                :options="selectSearch" :filter-option="filterOption" @focus="handleFocus" @blur="handleBlur"
+                @change="handleChange" class="select-search">
+                <template #suffixIcon>
+                  <search-outlined :size="14" class="ant-select-suffix" />
+                </template>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :span="12">
             <a-form-item label="상태">
-              <a-switch
-                v-model:checked="bf310Detail.switch"
-                checked-children="이용중"
-                un-checked-children="이용중지"
-                style="width: 100px"
-              />
+              <a-switch v-model:checked="bf310Detail.switch" checked-children="이용중" un-checked-children="이용중지"
+                style="width: 100px" />
             </a-form-item>
 
             <a-form-item label="회원종류">
-              <a-select
-                style="width: 150px"
-                v-model:value="dataMode.color"
-                option-label-prop="children"
-              >
-                <a-select-option value="중간매니저" label="중간매니저">
-                  <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
-                </a-select-option>
+              <a-select ref="select" v-model:value="dataMode.color" style="width: 120px" :options="options"
+                :field-names="{ label: 'name', value: 'id', options: 'children' }" @focus="focus"
+                @change="handleChange"> 
+              </a-select>
+
+
+              <a-select style="width: 150px" v-model:value="dataMode.color">
                 <a-select-option value="담당매니저" label="담당매니저">
                   <a-tag :color="getColorTag('담당매니저')">담당매니저</a-tag>
                 </a-select-option>
@@ -74,9 +45,7 @@
                   <a-tag :color="getColorTag('영업자')">영업자</a-tag>
                 </a-select-option>
                 <a-select-option value="파트너" label="파트너">
-                  <a-tag style="color: black" :color="getColorTag('파트너')"
-                    >파트너</a-tag
-                  >
+                  <a-tag style="color: black" :color="getColorTag('파트너')">파트너</a-tag>
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -85,42 +54,21 @@
 
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item
-              type="number"
-              :name="['user', 'number']"
-              label="휴대폰"
-            >
+            <a-form-item type="number" :name="['user', 'number']" label="휴대폰">
               <div style="display: flex; align-items: flex-end">
-                <a-input
-                  @keypress="onlyNumber"
-                  type="text"
-                  v-model:value="createUser.mobilePhone"
-                  style="width: 150px; margin-right: 8px"
-                />
+                <a-input @keypress="onlyNumber" type="text" v-model:value="createUser.mobilePhone"
+                  style="width: 150px; margin-right: 8px" />
               </div>
             </a-form-item>
-            <a-form-item
-              :name="['user', 'email']"
-              label="이메일"
-              :rules="[{ type: 'email' }]"
-            >
+            <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]">
               <a-input v-model:value="createUser.email" style="width: 250px" />
 
-              <a-button
-                :disabled="!validated"
-                html-type="submit"
-                class="btn_submitemail"
-                danger
-                @click="showModal"
-                >비밀번호 변경
+              <a-button :disabled="!validated" html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
+                변경
               </a-button>
             </a-form-item>
             <a-form-item>
-              <a-modal
-                class="container_email"
-                v-model:visible="isShow"
-                @ok="handleSuccsess"
-              >
+              <a-modal class="container_email" v-model:visible="isShow" @ok="handleSuccsess">
                 <div id="modal_email" class="modal_email">
                   <mail-outlined style="padding-right: 10px" />
                   <div>
@@ -144,29 +92,21 @@
 
         <div style="position: relative">
           <div v-if="!bf310Detail.switch" class="overlay"></div>
-          <DxDataGrid
-            :data-source="dataSource"
-            :show-borders="true"
-            :allow-column-reordering="true"
-            :allow-column-resizing="true"
-            :column-auto-width="true"
-          >
+          <DxDataGrid :data-source="dataSource" :show-borders="true" :allow-column-reordering="true"
+            :allow-column-resizing="true" :column-auto-width="true">
             <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
 
-            <DxColumn
-              data-field="screenRoles"
-              caption="코드"
-              :width="200"
-              :fixed="true"
-            />
+            <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="권한그룹설명" />
+            <DxColumn data-field="screenRoles" caption="권한그룹설명" />
             <DxColumn :width="50" cell-template="modal-table" />
             <template #modal-table="{}">
-              <div class="action-menu"><menu-outlined /></div>
+              <div class="action-menu">
+                <menu-outlined />
+              </div>
             </template>
 
             <template class="custom-action">
@@ -215,6 +155,7 @@ import { any } from "vue-types";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 
+
 interface FormState {
   name: string;
   영업자코드: string;
@@ -253,7 +194,7 @@ export default defineComponent({
     DxSearchPanel,
   },
   created() {
-    console.log("createUser", this.createUser);
+    // console.log("createUser", this.createUser);
   },
   data() {
     return {
@@ -290,7 +231,7 @@ export default defineComponent({
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
-    const handleChange = (value: string) => {
+    const handleChange = (value: any) => {
       console.log(`selected ${value}`);
     };
     const handleBlur = () => {
@@ -320,6 +261,31 @@ export default defineComponent({
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
     };
+    const focus = () => {
+      console.log('focus');
+    };
+    const options = ref<SelectProps['options']>([
+      {
+        id: 'jack',
+        name: 'Jack',
+        children: [
+          {
+            id: 'small jack',
+            name: 'samll Jack',
+          },
+        ],
+      },
+      {
+        id: 'jack',
+        name: 'Jack',
+        children: [
+          {
+            id: 'small jack',
+            name: 'samll Jack',
+          },
+        ],
+      },
+    ]);
 
     const dateFormat = "YYYY-MM-DD";
 
@@ -382,11 +348,11 @@ export default defineComponent({
       }
     };
     const createUser = reactive({
-      type: "type test",
-      username: "Hoang Thanh Trang",
-      name: "회계설정",
+      type: "",
+      username: "",
+      name: "",
       screenRoleGroupIds: ["r", "m", "c", "p", "s"],
-      mobilePhone: "123456789",
+      mobilePhone: "",
       email: "",
     });
     const originData = ref({
@@ -415,12 +381,10 @@ export default defineComponent({
       // } else {
       // }
       dataSource.value = res.data.searchScreenRoleGroups.datas;
-
-      console.log(dataSource.value, "data");
     });
     return {
       labelCol,
-
+      focus,
       wrapperCol,
       bf310Detail,
       layout,
@@ -443,6 +407,7 @@ export default defineComponent({
       createUser,
       dataSource,
       userCreated,
+      options,
     };
   },
 
@@ -483,22 +448,27 @@ export default defineComponent({
 ::v-deep .ant-modal-footer {
   padding-top: 0;
 }
+
 ::v-deep .ant-form-item-control {
   display: flex;
   flex-direction: row;
 }
-::v-deep .ant-form-item-label > label {
+
+::v-deep .ant-form-item-label>label {
   width: 110px;
 }
-.select-search ::v-deep .ant-select-arrow .anticon > svg {
+
+.select-search ::v-deep .ant-select-arrow .anticon>svg {
   width: 16px;
   height: 16px;
 }
+
 ::v-deep .ant-form-item-explain-error {
   width: 400px;
   margin-left: 5px;
   padding-top: 5px;
 }
+
 .overlay {
   position: absolute;
   top: 0;
@@ -508,17 +478,21 @@ export default defineComponent({
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.3);
 }
+
 .action-menu {
   text-align: center;
 }
+
 .title_modal {
   font-weight: 700;
   color: gray;
 }
+
 .modal_email ::v-deep .anticon svg {
   width: 50px;
   height: 50px;
 }
+
 .modal {
   width: 300px;
   padding: 30px;
@@ -527,15 +501,19 @@ export default defineComponent({
   font-size: 20px;
   text-align: center;
 }
+
 .modal_email {
   display: flex;
 }
+
 .btn_submitemail {
   margin-top: 10px;
 }
+
 .confirm-button {
   margin-left: 100px;
 }
+
 .confirm-modal p {
   white-space: normal;
   font-size: 13px;
@@ -570,6 +548,7 @@ export default defineComponent({
 .ant-form-item-label {
   text-align: left;
 }
+
 .ant-popover-arrow {
   display: none;
 }

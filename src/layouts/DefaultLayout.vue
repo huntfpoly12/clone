@@ -14,7 +14,7 @@
                 <router-link to="/change-password">비밀번호 변경</router-link>
               </a-menu-item>
               <a-menu-item>
-                <p @click="logout">Logout</p>
+                <p @click="logout">로그아웃</p>
               </a-menu-item>
             </a-menu>
           </template>

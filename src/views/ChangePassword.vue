@@ -10,27 +10,27 @@
           {{ errors }}
         </p>
         <div class="dx-field">
-          <div class="dx-field-label">Password</div>
+          <div class="dx-field-label">비밀번호</div>
           <div class="dx-field-value">
             <DxTextBox
               v-model:value="form.password"
               mode="password"
             >
               <DxValidator>
-                <DxRequiredRule message="Password is required"/>
+                <DxRequiredRule message="비밀번호는 필수 입렵항목 입니다"/>
               </DxValidator>
             </DxTextBox>
           </div>
         </div>
         <div class="dx-field">
-          <div class="dx-field-label">Confirm Password</div>
+          <div class="dx-field-label">비밀번호 확인</div>
           <div class="dx-field-value">
             <DxTextBox mode="password">
               <DxValidator>
-                <DxRequiredRule message="Confirm Password is required"/>
+                <DxRequiredRule message="비밀번호 확인은 필수 입렵항목 입니다"/>
                 <DxCompareRule
                   :comparison-target="passwordComparison"
-                  message="Password and Confirm Password do not match"
+                  message="비밀번호가 일치하지 않습니다"
                 />
               </DxValidator>
             </DxTextBox>
@@ -45,7 +45,7 @@
         <DxButton
           id="button"
           :use-submit-behavior="true"
-          text="Change Password"
+          text="비밀번호 변경"
           type="success"
         />
       </div>
