@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-query getUserLogs ($id: Int) {
+query getUserLogs ($id: Int!) {
   getUserLogs(id: $id) {
     userId
     ts

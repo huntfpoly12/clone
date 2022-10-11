@@ -304,21 +304,21 @@ export default defineComponent({
     });
     const dataQuery = ref();
     let trigger = ref<boolean>(false);
-      watch(
-            () => props.modalStatus,
-            (newValue, old) => {
-                if (newValue) {
-                    visible.value = newValue;
-                    dataQuery.value = { id: props.idRowEdit };                    
-                    trigger.value = true;
-                    
-                    refetch();
-                } else {
-                    visible.value = newValue;
-                    trigger.value = false;
-                }
-            }
-        );
+    // watch(
+    //   () => props.modalStatus,
+    //   (newValue, old) => {
+    //     if (newValue) {
+    //       visible.value = newValue;
+    //       dataQuery.value = { id: props.idRowEdit };
+    //       trigger.value = true;
+
+    //       refetch();
+    //     } else {
+    //       visible.value = newValue;
+    //       trigger.value = false;
+    //     }
+    //   }
+    // );
 
 
     const { result, loading, refetch } = useQuery(
