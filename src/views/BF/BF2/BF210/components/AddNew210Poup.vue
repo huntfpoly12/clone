@@ -3,16 +3,16 @@
     <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
       width="50%" :mask-closable="false">
       <h2 class="title_modal">회원정보</h2>
-      <a-form v-bind="layout" name="nest-messages" :model="formState" :validate-messages="validateMessages"
+      <a-form v-bind="layout" name="nest-messages" v-model:value="formState" :validate-messages="validateMessages"
         @finish="onFinish">
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID ">
-              <a-input style="width: 150px; margin-right: 10px" />
+              <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
               <button style="border: 1px solid grey">중복체크</button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input style="width: 150px; margin-right: 10px" v-model:value="createUser.username" />
+              <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px"/>
             </a-form-item>
             <a-form-item label="소속">
               <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 300px"
@@ -26,7 +26,7 @@
           </a-col>
           <a-col :span="12">
             <a-form-item label="상태">
-              <a-switch v-model:checked="bf310Detail.switch" checked-children="이용중" un-checked-children="이용중지"
+              <a-switch v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
                 style="width: 100px" />
             </a-form-item>
 
@@ -37,14 +37,14 @@
               </a-select>
 
 
-              <a-select style="width: 150px" v-model:value="dataMode.color">
-                <a-select-option value="담당매니저" label="담당매니저">
+              <a-select style="width: 150px" v-model:value="formState.type">
+                <a-select-option value="m" label="담당매니저">
                   <a-tag :color="getColorTag('담당매니저')">담당매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="영업자" label="영업자">
+                <a-select-option value="r" label="영업자">
                   <a-tag :color="getColorTag('영업자')">영업자</a-tag>
                 </a-select-option>
-                <a-select-option value="파트너" label="파트너">
+                <a-select-option value="p" label="파트너">
                   <a-tag style="color: black" :color="getColorTag('파트너')">파트너</a-tag>
                 </a-select-option>
               </a-select>
@@ -305,14 +305,38 @@ export default defineComponent({
     };
 
     const formState = reactive({
-      user: {
-        number: "",
-        age: undefined,
-        email: "",
-        website: "",
-        introduction: "",
-      },
-    });
+      id: 1,
+      type: "",
+      username: "",
+      name: "",
+      mobilePhone: "",
+      email: "",
+      president: true,
+      managerGrade: 1,
+      accountingRole: true,
+      withholdingRole: true,
+      createdAt: 1,
+      createdBy: "",
+      updatedAt: 1,
+      updatedBy: "",
+      ip: "",
+      active: true,
+      facilityBusinesses: [],
+      screenRoleGroups: {
+        id: "",
+        name: "",
+        type: "",
+        screenRoles: "",
+        lock: true,
+        memo: "",
+        createdAt: "",
+        createdBy: "",
+        updatedAt: "",
+        updatedBy: "",
+        ip: "",
+        active: true
+    }
+  });
     const onFinish = (values: any) => {
       console.log("Success:", values);
     };
