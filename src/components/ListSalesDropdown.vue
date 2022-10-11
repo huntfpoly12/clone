@@ -1,6 +1,13 @@
 <template>
-    <template v-if="result?.findSalesRepresentatives?.length > 0">
+    <template v-if="result?.findSalesRepresentatives?.length > 0 && textLabel">
         <label class="lable-item">{{textLabel}} :</label>
+        <a-select ref="select" v-model:value="sale" placeholder="전체" show-search @change="updateSale(sale)">
+            <a-select-option v-for="item in result?.findSalesRepresentatives" :key="item.id" :value="item.id">
+                {{item.name}}</a-select-option>
+        </a-select>
+    </template>
+    <template v-if="result?.findSalesRepresentatives?.length > 0 && !textLabel">
+         
         <a-select ref="select" v-model:value="sale" placeholder="전체" show-search @change="updateSale(sale)">
             <a-select-option v-for="item in result?.findSalesRepresentatives" :key="item.id" :value="item.id">
                 {{item.name}}</a-select-option>
@@ -21,7 +28,7 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
-        const sale = ref();
+        const sale = ref(props.selected);
         const { result, loading, error, onResult, refetch } = useQuery(queries.getListSale);
         const checkAll = () => {
             console.log("123412");

@@ -1,0 +1,151 @@
+<!-- eslint-disable vue/multi-word-component-names -->
+<template>
+    <div class="auth-form">
+      <form @submit="submitForm">
+        <p v-if="errors" class="invalid">
+          {{ errors }}
+        </p>
+        <div>
+          <label for="password" required>비밀번호 입력</label>
+          <input
+            :class="[
+              errors && errors.search('password') !== -1 ? 'error' : '',
+              'form-control',
+            ]"
+            type="password"
+            name="password"
+            id="password"
+            v-model="form.password"
+          />
+        </div>
+        <p v-if="errors && errors.error" class="invalid">
+          {{ isSignup ? errors.error : "Invalid credentials" }}
+        </p>
+        <button class="primary" type="submit">
+          Reset Password
+        </button>
+      </form>
+    </div>
+  </template>
+  
+  <script>
+  import { reactive, ref } from "vue";
+  import { useMutation } from "@vue/apollo-composable";
+  import { useRouter, useRoute } from "vue-router";
+  import mutations from "../graphql/mutations/index";
+  export default {
+    setup() {
+      const router = useRouter();
+      const route = useRoute()
+      const form = reactive({
+        password: "",
+      });
+      const errors = ref(null);
+  
+      const submitForm = (e) => {
+        e.preventDefault();
+        resetData();
+      };
+  
+  
+      // signin mutation
+      const {
+        mutate: resetData,
+        loading: resetLoading,
+        onDone: resetDone,
+        onError,
+      } = useMutation(mutations.ResetPassword, () => ({
+        variables: {
+          key: route.params.key,
+          password: form.password,
+        },
+      }));
+      resetDone(() => {
+        router.push("/login");
+      });
+      onError((error) => {
+        errors.value = error.message;
+      });
+  
+      return {
+        form,
+        submitForm,
+        errors,
+        resetLoading,
+      };
+    },
+  };
+  </script>
+  
+  <style scoped>
+  .auth-form {
+      padding-top: 150px;
+      max-width: 400px;
+      margin: 0 auto;
+  }
+  .flex {
+      display: flex;
+      align-items: center;
+      margin-left: -50px;
+  }
+  .flex label {
+      width: 100px;
+  }
+  [required]::after {
+    content: "*";
+    color: red;
+  }
+  .request-contract {
+    margin-top: 40px;
+  }
+  .form-control {
+    margin: 8px 0;
+   
+  }
+  
+  .invalid:focus {
+    background-color: salmon;
+  }
+  .error {
+    background-color: salmon;
+  }
+  label {
+    display: block;
+    text-align: left;
+  }
+  input {
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    padding: 4px 11px;
+  }
+  .secondary {
+    background-color: #ff0000;
+    color: #ffffff;
+  }
+  .secondary:not(:disabled):hover {
+    background: rgba(233, 12, 0, 0.75);
+    color: #ffffff;
+  }
+  .invalid {
+    color: red;
+  }
+  .primary {
+    background-color: #1890ff;
+    color: #ffffff;
+    border: none;
+    height: 32px;
+    padding: 4px 15px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .primary:hover {
+    background-color: #40a9ff;
+    color: #ffffff;
+  }
+  button:disabled {
+    cursor: no-drop;
+    background-color: silver;
+    color: #000000;
+  }
+  </style>
+  

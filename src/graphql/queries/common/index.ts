@@ -4,6 +4,7 @@ import getListPartner from "./getListPartner";
 import isUserRegistable from "./isUserRegistable";
 import getCompanyLogs from "./getCompanyLogs"; 
 import getSalesRepresentativeLogs from "./getSalesRepresentativeLogs"; 
+import getServiceContractLogs from "./getServiceContractLogs"; 
 
 const queries = {
   getListSale: getListSale,
@@ -11,6 +12,7 @@ const queries = {
   getListPartner: getListPartner,
   isUserRegistable: isUserRegistable,
   getCompanyLogs:getCompanyLogs,
+  getServiceContractLogs:getServiceContractLogs,
   getSalesRepresentativeLogs:getSalesRepresentativeLogs
 };
 

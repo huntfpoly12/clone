@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-export default  gql`
+export default gql`
 query getServiceContract($id: Int!) {
     getServiceContract(id: $id) {
     id
