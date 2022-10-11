@@ -11,6 +11,9 @@
           <template #overlay>
             <a-menu>
               <a-menu-item>
+                <router-link to="/change-password">비밀번호 변경</router-link>
+              </a-menu-item>
+              <a-menu-item>
                 <p @click="logout">Logout</p>
               </a-menu-item>
             </a-menu>

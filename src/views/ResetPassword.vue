@@ -3,9 +3,12 @@
       action="your-action"
       class="auth-form"
       @submit="submitForm"
-    >
+    > 
       <div class="dx-fieldset">
         <div class="dx-fieldset-header">비밀번호 설정</div>
+        <p v-if="errors" class="invalid">
+          {{ errors }}
+        </p>
         <div class="dx-field">
           <div class="dx-field-label">Password</div>
           <div class="dx-field-value">

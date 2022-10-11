@@ -3,9 +3,12 @@
       action="your-action"
       class="auth-form"
       @submit="submitForm"
-    >
+    > 
       <div class="dx-fieldset">
-        <div class="dx-fieldset-header">비밀번호 설정</div>
+        <div class="dx-fieldset-header">비밀번호 변경</div>
+        <p v-if="errors" class="invalid">
+          {{ errors }}
+        </p>
         <div class="dx-field">
           <div class="dx-field-label">비밀번호</div>
           <div class="dx-field-value">
@@ -42,7 +45,7 @@
         <DxButton
           id="button"
           :use-submit-behavior="true"
-          text="Reset Password"
+          text="Change Password"
           type="success"
         />
       </div>
@@ -98,9 +101,8 @@
         loading: resetLoading,
         onDone: resetDone,
         onError,
-      } = useMutation(mutations.ResetPassword, () => ({
+      } = useMutation(mutations.ChangePassword, () => ({
         variables: {
-          key: route.params.key,
           password: form.password,
         },
       }));
