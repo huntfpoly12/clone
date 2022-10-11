@@ -388,14 +388,10 @@ export default defineComponent({
         }
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = true;
-            popupData.value = data;
+
         }
         const modalLogin = (data: any) => {
-            console.log(data);
-            console.log(modalLoginStatus, "modalLoginStatus");
-            
             modalLoginStatus.value = true;
-            popupData.value = data;
         }
 
         let companyId: any = null

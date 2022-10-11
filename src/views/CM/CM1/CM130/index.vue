@@ -16,7 +16,7 @@
                                             <a-space direction="vertical">
                                                 <a-radio-group v-model:value="dataRes.reportType"
                                                     :options="plainOptions" />
-                                                    
+
                                             </a-space>
                                         </a-form-item>
                                     </a-col>
