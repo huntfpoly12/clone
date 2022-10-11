@@ -125,17 +125,20 @@
                             </div>
                         </a-form>
                     </div>
+
                     <a-form-item class="btn-submit">
                         <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
                     <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false"
                         :data="fileImage" />
+
                 </a-tab-pane>
 
                 <a-tab-pane key="2" tab="이용자">
-
-                    <DxDataGrid :data-source="listDataMyCompanyUser" :show-borders="true" key-expr="id">
+                    <DxDataGrid :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true"
+                        key-expr="id" :allow-column-reordering="true" :allow-column-resizing="true"
+                        :column-auto-width="true" style="width: 100%;">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -146,6 +149,7 @@
                             <DxItem name="addRowButton" show-text="always" />
                             <DxItem name="columnChooserButton" />
                         </DxToolbar>
+
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
@@ -158,7 +162,16 @@
                             </a-tag>
                         </template>
                         <DxColumn caption="성명" data-field="name" :width="200" />
-                        <DxColumn data-field="회계권한(담당사업)" />
+
+                        <!-- <DxColumn caption="성명" data-field="name" :width="200" cell-template="checked-facility" /> -->
+                        <!-- <DxColumn data-field="name" caption="회계권한(담당사업)" cell-template="checked-facility" /> -->
+
+                        <DxColumn caption="성명" data-field="facilityBusinesses" cell-template="checked-facility" />
+                        <template #checked-facility="{ data }">
+                            <!-- {{ changeValueRow(data.value[0].facilityBusinessId) }} -->
+                            {{ changeValueRow(data.value) }}
+                        </template>
+
                         <DxColumn data-field="withholdingRole" caption="원천권한" cell-template="checked-status" :width="80"
                             :allowEditing="true" />
                         <template #checked-status="{ data }">
@@ -185,19 +198,19 @@
                         </template>
                     </DxDataGrid>
 
-
-
                     <a-form-item class="btn-submit-table">
                         <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
-                    <AddNewCM110Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-                    <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
-                        :data="popupData" />
+
+                    <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" @closePopup="closePopupAdd" />
+
+                    <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :data="popupData" />
+
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        :data="popupData" title="변경이력[cm-000-pop]" />
+                        :data="popupData" title="변경이력" />
                     <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false"
-                        :data="popupData" title="로그인이력 [ cm-000-popLogin ]" />
+                        :data="popupData" title="로그인이력" />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -287,11 +300,18 @@ export default defineComponent({
             mutate: updateDataCompany,
             loading: loadingUpdate,
             onDone: onDoneAdd,
+            onError: onErrorUpdate
         } = useMutation(mutations.updateCompany);
 
 
         onDoneAdd((res) => {
             spinning.value = !spinning.value;
+            message.success(`Update successfully`);
+        })
+
+        onErrorUpdate((res) => {
+            spinning.value = !spinning.value;
+            message.error(`Update false`);
         })
 
         const statusMailValidate = ref<boolean>(true);
@@ -326,22 +346,7 @@ export default defineComponent({
             },
         });
 
-        const listDataMyCompanyUser = ref([{
-            id: 1,
-            username: "User Name",
-            name: "Name",
-            accountingRole: "accounting role",
-            withholdingRole: true,
-            active: true,
-        },
-        {
-            id: 1,
-            username: "An Tú",
-            name: "Phạm",
-            accountingRole: "accounting role",
-            withholdingRole: false,
-            active: false,
-        }])
+        let listDataMyCompanyUser = ref([])
 
         let previewImage: any = ref("");
         let fileImage: any = ref(null);
@@ -350,7 +355,6 @@ export default defineComponent({
 
         const handleChange = async (info: any) => {
             if (info.file.status !== "uploading") {
-                console.log(info.file.originFileObj.size, 'dfgdfdfg');
                 if (info.file.originFileObj.size <= 1000000) {
                     previewImage.value = await getBase64(info.file.originFileObj);
                     fileImage.value = info;
@@ -370,18 +374,26 @@ export default defineComponent({
             modalStampReviewStatus.value = true;
         };
         const openAddNewModal = () => {
+            popupData.value = {
+                companyId: companyId
+            };
             modalAddNewStatus.value = true;
         }
         const openEditModal = (data: any) => {
             modalEditStatus.value = true;
-            popupData.value = data;
+            popupData.value = {
+                userId: data.data.id,
+                companyId: companyId
+            };
         }
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = true;
             popupData.value = data;
         }
-
         const modalLogin = (data: any) => {
+            console.log(data);
+            console.log(modalLoginStatus, "modalLoginStatus");
+            
             modalLoginStatus.value = true;
             popupData.value = data;
         }
@@ -471,7 +483,20 @@ export default defineComponent({
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDataDetail, originData, () => ({ fetchPolicy: "no-cache", }))
         onResult((res) => {
             formState.value = res.data.getMyCompany
-            console.log(res.data.getMyCompany);
+        })
+
+        const dataGetListUsers = {
+            companyId: companyId,
+            filter: {
+                page: 1,
+                rows: 10
+            }
+        }
+
+
+        const { refetch: refetchDataUsers, onResult: resultUsers, result: resultDataUsers } = useQuery(queries.getListUserCompany, dataGetListUsers, () => ({ fetchPolicy: "no-cache", }))
+        resultUsers((res) => {
+            // console.log(resultDataUsers);
         })
 
         return {
@@ -483,6 +508,9 @@ export default defineComponent({
             headers: {
                 authorization: "authorization-text",
             },
+            resultUsers,
+            refetchDataUsers,
+            resultDataUsers,
             spinning,
             checkedRow,
             handleChange,
@@ -506,11 +534,49 @@ export default defineComponent({
             changeValueInputEmit,
             listDataMyCompanyUser,
             updateDataCompany,
-            companyId
+            companyId,
+
         };
+
     },
+    methods: {
+        // Convert FacilityBizType
+        changeValueRow(data: any) {
+            let stringConvert = ''
+            data.map((e: any) => {
+                if (e.facilityBusinessId == 1)
+                    stringConvert += '주·야간보호'
+                else if (e.facilityBusinessId == 2)
+                    stringConvert += '방문요양'
+                else if (e.facilityBusinessId == 3)
+                    stringConvert += '인지활동형 방문요양'
+                else if (e.facilityBusinessId == 4)
+                    stringConvert += '방문간호'
+                else if (e.facilityBusinessId == 5)
+                    stringConvert += '방문목욕'
+                else if (e.facilityBusinessId == 6)
+                    stringConvert += '단기보호'
+                else if (e.facilityBusinessId == 7)
+                    stringConvert += '복지용구'
+            })
+            return stringConvert
+        },
+
+        closePopupEdit() {
+            this.modalEditStatus = false
+            this.refetchDataUsers()
+        },
+
+        closePopupAdd() {
+            this.modalAddNewStatus = false
+            this.refetchDataUsers()
+        }
+    },
+
+
 });
 </script>
+
 <style scoped>
 .page-content>>>.cell-button-add {
     padding-left: 100px !important;

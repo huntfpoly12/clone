@@ -1,80 +1,94 @@
 <template>
+  <div class="top-content">
+    <a-typography-title :level="3"> 회원관리
+    </a-typography-title>
+    <div class="list-action">
+      <a-tooltip>
+        <template #title>조회</template>
+        <a-button @click="searching">
+          <SearchOutlined />
+        </a-button>
+      </a-tooltip>
+      <a-tooltip>
+        <template #title>저장</template>
+        <a-button>
+          <SaveOutlined />
+        </a-button>
+      </a-tooltip>
+      <a-tooltip>
+        <template #title>삭제</template>
+        <a-button>
+          <DeleteOutlined />
+        </a-button>
+      </a-tooltip>
+      <a-tooltip>
+        <template #title>출력</template>
+        <a-button>
+          <PrinterOutlined />
+        </a-button>
+      </a-tooltip>
+    </div>
+  </div>
   <div id="bf-210">
     <div class="search-form">
       <div id="components-grid-demo-flex">
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
             <label class="lable-item">회원종류 :</label>
-            <a-select
-              style="width: 130px"
-              v-model:value="dataSearch.nameSale"
-              option-label-prop="children"
-            >
-              <a-select-option value="고객사" label="고객사">
-                <a-tag :color="getColorTag('고객사')">고객사</a-tag>
+            <a-select style="width: 10px" v-model:value="dataSearch.type" option-label-prop="children">
+              <!-- <a-select-option value="" label="전체">
+                <a-tag style="width: 52px" :color="getColorTag('전체')"> 전체 </a-tag>
+              </a-select-option> -->
+              <a-select-option value="c" label="고객사">
+                <a-tag :color="getColorTag('c')">고객사</a-tag>
               </a-select-option>
-              <a-select-option value="매니저" label="전체">
-                <a-tag :color="getColorTag('매니저')">매니저</a-tag>
+              <a-select-option value="m" label="매니저">
+                <a-tag :color="getColorTag('m')">매니저</a-tag>
               </a-select-option>
-              <a-select-option value="영업자" label="영업자">
-                <a-tag :color="getColorTag('영업자')">영업자</a-tag>
+              <a-select-option value="r" label="영업자">
+                <a-tag :color="getColorTag('r')">영업자</a-tag>
               </a-select-option>
-              <a-select-option value="파트너" label="파트너">
-                <a-tag :color="getColorTag('파트너')">영업자</a-tag>
+              <a-select-option value="p" label="파트너">
+                <a-tag :color="getColorTag('p')">파트너</a-tag>
               </a-select-option>
             </a-select>
           </a-col>
           <a-col>
             <label class="lable-item">소속코드:</label>
-            <a-input
-              style="width: 150px"
-              v-model:value="dataSearch.nameCompany"
-            />
+            <a-input style="width: 150px" v-model:value="dataSearch.groupCode" />
           </a-col>
           <a-col>
             <label class="lable-item">소속명:</label>
-            <a-input
-              style="width: 150px"
-              v-model:value="dataSearch.surrogate"
-            />
+            <a-input style="width: 150px" v-model:value="dataSearch.groupName" />
           </a-col>
           <a-col>
             <label class="lable-item">회원ID :</label>
-            <a-input style="width: 150px" v-model:value="dataSearch.userid" />
+            <a-input style="width: 150px" v-model:value="dataSearch.username" />
           </a-col>
           <a-col>
             <label class="lable-item">회원명 :</label>
-            <a-input style="width: 150px" v-model:value="dataSearch.username" />
+            <a-input style="width: 150px" v-model:value="dataSearch.name" />
           </a-col>
-          <a-col style="display: flex; align-items: center">
-            <a-checkbox v-model:checked="dataSearch.typeSevice1">
-              <a-tag :color="getAbleDisable('이용중')">이용중</a-tag>
+          <a-col v-model:checked="dataSearch.active" style="display: flex; align-items: center">
+            <a-checkbox>
+              <a-tag :color="getAbleDisable(true)">이용중</a-tag>
             </a-checkbox>
-            <a-checkbox v-model:checked="dataSearch.typeSevice2">
-              <a-tag :color="getAbleDisable('이용중지')">이용중지</a-tag>
+            <a-checkbox>
+              <a-tag :color="getAbleDisable(false)">이용중지</a-tag>
             </a-checkbox>
           </a-col>
         </a-row>
       </div>
     </div>
     <div class="page-content">
-      <DxDataGrid
-        :data-source="dataSource"
-        :show-borders="true"
-        key-expr="ID"
-        @exporting="onExporting"
-      >
+      <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
         <DxPaging :page-size="5" />
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
         <DxExport :enabled="true" :allow-export-selected-data="true" />
         <DxToolbar>
           <DxItem name="searchPanel" />
           <DxItem name="exportButton" />
-          <DxItem
-            location="after"
-            template="button-template"
-            css-class="cell-button-add"
-          />
+          <DxItem location="after" template="button-template" css-class="cell-button-add" />
           <DxItem name="groupPanel" />
           <DxItem name="addRowButton" show-text="always" />
           <DxItem name="columnChooserButton" />
@@ -82,29 +96,20 @@
         <template #button-template>
           <DxButton icon="plus" @click="openAddNewModal" />
         </template>
-        <DxColumn
-          data-field="상태"
-          css-class="cell-center"
-          cell-template="check-box"
-          :width="100"
-        />
+        <DxColumn data-field="active" caption="상태" css-class="cell-center" cell-template="check-box" :width="100" />
         <template #check-box="{ data }">
-          <a-tag :color="getAbleDisable(data.value)">{{ data.value }}</a-tag>
+          <a-tag :color="getAbleDisable(data.value)">{{ data.value == true ? "이용중" : "이용중지" }}</a-tag>
         </template>
-        <DxColumn data-field="회원ID" :width="80" css-class="cell-center" />
-        <DxColumn data-field="회원명" :width="100" />
-        <DxColumn
-          data-field="회원종류"
-          cell-template="grid-cell"
-          css-class="cell-center"
-          :width="150"
-        />
+        <DxColumn data-field="id" caption="회원ID" :width="80" css-class="cell-center" />
+        <DxColumn data-field="username" caption="회원명" :width="100" />
+        <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" :width="150" />
         <template #grid-cell="{ data }">
-          <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
+          <a-tag :color="getColorTag(data.value)">{{ data.value == "m" ? "매니저" : (data.value == "c"? "고객사" : (data.value
+          == "p"? "파트너": "영업자")) }}</a-tag>
         </template>
-        <DxColumn data-field="휴대폰" :width="200" />
-        <DxColumn data-field="소속코드" :width="200" />
-        <DxColumn data-field="소속명" />
+        <DxColumn data-field="mobilePhone" caption="휴대폰" :width="200" />
+        <DxColumn data-field="groupCode" caption="소속코드" :width="200" />
+        <DxColumn data-field="groupName" caption="소속명" />
         <DxColumn cell-template="pupop" :width="100" />
         <template #pupop="{ data }" class="custom-action">
           <div class="custom-action">
@@ -126,33 +131,18 @@
         </template>
       </DxDataGrid>
 
-      <AddNew210Poup
-        :modalStatus="modalAddNewStatus"
-        @closePopup="modalAddNewStatus = false"
-      />
-      <EditBF210Popup
-        :modalStatus="modalEditStatus"
-        @closePopup="modalEditStatus = false"
-        :data="popupData"
-        title="회원관리 [ bf-210 –pop ]"
-      />
-      <HistoryPopup
-        :modalStatus="modalHistoryStatus"
-        @closePopup="modalHistoryStatus = false"
-        :data="popupData"
-        title="변경이력[cm-000-pop]"
-      />
-      <PopLogin
-        :modalStatus="modalLoginStatus"
-        @closePopup="modalLoginStatus = false"
-        :data="popupData"
-        title="로그인이력 [ cm-000-popLogin ]"
-      />
+      <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+      <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" :idUserEdit="idRowEdit"
+        title="회원관리 [ bf-210 –pop ]" />
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+        title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" />
+      <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
+        title="로그인이력 [ cm-000-popLogin ]" :idRow="rowChoose" />
     </div>
   </div>
 </template>
-<script>
-import { defineComponent, onMounted } from "vue";
+<script lang="ts">
+import { defineComponent, onMounted, ref } from "vue";
 import {
   DxDataGrid,
   DxColumn,
@@ -170,7 +160,6 @@ import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import PopLogin from "./components/PopLogin.vue";
-import Style from "./style/style.scss";
 import DxButton from "devextreme-vue/button";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
@@ -179,13 +168,19 @@ import {
   EditOutlined,
   HistoryOutlined,
   LoginOutlined,
+  SearchOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  MailOutlined,
+  PrinterOutlined,
+  DeleteOutlined,
+  SaveOutlined,
 } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
-import filters from "../../../../helpers/filters";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -201,7 +196,6 @@ export default defineComponent({
     EditOutlined,
     HistoryOutlined,
     LoginOutlined,
-    Style,
     DxToolbar,
     DxEditing,
     DxGrouping,
@@ -210,10 +204,27 @@ export default defineComponent({
     EditBF210Popup,
     HistoryPopup,
     PopLogin,
+    SearchOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeleteOutlined,
+    SaveOutlined,
   },
   data() {
     return {
-      dataSource: [],
+      dataSource: {
+        id: 1,
+        type: "",
+        username: "",
+        name: "",
+        mobilePhone: "",
+        groupCode: "",
+        groupName: "",
+        managerGrade: 1,
+        active: true,
+      },
 
       popupData: [],
       modalAddNewStatus: false,
@@ -221,23 +232,89 @@ export default defineComponent({
       modalHistoryStatus: false,
       modalLoginStatus: false,
 
-      dataSearch: {
-        typeSevice: "이용중",
-        status: "전체",
-        nameSale: "고객사",
-        typeSevice1: "이용중",
-        userid: "",
-        username: "",
-      },
+
     };
   },
 
-  mounted() {
-    const originData = { page: 1, rows: 10, type: "", active: true };
-    this.searchUsers(originData);
+  setup() {
+    const spinning = ref<boolean>(true);
+
+    const rowChoose = ref()
+    const dataSearch = ref({
+      page: 10,
+      rows: 1000,
+      type: "",
+      groupCode: "",
+      groupName: "",
+      username: "",
+      name: "",
+      active: true
+    })
+    var idRowEdit = ref<number>(0)
+    const originData = ref({
+      page: 1,
+      rows: 20,
+      type: "m",
+      groupCode: "",
+      groupName: "",
+      username: "",
+      name: "",
+      active: true
+    })
+
+    setTimeout(() => {
+      spinning.value = !spinning.value;
+    }, 1000);
+    const dataSource = ref([])
+    const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchUsers, originData)
+
+
+    onResult((res) => {
+      console.log(res);
+      dataSource.value = res.data.searchUsers.datas
+    })   
+    setTimeout(() => {
+      spinning.value = !spinning.value;
+    }, 1000);
+
+    const searching = () => {
+      spinning.value = !spinning.value;
+
+     
+
+      let dataNew = {
+        page: 1,
+        rows: 10,
+        type: dataSearch.value.type,
+        groupCode: dataSearch.value.groupCode,
+        groupName: dataSearch.value.groupName,
+        username: dataSearch.value.username,
+        name: dataSearch.value.name,
+        active: dataSearch.value.active,
+      } 
+
+
+      refetchData(dataNew)
+
+      setTimeout(() => {
+        spinning.value = !spinning.value;
+      }, 1000);
+    }
+
+    return {
+      spinning,
+      dataSource,
+      idRowEdit,
+      refetchData,
+      originData,
+      searching,
+      dataSearch,
+      rowChoose
+    }
   },
+
   methods: {
-    onExporting(e) {
+    onExporting(e: any) {
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("employees");
       exportDataGrid({
@@ -257,37 +334,39 @@ export default defineComponent({
     openAddNewModal() {
       this.modalAddNewStatus = true;
     },
-    setModalEditVisible(data) {
+    setModalEditVisible(data: any) {
+      this.idRowEdit = data.data.id
       this.modalEditStatus = true;
       this.popupData = data;
     },
-    modalHistory(data) {
+    modalHistory(data: any) {
       this.modalHistoryStatus = true;
       this.popupData = data;
     },
-    modalLogin(data) {
+    modalLogin(data: any) { 
+      this.rowChoose = data.key
       this.modalLoginStatus = true;
       this.popupData = data;
     },
-    getColorTag(data) {
-      if (data === "고객사") {
+    getColorTag(data: any) {
+      if (data === "c") {
         return "blue";
-      } else if (data === "매니저") {
+      } else if (data === "m") {
         return "black";
-      } else if (data === "영업자") {
+      } else if (data === "r") {
         return "grey";
-      } else if (data === "파트너") {
+      } else if (data === "p") {
         return "#cdc71c";
-      }
+      } 
     },
-    getAbleDisable(data) {
-      if (data === "이용중") {
+    getAbleDisable(data: any) {
+      if (data === true) {
         return "blue";
-      } else if (data === "이용중지") {
+      } else if (data === false) {
         return "#d5a7a7";
       }
     },
-    searchUsers(filter) {
+    searchUsers(filter: any) {
       const { loading, error, onResult } = useQuery(
         queries.searchUsers,
         filter
@@ -296,12 +375,54 @@ export default defineComponent({
         this.dataSource = res.data.searchUsers.datas;
       });
     },
-    getUsers() {
-      const { loading, error, onResult } = useQuery(queries.getUsers);
-      onResult((res) => {
-        return res;
-      });
-    },
   },
 });
 </script>
+<style scoped>
+.page-content {
+  padding: 10px 10px;
+}
+
+.cell-button-add {
+  padding-left: 100px !important;
+}
+
+.cell-center {
+  text-align: center !important
+}
+
+.dx-button-has-text .dx-button-content {
+  padding: 0px 15px !important;
+}
+
+.search-form {
+  background: #f1f3f4;
+  padding: 10px 24px;
+}
+
+.dx-select-checkbox {
+  display: inline-block !important;
+}
+
+#data-grid-demo {
+  min-height: 700px;
+}
+
+.search-form .col {
+  display: flex;
+  align-items: center;
+}
+
+.search-form .col {
+  margin-top: 20px;
+}
+
+.search-form .col .lable-item {
+  width: 110px;
+  display: inline-block;
+}
+
+.search-form .col .item:nth-child(2) {
+  margin-left: 30px;
+}
+</style>

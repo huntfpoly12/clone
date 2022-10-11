@@ -1,8 +1,7 @@
 import gql from "graphql-tag";
 export default  gql`
-query isUserRegistableUsername {
-    isUserRegistableUsername {
-        username
+query isUserRegistableUsername($username: String! ) {
+    isUserRegistableUsername (username:$ username)        
   }
-}
+
 `

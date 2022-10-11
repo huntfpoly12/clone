@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="auth-form">
+    <div class="dx-fieldset-header">로그인</div>
     <form @submit="submitForm">
       <p v-if="errors" class="invalid">
         {{ errors }}
@@ -20,7 +21,7 @@
         />
       </div>
       <div>
-        <label for="password" required>Password</label>
+        <label for="password" required>비밀번호</label>
         <input
           :class="[
             errors && errors.search('password') !== -1 ? 'error' : '',
@@ -38,8 +39,8 @@
       <button class="primary" type="submit">
         {{
            signinLoading
-            ? "Login in.."
-            : "Login"
+            ? "로그인중입니다.."
+            : "로그인"
         }}
       </button>
     </form>
