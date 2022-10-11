@@ -2,11 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-<<<<<<< HEAD
-            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf340 || loadingBf210">
-=======
-            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf330 || loadingBf340">
->>>>>>> develop
+            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts">
                     <DxColumn caption="기록일시" data-field="loggedAt" />
                     <DxColumn caption="비고" data-field="remark" />

@@ -7,27 +7,27 @@
       <div class="dx-fieldset">
         <div class="dx-fieldset-header">비밀번호 설정</div>
         <div class="dx-field">
-          <div class="dx-field-label">Password</div>
+          <div class="dx-field-label">비밀번호</div>
           <div class="dx-field-value">
             <DxTextBox
               v-model:value="form.password"
               mode="password"
             >
               <DxValidator>
-                <DxRequiredRule message="Password is required"/>
+                <DxRequiredRule message="비밀번호는 필수 입렵항목 입니다"/>
               </DxValidator>
             </DxTextBox>
           </div>
         </div>
         <div class="dx-field">
-          <div class="dx-field-label">Confirm Password</div>
+          <div class="dx-field-label">비밀번호 확인</div>
           <div class="dx-field-value">
             <DxTextBox mode="password">
               <DxValidator>
-                <DxRequiredRule message="Confirm Password is required"/>
+                <DxRequiredRule message="비밀번호 확인은 필수 입렵항목 입니다"/>
                 <DxCompareRule
                   :comparison-target="passwordComparison"
-                  message="Password and Confirm Password do not match"
+                  message="비밀번호가 일치하지 않습니다"
                 />
               </DxValidator>
             </DxTextBox>
