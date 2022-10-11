@@ -47,6 +47,7 @@ export default defineComponent({
         rows: 100
 
       }
+      this.trigger = false
       this.refetchData(dataCall)
 
 
@@ -56,6 +57,7 @@ export default defineComponent({
   },
 
   setup(props) {
+    let trigger = ref<boolean>(false);
     const dataTableShow = ref({
       status: 1,
       message: "",
@@ -74,7 +76,10 @@ export default defineComponent({
 
 
     //CHỉ viết trong setup
-    const { result, refetch: refetchData, loading, error, onResult } = useQuery(queries.getAuthentications);
+    const { result, refetch: refetchData, loading, error, onResult } = useQuery(queries.getAuthentications, {},   () => ({
+                enabled: trigger.value,
+                fetchPolicy: "no-cache",
+            }));
     onResult((res) => {
       let data = res.data.getAuthentications.datas
       console.log(data);
@@ -86,7 +91,8 @@ export default defineComponent({
       dataTableShow,
       refetchData,
       result,
-      arrayLog
+      arrayLog,
+      trigger
     };
 
   },

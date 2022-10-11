@@ -36,9 +36,9 @@
           <a-col>
             <label class="lable-item">회원종류 :</label>
             <a-select style="width: 10px" v-model:value="dataSearch.type" option-label-prop="children">
-              <a-select-option value="" label="전체">
+              <!-- <a-select-option value="" label="전체">
                 <a-tag style="width: 52px" :color="getColorTag('전체')"> 전체 </a-tag>
-              </a-select-option>
+              </a-select-option> -->
               <a-select-option value="c" label="고객사">
                 <a-tag :color="getColorTag('c')">고객사</a-tag>
               </a-select-option>
@@ -357,9 +357,7 @@ export default defineComponent({
         return "grey";
       } else if (data === "p") {
         return "#cdc71c";
-      } else if (data === "") {
-        return "9999";        
-      }
+      } 
     },
     getAbleDisable(data: any) {
       if (data === true) {
