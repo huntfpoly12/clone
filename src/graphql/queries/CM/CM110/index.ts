@@ -9,7 +9,7 @@ const queries = {
     getDataDetail: getDataDetail,
     getListUserCompany: getListUserCompany,
     getDetailUser: getDetailUserEdit,
-    getDataFacilityBusiness: getDataFacilityBusiness
+    getDataFacilityBusiness: getDataFacilityBusiness,
     checkUserNameCompany: checkUserNameCompany
 };
 

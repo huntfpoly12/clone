@@ -194,7 +194,8 @@ export default defineComponent({
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
 
-		const { refetch: refetchUserName, onResult : onResultUsername } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
+		let dataQueryUsername = {}
+		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, dataQueryUsername, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
 
 		onResult(e => {
 			let dataRes: any = []
@@ -207,9 +208,8 @@ export default defineComponent({
 			bizTypeList.value = dataRes
 		})
 
-		onResult(e => {
-			 console.log(e);
-			 
+		onResultUsername(e => {
+			console.log(e);
 		})
 
 		//Creact user in company
@@ -246,7 +246,10 @@ export default defineComponent({
 
 		const checkUserName = () => {
 			console.log(formState.value.username);
-			
+			let dataCall = {
+				username : formState.value.username
+			}
+			refetchUserName(dataCall)
 		}
 
 		return {
