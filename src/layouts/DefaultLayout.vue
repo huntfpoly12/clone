@@ -339,6 +339,13 @@ export default defineComponent({
           if (newValue.id.includes("pa-5")) {
             this.openKeys = ["pa-000", "pa-500"];
           }
+          
+          console.log(newValue.id)
+          console.log(this.$router)
+          if(newValue.id !== '#') {
+            this.$router.push(`/dashboard/${newValue.id}`);
+          }
+          
         }
       },
       immediate: true,
@@ -396,6 +403,7 @@ export default defineComponent({
       }
     },
     addMenuTab(item) {
+      
       if (this.menuTab.length < 20) {
         this.menuTab.push(item);
       }
@@ -576,12 +584,11 @@ export default defineComponent({
   .ant-menu-item-selected {
   background: none;
 }
-
-::v-deep
-  .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
-  .ant-menu-item-selected-active
-  a {
-  color: #fff;
+.ant-menu-item-selected-active {
+  background-color: #1890ff !important;
+}
+.ant-menu-item-selected-active a {
+  color: #fff !important;
 }
 ::v-deep .page-content {
   padding: 10px;
