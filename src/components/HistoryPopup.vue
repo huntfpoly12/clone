@@ -2,8 +2,10 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="Loading..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340">
-                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts">
+            <a-spin tip="Loading..."
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110">
+                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts"
+                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                     <DxColumn caption="기록일시" data-field="loggedAt" />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
@@ -16,7 +18,7 @@
                         {{ formarDate(data.value) }}
                     </template>
                     <DxColumn caption="수정자ID" data-field="updatedBy" />
-                    <DxColumn caption="삭제여부" data-field="active" :width="50" />
+                    <DxColumn caption="삭제여부" data-field="active" :width="80" />
                     <DxColumn caption="IP주소" data-field="ip" />
                     <DxColumn caption="상세" cell-template="detail" css-class="cell-center" :width="50" />
                     <template #detail="{}">
@@ -53,8 +55,7 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 
 export default defineComponent({
-    props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit']
-    ,
+    props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit', 'companyId'],
     components: {
         DxDataGrid,
         DxColumn,
@@ -69,15 +70,25 @@ export default defineComponent({
         let trigger330 = ref<boolean>(false);
         let trigger340 = ref<boolean>(false);
         let trigger210 = ref<boolean>(false);
+        let trigger110 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         watch(
             () => props.modalStatus,
             (newValue, old) => {
                 if (newValue) {
-                    visible.value = newValue;
-                    dataQuery.value = { id: props.idRowEdit };
+                    visible.value = newValue; 
                     
+                    if (props.companyId) {
+                        dataQuery.value = {
+                            userId: props.idRowEdit,
+                            companyId: props.companyId
+                        };
+                    }
+                    else
+                        dataQuery.value = { id: props.idRowEdit };
+
+
                     switch (props.typeHistory) {
                         case 'bf-320':
                             trigger320.value = true;
@@ -94,6 +105,10 @@ export default defineComponent({
                         case 'bf-210':
                             trigger210.value = true;
                             refetchBf210();
+                            break;
+                        case 'cm-110':
+                            trigger110.value = true;
+                            refetchCM110();
                             break;
                         default:
                             break;
@@ -163,9 +178,20 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-        watch(resultBf210, (value) => {
-            if (value && value.getUserLogs) {
-                dataTableShow.value = value.getUserLogs;
+
+        // get getUserLogs  110
+        const { result: resultCM110, loading: loadingCM110, refetch: refetchCM110 } = useQuery(
+            queries.getMyCompanyUserLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger110.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        watch(resultCM110, (value) => {
+            if (value && value.getMyCompanyUserLogs) {
+                dataTableShow.value = value.getMyCompanyUserLogs;
             }
         });
 
@@ -181,6 +207,7 @@ export default defineComponent({
             loadingBf330,
             loadingBf340,
             loadingBf210,
+            loadingCM110,
             formarDate,
             dataQuery
         }

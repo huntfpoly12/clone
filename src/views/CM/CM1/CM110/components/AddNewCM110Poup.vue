@@ -12,7 +12,7 @@
 							</a-form-item>
 						</a-col>
 						<a-col :span="12">
-							<a-button>중복체크</a-button>
+							<a-button @click="checkUserName">중복체크</a-button>
 						</a-col>
 					</a-row>
 					<a-row>
@@ -141,9 +141,11 @@ export default defineComponent({
 		let dataQuery = ref()
 
 		watch(() => props.modalStatus, (value) => {
-			dataQuery.value = { companyId: props.data.companyId };
-			triggers.value = true;
-			refetchData()
+			if (props.data.companyId) {
+				dataQuery.value = { companyId: props.data.companyId };
+				triggers.value = true;
+				// refetchData()
+			}
 		})
 
 		for (let i = 10; i < 36; i++) {
@@ -191,6 +193,10 @@ export default defineComponent({
 
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
+
+		let dataQueryUsername = {}
+		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, dataQueryUsername, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
+
 		onResult(e => {
 			let dataRes: any = []
 			e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
@@ -200,6 +206,10 @@ export default defineComponent({
 				})
 			})
 			bizTypeList.value = dataRes
+		})
+
+		onResultUsername(e => {
+			console.log(e);
 		})
 
 		//Creact user in company
@@ -234,6 +244,14 @@ export default defineComponent({
 			creactUser(dataCallApiCreact)
 		}
 
+		const checkUserName = () => {
+			console.log(formState.value.username);
+			let dataCall = {
+				username : formState.value.username
+			}
+			refetchUserName(dataCall)
+		}
+
 		return {
 			labelCol: { style: { width: "150px" } },
 			formState,
@@ -247,7 +265,8 @@ export default defineComponent({
 			bizTypeList,
 			companyId,
 			creactUserNew,
-			refetchData
+			refetchData,
+			checkUserName
 		};
 	}
 	,

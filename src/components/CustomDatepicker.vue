@@ -1,7 +1,14 @@
 <template>
-    <Datepicker v-model="date" :class="classNameProps" textInput autoApply :format="format" @focus="focusDatetime"
-        v-on:blur="alertDate" @keyup="getdata" @update:modelValue="closeDateTime" style="width: 100%;">
-    </Datepicker>
+    <div v-if="!styleDate">
+        <Datepicker v-model="date" :class="classNameProps" textInput autoApply :format="format" @focus="focusDatetime"
+            v-on:blur="alertDate" @keyup="getdata" @update:modelValue="closeDateTime" style="width: 100%;">
+        </Datepicker>
+    </div>
+    <div v-else>
+        <Datepicker monthPicker v-model="date" :class="classNameProps" textInput autoApply @focus="focusDatetime"
+            v-on:blur="alertDate" @keyup="getdata" @update:modelValue="closeDateTime" style="width: 100%;">
+        </Datepicker>
+    </div>
 </template>
 <script lang="ts">
 import DxDateBox from "devextreme-vue/date-box";
@@ -29,6 +36,9 @@ export default defineComponent({
         },
         className: {
             type: String,
+        },
+        styleDate: {
+            type: String
         }
     },
     components: {
@@ -36,6 +46,10 @@ export default defineComponent({
         Datepicker
     },
     setup(props, { emit }) {
+        const month = ref({
+            month: new Date().getMonth(),
+            year: new Date().getFullYear()
+        });
         let className: string = props.id ? `date_${props.id}` : '';
         let value = ref<Dayjs>();
         let dataInput: any = ''
@@ -51,8 +65,8 @@ export default defineComponent({
 
         const emitData = () => {
             let classDate = '.' + classNameProps + ' .dp__input'
-            var Url = document.querySelector(classDate) as HTMLInputElement; 
-            emit("valueDateChange", Url.value) 
+            var Url = document.querySelector(classDate) as HTMLInputElement;
+            emit("valueDateChange", Url.value)
         }
 
         const alertDate = () => {
@@ -101,7 +115,8 @@ export default defineComponent({
             className,
             value,
             format,
-            emitData
+            emitData,
+            month
         };
     },
 });

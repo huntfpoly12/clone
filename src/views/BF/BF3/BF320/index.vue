@@ -118,7 +118,7 @@
                 <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :idRowEdit="idRowEdit"
                     :data="popupData" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-320" />
+                    :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
             </div>
         </div>
     </a-spin>
