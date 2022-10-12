@@ -2,6 +2,11 @@
   <div id="edit-popup-130">
     <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
       @cancel="setModalVisible()" width="50%" :mask-closable="false">
+      <template #footer>
+        <a-button @click="setModalVisible">그냥 나가기</a-button>
+        <a-button key="submit" type="primary" :loading="loading" @click="onSubmit">
+          저장하고 나가기</a-button>
+      </template>
       <a-spin tip="Loading..." :spinning="loading">
         <h2 style="font-weight: 600; color: gray" class="title_modal">
           급여상세항목
@@ -27,17 +32,19 @@
 </template>
 
 <script lang="ts">
-import { getJwtObject } from "@bankda/jangbuda-common";
+import { companyId } from "../../../../../helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import type { CascaderProps } from "ant-design-vue";
+import { message } from "ant-design-vue";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import queries from "../../../../../graphql/queries/CM/CM130/index";
+import mutations from "../../../../../graphql/mutations/CM/CM130/index";
 import {
   DxDataGrid,
   DxColumn,
@@ -109,14 +116,6 @@ export default defineComponent({
   computed: {},
   setup(props) {
     let trigger = ref<boolean>(false);
-    let companyId: number | null | undefined = null
-    const token = sessionStorage.getItem("token");
-    if (token) {
-      const jwtObject = getJwtObject(token);
-      if (jwtObject.userType === 'c') {
-        companyId = jwtObject.companyId
-      }
-    }
     const dataQuery = ref();
     watch(
       () => props.modalStatus,
@@ -135,14 +134,18 @@ export default defineComponent({
     const initialState = {
       itemCode: 0,
       taxfreePayItemCode: '',
-      name: ''
+      name: '',
+      use: false,
+      formula: ''
     };
     const formState = reactive({ ...initialState });
 
+    // get detail withholding config pay item
     const { result: resultConfigPayItem, loading, refetch: refetchConfigPayItem } = useQuery(
       queries.getWithholdingConfigPayItem,
       dataQuery,
       () => ({
+        enabled: trigger.value,
         fetchPolicy: "no-cache",
       })
     );
@@ -152,13 +155,40 @@ export default defineComponent({
         formState.itemCode = value.getWithholdingConfigPayItem.itemCode;
         formState.taxfreePayItemCode = value.getWithholdingConfigPayItem.taxfreePayItemCode;
         formState.name = value.getWithholdingConfigPayItem.name;
+        formState.use = value.getWithholdingConfigPayItem.use;
+        formState.formula = value.getWithholdingConfigPayItem.formula;
       }
     });
+
+    // update detail withholding config pay item
+    const { mutate: actionUpdateWithholdingConfigPayItem, onDone: onDoneUpdated } = useMutation(
+      mutations.updateWithholdingConfigPayItem
+    );
+
+    onDoneUpdated(() => {
+      message.success(`Update was successful`, 4);
+      refetchConfigPayItem();
+    });
+
+    const onSubmit = () => {
+      let variables = {
+        companyId: companyId,
+        imputedYear: parseInt(dayjs().format('YYYY')),
+        itemCode: formState.itemCode,
+        input: {
+          name: formState.name,
+          use: formState.use,
+          formula: formState.formula
+        }
+      };
+      actionUpdateWithholdingConfigPayItem(variables)
+    };
 
     return {
       formState,
       loading,
       options,
+      onSubmit,
       value: ref<string[]>(["과세", "G03"]),
     };
   },

@@ -3,7 +3,7 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="Loading..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110">
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts"
                     :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                     <DxColumn caption="기록일시" data-field="loggedAt" />
@@ -39,6 +39,7 @@
 </template>
 
 <script lang="ts">
+import { companyId } from "../../src/helpers/commonFunction";
 import { ref, defineComponent, watch } from 'vue';
 import queries from "../../src/graphql/queries/common/index";
 import {
@@ -63,13 +64,14 @@ export default defineComponent({
         ZoomInOutlined
     },
 
-    setup(props) {
+    setup(props,{emit}) {
         let visible = ref(false);
         const dataQuery = ref();
         let trigger320 = ref<boolean>(false);
         let trigger330 = ref<boolean>(false);
         let trigger340 = ref<boolean>(false);
         let trigger210 = ref<boolean>(false);
+        let trigger130 = ref<boolean>(false);
         let trigger110 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
@@ -77,12 +79,12 @@ export default defineComponent({
             () => props.modalStatus,
             (newValue, old) => {
                 if (newValue) {
-                    visible.value = newValue; 
-                    
-                    if (props.companyId) {
+                    visible.value = newValue;
+
+                    if (companyId) {
                         dataQuery.value = {
                             userId: props.idRowEdit,
-                            companyId: props.companyId
+                            companyId: companyId
                         };
                     }
                     else
@@ -110,6 +112,14 @@ export default defineComponent({
                             trigger110.value = true;
                             refetchCM110();
                             break;
+                        case 'cm-130':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger130.value = true;
+                            refetchCM130();
+                            break;
                         default:
                             break;
                     }
@@ -118,6 +128,8 @@ export default defineComponent({
                     trigger320.value = false;
                     trigger340.value = false;
                     trigger210.value = false;
+                    trigger130.value = false;
+                    trigger110.value = false;
                 }
             }
         );
@@ -133,7 +145,6 @@ export default defineComponent({
         );
         watch(resultBf320, (value) => {
             if (value && value.getCompanyLogs) {
-
                 dataTableShow.value = value.getCompanyLogs;
             }
         });
@@ -195,12 +206,30 @@ export default defineComponent({
             }
         });
 
+        // get getWithholdingConfigPayItemsLogs cm-130
+        const { result: resultCM130, loading: loadingCM130, refetch: refetchCM130 } = useQuery(
+            queries.getWithholdingConfigPayItemsLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger130.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultCM130, (value) => {
+            if (value && value.getWithholdingConfigPayItemsLogs) {
+                dataTableShow.value = value.getWithholdingConfigPayItemsLogs;
+            }
+        });
 
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
-
+        const setModalVisible = ()=>{
+            dataTableShow.value = [];
+            emit('closePopup', false)
+        }
         return {
+            setModalVisible,
             dataTableShow,
             visible,
             loadingBf320,
@@ -208,15 +237,12 @@ export default defineComponent({
             loadingBf340,
             loadingBf210,
             loadingCM110,
+            loadingCM130,
             formarDate,
             dataQuery
         }
     },
-    methods: {
-        setModalVisible() {
-            this.$emit('closePopup', false)
-        }
-    }
+
 })
 </script>
 <style>

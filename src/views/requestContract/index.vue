@@ -383,7 +383,11 @@ import {
 } from "@ant-design/icons-vue";
 
 import moment from "moment";
+<<<<<<< HEAD
 import { states } from "./data.ts"; 
+=======
+// import mutations from "../../graphql/mutations/RqContract/index";
+>>>>>>> develop
 import { notification } from "ant-design-vue";
 import bizTypeList from "../../constants/facilityBizType";
 import {
