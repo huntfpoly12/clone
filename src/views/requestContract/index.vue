@@ -612,7 +612,7 @@ export default {
         };
 
         const onFinish = (values) => {
-            console.log("Success:", values);
+            
         };
 
         const layout = {
@@ -653,7 +653,6 @@ export default {
     },
     watch: {
         "contractCreacted.longTermCareInstitutionNumber"(newVal) {
-            console.log(newVal);
             if (this.listDataConvert.length > 0) {
                 this.listDataConvert.forEach((item) => {
                     item.longTermCareInstitutionNumber = newVal;
@@ -661,7 +660,6 @@ export default {
             }
         },
         "contractCreacted.registrationCardFileStorageId"(newVal) {
-            console.log(newVal);
             if (this.listDataConvert.length > 0) {
                 this.listDataConvert.forEach((item) => {
                     item.registrationCardFileStorageId = newVal;
@@ -757,7 +755,6 @@ export default {
         getImgUrlAccounting(img) {
             this.imagestep = img.url;
             this.fileNamestep = img.fileNamestep;
-            console.log(img);
             this.contractCreacted.registrationCardFileStorageId = img;
         },
 

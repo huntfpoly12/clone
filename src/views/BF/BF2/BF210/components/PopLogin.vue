@@ -81,9 +81,7 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             }));
     onResult((res) => {
-      let data = res.data.getAuthentications.datas
-      console.log(data);
-      
+      let data = res.data.getAuthentications.datas 
       arrayLog.value = data
     })
 
