@@ -1,4 +1,4 @@
-# my-app
+# Jangbuda Vue App
 
 ## Project setup
 ```
