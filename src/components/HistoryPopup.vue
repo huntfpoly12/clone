@@ -178,6 +178,13 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
+        watch(resultBf210, (value) => {
+            if (value && value.getUserLogs) {
+                dataTableShow.value = value.getUserLogs;
+            }
+        });
+
+
 
         // get getUserLogs  110
         const { result: resultCM110, loading: loadingCM110, refetch: refetchCM110 } = useQuery(

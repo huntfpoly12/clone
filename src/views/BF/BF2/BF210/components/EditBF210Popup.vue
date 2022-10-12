@@ -43,13 +43,13 @@
                 <a-select-option value="c" label="고객사">
                   <a-tag style="color: black" :color="getColorTag('고객사')">고객사</a-tag>
                 </a-select-option>
-                <a-select-option value="m" label="최고매니저">
+                <a-select-option :value="1" label="최고매니저">
                   <a-tag :color="getColorTag('최고매니저')">최고매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="m" label="중간매니저">
+                <a-select-option :value="2" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="m" label="담당매니저">
+                <a-select-option :value="3" label="담당매니저">
                   <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
                 </a-select-option>
                 <a-select-option value="r" label="영업자">
@@ -342,11 +342,13 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
+
     watch(result, (value) => {
       if (value && value.getUser) {
         formState.id = value.getUser.id;
-        formState.type = value.getUser.type;
+        formState.type = value.getUser.type != "m"?value.getUser.type:value.getUser.managerGrade;
         formState.username = value.getUser.username;
+        formState.name = value.getUser.name;
         formState.mobilePhone = value.getUser.mobilePhone;
         formState.email = value.getUser.email;
         formState.president = value.getUser.president;
@@ -444,9 +446,7 @@ export default defineComponent({
         return "#4a4848";
       } else if (data === "담당매니저") {
         return "#4a4848";
-      } else if (data === "담당매니저") {
-        return "#4a4848";
-      } else if (data === "영업자") {
+      }  else if (data === "영업자") {
         return "grey";
       } else if (data === "파트너") {
         return "#efe70b";

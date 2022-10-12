@@ -9,7 +9,7 @@
           <a-col :span="12">
             <a-form-item label="회원ID ">
               <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
-              <button style="border: 1px solid grey">중복체크</button>
+              <button style="border: 1px solid grey" @click="DupicationCheck">중복체크</button>
             </a-form-item>
             <a-form-item label="회원명">
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
@@ -31,35 +31,13 @@
             </a-form-item>
 
             <a-form-item label="회원종류">
-              <!-- <a-select v-model:value="dataMode.color" style="width: 150px"
-                :field-names="{ label: 'name', value: 'id', options: 'children' }" @focus="focus"
-                @change="handleChange"> -->
-              <!-- </a-select> -->
-              <a-select v-model:value="formState.type" style="width: 150px" @change="handleChange">
-                <a-select-opt-group label="담당매니저">
-                  <a-select-option value="m2" label="중간매니저">
-                    <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
-                  </a-select-option>
-                  <a-select-option value="m3" label="담당매니저">
-                    <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
-                  </a-select-option>
-                  <a-select-opt-group value="영업자" label="영업자">
-                    <a-select-option value="r" label="영업자">
-                      <a-tag :color="getColorTag('영업자')">영업자</a-tag>
-                    </a-select-option>
-                  </a-select-opt-group>
-
-                  <a-select-option value="lucy">Lucy</a-select-option>
-                </a-select-opt-group>
-
-              </a-select>
-
-
-
-
-              <!-- <a-select style="width: 150px" v-model:value="formState.type">
-                <a-select-option value="m" label="담당매니저">
-                  <a-tag :color="getColorTag('담당매니저')">담당매니저</a-tag>
+              <a-select style="width: 150px" v-model:value="formState.type" option-label-prop="children"
+                class="select_disable" @change="changeValueType">
+                <a-select-option :value="2" label="중간매니저">
+                  <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
+                </a-select-option>
+                <a-select-option :value="3" label="담당매니저">
+                  <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
                 </a-select-option>
                 <a-select-option value="r" label="영업자">
                   <a-tag :color="getColorTag('영업자')">영업자</a-tag>
@@ -67,7 +45,7 @@
                 <a-select-option value="p" label="파트너">
                   <a-tag style="color: black" :color="getColorTag('파트너')">파트너</a-tag>
                 </a-select-option>
-              </a-select> -->
+              </a-select>
             </a-form-item>
           </a-col>
         </a-row>
@@ -112,7 +90,7 @@
 
         <div style="position: relative">
           <div v-if="!bf310Detail.switch" class="overlay"></div>
-          <DxDataGrid :data-source="dataSource" :show-borders="true" :allow-column-reordering="true"
+          <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
             :allow-column-resizing="true" :column-auto-width="true">
             <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
@@ -151,7 +129,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, reactive } from "vue";
+import { ref, defineComponent, reactive, watch } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
 import type { SelectProps } from "ant-design-vue";
@@ -242,12 +220,21 @@ export default defineComponent({
       mobilePhone: "",
       email: "",
     });
-    const dataSource = ref([]);
-    const selectSearch = ref<SelectProps["options"]>([
-      { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
-      { value: "C20235301", label: "C20225301     효사랑노인요양전문병원" },
-      { value: "D20223838", label: "D20223838     테크노프로그램우리컴퍼니" },
-    ]);
+    const ScreenRoleGroup = reactive({
+      id: "",
+      name: "",
+      type: "",
+      screenRoles: "",
+      lock: true,
+      memo: "",
+      createdAt: "",
+      createdBy: "",
+      updatedAt: "",
+      updatedBy: "",
+      ip: "",
+      active: true
+    });
+    const selectSearch = ref([{}]);
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
@@ -284,28 +271,6 @@ export default defineComponent({
     const focus = () => {
       console.log('focus');
     };
-    // const options = ref<SelectProps['options']>([
-    //   {
-    //     id: 'jack',
-    //     name: 'Jack',
-    //     children: [
-    //       {
-    //         id: 'small jack',
-    //         name: 'samll Jack',
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     id: 'jack',
-    //     name: 'Jack',
-    //     children: [
-    //       {
-    //         id: 'small jack',
-    //         name: 'samll Jack',
-    //       },
-    //     ],
-    //   },
-    // ]);
 
     const dateFormat = "YYYY-MM-DD";
 
@@ -323,6 +288,25 @@ export default defineComponent({
         range: "${label} must be between ${min} and ${max}",
       },
     };
+
+    const changeValueType = (data: any) => {
+      console.log(data)
+      if (data == 'r') {
+        triggerSale.value = true
+        reqSale()
+      } else if (data == "2") {
+        triggerManager.value = true
+        reqManager()
+      } else if (data == "3") {
+        triggerManager.value = true
+        reqManager()
+      }
+      else if (data == "p") {
+        triggerPatner.value = true
+        reqManager()
+      }
+
+    }
 
     const formState = reactive({
       id: 1,
@@ -381,16 +365,46 @@ export default defineComponent({
       팩스: "",
       전자세금계산서수신이메일: "",
     });
+    const findSalesRepresentatives = reactive({
+      id: "",
+      name: "",
+      type: "",
+      screenRoles: "",
+      lock: true,
+      memo: "",
+      createdAt: "",
+      createdBy: "",
+      updatedAt: "",
+      updatedBy: "",
+      ip: "",
+      active: true
+    })
+      ;
+    const findManagerUsers = reactive({
+      id: 1,
+      type: "",
+      username: "",
+      name: "",
+      mobilePhone: "",
+      groupCode: "",
+      groupName: "",
+      managerGrade: true,
+      active: true,
+    });
+    const findParters = reactive({
+      id: 1,
+      code: "",
+      name: "",
+      description: "",
+      createdAt: "",
+      createdBy: "",
+      updatedAt: "",
+      updatedBy: "",
+      ip: "",
+      active: true
+    });
 
-    const handleOkConfirm = () => {
-      console.log(data, "fffffff");
-      if (confirm.value == "확인") {
-        visible.value = false;
-      } else {
-        bf310Detail.상태 = "정상";
-        visible.value = false;
-      }
-    };
+
     const createUser = reactive({
       type: "",
       username: "",
@@ -404,29 +418,140 @@ export default defineComponent({
       rows: 20,
       types: ["r", "m", "c", "p", "s"],
     });
-    const { onResult } = useQuery(
-      queries.searchScreenRoleGroups,
-      originData.value
-    );
-    // const {
-    //   mutate: Creat,
-    //   loading: signinLoading,
-    //   onDone: signinDone,
-    //   onError: onError,
-    // } = useMutation(mutations.createUser.createUser, () => ({
-    //   variables: {
-    //     ...userCreated,
-    //   },
-    // }));
 
-    onResult((res) => {
-      // if (res.loading) {
-      //   console.log(originData.value);
-      // } else {
-      // }
-      dataSource.value = res.data.searchScreenRoleGroups.datas;
+    //querie searchScreenRoleGroups
+    // const { onResult } = useQuery(
+    //   queries.searchScreenRoleGroups,
+    //   originData.value
+    // );   
+    // onResult((res) => {     
+    //   ScreenRoleGroup.value = res.data.searchScreenRoleGroups.datas;
+    // });
+    const dataQuery = ref();
+    let trigger = ref<boolean>(false);
+    let triggerSale = ref<boolean>(false);
+    let triggerManager = ref<boolean>(false);
+    let triggerPatner = ref<boolean>(false);
+    let triggerDuplication = ref<boolean>(false);
+    watch(
+      () => props.modalStatus,
+      (newValue, old) => {
+        if (newValue) {
+          visible.value = newValue;
+          dataQuery.value = {};
+          trigger.value = true;
+
+          refetch();
+        } else {
+          visible.value = newValue;
+          trigger.value = false;
+        }
+      }
+    );
+    // querie searchScreenRoleGroups
+    const { result, loading, refetch } = useQuery(
+      queries.searchScreenRoleGroups, originData,
+      () => ({
+        enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+
+    const arrData = ref()
+    watch(result, (value) => {
+      if (value && value.searchScreenRoleGroups) {
+        arrData.value = value.searchScreenRoleGroups.datas
+      }
     });
+
+    // querie findSalesRepresentatives
+    const { onResult: resSale, refetch: reqSale } = useQuery(
+      queries.findSalesRepresentatives, {},
+      () => ({
+        enabled: triggerSale.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    resSale(e => {
+      let option: any = []
+      e.data.findSalesRepresentatives.map((val: any) => {
+        option.push({
+          label: val.code + '  ' + val.name,
+          value: val.id
+        })
+      })
+      selectSearch.value = option
+    })
+    watch(result, (value) => {
+      if (value && value.findSalesRepresentatives) {
+        arrData.value = value.findSalesRepresentatives.datas
+      }
+    });
+
+    //querie findManagerUsers
+    const { onResult: resManager, refetch: reqManager } = useQuery(
+      queries.findManagerUsers, {},
+      () => ({
+        enabled: triggerManager.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    resManager(e => {
+      let option: any = []
+      e.data.findManagerUsers.map((val: any) => {
+        option.push({
+          label: val.code + '  ' + val.name,
+          value: val.id
+        })
+      })
+      selectSearch.value = option
+    })
+    watch(result, (value) => {
+      if (value && value.findManagerUsers) {
+        arrData.value = value.findManagerUsers.datas
+      }
+    });
+
+    //querie findParters
+    const { onResult: resPatner, refetch: reqPatner } = useQuery(
+      queries.findParters, {},
+      () => ({
+        enabled: triggerPatner.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    resPatner(e => {
+      let option: any = []
+      e.data.findParters.map((val: any) => {
+        option.push({
+          label: val.code + '  ' + val.name,
+          value: val.id
+        })
+      })
+      selectSearch.value = option
+    })
+    watch(result, (value) => {
+      if (value && value.findParters) {
+        arrData.value = value.findParters.datas
+      }
+    });
+
+    //querie duplication
+    const { onResult, refetch: DupicationCheck} = useQuery(
+      queries.isUserRegistableUsername, {},
+      () => ({
+        enabled: triggerDuplication.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    watch(result, (value) => {
+      if (value && value.findParters) {
+        arrData.value = value.findParters.datas
+      }
+    });
+
     return {
+      arrData,
       labelCol,
       focus,
       wrapperCol,
@@ -436,7 +561,6 @@ export default defineComponent({
       value1: ref<Dayjs>(),
       onToggle,
       confirm,
-      handleOkConfirm,
       formState,
       onFinish,
       validateMessages,
@@ -449,9 +573,12 @@ export default defineComponent({
       handleBlur,
       handleChange,
       createUser,
-      dataSource,
+      ScreenRoleGroup,
       userCreated,
-      // options,
+      findSalesRepresentatives,
+      findManagerUsers,
+      findParters,
+      changeValueType
     };
   },
 
