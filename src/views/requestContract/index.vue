@@ -138,7 +138,8 @@
                         </div>
                         <div style="display: flex">
                             <div>
-                                <imgUpload :title="titleModal" v-model:imageId="imageId" @update-img="getImgUrl" style="margin-top: 10px" />
+                                <imgUpload :title="titleModal" v-model:imageId="imageId" @update-img="getImgUrl"
+                                    style="margin-top: 10px" />
                             </div>
 
                             <a-col :span="7">
@@ -281,15 +282,15 @@
                         <label>서비스 시작년월 :</label>
                         <div style="width: 170px">
                             <CustomDatepicker v-if="contractCreacted.startYearMonthHolding == ''"
-                                @valueDateChange="changeValueDateHoding" />
+                                @valueDateChange="changeValueDateHoding" :styleDate="'m'" />
                             <CustomDatepicker v-else :valueDate="contractCreacted.startYearMonthHolding"
-                                @valueDateChange="changeValueDateHoding" />
+                                @valueDateChange="changeValueDateHoding" :styleDate="'m'" />
                         </div>
                     </div>
 
                     <div class="form-item">
                         <label>직 원 수:</label>
-                        <a-input-number placeholder="장기요양기관등록번호" style="width: 170px"
+                        <a-input placeholder="장기요양기관등록번호" style="width: 170px"
                             v-model:value="contractCreacted.capacityHolding" />
                     </div>
                     <div class="form-item">
@@ -444,7 +445,7 @@ export default {
         DxValidator,
         DxPatternRule,
         DxTextBox,
-        DxStringLengthRule, 
+        DxStringLengthRule,
         DeleteOutlined,
     },
     data() {

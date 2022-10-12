@@ -203,16 +203,16 @@
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
 
-                    <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" @closePopup="closePopupAdd" />
-
-                    <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :data="popupData" />
-
-                    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        :data="popupData" title="변경이력" />
-                    <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false"
-                        :data="popupData" title="로그인이력" />
                 </a-tab-pane>
             </a-tabs>
+
+            <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" @closePopup="closePopupAdd" />
+            <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :data="popupData" />
+
+            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+                title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-110" :companyId="companyIdPopup" />
+            <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
+                title="로그인이력" :idRowEdit="idRowEdit" typeHistory="cm-110" :companyId="companyIdPopup" />
         </div>
     </a-spin>
 </template>
@@ -291,6 +291,8 @@ export default defineComponent({
         let modalHistoryStatus = ref(false);
         let modalLoginStatus = ref(false);
         let popupData = ref();
+        var idRowEdit = ref<number>(0)
+        var companyIdPopup = ref<number>(0)
 
         setTimeout(() => {
             spinning.value = !spinning.value;
@@ -387,15 +389,15 @@ export default defineComponent({
             };
         }
         const modalHistory = (data: any) => {
+            // console.log(companyId);
+
+            idRowEdit.value = data.data.id
+            companyIdPopup.value = companyId
             modalHistoryStatus.value = true;
-            popupData.value = data;
+
         }
         const modalLogin = (data: any) => {
-            console.log(data);
-            console.log(modalLoginStatus, "modalLoginStatus");
-            
             modalLoginStatus.value = true;
-            popupData.value = data;
         }
 
         let companyId: any = null
@@ -535,7 +537,8 @@ export default defineComponent({
             listDataMyCompanyUser,
             updateDataCompany,
             companyId,
-
+            idRowEdit,
+            companyIdPopup
         };
 
     },

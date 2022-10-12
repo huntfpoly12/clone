@@ -69,14 +69,16 @@
             <label class="lable-item">회원명 :</label>
             <a-input style="width: 150px" v-model:value="dataSearch.name" />
           </a-col>
-          <a-col v-model:checked="dataSearch.active" style="display: flex; align-items: center">
-            <a-checkbox>
+          <a-col style="display: flex; align-items: center">
+            <a-checkbox v-model:checked="checkStatus.checkBox1">
               <a-tag :color="getAbleDisable(true)">이용중</a-tag>
             </a-checkbox>
-            <a-checkbox>
+            <a-checkbox v-model:checked="checkStatus.checkBox2">
               <a-tag :color="getAbleDisable(false)">이용중지</a-tag>
             </a-checkbox>
           </a-col>
+
+
         </a-row>
       </div>
     </div>
@@ -132,10 +134,10 @@
       </DxDataGrid>
 
       <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-      <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" :idUserEdit="idRowEdit"
-        title="회원관리 [ bf-210 –pop ]" />
+      <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
+      :idRowEdit="idRowEdit" typeHistory="bf-210 -pop" title="회원관리 [ bf-210 –pop ]" />
       <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-        title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" />
+        title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-210"/>
       <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
         title="로그인이력 [ cm-000-popLogin ]" :idRow="rowChoose" />
     </div>
@@ -238,7 +240,10 @@ export default defineComponent({
 
   setup() {
     const spinning = ref<boolean>(true);
-
+    const checkStatus = ref({
+      checkBox1: false,
+      checkBox2: false
+    })
     const rowChoose = ref()
     const dataSearch = ref({
       page: 10,
@@ -248,7 +253,6 @@ export default defineComponent({
       groupName: "",
       username: "",
       name: "",
-      active: true
     })
     var idRowEdit = ref<number>(0)
     const originData = ref({
@@ -259,42 +263,67 @@ export default defineComponent({
       groupName: "",
       username: "",
       name: "",
-      active: true
     })
 
     setTimeout(() => {
       spinning.value = !spinning.value;
     }, 1000);
     const dataSource = ref([])
-    const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchUsers, originData)
+    const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchUsers, originData, () => ({
+      fetchPolicy: "no-cache",
+    }))
 
 
     onResult((res) => {
-      console.log(res);
       dataSource.value = res.data.searchUsers.datas
-    })   
+    })
     setTimeout(() => {
       spinning.value = !spinning.value;
     }, 1000);
 
     const searching = () => {
       spinning.value = !spinning.value;
+      let dataNew: any = ref({})
+      if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
+        dataNew.value = {}
+        dataNew.value = {
+          page: 1,
+          rows: 10,
+          type: dataSearch.value.type,
+          groupCode: dataSearch.value.groupCode,
+          groupName: dataSearch.value.groupName,
+          username: dataSearch.value.username,
+          name: dataSearch.value.name,
+          active: true,
+        }
+      } else if (checkStatus.value.checkBox2 == true && checkStatus.value.checkBox1 == false) {
+        dataNew.value = {}
+        dataNew.value = {
+          page: 1,
+          rows: 10,
+          type: dataSearch.value.type,
+          groupCode: dataSearch.value.groupCode,
+          groupName: dataSearch.value.groupName,
+          username: dataSearch.value.username,
+          name: dataSearch.value.name,
+          active: false,
+        }
+      } else {
+        dataNew.value = {}
+        dataNew.value = {
+          page: 1,
+          rows: 10,
+          type: dataSearch.value.type,
+          groupCode: dataSearch.value.groupCode,
+          groupName: dataSearch.value.groupName,
+          username: dataSearch.value.username,
+          name: dataSearch.value.name,
+        }
 
-     
+      }
+      console.log(dataNew.value);
 
-      let dataNew = {
-        page: 1,
-        rows: 10,
-        type: dataSearch.value.type,
-        groupCode: dataSearch.value.groupCode,
-        groupName: dataSearch.value.groupName,
-        username: dataSearch.value.username,
-        name: dataSearch.value.name,
-        active: dataSearch.value.active,
-      } 
-
-
-      refetchData(dataNew)
+      refetchData(dataNew.value)
 
       setTimeout(() => {
         spinning.value = !spinning.value;
@@ -309,7 +338,8 @@ export default defineComponent({
       originData,
       searching,
       dataSearch,
-      rowChoose
+      rowChoose,
+      checkStatus
     }
   },
 
@@ -339,11 +369,12 @@ export default defineComponent({
       this.modalEditStatus = true;
       this.popupData = data;
     },
-    modalHistory(data: any) {
+    modalHistory(data: any) { 
+      this.idRowEdit = data.data.id
       this.modalHistoryStatus = true;
       this.popupData = data;
     },
-    modalLogin(data: any) { 
+    modalLogin(data: any) {
       this.rowChoose = data.key
       this.modalLoginStatus = true;
       this.popupData = data;
@@ -357,7 +388,7 @@ export default defineComponent({
         return "grey";
       } else if (data === "p") {
         return "#cdc71c";
-      } 
+      }
     },
     getAbleDisable(data: any) {
       if (data === true) {

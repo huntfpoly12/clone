@@ -3,12 +3,12 @@
     <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
       @cancel="setModalVisible()" width="50%" :mask-closable="false">
       <h2 class="title_modal">회원정보</h2>
-      <a-form v-bind="layout" name="nest-messages" :model="formState" :validate-messages="validateMessages"
+      <a-form v-bind="layout" name="nest-messages" v-model:value="formState" :validate-messages="validateMessages"
         @finish="onFinish">
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID">
-              <a-input disabled value="formState.id" style="width: 150px; margin-right: 10px" />
+              <a-input disabled v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
               <button disabled style="
                   background-color: #00000040;
                   color: #918e8b;
@@ -19,7 +19,7 @@
               </button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input value="formState.name" style="width: 150px; margin-right: 10px" />
+              <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
               <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 300px"
@@ -109,7 +109,7 @@
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
         <div style="position: relative">
           <div v-if="!bf310Detail.switch" class="overlay"></div>
-          <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" :allow-column-reordering="true"
+          <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id" :allow-column-reordering="true"
             :allow-column-resizing="true" :column-auto-width="true">
             <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
@@ -195,7 +195,7 @@ interface FormState {
 }
 
 export default defineComponent({
-  props: ["modalStatus", "data", "msg", "title"],
+  props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
 
   components: {
     MenuOutlined,
@@ -300,25 +300,41 @@ export default defineComponent({
       ip: "",
       active: true,
       facilityBusinesses: [],
-      screenRoleGroups: [],
+      screenRoleGroups: {
+        id: "",
+        name: "",
+        type: "",
+        screenRoles: "",
+        lock: true,
+        memo: "",
+        createdAt: "",
+        createdBy: "",
+        updatedAt: "",
+        updatedBy: "",
+        ip: "",
+        active: true
+      }
+
+
+      ,
     });
     const dataQuery = ref();
     let trigger = ref<boolean>(false);
-      watch(
-            () => props.modalStatus,
-            (newValue, old) => {
-                if (newValue) {
-                    visible.value = newValue;
-                    dataQuery.value = { id: props.idRowEdit };                    
-                    trigger.value = true;
-                    
-                    refetch();
-                } else {
-                    visible.value = newValue;
-                    trigger.value = false;
-                }
-            }
-        );
+    watch(
+      () => props.modalStatus,
+      (newValue, old) => {
+        if (newValue) {
+          visible.value = newValue;
+          dataQuery.value = { id: props.idRowEdit };
+          trigger.value = true;
+
+          refetch();
+        } else {
+          visible.value = newValue;
+          trigger.value = false;
+        }
+      }
+    );
 
 
     const { result, loading, refetch } = useQuery(

@@ -141,9 +141,11 @@ export default defineComponent({
 		let dataQuery = ref()
 
 		watch(() => props.modalStatus, (value) => {
-			dataQuery.value = { companyId: props.data.companyId };
-			triggers.value = true;
-			refetchData()
+			if (props.data.companyId) {
+				dataQuery.value = { companyId: props.data.companyId };
+				triggers.value = true;
+				// refetchData()
+			}
 		})
 
 		for (let i = 10; i < 36; i++) {
@@ -191,6 +193,7 @@ export default defineComponent({
 
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
+
 		onResult(e => {
 			let dataRes: any = []
 			e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
@@ -247,7 +250,8 @@ export default defineComponent({
 			bizTypeList,
 			companyId,
 			creactUserNew,
-			refetchData
+			refetchData,
+
 		};
 	}
 	,

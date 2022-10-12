@@ -72,6 +72,91 @@
                                         </a-col>
                                     </a-row>
 
+<<<<<<< HEAD
+                                <a-row>
+                                    <a-col :span="12">
+                                        <a-form-item label="급여신고주기">
+                                            <a-space direction="vertical">
+                                                <a-radio-group v-model:value="dataRes.reportType"
+                                                    :options="plainOptions" />
+
+                                            </a-space>
+                                        </a-form-item>
+                                    </a-col>
+                                </a-row>
+                                <a-row>
+                                    <a-col :span="12">
+                                        <a-form-item label="급여지급형태">
+                                            <a-space direction="vertical">
+                                                <a-radio-group v-model:value="value2" :options="payOptions" />
+                                            </a-space>
+                                        </a-form-item>
+                                    </a-col>
+                                </a-row>
+                                <a-row>
+                                    <a-col :span="16">
+                                        <a-form-item label="급여지급일자">
+                                            <div style="display: flex; align-items: center">
+                                                <DxNumberBox :value="0" :min="0" :max="30" :show-spin-buttons="true"
+                                                    :width="150" />
+                                                <span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
+                                            </div>
+                                            <div style=" display: flex; margin-top: 10px; align-items: center; ">
+                                                <info-circle-outlined />
+                                                <span style="margin-left: 5px">
+                                                    급여지급일자는 선택사항으로 지정시 급여명세서 등에
+                                                    해당 급여일자가 입력되며, 수정 가능합니다.
+                                                </span>
+                                            </div>
+                                        </a-form-item>
+                                    </a-col>
+                                </a-row>
+                                <a-row>
+                                    <a-col :span="12">
+                                        <a-form-item>
+                                            <div style="margin-left: 50px">
+                                                <span>두루누리 적용 여부 (사업자):</span>
+                                                <a-switch v-model:checked="isSwitch" checked-children="적용"
+                                                    un-checked-children="미적용" style="width: 80px; margin-left: 8px" />
+                                            </div>
+                                            <div style="margin-left: 150px; margin-top: 10px">
+                                                <info-circle-outlined />
+                                                <span style="margin-left: 5px">
+                                                    사업자 두루누리 미적용시 해당 사원이 두루누리
+                                                    적용이더라도 급여계산에 반영되지 않습니다.
+                                                </span>
+                                            </div>
+                                        </a-form-item>
+                                    </a-col>
+                                </a-row>
+
+                                <h2 style="font-weight: 600; color: gray" class="title-h2">
+                                    관할세무서, 지방소득세 납세지 설정
+                                </h2>
+                                <a-row :gutter="24">
+                                    <a-col>
+                                        <a-form-item label="사업장주소">
+                                            <a-input disabled style="width: 574px; margin-right: 10px"
+                                                v-model:value="formState.사업장주소" />
+                                            <a-button @click="showModal" type="primary">자동선택
+                                            </a-button>
+                                            <a-modal class="container_email" v-model:visible="isShow" okText="네. 적용합니다"
+                                                cancelText="아니오" @ok="handleSuccsess" :mask-closable="false">
+                                                <div id="modal">
+                                                    <div style="display: flex">
+                                                        <question-circle-outlined
+                                                            style="padding-right: 10px; font-size: xxx-large" />
+                                                        <div>
+                                                            <p style="margin: 0; font-weight: 600">
+                                                                관할세무서 : 송파세무서
+                                                            </p>
+                                                            <p style="margin: 0; font-weight: 600">
+                                                                지방소득세 납세지 : 서울특별시 송파구
+                                                            </p>
+                                                            <p style="margin: 0">
+                                                                위 자동으로 선택된 결과로 적용하시겠습니까?
+                                                            </p>
+=======
                                     <h2 style="font-weight: 600; color: gray" class="title-h2">
                                         관할세무서, 지방소득세 납세지 설정
                                     </h2>
@@ -100,6 +185,7 @@
                                                                     위 자동으로 선택된 결과로 적용하시겠습니까?
                                                                 </p>
                                                             </div>
+>>>>>>> develop
                                                         </div>
                                                     </div>
                                                 </a-modal>
