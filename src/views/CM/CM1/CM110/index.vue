@@ -106,9 +106,12 @@
                                 </div>
                             </div>
                             <div style="display: flex;">
-                                <a-form-item label="생년월일">
-                                    <a-input v-model:value="formState.extendInfo.president.birthday" />
+
+                                <a-form-item label="생년월일" style="width: 327px;">
+                                    <CustomDatepicker :valueDate="formState.extendInfo.president.birthday"
+                                        date-format="MM/DD/YYYY" @valueDateChange="changeDate" />
                                 </a-form-item>
+
                                 <p class="validate-message">
                                     ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
                                 </p>
@@ -237,7 +240,7 @@ import EditCM110Popup from "./components/EditCM110Popup.vue"
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import inputFormat from '../../../../components/inputBoxFormat.vue';
 
-import { defineComponent, ref, toRaw, reactive } from "vue";
+import { defineComponent, ref } from "vue";
 import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import ReviewStampImage from "./components/ReviewStampImage.vue";
 import ListLoginPopup from "../../../../components/ListLoginPopup.vue";
@@ -246,9 +249,10 @@ import { message } from 'ant-design-vue';
 import mutations from "../../../../graphql/mutations/CM/CM110/index";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/CM/CM110/index"
-
 import { useMutation } from "@vue/apollo-composable";
 import { getJwtObject } from "@bankda/jangbuda-common";
+import CustomDatepicker from "../../../../components/CustomDatepicker.vue";
+
 
 import { companyId } from "../../../../helpers/commonFunction"
 function getBase64(file: File) {
@@ -262,6 +266,7 @@ function getBase64(file: File) {
 
 export default defineComponent({
     components: {
+        CustomDatepicker,
         InfoCircleFilled,
         LoginOutlined,
         EditOutlined,
@@ -538,6 +543,11 @@ export default defineComponent({
             callSaveSeal(dataCallApi)
         }
 
+
+        const changeDate = (data: any) => {
+            formState.value.extendInfo.president.birthday = data 
+        }
+
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -581,7 +591,8 @@ export default defineComponent({
             dataGetListUsers,
             rowTable,
             changeSealUrl,
-            loadingSeal
+            loadingSeal,
+            changeDate
         };
 
     },
