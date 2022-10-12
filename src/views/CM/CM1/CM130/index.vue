@@ -1,7 +1,39 @@
 <template>
     <div id="cm-130" class="cm-130" style="padding: 24px;">
-        <a-spin tip="Loading..." :spinning="loading">
+        <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig">
             <a-tabs v-model:activeKey="activeKey" type="card">
+                <template #rightExtra>
+                    <div class="list-action">
+                        <div v-if="activeKey == '1'">
+                            <a-tooltip>
+                                <template #title>저장</template>
+                                <a-button @click="onSubmitConfig">
+                                    <SaveOutlined />
+                                </a-button>
+                            </a-tooltip>
+                        </div>
+                        <div v-if="activeKey == '2'">
+                            <a-tooltip>
+                                <template #title>조회</template>
+                                <a-button>
+                                    <SearchOutlined />
+                                </a-button>
+                            </a-tooltip>
+                            <a-tooltip>
+                                <template #title>삭제</template>
+                                <a-button>
+                                    <DeleteOutlined />
+                                </a-button>
+                            </a-tooltip>
+                            <a-tooltip>
+                                <template #title>출력</template>
+                                <a-button>
+                                    <PrinterOutlined />
+                                </a-button>
+                            </a-tooltip>
+                        </div>
+                    </div>
+                </template>
                 <a-tab-pane key="1" tab="기본">
                     <a-row>
                         <a-col :span="24">
@@ -126,10 +158,6 @@
                                             </a-row>
                                         </a-col>
                                     </a-row>
-                                    <a-form-item :wrapper-col="{ span: 14, offset: 9 }">
-                                        <a-button type="primary" >그냥 나가기</a-button>
-                                        <a-button style="margin-left: 10px" @click="onSubmitConfig">저장하고 나가기</a-button>
-                                    </a-form-item>
                                 </a-form>
                             </div>
                         </a-col>
@@ -138,91 +166,102 @@
                         title="원천설정 [ cm-130 –pop ]" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여항목">
-                    <div class="page-content">
-                        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="itemCode"
-                            @exporting="onExporting">
-                            <DxPaging :page-size="10" />
-                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                            <DxExport :enabled="true" :allow-export-selected-data="true" />
-                            <DxToolbar>
-                                <DxItem name="searchPanel" />
-                                <DxItem name="exportButton" />
-                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                                <DxItem name="groupPanel" />
-                                <DxItem name="addRowButton" show-text="always" />
-                                <DxItem name="columnChooserButton" />
-                            </DxToolbar>
-                            <template #button-template>
-                                <DxButton icon="plus" @click="openAddNewModal" />
-                            </template>
-                            <DxColumn data-field="itemCode" :width="50" css-class="cell-center" caption="코드"/>
 
-                            <DxColumn data-field="use" caption="이용여부" :width="80" cell-template="use" css-class="cell-center" />
-                            <template #use="{ data }">
-                                <a-tag :color="getAbleDisable(data.value)">이용중지</a-tag>
-                            </template>
-                            <DxColumn data-field="taxPayItemName"  caption="과세구분"  :width="100" />
+                    <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="itemCode"
+                        @exporting="onExporting" :column-auto-width="true">
+                        <DxPaging :page-size="10" />
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                        <DxExport :enabled="true" :allow-export-selected-data="true" />
+                        <DxToolbar>
+                            <DxItem name="searchPanel" />
+                            <DxItem name="exportButton" />
+                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                            <DxItem name="groupPanel" />
+                            <DxItem name="addRowButton" show-text="always" />
+                            <DxItem name="columnChooserButton" />
+                        </DxToolbar>
+                        <template #button-template>
+                            <DxButton icon="plus" @click="openAddNewModal" />
+                        </template>
+                        <DxColumn data-field="itemCode" :width="50" css-class="cell-center" caption="코드" />
 
-                            <DxColumn data-field="name" caption="항목명"/>
-                            <DxColumn data-field="taxfreePayItemCode" caption="비과세코드" css-class="cell-center" :width="100" />
-                            <DxColumn data-field="taxFreeIncludeSubmission" caption="제출여부" :width="80" css-class="cell-center" cell-template="taxExemption"/>
-                            <template #taxExemption="{ data }">
-                                {{data.value ?  'O' : 'X' }}
-                            </template>
-                            <DxColumn data-field="유형" />
-                            <DxColumn data-field="formula"  caption="산출방법"/>
-                            <DxColumn cell-template="pupop" css-class="cell-center" :width="60" />
-                            <template #pupop="{ data }" class="custom-action">
-                                <div class="custom-action">
-                                    <a-space :size="10">
-                                        <a-tooltip placement="top">
-                                            <template #title>편집</template>
-                                            <EditOutlined @click="setModalEditVisible(data)" />
-                                        </a-tooltip>
-                                        <a-tooltip placement="top">
-                                            <template #title>변경이력</template>
-                                            <HistoryOutlined @click="modalHistory(data)" />
-                                        </a-tooltip>
-                                    </a-space>
-                                </div>
-                            </template>
-                        </DxDataGrid>
-                        <a-form-item style="margin-top: 24px" :wrapper-col="{ span: 14, offset: 9 }">
-                            <a-button type="primary" >그냥 나가기</a-button>
-                            <a-button style="margin-left: 10px" @click="onSubmitConfig">저장하고 나가기</a-button>
-                        </a-form-item>
-                    </div>
+                        <DxColumn data-field="use" caption="이용여부" :width="80" cell-template="use"
+                            css-class="cell-center" />
+                        <template #use="{ data }">
+                            <a-tag :color="getAbleDisable(data.value)">이용중지</a-tag>
+                        </template>
+                        <DxColumn data-field="taxPayItemName" caption="과세구분" :width="100" />
+
+                        <DxColumn data-field="name" caption="항목명" />
+                        <DxColumn data-field="taxfreePayItemCode" caption="비과세코드" css-class="cell-center"
+                            :width="100" />
+                        <DxColumn data-field="taxFreeIncludeSubmission" caption="제출여부" :width="80"
+                            css-class="cell-center" cell-template="taxExemption" />
+                        <template #taxExemption="{ data }">
+                            {{data.value ? 'O' : 'X' }}
+                        </template>
+                        <DxColumn data-field="유형" :width="300" />
+                        <DxColumn data-field="formula" caption="산출방법" :width="300" />
+                        <DxColumn cell-template="pupop" css-class="cell-center" :width="100" />
+                        <template #pupop="{ data }" class="custom-action">
+                            <div class="custom-action">
+                                <a-space :size="10">
+                                    <a-tooltip placement="top">
+                                        <template #title>편집</template>
+                                        <EditOutlined @click="setModalEditVisible(data)" />
+                                    </a-tooltip>
+                                    <a-tooltip placement="top">
+                                        <template #title>변경이력</template>
+                                        <HistoryOutlined @click="modalHistory(data)" />
+                                    </a-tooltip>
+                                    <deleteOutlined @click="deleteConfig(data)" />
+                                </a-space>
+                            </div>
+                        </template>
+                    </DxDataGrid>
+
                     <AddCM130Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false"
                         title="원천설정 [ cm-130 –pop ]" />
                     <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
-                        :data="popupData" title="원천설정 [ cm-130 –pop] " :idRowEdit="idRowEdit"/>
+                        :data="popupData" title="원천설정 [ cm-130 –pop] " :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        :data="popupData" title="변경이력[cm-130-pop]" :idRowEdit="idRowEdit"/>
+                        :data="popupData" title="변경이력[cm-130-pop]" :idRowEdit="idRowEdit"  typeHistory="cm-130"/>
                 </a-tab-pane>
             </a-tabs>
         </a-spin>
     </div>
 </template>
 <script lang="ts">
-import { getJwtObject } from "@bankda/jangbuda-common";
+import { companyId } from "../../../../helpers/commonFunction";
+import {
+
+} from "@ant-design/icons-vue";
 import {
     UploadOutlined,
     WarningFilled,
     QuestionCircleOutlined,
     InfoCircleOutlined,
+    EditOutlined,
+    SearchOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeleteOutlined, SaveOutlined,
+    HistoryOutlined,
+    LoginOutlined,
+
 } from "@ant-design/icons-vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import queries from "../../../../graphql/queries/CM/CM130/index";
 import mutations from "../../../../graphql/mutations/CM/CM130/index";
 import { employees } from "./data";
-import { defineComponent, ref, toRaw, reactive, watch } from "vue";
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { defineComponent, ref, toRaw, reactive, watch, createVNode } from "vue";
 import { DxNumberBox } from "devextreme-vue/number-box";
 import DxButton from "devextreme-vue/button";
-import {
-    EditOutlined,
-    HistoryOutlined,
-    LoginOutlined,
-} from "@ant-design/icons-vue";
+import { Modal } from 'ant-design-vue';
+
 import {
     DxDataGrid,
     DxColumn,
@@ -239,10 +278,11 @@ import { message } from "ant-design-vue";
 import EditCM130Popup from "../CM130/components/EditCM130Popup.vue";
 import SettingPopup from "./components/SettingPopup.vue";
 import { Workbook } from "exceljs";
-import { useQuery ,useMutation} from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
+
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -274,6 +314,13 @@ export default defineComponent({
         HistoryPopup,
         AddCM130Popup,
         InfoCircleOutlined,
+        SearchOutlined,
+        MenuFoldOutlined,
+        MenuUnfoldOutlined,
+        MailOutlined,
+        PrinterOutlined,
+        DeleteOutlined,
+        SaveOutlined,
     },
     data() {
         return {
@@ -303,18 +350,6 @@ export default defineComponent({
             isShow.value = false;
         };
         const fileList = ref([]);
-        const onSubmit = () => {
-            console.log("submit!", toRaw(formState));
-        };
-
-        let companyId: number|null|undefined = null
-        const token = sessionStorage.getItem("token");
-        if (token) {
-            const jwtObject = getJwtObject(token);
-            if (jwtObject.userType === 'c') {
-                companyId = jwtObject.companyId
-            }
-        }
 
         const dataSource = ref([]);
         // reportType: 1 or 6
@@ -327,10 +362,10 @@ export default defineComponent({
             competentTaxOfficeCode: '',
             localIncomeTaxArea: '',
             companyAddressInfoAddress: '',
-            collectivePayment:false,
-            taxForEachBusiness:false
+            collectivePayment: false,
+            taxForEachBusiness: false
         });
-        
+
 
         // get config
         const dataQuery = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
@@ -384,8 +419,8 @@ export default defineComponent({
         };
 
         // get withholding config pay items
-        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) , useOnly: false });
-        const { result: resultWithholdingConfig, refetch: refetchWithholdingConfig } = useQuery(
+        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')), useOnly: false });
+        const { result: resultWithholdingConfig, refetch: refetchWithholdingConfig ,loading: loadingWithholdingConfig} = useQuery(
             queries.getWithholdingConfigPayItems,
             dataQueryWithholding,
             () => ({
@@ -395,12 +430,41 @@ export default defineComponent({
         watch(resultWithholdingConfig, (value) => {
             dataSource.value = value.getWithholdingConfigPayItems;
         });
- 
+
+        // delete withholding config pay item
+
+        const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
+            mutations.deleteWithholdingConfigPayItem
+        );
+
+        onDoneDelete(() => {
+            message.success(`Update was successful`, 4);
+            refetchWithholdingConfig()
+        });
+
+        const deleteConfig = (data: any) => {
+            Modal.confirm({
+                title: 'Do you want to delete this item?',
+                icon: createVNode(ExclamationCircleOutlined),
+                //content: createVNode('div', { style: 'color:red;' }, 'Some descriptions'),
+                onOk() {
+                    let variables = {
+                        companyId: companyId,
+                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        itemCode: data.data.itemCode
+                    };
+
+                    actionDelete(variables);
+                },
+                class: 'confirm',
+            });
+
+        }
+
         return {
             idRowEdit,
             labelCol: { style: { width: "150px" } },
             formState,
-            onSubmit,
             activeKey: ref("1"),
             fileList,
             headers: {
@@ -414,7 +478,9 @@ export default defineComponent({
             showModal,
             handleSuccsess,
             dataSource,
-            loading
+            loading,
+            loadingWithholdingConfig,
+            deleteConfig
         };
     },
     methods: {
@@ -442,12 +508,12 @@ export default defineComponent({
             this.modalAddNewStatus = true;
         },
         setModalEditVisible(data: any) {
-            console.log(data.data.itemCode,'ggggggggg');
             this.idRowEdit = data.data.itemCode;
             this.modalEditStatus = true;
             this.popupData = data;
         },
         modalHistory(data: any) {
+            console.log(data,'xxxxxxxxx');
             this.idRowEdit = data.data.itemCode;
             this.modalHistoryStatus = true;
             this.popupData = data;
@@ -455,7 +521,7 @@ export default defineComponent({
         getAbleDisable(data: any) {
             if (data) {
                 return "transparent";
-            }else{
+            } else {
                 return "red";
             }
         },
