@@ -12,7 +12,7 @@
               <button style="border: 1px solid grey">중복체크</button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px"/>
+              <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
               <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 300px"
@@ -31,13 +31,33 @@
             </a-form-item>
 
             <a-form-item label="회원종류">
-              <a-select ref="select" v-model:value="dataMode.color" style="width: 120px" :options="options"
+              <!-- <a-select v-model:value="dataMode.color" style="width: 150px"
                 :field-names="{ label: 'name', value: 'id', options: 'children' }" @focus="focus"
-                @change="handleChange"> 
+                @change="handleChange"> -->
+              <!-- </a-select> -->
+              <a-select v-model:value="formState.type" style="width: 150px" @change="handleChange">
+                <a-select-opt-group label="담당매니저">
+                  <a-select-option value="m2" label="중간매니저">
+                    <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
+                  </a-select-option>
+                  <a-select-option value="m3" label="담당매니저">
+                    <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
+                  </a-select-option>
+                  <a-select-opt-group value="영업자" label="영업자">
+                    <a-select-option value="r" label="영업자">
+                      <a-tag :color="getColorTag('영업자')">영업자</a-tag>
+                    </a-select-option>
+                  </a-select-opt-group>
+
+                  <a-select-option value="lucy">Lucy</a-select-option>
+                </a-select-opt-group>
+
               </a-select>
 
 
-              <a-select style="width: 150px" v-model:value="formState.type">
+
+
+              <!-- <a-select style="width: 150px" v-model:value="formState.type">
                 <a-select-option value="m" label="담당매니저">
                   <a-tag :color="getColorTag('담당매니저')">담당매니저</a-tag>
                 </a-select-option>
@@ -47,7 +67,7 @@
                 <a-select-option value="p" label="파트너">
                   <a-tag style="color: black" :color="getColorTag('파트너')">파트너</a-tag>
                 </a-select-option>
-              </a-select>
+              </a-select> -->
             </a-form-item>
           </a-col>
         </a-row>
@@ -264,28 +284,28 @@ export default defineComponent({
     const focus = () => {
       console.log('focus');
     };
-    const options = ref<SelectProps['options']>([
-      {
-        id: 'jack',
-        name: 'Jack',
-        children: [
-          {
-            id: 'small jack',
-            name: 'samll Jack',
-          },
-        ],
-      },
-      {
-        id: 'jack',
-        name: 'Jack',
-        children: [
-          {
-            id: 'small jack',
-            name: 'samll Jack',
-          },
-        ],
-      },
-    ]);
+    // const options = ref<SelectProps['options']>([
+    //   {
+    //     id: 'jack',
+    //     name: 'Jack',
+    //     children: [
+    //       {
+    //         id: 'small jack',
+    //         name: 'samll Jack',
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     id: 'jack',
+    //     name: 'Jack',
+    //     children: [
+    //       {
+    //         id: 'small jack',
+    //         name: 'samll Jack',
+    //       },
+    //     ],
+    //   },
+    // ]);
 
     const dateFormat = "YYYY-MM-DD";
 
@@ -335,8 +355,8 @@ export default defineComponent({
         updatedBy: "",
         ip: "",
         active: true
-    }
-  });
+      }
+    });
     const onFinish = (values: any) => {
       console.log("Success:", values);
     };
@@ -431,7 +451,7 @@ export default defineComponent({
       createUser,
       dataSource,
       userCreated,
-      options,
+      // options,
     };
   },
 
