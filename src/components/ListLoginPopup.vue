@@ -55,8 +55,9 @@ export default defineComponent({
                 오류시스템메세지: "비밀번호 불일치",
                 IP주소: "123.451.342.1",
             },
-        ]);
-
+        ]); 
+        console.log(props);
+        
         return {
             dataTableShow
         }
