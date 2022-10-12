@@ -2,14 +2,18 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" :title="title" centered @cancel="setModalVisible()" :mask-closable="false"
             width="50%">
-            <a-spin tip="Loading..."
-                :spinning="loadingCM110">
-                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="index">
-                    <DxColumn data-field="createdAt" caption="기록일시" />
+            <a-spin tip="Loading..." :spinning="loadingCM110">
+                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="index"
+                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+                    <DxColumn data-field="createdAt" caption="기록일시" cell-template="creactedAt" data-type="text"/>
+                    <template #creactedAt="{ data }"> 
+                        {{ formarDate(data.value) }}
+                    </template>
+
                     <DxColumn data-field="success" caption="성공여부" cell-template="tag-login" css-class="cell-center" />
                     <template #tag-login="{ data }">
-                        <a-tag :color="getColorTag(data.value)" style="width:65px">{{ data.value == true? "성공" : "실패"
-                        }}
+                        <a-tag :color="getColorTag(data.value)" style="width:65px">
+                            {{ data.value == true? "성공" : "실패"}}
                         </a-tag>
                     </template>
                     <DxColumn data-field="status" caption="응답상태" />
@@ -34,30 +38,39 @@ import {
 } from "devextreme-vue/data-grid";
 import queries from "../../src/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
+import dayjs, { Dayjs } from 'dayjs';
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 
 export default defineComponent({
     props: ['modalStatus', 'data', 'title', 'idRowEdit', 'typeHistory', 'companyId'],
     components: {
         DxDataGrid,
         DxColumn,
-        DxPaging
+        DxPaging,
+        Dayjs,
     },
 
     setup(props) {
         let trigger110 = ref<boolean>(false);
         const dataTableShow = ref([]);
-        const dataQuery = ref({
-            companyId: 29,
-            userId: 13,
-            filter: {
-                page: 1,
-                rows: 100
-            }
-        })
+        const dataQuery = ref()
 
         watch(() => props.modalStatus, (newValue, old) => {
-            refetchCM110();
-            trigger110.value = true
+            if (props.data && props.data.companyId && props.data.userId) {
+                dataQuery.value = {
+                    companyId: props.data.companyId,
+                    userId: props.data.userId,
+                    filter: {
+                        page: 1,
+                        rows: 100
+                    }
+                }
+                refetchCM110();
+                trigger110.value = true
+            }
         })
 
         // get getUserLogs  110
@@ -83,10 +96,16 @@ export default defineComponent({
 
         });
 
+        const formarDate = (date: any) => {
+            return dayjs(date).format('YYYY-MM-DD hh:mm:ss')
+        };
+
+
 
         return {
             dataTableShow,
-            loadingCM110
+            loadingCM110,
+            formarDate
         }
     },
     methods: {
