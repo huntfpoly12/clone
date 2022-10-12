@@ -8,6 +8,7 @@ import getSalesRepresentativeLogs from "./getSalesRepresentativeLogs";
 import getServiceContractLogs from "./getServiceContractLogs";
 import getMyCompanyUserLogs from "./getMyCompanyUserLogs";
 import getMyCompanyAuthentications from "./getMyCompanyAuthentications";
+import getWithholdingConfigPayItemsLogs from "./getWithholdingConfigPayItemsLogs";
 
 const queries = {
   getListSale: getListSale,
@@ -20,6 +21,7 @@ const queries = {
   getSalesRepresentativeLogs: getSalesRepresentativeLogs,
   getMyCompanyUserLogs: getMyCompanyUserLogs,
   getMyCompanyAuthentications: getMyCompanyAuthentications,
+  getWithholdingConfigPayItemsLogs:getWithholdingConfigPayItemsLogs
 
 };
 
