@@ -8,7 +8,7 @@
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="이용자ID">
-								<a-input v-model:value="formState.username" />
+								<a-input v-model:value="formState.username" @change="validateCharacter" />
 							</a-form-item>
 						</a-col>
 						<a-col :span="12">
@@ -210,7 +210,7 @@ export default defineComponent({
 
 		onResultUsername(e => {
 			if (e.data)
-				if (e.data.isUserRegistableUsername == true) { 
+				if (e.data.isUserRegistableUsername == true) {
 					message.success(`해당 사용자 이름이 존재하지 않습니다`)
 				} else {
 					message.error(`해당 사용자 이름이 이미 존재합니다`)
@@ -261,6 +261,10 @@ export default defineComponent({
 			}
 		}
 
+		const validateCharacter = (e: any) => { 
+			formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '') 
+		}
+
 		return {
 			labelCol: { style: { width: "150px" } },
 			formState,
@@ -275,7 +279,8 @@ export default defineComponent({
 			companyId,
 			creactUserNew,
 			refetchData,
-			checkUserName
+			checkUserName,
+			validateCharacter
 		};
 	}
 	,
