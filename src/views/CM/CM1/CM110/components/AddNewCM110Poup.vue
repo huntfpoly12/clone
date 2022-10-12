@@ -138,13 +138,14 @@ export default defineComponent({
 		const options = ref<SelectProps['options']>([]);
 		let companyId = 0
 		let triggers = ref<boolean>(false);
+		let triggersUserName = ref<boolean>(false);
 		let dataQuery = ref()
 
 		watch(() => props.modalStatus, (value) => {
 			if (props.data.companyId) {
 				dataQuery.value = { companyId: props.data.companyId };
 				triggers.value = true;
-				// refetchData()
+				refetchData()
 			}
 		})
 
@@ -194,8 +195,7 @@ export default defineComponent({
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
 
-		let dataQueryUsername = {}
-		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, dataQueryUsername, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
+		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, {}, () => ({ enabled: triggersUserName.value, fetchPolicy: "no-cache", }))
 
 		onResult(e => {
 			let dataRes: any = []
@@ -209,7 +209,14 @@ export default defineComponent({
 		})
 
 		onResultUsername(e => {
-			console.log(e);
+			if (e.data)
+				if (e.data.isUserRegistableUsername == true) {
+					console.log('1');
+
+					message.success(`Username chưa tồn tại`)
+				} else {
+					message.error(`Username đã tồn tại`)
+				}
 		})
 
 		//Creact user in company
@@ -245,11 +252,15 @@ export default defineComponent({
 		}
 
 		const checkUserName = () => {
-			console.log(formState.value.username);
-			let dataCall = {
-				username : formState.value.username
+			if (formState.value.username !== '') {
+				triggersUserName.value = true
+				let dataCall = {
+					username: formState.value.username
+				}
+				refetchUserName(dataCall)
+			} else {
+				message.error(`Vui lòng nhập user name để kiểm tra !`)
 			}
-			refetchUserName(dataCall)
 		}
 
 		return {

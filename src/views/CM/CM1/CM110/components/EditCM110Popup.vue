@@ -231,15 +231,17 @@ export default defineComponent({
             bizTypeList.value = dataRes
         })
 
-        watch(() => props.data, (value) => {
-            dataCall.value = {
-                companyId: props.data.companyId
-            }
-            dataUser.value = value
+        watch(() => props.modalStatus, (value) => {
+            if (props.data && props.data.companyId) {
+                dataCall.value = {
+                    companyId: props.data.companyId
+                }
+                dataUser.value =  props.data
 
-            trigger.value = true;
-            refetchData()
-            refetchFacility()
+                trigger.value = true;
+                refetchData()
+                refetchFacility()
+            }
         })
 
         const confirmUpdate = () => {
