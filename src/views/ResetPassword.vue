@@ -65,6 +65,7 @@
   import { useMutation } from "@vue/apollo-composable";
   import { useRouter, useRoute } from "vue-router";
   import mutations from "../graphql/mutations/index";
+  import { notification } from 'ant-design-vue';
   export default {
     components: {
 
@@ -108,6 +109,11 @@
         },
       }));
       resetDone(() => {
+        notification.success({
+          message: '비밀번호 생성 성공',
+          description:
+            '비밀번호를 성공적으로 생성했으며 로그인하여 관리 페이지로 이동하세요',
+        });
         router.push("/login");
       });
       onError((error) => {
