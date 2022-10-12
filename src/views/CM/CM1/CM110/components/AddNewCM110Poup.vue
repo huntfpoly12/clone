@@ -210,12 +210,10 @@ export default defineComponent({
 
 		onResultUsername(e => {
 			if (e.data)
-				if (e.data.isUserRegistableUsername == true) {
-					console.log('1');
-
-					message.success(`Username chưa tồn tại`)
+				if (e.data.isUserRegistableUsername == true) { 
+					message.success(`해당 사용자 이름이 존재하지 않습니다`)
 				} else {
-					message.error(`Username đã tồn tại`)
+					message.error(`해당 사용자 이름이 이미 존재합니다`)
 				}
 		})
 
@@ -259,7 +257,7 @@ export default defineComponent({
 				}
 				refetchUserName(dataCall)
 			} else {
-				message.error(`Vui lòng nhập user name để kiểm tra !`)
+				message.error(`사용자 이름을 입력헤주세요!`)
 			}
 		}
 

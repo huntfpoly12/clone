@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="spinning || loadData" size="large">
+    <a-spin :spinning="spinning || loadData || loadingSeal" size="large">
         <div id="cm-110" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="사업자">
@@ -46,7 +46,7 @@
                                     <a-row>
                                         <a-col :span="6">
                                             <a-form-item label="직인(인감)" style="margin-bottom: 5px;">
-                                                <a-image :width="100" :src="previewImage" :preview="false"
+                                                <a-image :width="100" :src="previewImage" :preview="true"
                                                     fallback="data:image/png;base64,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" />
                                             </a-form-item>
                                         </a-col>
@@ -130,8 +130,9 @@
                         <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
+
                     <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false"
-                        :data="fileImage" />
+                        :data="fileImage" :previewImageCall="previewImage" @urlSeal="changeSealUrl" />
 
                 </a-tab-pane>
 
@@ -162,21 +163,18 @@
                             </a-tag>
                         </template>
                         <DxColumn caption="성명" data-field="name" :width="200" />
-
-                        <!-- <DxColumn caption="성명" data-field="name" :width="200" cell-template="checked-facility" /> -->
-                        <!-- <DxColumn data-field="name" caption="회계권한(담당사업)" cell-template="checked-facility" /> -->
-
                         <DxColumn caption="성명" data-field="facilityBusinesses" cell-template="checked-facility" />
                         <template #checked-facility="{ data }">
-                            <!-- {{ changeValueRow(data.value[0].facilityBusinessId) }} -->
                             {{ changeValueRow(data.value) }}
                         </template>
 
                         <DxColumn data-field="withholdingRole" caption="원천권한" cell-template="checked-status" :width="80"
                             :allowEditing="true" />
+
                         <template #checked-status="{ data }">
-                            <a-checkbox :checked="data" @change="checkedRow(data)" />
+                            <a-checkbox v-model:value="data.value" @change="checkedRow(data)" />
                         </template>
+
                         <DxColumn :width="80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
@@ -212,10 +210,8 @@
 
             <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" @closePopup="closePopupAdd" />
             <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :data="popupData" />
-
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                 title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-110" :companyId="companyIdPopup" />
-
             <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false"
                 :data="popupDataLogin" title="로그인이력" typeHistory="cm-110" :companyId="companyIdPopup" />
         </div>
@@ -254,6 +250,7 @@ import queries from "../../../../graphql/queries/CM/CM110/index"
 import { useMutation } from "@vue/apollo-composable";
 import { getJwtObject } from "@bankda/jangbuda-common";
 
+import { companyId } from "../../../../helpers/commonFunction"
 function getBase64(file: File) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -287,7 +284,8 @@ export default defineComponent({
         EditCM110Popup,
         ListLoginPopup,
         inputFormat,
-        getJwtObject
+        getJwtObject,
+        companyId
     },
     setup() {
         const spinning = ref<boolean>(true);
@@ -352,11 +350,11 @@ export default defineComponent({
                     licenseFileStorageId: 0
                 }
             },
+            sealFileStorageId: null
         });
 
         let listDataMyCompanyUser = ref([])
-
-        let previewImage: any = ref("");
+        let previewImage: any = ref("https://jangbuda-frs.bankda.com/uFH4PK0U2Ar9sTYIqp0AV.png");
         let fileImage: any = ref(null);
         let modalStampReviewStatus: any = ref();
         const fileList = ref<UploadProps['fileList']>([]);
@@ -366,6 +364,8 @@ export default defineComponent({
                 if (info.file.originFileObj.size <= 1000000) {
                     previewImage.value = await getBase64(info.file.originFileObj);
                     fileImage.value = info;
+                    console.log(previewImage.value, "fileImage");
+
                 } else {
                     message.error(`이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 / 종류 : GIF, JPG, PNG`);
                 }
@@ -377,7 +377,6 @@ export default defineComponent({
             //   //message.error(`${info.file.name} file upload failed.`);
             // }
         };
-
         const stampReview = () => {
             modalStampReviewStatus.value = true;
         };
@@ -426,7 +425,7 @@ export default defineComponent({
                 input: {
                     phone: formState.value.presidentMobilePhone,
                     fax: formState.value.extendInfo.detail.fax,
-                    sealFileStorageId: 1,
+                    sealFileStorageId: formState.value.sealFileStorageId,
                     presidentMobilePhone: formState.value.extendInfo.president.mobilePhone,
                     presidentEmail: formState.value.extendInfo.president.email,
                     presidentBirthday: formState.value.extendInfo.president.birthday
@@ -435,7 +434,6 @@ export default defineComponent({
             spinning.value = !spinning.value;
             updateDataCompany(dataUpdateCompany)
         };
-
         const getColorTag = (data: boolean) => {
             if (data === true) {
                 return "rgb(16 142 236 / 62%)";
@@ -494,7 +492,13 @@ export default defineComponent({
 
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDataDetail, originData, () => ({ fetchPolicy: "no-cache", }))
         onResult((res) => {
+            console.log(res.data.getMyCompany.seal.url);
+
+            if (res.data.getMyCompany.seal) {
+                previewImage.value = res.data.getMyCompany.seal.url
+            }
             formState.value = res.data.getMyCompany
+
         })
 
         const dataGetListUsers = ref({
@@ -511,6 +515,33 @@ export default defineComponent({
         resultUsers((res) => {
             rowTable.value = res.data.getMyCompanyUsers.totalCount
         })
+
+
+        const {
+            mutate: callSaveSeal,
+            loading: loadingSeal,
+            onDone: onDoneSeal,
+            onError: onErrorSeal
+        } = useMutation(mutations.createMyCompanyAutoGeneratedSeal);
+
+        onDoneSeal(e => {
+            console.log(e.data.createMyCompanyAutoGeneratedSeal);
+            formState.value.sealFileStorageId = e.data.createMyCompanyAutoGeneratedSeal
+        })
+
+        onErrorSeal(e => {
+            message.error(`Có lỗi xảy ra trong quá trình tạo con dấu`)
+        })
+
+
+        const changeSealUrl = (data: any) => {
+            previewImage.value = 'data:image/png;base64,' + data
+            let dataCallApi = {
+                companyId: companyId,
+                seal: data
+            }
+            callSaveSeal(dataCallApi)
+        }
 
         return {
             labelCol: { style: { width: "150px" } },
@@ -553,11 +584,14 @@ export default defineComponent({
             companyIdPopup,
             popupDataLogin,
             dataGetListUsers,
-            rowTable
+            rowTable,
+            changeSealUrl,
+            loadingSeal
         };
 
     },
     methods: {
+
         // Convert FacilityBizType
         changeValueRow(data: any) {
             let stringConvert = ''
@@ -589,19 +623,6 @@ export default defineComponent({
             this.modalAddNewStatus = false
             this.refetchDataUsers()
         },
-
-        // changePage() {
-        //     let dataNew = {
-
-        //     }
-
-        //     this.refetchData(dataNew)
-
-        //     this.spinning = !this.spinning;
-        //     setTimeout(() => {
-        //         this.spinning = !this.spinning;
-        //     }, 1000);
-        // },
     },
 
 
