@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="spinning" size="large">
+    <a-spin :spinning="spinning || loadData" size="large">
         <div id="cm-110" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="사업자">
@@ -198,11 +198,15 @@
                         </template>
                     </DxDataGrid>
 
+                    <div class="pagination-table" v-if="rowTable > dataGetListUsers.filter.rows">
+                        <a-pagination v-model:current="dataGetListUsers.filter.page"
+                            v-model:page-size="dataGetListUsers.filter.rows" :total="rowTable" show-less-items />
+                    </div>
+
                     <a-form-item class="btn-submit-table">
                         <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
-
                 </a-tab-pane>
             </a-tabs>
 
@@ -211,8 +215,9 @@
 
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                 title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-110" :companyId="companyIdPopup" />
-            <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
-                title="로그인이력" :idRowEdit="idRowEdit" typeHistory="cm-110" :companyId="companyIdPopup" />
+
+            <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false"
+                :data="popupDataLogin" title="로그인이력" typeHistory="cm-110" :companyId="companyIdPopup" />
         </div>
     </a-spin>
 </template>
@@ -293,6 +298,7 @@ export default defineComponent({
         let popupData = ref();
         var idRowEdit = ref<number>(0)
         var companyIdPopup = ref<number>(0)
+        const popupDataLogin = ref()
 
         setTimeout(() => {
             spinning.value = !spinning.value;
@@ -397,6 +403,10 @@ export default defineComponent({
 
         }
         const modalLogin = (data: any) => {
+            popupDataLogin.value = {
+                companyId: companyId,
+                userId: data.data.id
+            }
             modalLoginStatus.value = true;
         }
 
@@ -487,18 +497,19 @@ export default defineComponent({
             formState.value = res.data.getMyCompany
         })
 
-        const dataGetListUsers = {
+        const dataGetListUsers = ref({
             companyId: companyId,
             filter: {
                 page: 1,
                 rows: 10
             }
-        }
+        })
 
+        const rowTable = ref(0)
 
-        const { refetch: refetchDataUsers, onResult: resultUsers, result: resultDataUsers } = useQuery(queries.getListUserCompany, dataGetListUsers, () => ({ fetchPolicy: "no-cache", }))
+        const { refetch: refetchDataUsers, onResult: resultUsers, result: resultDataUsers, loading: loadData } = useQuery(queries.getListUserCompany, dataGetListUsers.value, () => ({ fetchPolicy: "no-cache", }))
         resultUsers((res) => {
-            // console.log(resultDataUsers);
+            rowTable.value = res.data.getMyCompanyUsers.totalCount
         })
 
         return {
@@ -510,6 +521,7 @@ export default defineComponent({
             headers: {
                 authorization: "authorization-text",
             },
+            loadData,
             resultUsers,
             refetchDataUsers,
             resultDataUsers,
@@ -538,7 +550,10 @@ export default defineComponent({
             updateDataCompany,
             companyId,
             idRowEdit,
-            companyIdPopup
+            companyIdPopup,
+            popupDataLogin,
+            dataGetListUsers,
+            rowTable
         };
 
     },
@@ -573,7 +588,20 @@ export default defineComponent({
         closePopupAdd() {
             this.modalAddNewStatus = false
             this.refetchDataUsers()
-        }
+        },
+
+        // changePage() {
+        //     let dataNew = {
+
+        //     }
+
+        //     this.refetchData(dataNew)
+
+        //     this.spinning = !this.spinning;
+        //     setTimeout(() => {
+        //         this.spinning = !this.spinning;
+        //     }, 1000);
+        // },
     },
 
 
@@ -628,6 +656,10 @@ export default defineComponent({
 
 .ant-form-item {
     margin-bottom: 10px;
+}
+
+.pagination-margin {
+    margin-top: 10px;
 }
 </style>
   
