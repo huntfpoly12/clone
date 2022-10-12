@@ -513,7 +513,6 @@ export default defineComponent({
             this.popupData = data;
         },
         modalHistory(data: any) {
-            console.log(data,'xxxxxxxxx');
             this.idRowEdit = data.data.itemCode;
             this.modalHistoryStatus = true;
             this.popupData = data;

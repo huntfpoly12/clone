@@ -448,10 +448,8 @@ export default defineComponent({
         const handleAddMemo = (note: any, mmId: any = null) => {
 
             if (note !== '' && mmId == null) {
-                console.log(note, mmId, 'add memo');
                 actionCreateMemo({ companyId: formState.id, memo: note });
             } else {
-                console.log(note, mmId, 'update memo');
                 actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         }
@@ -628,7 +626,6 @@ export default defineComponent({
     },
     methods: {
         getImgUrl(img: any) {
-            // console.log("imgUrl", img);
         },
         setModalVisible() {
             this.$emit("closePopup", false);
