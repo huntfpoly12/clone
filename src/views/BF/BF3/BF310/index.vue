@@ -70,7 +70,7 @@
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
                     <template #createdat-cell="{ data }">
-                        {{ formarDate(data.value) }}
+                        {{ $filters.formatDate(data.value) }}
                     </template>
                     <DxColumn data-field="code" caption="신청코드" />
                     <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
