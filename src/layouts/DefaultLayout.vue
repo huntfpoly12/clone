@@ -208,7 +208,6 @@ import {
   defineAsyncComponent,
   onMounted,
 } from "vue";
-import { useRouter } from "vue-router";
 import menuTree from "./menuTree";
 import menuData from "./menuData";
 const BF310 = defineAsyncComponent(() =>
@@ -340,6 +339,13 @@ export default defineComponent({
           if (newValue.id.includes("pa-5")) {
             this.openKeys = ["pa-000", "pa-500"];
           }
+          
+          console.log(newValue.id)
+          console.log(this.$router)
+          if(newValue.id !== '#') {
+            this.$router.push(`/dashboard/${newValue.id}`);
+          }
+          
         }
       },
       immediate: true,
@@ -397,7 +403,7 @@ export default defineComponent({
       }
     },
     addMenuTab(item) {
-      const router = useRouter();
+      
       if (this.menuTab.length < 20) {
         this.menuTab.push(item);
       }
@@ -410,7 +416,6 @@ export default defineComponent({
         this.menuTab.push(obj[key]);
       }
       this.activeTab = item;
-      router.push(`/dashboard/${item.id}`);
     },
     removeItemTab(item) {
       this.menuTab.splice(item, 1);
@@ -420,8 +425,6 @@ export default defineComponent({
     },
     changeActiveTab(item) {
       this.activeTab = item;
-      const router = useRouter();
-      router.push(`/dashboard/${item.id}`);
       if (this.menuTab.length === 0) {
         this.activeTab = "";
       }
@@ -581,12 +584,11 @@ export default defineComponent({
   .ant-menu-item-selected {
   background: none;
 }
-
-::v-deep
-  .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
-  .ant-menu-item-selected-active
-  a {
-  color: #fff;
+.ant-menu-item-selected-active {
+  background-color: #1890ff !important;
+}
+.ant-menu-item-selected-active a {
+  color: #fff !important;
 }
 ::v-deep .page-content {
   padding: 10px;
