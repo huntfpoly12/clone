@@ -375,7 +375,7 @@
     </div>
 </template>
 <script>
-import { computed, reactive, ref, onMounted, watch } from "vue";
+import { reactive, ref } from "vue";
 import {
     CheckOutlined,
     EditOutlined,
@@ -409,8 +409,7 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-
-// import { DxNumberBox } from "devextreme-vue/number-box";
+  
 import DxTextBox from "devextreme-vue/text-box";
 import {
     DxValidator,
@@ -752,8 +751,7 @@ export default {
         getImgUrl(img) {
             this.contractCreacted.licenseFileStorageId = img;
             this.imageValue = img.url;
-            this.fileName = img.fileName;
-            console.log(img);
+            this.fileName = img.fileName; 
         },
 
         getImgUrlAccounting(img) {
