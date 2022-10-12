@@ -208,6 +208,7 @@ import {
   defineAsyncComponent,
   onMounted,
 } from "vue";
+import { useRouter } from "vue-router";
 import menuTree from "./menuTree";
 import menuData from "./menuData";
 const BF310 = defineAsyncComponent(() =>
@@ -396,6 +397,7 @@ export default defineComponent({
       }
     },
     addMenuTab(item) {
+      const router = useRouter();
       if (this.menuTab.length < 20) {
         this.menuTab.push(item);
       }
@@ -408,6 +410,7 @@ export default defineComponent({
         this.menuTab.push(obj[key]);
       }
       this.activeTab = item;
+      router.push(`/dashboard/${item.id}`);
     },
     removeItemTab(item) {
       this.menuTab.splice(item, 1);
@@ -417,6 +420,8 @@ export default defineComponent({
     },
     changeActiveTab(item) {
       this.activeTab = item;
+      const router = useRouter();
+      router.push(`/dashboard/${item.id}`);
       if (this.menuTab.length === 0) {
         this.activeTab = "";
       }
