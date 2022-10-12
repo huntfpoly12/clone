@@ -31,8 +31,7 @@ export default defineComponent({
         const sale = ref(props.selected);
         const { result, loading, error, onResult, refetch } = useQuery(queries.getListSale);
         const checkAll = () => {
-            console.log("123412");
-
+       
         }
         const updateSale = (value: any) => {
             emit('update:selected', value)

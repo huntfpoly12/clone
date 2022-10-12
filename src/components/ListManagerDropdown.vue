@@ -35,7 +35,6 @@ export default defineComponent({
     setup(props, { emit }) {
         const manager = ref(props.selected)
         const { result, loading, error, onResult, refetch } = useQuery(queries.getListManager);
-        console.log(result)
         const updateManager = (value: any) => {
             emit('update:selected', value)
         }

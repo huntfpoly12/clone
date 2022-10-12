@@ -29,25 +29,12 @@
             <menu-fold-outlined v-else class="trigger" />
           </a-button>
           <div class="wrap-search">
-            <a-input
-              v-model:value="inputSearchText"
-              placeholder="메뉴를 입력해보세요"
-              @keyup="onSearch($event.target.value)"
-              :class="{ shown: state }"
-              @click.prevent="toggleDropdown"
-            />
+            <a-input v-model:value="inputSearchText" placeholder="메뉴를 입력해보세요" @keyup="onSearch($event.target.value)"
+              :class="{ shown: state }" @click.prevent="toggleDropdown" />
             <div>
-              <div
-                class="box-search search-height"
-                v-if="filteredResult.length"
-                v-show="state"
-              >
-                <div
-                  v-for="(result, resultIndex) in filteredResult"
-                  :key="resultIndex"
-                  class="item-search"
-                  @click.prevent="toggleDropdown"
-                >
+              <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
+                <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex" class="item-search"
+                  @click.prevent="toggleDropdown">
                   <router-link :to="result.url">
                     {{ result.name }}
                   </router-link>
@@ -55,52 +42,26 @@
               </div>
             </div>
             <div v-if="inputSearchText.length > 0">
-              <div
-                class="box-search search-height"
-                v-if="filteredResult.length"
-                v-show="state"
-              >
-                <div
-                  v-for="(result, resultIndex) in filteredResult"
-                  :key="resultIndex"
-                  class="item-search"
-                  @click.prevent="toggleDropdown"
-                >
-                  <router-link
-                    :to="result.url"
-                    @click.enter="addMenuTab(result)"
-                  >
+              <div class="box-search search-height" v-if="filteredResult.length" v-show="state">
+                <div v-for="(result, resultIndex) in filteredResult" :key="resultIndex" class="item-search"
+                  @click.prevent="toggleDropdown">
+                  <router-link :to="result.url" @click.enter="addMenuTab(result)">
                     {{ result.id + " | " + result.name }}
                   </router-link>
                 </div>
               </div>
             </div>
             <div v-if="inputSearchText.length === 0">
-              <div
-                class="box-search search-height"
-                v-show="state"
-                @click.prevent="toggleDropdown"
-              >
-                <div
-                  v-for="result in menuData"
-                  :key="result.id"
-                  class="item-search"
-                >
-                  <router-link
-                    :to="result.url"
-                    @click.enter="addMenuTab(result)"
-                  >
+              <div class="box-search search-height" v-show="state" @click.prevent="toggleDropdown">
+                <div v-for="result in menuData" :key="result.id" class="item-search">
+                  <router-link :to="result.url" @click.enter="addMenuTab(result)">
                     {{ result.id + " | " + result.name }}
                   </router-link>
                 </div>
               </div>
             </div>
-            <div
-              v-if="filteredResult.length === 0 && inputSearchText.length"
-              v-show="state"
-              class="box-search search-no-data"
-              @click.prevent="toggleDropdown"
-            >
+            <div v-if="filteredResult.length === 0 && inputSearchText.length" v-show="state"
+              class="box-search search-no-data" @click.prevent="toggleDropdown">
               No Data
             </div>
           </div>
@@ -108,27 +69,15 @@
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
             <ul class="list-menu-tab">
-              <li
-                v-for="(item, index) in menuTab"
-                :class="activeTab.id === item.id ? 'active' : ''"
-                :key="index"
-                @click="changeActiveTab(item)"
-              >
+              <li v-for="(item, index) in menuTab" :class="activeTab.id === item.id ? 'active' : ''" :key="index"
+                @click="changeActiveTab(item)">
                 {{ item.name }}
                 <button @click="removeItemTab(index)">
-                  <svg
-                    focusable="false"
-                    class=""
-                    data-icon="close"
-                    width="1em"
-                    height="1em"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    viewBox="64 64 896 896"
-                  >
+                  <svg focusable="false" class="" data-icon="close" width="1em" height="1em" fill="currentColor"
+                    aria-hidden="true" viewBox="64 64 896 896">
                     <path
-                      d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z"
-                    ></path>
+                      d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
+                    </path>
                   </svg>
                 </button>
               </li>
@@ -138,39 +87,20 @@
       </div>
 
       <a-layout>
-        <a-layout-sider
-          width="300"
-          v-model:collapsed="collapsed"
-          :trigger="null"
-          collapsible
-        >
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            theme="dark"
-            mode="inline"
-            :open-keys="openKeys"
-            @openChange="onOpenChange"
-          >
+        <a-layout-sider width="300" v-model:collapsed="collapsed" :trigger="null" collapsible>
+          <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :open-keys="openKeys"
+            @openChange="onOpenChange">
             <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
               <template #icon>
                 <MailOutlined />
               </template>
               <template #title>{{ menuItem.title }}</template>
-              <a-sub-menu
-                v-for="subMenu in menuItem.subMenus"
-                :key="subMenu.id"
-                :title="subMenu.title"
-              >
-                <a-menu-item
-                  v-for="item in subMenu.items"
-                  :key="item.id"
-                  :class="
-                    item.id === activeTab.id
-                      ? 'ant-menu-item-selected-active'
-                      : ''
-                  "
-                  @click.enter="addMenuTab(item)"
-                >
+              <a-sub-menu v-for="subMenu in menuItem.subMenus" :key="subMenu.id" :title="subMenu.title">
+                <a-menu-item v-for="item in subMenu.items" :key="item.id" :class="
+                  item.id === activeTab.id
+                    ? 'ant-menu-item-selected-active'
+                    : ''
+                " @click.enter="addMenuTab(item)">
                   <router-link :to="item.url">{{ item.name }}</router-link>
                 </a-menu-item>
               </a-sub-menu>
@@ -178,9 +108,7 @@
           </a-menu>
         </a-layout-sider>
         <a-layout>
-          <a-layout-content
-            :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
-          >
+          <a-layout-content :style="{ background: '#fff', margin: 0, minHeight: '280px' }">
             <div class="main-content">
               <template v-if="activeTab">
                 <keep-alive>
@@ -339,6 +267,10 @@ export default defineComponent({
           if (newValue.id.includes("pa-5")) {
             this.openKeys = ["pa-000", "pa-500"];
           }
+          if (newValue.id !== '#') {
+            this.$router.push(`/dashboard/${newValue.id}`);
+          }
+
         }
       },
       immediate: true,
@@ -396,6 +328,7 @@ export default defineComponent({
       }
     },
     addMenuTab(item) {
+
       if (this.menuTab.length < 20) {
         this.menuTab.push(item);
       }
@@ -458,10 +391,12 @@ export default defineComponent({
 .ant-layout.ant-layout-has-sider {
   min-height: calc(100vh - 64px);
 }
+
 .components-grid-demo-flex .ant-col {
   display: flex;
   align-items: center;
 }
+
 .ant-layout-header {
   display: flex;
   justify-content: space-between;
@@ -483,6 +418,7 @@ export default defineComponent({
   background: #91d5ff;
   align-items: center;
   position: relative;
+
   .left {
     width: 300px;
     float: left;
@@ -498,6 +434,7 @@ export default defineComponent({
     float: left;
     width: calc(100% - 324px);
   }
+
   &::after {
     content: "";
     clear: both;
@@ -535,9 +472,11 @@ export default defineComponent({
 .search-height {
   max-height: 150px;
 }
+
 .ant-layout {
   overflow-x: hidden;
 }
+
 .box-search {
   overflow-y: auto;
   position: absolute;
@@ -565,30 +504,35 @@ export default defineComponent({
 ::v-deep .ant-layout-header {
   background-color: #096dd9;
 }
-::v-deep .ant-menu-dark .ant-menu-item-selected > span > a {
+
+::v-deep .ant-menu-dark .ant-menu-item-selected>span>a {
   color: rgba(255, 255, 255, 0.65);
 }
+
 ::v-deep h3.ant-typography {
   margin-bottom: 0;
 }
-::v-deep
-  .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
-  .ant-menu-item-selected {
+
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
   background: none;
 }
 
-::v-deep
-  .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
-  .ant-menu-item-selected-active
-  a {
-  color: #fff;
+.ant-menu-item-selected-active {
+  background-color: #1890ff !important;
 }
+
+.ant-menu-item-selected-active a {
+  color: #fff !important;
+}
+
 ::v-deep .page-content {
   padding: 10px;
 }
+
 .nav-logo img {
   max-width: 150px;
 }
+
 .nav-tabs {
   display: block;
   box-shadow: inset 0 -1px 0 #888;
@@ -603,6 +547,7 @@ export default defineComponent({
     overflow-x: auto;
     overflow-y: hidden;
     max-width: 100%;
+
     li {
       display: inline-block;
       width: auto;
@@ -614,6 +559,7 @@ export default defineComponent({
       border: 1px solid #888;
       margin: 0 2px;
       border-radius: 8px 8px 0 0;
+
       button {
         background: none;
         border: none;
@@ -621,6 +567,7 @@ export default defineComponent({
         float: right;
         cursor: pointer;
       }
+
       cursor: pointer;
 
       &:first-of-type {

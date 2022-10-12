@@ -1,11 +1,8 @@
 import gql from "graphql-tag";
 export default gql`
     query
-    getMyCompanyFacilityBusinesses(
-            $companyId: Int!   
+    isUserRegistableUsername(
+            $username: String!   
         ){
-            getMyCompanyFacilityBusinesses(companyId : $companyId) {
-                facilityBusinessId
-                name
-            }
+            isUserRegistableUsername(username : $username) 
         }`

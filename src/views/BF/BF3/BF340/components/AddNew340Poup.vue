@@ -273,7 +273,6 @@ export default defineComponent({
                 bf340Detail.value.status = 2;
             } else { 
                 bf340Detail.value.status = 1;
-                console.log(bf340Detail.status); 
             }
         };
 
@@ -282,9 +281,8 @@ export default defineComponent({
         };
 
         const onFinish = (values: any) => {
-            console.log("Success:", values);
         };
-
+        // create saler
         const {
             mutate: creactSale,
             loading: loadingUpdate,

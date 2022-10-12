@@ -61,14 +61,14 @@ export default gql`
                 ip
                 active
                 seal {
-                name
-                url
-                createdAt
-                createdBy
-                updatedAt
-                updatedBy
-                ip
-                active
+                    name
+                    url
+                    createdAt
+                    createdBy
+                    updatedAt
+                    updatedBy
+                    ip
+                    active
                 }
                 canceledAt
                 unpaidMonths

@@ -112,10 +112,7 @@ export default defineComponent({
     const data = props.data;
     const visible = ref<boolean>(false);
     const search = ref<string>("");
-    const onSearch = (searchValue: string) => {
-      console.log("use value", searchValue);
-      console.log("or use this.value", search.value);
-    };
+    const onSearch = (searchValue: string) => {};
     return { data, visible, search, onSearch };
   },
   methods: {
