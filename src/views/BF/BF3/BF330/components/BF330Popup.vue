@@ -278,10 +278,7 @@ import {
     DxItem,
     DxTexts,
 } from "devextreme-vue/data-grid";
-import { DxButton } from "devextreme-vue/button";
-import DataSource from "devextreme/data/data_source";
-import ArrayStore from "devextreme/data/array_store";
-import { employees, states } from "./data.js";
+import { DxButton } from "devextreme-vue/button"; 
 import {
     UploadOutlined,
     MinusCircleOutlined,
@@ -354,16 +351,8 @@ export default defineComponent({
             직원수: "직원수",
             selectionChanged: (data: any) => {
                 this.selectedItemKeys = data.selectedRowKeys;
-            },
-            dataModal: employees,
-            dataTable: new DataSource({
-                store: new ArrayStore({
-                    data: employees,
-                    key: "ID",
-                }),
-            }),
-            selectedItemKeys: [],
-            states,
+            }, 
+            selectedItemKeys: [], 
         };
     },
     computed: {},

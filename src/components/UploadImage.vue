@@ -145,7 +145,6 @@ export default defineComponent({
             formData.append("file", file);
             fileName.value = file.name;
             try {
-                console.log(formData);
                 
                 const data = await uploadRepository.public(formData);
 

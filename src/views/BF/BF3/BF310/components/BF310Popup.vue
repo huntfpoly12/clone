@@ -499,10 +499,6 @@ export default defineComponent({
       extraComment: "",
     });
 
-    const onFinish = (values: any) => {
-      console.log("Success:", values);
-    };
-
     const validateMessages = {
       required: "${label} is required!",
       types: {
@@ -519,7 +515,6 @@ export default defineComponent({
       () => props.modalStatus,
       (newValue, old) => {
         if (newValue) {
-          console.log(FacilityBizType.all(),'hkhjkhjk');
           visible.value = newValue;
           dataQuery.value = { id: props.data };
           trigger.value = true;
@@ -901,7 +896,6 @@ export default defineComponent({
     return {
       visible,
       formState,
-      onFinish,
       layout,
       validateMessages,
       setModalVisible,
@@ -922,7 +916,7 @@ export default defineComponent({
   },
   methods: {
     getImgUrl(img: any) {
-      // console.log("imgUrl", img);
+      
     },
 
     formarDate(date: any) {

@@ -5,7 +5,6 @@
             <div class="cm-100-popup-edit">
                 <a-form :model="formState" :label-col="labelCol">
                     <h2 class="title-h2">사업자정보</h2>
-
                     <a-row>
                         <a-col :span="12">
                             <a-form-item label="이용자ID">
@@ -30,7 +29,6 @@
                                 <a-input v-model:value="formState.name" />
                             </a-form-item>
                         </a-col>
-
                     </a-row>
                     <a-row>
                         <a-col :span="24">
@@ -83,7 +81,6 @@
                             <a-button danger class="btn-set-password" @click="confirmPopup">비밀번호 설정</a-button>
                         </a-col>
                     </a-row>
-
                 </a-form>
             </div>
             <template #footer>
@@ -93,7 +90,6 @@
                 </div>
             </template>
         </a-modal>
-
         <div class="confirm-popup">
             <a-modal v-model:visible="visible" :mask-closable="false">
                 <a-row>
@@ -112,10 +108,8 @@
                 </template>
             </a-modal>
         </div>
-
     </div>
 </template>
-
 <script lang="ts">
 import { ref, defineComponent, watch, reactive } from "vue";
 import { MailOutlined } from '@ant-design/icons-vue';
@@ -124,12 +118,10 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/CM/CM110/index"
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import { message } from 'ant-design-vue';
-
 const optionsRadio = [
     { label: '있음', value: true },
     { label: '없음', value: false }
 ];
-
 export default defineComponent({
     props: {
         modalStatus: {
@@ -138,11 +130,9 @@ export default defineComponent({
         },
         data: null,
     },
-
     components: {
         MailOutlined,
     },
-
     setup(props, { emit }) {
         const visible = ref<boolean>(false);
         const statusMailValidate = ref<boolean>(true);
@@ -152,7 +142,6 @@ export default defineComponent({
         let trigger = ref<boolean>(false);
         let dataCall = ref()
         let dataUser = ref()
-
         for (let i = 10; i < 36; i++) {
             const value = i.toString(36) + i;
             options?.value?.push({
@@ -160,34 +149,27 @@ export default defineComponent({
                 value,
             });
         }
-
         // Get detail user
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDetailUser, dataUser, () => ({ enabled: trigger.value, fetchPolicy: "no-cache", }))
-
         //Update info user
         const {
             mutate: updateUser,
             onDone: onDoneUpdate,
             onError: onErrorUpdate
         } = useMutation(mutations.updateInfoUser);
-
         //Send mail 
         const {
             mutate: sendGmail,
             onDone: doneSendGmail,
             onError: errorSendGmail
         } = useMutation(mutations.sendEmail);
-
-
         onDoneUpdate((e) => {
             message.success(`Update success!`);
             emit("closePopup", false)
         })
-
         const confirmPopup = () => {
             visible.value = true;
         }
-
         const validateNumber = (e: any, name: string) => {
             let valNumberOnly = e.target.value.replace(/\D+/g, '');
             switch (name) {
@@ -197,7 +179,6 @@ export default defineComponent({
                 default:
             }
         }
-
         const validateEmail = (e: any) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -208,7 +189,6 @@ export default defineComponent({
                 statusMailValidate.value = true;
             }
         }
-
         onResult((res) => {
             let newFaci: any = []
             res.data.getMyCompanyUser.facilityBusinesses.map((e: any) => {
@@ -217,7 +197,6 @@ export default defineComponent({
             valueFacilyti.value = newFaci
             formState.value = res.data.getMyCompanyUser
         })
-
         let bizTypeList = ref([])
         const { refetch: refetchFacility, onResult: resultFacility } = useQuery(queries.getDataFacilityBusiness, dataCall, () => ({ enabled: trigger.value, fetchPolicy: "no-cache", }))
         resultFacility(e => {
@@ -230,20 +209,17 @@ export default defineComponent({
             })
             bizTypeList.value = dataRes
         })
-
         watch(() => props.modalStatus, (value) => {
             if (props.data && props.data.companyId) {
+                trigger.value = true;
                 dataCall.value = {
                     companyId: props.data.companyId
                 }
                 dataUser.value =  props.data
-
-                trigger.value = true;
                 refetchData()
                 refetchFacility()
             }
         })
-
         const confirmUpdate = () => {
             let dataUpdate = {
                 companyId: props.data.companyId,
@@ -260,12 +236,10 @@ export default defineComponent({
             }
             updateUser(dataUpdate)
         }
-
         doneSendGmail((e) => {
             message.success(`Send email success!`);
             // emit("closePopup", false)
         })
-
         const sendMessToGmail = () => {
             let dataCallSendEmail = {
                 companyId: props.data.companyId,
@@ -273,7 +247,6 @@ export default defineComponent({
             }
             sendGmail(dataCallSendEmail)
         }
-
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -292,7 +265,6 @@ export default defineComponent({
             refetchFacility
         };
     },
-
     methods: {
         setModalVisible() {
             this.$emit('closePopup', false)
@@ -305,16 +277,12 @@ export default defineComponent({
     margin-left: 2%;
     color: #c3baba;
 }
-
 .btn-set-password {
     margin-left: 150px;
 }
-
-
 .confirm-popup /deep/.ant-modal-footer {
     text-align: center;
 }
-
 .ant-form-item {
     margin-bottom: 10px;
 }

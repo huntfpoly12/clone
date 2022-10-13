@@ -127,8 +127,7 @@ import {
 } from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
-import DxButton from "devextreme-vue/button";
-import { employees, states } from "../data.ts";
+import DxButton from "devextreme-vue/button"; 
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
@@ -164,10 +163,7 @@ export default defineComponent({
     },
     data() {
         return {
-            amountFormat: { currency: 'VND', useGrouping: true },
-            dataSource: employees,
-            states,
-
+            amountFormat: { currency: 'VND', useGrouping: true }, 
             popupData: [],
             modalStatus: false,
             modalHistoryStatus: false,
