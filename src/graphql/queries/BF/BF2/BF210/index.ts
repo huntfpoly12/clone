@@ -6,6 +6,7 @@ import getAuthentications from "./getAuthentications";
 import findManagerUsers from "./findManagerUsers";
 import findSalesRepresentatives from "./findSalesRepresentatives";
 import findParters from "./findParters";
+import findGroups from "./findGroups";
 const queries = {
   searchUsers: searchUsers,
   getUser: getUser,
@@ -15,6 +16,7 @@ const queries = {
   getAuthentications: getAuthentications,
   findManagerUsers: findManagerUsers,
   findParters: findParters,
+  findGroups: findGroups
 
 };
 

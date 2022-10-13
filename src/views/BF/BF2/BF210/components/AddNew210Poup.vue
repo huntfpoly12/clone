@@ -8,14 +8,15 @@
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID">
-              <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
+              <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px"
+                @change="changeValueID" />
               <a-button style="border: 1px solid grey" @click="checkDuplicateUsername">중복체크</a-button>
             </a-form-item>
             <a-form-item label="회원명">
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 300px"
+              <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 250px"
                 :options="selectSearch" :filter-option="filterOption" @focus="handleFocus" @blur="handleBlur"
                 @change="handleChange" class="select-search">
                 <template #suffixIcon>
@@ -31,7 +32,7 @@
             </a-form-item>
 
             <a-form-item label="회원종류">
-              <a-select style="width: 150px" v-model:value="formState.type" option-label-prop="children"
+              <a-select style="width: 10px" v-model:value="formState.type" option-label-prop="children"
                 class="select_disable" @change="changeValueType">
                 <a-select-option :value="2" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
@@ -149,6 +150,8 @@ import {
 } from "@ant-design/icons-vue";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import findGroups from "../../../../../graphql/queries/BF/BF2/BF210/findGroups";
+import { type } from "os";
 
 
 interface FormState {
@@ -284,22 +287,35 @@ export default defineComponent({
       },
     };
 
+    // const changeValueType = (data: any) => {
+    //   console.log(data)
+    //   if (data == 'r') {
+    //     triggerSale.value = true
+    //     reqSale()
+    //   } else if (data == "2") {
+    //     triggerManager.value = true
+    //     reqManager()
+    //   } else if (data == "3") {
+    //     triggerManager.value = true
+    //     reqManager()
+    //   }
+    //   else if (data == "p") {
+    //     triggerPatner.value = true
+    //     reqManager()
+    //   }
+    // }
     const changeValueType = (data: any) => {
-      console.log(data)
-      if (data == 'r') {
-        triggerSale.value = true
-        reqSale()
-      } else if (data == "2") {
-        triggerManager.value = true
-        reqManager()
-      } else if (data == "3") {
-        triggerManager.value = true
-        reqManager()
-      }
-      else if (data == "p") {
-        triggerPatner.value = true
-        reqManager()
-      }
+      triggerGroup.value = true;
+      setTimeout(() => {
+        let value = data
+        if (data == 1 || data == 2 || data == 3) {
+          value = 'm'
+        }
+        let dataCall = {
+          type: value
+        }
+        reqGroup(dataCall)
+      }, 100);
 
     }
 
@@ -375,6 +391,12 @@ export default defineComponent({
       active: true
     })
       ;
+    const findGroups = reactive({
+      groupId: 1,
+      groupCode: "",
+      groupName: "",
+      active: true
+    });
     const findManagerUsers = reactive({
       id: 1,
       type: "",
@@ -420,6 +442,7 @@ export default defineComponent({
     let triggerManager = ref<boolean>(false);
     let triggerPatner = ref<boolean>(false);
     let triggerDuplication = ref<boolean>(false);
+    let triggerGroup = ref<boolean>(false);
     watch(
       () => props.modalStatus,
       (newValue, old) => {
@@ -451,90 +474,111 @@ export default defineComponent({
       }
     });
 
-    // querie findSalesRepresentatives
-    const { onResult: resSale, refetch: reqSale } = useQuery(
-      queries.findSalesRepresentatives, {},
+    //query find group
+    const { onResult: resGroup, refetch: reqGroup } = useQuery(
+      queries.findGroups, {},
       () => ({
-        enabled: triggerSale.value,
+        enabled: triggerGroup.value,
         fetchPolicy: "no-cache",
       })
     );
-    resSale(e => {
+    resGroup(e => {
       let option: any = []
-      e.data.findSalesRepresentatives.map((val: any) => {
+      e.data.findGroups.map((val: any) => {
         option.push({
-          label: val.code + '  ' + val.name,
+          label: val.groupCode + '  ' + val.groupName,
           value: val.id
         })
       })
       selectSearch.value = option
     })
     watch(result, (value) => {
-      if (value && value.findSalesRepresentatives) {
-        arrData.value = value.findSalesRepresentatives.datas
+      if (value && value.findGroups) {
+        arrData.value = value.findGroups.datas
       }
     });
 
-    //querie findManagerUsers
-    const { onResult: resManager, refetch: reqManager } = useQuery(
-      queries.findManagerUsers, {},
-      () => ({
-        enabled: triggerManager.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    resManager(e => {
-      let option: any = []
-      e.data.findManagerUsers.map((val: any) => {
-        option.push({
-          label: val.code + '  ' + val.name,
-          value: val.id
-        })
-      })
-      selectSearch.value = option
-    })
-    watch(result, (value) => {
-      if (value && value.findManagerUsers) {
-        arrData.value = value.findManagerUsers.datas
-      }
-    });
+    // // querie findSalesRepresentatives
+    // const { onResult: resSale, refetch: reqSale } = useQuery(
+    //   queries.findSalesRepresentatives, {},
+    //   () => ({
+    //     enabled: triggerSale.value,
+    //     fetchPolicy: "no-cache",
+    //   })
+    // );
+    // resSale(e => {
+    //   let option: any = []
+    //   e.data.findSalesRepresentatives.map((val: any) => {
+    //     option.push({
+    //       label: val.code + '  ' + val.name,
+    //       value: val.id
+    //     })
+    //   })
+    //   selectSearch.value = option
+    // })
+    // watch(result, (value) => {
+    //   if (value && value.findSalesRepresentatives) {
+    //     arrData.value = value.findSalesRepresentatives.datas
+    //   }
+    // });
 
-    //querie findParters
-    const { onResult: resPatner, refetch: reqPatner } = useQuery(
-      queries.findParters, {},
-      () => ({
-        enabled: triggerPatner.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    resPatner(e => {
-      let option: any = []
-      e.data.findParters.map((val: any) => {
-        option.push({
-          label: val.code + '  ' + val.name,
-          value: val.id
-        })
-      })
-      selectSearch.value = option
-    })
-    watch(result, (value) => {
-      if (value && value.findParters) {
-        arrData.value = value.findParters.datas
-      }
-    });
+    // //querie findManagerUsers
+    // const { onResult: resManager, refetch: reqManager } = useQuery(
+    //   queries.findManagerUsers, {},
+    //   () => ({
+    //     enabled: triggerManager.value,
+    //     fetchPolicy: "no-cache",
+    //   })
+    // );
+    // resManager(e => {
+    //   let option: any = []
+    //   e.data.findManagerUsers.map((val: any) => {
+    //     option.push({
+    //       label: val.code + '  ' + val.name,
+    //       value: val.id
+    //     })
+    //   })
+    //   selectSearch.value = option
+    // })
+    // watch(result, (value) => {
+    //   if (value && value.findManagerUsers) {
+    //     arrData.value = value.findManagerUsers.datas
+    //   }
+    // });
+
+    // //querie findParters
+    // const { onResult: resPatner, refetch: reqPatner } = useQuery(
+    //   queries.findParters, {},
+    //   () => ({
+    //     enabled: triggerPatner.value,
+    //     fetchPolicy: "no-cache",
+    //   })
+    // );
+    // resPatner(e => {
+    //   let option: any = []
+    //   e.data.findParters.map((val: any) => {
+    //     option.push({
+    //       label: val.code + '  ' + val.name,
+    //       value: val.id
+    //     })
+    //   })
+    //   selectSearch.value = option
+    // })
+    // watch(result, (value) => {
+    //   if (value && value.findParters) {
+    //     arrData.value = value.findParters.datas
+    //   }
+    // });
 
     //querie checkDuplicateUsername 
-    const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.isUserRegistableUsername, {}, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
+    let dataCallCheck = ref({})
+    const { refetch: refetchUserName, onResult: onResultUsername } =
+      useQuery(queries.isUserRegistableUsername, dataCallCheck, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
 
     const checkDuplicateUsername = () => {
       if (formState.value.username !== '') {
         triggerDuplication.value = true
-        setTimeout(() => {
-          let dataCall = {
-            username: formState.value.username
-          }
-          refetchUserName(dataCall)
-        }, 500);
+        refetchUserName()
       } else {
         message.error(`사용자 이름을 입력헤주세요!`)
       }
@@ -548,9 +592,16 @@ export default defineComponent({
           message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
         }
     })
-    
+
+
+    const changeValueID = () => {
+      dataCallCheck.value = {
+        username: formState.value.username
+      }
+    }
 
     return {
+      changeValueID,
       arrData,
       labelCol,
       focus,

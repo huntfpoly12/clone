@@ -249,7 +249,7 @@ export default defineComponent({
             spinning.value = !spinning.value;
             let dataNew: any = ref({})
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
-                dataNew.value = {}
+                
                 dataNew.value = {
                     page: 1,
                     rows: 10,
@@ -261,7 +261,7 @@ export default defineComponent({
                     active: true,
                 }
             } else if (checkStatus.value.checkBox2 == true && checkStatus.value.checkBox1 == false) {
-                dataNew.value = {}
+              
                 dataNew.value = {
                     page: 1,
                     rows: 10,
@@ -273,7 +273,7 @@ export default defineComponent({
                     active: false,
                 }
             } else {
-                dataNew.value = {}
+                
                 dataNew.value = {
                     page: 1,
                     rows: 10,
@@ -283,9 +283,9 @@ export default defineComponent({
                     username: dataSearch.value.username,
                     name: dataSearch.value.name,
                 }
-            }
-            console.log(dataNew.value);
-            refetchData(dataNew.value)
+            } 
+            originData.value = dataNew.value
+            // refetchData()
             setTimeout(() => {
                 spinning.value = !spinning.value;
             }, 1000);

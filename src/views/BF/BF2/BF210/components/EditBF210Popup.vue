@@ -19,10 +19,13 @@
               </button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
+              <a-input v-if="formState.type!='c'" v-model:value="formState.name"
+                style="width: 150px; margin-right: 10px" />
+              <a-input v-if="formState.type=='c'" disabled v-model:value="formState.name"
+                style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 150px;"/> 
+              <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 230px;" />
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -61,18 +64,20 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4">
               <div style="display: flex; align-items: flex-end">
-                <a-input @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
-                  style="width: 150px; margin-right: 8px" />
+                <a-input v-if="formState.type !=='c'" @keypress="onlyNumber" type="text"
+                  v-model:value="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
+                <a-input v-if="formState.type =='c'" disabled @keypress="onlyNumber" type="text"
+                  v-model:value="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
               </div>
               <div :class="{ active: toggleActive }" class="toggle_container">
                 <ToggleButton v-on:change="triggerToggleEvent" />
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" :span="8">
-              <a-input v-model:value="formState.email" style="width: 250px" />
-              <a-button :disabled="!validated" html-type="submit" danger class="btn_sendemail" @click="showModal">비밀번호
-                변경
-              </a-button>
+              <a-input v-if="formState.type!=='c'" v-model:value="formState.email" style="width: 230px" />
+              <a-input v-if="formState.type=='c'" disabled v-model:value="formState.email" style="width: 230px" />
+              <a-button v-if="formState.type!=='c'" :disabled="!validated" html-type="submit" danger class="btn_sendemail" @click="showModal">비밀번호 변경</a-button>
+              <a-button v-if="formState.type =='c'" disabled html-type="submit" danger class="btn_sendemail" @click="showModal">비밀번호 변경</a-button>
             </a-form-item>
             <a-form-item>
               <a-modal :disabled="!formState.email" class="container_email" v-model:visible="isShow"
@@ -206,7 +211,7 @@ export default defineComponent({
   created() { },
   data() {
     return {
-      isShow: ref<boolean>(false), 
+      isShow: ref<boolean>(false),
       toggleActive: false,
       reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
     };
