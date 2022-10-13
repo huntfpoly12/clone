@@ -9,7 +9,7 @@
           <a-col :span="12">
             <a-form-item label="회원ID">
               <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
-              <button style="border: 1px solid grey" @click="checkDuplicationUser">중복체크</button>
+              <button style="border: 1px solid grey" @click="checkDuplicateUsername">중복체크</button>
             </a-form-item>
             <a-form-item label="회원명">
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
@@ -529,7 +529,7 @@ export default defineComponent({
       }
     });
 
-    //querie checkDuplicationUser
+    //querie checkDuplicateUsername
     const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(
       queries.isUserRegistableUsername, {}, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
       onResultUsername(e => {
@@ -540,7 +540,7 @@ export default defineComponent({
 					message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
 				}
 		})
-    const checkDuplicationUser = () => {
+    const checkDuplicateUsername = () => {
 			if (formState.value.username !== '') {
 				triggerDuplication.value = true
 				let dataCall = {
@@ -589,7 +589,7 @@ export default defineComponent({
       findManagerUsers,
       findParters,
       changeValueType,
-      checkDuplicationUser
+      checkDuplicateUsername
     };
   },
 
