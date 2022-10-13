@@ -9,8 +9,8 @@
           <a-tag :color="getColorTag(data.value)">{{ data.value }}</a-tag>
         </template>
         <DxColumn data-field="status" caption="응답상태" :width="80" />
-        <DxColumn data-field="message" caption="오류메세지"/>
-        <DxColumn data-field="cause" caption="오류시스템메세지"/>
+        <DxColumn data-field="message" caption="오류메세지" />
+        <DxColumn data-field="cause" caption="오류시스템메세지" />
         <DxColumn data-field="ip" caption="IP주소" :width="100" />
       </DxDataGrid>
       <template #footer> </template>
@@ -41,18 +41,16 @@ export default defineComponent({
 
   watch: {
     idRow(newVal) {
-      let dataCall: any = {
-        userId: newVal,
-        page: 1,
-        rows: 100
-
-      }
-      this.trigger = false
-      this.refetchData(dataCall)
-
-
-
-
+      this.trigger = true
+      console.log(newVal);
+      setTimeout(() => {
+        let dataCall = {
+          userId: newVal,
+          page: 1,
+          rows: 100
+        }
+        this.refetchData(dataCall)
+      }, 500);
     }
   },
 
@@ -74,15 +72,13 @@ export default defineComponent({
 
     let arrayLog = ref([])
 
-
     //CHỉ viết trong setup
-    const { result, refetch: refetchData, loading, error, onResult } = useQuery(queries.getAuthentications, {},   () => ({
-                enabled: trigger.value,
-                fetchPolicy: "no-cache",
-            }));
+    const { result, refetch: refetchData, loading, error, onResult } = useQuery(queries.getAuthentications, {}, () => ({
+      enabled: trigger.value,
+      fetchPolicy: "no-cache",
+    }));
     onResult((res) => {
-      let data = res.data.getAuthentications.datas 
-      arrayLog.value = data
+      arrayLog.value = res.data.getAuthentications.datas
     })
 
     return {
