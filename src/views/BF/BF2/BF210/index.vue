@@ -104,10 +104,10 @@
                     <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center"
                         :width="150" />
                     <template #grid-cell="{ data }">
-                        <a-tag :color="getColorTag(data.value)">{{ data.value == "m" ? "매니저" : (data.value == "c"? "고객사"
-                        :
-                        (data.value
-                        == "p"? "파트너": "영업자")) }}</a-tag>
+                        <a-tag :color="getColorTag(data.value)">
+                            {{ data.value == "m" ? "매니저" : (data.value == "c"
+                            ? "고객사" :
+                            (data.value == "p"? "파트너": "영업자")) }}</a-tag>
                     </template>
                     <DxColumn data-field="mobilePhone" caption="휴대폰" :width="200" />
                     <DxColumn data-field="groupCode" caption="소속코드" :width="200" />
@@ -152,7 +152,7 @@ import {
     DxExport,
     DxSearchPanel,
     DxToolbar,
-    DxItem,
+    DxItem, 
 } from "devextreme-vue/data-grid";
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
@@ -168,7 +168,8 @@ import {
     SearchOutlined,
     PrinterOutlined,
     DeleteOutlined,
-    SaveOutlined,
+    SaveOutlined, 
+    LoginOutlined
 } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -197,6 +198,7 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
+        LoginOutlined
     },
     data() {
         return {
@@ -242,7 +244,7 @@ export default defineComponent({
         }))
         onResult((res) => {
             dataSource.value = res.data.searchUsers.datas
-        }) 
+        })
         const searching = () => {
             spinning.value = !spinning.value;
             let dataNew: any = ref({})

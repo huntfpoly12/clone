@@ -9,7 +9,7 @@
           <a-col :span="12">
             <a-form-item label="회원ID">
               <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
-              <button style="border: 1px solid grey" @click="checkDuplicateUsername">중복체크</button>
+              <a-button style="border: 1px solid grey" @click="checkDuplicateUsername">중복체크</a-button>
             </a-form-item>
             <a-form-item label="회원명">
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
@@ -130,9 +130,7 @@
 
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
-import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
-import type { SelectProps } from "ant-design-vue";
 import { message } from 'ant-design-vue';
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 import {
@@ -149,8 +147,6 @@ import {
   MailOutlined,
   MenuOutlined,
 } from "@ant-design/icons-vue";
-import dayjs, { Dayjs } from "dayjs";
-import { any } from "vue-types";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 
@@ -198,8 +194,6 @@ export default defineComponent({
   data() {
     return {
       isShow: ref<boolean>(false),
-
-      states,
       dataMode: {
         color: "",
       },
@@ -529,36 +523,32 @@ export default defineComponent({
       }
     });
 
-    //querie checkDuplicateUsername
-    const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(
-      queries.isUserRegistableUsername, {}, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
-      onResultUsername(e => {
-			if (e.data)
-				if (e.data.isUserRegistableUsername == true) {
-					message.success(`사용 가능한 아이디입니다`)
-				} else {
-					message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
-				}
-		})
-    const checkDuplicateUsername = () => {
-			if (formState.value.username !== '') {
-				triggerDuplication.value = true
-				let dataCall = {
-					username: formState.value.username
-				}
-				refetchUserName(dataCall)
-			} else {
-				message.error(`사용자 이름을 입력헤주세요!`)
-			}
-		}
-    // creactError(e => {
-		// 	message.error(e.message, 2)
-		// })
+    //querie checkDuplicateUsername 
+    const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.isUserRegistableUsername, {}, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
 
-		// creactDone(e => {
-		// 	emit("closePopup", false)
-		// 	message.success("새 사용자가 추가되었습니다!")
-		// })
+    const checkDuplicateUsername = () => {
+      if (formState.value.username !== '') {
+        triggerDuplication.value = true
+        setTimeout(() => {
+          let dataCall = {
+            username: formState.value.username
+          }
+          refetchUserName(dataCall)
+        }, 500);
+      } else {
+        message.error(`사용자 이름을 입력헤주세요!`)
+      }
+    }
+
+    onResultUsername(e => {
+      if (e.data)
+        if (e.data.isUserRegistableUsername == true) {
+          message.success(`사용 가능한 아이디입니다`)
+        } else {
+          message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
+        }
+    })
+    
 
     return {
       arrData,
@@ -568,7 +558,6 @@ export default defineComponent({
       bf310Detail,
       layout,
       formTailLayout,
-      value1: ref<Dayjs>(),
       onToggle,
       confirm,
       formState,
