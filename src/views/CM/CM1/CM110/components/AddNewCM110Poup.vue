@@ -210,7 +210,7 @@ export default defineComponent({
 		})
 		creactDone(e => {
 			emit("closePopup", false)
-			message.success("새 사용자가 추가되었습니다!")
+			message.success("사용자가 새로 생성되었습니다!")
 		})
 		const creactUserNew = () => {
 			let dataCallApiCreact = {
