@@ -22,13 +22,7 @@
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 300px"
-                :options="selectSearch" :filter-option="filterOption" @focus="handleFocus" @blur="handleBlur"
-                @change="handleChange" class="select-search">
-                <template #suffixIcon>
-                  <search-outlined :size="14" class="ant-select-suffix" />
-                </template>
-              </a-select>
+              <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 150px;"/> 
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -109,8 +103,8 @@
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
         <div style="position: relative">
           <div v-if="!bf310Detail.switch" class="overlay"></div>
-          <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id" :allow-column-reordering="true"
-            :allow-column-resizing="true" :column-auto-width="true">
+          <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id"
+            :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
             <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
 
@@ -149,7 +143,6 @@
 
 <script lang="ts">
 import { ref, defineComponent, reactive, computed, watch } from "vue";
-import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import type { SelectProps } from "ant-design-vue";
@@ -213,9 +206,7 @@ export default defineComponent({
   created() { },
   data() {
     return {
-      isShow: ref<boolean>(false),
-      dataSource: employees,
-      states,
+      isShow: ref<boolean>(false), 
       toggleActive: false,
       reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
     };
@@ -296,6 +287,9 @@ export default defineComponent({
       updatedBy: "",
       ip: "",
       active: true,
+      groupId: "",
+      groupCode: "",
+      groupName: "",
       facilityBusinesses: [],
       screenRoleGroups: {
         id: "",
@@ -346,7 +340,7 @@ export default defineComponent({
     watch(result, (value) => {
       if (value && value.getUser) {
         formState.id = value.getUser.id;
-        formState.type = value.getUser.type != "m"?value.getUser.type:value.getUser.managerGrade;
+        formState.type = value.getUser.type != "m" ? value.getUser.type : value.getUser.managerGrade;
         formState.username = value.getUser.username;
         formState.name = value.getUser.name;
         formState.mobilePhone = value.getUser.mobilePhone;
@@ -361,6 +355,7 @@ export default defineComponent({
         formState.active = value.getUser.active;
         formState.facilityBusinesses = value.getUser.facilityBusinesses;
         formState.screenRoleGroups = value.getUser.screenRoleGroups;
+        formState.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
 
       }
 
@@ -446,7 +441,7 @@ export default defineComponent({
         return "#4a4848";
       } else if (data === "담당매니저") {
         return "#4a4848";
-      }  else if (data === "영업자") {
+      } else if (data === "영업자") {
         return "grey";
       } else if (data === "파트너") {
         return "#efe70b";
