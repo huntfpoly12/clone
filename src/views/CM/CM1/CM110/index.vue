@@ -336,11 +336,12 @@ export default defineComponent({
         let fileImage: any = ref(null);
         let modalStampReviewStatus: any = ref();
         const fileList = ref<UploadProps['fileList']>([]);
-        const handleChange = async (info: any) => {
+        const handleChange = async (info: any) => { 
             if (info.file.status !== "uploading") {
                 if (info.file.originFileObj.size <= 1000000) {
                     previewImage.value = await getBase64(info.file.originFileObj);
-                    fileImage.value = info;
+                    fileImage.value = info; 
+                    changeSealUrl(previewImage.value.replace('data:image/png;base64,',''))
                 } else {
                     message.error(`이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 / 종류 : GIF, JPG, PNG`);
                 }
