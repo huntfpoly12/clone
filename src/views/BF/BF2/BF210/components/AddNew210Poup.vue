@@ -9,11 +9,7 @@
           <a-col :span="12">
             <a-form-item label="회원ID">
               <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
-<<<<<<< HEAD
-              <button style="border: 1px solid grey">중복체크</button>
-=======
               <button style="border: 1px solid grey" @click="checkDuplicationUser">중복체크</button>
->>>>>>> 343ba9db0ec5e89fb341b6b2dc78778e924c88e7
             </a-form-item>
             <a-form-item label="회원명">
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
@@ -539,9 +535,9 @@ export default defineComponent({
       onResultUsername(e => {
 			if (e.data)
 				if (e.data.isUserRegistableUsername == true) {
-					message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
-				} else {
 					message.success(`사용 가능한 아이디입니다`)
+				} else {
+					message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
 				}
 		})
     const checkDuplicationUser = () => {
