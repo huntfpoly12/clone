@@ -77,7 +77,6 @@
                                                 accept=".png,.jpeg,.jpg">
                                                 <a-button class="btn-upload-image">직인업로드</a-button>
                                             </a-upload>
-
                                         </a-col>
                                         <a-col :span="14" :xl="14">
                                             <InfoCircleFilled />
@@ -97,7 +96,6 @@
                                             style="width: 176px" />
                                     </a-form-item>
                                 </div>
-
                                 <div style="display: flex; margin-left: 150px;">
                                     <a-form-item label="휴대폰">
                                         <a-input v-model:value="formState.extendInfo.president.mobilePhone" />
@@ -106,12 +104,10 @@
                                 </div>
                             </div>
                             <div style="display: flex;">
-
                                 <a-form-item label="생년월일" style="width: 327px;">
                                     <CustomDatepicker :valueDate="formState.extendInfo.president.birthday"
                                         date-format="MM/DD/YYYY" @valueDateChange="changeDate" />
                                 </a-form-item>
-
                                 <p class="validate-message">
                                     ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
                                 </p>
@@ -128,17 +124,13 @@
                             </div>
                         </a-form>
                     </div>
-
                     <a-form-item class="btn-submit">
                         <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
-
                     <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false"
                         :data="fileImage" :previewImageCall="previewImage" @urlSeal="changeSealUrl" />
-
                 </a-tab-pane>
-
                 <a-tab-pane key="2" tab="이용자">
                     <DxDataGrid :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true"
                         key-expr="id" :allow-column-reordering="true" :allow-column-resizing="true"
@@ -153,7 +145,6 @@
                             <DxItem name="addRowButton" show-text="always" />
                             <DxItem name="columnChooserButton" />
                         </DxToolbar>
-
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
@@ -170,14 +161,11 @@
                         <template #checked-facility="{ data }">
                             {{ changeValueRow(data.value) }}
                         </template>
-
                         <DxColumn data-field="withholdingRole" caption="원천권한" cell-template="checked-status" :width="80"
                             :allowEditing="true" />
-
                         <template #checked-status="{ data }">
                             <a-checkbox v-model:value="data.value" @change="checkedRow(data)" />
                         </template>
-
                         <DxColumn :width="80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
@@ -198,19 +186,16 @@
                             </div>
                         </template>
                     </DxDataGrid>
-
                     <div class="pagination-table" v-if="rowTable > dataGetListUsers.filter.rows">
                         <a-pagination v-model:current="dataGetListUsers.filter.page"
                             v-model:page-size="dataGetListUsers.filter.rows" :total="rowTable" show-less-items />
                     </div>
-
                     <a-form-item class="btn-submit-table">
                         <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
                         <a-button style="margin-left: 10px">저장하고 나가기</a-button>
                     </a-form-item>
                 </a-tab-pane>
             </a-tabs>
-
             <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" @closePopup="closePopupAdd" />
             <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :data="popupData" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
@@ -239,7 +224,6 @@ import AddNewCM110Poup from "./components/AddNewCM110Poup.vue";
 import EditCM110Popup from "./components/EditCM110Popup.vue"
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import inputFormat from '../../../../components/inputBoxFormat.vue';
-
 import { defineComponent, ref } from "vue";
 import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import ReviewStampImage from "./components/ReviewStampImage.vue";
@@ -252,8 +236,6 @@ import queries from "../../../../graphql/queries/CM/CM110/index"
 import { useMutation } from "@vue/apollo-composable";
 import { getJwtObject } from "@bankda/jangbuda-common";
 import CustomDatepicker from "../../../../components/CustomDatepicker.vue";
-
-
 import { companyId } from "../../../../helpers/commonFunction"
 function getBase64(file: File) {
     return new Promise((resolve, reject) => {
@@ -263,7 +245,6 @@ function getBase64(file: File) {
         reader.onerror = (error) => reject(error);
     });
 }
-
 export default defineComponent({
     components: {
         CustomDatepicker,
@@ -302,31 +283,24 @@ export default defineComponent({
         var idRowEdit = ref<number>(0)
         var companyIdPopup = ref<number>(0)
         const popupDataLogin = ref()
-
         setTimeout(() => {
             spinning.value = !spinning.value;
         }, 1000);
-
         const {
             mutate: updateDataCompany,
             loading: loadingUpdate,
             onDone: onDoneAdd,
             onError: onErrorUpdate
         } = useMutation(mutations.updateCompany);
-
-
         onDoneAdd((res) => {
             spinning.value = !spinning.value;
             message.success(`Update successfully`);
         })
-
         onErrorUpdate((res) => {
             spinning.value = !spinning.value;
             message.error(`Update false`);
         })
-
         const statusMailValidate = ref<boolean>(true);
-
         let formState = ref({
             name: "",
             bizType: "",
@@ -357,13 +331,11 @@ export default defineComponent({
             },
             sealFileStorageId: null
         });
-
         let listDataMyCompanyUser = ref([])
         let previewImage: any = ref("https://jangbuda-frs.bankda.com/uFH4PK0U2Ar9sTYIqp0AV.png");
         let fileImage: any = ref(null);
         let modalStampReviewStatus: any = ref();
         const fileList = ref<UploadProps['fileList']>([]);
-
         const handleChange = async (info: any) => {
             if (info.file.status !== "uploading") {
                 if (info.file.originFileObj.size <= 1000000) {
@@ -398,11 +370,9 @@ export default defineComponent({
         }
         const modalHistory = (data: any) => {
             // console.log(companyId);
-
             idRowEdit.value = data.data.id
             companyIdPopup.value = companyId
             modalHistoryStatus.value = true;
-
         }
         const modalLogin = (data: any) => {
             popupDataLogin.value = {
@@ -411,7 +381,6 @@ export default defineComponent({
             }
             modalLoginStatus.value = true;
         }
-
         let companyId: any = null
         const token = sessionStorage.getItem("token");
         if (token) {
@@ -420,7 +389,6 @@ export default defineComponent({
                 companyId = jwtObject.companyId
             }
         }
-
         //Submit form detail company
         const onSubmit = () => {
             let dataUpdateCompany = {
@@ -444,16 +412,12 @@ export default defineComponent({
                 return "rgb(205 32 31 / 51%)";
             }
         }
-
         const checkedRow = (data: any) => {
             // dataTableShow.value[data.key].원천권한 = !dataTableShow.value[data.key].원천권한;
         }
-
         const changeValueInputEmit = (data: { name: string; value: any; }) => {
             if (data.name == 'fax') {
-
             }
-
             switch (data.name) {
                 case 'fax':
                     formState.value.fax = data.value;
@@ -463,7 +427,6 @@ export default defineComponent({
                     break;
                 default:
             }
-
         }
         const validateNumber = (e: any, name: string) => {
             let valNumberOnly = e.target.value.replace(/\D+/g, '');
@@ -488,20 +451,16 @@ export default defineComponent({
                 statusMailValidate.value = true;
             }
         }
-
         const originData = {
             companyId: companyId
         }
-
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDataDetail, originData, () => ({ fetchPolicy: "no-cache", }))
         onResult((res) => {
             if (res.data.getMyCompany.seal) {
                 previewImage.value = res.data.getMyCompany.seal.url
             }
             formState.value = res.data.getMyCompany
-
         })
-
         const dataGetListUsers = ref({
             companyId: companyId,
             filter: {
@@ -509,31 +468,23 @@ export default defineComponent({
                 rows: 10
             }
         })
-
         const rowTable = ref(0)
-
         const { refetch: refetchDataUsers, onResult: resultUsers, result: resultDataUsers, loading: loadData } = useQuery(queries.getListUserCompany, dataGetListUsers.value, () => ({ fetchPolicy: "no-cache", }))
         resultUsers((res) => {
             rowTable.value = res.data.getMyCompanyUsers.totalCount
         })
-
-
         const {
             mutate: callSaveSeal,
             loading: loadingSeal,
             onDone: onDoneSeal,
             onError: onErrorSeal
         } = useMutation(mutations.createMyCompanyAutoGeneratedSeal);
-
         onDoneSeal(e => {
             formState.value.sealFileStorageId = e.data.createMyCompanyAutoGeneratedSeal
         })
-
         onErrorSeal(e => {
             message.error(`봉인을 만드는 동안 오류가 발생했습니다.`)
         })
-
-
         const changeSealUrl = (data: any) => {
             previewImage.value = 'data:image/png;base64,' + data
             let dataCallApi = {
@@ -542,12 +493,9 @@ export default defineComponent({
             }
             callSaveSeal(dataCallApi)
         }
-
-
         const changeDate = (data: any) => {
             formState.value.extendInfo.president.birthday = data
         }
-
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -594,10 +542,8 @@ export default defineComponent({
             loadingSeal,
             changeDate
         };
-
     },
     methods: {
-
         // Convert FacilityBizType
         changeValueRow(data: any) {
             let stringConvert = ''
@@ -619,74 +565,56 @@ export default defineComponent({
             })
             return stringConvert
         },
-
         closePopupEdit() {
             this.modalEditStatus = false
             this.refetchDataUsers()
         },
-
         closePopupAdd() {
             this.modalAddNewStatus = false
             this.refetchDataUsers()
         },
     },
-
-
 });
 </script>
-
 <style scoped>
 .page-content>>>.cell-button-add {
     padding-left: 100px !important;
 }
-
 .page-content>>>.ant-tag {
     width: 65px;
     text-align: center;
 }
-
 .container {
     width: 1200px;
     padding-right: 10px;
     padding-left: 10px;
 }
-
 .title-h2 {
     margin-left: 1%;
 }
-
 .validate-message {
     margin-left: 2%;
     color: #c3baba;
 }
-
 .btn-upload-image {
     width: 100px;
     margin-left: 150px;
-
 }
-
 .btn-submit-table {
     margin-top: 20px;
     text-align: center;
 }
-
 .btn-submit {
     margin-top: 20px;
     margin-left: 280px;
 }
-
-
 .page-content>>>.cell-center {
     text-align: center !important
 }
-
 .ant-form-item {
     margin-bottom: 10px;
 }
-
 .pagination-margin {
     margin-top: 10px;
 }
 </style>
-  

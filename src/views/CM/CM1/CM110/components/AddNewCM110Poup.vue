@@ -21,7 +21,6 @@
 								<a-input v-model:value="formState.name" />
 							</a-form-item>
 						</a-col>
-
 					</a-row>
 					<a-row>
 						<a-col :span="24">
@@ -83,7 +82,6 @@
 				</div>
 			</template>
 		</a-modal>
-
 		<div class="confirm-popup">
 			<a-modal v-model:visible="visible" :mask-closable="false">
 				<a-row>
@@ -102,10 +100,8 @@
 				</template>
 			</a-modal>
 		</div>
-
 	</div>
 </template>
-
 <script lang="ts">
 import { ref, defineComponent, watch } from "vue";
 import { MailOutlined } from '@ant-design/icons-vue';
@@ -114,7 +110,6 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import { message } from 'ant-design-vue';
 import queries from "../../../../../graphql/queries/CM/CM110/index"
-
 const optionsRadio = [
 	{ label: '있음', value: true },
 	{ label: '없음', value: false }
@@ -127,11 +122,9 @@ export default defineComponent({
 		},
 		data: null,
 	},
-
 	components: {
 		MailOutlined
 	},
-
 	setup(props, { emit }) {
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(true);
@@ -140,7 +133,6 @@ export default defineComponent({
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
 		let dataQuery = ref()
-
 		watch(() => props.modalStatus, (value) => {
 			if (props.data.companyId) {
 				triggers.value = true;
@@ -148,7 +140,6 @@ export default defineComponent({
 				refetchData()
 			}
 		})
-
 		for (let i = 10; i < 36; i++) {
 			const value = i.toString(36) + i;
 			options?.value?.push({
@@ -156,7 +147,6 @@ export default defineComponent({
 				value,
 			});
 		}
-
 		const formState = ref({
 			username: "",
 			name: "",
@@ -166,11 +156,9 @@ export default defineComponent({
 			mobilePhone: "",
 			email: "",
 		});
-
 		const confirmPopup = () => {
 			visible.value = true;
 		}
-
 		const validateNumber = (e: any, name: string) => {
 			let valNumberOnly = e.target.value.replace(/\D+/g, '');
 			switch (name) {
@@ -180,7 +168,6 @@ export default defineComponent({
 				default:
 			}
 		}
-
 		const validateEmail = (e: any) => {
 			let checkMail = e.target.value.match(
 				/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -191,12 +178,9 @@ export default defineComponent({
 				statusMailValidate.value = true;
 			}
 		}
-
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
-
 		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, {}, () => ({ enabled: triggersUserName.value, fetchPolicy: "no-cache", }))
-
 		onResult(e => {
 			let dataRes: any = []
 			e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
@@ -207,7 +191,6 @@ export default defineComponent({
 			})
 			bizTypeList.value = dataRes
 		})
-
 		onResultUsername(e => {
 			if (e.data)
 				if (e.data.isUserRegistableUsername == true) {
@@ -216,23 +199,19 @@ export default defineComponent({
 					message.error(`해당 사용자 이름이 이미 존재합니다`)
 				}
 		})
-
 		//Creact user in company
 		const {
 			mutate: creactUser,
 			onDone: creactDone,
 			onError: creactError
 		} = useMutation(mutations.creactUser);
-
 		creactError(e => {
 			message.error(e.message, 2)
 		})
-
 		creactDone(e => {
 			emit("closePopup", false)
 			message.success("새 사용자가 추가되었습니다!")
 		})
-
 		const creactUserNew = () => {
 			let dataCallApiCreact = {
 				companyId: companyId,
@@ -248,7 +227,6 @@ export default defineComponent({
 			}
 			creactUser(dataCallApiCreact)
 		}
-
 		const checkUserName = () => {
 			if (formState.value.username !== '') {
 				triggersUserName.value = true
@@ -260,11 +238,9 @@ export default defineComponent({
 				message.error(`사용자 이름을 입력헤주세요!`)
 			}
 		}
-
-		const validateCharacter = (e: any) => { 
-			formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '') 
+		const validateCharacter = (e: any) => {
+			formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
 		}
-
 		return {
 			labelCol: { style: { width: "150px" } },
 			formState,
