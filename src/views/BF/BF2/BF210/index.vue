@@ -273,7 +273,6 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }))
 
-
     onResult((res) => {
       dataSource.value = res.data.searchUsers.datas
     })
@@ -375,6 +374,8 @@ export default defineComponent({
       this.popupData = data;
     },
     modalLogin(data: any) {
+      console.log(data);
+      
       this.rowChoose = data.key
       this.modalLoginStatus = true;
       this.popupData = data;
