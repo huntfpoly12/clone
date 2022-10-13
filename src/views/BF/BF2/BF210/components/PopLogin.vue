@@ -78,12 +78,7 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }));
     onResult((res) => {
-<<<<<<< HEAD
       arrayLog.value = res.data.getAuthentications.datas
-=======
-      let data = res.data.getAuthentications.datas 
-      arrayLog.value = data
->>>>>>> develop
     })
 
     return {

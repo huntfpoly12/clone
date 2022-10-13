@@ -9,7 +9,7 @@
           <a-col :span="12">
             <a-form-item label="회원ID ">
               <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
-              <button style="border: 1px solid grey" @click="DupicationCheck">중복체크</button>
+              <button style="border: 1px solid grey">중복체크</button>
             </a-form-item>
             <a-form-item label="회원명">
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
