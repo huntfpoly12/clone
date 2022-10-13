@@ -194,9 +194,9 @@ export default defineComponent({
 		onResultUsername(e => {
 			if (e.data)
 				if (e.data.isUserRegistableUsername == true) {
-					message.success(`해당 사용자 이름이 존재하지 않습니다`)
+					message.success(`사용 가능한 아이디입니다`)
 				} else {
-					message.error(`해당 사용자 이름이 이미 존재합니다`)
+					message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
 				}
 		})
 		//Creact user in company
