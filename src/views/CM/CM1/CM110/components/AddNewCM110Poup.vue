@@ -110,10 +110,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import { message } from 'ant-design-vue';
 import queries from "../../../../../graphql/queries/CM/CM110/index"
-const optionsRadio = [
-	{ label: '있음', value: true },
-	{ label: '없음', value: false }
-];
+
 export default defineComponent({
 	props: {
 		modalStatus: {
@@ -126,6 +123,10 @@ export default defineComponent({
 		MailOutlined
 	},
 	setup(props, { emit }) {
+		const optionsRadio = [
+			{ label: '있음', value: true },
+			{ label: '없음', value: false }
+		];
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(true);
 		const options = ref<SelectProps['options']>([]);
@@ -180,7 +181,10 @@ export default defineComponent({
 		}
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
-		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, {}, () => ({ enabled: triggersUserName.value, fetchPolicy: "no-cache", }))
+
+		let dataCallApiCheck = ref({})
+		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, dataCallApiCheck, () => ({ enabled: triggersUserName.value, fetchPolicy: "no-cache", }))
+
 		onResult(e => {
 			let dataRes: any = []
 			e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
@@ -230,18 +234,19 @@ export default defineComponent({
 		const checkUserName = () => {
 			if (formState.value.username !== '') {
 				triggersUserName.value = true
-				let dataCall = {
-					username: formState.value.username
-				}
-				refetchUserName(dataCall)
+				refetchUserName()
 			} else {
 				message.error(`사용자 이름을 입력헤주세요!`)
 			}
 		}
 		const validateCharacter = (e: any) => {
 			formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+			dataCallApiCheck.value = {
+				username: formState.value.username
+			}
 		}
 		return {
+			dataCallApiCheck,
 			labelCol: { style: { width: "150px" } },
 			formState,
 			options,
