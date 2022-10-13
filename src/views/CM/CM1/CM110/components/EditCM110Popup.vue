@@ -233,12 +233,11 @@ export default defineComponent({
 
         watch(() => props.modalStatus, (value) => {
             if (props.data && props.data.companyId) {
+                trigger.value = true;
                 dataCall.value = {
                     companyId: props.data.companyId
                 }
                 dataUser.value =  props.data
-
-                trigger.value = true;
                 refetchData()
                 refetchFacility()
             }

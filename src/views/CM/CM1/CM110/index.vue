@@ -530,7 +530,7 @@ export default defineComponent({
         })
 
         onErrorSeal(e => {
-            message.error(`Có lỗi xảy ra trong quá trình tạo con dấu`)
+            message.error(`봉인을 만드는 동안 오류가 발생했습니다.`)
         })
 
 
@@ -545,7 +545,7 @@ export default defineComponent({
 
 
         const changeDate = (data: any) => {
-            formState.value.extendInfo.president.birthday = data 
+            formState.value.extendInfo.president.birthday = data
         }
 
         return {

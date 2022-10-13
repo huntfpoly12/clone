@@ -143,8 +143,8 @@ export default defineComponent({
 
 		watch(() => props.modalStatus, (value) => {
 			if (props.data.companyId) {
-				dataQuery.value = { companyId: props.data.companyId };
 				triggers.value = true;
+				dataQuery.value = { companyId: props.data.companyId };
 				refetchData()
 			}
 		})
