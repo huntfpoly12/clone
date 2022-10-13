@@ -7,9 +7,13 @@
         @finish="onFinish">
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item label="회원ID ">
+            <a-form-item label="회원ID">
               <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
+<<<<<<< HEAD
               <button style="border: 1px solid grey">중복체크</button>
+=======
+              <button style="border: 1px solid grey" @click="checkDuplicationUser">중복체크</button>
+>>>>>>> 343ba9db0ec5e89fb341b6b2dc78778e924c88e7
             </a-form-item>
             <a-form-item label="회원명">
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
@@ -133,6 +137,7 @@ import { ref, defineComponent, reactive, watch } from "vue";
 import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
 import type { SelectProps } from "ant-design-vue";
+import { message } from 'ant-design-vue';
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 import {
   DxDataGrid,
@@ -308,7 +313,7 @@ export default defineComponent({
 
     }
 
-    const formState = reactive({
+    const formState = ref({
       id: 1,
       type: "",
       username: "",
@@ -418,16 +423,8 @@ export default defineComponent({
       rows: 20,
       types: ["r", "m", "c", "p", "s"],
     });
-
-    //querie searchScreenRoleGroups
-    // const { onResult } = useQuery(
-    //   queries.searchScreenRoleGroups,
-    //   originData.value
-    // );   
-    // onResult((res) => {     
-    //   ScreenRoleGroup.value = res.data.searchScreenRoleGroups.datas;
-    // });
     const dataQuery = ref();
+
     let trigger = ref<boolean>(false);
     let triggerSale = ref<boolean>(false);
     let triggerManager = ref<boolean>(false);
@@ -536,19 +533,36 @@ export default defineComponent({
       }
     });
 
-    //querie duplication
-    const { onResult, refetch: DupicationCheck} = useQuery(
-      queries.isUserRegistableUsername, {},
-      () => ({
-        enabled: triggerDuplication.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    watch(result, (value) => {
-      if (value && value.findParters) {
-        arrData.value = value.findParters.datas
-      }
-    });
+    //querie checkDuplicationUser
+    const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(
+      queries.isUserRegistableUsername, {}, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
+      onResultUsername(e => {
+			if (e.data)
+				if (e.data.isUserRegistableUsername == true) {
+					message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
+				} else {
+					message.success(`사용 가능한 아이디입니다`)
+				}
+		})
+    const checkDuplicationUser = () => {
+			if (formState.value.username !== '') {
+				triggerDuplication.value = true
+				let dataCall = {
+					username: formState.value.username
+				}
+				refetchUserName(dataCall)
+			} else {
+				message.error(`사용자 이름을 입력헤주세요!`)
+			}
+		}
+    // creactError(e => {
+		// 	message.error(e.message, 2)
+		// })
+
+		// creactDone(e => {
+		// 	emit("closePopup", false)
+		// 	message.success("새 사용자가 추가되었습니다!")
+		// })
 
     return {
       arrData,
@@ -578,7 +592,8 @@ export default defineComponent({
       findSalesRepresentatives,
       findManagerUsers,
       findParters,
-      changeValueType
+      changeValueType,
+      checkDuplicationUser
     };
   },
 
