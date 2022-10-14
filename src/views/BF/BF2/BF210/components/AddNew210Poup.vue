@@ -150,8 +150,8 @@ import {
 } from "@ant-design/icons-vue";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import findGroups from "../../../../../graphql/queries/BF/BF2/BF210/findGroups";
-import { type } from "os";
+
+
 
 
 interface FormState {
@@ -306,15 +306,20 @@ export default defineComponent({
     // }
     const changeValueType = (data: any) => {
       triggerGroup.value = true;
+      trigger.value = true
       setTimeout(() => {
         let value = data
         if (data == 1 || data == 2 || data == 3) {
           value = 'm'
         }
-        let dataCall = {
+        let dataCall:any = {
           type: value
         }
+        originData.value.types = value
         reqGroup(dataCall)
+        console.log(originData);
+        
+        reqRoleGroup()
       }, 100);
 
     }
@@ -451,7 +456,7 @@ export default defineComponent({
           dataQuery.value = {};
           trigger.value = true;
 
-          refetch();
+          reqRoleGroup();
         } else {
           visible.value = newValue;
           trigger.value = false;
@@ -459,7 +464,7 @@ export default defineComponent({
       }
     );
     // querie searchScreenRoleGroups
-    const { result, loading, refetch } = useQuery(
+    const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
       queries.searchScreenRoleGroups, originData,
       () => ({
         enabled: trigger.value,
@@ -468,7 +473,9 @@ export default defineComponent({
     );
 
     const arrData = ref()
-    watch(result, (value) => {
+    watch(resRoleGroup, (value: any) => {
+      console.log(value);
+      
       if (value && value.searchScreenRoleGroups) {
         arrData.value = value.searchScreenRoleGroups.datas
       }
@@ -482,7 +489,8 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
-    resGroup(e => {
+    resGroup(e => { 
+      
       let option: any = []
       e.data.findGroups.map((val: any) => {
         option.push({
@@ -492,83 +500,11 @@ export default defineComponent({
       })
       selectSearch.value = option
     })
-    watch(result, (value) => {
+    watch(resGroup, (value: any) => {
       if (value && value.findGroups) {
         arrData.value = value.findGroups.datas
       }
     });
-
-    // // querie findSalesRepresentatives
-    // const { onResult: resSale, refetch: reqSale } = useQuery(
-    //   queries.findSalesRepresentatives, {},
-    //   () => ({
-    //     enabled: triggerSale.value,
-    //     fetchPolicy: "no-cache",
-    //   })
-    // );
-    // resSale(e => {
-    //   let option: any = []
-    //   e.data.findSalesRepresentatives.map((val: any) => {
-    //     option.push({
-    //       label: val.code + '  ' + val.name,
-    //       value: val.id
-    //     })
-    //   })
-    //   selectSearch.value = option
-    // })
-    // watch(result, (value) => {
-    //   if (value && value.findSalesRepresentatives) {
-    //     arrData.value = value.findSalesRepresentatives.datas
-    //   }
-    // });
-
-    // //querie findManagerUsers
-    // const { onResult: resManager, refetch: reqManager } = useQuery(
-    //   queries.findManagerUsers, {},
-    //   () => ({
-    //     enabled: triggerManager.value,
-    //     fetchPolicy: "no-cache",
-    //   })
-    // );
-    // resManager(e => {
-    //   let option: any = []
-    //   e.data.findManagerUsers.map((val: any) => {
-    //     option.push({
-    //       label: val.code + '  ' + val.name,
-    //       value: val.id
-    //     })
-    //   })
-    //   selectSearch.value = option
-    // })
-    // watch(result, (value) => {
-    //   if (value && value.findManagerUsers) {
-    //     arrData.value = value.findManagerUsers.datas
-    //   }
-    // });
-
-    // //querie findParters
-    // const { onResult: resPatner, refetch: reqPatner } = useQuery(
-    //   queries.findParters, {},
-    //   () => ({
-    //     enabled: triggerPatner.value,
-    //     fetchPolicy: "no-cache",
-    //   })
-    // );
-    // resPatner(e => {
-    //   let option: any = []
-    //   e.data.findParters.map((val: any) => {
-    //     option.push({
-    //       label: val.code + '  ' + val.name,
-    //       value: val.id
-    //     })
-    //   })
-    //   selectSearch.value = option
-    // })
-    // watch(result, (value) => {
-    //   if (value && value.findParters) {
-    //     arrData.value = value.findParters.datas
-    //   }
-    // });
 
     //querie checkDuplicateUsername 
     let dataCallCheck = ref({})
@@ -583,8 +519,7 @@ export default defineComponent({
         message.error(`사용자 이름을 입력헤주세요!`)
       }
     }
-
-    onResultUsername(e => {
+    onResultUsername(e => { 
       if (e.data)
         if (e.data.isUserRegistableUsername == true) {
           message.success(`사용 가능한 아이디입니다`)
@@ -592,8 +527,6 @@ export default defineComponent({
           message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
         }
     })
-
-
     const changeValueID = () => {
       dataCallCheck.value = {
         username: formState.value.username

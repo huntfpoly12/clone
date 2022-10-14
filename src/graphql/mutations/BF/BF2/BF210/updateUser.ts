@@ -1,8 +1,7 @@
 import gql from "graphql-tag";
-const mutations = {
-    updateUser: gql`
-  
-    `,
-};
-
-export default mutations;
+export default gql`
+mutations updateUser($id:Int, $input: UserUpdateInput!){
+    updateUser(id: $id, input: $input){
+    id
+    }}
+    `;

@@ -30,7 +30,9 @@
           </a-col>
           <a-col :span="12">
             <a-form-item label="상태">
-              <a-switch v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
+              <a-switch v-if="formState.type!='c'" v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
+                style="width: 100px" />
+                <a-switch v-if="formState.type=='c'" disabled v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
                 style="width: 100px" />
             </a-form-item>
 
@@ -91,7 +93,7 @@
                         margin-top: 16px;
                       ">
                       비밀번호 설정 이메일
-                    </p>
+                    </p>nToggle
                     <p style="margin-bottom: 0">
                       비밀번호 설정 링크가 이메일로 발송됩니다. 계속
                       진행하시겠습니까?
@@ -104,13 +106,13 @@
         </a-row>
       </a-form>
 
-      <div style="margin-top: 50px" disabled class="page-content">
+      <div style="margin-top: 50px">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
         <div style="position: relative">
-          <div v-if="!bf310Detail.switch" class="overlay"></div>
+          <div class="overlay" v-if="formState.type=='c'" ></div>
           <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id"
             :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
-            <DxPaging :page-size="5" />
+            <DxPaging :page-size="1" />
             <DxSelection mode="multiple" />
 
             <DxColumn data-field="id" caption="코드" :width="80" :fixed="true" />
@@ -170,27 +172,27 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { any } from "vue-types";
 import themes from "devextreme/ui/themes";
-interface FormState {
-  name: string;
-  영업자코드: string;
-  영업자명: string;
-  사업자유형: string;
-  상태: string;
-  등급: string;
-  switch: boolean;
-  은행: string;
-  계좌번호: string;
-  등록번호: string;
-  예금주: string;
-  가입일자: string;
-  사업자등록번호: string;
-  휴대폰: string;
-  비고: string;
-  이메일: string;
-  연락처: string;
-  팩스: string;
-  전자세금계산서수신이메일: string;
-}
+// interface FormState {
+//   name: string;
+//   영업자코드: string;
+//   영업자명: string;
+//   사업자유형: string;
+//   상태: string;
+//   등급: string;
+//   switch: boolean;
+//   은행: string;
+//   계좌번호: string;
+//   등록번호: string;
+//   예금주: string;
+//   가입일자: string;
+//   사업자등록번호: string;
+//   휴대폰: string;
+//   비고: string;
+//   이메일: string;
+//   연락처: string;
+//   팩스: string;
+//   전자세금계산서수신이메일: string;
+// }
 
 export default defineComponent({
   props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
@@ -247,9 +249,9 @@ export default defineComponent({
       isShow.value = true;
     };
 
-    const onToggle = () => {
-      bf310Detail.switch = !bf310Detail.switch;
-    };
+    // const onToggle = () => {
+    //   bf310Detail.switch = !bf310Detail.switch;
+    // };
 
     const handleSuccsess = (e: MouseEvent) => {
       console.log(e);
@@ -370,54 +372,54 @@ export default defineComponent({
     const onFinish = (values: any) => {
       console.log("Success:", values);
     };
-    const bf310Detail: UnwrapRef<FormState> = reactive({
-      name: "",
-      사업자유형: "개인",
-      상태: "정상",
-      등급: "본사",
-      switch: false,
-      은행: "농협",
-      계좌번호: "",
-      예금주: "",
-      가입일자: "",
-      비고: "",
-      영업자코드: "",
-      영업자명: "",
-      등록번호: "",
-      사업자등록번호: "",
-      휴대폰: "",
-      이메일: "",
-      연락처: "",
-      팩스: "",
-      전자세금계산서수신이메일: "",
-    });
+    // const bf310Detail: UnwrapRef<FormState> = reactive({
+    //   name: "",
+    //   사업자유형: "개인",
+    //   상태: "정상",
+    //   등급: "본사",
+    //   switch: false,
+    //   은행: "농협",
+    //   계좌번호: "",
+    //   예금주: "",
+    //   가입일자: "",
+    //   비고: "",
+    //   영업자코드: "",
+    //   영업자명: "",
+    //   등록번호: "",
+    //   사업자등록번호: "",
+    //   휴대폰: "",
+    //   이메일: "",
+    //   연락처: "",
+    //   팩스: "",
+    //   전자세금계산서수신이메일: "",
+    // });
 
-    const handleOkConfirm = () => {
-      console.log(data, "fffffff");
-      if (confirm.value == "확인") {
-        visible.value = false;
-      } else {
-        bf310Detail.상태 = "정상";
-        visible.value = false;
-      }
-    };
+    // const handleOkConfirm = () => {
+    //   console.log(data, "fffffff");
+    //   if (confirm.value == "확인") {
+    //     visible.value = false;
+    //   } else {
+    //     bf310Detail.상태 = "정상";
+    //     visible.value = false;
+    //   }
+    // };
 
     return {
       labelCol,
       wrapperCol,
-      bf310Detail,
+      // bf310Detail,
       layout,
       formTailLayout,
       value1: ref<Dayjs>(),
       confirm,
-      handleOkConfirm,
+      // handleOkConfirm,
       formState,
       onFinish,
       validateMessages,
       isShow,
       showModal,
       handleSuccsess,
-      onToggle,
+      // onToggle,
       selectSearch,
       filterOption,
       handleFocus,

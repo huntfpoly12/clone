@@ -95,12 +95,12 @@
                         <DxButton icon="plus" @click="openAddNewModal" />
                     </template>
                     <DxColumn data-field="active" caption="상태" css-class="cell-center" cell-template="check-box"
-                        :width="100" />
+                        :width="120" />
                     <template #check-box="{ data }">
                         <a-tag :color="getAbleDisable(data.value)">{{ data.value == true ? "이용중" : "이용중지" }}</a-tag>
                     </template>
-                    <DxColumn data-field="id" caption="회원ID" :width="80" css-class="cell-center" />
-                    <DxColumn data-field="username" caption="회원명" :width="100" />
+                    <DxColumn data-field="username" caption="회원ID" :width="200" css-class="cell-center" />
+                    <DxColumn data-field="name" caption="회원명" :width="250" />
                     <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center"
                         :width="150" />
                     <template #grid-cell="{ data }">
