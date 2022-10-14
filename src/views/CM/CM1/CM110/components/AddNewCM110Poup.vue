@@ -66,12 +66,7 @@
 								</a-col>
 							</a-row>
 						</a-col>
-					</a-row>
-					<a-row>
-						<a-col :span="24">
-							<a-button danger class="btn-set-password" @click="confirmPopup">비밀번호 설정</a-button>
-						</a-col>
-					</a-row>
+					</a-row> 
 				</a-form>
 			</div>
 			<template #footer>
@@ -80,25 +75,7 @@
 					<a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
 				</div>
 			</template>
-		</a-modal>
-		<div class="confirm-popup">
-			<a-modal v-model:visible="visible" :mask-closable="false">
-				<a-row>
-					<a-col :span="4">
-						<mail-outlined :style="{fontSize: '70px'}" />
-					</a-col>
-					<a-col :span="20">
-						<p><strong>비밀번호 설정 이메일</strong></p>
-						<p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
-						<p>계속 진행하시겠습니까?</p>
-					</a-col>
-				</a-row>
-				<template #footer>
-					<a-button>아니오</a-button>
-					<a-button type="primary">네. 발송합니다</a-button>
-				</template>
-			</a-modal>
-		</div>
+		</a-modal> 
 	</div>
 </template>
 <script lang="ts">
@@ -128,8 +105,7 @@ export default defineComponent({
 		];
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(true);
-		const options = ref<SelectProps['options']>([]);
-		let companyId = 0
+		const options = ref<SelectProps['options']>([]); 
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
 		let dataQuery = ref()
@@ -209,7 +185,7 @@ export default defineComponent({
 		const creactUserNew = () => {
 			if (statusMailValidate.value == true) {
 				let dataCallApiCreact = {
-					companyId: companyId,
+					companyId: props.data.companyId,
 					input: {
 						username: formState.value.username,
 						name: formState.value.name,
@@ -237,6 +213,18 @@ export default defineComponent({
 				username: formState.value.username
 			}
 		}
+
+		const {
+			mutate: sendEmailUser,
+			onDone: doneSendEmail,
+			onError: errorSendEmail
+		} = useMutation(mutations.sendEmail);
+
+		doneSendEmail(e => {
+			console.log(e);
+
+		}) 
+
 		return {
 			dataCallApiCheck,
 			labelCol: { style: { width: "150px" } },
@@ -247,12 +235,11 @@ export default defineComponent({
 			confirmPopup,
 			validateEmail,
 			statusMailValidate,
-			bizTypeList,
-			companyId,
+			bizTypeList, 
 			creactUserNew,
 			refetchData,
 			checkUserName,
-			validateCharacter
+			validateCharacter, 
 		};
 	}
 	,

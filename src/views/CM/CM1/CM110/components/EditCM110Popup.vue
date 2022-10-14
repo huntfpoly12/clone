@@ -169,6 +169,10 @@ export default defineComponent({
         onErrorUpdate(e => {
             message.error(e.message); 
         })
+
+        errorSendGmail(e => {
+            message.error(e.message)
+        })
         const confirmPopup = () => {
             visible.value = true;
         }
