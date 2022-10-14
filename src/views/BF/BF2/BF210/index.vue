@@ -80,7 +80,8 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
-                    <DxPaging :page-size="5" />
+                    <DxPaging :page-size="5" :allow-column-reordering="true" :allow-column-resizing="true"
+                        :column-auto-width="true" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
@@ -94,25 +95,23 @@
                     <template #button-template>
                         <DxButton icon="plus" @click="openAddNewModal" />
                     </template>
-                    <DxColumn data-field="active" caption="상태" css-class="cell-center" cell-template="check-box"
-                        :width="100" />
+                    <DxColumn data-field="active" caption="상태" data-type="text" cell-template="check-box" />
                     <template #check-box="{ data }">
                         <a-tag :color="getAbleDisable(data.value)">{{ data.value == true ? "이용중" : "이용중지" }}</a-tag>
                     </template>
-                    <DxColumn data-field="id" caption="회원ID" :width="80" css-class="cell-center" />
-                    <DxColumn data-field="username" caption="회원명" :width="100" />
-                    <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center"
-                        :width="150" />
+                    <DxColumn data-field="id" caption="회원ID" css-class="cell-center" />
+                    <DxColumn data-field="username" caption="회원명" />
+                    <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" />
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)">
                             {{ data.value == "m" ? "매니저" : (data.value == "c"
                             ? "고객사" :
                             (data.value == "p"? "파트너": "영업자")) }}</a-tag>
                     </template>
-                    <DxColumn data-field="mobilePhone" caption="휴대폰" :width="200" />
-                    <DxColumn data-field="groupCode" caption="소속코드" :width="200" />
+                    <DxColumn data-field="mobilePhone" caption="휴대폰" />
+                    <DxColumn data-field="groupCode" caption="소속코드" />
                     <DxColumn data-field="groupName" caption="소속명" />
-                    <DxColumn cell-template="pupop" :width="100" />
+                    <DxColumn cell-template="pupop" :width="100" css-class="cell-center" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
@@ -152,7 +151,7 @@ import {
     DxExport,
     DxSearchPanel,
     DxToolbar,
-    DxItem, 
+    DxItem,
 } from "devextreme-vue/data-grid";
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
@@ -168,7 +167,7 @@ import {
     SearchOutlined,
     PrinterOutlined,
     DeleteOutlined,
-    SaveOutlined, 
+    SaveOutlined,
     LoginOutlined
 } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
@@ -217,7 +216,7 @@ export default defineComponent({
         })
         const rowChoose = ref()
         const dataSearch = ref({
-            page: 10,
+            page: 1,
             rows: 1000,
             type: "",
             groupCode: "",
@@ -228,7 +227,7 @@ export default defineComponent({
         var idRowEdit = ref<number>(0)
         const originData = ref({
             page: 1,
-            rows: 20,
+            rows: 1000,
             type: "m",
             groupCode: "",
             groupName: "",
@@ -247,9 +246,8 @@ export default defineComponent({
         })
         const searching = () => {
             spinning.value = !spinning.value;
-            let dataNew: any = ref({})
+            let dataNew = ref()
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
-                dataNew.value = {}
                 dataNew.value = {
                     page: 1,
                     rows: 10,
@@ -261,7 +259,6 @@ export default defineComponent({
                     active: true,
                 }
             } else if (checkStatus.value.checkBox2 == true && checkStatus.value.checkBox1 == false) {
-                dataNew.value = {}
                 dataNew.value = {
                     page: 1,
                     rows: 10,
@@ -273,7 +270,6 @@ export default defineComponent({
                     active: false,
                 }
             } else {
-                dataNew.value = {}
                 dataNew.value = {
                     page: 1,
                     rows: 10,
@@ -284,7 +280,7 @@ export default defineComponent({
                     name: dataSearch.value.name,
                 }
             }
-            console.log(dataNew.value);
+
             refetchData(dataNew.value)
             setTimeout(() => {
                 spinning.value = !spinning.value;
