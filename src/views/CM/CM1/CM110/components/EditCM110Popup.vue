@@ -4,11 +4,11 @@
             @cancel="setModalVisible()" width="700px">
             <div class="cm-100-popup-edit">
                 <a-form :model="formState" :label-col="labelCol">
-                    <h2 class="title-h2">사업자정보</h2>
+                    <h2 class="title-h2">이용자정보</h2>
                     <a-row>
                         <a-col :span="12">
                             <a-form-item label="이용자ID">
-                                <a-input v-model:value="formState.id" :disabled="true" />
+                                <a-input v-model:value="formState.username" :disabled="true" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="6">
@@ -51,8 +51,7 @@
                             <a-row>
                                 <a-col :span="15">
                                     <a-form-item label="휴대폰">
-                                        <a-input v-model:value="formState.mobilePhone"
-                                            @change="validateNumber($event,'휴대폰')" />
+                                        <a-input v-model:value="formState.mobilePhone" @change="validateNumber" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="8">
@@ -167,18 +166,13 @@ export default defineComponent({
             message.success(`Update success!`);
             emit("closePopup", false)
         })
+        onErrorUpdate(e => {
+            message.error(e.message); 
+        })
         const confirmPopup = () => {
             visible.value = true;
         }
-        const validateNumber = (e: any, name: string) => {
-            let valNumberOnly = e.target.value.replace(/\D+/g, '');
-            switch (name) {
-                case '휴대폰':
-                    formState.휴대폰 = valNumberOnly;
-                    break;
-                default:
-            }
-        }
+
         const validateEmail = (e: any) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -196,6 +190,16 @@ export default defineComponent({
             })
             valueFacilyti.value = newFaci
             formState.value = res.data.getMyCompanyUser
+
+            let checkMail = res.data.getMyCompanyUser.email.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+            if (!checkMail) {
+                statusMailValidate.value = false;
+            } else {
+                statusMailValidate.value = true;
+            }
+
         })
         let bizTypeList = ref([])
         const { refetch: refetchFacility, onResult: resultFacility } = useQuery(queries.getDataFacilityBusiness, dataCall, () => ({ enabled: trigger.value, fetchPolicy: "no-cache", }))
@@ -215,26 +219,28 @@ export default defineComponent({
                 dataCall.value = {
                     companyId: props.data.companyId
                 }
-                dataUser.value =  props.data
+                dataUser.value = props.data
                 refetchData()
                 refetchFacility()
             }
         })
         const confirmUpdate = () => {
-            let dataUpdate = {
-                companyId: props.data.companyId,
-                userId: props.data.userId,
-                input: {
-                    name: formState.value.name,
-                    accountingRole: false,
-                    facilityBusinessIds: valueFacilyti.value,
-                    withholdingRole: formState.value.withholdingRole,
-                    mobilePhone: formState.value.mobilePhone,
-                    email: formState.value.email,
-                    active: formState.value.active
+            if (statusMailValidate.value == true) {
+                let dataUpdate = {
+                    companyId: props.data.companyId,
+                    userId: props.data.userId,
+                    input: {
+                        name: formState.value.name,
+                        accountingRole: false,
+                        facilityBusinessIds: valueFacilyti.value,
+                        withholdingRole: formState.value.withholdingRole,
+                        mobilePhone: formState.value.mobilePhone,
+                        email: formState.value.email,
+                        active: formState.value.active
+                    }
                 }
+                updateUser(dataUpdate)
             }
-            updateUser(dataUpdate)
         }
         doneSendGmail((e) => {
             message.success(`Send email success!`);
@@ -254,7 +260,6 @@ export default defineComponent({
             visible,
             optionsRadio,
             confirmPopup,
-            validateNumber,
             validateEmail,
             statusMailValidate,
             valueFacilyti,
@@ -269,6 +274,12 @@ export default defineComponent({
         setModalVisible() {
             this.$emit('closePopup', false)
         },
+        validateNumber() {
+            let e = this.formState.mobilePhone
+            this.formState.mobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            console.log(this.formState.mobilePhone);
+
+        }
     }
 });
 </script>
@@ -277,12 +288,15 @@ export default defineComponent({
     margin-left: 2%;
     color: #c3baba;
 }
+
 .btn-set-password {
     margin-left: 150px;
 }
+
 .confirm-popup /deep/.ant-modal-footer {
     text-align: center;
 }
+
 .ant-form-item {
     margin-bottom: 10px;
 }

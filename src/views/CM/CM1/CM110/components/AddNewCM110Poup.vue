@@ -43,8 +43,7 @@
 							<a-row>
 								<a-col :span="15">
 									<a-form-item label="휴대폰">
-										<a-input v-model:value="formState.mobilePhone"
-											@change="validateNumber($event,'휴대폰')" />
+										<a-input v-model:value="formState.mobilePhone" @change="validateNumber" />
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
@@ -160,15 +159,6 @@ export default defineComponent({
 		const confirmPopup = () => {
 			visible.value = true;
 		}
-		const validateNumber = (e: any, name: string) => {
-			let valNumberOnly = e.target.value.replace(/\D+/g, '');
-			switch (name) {
-				case 'mobilePhone':
-					formState.value.mobilePhone = valNumberOnly;
-					break;
-				default:
-			}
-		}
 		const validateEmail = (e: any) => {
 			let checkMail = e.target.value.match(
 				/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -217,19 +207,21 @@ export default defineComponent({
 			message.success("사용자가 새로 생성되었습니다!")
 		})
 		const creactUserNew = () => {
-			let dataCallApiCreact = {
-				companyId: companyId,
-				input: {
-					username: formState.value.username,
-					name: formState.value.name,
-					accountingRole: false,
-					facilityBusinessIds: formState.value.facilityBusinessIds,
-					withholdingRole: formState.value.withholdingRole,
-					mobilePhone: formState.value.mobilePhone,
-					email: formState.value.email,
+			if (statusMailValidate.value == true) {
+				let dataCallApiCreact = {
+					companyId: companyId,
+					input: {
+						username: formState.value.username,
+						name: formState.value.name,
+						accountingRole: false,
+						facilityBusinessIds: formState.value.facilityBusinessIds,
+						withholdingRole: formState.value.withholdingRole,
+						mobilePhone: formState.value.mobilePhone,
+						email: formState.value.email,
+					}
 				}
+				creactUser(dataCallApiCreact)
 			}
-			creactUser(dataCallApiCreact)
 		}
 		const checkUserName = () => {
 			if (formState.value.username !== '') {
@@ -253,7 +245,6 @@ export default defineComponent({
 			visible,
 			optionsRadio,
 			confirmPopup,
-			validateNumber,
 			validateEmail,
 			statusMailValidate,
 			bizTypeList,
@@ -268,6 +259,11 @@ export default defineComponent({
 	methods: {
 		setModalVisible() {
 			this.$emit('closePopup', false)
+		},
+
+		validateNumber() {
+			let e = this.formState.mobilePhone
+			this.formState.mobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
 		}
 	}
 });
