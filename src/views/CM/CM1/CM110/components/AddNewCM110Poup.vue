@@ -58,7 +58,7 @@
 								<a-col :span="15">
 									<a-form-item label="이메일">
 										<a-input v-model:value="formState.email" @change="validateEmail"
-											:style="!statusMailValidate ? { borderColor: 'red'}: ''" />
+											:style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
@@ -66,7 +66,7 @@
 								</a-col>
 							</a-row>
 						</a-col>
-					</a-row> 
+					</a-row>
 				</a-form>
 			</div>
 			<template #footer>
@@ -75,7 +75,7 @@
 					<a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
 				</div>
 			</template>
-		</a-modal> 
+		</a-modal>
 	</div>
 </template>
 <script lang="ts">
@@ -104,8 +104,8 @@ export default defineComponent({
 			{ label: '없음', value: false }
 		];
 		const visible = ref<boolean>(false);
-		const statusMailValidate = ref<boolean>(true);
-		const options = ref<SelectProps['options']>([]); 
+		const statusMailValidate = ref<boolean>(false);
+		const options = ref<SelectProps['options']>([]);
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
 		let dataQuery = ref()
@@ -175,16 +175,18 @@ export default defineComponent({
 			onDone: creactDone,
 			onError: creactError
 		} = useMutation(mutations.creactUser);
+
+
 		creactError(e => {
 			message.error(e.message, 2)
 		})
 		creactDone(e => {
 			emit("closePopup", false)
-			message.success("사용자가 새로 생성되었습니다!")
+			message.success("신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!")
 		})
 		const creactUserNew = () => {
 			if (statusMailValidate.value == true) {
-				let dataCallApiCreact = {
+				let dataCallApiCreate = {
 					companyId: props.data.companyId,
 					input: {
 						username: formState.value.username,
@@ -196,9 +198,15 @@ export default defineComponent({
 						email: formState.value.email,
 					}
 				}
-				creactUser(dataCallApiCreact)
+				creactUser(dataCallApiCreate)
+			} else {
+				message.error(`이메일형식이 정확하지 않습니다.`)
+				var Url = document.getElementById("email") as HTMLInputElement;
+				Url.select()
 			}
 		}
+
+
 		const checkUserName = () => {
 			if (formState.value.username !== '') {
 				triggersUserName.value = true
@@ -223,7 +231,7 @@ export default defineComponent({
 		doneSendEmail(e => {
 			console.log(e);
 
-		}) 
+		})
 
 		return {
 			dataCallApiCheck,
@@ -235,11 +243,11 @@ export default defineComponent({
 			confirmPopup,
 			validateEmail,
 			statusMailValidate,
-			bizTypeList, 
+			bizTypeList,
 			creactUserNew,
 			refetchData,
 			checkUserName,
-			validateCharacter, 
+			validateCharacter,
 		};
 	}
 	,
@@ -251,7 +259,8 @@ export default defineComponent({
 		validateNumber() {
 			let e = this.formState.mobilePhone
 			this.formState.mobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
-		}
+		},
+
 	}
 });
 </script>

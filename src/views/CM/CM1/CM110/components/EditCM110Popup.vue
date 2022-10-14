@@ -66,7 +66,7 @@
                                 <a-col :span="15">
                                     <a-form-item label="이메일">
                                         <a-input v-model:value="formState.email" @change="validateEmail"
-                                            :style="!statusMailValidate ? { borderColor: 'red'}: ''" />
+                                            :style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email"/>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="8">
@@ -110,7 +110,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, reactive } from "vue";
+import { ref, defineComponent, watch } from "vue";
 import { MailOutlined } from '@ant-design/icons-vue';
 import type { SelectProps } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -167,7 +167,7 @@ export default defineComponent({
             emit("closePopup", false)
         })
         onErrorUpdate(e => {
-            message.error(e.message); 
+            message.error(e.message);
         })
 
         errorSendGmail(e => {
@@ -244,19 +244,27 @@ export default defineComponent({
                     }
                 }
                 updateUser(dataUpdate)
+            } else {
+                message.error(`이메일형식이 정확하지 않습니다.`)
+                var Url = document.getElementById("email") as HTMLInputElement;
+				Url.select()
             }
         }
         doneSendGmail((e) => {
             message.success(`Send email success!`);
             // emit("closePopup", false)
         })
+
+
         const sendMessToGmail = () => {
+
             let dataCallSendEmail = {
                 companyId: props.data.companyId,
                 userId: props.data.userId,
             }
             sendGmail(dataCallSendEmail)
         }
+
         return {
             labelCol: { style: { width: "150px" } },
             formState,
