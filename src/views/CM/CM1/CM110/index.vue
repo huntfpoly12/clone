@@ -403,10 +403,10 @@ export default defineComponent({
                 let dataUpdateCompany = {
                     companyId: companyId,
                     input: {
-                        phone: formState.value.presidentMobilePhone,
+                        phone: formState.value.extendInfo.detail.phone,
                         fax: formState.value.extendInfo.detail.fax,
                         sealFileStorageId: formState.value.sealFileStorageId,
-                        presidentMobilePhone: formState.value.extendInfo.president.mobilePhone,
+                        presidentMobilePhone: formState.value.presidentMobilePhone,
                         presidentEmail: formState.value.extendInfo.president.email,
                         presidentBirthday: formState.value.extendInfo.president.birthday
                     }
@@ -587,8 +587,9 @@ export default defineComponent({
                 this.formState.extendInfo.detail.fax = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
             }
             if (name == 'phone' && this.formState.extendInfo.detail.phone.length > 0) {
-                let e = this.formState.extendInfo.detail.phone
-                this.formState.extendInfo.detail.phone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                let e = this.formState.extendInfo.detail.phone.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.formState.extendInfo.detail.phone = e
+
             }
 
         }
