@@ -43,8 +43,7 @@
 							<a-row>
 								<a-col :span="15">
 									<a-form-item label="휴대폰">
-										<a-input v-model:value="formState.mobilePhone"
-											@change="validateNumber($event,'휴대폰')" />
+										<a-input v-model:value="formState.mobilePhone" @change="validateNumber" />
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
@@ -59,18 +58,13 @@
 								<a-col :span="15">
 									<a-form-item label="이메일">
 										<a-input v-model:value="formState.email" @change="validateEmail"
-											:style="!statusMailValidate ? { borderColor: 'red'}: ''" />
+											:style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
 									<p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
 								</a-col>
 							</a-row>
-						</a-col>
-					</a-row>
-					<a-row>
-						<a-col :span="24">
-							<a-button danger class="btn-set-password" @click="confirmPopup">비밀번호 설정</a-button>
 						</a-col>
 					</a-row>
 				</a-form>
@@ -82,24 +76,6 @@
 				</div>
 			</template>
 		</a-modal>
-		<div class="confirm-popup">
-			<a-modal v-model:visible="visible" :mask-closable="false">
-				<a-row>
-					<a-col :span="4">
-						<mail-outlined :style="{fontSize: '70px'}" />
-					</a-col>
-					<a-col :span="20">
-						<p><strong>비밀번호 설정 이메일</strong></p>
-						<p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
-						<p>계속 진행하시겠습니까?</p>
-					</a-col>
-				</a-row>
-				<template #footer>
-					<a-button>아니오</a-button>
-					<a-button type="primary">네. 발송합니다</a-button>
-				</template>
-			</a-modal>
-		</div>
 	</div>
 </template>
 <script lang="ts">
@@ -110,10 +86,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import { message } from 'ant-design-vue';
 import queries from "../../../../../graphql/queries/CM/CM110/index"
-const optionsRadio = [
-	{ label: '있음', value: true },
-	{ label: '없음', value: false }
-];
+
 export default defineComponent({
 	props: {
 		modalStatus: {
@@ -126,10 +99,13 @@ export default defineComponent({
 		MailOutlined
 	},
 	setup(props, { emit }) {
+		const optionsRadio = [
+			{ label: '있음', value: true },
+			{ label: '없음', value: false }
+		];
 		const visible = ref<boolean>(false);
-		const statusMailValidate = ref<boolean>(true);
+		const statusMailValidate = ref<boolean>(false);
 		const options = ref<SelectProps['options']>([]);
-		let companyId = 0
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
 		let dataQuery = ref()
@@ -159,15 +135,6 @@ export default defineComponent({
 		const confirmPopup = () => {
 			visible.value = true;
 		}
-		const validateNumber = (e: any, name: string) => {
-			let valNumberOnly = e.target.value.replace(/\D+/g, '');
-			switch (name) {
-				case 'mobilePhone':
-					formState.value.mobilePhone = valNumberOnly;
-					break;
-				default:
-			}
-		}
 		const validateEmail = (e: any) => {
 			let checkMail = e.target.value.match(
 				/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -180,7 +147,10 @@ export default defineComponent({
 		}
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
-		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, {}, () => ({ enabled: triggersUserName.value, fetchPolicy: "no-cache", }))
+
+		let dataCallApiCheck = ref({})
+		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, dataCallApiCheck, () => ({ enabled: triggersUserName.value, fetchPolicy: "no-cache", }))
+
 		onResult(e => {
 			let dataRes: any = []
 			e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
@@ -205,65 +175,92 @@ export default defineComponent({
 			onDone: creactDone,
 			onError: creactError
 		} = useMutation(mutations.creactUser);
+
+
 		creactError(e => {
 			message.error(e.message, 2)
 		})
 		creactDone(e => {
 			emit("closePopup", false)
-			message.success("사용자가 새로 생성되었습니다!")
+			message.success("신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!")
 		})
 		const creactUserNew = () => {
-			let dataCallApiCreact = {
-				companyId: companyId,
-				input: {
-					username: formState.value.username,
-					name: formState.value.name,
-					accountingRole: false,
-					facilityBusinessIds: formState.value.facilityBusinessIds,
-					withholdingRole: formState.value.withholdingRole,
-					mobilePhone: formState.value.mobilePhone,
-					email: formState.value.email,
+			if (statusMailValidate.value == true) {
+				let dataCallApiCreate = {
+					companyId: props.data.companyId,
+					input: {
+						username: formState.value.username,
+						name: formState.value.name,
+						accountingRole: false,
+						facilityBusinessIds: formState.value.facilityBusinessIds,
+						withholdingRole: formState.value.withholdingRole,
+						mobilePhone: formState.value.mobilePhone,
+						email: formState.value.email,
+					}
 				}
+				creactUser(dataCallApiCreate)
+			} else {
+				message.error(`이메일형식이 정확하지 않습니다.`)
+				var Url = document.getElementById("email") as HTMLInputElement;
+				Url.select()
 			}
-			creactUser(dataCallApiCreact)
 		}
+
+
 		const checkUserName = () => {
 			if (formState.value.username !== '') {
 				triggersUserName.value = true
-				let dataCall = {
-					username: formState.value.username
-				}
-				refetchUserName(dataCall)
+				refetchUserName()
 			} else {
 				message.error(`사용자 이름을 입력헤주세요!`)
 			}
 		}
 		const validateCharacter = (e: any) => {
 			formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+			dataCallApiCheck.value = {
+				username: formState.value.username
+			}
 		}
+
+		const {
+			mutate: sendEmailUser,
+			onDone: doneSendEmail,
+			onError: errorSendEmail
+		} = useMutation(mutations.sendEmail);
+
+		doneSendEmail(e => {
+			console.log(e);
+
+		})
+
 		return {
+			dataCallApiCheck,
 			labelCol: { style: { width: "150px" } },
 			formState,
 			options,
 			visible,
 			optionsRadio,
 			confirmPopup,
-			validateNumber,
 			validateEmail,
 			statusMailValidate,
 			bizTypeList,
-			companyId,
 			creactUserNew,
 			refetchData,
 			checkUserName,
-			validateCharacter
+			validateCharacter,
 		};
 	}
 	,
 	methods: {
 		setModalVisible() {
 			this.$emit('closePopup', false)
-		}
+		},
+
+		validateNumber() {
+			let e = this.formState.mobilePhone
+			this.formState.mobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+		},
+
 	}
 });
 </script>

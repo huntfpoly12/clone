@@ -31,7 +31,6 @@
                 </a-tooltip>
             </div>
         </div>
-
         <div id="bf-310">
             <div class="search-form">
                 <a-row :gutter="[8,8]">
@@ -60,10 +59,9 @@
                     </a-col>
                 </a-row>
             </div>
-
             <div class="page-content">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :column-auto-width="true">
+                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                     <DxSelection mode="multiple" />
                     <DxPaging :page-size="rowTable" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -77,8 +75,7 @@
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)?.name">{{getColorTag(data.value)?.tag_name}}</a-tag>
                     </template>
-                    <DxColumn :width="170" data-field="compactSalesRepresentative.code" caption="사업자코드"
-                        css-class="cell-center" />
+                    <DxColumn data-field="compactSalesRepresentative.code" caption="사업자코드" css-class="cell-center" />
                     <DxColumn data-field="companyName" caption="상호" />
                     <DxColumn data-field="companyAddress" caption="주소" />
                     <DxColumn data-field="presidentName" caption="대표자" />
@@ -119,28 +116,21 @@
                             </a-popover>
                         </span>
                     </template>
-                    <DxColumn :width="50" cell-template="pupop" type="buttons" />
+                    <DxColumn :width="80" cell-template="pupop" type="buttons" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
-                            <a-tooltip placement="top">
-                                <template #title>편집 {{data.data.id}}</template>
-                                <EditOutlined @click="setModalVisible(data)" />
-                            </a-tooltip>
+                            <div style="color: blue;cursor: pointer;" @click="setModalVisible(data)">편집</div>
                         </div>
                     </template>
                 </DxDataGrid>
-
                 <div class="pagination-table" v-if="rowTable > 20">
                     <a-pagination v-model:current="originDataCall.page" v-model:page-size="pageSize" :total="rowTable"
                         show-less-items @change="changePage" />
                 </div>
-
                 <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
             </div>
-
         </div>
     </a-spin>
-
 </template>
 <script lang="ts">
 import {
@@ -210,7 +200,6 @@ export default defineComponent({
             displayMode: 'full',
             showPageSizeSelector: true,
             showNavButtons: true,
-
         };
     },
     setup() {
@@ -268,10 +257,7 @@ export default defineComponent({
             }
             arraySale.value = arrayAdd
         })
-
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originDataCall.value)
-
-
         onResult((res) => {
             if (res.loading) {
             } else {
@@ -279,11 +265,9 @@ export default defineComponent({
                 dataSource.value = res.data.searchSubscriptionRequests.datas
             }
         })
-
         setTimeout(() => {
             spinning.value = !spinning.value;
         }, 1000);
-
         return {
             idSubRequest,
             dataSource,
@@ -300,7 +284,6 @@ export default defineComponent({
             statuses
         }
     },
-
     watch: {
         'dateSearch'(newVal) {
             if (newVal != null) {
@@ -308,17 +291,14 @@ export default defineComponent({
                 this.originData.finishDate = this.formarDate(newVal[1].$d)
             }
         },
-
         modalStatus() {
             this.searching()
         }
     },
-
     methods: {
         onExporting(e: { component: any; cancel: boolean; }) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
-
             exportDataGrid({
                 component: e.component,
                 worksheet,
@@ -350,7 +330,6 @@ export default defineComponent({
         formarDate(date: any) {
             return dayjs(date).format('YYYY/MM/DD')
         },
-
         searching() {
             if (!this.originData.startDate && !this.originData.finishDate) {
                 this.originData.finishDate = this.formarDate(new Date())
@@ -360,46 +339,38 @@ export default defineComponent({
             this.spinning = true
             let arrayNew = {
                 ...this.originData,
-                page : 1,
+                page: 1,
                 statuses: this.statuses.length > 0 ? this.statuses : [10, 20, 30, 99]
-            } 
+            }
             this.refetchData(arrayNew)
             setTimeout(() => {
                 this.spinning = false
             }, 1000);
         },
-
         changePage() {
             this.spinning = !this.spinning;
             setTimeout(() => {
                 this.spinning = !this.spinning;
             }, 1000);
         },
-
         chooseAll() {
             this.statuses = [10, 20, 30, 99]
         }
     },
-
 });
 </script>
-
 <style lang="scss" scoped>
 .page-content {
     padding-top: 10px;
 }
-
 .pagination-table {
     margin-top: 10px;
 }
-
 .dx-button-has-text .dx-button-content {
     padding: 0px 15px !important;
 }
-
 ::v-deep .dx-toolbar-after {
     display: flex;
-
     .dx-toolbar-item {
         &:first-child {
             order: 2;
@@ -407,78 +378,61 @@ export default defineComponent({
         }
     }
 }
-
 .search-form {
     background: #f1f3f4;
     padding: 10px 24px;
-
     >div {
         justify-content: flex-start !important;
         align-items: center;
         margin-right: 15px;
     }
-
     label {
         margin-right: 10px;
     }
 }
-
 .ant-select {
     width: 145px;
 }
-
 ::v-deep .dx-button-text {
     line-height: 0.5;
 }
-
 #data-grid-demo {
     min-height: 700px;
 }
-
 .dx-select-checkbox {
     display: inline-block !important;
 }
-
 .search-form .col {
     display: flex;
     align-items: center;
 }
-
 .search-form .col {
     margin-top: 20px;
 }
-
 .search-form .col .lable-item {
     width: 110px;
     display: inline-block;
 }
-
 .search-form .col .item:nth-child(2) {
     margin-left: 30px;
 }
-
 .noteText p {
     margin-bottom: 1px;
 }
-
 .noteImage {
     font-size: 11px;
     width: 100%;
     padding-top: 2px;
 }
-
 .ant-card-head-title {
     padding: 0px;
 }
-
 .ant-form-item {
     margin-bottom: 4px;
 }
-
 .title-number-modal {
     margin-top: 7px;
 }
-
 .ant-collapse {
     .ant-collapse-item {
         .ant-collapse-header {
@@ -486,19 +440,15 @@ export default defineComponent({
         }
     }
 }
-
 .ant-form-item-label {
     text-align: left;
 }
-
 .ant-card-extra {
     padding: 0px;
 }
-
 .ant-card-head {
     min-height: 30px;
 }
-
 .ant-table-thead {
     tr {
         th {
@@ -506,7 +456,6 @@ export default defineComponent({
         }
     }
 }
-
 .ant-table-tbody {
     tr {
         td {
@@ -514,12 +463,9 @@ export default defineComponent({
         }
     }
 }
-
 ::v-deep .cell-center {
     text-align: center !important
 }
-
-
 ::v-deep .ant-pagination-options {
     display: none;
 }
