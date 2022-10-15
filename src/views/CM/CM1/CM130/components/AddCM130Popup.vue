@@ -58,7 +58,6 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { any } from "vue-types";
 import themes from "devextreme/ui/themes";
-import { error } from "console";
 
 const options: CascaderProps["options"] = [
   {
