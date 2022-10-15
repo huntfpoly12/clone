@@ -1,6 +1,7 @@
 <template>
     <div id="cm-130" class="cm-130" style="padding: 24px;">
         <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig">
+
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <template #rightExtra>
                     <div class="list-action">
@@ -220,12 +221,12 @@
                         </template>
                     </DxDataGrid>
 
-                    <AddCM130Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false"
+                    <AddCM130Popup :modalStatus="modalAddNewStatus" @closePopup="onCloseAddNewModal"
                         title="원천설정 [ cm-130 –pop ]" />
-                    <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
-                        :data="popupData" title="원천설정 [ cm-130 –pop] " :idRowEdit="idRowEdit" />
+                    <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="onCloseEditModal" :data="popupData"
+                        title="원천설정 [ cm-130 –pop] " :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        :data="popupData" title="변경이력[cm-130-pop]" :idRowEdit="idRowEdit"  typeHistory="cm-130"/>
+                        :data="popupData" title="변경이력[cm-130-pop]" :idRowEdit="idRowEdit" typeHistory="cm-130" />
                 </a-tab-pane>
             </a-tabs>
         </a-spin>
@@ -255,7 +256,6 @@ import {
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import queries from "../../../../graphql/queries/CM/CM130/index";
 import mutations from "../../../../graphql/mutations/CM/CM130/index";
-import { employees } from "./data";
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref, toRaw, reactive, watch, createVNode } from "vue";
 import { DxNumberBox } from "devextreme-vue/number-box";
@@ -324,16 +324,15 @@ export default defineComponent({
     },
     data() {
         return {
-            popupData: [],
-            isShow: ref<boolean>(false),
-            modalSettingStatus: false,
-            employees,
-            modalEditStatus: false,
-            modalAddNewStatus: false,
-            modalHistoryStatus: false,
+
         };
     },
     setup() {
+        const popupData = ref([]);
+        const modalSettingStatus = ref<boolean>(false);
+        const modalEditStatus = ref<boolean>(false);
+        const modalAddNewStatus = ref<boolean>(false);
+        const modalHistoryStatus = ref<boolean>(false);
         const isSwitch = ref<boolean>(false);
         const isShow = ref<boolean>(false);
         const idRowEdit = ref(0);
@@ -391,10 +390,13 @@ export default defineComponent({
         });
 
         // update config 
-        const { mutate: actionUpdateWithholdingConfig, onDone: onDoneUpdated } = useMutation(
+        const { mutate: actionUpdateWithholdingConfig, onDone: onDoneUpdated, onError: errorEditConfig } = useMutation(
             mutations.updateWithholdingConfig
         );
 
+        errorEditConfig((error) => {
+            message.error(error.message, 5);
+        })
         onDoneUpdated(() => {
             message.success(`Update was successful`, 4);
             refetchConfig();
@@ -420,7 +422,7 @@ export default defineComponent({
 
         // get withholding config pay items
         const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')), useOnly: false });
-        const { result: resultWithholdingConfig, refetch: refetchWithholdingConfig ,loading: loadingWithholdingConfig} = useQuery(
+        const { result: resultWithholdingConfig, refetch: refetchWithholdingConfig, loading: loadingWithholdingConfig } = useQuery(
             queries.getWithholdingConfigPayItems,
             dataQueryWithholding,
             () => ({
@@ -461,6 +463,60 @@ export default defineComponent({
 
         }
 
+
+        const onExporting = (e: any) => {
+            const workbook = new Workbook();
+            const worksheet = workbook.addWorksheet("employees");
+            exportDataGrid({
+                component: e.component,
+                worksheet,
+                autoFilterEnabled: true,
+            }).then(() => {
+                workbook.xlsx.writeBuffer().then((buffer) => {
+                    saveAs(
+                        new Blob([buffer], { type: "application/octet-stream" }),
+                        "DataGrid.xlsx"
+                    );
+                });
+            });
+            e.cancel = true;
+        };
+        const modalSetting = () => {
+            modalSettingStatus.value = true;
+        }
+
+        const openAddNewModal = () => {
+            modalAddNewStatus.value = true;
+        }
+        const onCloseAddNewModal = () => {
+            modalAddNewStatus.value = false;
+            refetchWithholdingConfig();
+        };
+
+        const setModalEditVisible = (data: any) => {
+            idRowEdit.value = data.data.itemCode;
+            modalEditStatus.value = true;
+            popupData.value = data;
+        };
+
+        const onCloseEditModal = () => {
+            modalEditStatus.value = false;
+            refetchWithholdingConfig();
+        };
+
+
+        const modalHistory = (data: any) => {
+            idRowEdit.value = data.data.itemCode;
+            modalHistoryStatus.value = true;
+            popupData.value = data;
+        }
+        const getAbleDisable = (data: any) => {
+            if (data) {
+                return "transparent";
+            } else {
+                return "red";
+            }
+        }
         return {
             idRowEdit,
             labelCol: { style: { width: "150px" } },
@@ -480,50 +536,21 @@ export default defineComponent({
             dataSource,
             loading,
             loadingWithholdingConfig,
-            deleteConfig
+            deleteConfig,
+            popupData,
+            modalSettingStatus,
+            modalEditStatus,
+            modalAddNewStatus,
+            modalHistoryStatus,
+            modalSetting,
+            openAddNewModal,
+            onCloseAddNewModal,
+            setModalEditVisible,
+            onCloseEditModal,
+            modalHistory,
+            getAbleDisable,
+            onExporting
         };
-    },
-    methods: {
-        onExporting(e: any) {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet("employees");
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(
-                        new Blob([buffer], { type: "application/octet-stream" }),
-                        "DataGrid.xlsx"
-                    );
-                });
-            });
-            e.cancel = true;
-        },
-        modalSetting() {
-            this.modalSettingStatus = true;
-        },
-        openAddNewModal() {
-            this.modalAddNewStatus = true;
-        },
-        setModalEditVisible(data: any) {
-            this.idRowEdit = data.data.itemCode;
-            this.modalEditStatus = true;
-            this.popupData = data;
-        },
-        modalHistory(data: any) {
-            this.idRowEdit = data.data.itemCode;
-            this.modalHistoryStatus = true;
-            this.popupData = data;
-        },
-        getAbleDisable(data: any) {
-            if (data) {
-                return "transparent";
-            } else {
-                return "red";
-            }
-        },
     },
 });
 </script>
