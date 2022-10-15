@@ -4,7 +4,7 @@
       width="50%" :mask-closable="false">
       <h2 class="title_modal">회원정보</h2>
       <a-form v-bind="layout" name="nest-messages" v-model:value="formState" :validate-messages="validateMessages"
-        @finish="onFinish">
+        @finish="onFinish" >
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID">
@@ -86,7 +86,7 @@
         </a-row>
       </a-form>
 
-      <div style="margin-top: 50px" class="page-content">
+      <div class="page-content">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
 
         <div style="position: relative">         
@@ -563,6 +563,9 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
 }
+::v-deep .ant-modal-content {
+  height: 900px
+}
 
 ::v-deep .ant-form-item-label>label {
   width: 110px;
@@ -655,7 +658,7 @@ export default defineComponent({
   line-height: 5px;
 }
 .table-scroll {
-    height: 450px;
+    height: 300px;
     overflow-y: auto;
     padding: 5px;
 }

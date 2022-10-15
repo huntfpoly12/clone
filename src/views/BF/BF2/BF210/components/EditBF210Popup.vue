@@ -30,10 +30,10 @@
           </a-col>
           <a-col :span="12">
             <a-form-item label="상태">
-              <a-switch v-if="formState.type!='c'" v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
-                style="width: 100px" />
-                <a-switch v-if="formState.type=='c'" disabled v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
-                style="width: 100px" />
+              <a-switch v-if="formState.type!='c'" v-model:checked="formState.active" checked-children="이용중"
+                un-checked-children="이용중지" style="width: 100px" />
+              <a-switch v-if="formState.type=='c'" disabled v-model:checked="formState.active" checked-children="이용중"
+                un-checked-children="이용중지" style="width: 100px" />
             </a-form-item>
 
             <a-form-item label="회원종류">
@@ -78,10 +78,30 @@
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" :span="8">
               <a-input v-if="formState.type!=='c'" v-model:value="formState.email" style="width: 230px" />
               <a-input v-if="formState.type=='c'" disabled v-model:value="formState.email" style="width: 230px" />
-              <a-button v-if="formState.type!=='c'" :disabled="!validated" html-type="submit" danger class="btn_sendemail" @click="showModal">비밀번호 변경</a-button>
-              <a-button v-if="formState.type =='c'" disabled html-type="submit" danger class="btn_sendemail" @click="showModal">비밀번호 변경</a-button>
+              <a-button v-if="formState.type!=='c'" :disabled="!validated" html-type="submit" danger
+                class="btn_sendemail" @click="showModal">비밀번호 변경</a-button>
+              <a-button v-if="formState.type =='c'" disabled html-type="submit" danger class="btn_sendemail"
+                @click="showModal">비밀번호 변경</a-button>
             </a-form-item>
-            <a-form-item>
+            <div class="confirm-popup">
+            <a-modal v-model:visible="isShow" :mask-closable="false">
+                <a-row>
+                    <a-col :span="4">
+                        <mail-outlined :style="{fontSize: '70px'}" />
+                    </a-col>
+                    <a-col :span="20">
+                        <p><strong>비밀번호 설정 이메일</strong></p>
+                        <p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
+                        <p>계속 진행하시겠습니까?</p>
+                    </a-col>
+                </a-row>
+                <template #footer>
+                    <a-button>아니오</a-button>
+                    <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button>
+                </template>
+            </a-modal>
+        </div>
+            <!-- <a-form-item>
               <a-modal :disabled="!formState.email" class="container_email" v-model:visible="isShow"
                 @ok="handleSuccsess">
                 <div id="modal_email" class="modal_email">
@@ -95,13 +115,14 @@
                       비밀번호 설정 이메일
                     </p>
                     <p style="margin-bottom: 0">
-                      비밀번호 설정 링크가 이메일로 발송됩니다. 계속
-                      진행하시겠습니까?
+                      비밀번호 설정 링크가 이메일로 발송됩니다
+                      <br>
+                      계속 진행하시겠습니까?
                     </p>
                   </div>
                 </div>
               </a-modal>
-            </a-form-item>
+            </a-form-item> -->
           </a-col>
         </a-row>
       </a-form>
@@ -109,7 +130,7 @@
       <div style="margin-top: 50px">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
         <div style="position: relative">
-          <div class="overlay" v-if="formState.type=='c'" ></div>
+          <div class="overlay" v-if="formState.type=='c'"></div>
           <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id"
             :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
             <DxPaging :page-size="1" />
@@ -224,15 +245,15 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const data = props.data;
+    // const data = props.data;
     const isShow = ref<boolean>(false);
     const visible = ref<boolean>(false);
-    const validateError = ref<boolean>(false);
-    const selectSearch = ref<SelectProps["options"]>([
-      { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
-      { value: "C20235301", label: "C20225301     효사랑노인요양전문병원" },
-      { value: "D20223838", label: "D20223838     테크노프로그램우리컴퍼니" },
-    ]);
+    // const validateError = ref<boolean>(false);
+    // const selectSearch = ref<SelectProps["options"]>([
+    //   { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
+    //   { value: "C20235301", label: "C20225301     효사랑노인요양전문병원" },
+    //   { value: "D20223838", label: "D20223838     테크노프로그램우리컴퍼니" },
+    // ]);
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
@@ -420,7 +441,7 @@ export default defineComponent({
       showModal,
       handleSuccsess,
       // onToggle,
-      selectSearch,
+      // selectSearch,
       filterOption,
       handleFocus,
       handleBlur,
