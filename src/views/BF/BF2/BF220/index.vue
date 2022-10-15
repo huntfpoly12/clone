@@ -1,105 +1,113 @@
 <template>
-    <div class="top-content">
-        <a-typography-title :level="3"> 회원관리
-        </a-typography-title>
-        <div class="list-action">
-            <a-tooltip>
-                <template #title>조회</template>
-                <a-button @click="searching">
-                    <SearchOutlined />
-                </a-button>
-            </a-tooltip>
-            <a-tooltip>
-                <template #title>저장</template>
-                <a-button>
-                    <SaveOutlined />
-                </a-button>
-            </a-tooltip>
-            <a-tooltip>
-                <template #title>삭제</template>
-                <a-button>
-                    <DeleteOutlined />
-                </a-button>
-            </a-tooltip>
-            <a-tooltip>
-                <template #title>출력</template>
-                <a-button>
-                    <PrinterOutlined />
-                </a-button>
-            </a-tooltip>
-        </div>
-    </div>
-    <div id="bf-220">
-        <div class="search-form">
-            <div id="components-grid-demo-flex">
-                <a-row justify="start" :gutter="[16,8]">
-                    <a-col>
-                        <label class="lable-item">대상회원 :</label>
-                        <a-checkbox v-model:checked="buttonSearch.typeSevice1">
-                            <a-tag color="black">매니저</a-tag>
-                        </a-checkbox>
-                        <a-checkbox v-model:checked="buttonSearch.typeSevice2">
-                            <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
-                        </a-checkbox>
-                        <a-checkbox v-model:checked="buttonSearch.typeSevice3">
-                            <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
-                        </a-checkbox>
-                    </a-col>
-                </a-row>
+    <a-spin :spinning="spinning" size="large">
+        <div class="top-content">
+            <a-typography-title :level="3"> 회원관리
+            </a-typography-title>
+            <div class="list-action">
+                <a-tooltip>
+                    <template #title>조회</template>
+                    <a-button @click="searching">
+                        <SearchOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>저장</template>
+                    <a-button>
+                        <SaveOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>삭제</template>
+                    <a-button>
+                        <DeleteOutlined />
+                    </a-button>
+                </a-tooltip>
+                <a-tooltip>
+                    <template #title>출력</template>
+                    <a-button>
+                        <PrinterOutlined />
+                    </a-button>
+                </a-tooltip>
             </div>
         </div>
-        <div class="page-content">
-            <DxDataGrid :data-source="resList.searchScreenRoleGroups.datas" :show-borders="true" key-expr="id"
-                @exporting="onExporting">
-                <DxPaging :page-size="5" />
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                <DxExport :enabled="true" :allow-export-selected-data="true" />
-                <DxToolbar>
-                    <DxItem name="searchPanel" />
-                    <DxItem name="exportButton" />
-                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                    <DxItem name="groupPanel" />
-                    <DxItem name="addRowButton" show-text="always" />
-                    <DxItem name="columnChooserButton" />
-                </DxToolbar>
-                <template #button-template>
-                    <DxButton icon="plus" @click="openAddNewModal" />
-                </template>
+        <div id="bf-220">
+            <div class="search-form">
+                <div id="components-grid-demo-flex">
+                    <a-row justify="start" :gutter="[16,8]">
+                        <a-col>
+                            <label class="lable-item">대상회원 :</label>
+                            <a-checkbox v-model:checked="buttonSearch.typeSevice1">
+                                <a-tag color="black">매니저</a-tag>
+                            </a-checkbox>
+                            <a-checkbox v-model:checked="buttonSearch.typeSevice2">
+                                <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
+                            </a-checkbox>
+                            <a-checkbox v-model:checked="buttonSearch.typeSevice3">
+                                <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                            </a-checkbox>
+                        </a-col>
+                    </a-row>
+                </div>
+            </div>
+            <div class="page-content">
+                <DxDataGrid :data-source="resList ? resList.searchScreenRoleGroups.datas : ''" :show-borders="true"
+                    key-expr="id" @exporting="onExporting">
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxToolbar>
+                        <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" />
+                        <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                        <DxItem name="groupPanel" />
+                        <DxItem name="addRowButton" show-text="always" />
+                        <DxItem name="columnChooserButton" />
+                    </DxToolbar>
+                    <template #button-template>
+                        <DxButton icon="plus" @click="openAddNewModal" />
+                    </template>
 
-                <DxColumn data-field="id" caption="그룹코드" data-type="text" :fixed="true" />
-                <DxColumn data-field="name" caption="그룹명" />
-                <DxColumn data-field="type" caption="대상회원" cell-template="button" />
-                <template #button="{ data }" class="custom-action">
-                    <a-tag :color="getColorTag(data.value)">
-                        {{ data.value == 'm' ? '매니저' : (data.value == 'r' ? '영업자' : (data.value == 'p' ? '파트너' : '')) }}
-                    </a-tag>
-                </template>
-                <DxColumn data-field="memo" caption="메모"/>
-                <DxColumn :width="80" cell-template="pupop" />
-                <template #pupop="{ data }" class="custom-action">
-                    <div class="custom-action">
-                        <a-space :size="10">
-                            <a-tooltip placement="top">
-                                <template #title>편집</template>
-                                <EditOutlined @click="openEditModal(data)" />
-                            </a-tooltip>
-                            <a-tooltip placement="top">
-                                <template #title>변경이력</template>
-                                <HistoryOutlined @click="modalHistory(data)" />
-                            </a-tooltip>
-                        </a-space>
-                    </div>
-                </template>
-            </DxDataGrid>
-            <BF220Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus=false"
-                :modalEdit="modalEditStatus" @closePopupEdit="modalEditStatus = false" />
-            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-                title="변경이력[cm-000-pop]" />
+                    <DxColumn data-field="id" caption="그룹코드" data-type="text" :fixed="true" />
+                    <DxColumn data-field="name" caption="그룹명" />
+                    <DxColumn data-field="type" caption="대상회원" cell-template="button" />
+                    <template #button="{ data }" class="custom-action">
+                        <a-tag :color="getColorTag(data.value)">
+                            {{ data.value == 'm' ? '매니저' : (data.value == 'r' ? '영업자' : (data.value == 'p' ? '파트너' :
+                            '')) }}
+                        </a-tag>
+                    </template>
+                    <DxColumn data-field="memo" caption="메모" />
+                    <DxColumn :width="80" cell-template="pupop" />
+                    <template #pupop="{ data }" class="custom-action">
+                        <div class="custom-action">
+                            <a-space :size="10">
+                                <a-tooltip placement="top">
+                                    <template #title>편집</template>
+                                    <EditOutlined @click="openEditModal(data)" />
+                                </a-tooltip>
+                                <a-tooltip placement="top">
+                                    <template #title>변경이력</template>
+                                    <HistoryOutlined @click="modalHistory(data)" />
+                                </a-tooltip>
+                            </a-space>
+                        </div>
+                    </template>
+                </DxDataGrid>
+                <div class="pagination-table" v-if="totalRow > dataSearch.rows">
+                    <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
+                        :total="totalRow" show-less-items />
+                </div>
+
+                <BF220PopupAddNew :modalStatus="modalAddNewStatus"  @closePopupAdd="modalAddNewStatus = false" />
+
+                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    :data="popupData" title="변경이력" />
+            </div>
+
         </div>
-    </div>
+    </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import {
     DxDataGrid,
     DxColumn,
@@ -111,14 +119,14 @@ import {
     DxItem
 } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
-import BF220Popup from "./components/BF220Popup.vue";
+import BF220PopupAddNew from "./components/BF220PopupAddNew.vue";
 import DxButton from "devextreme-vue/button";
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF2/BF220/index";
-
+import { message } from 'ant-design-vue';
 import {
     EditOutlined,
     HistoryOutlined,
@@ -142,7 +150,7 @@ export default defineComponent({
         DxSelection,
         DxExport,
         DxSearchPanel,
-        BF220Popup,
+        BF220PopupAddNew,
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
@@ -164,30 +172,61 @@ export default defineComponent({
         };
     },
     setup() {
+        const totalRow = ref(0)
+        const spinning = ref<boolean>(true);
         const buttonSearch = ref({
             typeSevice1: true,
             typeSevice2: true,
             typeSevice3: true
-        })
+        }) 
 
-        const dataSearch = {
+        const dataSearch = ref({
             page: 1,
             rows: 10,
             types: ["m", "r", "p"]
-        }
+        })
+
 
         const searching = () => {
+            let arrayStatus = []
+            if (buttonSearch.value.typeSevice1 == true) {
+                arrayStatus.push('m')
+            }
+            if (buttonSearch.value.typeSevice2 == true) {
+                arrayStatus.push('r')
+            }
+            if (buttonSearch.value.typeSevice3 == true) {
+                arrayStatus.push('p')
+            }
+            if (buttonSearch.value.typeSevice1 != true && buttonSearch.value.typeSevice2 != true && buttonSearch.value.typeSevice3 != true) {
+                message.error('Vui lòng chọn trạng thái để tìm kiếm')
+            } else {
+                dataSearch.value.types = arrayStatus
+                spinning.value = true
+                setTimeout(() => {
+                    refetchData()
+                }, 100);
+            }
         }
 
         const { refetch: refetchData, result: resList } = useQuery(queries.searchScreenRoleGroups, dataSearch, () => ({
             fetchPolicy: "no-cache",
         }))
 
+        watch(resList, (value) => {
+            totalRow.value = value.searchScreenRoleGroups.totalCount
+            setTimeout(() => {
+                spinning.value = false
+            }, 500);
+        });
+
         return {
             searching,
+            spinning,
             dataSearch,
             resList,
-            buttonSearch
+            buttonSearch,
+            totalRow
         }
     },
     methods: {

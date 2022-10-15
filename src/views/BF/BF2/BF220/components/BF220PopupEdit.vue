@@ -1,7 +1,7 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" width="1000px">
+        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered okText="저장하고 나가기"
+            cancelText="그냥 나가기" @cancel="setModalVisible()" width="1000px">
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
                     <a-col :span="24" class="title-modal">
@@ -11,14 +11,15 @@
                     <a-col :span="16">
                         <a-form-item label="그룹코드">
                             <div class="dflex">
-                                <a-input v-model:value="bf220Detail.name" class="mr5" placeholder="영문,숫자 5~10자 (중복불가)" />
+                                <a-input v-model:value="bf220Detail.name" class="mr5"
+                                    placeholder="영문,숫자 5~10자 (중복불가)" />
                                 <a-button type="button">중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <a-input v-model:value="bf220Detail.resource" placeholder="최대 20자"/>
+                            <a-input v-model:value="bf220Detail.resource" placeholder="최대 20자" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="8"></a-col>
@@ -68,8 +69,9 @@
                 </a-row>
             </a-form>
         </a-modal>
-        <a-modal :mask-closable="false" :visible="modalEdit" title="권한그룹관리" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="closeModalEdit()" width="1000px">
+
+        <a-modal :mask-closable="false" :visible="modalEdit" title="권한그룹관리" centered okText="저장하고 나가기"
+            cancelText="그냥 나가기" @cancel="closeModalEdit()" width="1000px">
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
                     <a-col :span="24" class="title-modal">
@@ -136,6 +138,7 @@
                 </a-row>
             </a-form>
         </a-modal>
+
         <a-modal :mask-closable="false" v-model:visible="visible" title="해지 확인" ok-text="완료">
             <a-row>
                 <a-col :span="4">
