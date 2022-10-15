@@ -22,40 +22,34 @@
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 300px"
-                :options="selectSearch" :filter-option="filterOption" @focus="handleFocus" @blur="handleBlur"
-                @change="handleChange" class="select-search">
-                <template #suffixIcon>
-                  <search-outlined :size="14" class="ant-select-suffix" />
-                </template>
-              </a-select>
+              <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 150px;"/> 
             </a-form-item>
           </a-col>
           <a-col :span="12">
             <a-form-item label="상태">
-              <a-switch v-model:checked="bf310Detail.switch" checked-children="이용중" un-checked-children="이용중지"
+              <a-switch v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
                 style="width: 100px" />
             </a-form-item>
 
             <a-form-item label="회원종류">
-              <a-select style="width: 150px" v-model:value="dataMode.color" option-label-prop="children"
+              <a-select style="width: 150px" v-model:value="formState.type" option-label-prop="children"
                 class="select_disable" disabled>
-                <a-select-option value="고객사" label="고객사">
+                <a-select-option value="c" label="고객사">
                   <a-tag style="color: black" :color="getColorTag('고객사')">고객사</a-tag>
                 </a-select-option>
-                <a-select-option value="최고매니저" label="최고매니저">
+                <a-select-option :value="1" label="최고매니저">
                   <a-tag :color="getColorTag('최고매니저')">최고매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="중간매니저" label="중간매니저">
+                <a-select-option :value="2" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="담당매니저" label="담당매니저">
+                <a-select-option :value="3" label="담당매니저">
                   <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
                 </a-select-option>
-                <a-select-option value="영업자" label="영업자">
+                <a-select-option value="r" label="영업자">
                   <a-tag :color="getColorTag('영업자')">영업자</a-tag>
                 </a-select-option>
-                <a-select-option value="파트너" label="파트너">
+                <a-select-option value="p" label="파트너">
                   <a-tag style="color: black" :color="getColorTag('파트너')">파트너</a-tag>
                 </a-select-option>
               </a-select>
@@ -109,8 +103,8 @@
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
         <div style="position: relative">
           <div v-if="!bf310Detail.switch" class="overlay"></div>
-          <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id" :allow-column-reordering="true"
-            :allow-column-resizing="true" :column-auto-width="true">
+          <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id"
+            :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
             <DxPaging :page-size="5" />
             <DxSelection mode="multiple" />
 
@@ -149,7 +143,6 @@
 
 <script lang="ts">
 import { ref, defineComponent, reactive, computed, watch } from "vue";
-import { employees, states } from "../data.js";
 import type { UnwrapRef } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import type { SelectProps } from "ant-design-vue";
@@ -213,12 +206,7 @@ export default defineComponent({
   created() { },
   data() {
     return {
-      isShow: ref<boolean>(false),
-      dataSource: employees,
-      states,
-      dataMode: {
-        color: "고객사",
-      },
+      isShow: ref<boolean>(false), 
       toggleActive: false,
       reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
     };
@@ -299,6 +287,9 @@ export default defineComponent({
       updatedBy: "",
       ip: "",
       active: true,
+      groupId: "",
+      groupCode: "",
+      groupName: "",
       facilityBusinesses: [],
       screenRoleGroups: {
         id: "",
@@ -345,11 +336,13 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
+
     watch(result, (value) => {
       if (value && value.getUser) {
         formState.id = value.getUser.id;
-        formState.type = value.getUser.type;
+        formState.type = value.getUser.type != "m" ? value.getUser.type : value.getUser.managerGrade;
         formState.username = value.getUser.username;
+        formState.name = value.getUser.name;
         formState.mobilePhone = value.getUser.mobilePhone;
         formState.email = value.getUser.email;
         formState.president = value.getUser.president;
@@ -362,6 +355,7 @@ export default defineComponent({
         formState.active = value.getUser.active;
         formState.facilityBusinesses = value.getUser.facilityBusinesses;
         formState.screenRoleGroups = value.getUser.screenRoleGroups;
+        formState.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
 
       }
 
@@ -444,8 +438,6 @@ export default defineComponent({
       } else if (data === "최고매니저") {
         return "#4a4848";
       } else if (data === "중간매니저") {
-        return "#4a4848";
-      } else if (data === "담당매니저") {
         return "#4a4848";
       } else if (data === "담당매니저") {
         return "#4a4848";

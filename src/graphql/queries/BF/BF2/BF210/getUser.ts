@@ -1,9 +1,7 @@
 import gql from "graphql-tag";
 export default gql`
-  query getUser ($id: Int!){
-    getUser(
-      id : $id
-    ) {
+  query getUser($id: Int!) {
+    getUser(id: $id) {
       id
       type
       username
@@ -20,6 +18,9 @@ export default gql`
       updatedBy
       ip
       active
+      groupId
+      groupCode
+      groupName
       facilityBusinesses {
         facilityBusinessId
         name

@@ -12,7 +12,7 @@
 </template>
 <script lang="ts">
 import DxDateBox from "devextreme-vue/date-box";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { Dayjs } from 'dayjs';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -68,6 +68,10 @@ export default defineComponent({
             var Url = document.querySelector(classDate) as HTMLInputElement;
             emit("valueDateChange", Url.value)
         }
+
+        watch(() => props.valueDate, (currentValue, oldValue) => {
+            date.value = new Date(currentValue)
+        });
 
         const alertDate = () => {
             if (dataInput) {

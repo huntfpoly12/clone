@@ -29,13 +29,15 @@
                             <div style="display: flex;">
                                 <div style="display: flex;">
                                     <a-form-item label="대표번호">
-                                        <a-input v-model:value="formState.presidentMobilePhone" />
+                                        <a-input v-model:value="formState.presidentMobilePhone" min="0"
+                                            style="width: 150px;" @change="validateCharacter('presidentMobilePhone')" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
                                 </div>
-                                <div style="display: flex; margin-left: 19px;">
+                                <div style="display: flex">
                                     <a-form-item label="팩스번호">
-                                        <a-input v-model:value="formState.extendInfo.detail.fax" />
+                                        <a-input v-model:value="formState.extendInfo.detail.fax" style="width: 150px;"
+                                            @change="validateCharacter('fax')" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
                                 </div>
@@ -77,7 +79,6 @@
                                                 accept=".png,.jpeg,.jpg">
                                                 <a-button class="btn-upload-image">직인업로드</a-button>
                                             </a-upload>
-
                                         </a-col>
                                         <a-col :span="14" :xl="14">
                                             <InfoCircleFilled />
@@ -97,17 +98,18 @@
                                             style="width: 176px" />
                                     </a-form-item>
                                 </div>
-
                                 <div style="display: flex; margin-left: 150px;">
                                     <a-form-item label="휴대폰">
-                                        <a-input v-model:value="formState.extendInfo.president.mobilePhone" />
+                                        <a-input v-model:value="formState.extendInfo.detail.phone" style="width: 100px;"
+                                            @change="validateCharacter('phone')" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
                                 </div>
                             </div>
                             <div style="display: flex;">
-                                <a-form-item label="생년월일">
-                                    <a-input v-model:value="formState.extendInfo.president.birthday" />
+                                <a-form-item label="생년월일" style="width: 327px;">
+                                    <CustomDatepicker :valueDate="formState.extendInfo.president.birthday"
+                                        date-format="MM/DD/YYYY" @valueDateChange="changeDate" />
                                 </a-form-item>
                                 <p class="validate-message">
                                     ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
@@ -125,17 +127,12 @@
                             </div>
                         </a-form>
                     </div>
-
                     <a-form-item class="btn-submit">
-                        <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
-                        <a-button style="margin-left: 10px">저장하고 나가기</a-button>
+                        <a-button type="primary" @click="onSubmit">저장</a-button>
                     </a-form-item>
-
                     <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false"
                         :data="fileImage" :previewImageCall="previewImage" @urlSeal="changeSealUrl" />
-
                 </a-tab-pane>
-
                 <a-tab-pane key="2" tab="이용자">
                     <DxDataGrid :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true"
                         key-expr="id" :allow-column-reordering="true" :allow-column-resizing="true"
@@ -150,7 +147,6 @@
                             <DxItem name="addRowButton" show-text="always" />
                             <DxItem name="columnChooserButton" />
                         </DxToolbar>
-
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
@@ -163,19 +159,22 @@
                             </a-tag>
                         </template>
                         <DxColumn caption="성명" data-field="name" :width="200" />
-                        <DxColumn caption="성명" data-field="facilityBusinesses" cell-template="checked-facility" />
+                        <DxColumn caption="회계권한(담당사업)" data-field="facilityBusinesses"
+                            cell-template="checked-facility" />
                         <template #checked-facility="{ data }">
                             {{ changeValueRow(data.value) }}
                         </template>
-
                         <DxColumn data-field="withholdingRole" caption="원천권한" cell-template="checked-status" :width="80"
                             :allowEditing="true" />
-
                         <template #checked-status="{ data }">
-                            <a-checkbox v-model:value="data.value" @change="checkedRow(data)" />
+                            <div style="width: 14px;height: 14px;background-color: black; margin: 0 auto; margin-top: 7px;"
+                                v-if="data.value == true">
+                            </div>
+                            <div style="width: 14px;height: 14px;background-color: white; border: 1px solid black; margin: 0 auto; margin-top: 7px;"
+                                v-else>
+                            </div>
                         </template>
-
-                        <DxColumn :width="80" cell-template="pupop" />
+                        <DxColumn :width=" 80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
@@ -195,19 +194,15 @@
                             </div>
                         </template>
                     </DxDataGrid>
-
                     <div class="pagination-table" v-if="rowTable > dataGetListUsers.filter.rows">
                         <a-pagination v-model:current="dataGetListUsers.filter.page"
                             v-model:page-size="dataGetListUsers.filter.rows" :total="rowTable" show-less-items />
                     </div>
-
                     <a-form-item class="btn-submit-table">
-                        <a-button type="primary" @click="onSubmit">그냥 나가기</a-button>
-                        <a-button style="margin-left: 10px">저장하고 나가기</a-button>
+                        <a-button type="primary" @click="onSubmit">저장</a-button>
                     </a-form-item>
                 </a-tab-pane>
             </a-tabs>
-
             <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" @closePopup="closePopupAdd" />
             <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :data="popupData" />
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
@@ -236,8 +231,7 @@ import AddNewCM110Poup from "./components/AddNewCM110Poup.vue";
 import EditCM110Popup from "./components/EditCM110Popup.vue"
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import inputFormat from '../../../../components/inputBoxFormat.vue';
-
-import { defineComponent, ref, toRaw, reactive } from "vue";
+import { defineComponent, ref } from "vue";
 import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import ReviewStampImage from "./components/ReviewStampImage.vue";
 import ListLoginPopup from "../../../../components/ListLoginPopup.vue";
@@ -246,10 +240,9 @@ import { message } from 'ant-design-vue';
 import mutations from "../../../../graphql/mutations/CM/CM110/index";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/CM/CM110/index"
-
 import { useMutation } from "@vue/apollo-composable";
 import { getJwtObject } from "@bankda/jangbuda-common";
-
+import CustomDatepicker from "../../../../components/CustomDatepicker.vue";
 import { companyId } from "../../../../helpers/commonFunction"
 function getBase64(file: File) {
     return new Promise((resolve, reject) => {
@@ -259,9 +252,9 @@ function getBase64(file: File) {
         reader.onerror = (error) => reject(error);
     });
 }
-
 export default defineComponent({
     components: {
+        CustomDatepicker,
         InfoCircleFilled,
         LoginOutlined,
         EditOutlined,
@@ -297,31 +290,24 @@ export default defineComponent({
         var idRowEdit = ref<number>(0)
         var companyIdPopup = ref<number>(0)
         const popupDataLogin = ref()
-
         setTimeout(() => {
             spinning.value = !spinning.value;
         }, 1000);
-
         const {
             mutate: updateDataCompany,
             loading: loadingUpdate,
             onDone: onDoneAdd,
             onError: onErrorUpdate
         } = useMutation(mutations.updateCompany);
-
-
         onDoneAdd((res) => {
             spinning.value = !spinning.value;
             message.success(`Update successfully`);
         })
-
         onErrorUpdate((res) => {
             spinning.value = !spinning.value;
             message.error(`Update false`);
         })
-
         const statusMailValidate = ref<boolean>(true);
-
         let formState = ref({
             name: "",
             bizType: "",
@@ -352,18 +338,17 @@ export default defineComponent({
             },
             sealFileStorageId: null
         });
-
         let listDataMyCompanyUser = ref([])
         let previewImage: any = ref("https://jangbuda-frs.bankda.com/uFH4PK0U2Ar9sTYIqp0AV.png");
         let fileImage: any = ref(null);
         let modalStampReviewStatus: any = ref();
         const fileList = ref<UploadProps['fileList']>([]);
-
         const handleChange = async (info: any) => {
             if (info.file.status !== "uploading") {
                 if (info.file.originFileObj.size <= 1000000) {
                     previewImage.value = await getBase64(info.file.originFileObj);
                     fileImage.value = info;
+                    changeSealUrl(previewImage.value.replace('data:image/png;base64,', ''))
                 } else {
                     message.error(`이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 / 종류 : GIF, JPG, PNG`);
                 }
@@ -393,11 +378,9 @@ export default defineComponent({
         }
         const modalHistory = (data: any) => {
             // console.log(companyId);
-
             idRowEdit.value = data.data.id
             companyIdPopup.value = companyId
             modalHistoryStatus.value = true;
-
         }
         const modalLogin = (data: any) => {
             popupDataLogin.value = {
@@ -406,7 +389,6 @@ export default defineComponent({
             }
             modalLoginStatus.value = true;
         }
-
         let companyId: any = null
         const token = sessionStorage.getItem("token");
         if (token) {
@@ -415,22 +397,23 @@ export default defineComponent({
                 companyId = jwtObject.companyId
             }
         }
-
         //Submit form detail company
         const onSubmit = () => {
-            let dataUpdateCompany = {
-                companyId: companyId,
-                input: {
-                    phone: formState.value.presidentMobilePhone,
-                    fax: formState.value.extendInfo.detail.fax,
-                    sealFileStorageId: formState.value.sealFileStorageId,
-                    presidentMobilePhone: formState.value.extendInfo.president.mobilePhone,
-                    presidentEmail: formState.value.extendInfo.president.email,
-                    presidentBirthday: formState.value.extendInfo.president.birthday
+            if (statusMailValidate.value == true) {
+                let dataUpdateCompany = {
+                    companyId: companyId,
+                    input: {
+                        phone: formState.value.extendInfo.detail.phone,
+                        fax: formState.value.extendInfo.detail.fax,
+                        sealFileStorageId: formState.value.sealFileStorageId,
+                        presidentMobilePhone: formState.value.presidentMobilePhone,
+                        presidentEmail: formState.value.extendInfo.president.email,
+                        presidentBirthday: formState.value.extendInfo.president.birthday
+                    }
                 }
+                spinning.value = !spinning.value;
+                updateDataCompany(dataUpdateCompany)
             }
-            spinning.value = !spinning.value;
-            updateDataCompany(dataUpdateCompany)
         };
         const getColorTag = (data: boolean) => {
             if (data === true) {
@@ -439,16 +422,12 @@ export default defineComponent({
                 return "rgb(205 32 31 / 51%)";
             }
         }
-
         const checkedRow = (data: any) => {
             // dataTableShow.value[data.key].원천권한 = !dataTableShow.value[data.key].원천권한;
         }
-
         const changeValueInputEmit = (data: { name: string; value: any; }) => {
             if (data.name == 'fax') {
-
             }
-
             switch (data.name) {
                 case 'fax':
                     formState.value.fax = data.value;
@@ -458,7 +437,6 @@ export default defineComponent({
                     break;
                 default:
             }
-
         }
         const validateNumber = (e: any, name: string) => {
             let valNumberOnly = e.target.value.replace(/\D+/g, '');
@@ -483,20 +461,19 @@ export default defineComponent({
                 statusMailValidate.value = true;
             }
         }
-
         const originData = {
             companyId: companyId
         }
-
         const { refetch: refetchData, loading, error, onResult } = useQuery(queries.getDataDetail, originData, () => ({ fetchPolicy: "no-cache", }))
         onResult((res) => {
             if (res.data.getMyCompany.seal) {
                 previewImage.value = res.data.getMyCompany.seal.url
             }
-            formState.value = res.data.getMyCompany
-
+            formState.value = {
+                ...res.data.getMyCompany,
+                bizType: res.data.getMyCompany.bizType == 1 ? "법인사업자" : "개인사업자"
+            }
         })
-
         const dataGetListUsers = ref({
             companyId: companyId,
             filter: {
@@ -504,31 +481,23 @@ export default defineComponent({
                 rows: 10
             }
         })
-
         const rowTable = ref(0)
-
         const { refetch: refetchDataUsers, onResult: resultUsers, result: resultDataUsers, loading: loadData } = useQuery(queries.getListUserCompany, dataGetListUsers.value, () => ({ fetchPolicy: "no-cache", }))
         resultUsers((res) => {
             rowTable.value = res.data.getMyCompanyUsers.totalCount
         })
-
-
         const {
             mutate: callSaveSeal,
             loading: loadingSeal,
             onDone: onDoneSeal,
             onError: onErrorSeal
         } = useMutation(mutations.createMyCompanyAutoGeneratedSeal);
-
         onDoneSeal(e => {
             formState.value.sealFileStorageId = e.data.createMyCompanyAutoGeneratedSeal
         })
-
         onErrorSeal(e => {
-            message.error(`Có lỗi xảy ra trong quá trình tạo con dấu`)
+            message.error(`봉인을 만드는 동안 오류가 발생했습니다.`)
         })
-
-
         const changeSealUrl = (data: any) => {
             previewImage.value = 'data:image/png;base64,' + data
             let dataCallApi = {
@@ -537,7 +506,9 @@ export default defineComponent({
             }
             callSaveSeal(dataCallApi)
         }
-
+        const changeDate = (data: any) => {
+            formState.value.extendInfo.president.birthday = data
+        }
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -581,49 +552,50 @@ export default defineComponent({
             dataGetListUsers,
             rowTable,
             changeSealUrl,
-            loadingSeal
+            loadingSeal,
+            changeDate
         };
-
     },
     methods: {
-
         // Convert FacilityBizType
         changeValueRow(data: any) {
             let stringConvert = ''
-            data.map((e: any) => {
-                if (e.facilityBusinessId == 1)
-                    stringConvert += '주·야간보호'
-                else if (e.facilityBusinessId == 2)
-                    stringConvert += '방문요양'
-                else if (e.facilityBusinessId == 3)
-                    stringConvert += '인지활동형 방문요양'
-                else if (e.facilityBusinessId == 4)
-                    stringConvert += '방문간호'
-                else if (e.facilityBusinessId == 5)
-                    stringConvert += '방문목욕'
-                else if (e.facilityBusinessId == 6)
-                    stringConvert += '단기보호'
-                else if (e.facilityBusinessId == 7)
-                    stringConvert += '복지용구'
+            data.map((e: any, index: any) => {
+                if (index + 1 != data.length)
+                    stringConvert += e.name + ' '
+                else
+                    stringConvert += e.name
             })
+
             return stringConvert
         },
-
         closePopupEdit() {
             this.modalEditStatus = false
             this.refetchDataUsers()
         },
-
         closePopupAdd() {
             this.modalAddNewStatus = false
             this.refetchDataUsers()
         },
+        validateCharacter(name: any) {
+            if (name == 'presidentMobilePhone' && this.formState.presidentMobilePhone.length > 0) {
+                let e = this.formState.presidentMobilePhone
+                this.formState.presidentMobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            }
+            if (name == 'fax' && this.formState.extendInfo.detail.fax.length > 0) {
+                let e = this.formState.extendInfo.detail.fax
+                this.formState.extendInfo.detail.fax = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            }
+            if (name == 'phone' && this.formState.extendInfo.detail.phone.length > 0) {
+                let e = this.formState.extendInfo.detail.phone.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.formState.extendInfo.detail.phone = e
+
+            }
+
+        }
     },
-
-
 });
 </script>
-
 <style scoped>
 .page-content>>>.cell-button-add {
     padding-left: 100px !important;
@@ -645,14 +617,13 @@ export default defineComponent({
 }
 
 .validate-message {
-    margin-left: 2%;
+    margin-left: 10px;
     color: #c3baba;
 }
 
 .btn-upload-image {
     width: 100px;
     margin-left: 150px;
-
 }
 
 .btn-submit-table {
@@ -664,7 +635,6 @@ export default defineComponent({
     margin-top: 20px;
     margin-left: 280px;
 }
-
 
 .page-content>>>.cell-center {
     text-align: center !important
@@ -678,4 +648,3 @@ export default defineComponent({
     margin-top: 10px;
 }
 </style>
-  
