@@ -114,7 +114,7 @@ export default defineComponent({
     return {};
   },
   computed: {},
-  setup(props) {
+  setup(props, { emit }) {
     let trigger = ref<boolean>(false);
     const dataQuery = ref();
     watch(
@@ -161,13 +161,17 @@ export default defineComponent({
     });
 
     // update detail withholding config pay item
-    const { mutate: actionUpdateWithholdingConfigPayItem, onDone: onDoneUpdated } = useMutation(
+    const { mutate: actionUpdateWithholdingConfigPayItem, onDone: onDoneUpdated, onError: errorPayItem } = useMutation(
       mutations.updateWithholdingConfigPayItem
     );
 
+    errorPayItem((error) => {
+      message.error(error.message, 5);
+    })
     onDoneUpdated(() => {
       message.success(`Update was successful`, 4);
       refetchConfigPayItem();
+      setModalVisible();
     });
 
     const onSubmit = () => {
@@ -183,19 +187,20 @@ export default defineComponent({
       };
       actionUpdateWithholdingConfigPayItem(variables)
     };
-
+    const setModalVisible = () => {
+      emit("closePopup", false);
+    }
     return {
       formState,
       loading,
       options,
       onSubmit,
+      setModalVisible,
       value: ref<string[]>(["과세", "G03"]),
     };
   },
   methods: {
-    setModalVisible() {
-      this.$emit("closePopup", false);
-    },
+
   },
 });
 </script>

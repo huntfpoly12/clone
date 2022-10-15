@@ -8,26 +8,26 @@
           저장하고 나가기</a-button>
       </template>
       <a-spin tip="Loading..." :spinning="loading">
-      <h2 style="font-weight: 600; color: gray" class="title_modal">
-        급여상세항목
-      </h2>
-      <a-row :gutter="24">
-        <a-col :span="12">
-          <a-form-item label="코드">
-            <DxNumberBox v-model:value="formState.itemCode" :min="0" :max="30"
-                                                        :show-spin-buttons="true" :width="150" />
-          </a-form-item>
-          <a-form-item label="항목명">
-            <a-input style="width: 150px; margin-right: 10px"  v-model:value="formState.name"/>
-            <button>중복체크</button>
-          </a-form-item>
-          <a-form-item label="과세구분/유형 ">
-            <a-cascader v-model:value="value" :options="options" expand-trigger="hover" />
-          </a-form-item>
-        </a-col>
-        <a-col :span="12"> </a-col>
-      </a-row>
-    </a-spin>
+        <h2 style="font-weight: 600; color: gray" class="title_modal">
+          급여상세항목
+        </h2>
+        <a-row :gutter="24">
+          <a-col :span="12">
+            <a-form-item label="코드">
+              <DxNumberBox v-model:value="formState.itemCode" :min="0" :max="30" :show-spin-buttons="true"
+                :width="150" />
+            </a-form-item>
+            <a-form-item label="항목명">
+              <a-input style="width: 150px; margin-right: 10px" v-model:value="formState.name" />
+              <button>중복체크</button>
+            </a-form-item>
+            <a-form-item label="과세구분/유형 ">
+              <a-cascader v-model:value="value" :options="options" expand-trigger="hover" />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12"> </a-col>
+        </a-row>
+      </a-spin>
     </a-modal>
   </div>
 </template>
@@ -110,7 +110,7 @@ export default defineComponent({
     DxNumberBox
   },
 
-  setup(props,{emit}) {
+  setup(props, { emit }) {
     const initialState = {
       itemCode: 0,
       taxfreePayItemCode: '',
@@ -125,35 +125,40 @@ export default defineComponent({
       mutate: creactConfigPayItem,
       loading: loading,
       onDone: onDoneAdd,
+      onError: errorPayItem,
+      error
     } = useMutation(mutations.createWithholdingConfigPayItem);
 
-
+    errorPayItem((error) => {
+      message.error(error.message, 5);
+    })
     onDoneAdd((res) => {
       message.success(`Add new with holding Config pay item success !`, 5);
       setModalVisible();
     })
 
-    const onSubmit = ()=>{
-      formState.taxfreePayItemCode =  value.value.length > 1 ?  value.value[1] : value.value[0];
+    const onSubmit = () => {
+      formState.taxfreePayItemCode = value.value.length > 1 ? value.value[1] : value.value[0];
       let variables = {
         companyId: companyId,
         imputedYear: parseInt(dayjs().format('YYYY')),
         input: {
           itemCode: formState.itemCode,
-          name:formState.name,
+          name: formState.name,
           use: formState.use,
           sort: formState.formula,
-          tax:true,
+          tax: true,
           taxfreePayItemCode: formState.taxfreePayItemCode,
         }
       }
       creactConfigPayItem(variables);
     }
-    const setModalVisible = ()=>{
+    const setModalVisible = () => {
       emit("closePopup", false);
     }
     return {
       formState,
+      error,
       onSubmit,
       loading,
       options,
