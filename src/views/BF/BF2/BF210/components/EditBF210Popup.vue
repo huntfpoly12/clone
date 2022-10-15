@@ -93,7 +93,7 @@
                         margin-top: 16px;
                       ">
                       비밀번호 설정 이메일
-                    </p>nToggle
+                    </p>
                     <p style="margin-bottom: 0">
                       비밀번호 설정 링크가 이메일로 발송됩니다. 계속
                       진행하시겠습니까?

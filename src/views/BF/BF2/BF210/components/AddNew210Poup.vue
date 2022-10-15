@@ -16,7 +16,7 @@
               <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 250px"
+              <a-select v-model:value="formState.groupCode" show-search placeholder="Select a person" style="width: 250px"
                 :options="selectSearch" :filter-option="filterOption" @focus="handleFocus" @blur="handleBlur"
                 @change="handleChange" class="select-search">
                 <template #suffixIcon>
@@ -89,11 +89,10 @@
       <div style="margin-top: 50px" class="page-content">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
 
-        <div style="position: relative">
-          <div v-if="!bf310Detail.switch" class="overlay"></div>
+        <div style="position: relative">         
           <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
-            :allow-column-resizing="true" :column-auto-width="true">
-            <DxPaging :page-size="5" />
+            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll">
+            <DxPaging :page-size="0" />
             <DxSelection mode="multiple" />
 
             <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
@@ -150,31 +149,6 @@ import {
 } from "@ant-design/icons-vue";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-
-
-
-
-interface FormState {
-  name: string;
-  영업자코드: string;
-  영업자명: string;
-  사업자유형: string;
-  상태: string;
-  등급: string;
-  switch: boolean;
-  은행: string;
-  계좌번호: string;
-  등록번호: string;
-  예금주: string;
-  가입일자: string;
-  사업자등록번호: string;
-  휴대폰: string;
-  비고: string;
-  이메일: string;
-  연락처: string;
-  팩스: string;
-  전자세금계산서수신이메일: string;
-}
 
 export default defineComponent({
   props: ["modalStatus", "data"],
@@ -255,9 +229,9 @@ export default defineComponent({
       console.log(e);
       isShow.value = false;
     };
-    const onToggle = () => {
-      bf310Detail.switch = !bf310Detail.switch;
-    };
+    // const onToggle = () => {
+    //   bf310Detail.switch = !bf310Detail.switch;
+    // };
     const layout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
@@ -341,6 +315,9 @@ export default defineComponent({
       updatedBy: "",
       ip: "",
       active: true,
+      groupId: "",
+      groupCode: "",
+      groupName: "",
       facilityBusinesses: [],
       screenRoleGroups: {
         id: "",
@@ -360,27 +337,7 @@ export default defineComponent({
     const onFinish = (values: any) => {
       console.log("Success:", values);
     };
-    const bf310Detail: UnwrapRef<FormState> = reactive({
-      name: "",
-      사업자유형: "개인",
-      상태: "정상",
-      등급: "본사",
-      switch: true,
-      은행: "농협",
-      계좌번호: "",
-      예금주: "",
-      가입일자: "",
-      비고: "",
-      영업자코드: "",
-      영업자명: "",
-      등록번호: "",
-      사업자등록번호: "",
-      휴대폰: "",
-      이메일: "",
-      연락처: "",
-      팩스: "",
-      전자세금계산서수신이메일: "",
-    });
+  
     const findSalesRepresentatives = reactive({
       id: "",
       name: "",
@@ -538,11 +495,9 @@ export default defineComponent({
       arrData,
       labelCol,
       focus,
-      wrapperCol,
-      bf310Detail,
+      wrapperCol,      
       layout,
-      formTailLayout,
-      onToggle,
+      formTailLayout,    
       confirm,
       formState,
       onFinish,
@@ -699,6 +654,11 @@ export default defineComponent({
   font-size: 13px;
   line-height: 5px;
 }
+.table-scroll {
+    height: 450px;
+    overflow-y: auto;
+    padding: 5px;
+}
 
 .ant-form-item-label {
   text-align: left;
@@ -708,3 +668,5 @@ export default defineComponent({
   display: none;
 }
 </style>
+
+
