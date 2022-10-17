@@ -4,15 +4,17 @@
     :options="options"
     placeholder="Please select"
     @change="selectTaxPay"
+    :disabled="disabled"
+    style="width: 100%"
   />
 </template>
   <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref,watch } from "vue";
 import type { CascaderProps } from "ant-design-vue";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
 
 const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
-  value: TaxPayItem.all()[index].enumKey,
+  value: TaxPayItem.all()[index].enumOrdinal,
   label: TaxPayItem.all()[index].name,
 }));
 
@@ -35,32 +37,28 @@ const options: CascaderProps["options"] = [
 export default defineComponent({
   props: {
     selectedValue:{
-        type: String,
-        default: null,
+        type: Array,
         required: true
     },
+    disabled:{
+        type: Boolean,
+        default: false,
+        required: false
+    }
   },
   setup(props,{emit}) {
+    const value = ref();
+    watch(
+      () => props.selectedValue,
+      (newValue) => {
+        value.value = props.selectedValue;
+      }
+    );
     
-    let parentValue = '';
-    let childValue = ''; 
-    let taxValue =  taxPayItem.find(ob => ob.value === props.selectedValue);
-    let taxFreeValue =  taxFreePayItem.find(ob => ob.value === props.selectedValue);
-    console.log(taxFreePayItem);
-    if(taxValue != undefined){
-        parentValue = "과세";
-        childValue = props.selectedValue;
-    }
-
-    if(taxFreeValue != undefined){
-        parentValue = "비과세";
-        childValue = props.selectedValue;
-    }
-   
-    let value = ref<string[]>([parentValue,childValue]);
     const selectTaxPay = (event: any)=>{
-        emit('update:selectedValue', event[1])
+        emit('update:selectedValue', event)
     }
+    
     return {
       value,
       options,
