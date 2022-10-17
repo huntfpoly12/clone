@@ -80,27 +80,27 @@
               <a-input v-if="formState.type=='c'" disabled v-model:value="formState.email" style="width: 230px" />
               <a-button v-if="formState.type!=='c'" :disabled="!validated" html-type="submit" danger
                 class="btn_sendemail" @click="showModal">비밀번호 변경</a-button>
-              <a-button v-if="formState.type =='c'" disabled html-type="submit" danger class="btn_sendemail"
-                @click="showModal">비밀번호 변경</a-button>
+              <a-button v-if="formState.type =='c'" disabled html-type="submit" danger class="btn_sendemail">비밀번호 변경
+              </a-button>
             </a-form-item>
             <div class="confirm-popup">
-            <a-modal v-model:visible="isShow" :mask-closable="false">
+              <a-modal v-model:visible="visible" :mask-closable="false">
                 <a-row>
-                    <a-col :span="4">
-                        <mail-outlined :style="{fontSize: '70px'}" />
-                    </a-col>
-                    <a-col :span="20">
-                        <p><strong>비밀번호 설정 이메일</strong></p>
-                        <p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
-                        <p>계속 진행하시겠습니까?</p>
-                    </a-col>
+                  <a-col :span="4">
+                    <mail-outlined :style="{fontSize: '70px'}" />
+                  </a-col>
+                  <a-col :span="20">
+                    <p><strong>비밀번호 설정 이메일</strong></p>
+                    <p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
+                    <p>계속 진행하시겠습니까?</p>
+                  </a-col>
                 </a-row>
                 <template #footer>
-                    <a-button>아니오</a-button>
-                    <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button>
+                  <a-button @click="closePopupEmail">아니오</a-button>
+                  <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button>
                 </template>
-            </a-modal>
-        </div>
+              </a-modal>
+            </div>
             <!-- <a-form-item>
               <a-modal :disabled="!formState.email" class="container_email" v-model:visible="isShow"
                 @ok="handleSuccsess">
@@ -132,11 +132,33 @@
         <div style="position: relative">
           <div class="overlay" v-if="formState.type=='c'"></div>
           <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id"
-            :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+            :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
+            @selection-changed="selectionChanged">
             <DxPaging :page-size="1" />
-            <DxSelection mode="multiple" />
-
-            <DxColumn data-field="id" caption="코드" :width="80" :fixed="true" />
+            <DxSelection
+        :show-check-boxes-mode="checkBoxesMode"
+        mode="multiple" :deferred="false"/>
+            <!-- <DxColumn data-field="active" mode="multiple" cell-template="checked-status" :width="80"
+              :allowEditing="true" />
+            <template #checked-status="{ data }">
+              <div style="width: 14px;height: 14px; margin: 0 auto; margin-top: 7px;"
+                v-if="data.value == true">
+              </div>
+              <div
+                style="width: 14px;height: 14px; border: 1px solid black; margin: 0 auto; margin-top: 7px;"
+                v-else>
+              </div>
+            </template> -->
+            <template #checked-status="{ data }">
+              <div style="width: 14px;height: 14px; margin: 0 auto; margin-top: 7px;"
+                v-if="data.value == true">
+              </div>
+              <div
+                style="width: 14px;height: 14px; border: 1px solid black; margin: 0 auto; margin-top: 7px;"
+                v-else>
+              </div>
+            </template>
+            <DxColumn data-field="id" caption="코드" :width="150" :fixed="true" />
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
@@ -174,8 +196,10 @@ import { ref, defineComponent, reactive, computed, watch } from "vue";
 import type { UnwrapRef } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import type { SelectProps } from "ant-design-vue";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
+import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index"
+import { message } from 'ant-design-vue';
 import {
   DxDataGrid,
   DxColumn,
@@ -193,27 +217,7 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { any } from "vue-types";
 import themes from "devextreme/ui/themes";
-// interface FormState {
-//   name: string;
-//   영업자코드: string;
-//   영업자명: string;
-//   사업자유형: string;
-//   상태: string;
-//   등급: string;
-//   switch: boolean;
-//   은행: string;
-//   계좌번호: string;
-//   등록번호: string;
-//   예금주: string;
-//   가입일자: string;
-//   사업자등록번호: string;
-//   휴대폰: string;
-//   비고: string;
-//   이메일: string;
-//   연락처: string;
-//   팩스: string;
-//   전자세금계산서수신이메일: string;
-// }
+
 
 export default defineComponent({
   props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
@@ -234,8 +238,13 @@ export default defineComponent({
   created() { },
   data() {
     return {
-      isShow: ref<boolean>(false),
+      // isShow: ref<boolean>(false),
       toggleActive: false,
+      selectionChanged: (data: any) => {
+        this.selectedItemKeys = data.selectedRowKeys;
+      },
+      
+      checkBoxesMode: themes.current().startsWith('material') ? 'always' : 'onClick',
       reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
     };
   },
@@ -245,15 +254,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // const data = props.data;
-    const isShow = ref<boolean>(false);
+    // const isShow = ref<boolean>(false);
     const visible = ref<boolean>(false);
-    // const validateError = ref<boolean>(false);
-    // const selectSearch = ref<SelectProps["options"]>([
-    //   { value: "C20225301", label: "C20225301     효사랑노인요양전문병원" },
-    //   { value: "C20235301", label: "C20225301     효사랑노인요양전문병원" },
-    //   { value: "D20223838", label: "D20223838     테크노프로그램우리컴퍼니" },
-    // ]);
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
@@ -267,17 +269,12 @@ export default defineComponent({
       console.log("focus");
     };
     const showModal = () => {
-      isShow.value = true;
+      visible.value = true;
     };
-
-    // const onToggle = () => {
-    //   bf310Detail.switch = !bf310Detail.switch;
+    // const handleSuccsess = (e: MouseEvent) => {
+    //   console.log(e);
+    //   isShow.value = false;
     // };
-
-    const handleSuccsess = (e: MouseEvent) => {
-      console.log(e);
-      isShow.value = false;
-    };
     const layout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
@@ -286,7 +283,6 @@ export default defineComponent({
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
     };
-
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
@@ -297,7 +293,27 @@ export default defineComponent({
         email: "이메일 형식이 정확하지 않습니다",
       },
     };
+    //Send mail 
+    const {
+      mutate: sendGmail,
+      onDone: doneSendGmail,
+      onError: errorSendGmail
+    } = useMutation(mutations.sendEmailToResetUserPassword);
 
+    errorSendGmail(e => {
+      message.error(e.message)
+    })
+    doneSendGmail((e) => {
+      message.success(`Send email success!`);
+    })
+    const sendMessToGmail = () => {
+      let dataCallSendEmail = {
+        id: props.idRowEdit,
+      }
+      console.log(dataCallSendEmail);
+
+      sendGmail(dataCallSendEmail)
+    }
     const formState = reactive({
       id: 1,
       type: "",
@@ -343,13 +359,13 @@ export default defineComponent({
       () => props.modalStatus,
       (newValue, old) => {
         if (newValue) {
-          visible.value = newValue;
+          // visible.value = newValue;
           dataQuery.value = { id: props.idRowEdit };
           trigger.value = true;
 
           refetch();
         } else {
-          visible.value = newValue;
+          // visible.value = newValue;
           trigger.value = false;
         }
       }
@@ -393,59 +409,28 @@ export default defineComponent({
     const onFinish = (values: any) => {
       console.log("Success:", values);
     };
-    // const bf310Detail: UnwrapRef<FormState> = reactive({
-    //   name: "",
-    //   사업자유형: "개인",
-    //   상태: "정상",
-    //   등급: "본사",
-    //   switch: false,
-    //   은행: "농협",
-    //   계좌번호: "",
-    //   예금주: "",
-    //   가입일자: "",
-    //   비고: "",
-    //   영업자코드: "",
-    //   영업자명: "",
-    //   등록번호: "",
-    //   사업자등록번호: "",
-    //   휴대폰: "",
-    //   이메일: "",
-    //   연락처: "",
-    //   팩스: "",
-    //   전자세금계산서수신이메일: "",
-    // });
 
-    // const handleOkConfirm = () => {
-    //   console.log(data, "fffffff");
-    //   if (confirm.value == "확인") {
-    //     visible.value = false;
-    //   } else {
-    //     bf310Detail.상태 = "정상";
-    //     visible.value = false;
-    //   }
-    // };
 
     return {
       labelCol,
       wrapperCol,
-      // bf310Detail,
       layout,
       formTailLayout,
       value1: ref<Dayjs>(),
       confirm,
-      // handleOkConfirm,
       formState,
       onFinish,
       validateMessages,
-      isShow,
+      // isShow,
       showModal,
-      handleSuccsess,
-      // onToggle,
-      // selectSearch,
+      // handleSuccsess,
       filterOption,
       handleFocus,
       handleBlur,
       handleChange,
+      visible,
+      sendGmail,
+      sendMessToGmail,
     };
   },
   methods: {
@@ -475,10 +460,12 @@ export default defineComponent({
         return "#efe70b";
       }
     },
-
-    closeModal() {
-      this.isShow = false;
+    closePopupEmail() {
+      this.visible = false
     },
+    // closeModal() {
+    //   this.isShow = false;
+    // },
     triggerToggleEvent(value: any) {
       this.toggleActive = value;
     },
