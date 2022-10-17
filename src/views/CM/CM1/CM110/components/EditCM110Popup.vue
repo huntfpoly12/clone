@@ -251,7 +251,8 @@ export default defineComponent({
             }
         }
         doneSendGmail((e) => {
-            message.success(`Send email success!`);
+            message.success(`비밀번호 설정을 위한 이메일을 확인해주세요.`);
+            visible.value = false
             // emit("closePopup", false)
         })
 
