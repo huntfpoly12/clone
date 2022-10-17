@@ -88,7 +88,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const initialState = {
       itemCode: 0,
-      taxPayCode: <string[]>([]),
+      taxPayCode: Array(),
       name: '',
       use: false,
       formula: 0,

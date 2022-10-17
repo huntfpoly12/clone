@@ -108,7 +108,7 @@ export default defineComponent({
 
     const initialState = {
       itemCode: 0,
-      taxPayCode: <string[]>([]),
+      taxPayCode: Array(),
       name: '',
       use: false,
       formula: ''
