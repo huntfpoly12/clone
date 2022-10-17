@@ -1,7 +1,7 @@
 <template>
   <div id="edit-popup-130">
     <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-      @cancel="setModalVisible()" width="50%" :mask-closable="false">
+      @cancel="setModalVisible()" width="700px" :mask-closable="false">
       <template #footer>
         <a-button @click="setModalVisible">그냥 나가기</a-button>
         <a-button key="submit" type="primary" :loading="loading" @click="onSubmit">
@@ -12,19 +12,29 @@
           급여상세항목
         </h2>
         <a-row :gutter="24">
-          <a-col :span="12">
-            <a-form-item label="코드">
-              <a-input disabled :value="formState.itemCode" style="width: 150px; margin-right: 10px" />
-            </a-form-item>
+          <a-col :span="24">
+            <a-row :gutter="24">
+              <a-col :span="12">
+                <a-form-item label="코드">
+                  <DxNumberBox v-model:value="formState.itemCode" :min="0" :max="30" :show-spin-buttons="true"
+                    :width="150" :disabled="true"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-switch v-model:checked="formState.use" checked-children="이용중" un-checked-children="이용중지"
+                  style="width: 80px; margin-right: 8px" />
+              </a-col>
+            </a-row>
+
             <a-form-item label="항목명">
-              <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
-              <button>중복체크</button>
+              <a-input style="width: 150px; margin-right: 10px" v-model:value="formState.name" />
             </a-form-item>
             <a-form-item label="과세구분/유형 ">
-              <a-cascader v-model:value="value" :options="options" expand-trigger="hover" disabled />
+              <div style="width: 320px;">
+                <TaxPay v-model:selectedValue="formState.taxPayCode" :disabled="true"></TaxPay>
+              </div>
             </a-form-item>
           </a-col>
-          <a-col :span="12"> </a-col>
         </a-row>
       </a-spin>
     </a-modal>
@@ -32,11 +42,11 @@
 </template>
 
 <script lang="ts">
+import { DxNumberBox } from "devextreme-vue/number-box";
 import { companyId } from "../../../../../helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import type { CascaderProps } from "ant-design-vue";
 import { message } from "ant-design-vue";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -59,39 +69,7 @@ import {
   MailOutlined,
   MenuOutlined,
 } from "@ant-design/icons-vue";
-
-const options: CascaderProps["options"] = [
-  {
-    value: "과세",
-    label: "과세",
-    children: [
-      {
-        value: "G01",
-        label: "G01 비과세항목1 (월10만원), 제출X  ",
-      },
-      {
-        value: "G02",
-        label: "G02 비과세항목2 (월100만원),  제출O",
-      },
-      {
-        value: "G03",
-        label: "G03 비과세항목3, 제출X",
-      },
-      {
-        value: "P01",
-        label: "P01  비과세항목4, 제출X",
-      },
-      {
-        value: "H01",
-        label: "H01  비과세항목5, 제출O",
-      },
-    ],
-  },
-  {
-    value: "비과세",
-    label: "비과세",
-  },
-];
+import TaxPay from "../../../../../components/TaxPay.vue";
 
 export default defineComponent({
   props: ["modalStatus", "data", "msg", "title", "idRowEdit"],
@@ -108,13 +86,10 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
     DxSelectBox,
+    DxNumberBox,
+    TaxPay
   },
-  created() { },
-  data() {
-    return {};
-  },
-  computed: {},
-  setup(props) {
+  setup(props, { emit }) {
     let trigger = ref<boolean>(false);
     const dataQuery = ref();
     watch(
@@ -133,7 +108,7 @@ export default defineComponent({
 
     const initialState = {
       itemCode: 0,
-      taxfreePayItemCode: '',
+      taxPayCode: <string[]>([]),
       name: '',
       use: false,
       formula: ''
@@ -153,7 +128,7 @@ export default defineComponent({
     watch(resultConfigPayItem, (value) => {
       if (value) {
         formState.itemCode = value.getWithholdingConfigPayItem.itemCode;
-        formState.taxfreePayItemCode = value.getWithholdingConfigPayItem.taxfreePayItemCode;
+        formState.taxPayCode = value.getWithholdingConfigPayItem.taxfreePayItemCode != null ?  ['비과세',value.getWithholdingConfigPayItem.taxfreePayItemCode] : ['과세',value.getWithholdingConfigPayItem.taxPayItemCode];
         formState.name = value.getWithholdingConfigPayItem.name;
         formState.use = value.getWithholdingConfigPayItem.use;
         formState.formula = value.getWithholdingConfigPayItem.formula;
@@ -161,13 +136,17 @@ export default defineComponent({
     });
 
     // update detail withholding config pay item
-    const { mutate: actionUpdateWithholdingConfigPayItem, onDone: onDoneUpdated } = useMutation(
+    const { mutate: actionUpdateWithholdingConfigPayItem, onDone: onDoneUpdated, onError: errorPayItem } = useMutation(
       mutations.updateWithholdingConfigPayItem
     );
 
+    errorPayItem((error) => {
+      message.error(error.message, 5);
+    })
     onDoneUpdated(() => {
       message.success(`Update was successful`, 4);
       refetchConfigPayItem();
+      setModalVisible();
     });
 
     const onSubmit = () => {
@@ -183,19 +162,19 @@ export default defineComponent({
       };
       actionUpdateWithholdingConfigPayItem(variables)
     };
-
+    const setModalVisible = () => {
+      emit("closePopup", false);
+    }
     return {
       formState,
       loading,
-      options,
       onSubmit,
+      setModalVisible,
       value: ref<string[]>(["과세", "G03"]),
     };
   },
   methods: {
-    setModalVisible() {
-      this.$emit("closePopup", false);
-    },
+
   },
 });
 </script>
