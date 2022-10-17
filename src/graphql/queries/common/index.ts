@@ -9,6 +9,7 @@ import getServiceContractLogs from "./getServiceContractLogs";
 import getMyCompanyUserLogs from "./getMyCompanyUserLogs";
 import getMyCompanyAuthentications from "./getMyCompanyAuthentications";
 import getWithholdingConfigPayItemsLogs from "./getWithholdingConfigPayItemsLogs";
+import getScreenRoleGroupLogs from "./getScreenRoleGroupLogs";
 
 const queries = {
   getListSale: getListSale,
@@ -21,7 +22,8 @@ const queries = {
   getSalesRepresentativeLogs: getSalesRepresentativeLogs,
   getMyCompanyUserLogs: getMyCompanyUserLogs,
   getMyCompanyAuthentications: getMyCompanyAuthentications,
-  getWithholdingConfigPayItemsLogs:getWithholdingConfigPayItemsLogs
+  getWithholdingConfigPayItemsLogs:getWithholdingConfigPayItemsLogs,
+  getScreenRoleGroupLogs :getScreenRoleGroupLogs
 
 };
 
