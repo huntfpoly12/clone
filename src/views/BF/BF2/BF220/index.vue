@@ -1,7 +1,7 @@
 <template>
     <a-spin :spinning="spinning" size="large">
         <div class="top-content">
-            <a-typography-title :level="3"> 회원관리
+            <a-typography-title :level="3"> 권한그룹관리
             </a-typography-title>
             <div class="list-action">
                 <a-tooltip>
@@ -97,12 +97,16 @@
                         :total="totalRow" show-less-items />
                 </div>
 
-                <BF220PopupAddNew :modalStatus="modalAddNewStatus"  @closePopupAdd="modalAddNewStatus = false" />
-
+                <BF220PopupAddNew :modalStatus="modalAddNewStatus" @closePopupAdd="closePopupAdd" />
+                <BF220PopupEdit :modalStatus="modalEditStatus" @closePopupEdit="closePopupEdit" :idRowIndex="IDRow" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력" />
-            </div>
+                    :data="popupData" title="변경이력" :idRowEdit="IDRow" typeHistory="cm-220"/>
 
+
+                <!-- <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-110"
+                    :companyId="companyIdPopup" /> -->
+            </div>
         </div>
     </a-spin>
 </template>
@@ -139,6 +143,7 @@ import {
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
+import BF220PopupEdit from './components/BF220PopupEdit.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 export default defineComponent({
@@ -160,32 +165,34 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        LoginOutlined
+        LoginOutlined,
+        BF220PopupEdit
     },
     data() {
         return {
             popupData: [],
             modalStatus: false,
             modalHistoryStatus: false,
-            modalAddNewStatus: false,
-            modalEditStatus: false
         };
     },
     setup() {
         const totalRow = ref(0)
+        const IDRow = ref()
         const spinning = ref<boolean>(true);
         const buttonSearch = ref({
             typeSevice1: true,
             typeSevice2: true,
             typeSevice3: true
-        }) 
+        })
+
+        const modalAddNewStatus = ref(false)
+        const modalEditStatus = ref(false)
 
         const dataSearch = ref({
             page: 1,
             rows: 10,
             types: ["m", "r", "p"]
         })
-
 
         const searching = () => {
             let arrayStatus = []
@@ -220,13 +227,28 @@ export default defineComponent({
             }, 500);
         });
 
+        const closePopupAdd = () => {
+            modalAddNewStatus.value = false
+            refetchData()
+        }
+
+        const closePopupEdit = () => {
+            modalEditStatus.value = false
+            refetchData()
+        }
+
         return {
+            modalAddNewStatus,
+            closePopupAdd,
+            closePopupEdit,
+            modalEditStatus,
             searching,
             spinning,
             dataSearch,
             resList,
             buttonSearch,
-            totalRow
+            totalRow,
+            IDRow
         }
     },
     methods: {
@@ -249,6 +271,7 @@ export default defineComponent({
             this.popupData = data;
         },
         modalHistory(data: any) {
+            this.IDRow = data.data.id
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
@@ -256,6 +279,7 @@ export default defineComponent({
             this.modalAddNewStatus = true;
         },
         openEditModal(data: any) {
+            this.IDRow = data.data.id
             this.modalEditStatus = true;
         },
         getColorTag(data: String) {
@@ -266,7 +290,8 @@ export default defineComponent({
             } else if (data === "r") {
                 return "gray";
             }
-        }
+        },
+
     },
 });
 </script>

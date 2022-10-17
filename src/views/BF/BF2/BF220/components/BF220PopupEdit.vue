@@ -1,38 +1,41 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered okText="저장하고 나가기"
-            cancelText="그냥 나가기" @cancel="setModalVisible()" width="1000px">
+        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
+            @cancel="setModalVisible()">
+            <template #footer>
+                <a-button @click="setModalVisible">그냥 나가기</a-button>
+                <a-button key="submit" type="primary" @click="updateScreenRole">
+                    저장하고 나가기</a-button>
+            </template>
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
                     <a-col :span="24" class="title-modal">
                         <span>권한그룹 기본정보</span>
                     </a-col>
-
                     <a-col :span="16">
                         <a-form-item label="그룹코드">
                             <div class="dflex">
-                                <a-input v-model:value="bf220Detail.name" class="mr5"
-                                    placeholder="영문,숫자 5~10자 (중복불가)" />
-                                <a-button type="button">중복체크</a-button>
+                                <a-input v-model:value="dataRes.id" @change="changeID" class="mr5"
+                                    placeholder="영문,숫자 5~10자 (중복불가)" disabled="true" />
+                                <a-button type="button" disabled="true">중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <a-input v-model:value="bf220Detail.resource" placeholder="최대 20자" />
+                            <a-input v-model:value="dataRes.name" placeholder="최대 20자" />
                         </a-form-item>
                     </a-col>
-                    <a-col :span="8"></a-col>
                     <a-col :span="16">
                         <a-form-item label="대상회원">
-                            <a-radio-group v-model:value="bf220Detail.사업자유형">
-                                <a-radio :value="'매니저'">
+                            <a-radio-group v-model:value="dataRes.type" disabled="true">
+                                <a-radio value="m">
                                     <a-tag color="black">매니저</a-tag>
                                 </a-radio>
-                                <a-radio :value="'영업자'">
+                                <a-radio value="r">
                                     <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                                 </a-radio>
-                                <a-radio :value="'파트너'">
+                                <a-radio value="p">
                                     <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
                                 </a-radio>
                             </a-radio-group>
@@ -40,128 +43,39 @@
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="메모" style="align-items: flex-start;">
-                            <a-textarea placeholder="최대 30자"></a-textarea>
+                            <a-textarea placeholder="최대 30자" v-model:value="dataRes.memo" />
                         </a-form-item>
                     </a-col>
-
                     <a-col :span="24" class="title-modal" style="margin-top: 10px;">
                         <span>권한그룹메뉴별 권한</span>
                     </a-col>
                     <a-col :span="20">
-                        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID">
-                            <DxPaging :page-size="5" />
-                            <DxColumn data-field="메뉴" :fixed="true" />
-                            <DxColumn data-field="읽기" cell-template="col1" :width="100" alignment="center" />
-                            <template #col1="{}" class="custom-action">
-                                <div class="custom-action">
-                                    <a-checkbox></a-checkbox>
-                                </div>
-                            </template>
-                            <DxColumn data-field="쓰기" cell-template="col2" alignment="center" :width="100" />
-                            <template #col2="{}" class="custom-action">
-                                <div class="custom-action">
-                                    <a-checkbox></a-checkbox>
-                                </div>
-                            </template>
-                        </DxDataGrid>
+                        <a-spin :spinning="spinning" size="large">
+                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id"
+                                class="table-sevice">
+                                <DxColumn data-field="id" caption="메뉴" :fixed="true" />
+                                <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
+                                <template #col1="{}" class="custom-action">
+                                    <div class="custom-action">
+                                        <a-checkbox></a-checkbox>
+                                    </div>
+                                </template>
+                                <DxColumn caption="쓰기" cell-template="col2" alignment="center" :width="100" />
+                                <template #col2="{}" class="custom-action">
+                                    <div class="custom-action">
+                                        <a-checkbox></a-checkbox>
+                                    </div>
+                                </template>
+                            </DxDataGrid>
+                        </a-spin>
                     </a-col>
-
                 </a-row>
             </a-form>
-        </a-modal>
-
-        <a-modal :mask-closable="false" :visible="modalEdit" title="권한그룹관리" centered okText="저장하고 나가기"
-            cancelText="그냥 나가기" @cancel="closeModalEdit()" width="1000px">
-            <a-form v-bind="layout" name="nest-messages">
-                <a-row :gutter="24">
-                    <a-col :span="24" class="title-modal">
-                        <span>권한그룹 기본정보 </span>
-                    </a-col>
-
-                    <a-col :span="16">
-                        <a-form-item label="그룹코드">
-                            <div class="dflex">
-                                <a-input v-model:value="dataEditDemo.name" class="mr5" disabled="" />
-                                <a-button type="button" disabled>중복체크</a-button>
-                            </div>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="16">
-                        <a-form-item label="그룹명">
-                            <a-input v-model:value="dataEditDemo.delivery" placeholder="최대 20자" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="8"></a-col>
-                    <a-col :span="16">
-                        <a-form-item label="대상회원">
-                            <a-radio-group v-model:value="dataEditDemo.type" disabled="">
-                                <a-radio :value="'매니저'">
-                                    <a-tag color="black">매니저</a-tag>
-                                </a-radio>
-                                <a-radio :value="'영업자'">
-                                    <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
-                                </a-radio>
-                                <a-radio :value="'파트너'">
-                                    <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
-                                </a-radio>
-                            </a-radio-group>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="16">
-                        <a-form-item label="메모" style="align-items: flex-start;">
-                            <a-textarea v-model:value="dataEditDemo.resource" placeholder="최대 30자"></a-textarea>
-                        </a-form-item>
-                    </a-col>
-
-                    <a-col :span="24" class="title-modal" style="margin-top: 10px;">
-                        <span>권한그룹메뉴별 권한</span>
-                    </a-col>
-                    <a-col :span="20">
-                        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID">
-                            <DxPaging :page-size="5" />
-                            <DxColumn data-field="메뉴" :fixed="true" />
-                            <DxColumn data-field="읽기" cell-template="col1" :width="100" alignment="center" />
-                            <template #col1="{}" class="custom-action">
-                                <div class="custom-action">
-                                    <a-checkbox></a-checkbox>
-                                </div>
-                            </template>
-                            <DxColumn data-field="쓰기" cell-template="col2" alignment="center" :width="100" />
-                            <template #col2="{}" class="custom-action">
-                                <div class="custom-action">
-                                    <a-checkbox></a-checkbox>
-                                </div>
-                            </template>
-                        </DxDataGrid>
-                    </a-col>
-
-                </a-row>
-            </a-form>
-        </a-modal>
-
-        <a-modal :mask-closable="false" v-model:visible="visible" title="해지 확인" ok-text="완료">
-            <a-row>
-                <a-col :span="4">
-                    <warning-outlined :style="{fontSize: '70px', color: '#faad14'}" />
-                </a-col>
-                <a-col :span="20">
-                    <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
-                    <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을 </p>
-                    <p>누르세요</p>
-
-                </a-col>
-            </a-row>
-            <template #footer>
-                <a-input v-model:value="confirm" placeholder="확인" />
-                <a-button type="primary" @click="handleOkConfirm">완료</a-button>
-            </template>
         </a-modal>
     </div>
 </template>
-
 <script lang="ts">
-import { ref, defineComponent, reactive } from 'vue'
-import type { UnwrapRef } from 'vue';
+import { ref, defineComponent, watch } from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import { Dayjs } from 'dayjs';
 import {
@@ -169,28 +83,12 @@ import {
     DxColumn,
     DxPaging,
 } from 'devextreme-vue/data-grid';
-interface FormState {
-    name: string;
-    delivery: boolean;
-    type: string[];
-    resource: string;
-    desc: string;
-    사업자유형: string;
-    상태: string;
-    등급: string;
-    주소: boolean;
-    은행: string;
-    계좌번호: string;
-    예금주: string;
-    가입일자: string;
-    비고: string;
-}
-
+import { message } from 'ant-design-vue';
+import { useQuery, useMutation } from "@vue/apollo-composable";
+import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
+import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
 export default defineComponent({
-    props: {
-        modalStatus: Boolean,
-        modalEdit: Boolean,
-    },
+    props: ['modalStatus', 'idRowIndex'],
     components: {
         SearchOutlined,
         WarningOutlined,
@@ -198,22 +96,9 @@ export default defineComponent({
         DxPaging,
         DxColumn
     },
-    data() {
-        return {
-            dataSource: [{
-                ID: 1,
-                메뉴: 'John',
-                읽기: 'Heart',
-                쓰기: '신청',
-            }, {
-                ID: 2,
-                메뉴: 'John',
-                읽기: 'Heart',
-                쓰기: '신청',
-            }]
-        }
-    },
-    setup() {
+    setup(props, { emit }) {
+        const dataSource = ref([])
+        const spinning = ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
@@ -223,69 +108,122 @@ export default defineComponent({
             wrapperCol: { span: 16, },
         };
         const visible = ref<boolean>(false);
-
+        const triggers = ref(false)
+        const triggersTable = ref(false)
+        const triggersGetData = ref(false)
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
-        const bf220Detail: UnwrapRef<FormState> = reactive({
-            name: '',
-            delivery: false,
-            type: [],
-            resource: '',
-            desc: '',
-            사업자유형: '매니저',
-            상태: '정상',
-            등급: '본사',
-            주소: false,
-            은행: '농협',
-            계좌번호: '',
-            예금주: '',
-            가입일자: '',
-            비고: ''
+        const checkIDName = ref()
+        const dataCallApiDetail = ref()
+        const dataRes: any = ref({
+            id: '',
+            name: "",
+            type: "m",
+            screenRoles: "",
+            memo: ""
         });
-
-        const dataEditDemo = reactive({
-            name: 'MMANAGER',
-            delivery: '',
-            type: '매니저',
-            resource: '',
-        });
-
+        const changeID = (e: any) => {
+            checkIDName.value = {
+                id: dataRes.value.id
+            }
+            dataRes.value.id = e.target.value.replace(/[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+        }
         const confirmPopup = (value: any) => {
             if (value == '해지') {
                 visible.value = true;
             }
         }
-        const handleOkConfirm = () => {
-            if (confirm.value == '확인') {
-                visible.value = false;
-            } else {
-                bf220Detail.상태 = '정상';
-                visible.value = false;
+
+        const getDataTable = ref({
+            page: 1,
+            rows: 1000,
+            types: ["m"]
+        })
+        const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
+            enabled: triggersTable.value,
+            fetchPolicy: "no-cache",
+        }))
+        watch(() => props.modalStatus, (value) => {
+            dataCallApiDetail.value = {
+                id: props.idRowIndex
             }
+            console.log(dataCallApiDetail);
+
+            setTimeout(() => {
+                if (value == true) {
+                    spinning.value = true
+                    triggersGetData.value = true
+                }
+            }, 500);
+        })
+        watch(resListTable, (value) => {
+            dataSource.value = value.searchScreenRoleGroups.datas
+            setTimeout(() => {
+                spinning.value = false;
+            }, 500);
+        });
+
+        //Creat new group roll
+        const {
+            mutate: editScreenRole,
+            onDone: editDone,
+            onError: editError
+        } = useMutation(mutations.updateScreenRoleGroup);
+        editDone(e => {
+            message.success('그룹이 생성되었습니다.')
+            emit("closePopupEdit", false)
+        })
+        editError(e => {
+            message.error(e.message)
+        })
+        const updateScreenRole = () => {
+            let dataCall = {
+                input: {
+                    id: dataRes.value.id,
+                    name: dataRes.value.name,
+                    type: dataRes.value.type,
+                    screenRoles: "0000000c",
+                    memo: dataRes.value.memo
+                }
+            }
+            editScreenRole(dataCall)
         }
 
+        const { refetch: refetchDataEdit, result: resDataDetail } = useQuery(queries.getScreenRoleGroup, dataCallApiDetail, () => ({
+            enabled: triggersGetData.value,
+            fetchPolicy: "no-cache",
+        }))
+
+        watch(resDataDetail, (value) => {
+            dataRes.value = value.getScreenRoleGroup
+            setTimeout(() => {
+                getDataTable.value.types = [value.getScreenRoleGroup.type]
+                triggersTable.value = true
+            }, 500);
+        });
+
         return {
+            updateScreenRole,
+            spinning,
+            dataSource,
+            changeID,
             labelCol,
             wrapperCol,
-            bf220Detail,
+            dataRes,
             layout,
             formTailLayout,
             value1: ref<Dayjs>(),
             visible,
             confirmPopup,
             confirm,
-            handleOkConfirm,
-            dataEditDemo
         }
     },
     methods: {
         setModalVisible() {
-            this.$emit('closePopup', false)
-        },
-        closeModalEdit() {
             this.$emit('closePopupEdit', false)
         },
+
         getColorTag(data: string) {
             if (data === "정상") {
                 return "#108ee9";
@@ -295,11 +233,14 @@ export default defineComponent({
                 return "grey";
             }
         },
-
     }
 })
 </script>
 <style lang="scss" scoped>
+.table-sevice {
+    max-height: 300px;
+}
+
 .ant-form-item {
     margin-bottom: 10px;
 }
@@ -445,7 +386,6 @@ export default defineComponent({
     color: black !important;
 }
 
-
 ::v-deep.components-modal-demo-position {
     ::v-deep.test-local {
         background-color: pink !important;
@@ -460,7 +400,6 @@ export default defineComponent({
     .ant-form-item-label {
         text-align: left;
     }
-
 }
 
 .dflex {

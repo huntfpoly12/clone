@@ -15,15 +15,8 @@ export default gql`
             id
             name
             type
-            screenRoles
-            lock
-            memo 
-            createdAt
-            createdBy
-            updatedAt
-            updatedBy
-            ip
-            active
+            screenRoles 
+            memo   
         }
     }
   }`

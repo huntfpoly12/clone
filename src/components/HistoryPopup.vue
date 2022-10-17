@@ -2,11 +2,11 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="Loading..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130">
+            <a-spin tip="로딩 중..."
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220 ">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts"
                     :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
-                    <DxColumn caption="기록일시" data-field="loggedAt" />
+                    <DxColumn caption="기록일시" data-field="loggedAt" data-type="text"/>
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
                     <template #createdAtCell="{ data }">
@@ -18,7 +18,8 @@
                         {{ formarDate(data.value) }}
                     </template>
                     <DxColumn caption="수정자ID" data-field="updatedBy" />
-                    <DxColumn caption="삭제여부" data-field="active" :width="80" />
+                    <DxColumn caption="삭제여부" data-field="active" :width="80"
+                    />
                     <DxColumn caption="IP주소" data-field="ip" />
                     <DxColumn caption="상세" cell-template="detail" css-class="cell-center" :width="50" />
                     <template #detail="{}">
@@ -64,7 +65,7 @@ export default defineComponent({
         ZoomInOutlined
     },
 
-    setup(props,{emit}) {
+    setup(props, { emit }) {
         let visible = ref(false);
         const dataQuery = ref();
         let trigger320 = ref<boolean>(false);
@@ -73,6 +74,7 @@ export default defineComponent({
         let trigger210 = ref<boolean>(false);
         let trigger130 = ref<boolean>(false);
         let trigger110 = ref<boolean>(false);
+        let trigger220 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         watch(
@@ -80,17 +82,15 @@ export default defineComponent({
             (newValue, old) => {
                 if (newValue) {
                     visible.value = newValue;
-
                     if (companyId) {
                         dataQuery.value = {
                             userId: props.idRowEdit,
                             companyId: companyId
                         };
                     }
-                    else
+                    else {
                         dataQuery.value = { id: props.idRowEdit };
-
-
+                    }
                     switch (props.typeHistory) {
                         case 'bf-320':
                             trigger320.value = true;
@@ -109,8 +109,14 @@ export default defineComponent({
                             refetchBf210();
                             break;
                         case 'cm-110':
-                            trigger110.value = true;
-                            refetchCM110();
+                            if (dataQuery.value) {
+                                trigger110.value = true;
+                                // refetchCM110();
+                            }
+                            break;
+                        case 'cm-220':
+                            trigger220.value = true;
+                            refetchCM220();
                             break;
                         case 'cm-130':
                             dataQuery.value = {
@@ -130,6 +136,7 @@ export default defineComponent({
                     trigger210.value = false;
                     trigger130.value = false;
                     trigger110.value = false;
+                    trigger220.value = false;
                 }
             }
         );
@@ -164,7 +171,6 @@ export default defineComponent({
             }
         });
 
-
         // get getSalesRepresentativeLogs  340
         const { result: resultBf340, loading: loadingBf340, refetch: refetchBf340 } = useQuery(
             queries.getSalesRepresentativeLogs,
@@ -195,8 +201,6 @@ export default defineComponent({
             }
         });
 
-
-
         // get getUserLogs  110
         const { result: resultCM110, loading: loadingCM110, refetch: refetchCM110 } = useQuery(
             queries.getMyCompanyUserLogs,
@@ -210,6 +214,22 @@ export default defineComponent({
         watch(resultCM110, (value) => {
             if (value && value.getMyCompanyUserLogs) {
                 dataTableShow.value = value.getMyCompanyUserLogs;
+            }
+        });
+
+        // get getScreenRoleGroupLogs  220
+        const { result: resultBF220, loading: loadingBF220, refetch: refetchCM220 } = useQuery(
+            queries.getScreenRoleGroupLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger220.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        watch(resultBF220, (value) => {
+            if (value && value.getScreenRoleGroupLogs) {
+                dataTableShow.value = value.getScreenRoleGroupLogs;
             }
         });
 
@@ -231,7 +251,7 @@ export default defineComponent({
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
-        const setModalVisible = ()=>{
+        const setModalVisible = () => {
             dataTableShow.value = [];
             emit('closePopup', false)
         }
@@ -245,6 +265,7 @@ export default defineComponent({
             loadingBf210,
             loadingCM110,
             loadingCM130,
+            loadingBF220,
             formarDate,
             dataQuery
         }
