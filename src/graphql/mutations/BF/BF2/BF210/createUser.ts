@@ -1,6 +1,13 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation sendEmailToResetUserPassword($userId: Int!) {
-    sendEmailToResetUserPassword(userId: $userId)
-  }
-`;
+mutation createUser(             
+            $input : UserCreateInput!, 
+        ) {
+          createUser(             
+            input : $input 
+            ){
+                id
+            }
+            
+}
+`

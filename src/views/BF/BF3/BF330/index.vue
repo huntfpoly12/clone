@@ -40,7 +40,7 @@
                             <a-input style="width: 120px" v-model:value="dataSearchDef.code" />
                         </a-col>
                         <a-col>
-                            <label class="lable-item">상호:</label>
+                            <label class="lable-item">상호:</label>select
                             <a-input style="width: 120px" v-model:value="dataSearchDef.name" />
                         </a-col>
                         <a-col>

@@ -2,9 +2,16 @@
   <div id="components-modal-demo-position">
     <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
       @cancel="setModalVisible()" width="50%" :mask-closable="false">
+      <template #footer>
+        <div>
+          <a-button @click="setModalVisible()">그냥 나가기</a-button>
+          <a-button type="primary" @click="confirmUpdate">저장하고 나가기</a-button>
+        </div>
+      </template>
+
       <h2 class="title_modal">회원정보</h2>
-      <a-form v-bind="layout" name="nest-messages" v-model:value="formState" :validate-messages="validateMessages"
-        @finish="onFinish">
+
+      <a-form v-bind="layout" name="nest-messages" v-model:value="formState" @finish="onFinish">
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID">
@@ -76,13 +83,16 @@
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" :span="8">
-              <a-input v-if="formState.type!=='c'" v-model:value="formState.email" style="width: 230px" />
+              <a-input v-if="formState.type!=='c'" @change="validateEmail" v-model:value="formState.email"
+                style="width: 230px" :style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
               <a-input v-if="formState.type=='c'" disabled v-model:value="formState.email" style="width: 230px" />
-              <a-button v-if="formState.type!=='c'" :disabled="!validated" html-type="submit" danger
-                class="btn_sendemail" @click="showModal">비밀번호 변경</a-button>
+              <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
+              <a-button v-if="formState.type!=='c'" html-type="submit" danger class="btn_sendemail" @click="showModal">
+                비밀번호 변경</a-button>
               <a-button v-if="formState.type =='c'" disabled html-type="submit" danger class="btn_sendemail">비밀번호 변경
               </a-button>
             </a-form-item>
+
             <div class="confirm-popup">
               <a-modal v-model:visible="visible" :mask-closable="false">
                 <a-row>
@@ -101,28 +111,6 @@
                 </template>
               </a-modal>
             </div>
-            <!-- <a-form-item>
-              <a-modal :disabled="!formState.email" class="container_email" v-model:visible="isShow"
-                @ok="handleSuccsess">
-                <div id="modal_email" class="modal_email">
-                  <mail-outlined style="padding-right: 10px" />
-                  <div>
-                    <p style="
-                        margin-bottom: 2px;
-                        font-weight: 600;
-                        margin-top: 16px;
-                      ">
-                      비밀번호 설정 이메일
-                    </p>
-                    <p style="margin-bottom: 0">
-                      비밀번호 설정 링크가 이메일로 발송됩니다
-                      <br>
-                      계속 진행하시겠습니까?
-                    </p>
-                  </div>
-                </div>
-              </a-modal>
-            </a-form-item> -->
           </a-col>
         </a-row>
       </a-form>
@@ -134,31 +122,15 @@
           <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id"
             :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
             @selection-changed="selectionChanged">
-            <DxPaging :page-size="1" />
-            <DxSelection
-        :show-check-boxes-mode="checkBoxesMode"
-        mode="multiple" :deferred="false"/>
-            <!-- <DxColumn data-field="active" mode="multiple" cell-template="checked-status" :width="80"
-              :allowEditing="true" />
-            <template #checked-status="{ data }">
-              <div style="width: 14px;height: 14px; margin: 0 auto; margin-top: 7px;"
-                v-if="data.value == true">
-              </div>
-              <div
-                style="width: 14px;height: 14px; border: 1px solid black; margin: 0 auto; margin-top: 7px;"
-                v-else>
-              </div>
-            </template> -->
-            <template #checked-status="{ data }">
-              <div style="width: 14px;height: 14px; margin: 0 auto; margin-top: 7px;"
-                v-if="data.value == true">
-              </div>
-              <div
-                style="width: 14px;height: 14px; border: 1px solid black; margin: 0 auto; margin-top: 7px;"
-                v-else>
+            <!-- <DxPaging :page-size="1" /> -->
+            <DxColumn caption="" cell-template="active" css-class="cell-center" />
+            <template #active="{}">
+              <div style="width: 100%; text-align: center;">
+                <a-checkbox checked="true" />
               </div>
             </template>
-            <DxColumn data-field="id" caption="코드" :width="150" :fixed="true" />
+
+            <DxColumn data-field="id" caption="코드" :width="150" />
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
@@ -198,8 +170,10 @@ import { DxSelectBox } from "devextreme-vue/select-box";
 import type { SelectProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
-import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index"
+import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 import { message } from 'ant-design-vue';
+
+import { DxCheckBox } from 'devextreme-vue/check-box';
 import {
   DxDataGrid,
   DxColumn,
@@ -234,87 +208,30 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
     DxSelectBox,
+    DxCheckBox
   },
   created() { },
   data() {
     return {
-      // isShow: ref<boolean>(false),
       toggleActive: false,
       selectionChanged: (data: any) => {
         this.selectedItemKeys = data.selectedRowKeys;
       },
-      
-      checkBoxesMode: themes.current().startsWith('material') ? 'always' : 'onClick',
       reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
     };
   },
-  computed: {
-    validated() {
-      return this.validateEmail(this.formState.email);
-    },
-  },
-  setup(props) {
-    // const isShow = ref<boolean>(false);
+  // computed: {
+  //   validated() {
+  //     return this.validateEmail(this.formState.email);
+  //   },
+  // },
+  setup(props, { emit }) {
     const visible = ref<boolean>(false);
+    const statusMailValidate = ref<boolean>(true);
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
-    const handleChange = (value: any) => {
-      console.log(`selected ${value}`);
-    };
-    const handleBlur = () => {
-      console.log("blur");
-    };
-    const handleFocus = () => {
-      console.log("focus");
-    };
-    const showModal = () => {
-      visible.value = true;
-    };
-    // const handleSuccsess = (e: MouseEvent) => {
-    //   console.log(e);
-    //   isShow.value = false;
-    // };
-    const layout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 16 },
-    };
-    const formTailLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 16 },
-    };
-    const labelCol = { style: { width: "300px" } };
-    const wrapperCol = { span: 14 };
-    let confirm = ref<string>("");
-
-    const validateMessages = {
-      required: true,
-      types: {
-        email: "이메일 형식이 정확하지 않습니다",
-      },
-    };
-    //Send mail 
-    const {
-      mutate: sendGmail,
-      onDone: doneSendGmail,
-      onError: errorSendGmail
-    } = useMutation(mutations.sendEmailToResetUserPassword);
-
-    errorSendGmail(e => {
-      message.error(e.message)
-    })
-    doneSendGmail((e) => {
-      message.success(`Send email success!`);
-    })
-    const sendMessToGmail = () => {
-      let dataCallSendEmail = {
-        id: props.idRowEdit,
-      }
-      console.log(dataCallSendEmail);
-
-      sendGmail(dataCallSendEmail)
-    }
-    const formState = reactive({
+    const formState = ref({
       id: 1,
       type: "",
       username: "",
@@ -353,6 +270,103 @@ export default defineComponent({
 
       ,
     });
+
+    const handleChange = (value: any) => {
+      console.log(`selected ${value}`);
+    };
+    const handleBlur = () => {
+      console.log("blur");
+    };
+    const handleFocus = () => {
+      console.log("focus");
+    };
+    const showModal = () => {
+      visible.value = true;
+    };
+    const layout = {
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 },
+    };
+    const formTailLayout = {
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 },
+    };
+    const labelCol = { style: { width: "300px" } };
+    const wrapperCol = { span: 14 };
+    let confirm = ref<string>("");
+
+    // const validateMessages = {
+    //   required: true,
+    //   types: {
+    //     email: "이메일 형식이 정확하지 않습니다",
+    //   },
+    // };
+
+    //Update info user
+    const {
+      mutate: updateUser,
+      onDone: onDoneUpdate,
+      onError: onErrorUpdate
+    } = useMutation(mutations.updateUser);
+    onDoneUpdate((e) => {
+      message.success(`Update success!`);
+      emit("closePopup", false)
+    })
+    onErrorUpdate(e => {
+      message.error(e.message);
+    })
+
+    const confirmUpdate = () => {
+      console.log('1');
+
+      if (statusMailValidate.value == true) {
+        console.log('2');
+        let dataUpdate = {
+          id: props.data.id,
+          input: {
+            name: formState.value.name,            
+            screenRoleGroupIds: [formState.value.id],     
+            mobilePhone: formState.value.mobilePhone,
+            email: formState.value.email,
+            active: formState.value.active,
+          }
+
+        }
+        updateUser(dataUpdate);
+        console.log(dataUpdate, "dataUpdate");
+      } else {
+        console.log('2');
+        message.error(`이메일형식이 정확하지 않습니다.`)
+        var Url = document.getElementById("email") as HTMLInputElement;
+        Url.select()
+      }
+    }
+
+
+    //Send mail 
+    const {
+      mutate: sendGmail,
+      onDone: doneSendGmail,
+      onError: errorSendGmail
+    } = useMutation(mutations.sendEmailToResetUserPassword);
+
+    errorSendGmail(e => {
+      message.error(e.message)
+    })
+    doneSendGmail((e) => {
+      message.success(`비밀번호 재설정을 위한 이메일을 확인해주세요!`);
+      visible.value = false
+    })
+    const sendMessToGmail = () => {
+      let dataCallSendEmail = {
+        id: props.idRowEdit,
+      }
+      console.log(dataCallSendEmail);
+
+      sendGmail(dataCallSendEmail);
+    }
+
+
     const dataQuery = ref();
     let trigger = ref<boolean>(false);
     watch(
@@ -371,8 +385,18 @@ export default defineComponent({
       }
     );
 
+    const validateEmail = (e: any) => {
+      let checkMail = e.target.value.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+      if (!checkMail) {
+        statusMailValidate.value = false;
+      } else {
+        statusMailValidate.value = true;
+      }
+    }
 
-    const { result, loading, refetch } = useQuery(
+    const { result, refetch } = useQuery(
       queries.getUser,
       dataQuery,
       () => ({
@@ -383,23 +407,23 @@ export default defineComponent({
 
     watch(result, (value) => {
       if (value && value.getUser) {
-        formState.id = value.getUser.id;
-        formState.type = value.getUser.type != "m" ? value.getUser.type : value.getUser.managerGrade;
-        formState.username = value.getUser.username;
-        formState.name = value.getUser.name;
-        formState.mobilePhone = value.getUser.mobilePhone;
-        formState.email = value.getUser.email;
-        formState.president = value.getUser.president;
-        formState.managerGrade = value.getUser.managerGrade;
-        formState.accountingRole = value.getUser.accountingRole;
-        formState.createdAt = value.getUser.createdAt;
-        formState.updatedAt = value.getUser.updatedAt;
-        formState.updatedBy = value.getUser.updatedBy;
-        formState.ip = value.getUser.ip;
-        formState.active = value.getUser.active;
-        formState.facilityBusinesses = value.getUser.facilityBusinesses;
-        formState.screenRoleGroups = value.getUser.screenRoleGroups;
-        formState.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
+        formState.value.id = value.getUser.id;
+        formState.value.type = value.getUser.type != "m" ? value.getUser.type : value.getUser.managerGrade;
+        formState.value.username = value.getUser.username;
+        formState.value.name = value.getUser.name;
+        formState.value.mobilePhone = value.getUser.mobilePhone;
+        formState.value.email = value.getUser.email;
+        formState.value.president = value.getUser.president;
+        formState.value.managerGrade = value.getUser.managerGrade;
+        formState.value.accountingRole = value.getUser.accountingRole;
+        formState.value.createdAt = value.getUser.createdAt;
+        formState.value.updatedAt = value.getUser.updatedAt;
+        formState.value.updatedBy = value.getUser.updatedBy;
+        formState.value.ip = value.getUser.ip;
+        formState.value.active = value.getUser.active;
+        formState.value.facilityBusinesses = value.getUser.facilityBusinesses;
+        formState.value.screenRoleGroups = value.getUser.screenRoleGroups;
+        formState.value.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
 
       }
 
@@ -420,10 +444,8 @@ export default defineComponent({
       confirm,
       formState,
       onFinish,
-      validateMessages,
-      // isShow,
+      validateEmail,
       showModal,
-      // handleSuccsess,
       filterOption,
       handleFocus,
       handleBlur,
@@ -431,6 +453,8 @@ export default defineComponent({
       visible,
       sendGmail,
       sendMessToGmail,
+      confirmUpdate,
+      statusMailValidate
     };
   },
   methods: {
@@ -469,11 +493,11 @@ export default defineComponent({
     triggerToggleEvent(value: any) {
       this.toggleActive = value;
     },
-    validateEmail(email: any): any {
-      const re =
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
-    },
+    // validateEmail(email: any): any {
+    //   const re =
+    //     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    //   return re.test(email);
+    // },
 
   },
 });
@@ -589,3 +613,7 @@ export default defineComponent({
   display: none;
 }
 </style>
+
+function emit(arg0: string, arg1: boolean) {
+  throw new Error("Function not implemented.");
+}
