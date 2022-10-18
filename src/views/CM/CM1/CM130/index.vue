@@ -1,7 +1,6 @@
 <template>
     <div id="cm-130" class="cm-130" style="padding: 24px;">
         <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig">
-
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <template #rightExtra>
                     <div class="list-action">
@@ -14,24 +13,26 @@
                             </a-tooltip>
                         </div>
                         <div v-if="activeKey == '2'">
-                            <a-tooltip>
-                                <template #title>조회</template>
-                                <a-button>
-                                    <SearchOutlined />
-                                </a-button>
-                            </a-tooltip>
-                            <a-tooltip>
-                                <template #title>삭제</template>
-                                <a-button>
-                                    <DeleteOutlined />
-                                </a-button>
-                            </a-tooltip>
-                            <a-tooltip>
-                                <template #title>출력</template>
-                                <a-button>
-                                    <PrinterOutlined />
-                                </a-button>
-                            </a-tooltip>
+                            <div class="btn-action">
+                                <a-tooltip>
+                                    <template #title>삭제</template>
+                                    <a-button>
+                                        <SearchOutlined />
+                                    </a-button>
+                                </a-tooltip>
+                                <a-tooltip>
+                                    <template #title>삭제</template>
+                                    <a-button>
+                                        <DeleteOutlined />
+                                    </a-button>
+                                </a-tooltip>
+                                <a-tooltip>
+                                    <template #title>출력</template>
+                                    <a-button>
+                                        <PrinterOutlined />
+                                    </a-button>
+                                </a-tooltip>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -104,7 +105,6 @@
                                             </a-form-item>
                                         </a-col>
                                     </a-row>
-
                                     <h2 style="font-weight: 600; color: gray" class="title-h2">
                                         관할세무서, 지방소득세 납세지 설정
                                     </h2>
@@ -164,13 +164,11 @@
                         </a-col>
                     </a-row>
                     <SettingPopup :modalStatus="modalSettingStatus" @closePopup="modalSettingStatus = false"
-                        title="원천설정 [ cm-130 –pop ]" />
+                        @dataEmit="changeValueAddress" title="원천설정 [ cm-130 –pop ]" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여항목">
-
                     <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="itemCode"
-                        @exporting="onExporting" :column-auto-width="true">
-                        <DxPaging :page-size="10" />
+                        :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -184,25 +182,22 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <DxColumn data-field="itemCode" :width="50" css-class="cell-center" caption="코드" />
-
-                        <DxColumn data-field="use" caption="이용여부" :width="80" cell-template="use"
+                        <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
+                        <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
                         <template #use="{ data }">
                             <a-tag :color="getAbleDisable(data.value)">이용중지</a-tag>
                         </template>
-                        <DxColumn data-field="taxPayItemName" caption="과세구분" :width="100" />
-
+                        <DxColumn data-field="taxPayItemName" caption="과세구분" />
                         <DxColumn data-field="name" caption="항목명" />
-                        <DxColumn data-field="taxfreePayItemCode" caption="비과세코드" css-class="cell-center"
-                            :width="100" />
-                        <DxColumn data-field="taxFreeIncludeSubmission" caption="제출여부" :width="80"
-                            css-class="cell-center" cell-template="taxExemption" />
+                        <DxColumn data-field="taxfreePayItemCode" caption="비과세코드" css-class="cell-center" />
+                        <DxColumn data-field="taxFreeIncludeSubmission" caption="제출여부" css-class="cell-center"
+                            cell-template="taxExemption" :width="100" />
                         <template #taxExemption="{ data }">
-                            {{data.value ? 'O' : 'X' }}
+                            {{data.value== true ? 'O' : 'X' }}
                         </template>
-                        <DxColumn data-field="유형" :width="300" />
-                        <DxColumn data-field="formula" caption="산출방법" :width="300" />
+                        <DxColumn data-field="유형" />
+                        <DxColumn data-field="formula" caption="산출방법" />
                         <DxColumn cell-template="pupop" css-class="cell-center" :width="100" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
@@ -220,13 +215,11 @@
                             </div>
                         </template>
                     </DxDataGrid>
-
-                    <AddCM130Popup :modalStatus="modalAddNewStatus" @closePopup="onCloseAddNewModal"
-                        title="원천설정 [ cm-130 –pop ]" />
+                    <AddCM130Popup :modalStatus="modalAddNewStatus" @closePopup="onCloseAddNewModal" title="원천설정" />
                     <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="onCloseEditModal" :data="popupData"
-                        title="원천설정 [ cm-130 –pop] " :idRowEdit="idRowEdit" />
+                        title="원천설정" :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        :data="popupData" title="변경이력[cm-130-pop]" :idRowEdit="idRowEdit" typeHistory="cm-130" />
+                        :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-130" />
                 </a-tab-pane>
             </a-tabs>
         </a-spin>
@@ -235,43 +228,31 @@
 <script lang="ts">
 import { companyId } from "../../../../helpers/commonFunction";
 import {
-
 } from "@ant-design/icons-vue";
 import {
-    UploadOutlined,
     WarningFilled,
-    QuestionCircleOutlined,
-    InfoCircleOutlined,
     EditOutlined,
     SearchOutlined,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    MailOutlined,
     PrinterOutlined,
     DeleteOutlined, SaveOutlined,
     HistoryOutlined,
     LoginOutlined,
-
 } from "@ant-design/icons-vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import queries from "../../../../graphql/queries/CM/CM130/index";
 import mutations from "../../../../graphql/mutations/CM/CM130/index";
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { defineComponent, ref, toRaw, reactive, watch, createVNode } from "vue";
+import { defineComponent, ref, reactive, watch, createVNode } from "vue";
 import { DxNumberBox } from "devextreme-vue/number-box";
 import DxButton from "devextreme-vue/button";
 import { Modal } from 'ant-design-vue';
-
 import {
     DxDataGrid,
     DxColumn,
-    DxPaging,
     DxExport,
-    DxSelection,
     DxSearchPanel,
     DxToolbar,
-    DxEditing,
-    DxGrouping,
+    DxPaging,
     DxItem,
 } from "devextreme-vue/data-grid";
 import { message } from "ant-design-vue";
@@ -282,30 +263,22 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
-
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-
 export default defineComponent({
     components: {
-        UploadOutlined,
         DxNumberBox,
         WarningFilled,
-        QuestionCircleOutlined,
         SettingPopup,
         DxDataGrid,
         DxColumn,
-        DxPaging,
-        DxSelection,
         DxExport,
         DxSearchPanel,
         DxButton,
         DxToolbar,
-        DxEditing,
-        DxGrouping,
         DxItem,
         EditOutlined,
         HistoryOutlined,
@@ -313,22 +286,13 @@ export default defineComponent({
         EditCM130Popup,
         HistoryPopup,
         AddCM130Popup,
-        InfoCircleOutlined,
         SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-    },
-    data() {
-        return {
-
-        };
+        DxPaging
     },
     setup() {
-
         const popupData = ref([]);
         const modalSettingStatus = ref<boolean>(false);
         const modalEditStatus = ref<boolean>(false);
@@ -337,23 +301,6 @@ export default defineComponent({
         const isSwitch = ref<boolean>(false);
         const isShow = ref<boolean>(false);
         const idRowEdit = ref(0);
-        const showModal = () => {
-            isShow.value = true;
-        };
-        const SwitchButton = () => {
-            isSwitch.value = true;
-        };
-        let previewImage: any = ref("/public/images/demo-image.jpg");
-
-        const handleSuccsess = (e: MouseEvent) => {
-
-            isShow.value = false;
-        };
-        const fileList = ref([]);
-
-        const dataSource = ref([]);
-        // reportType: 1 or 6
-        // paymentType: 1 or 2
         const formState = reactive({
             reportType: 1,
             paymentType: 1,
@@ -363,10 +310,25 @@ export default defineComponent({
             localIncomeTaxArea: '',
             companyAddressInfoAddress: '',
             collectivePayment: false,
-            taxForEachBusiness: false
+            taxForEachBusiness: false,
+            bcode: "",
+            taxOfficeName: ""
         });
-
-
+        const dataSource = ref([]);
+        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
+        //================================================= FUNCTION============================================
+        const showModal = () => {
+            isShow.value = true;
+        };
+        const SwitchButton = () => {
+            isSwitch.value = true;
+        };
+        let previewImage: any = ref("/public/images/demo-image.jpg");
+        const handleSuccsess = (e: MouseEvent) => {
+            isShow.value = false;
+        };
+        // reportType: 1 or 6
+        // paymentType: 1 or 2
         // get config
         const dataQuery = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
         const { result: resultConfig, loading, refetch: refetchConfig } = useQuery(
@@ -389,12 +351,10 @@ export default defineComponent({
                 formState.taxForEachBusiness = value.getWithholdingConfig.taxForEachBusiness;
             }
         });
-
         // update config 
         const { mutate: actionUpdateWithholdingConfig, onDone: onDoneUpdated, onError: errorEditConfig } = useMutation(
             mutations.updateWithholdingConfig
         );
-
         errorEditConfig((error) => {
             message.error(error.message, 5);
         })
@@ -402,7 +362,6 @@ export default defineComponent({
             message.success(`Update was successful`, 4);
             refetchConfig();
         });
-
         const onSubmitConfig = () => {
             let variables = {
                 companyId: companyId,
@@ -420,9 +379,7 @@ export default defineComponent({
             };
             actionUpdateWithholdingConfig(variables)
         };
-
-        // get withholding config pay items
-        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')), useOnly: false });
+        // get withholding config pay items  
         const { result: resultWithholdingConfig, refetch: refetchWithholdingConfig, loading: loadingWithholdingConfig } = useQuery(
             queries.getWithholdingConfigPayItems,
             dataQueryWithholding,
@@ -433,18 +390,14 @@ export default defineComponent({
         watch(resultWithholdingConfig, (value) => {
             dataSource.value = value.getWithholdingConfigPayItems;
         });
-
         // delete withholding config pay item
-
         const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
             mutations.deleteWithholdingConfigPayItem
         );
-
         onDoneDelete(() => {
             message.success(`Update was successful`, 4);
             refetchWithholdingConfig()
         });
-
         const deleteConfig = (data: any) => {
             Modal.confirm({
                 title: 'Do you want to delete this item?',
@@ -456,15 +409,11 @@ export default defineComponent({
                         imputedYear: parseInt(dayjs().format('YYYY')),
                         itemCode: data.data.itemCode
                     };
-
                     actionDelete(variables);
                 },
                 class: 'confirm',
             });
-
         }
-
-
         const onExporting = (e: any) => {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
@@ -485,27 +434,26 @@ export default defineComponent({
         const modalSetting = () => {
             modalSettingStatus.value = true;
         }
-
         const openAddNewModal = () => {
-            modalAddNewStatus.value = true;
+            if (dataSource.value.length >= 20) {
+                modalAddNewStatus.value = true;
+            } else {
+                message.error(`이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
+            }
         }
         const onCloseAddNewModal = () => {
             modalAddNewStatus.value = false;
             refetchWithholdingConfig();
         };
-
         const setModalEditVisible = (data: any) => {
             idRowEdit.value = data.data.itemCode;
             modalEditStatus.value = true;
             popupData.value = data;
         };
-
         const onCloseEditModal = () => {
             modalEditStatus.value = false;
             refetchWithholdingConfig();
         };
-
-
         const modalHistory = (data: any) => {
             idRowEdit.value = data.data.itemCode;
             modalHistoryStatus.value = true;
@@ -518,15 +466,16 @@ export default defineComponent({
                 return "red";
             }
         }
+        const changeValueAddress = (data: any) => {
+            formState.competentTaxOfficeCode = data.taxOfficeName
+            formState.localIncomeTaxArea = data.localIncomeTaxArea
+        }
         return {
+            changeValueAddress,
             idRowEdit,
             labelCol: { style: { width: "150px" } },
             formState,
             activeKey: ref("1"),
-            fileList,
-            headers: {
-                authorization: "authorization-text",
-            },
             onSubmitConfig,
             previewImage,
             SwitchButton,
@@ -555,8 +504,11 @@ export default defineComponent({
     },
 });
 </script>
-
 <style lang="scss" scoped>
+.btn-action>button {
+    margin-left: 5px;
+}
+
 ::v-deep .ant-tag-red {
     border: none;
 }
