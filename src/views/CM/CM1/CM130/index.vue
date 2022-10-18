@@ -435,7 +435,7 @@ export default defineComponent({
             modalSettingStatus.value = true;
         }
         const openAddNewModal = () => {
-            if (dataSource.value.length >= 20) {
+            if (dataSource.value.length <= 20) {
                 modalAddNewStatus.value = true;
             } else {
                 message.error(`이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
