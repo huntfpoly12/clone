@@ -10,6 +10,7 @@ import getMyCompanyUserLogs from "./getMyCompanyUserLogs";
 import getMyCompanyAuthentications from "./getMyCompanyAuthentications";
 import getWithholdingConfigPayItemsLogs from "./getWithholdingConfigPayItemsLogs";
 import getScreenRoleGroupLogs from "./getScreenRoleGroupLogs";
+import searchPublicInstitutions from "./searchPublicInstitutions";
 
 const queries = {
   getListSale: getListSale,
@@ -23,8 +24,8 @@ const queries = {
   getMyCompanyUserLogs: getMyCompanyUserLogs,
   getMyCompanyAuthentications: getMyCompanyAuthentications,
   getWithholdingConfigPayItemsLogs:getWithholdingConfigPayItemsLogs,
-  getScreenRoleGroupLogs :getScreenRoleGroupLogs
-
+  getScreenRoleGroupLogs :getScreenRoleGroupLogs,
+  searchPublicInstitutions:searchPublicInstitutions,
 };
 
 export default queries;

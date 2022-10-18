@@ -1,14 +1,7 @@
 <template>
   <div id="components-modal-demo-position">
-    <a-modal
-      :visible="modalStatus"
-      :title="title"
-      centered
-      width="35%"
-      :footer="null"
-      @cancel="setModalVisible()"
-      :mask-closable="false"
-    >
+    <a-modal :visible="modalStatus" :title="title" centered width="35%" :footer="null" @cancel="setModalVisible()"
+      :mask-closable="false">
       <h2 style="font-weight: 600; color: gray">
         관할세무서, 지방소득세 납세지 검색
       </h2>
@@ -17,38 +10,28 @@
         주소 또는 소재지 ‘읍.면.동’ 이름을 입력하세요
       </div>
       <div style="text-align: center; margin-top: 10px">
-        <a-input-search
-          v-model:value="search"
-          enter-button="검색"
-          style="width: 400px"
-          @search="onSearch"
-        />
+        <a-input-search v-model:value="search" enter-button="검색" style="width: 400px" @search="onSearch" />
       </div>
       <div style="margin: 48px 0">
-        <DxDataGrid
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="ID"
-          :allow-column-reordering="true"
-          :allow-column-resizing="true"
-          :column-auto-width="true"
-          :selection="{ mode: 'single' }"
-          @selection-changed="onSelectionChanged"
-        >
+        <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID" :allow-column-reordering="true"
+          :allow-column-resizing="true" :column-auto-width="true" :selection="{ mode: 'single' }"
+          @selection-changed="onSelectionChanged">
           <DxColumn data-field="" :width="30" cell-template="grid-cell" />
           <template #grid-cell="{ data }">
             <a-radio-group v-model:value="modalParam.checkBox">
-              <a-radio
-                :value="data.data.ID"
-                @click="changeOption(data.data.ID)"
-                :id="'data-' + data.data.ID"
-              >
+              <a-radio :value="data.data.ID" @click="changeOption(data.data.ID)" :id="'data-' + data.data.ID">
               </a-radio>
             </a-radio-group>
           </template>
-          <DxColumn :width="150" data-field="관할세무서" />
-          <DxColumn :width="200" data-field="지방소득세납세지" />
-          <DxColumn data-field="주소" />
+          <DxColumn :width="150" data-field="taxOfficeName"  caption="관할세무서"/>
+          <DxColumn :width="200" data-field="localIncomeTaxArea" caption="지방소득세납세지"/>
+          <DxColumn  caption="주소" cell-template="address-cell" />
+          <template #address-cell="{ data }">
+            <a-radio-group v-model:value="modalParam.checkBox">
+              <a-radio :value="data.data.ID" @click="changeOption(data.data.ID)" :id="'data-' + data.data.ID">
+              </a-radio>
+            </a-radio-group>
+          </template>
         </DxDataGrid>
       </div>
       <div class="btn_submit">
@@ -59,10 +42,11 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent ,watch} from "vue";
 import { employees } from "../data.js";
 import { DxSelectBox } from "devextreme-vue/select-box";
-
+import queries from "../../../../../graphql/queries/common/index";
+import { useQuery } from "@vue/apollo-composable";
 import {
   DxDataGrid,
   DxColumn,
@@ -94,42 +78,79 @@ export default defineComponent({
     DxSearchPanel,
     DxSelectBox,
   },
-  created() {},
+  created() { },
   data() {
     return {
-      dataSource: employees,
-      showEmployeeInfo: false,
-      selectedRowNotes: "",
-      selectedRowPicture: "",
       modalParam: {
         checkBox: "",
       },
       employees,
     };
   },
-  computed: {},
-  setup(props) {
+  setup(props, { emit }) {
+    let showEmployeeInfo = ref(false);
+    let selectedRowNotes = ref('');
+    let selectedRowPicture = ref('');
+    let dataQuery = ref();
+    let trigger = ref<boolean>(false);
+    const dataSource = ref([]);
+
     const data = props.data;
     const visible = ref<boolean>(false);
     const search = ref<string>("");
-    const onSearch = (searchValue: string) => {};
-    return { data, visible, search, onSearch };
-  },
-  methods: {
-    setModalVisible() {
-      this.$emit("closePopup", false);
-    },
-    onSelectionChanged({ selectedRowsData }: any) {
+
+    const onSearch = (searchValue: string) => { 
+      dataQuery.value = { keyword: searchValue};
+      trigger.value = true;
+      refetchSearch();
+    };
+
+    // Search public institution information
+    const { result: resultSearch, loading, refetch: refetchSearch } = useQuery(
+      queries.searchPublicInstitutions,
+      dataQuery,
+      () => ({
+        enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+
+    watch(resultSearch, (value) => {
+      if (value) {
+        dataSource.value = value.searchPublicInstitutions
+      }
+    });
+
+
+    const setModalVisible = () => {
+      emit("closePopup", false);
+    };
+    const onSelectionChanged = ({ selectedRowsData }: any) => {
       const data = selectedRowsData[0];
 
-      this.showEmployeeInfo = !!data;
-      this.selectedRowNotes = data && data.관할세무서;
-      this.selectedRowPicture = data && data.주소;
-    },
+      showEmployeeInfo.value = !!data;
+      selectedRowNotes.value = data && data.관할세무서;
+      selectedRowPicture.value = data && data.주소;
+    }
 
-    changeOption(data: any) {
+    const changeOption = (data: any) => {
       (document.getElementById("data-" + data) as HTMLInputElement).click();
-    },
+    }
+
+
+    return {
+            data,
+            visible,
+            search,
+            onSearch,
+            setModalVisible,
+            showEmployeeInfo,
+            selectedRowNotes,
+            selectedRowPicture,
+            changeOption,
+            onSelectionChanged,
+            dataSource
+          };
   },
 });
 </script>
