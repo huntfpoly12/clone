@@ -3,25 +3,28 @@
     <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
       width="50%" :mask-closable="false">
       <h2 class="title_modal">회원정보</h2>
-      <a-form v-bind="layout" name="nest-messages" v-model:value="formState" :validate-messages="validateMessages"
-        @finish="onFinish">
+      <a-form v-bind="layout" name="nest-messages" v-model:value="formState">
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID">
-              <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
+              <a-input v-model:value="formState.username" style="width: 170px; margin-right: 10px"
+                @change="changeValueID" />
               <a-button style="border: 1px solid grey" @click="checkDuplicateUsername">중복체크</a-button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
+              <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select v-model:value="bf310Detail.name" show-search placeholder="Select a person" style="width: 300px"
+              <!-- <a-select v-model:value="formState.groupCode" style="width: 250px" placeholder="Select a person"
                 :options="selectSearch" :filter-option="filterOption" @focus="handleFocus" @blur="handleBlur"
-                @change="handleChange" class="select-search">
+                @change="handleChange" >
                 <template #suffixIcon>
                   <search-outlined :size="14" class="ant-select-suffix" />
                 </template>
-              </a-select>
+              </a-select> -->
+              <a-select v-model:value="formState.groupCode" style="width: 170px" :options="selectSearch"
+                @change="handleChange"></a-select>
+
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -31,12 +34,12 @@
             </a-form-item>
 
             <a-form-item label="회원종류">
-              <a-select style="width: 150px" v-model:value="formState.type" option-label-prop="children"
+              <a-select style="width: 10px" v-model:value="formState.type" option-label-prop="children"
                 class="select_disable" @change="changeValueType">
-                <a-select-option :value="2" label="중간매니저">
+                <a-select-option value="2" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
                 </a-select-option>
-                <a-select-option :value="3" label="담당매니저">
+                <a-select-option value="3" label="담당매니저">
                   <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
                 </a-select-option>
                 <a-select-option value="r" label="영업자">
@@ -54,16 +57,17 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰">
               <div style="display: flex; align-items: flex-end">
-                <a-input @keypress="onlyNumber" type="text" v-model:value="createUser.mobilePhone"
-                  style="width: 150px; margin-right: 8px" />
+                <a-input @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
+                  style="width: 170px; margin-right: 8px" />
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]">
-              <a-input v-model:value="createUser.email" style="width: 250px" />
-
-              <a-button :disabled="!validated" html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
+              <a-input v-model:value="formState.email" style="width: 270px" @change="validateEmail"
+                :style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
+              <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
+              <!-- <a-button html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
                 변경
-              </a-button>
+              </a-button> -->
             </a-form-item>
             <a-form-item>
               <a-modal class="container_email" v-model:visible="isShow" @ok="handleSuccsess">
@@ -85,15 +89,15 @@
         </a-row>
       </a-form>
 
-      <div style="margin-top: 50px" class="page-content">
+      <div class="page-content">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
 
         <div style="position: relative">
-          <div v-if="!bf310Detail.switch" class="overlay"></div>
           <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
-            :allow-column-resizing="true" :column-auto-width="true">
-            <DxPaging :page-size="5" />
-            <DxSelection mode="multiple" />
+            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll"
+            @selection-changed="onSelectionChanged">
+            <DxPaging :page-size="0" />
+            <DxSelection data-field="active" mode="multiple" />
 
             <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
 
@@ -106,33 +110,25 @@
                 <menu-outlined />
               </div>
             </template>
-
-            <template class="custom-action">
-              <div class="custom-action">
-                <a-space :size="10">
-                  <a-tooltip placement="top">
-                    <template #title>편집</template>
-                    <EditOutlined />
-                  </a-tooltip>
-                  <a-tooltip placement="top">
-                    <template #title>변경이력</template>
-                    <HistoryOutlined />
-                  </a-tooltip>
-                </a-space>
-              </div>
-            </template>
           </DxDataGrid>
         </div>
       </div>
+      <template #footer>
+        <div style="text-align: center;">
+          <a-button @click="setModalVisible()">그냥 나가기</a-button>
+          <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
+        </div>
+      </template>
     </a-modal>
   </div>
 </template>
 
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
-import type { UnwrapRef } from "vue";
+
 import { message } from 'ant-design-vue';
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
+
 import {
   DxDataGrid,
   DxColumn,
@@ -150,29 +146,6 @@ import {
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 
-
-interface FormState {
-  name: string;
-  영업자코드: string;
-  영업자명: string;
-  사업자유형: string;
-  상태: string;
-  등급: string;
-  switch: boolean;
-  은행: string;
-  계좌번호: string;
-  등록번호: string;
-  예금주: string;
-  가입일자: string;
-  사업자등록번호: string;
-  휴대폰: string;
-  비고: string;
-  이메일: string;
-  연락처: string;
-  팩스: string;
-  전자세금계산서수신이메일: string;
-}
-
 export default defineComponent({
   props: ["modalStatus", "data"],
 
@@ -188,33 +161,19 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
   },
-  created() {
-    // console.log("createUser", this.createUser);
-  },
+
   data() {
     return {
-      isShow: ref<boolean>(false),
+
       dataMode: {
         color: "",
       },
     };
   },
-  computed: {
-    validated() {
-      return this.validateEmail(this.createUser.email);
-    },
-  },
 
-  setup(props) {
-    const userCreated = reactive({
-      type: "r",
-      username: "",
-      name: "",
-      salesRepresentativeId: null,
-      screenRoleGroupIds: ["CONFIG_ACCOUNTING", "CONFIG_ACCOUNTING_CODE"],
-      mobilePhone: "",
-      email: "",
-    });
+
+  setup(props, { emit }) {
+    
     const ScreenRoleGroup = reactive({
       id: "",
       name: "",
@@ -234,13 +193,11 @@ export default defineComponent({
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
     const handleChange = (value: any) => {
-      console.log(`selected ${value}`);
+
     };
     const handleBlur = () => {
-      console.log("blur");
     };
     const handleFocus = () => {
-      console.log("focus");
     };
     const data = props.data;
     const isShow = ref<boolean>(false);
@@ -249,12 +206,9 @@ export default defineComponent({
       isShow.value = true;
     };
     const handleSuccsess = (e: MouseEvent) => {
-      console.log(e);
       isShow.value = false;
     };
-    const onToggle = () => {
-      bf310Detail.switch = !bf310Detail.switch;
-    };
+
     const layout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
@@ -264,42 +218,31 @@ export default defineComponent({
       wrapperCol: { span: 16 },
     };
     const focus = () => {
-      console.log('focus');
     };
 
-    const dateFormat = "YYYY-MM-DD";
 
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
 
-    const validateMessages = {
-      required: "${label} is required!",
-      types: {
-        email: "이메일 형식이 정확하지 않습니다",
-        number: "Numeric only!",
-      },
-      number: {
-        range: "${label} must be between ${min} and ${max}",
-      },
-    };
+
 
     const changeValueType = (data: any) => {
-      console.log(data)
-      if (data == 'r') {
-        triggerSale.value = true
-        reqSale()
-      } else if (data == "2") {
-        triggerManager.value = true
-        reqManager()
-      } else if (data == "3") {
-        triggerManager.value = true
-        reqManager()
-      }
-      else if (data == "p") {
-        triggerPatner.value = true
-        reqManager()
-      }
+      triggerGroup.value = true;
+      trigger.value = true
+      setTimeout(() => {
+        let value = data
+        if (data == 1 || data == 2 || data == 3) {
+          value = 'm'
+        }
+        let dataCall: any = {
+          type: value
+        }
+        originData.value.types = value
+        reqGroup(dataCall)
+
+        reqRoleGroup()
+      }, 100);
 
     }
 
@@ -320,6 +263,9 @@ export default defineComponent({
       updatedBy: "",
       ip: "",
       active: true,
+      groupId: "",
+      groupCode: "",
+      groupName: "",
       facilityBusinesses: [],
       screenRoleGroups: {
         id: "",
@@ -336,68 +282,26 @@ export default defineComponent({
         active: true
       }
     });
-    const onFinish = (values: any) => {
-      console.log("Success:", values);
-    };
-    const bf310Detail: UnwrapRef<FormState> = reactive({
-      name: "",
-      사업자유형: "개인",
-      상태: "정상",
-      등급: "본사",
-      switch: true,
-      은행: "농협",
-      계좌번호: "",
-      예금주: "",
-      가입일자: "",
-      비고: "",
-      영업자코드: "",
-      영업자명: "",
-      등록번호: "",
-      사업자등록번호: "",
-      휴대폰: "",
-      이메일: "",
-      연락처: "",
-      팩스: "",
-      전자세금계산서수신이메일: "",
-    });
-    const findSalesRepresentatives = reactive({
-      id: "",
-      name: "",
-      type: "",
-      screenRoles: "",
-      lock: true,
-      memo: "",
-      createdAt: "",
-      createdBy: "",
-      updatedAt: "",
-      updatedBy: "",
-      ip: "",
-      active: true
-    })
-      ;
-    const findManagerUsers = reactive({
-      id: 1,
-      type: "",
-      username: "",
-      name: "",
-      mobilePhone: "",
+
+
+
+    const findGroups = reactive({
+      groupId: 1,
       groupCode: "",
       groupName: "",
-      managerGrade: true,
-      active: true,
-    });
-    const findParters = reactive({
-      id: 1,
-      code: "",
-      name: "",
-      description: "",
-      createdAt: "",
-      createdBy: "",
-      updatedAt: "",
-      updatedBy: "",
-      ip: "",
       active: true
     });
+    const statusMailValidate = ref<boolean>(true);
+    const validateEmail = (e: any) => {
+      let checkMail = e.target.value.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+      if (!checkMail) {
+        statusMailValidate.value = false;
+      } else {
+        statusMailValidate.value = true;
+      }
+    }
 
 
     const createUser = reactive({
@@ -416,10 +320,9 @@ export default defineComponent({
     const dataQuery = ref();
 
     let trigger = ref<boolean>(false);
-    let triggerSale = ref<boolean>(false);
-    let triggerManager = ref<boolean>(false);
-    let triggerPatner = ref<boolean>(false);
     let triggerDuplication = ref<boolean>(false);
+    let triggerGroup = ref<boolean>(false);
+
     watch(
       () => props.modalStatus,
       (newValue, old) => {
@@ -428,7 +331,7 @@ export default defineComponent({
           dataQuery.value = {};
           trigger.value = true;
 
-          refetch();
+          reqRoleGroup();
         } else {
           visible.value = newValue;
           trigger.value = false;
@@ -436,7 +339,7 @@ export default defineComponent({
       }
     );
     // querie searchScreenRoleGroups
-    const { result, loading, refetch } = useQuery(
+    const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
       queries.searchScreenRoleGroups, originData,
       () => ({
         enabled: trigger.value,
@@ -445,101 +348,50 @@ export default defineComponent({
     );
 
     const arrData = ref()
-    watch(result, (value) => {
+    watch(resRoleGroup, (value: any) => {
       if (value && value.searchScreenRoleGroups) {
         arrData.value = value.searchScreenRoleGroups.datas
       }
     });
 
-    // querie findSalesRepresentatives
-    const { onResult: resSale, refetch: reqSale } = useQuery(
-      queries.findSalesRepresentatives, {},
+    //query find group
+    const { onResult: resGroup, refetch: reqGroup } = useQuery(
+      queries.findGroups, {},
       () => ({
-        enabled: triggerSale.value,
+        enabled: triggerGroup.value,
         fetchPolicy: "no-cache",
       })
     );
-    resSale(e => {
-      let option: any = []
-      e.data.findSalesRepresentatives.map((val: any) => {
-        option.push({
-          label: val.code + '  ' + val.name,
-          value: val.id
-        })
-      })
-      selectSearch.value = option
-    })
-    watch(result, (value) => {
-      if (value && value.findSalesRepresentatives) {
-        arrData.value = value.findSalesRepresentatives.datas
-      }
-    });
+    resGroup(e => {
 
-    //querie findManagerUsers
-    const { onResult: resManager, refetch: reqManager } = useQuery(
-      queries.findManagerUsers, {},
-      () => ({
-        enabled: triggerManager.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    resManager(e => {
       let option: any = []
-      e.data.findManagerUsers.map((val: any) => {
+      e.data.findGroups.map((val: any) => {
         option.push({
-          label: val.code + '  ' + val.name,
-          value: val.id
+          label: val.groupCode + '  ' + val.groupName,
+          value: val.groupId
         })
       })
       selectSearch.value = option
     })
-    watch(result, (value) => {
-      if (value && value.findManagerUsers) {
-        arrData.value = value.findManagerUsers.datas
-      }
-    });
-
-    //querie findParters
-    const { onResult: resPatner, refetch: reqPatner } = useQuery(
-      queries.findParters, {},
-      () => ({
-        enabled: triggerPatner.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    resPatner(e => {
-      let option: any = []
-      e.data.findParters.map((val: any) => {
-        option.push({
-          label: val.code + '  ' + val.name,
-          value: val.id
-        })
-      })
-      selectSearch.value = option
-    })
-    watch(result, (value) => {
-      if (value && value.findParters) {
-        arrData.value = value.findParters.datas
+    watch(resGroup, (value: any) => {
+      if (value && value.findGroups) {
+        arrData.value = value.findGroups.datas
       }
     });
 
     //querie checkDuplicateUsername 
-    const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.isUserRegistableUsername, {}, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
+    let dataCallCheck = ref({})
+    const { refetch: refetchUserName, onResult: onResultUsername } =
+      useQuery(queries.isUserRegistableUsername, dataCallCheck, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
 
     const checkDuplicateUsername = () => {
       if (formState.value.username !== '') {
         triggerDuplication.value = true
-        setTimeout(() => {
-          let dataCall = {
-            username: formState.value.username
-          }
-          refetchUserName(dataCall)
-        }, 500);
+        refetchUserName()
       } else {
         message.error(`사용자 이름을 입력헤주세요!`)
       }
     }
-
     onResultUsername(e => {
       if (e.data)
         if (e.data.isUserRegistableUsername == true) {
@@ -548,21 +400,67 @@ export default defineComponent({
           message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
         }
     })
-    
+    const changeValueID = () => {
+      dataCallCheck.value = {
+        username: formState.value.username
+      }
+    }
+
+    //Creact user 
+    const {
+      mutate: creactUser,
+      onDone: creactDone,
+      onError: creactError
+    } = useMutation(mutations.createUser);
+
+    creactError(e => {
+      message.error(e.message, 2)
+    })
+    creactDone(e => {
+      emit("closePopup", false)
+      message.success("신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!")
+    })
+
+    var idRoleGroup: any = [];
+    const onSelectionChanged = (selectedRows: any) => {
+      idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
+    };
+
+    const creactUserNew = () => {
+
+      var RoleGroup = idRoleGroup.map((row: any) => {
+        return row.id;
+      })
+      if (statusMailValidate.value == true) {
+        let dataCallApiCreate = { input : {
+          type: (formState.value.type == '2' || formState.value.type == '3') ? 'm' : formState.value.type,
+          name: formState.value.name,
+          username: formState.value.username,
+          screenRoleGroupIds: RoleGroup,
+          mobilePhone: formState.value.mobilePhone,
+          email: formState.value.email,
+          groupId: formState.value.groupCode,
+          managerGrade: (formState.value.type == '2' || formState.value.type == '3') ? parseInt(formState.value.type) : null,
+        }
+      }
+        creactUser(dataCallApiCreate)
+      } else {
+        message.error(`이메일형식이 정확하지 않습니다.`)
+        var Url = document.getElementById("email") as HTMLInputElement;
+        Url.select()
+      }
+    }
 
     return {
+      changeValueID,
       arrData,
       labelCol,
       focus,
       wrapperCol,
-      bf310Detail,
       layout,
       formTailLayout,
-      onToggle,
       confirm,
       formState,
-      onFinish,
-      validateMessages,
       isShow,
       showModal,
       handleSuccsess,
@@ -573,12 +471,12 @@ export default defineComponent({
       handleChange,
       createUser,
       ScreenRoleGroup,
-      userCreated,
-      findSalesRepresentatives,
-      findManagerUsers,
-      findParters,
       changeValueType,
-      checkDuplicateUsername
+      checkDuplicateUsername,
+      statusMailValidate,
+      validateEmail,
+      creactUserNew,
+      onSelectionChanged
     };
   },
 
@@ -607,11 +505,6 @@ export default defineComponent({
     closeModal() {
       this.isShow = false;
     },
-    validateEmail(email: any): any {
-      const re =
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
-    },
   },
 });
 </script>
@@ -623,6 +516,10 @@ export default defineComponent({
 ::v-deep .ant-form-item-control {
   display: flex;
   flex-direction: row;
+}
+
+::v-deep .ant-modal-content {
+  height: 900px
 }
 
 ::v-deep .ant-form-item-label>label {
@@ -716,6 +613,12 @@ export default defineComponent({
   line-height: 5px;
 }
 
+.table-scroll {
+  height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
 .ant-form-item-label {
   text-align: left;
 }
@@ -724,3 +627,5 @@ export default defineComponent({
   display: none;
 }
 </style>
+
+

@@ -102,7 +102,7 @@
                     </a-col>
                 </a-row>
                 <template #footer>
-                    <a-button>아니오</a-button>
+                    <a-button @click="closePopupEmail">아니오</a-button>
                     <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button>
                 </template>
             </a-modal>
@@ -266,6 +266,7 @@ export default defineComponent({
             sendGmail(dataCallSendEmail)
         }
 
+
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -292,6 +293,9 @@ export default defineComponent({
             this.formState.mobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
             console.log(this.formState.mobilePhone);
 
+        },
+        closePopupEmail(){
+            this.visible=false
         }
     }
 });
