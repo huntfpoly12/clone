@@ -7,12 +7,12 @@
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID">
-              <a-input v-model:value="formState.username" style="width: 150px; margin-right: 10px"
+              <a-input v-model:value="formState.username" style="width: 170px; margin-right: 10px"
                 @change="changeValueID" />
               <a-button style="border: 1px solid grey" @click="checkDuplicateUsername">중복체크</a-button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input v-model:value="formState.name" style="width: 150px; margin-right: 10px" />
+              <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
               <!-- <a-select v-model:value="formState.groupCode" style="width: 250px" placeholder="Select a person"
@@ -22,7 +22,7 @@
                   <search-outlined :size="14" class="ant-select-suffix" />
                 </template>
               </a-select> -->
-              <a-select v-model:value="formState.groupCode" style="width: 120px" :options="selectSearch"
+              <a-select v-model:value="formState.groupCode" style="width: 170px" :options="selectSearch"
                 @change="handleChange"></a-select>
 
             </a-form-item>
@@ -57,12 +57,12 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰">
               <div style="display: flex; align-items: flex-end">
-                <a-input @keypress="onlyNumber" type="text" v-model:value="createUser.mobilePhone"
-                  style="width: 150px; margin-right: 8px" />
+                <a-input @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
+                  style="width: 170px; margin-right: 8px" />
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]">
-              <a-input v-model:value="createUser.email" style="width: 250px" @change="validateEmail"
+              <a-input v-model:value="formState.email" style="width: 270px" @change="validateEmail"
                 :style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
               <!-- <a-button html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
@@ -125,7 +125,7 @@
 
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
-import type { UnwrapRef } from "vue";
+
 import { message } from 'ant-design-vue';
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 
@@ -161,34 +161,19 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
   },
-  created() {
-    // console.log("createUser", this.createUser);
-  },
+
   data() {
     return {
-      // isShow: ref<boolean>(false),
+
       dataMode: {
         color: "",
       },
     };
   },
-  // computed: {
-  //   validated() {
-  //     return this.validateEmail(this.createUser.email);
-  //   },
-  // },
+
 
   setup(props, { emit }) {
-    const dataGrid = {};
-    const userCreated = reactive({
-      type: "r",
-      username: "",
-      name: "",
-      salesRepresentativeId: null,
-      screenRoleGroupIds: ["CONFIG_ACCOUNTING", "CONFIG_ACCOUNTING_CODE"],
-      mobilePhone: "",
-      email: "",
-    });
+    
     const ScreenRoleGroup = reactive({
       id: "",
       name: "",
@@ -235,22 +220,12 @@ export default defineComponent({
     const focus = () => {
     };
 
-    const dateFormat = "YYYY-MM-DD";
 
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
 
-    // const validateMessages = {
-    //   required: "${label} is required!",
-    //   types: {
-    //     email: "이메일 형식이 정확하지 않습니다",
-    //     number: "Numeric only!",
-    //   },
-    //   number: {
-    //     range: "${label} must be between ${min} and ${max}",
-    //   },
-    // };
+
 
     const changeValueType = (data: any) => {
       triggerGroup.value = true;
@@ -307,9 +282,7 @@ export default defineComponent({
         active: true
       }
     });
-    // const onFinish = (values: any) => {
-    //   console.log("Success:", values);
-    // };
+
 
 
     const findGroups = reactive({
@@ -488,8 +461,6 @@ export default defineComponent({
       formTailLayout,
       confirm,
       formState,
-      // onFinish,
-      // validateMessages,
       isShow,
       showModal,
       handleSuccsess,
@@ -500,7 +471,6 @@ export default defineComponent({
       handleChange,
       createUser,
       ScreenRoleGroup,
-      userCreated,
       changeValueType,
       checkDuplicateUsername,
       statusMailValidate,
@@ -535,11 +505,6 @@ export default defineComponent({
     closeModal() {
       this.isShow = false;
     },
-    // validateEmail(email: any): any {
-    //   const re =
-    //     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    //   return re.test(email);
-    // },
   },
 });
 </script>

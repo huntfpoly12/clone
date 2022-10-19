@@ -194,7 +194,7 @@
                         <DxColumn data-field="taxFreeIncludeSubmission" caption="제출여부" css-class="cell-center"
                             cell-template="taxExemption" :width="100" />
                         <template #taxExemption="{ data }">
-                            {{data.value== true ? 'O' : 'X' }}
+                            {{data.value == true ? 'O' : (data.value == false ? 'X' : '')}}
                         </template>
                         <DxColumn data-field="유형" />
                         <DxColumn data-field="formula" caption="산출방법" />

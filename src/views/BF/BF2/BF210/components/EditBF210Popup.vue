@@ -8,20 +8,13 @@
           <a-button type="primary" @click="confirmUpdate">저장하고 나가기</a-button>
         </div>
       </template>
-
       <h2 class="title_modal">회원정보</h2>
-
       <a-form v-bind="layout" name="nest-messages" v-model:value="formState" @finish="onFinish">
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID">
               <a-input disabled v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
-              <button disabled style="
-                  background-color: #00000040;
-                  color: #918e8b;
-                  border: none;
-                  height: 32px;
-                ">
+              <button disabled style="background-color: #00000040;color: #918e8b;border: none;height: 32px;">
                 중복체크
               </button>
             </a-form-item>
@@ -42,7 +35,6 @@
               <a-switch v-if="formState.type=='c'" disabled v-model:checked="formState.active" checked-children="이용중"
                 un-checked-children="이용중지" style="width: 100px" />
             </a-form-item>
-
             <a-form-item label="회원종류">
               <a-select style="width: 150px" v-model:value="formState.type" option-label-prop="children"
                 class="select_disable" disabled>
@@ -68,7 +60,6 @@
             </a-form-item>
           </a-col>
         </a-row>
-
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4">
@@ -87,12 +78,12 @@
                 style="width: 230px" :style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
               <a-input v-if="formState.type=='c'" disabled v-model:value="formState.email" style="width: 230px" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
+
               <a-button v-if="formState.type!=='c'" html-type="submit" danger class="btn_sendemail" @click="showModal">
                 비밀번호 변경</a-button>
               <a-button v-if="formState.type =='c'" disabled html-type="submit" danger class="btn_sendemail">비밀번호 변경
               </a-button>
             </a-form-item>
-
             <div class="confirm-popup">
               <a-modal v-model:visible="visible" :mask-closable="false">
                 <a-row>
@@ -103,6 +94,7 @@
                     <p><strong>비밀번호 설정 이메일</strong></p>
                     <p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
                     <p>계속 진행하시겠습니까?</p>
+
                   </a-col>
                 </a-row>
                 <template #footer>
@@ -114,23 +106,20 @@
           </a-col>
         </a-row>
       </a-form>
-
       <div style="margin-top: 50px">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
         <div style="position: relative">
           <div class="overlay" v-if="formState.type=='c'"></div>
-          <DxDataGrid :data-source="formState.screenRoleGroups" :show-borders="true" key-expr="id"
-            :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
-            @selection-changed="selectionChanged">
-            <!-- <DxPaging :page-size="1" /> -->
-            <DxColumn caption="" cell-template="active" css-class="cell-center" />
-            <template #active="{}">
-              <div style="width: 100%; text-align: center;">
-                <a-checkbox checked="true" />
+          <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
+            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll">
+
+            <DxColumn caption="" data-field="id" cell-template="active" css-class="cell-center"/>
+            <template #active="{data}">
+              <div style="width: 100%; text-align: center;"> 
+                <input type="checkbox" :value="data.data.id" v-model="checkedNames" />
               </div>
             </template>
-
-            <DxColumn data-field="id" caption="코드" :width="150" />
+            <DxColumn data-field="id" caption="코드" :width="200" />
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
@@ -141,7 +130,6 @@
                 <menu-outlined />
               </div>
             </template>
-
             <template class="custom-action">
               <div class="custom-action">
                 <a-space :size="10">
@@ -162,17 +150,13 @@
     </a-modal>
   </div>
 </template>
-
 <script lang="ts">
-import { ref, defineComponent, reactive, computed, watch } from "vue";
-import type { UnwrapRef } from "vue";
+import { ref, defineComponent, watch, reactive } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import type { SelectProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 import { message } from 'ant-design-vue';
-
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import {
   DxDataGrid,
@@ -189,13 +173,8 @@ import {
   MenuOutlined,
 } from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
-import { any } from "vue-types";
-import themes from "devextreme/ui/themes";
-
-
 export default defineComponent({
   props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
-
   components: {
     MenuOutlined,
     SearchOutlined,
@@ -220,11 +199,6 @@ export default defineComponent({
       reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
     };
   },
-  // computed: {
-  //   validated() {
-  //     return this.validateEmail(this.formState.email);
-  //   },
-  // },
   setup(props, { emit }) {
     const visible = ref<boolean>(false);
     const statusMailValidate = ref<boolean>(true);
@@ -252,7 +226,7 @@ export default defineComponent({
       groupCode: "",
       groupName: "",
       facilityBusinesses: [],
-      screenRoleGroups: {
+      screenRoleGroups: [{
         id: "",
         name: "",
         type: "",
@@ -265,20 +239,18 @@ export default defineComponent({
         updatedBy: "",
         ip: "",
         active: true
-      }
-
-
+      }]
       ,
     });
 
     const handleChange = (value: any) => {
-      console.log(`selected ${value}`);
+           
     };
     const handleBlur = () => {
-      console.log("blur");
+      
     };
     const handleFocus = () => {
-      console.log("focus");
+     
     };
     const showModal = () => {
       visible.value = true;
@@ -295,13 +267,6 @@ export default defineComponent({
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
 
-    // const validateMessages = {
-    //   required: true,
-    //   types: {
-    //     email: "이메일 형식이 정확하지 않습니다",
-    //   },
-    // };
-
     //Update info user
     const {
       mutate: updateUser,
@@ -309,39 +274,33 @@ export default defineComponent({
       onError: onErrorUpdate
     } = useMutation(mutations.updateUser);
     onDoneUpdate((e) => {
-      message.success(`Update success!`);
+      message.success(`업데이트 완료!`);
       emit("closePopup", false)
     })
     onErrorUpdate(e => {
       message.error(e.message);
     })
-
     const confirmUpdate = () => {
-      console.log('1');
-
       if (statusMailValidate.value == true) {
-        console.log('2');
         let dataUpdate = {
-          id: props.data.id,
+          id: props.idRowEdit,
           input: {
-            name: formState.value.name,            
-            screenRoleGroupIds: [formState.value.id],     
+            name: formState.value.name,
+            screenRoleGroupIds: checkedNames.value,
             mobilePhone: formState.value.mobilePhone,
             email: formState.value.email,
             active: formState.value.active,
           }
-
         }
         updateUser(dataUpdate);
-        console.log(dataUpdate, "dataUpdate");
       } else {
-        console.log('2');
         message.error(`이메일형식이 정확하지 않습니다.`)
         var Url = document.getElementById("email") as HTMLInputElement;
         Url.select()
       }
     }
 
+   
 
     //Send mail 
     const {
@@ -349,7 +308,6 @@ export default defineComponent({
       onDone: doneSendGmail,
       onError: errorSendGmail
     } = useMutation(mutations.sendEmailToResetUserPassword);
-
     errorSendGmail(e => {
       message.error(e.message)
     })
@@ -361,30 +319,20 @@ export default defineComponent({
       let dataCallSendEmail = {
         id: props.idRowEdit,
       }
-      console.log(dataCallSendEmail);
-
+      
       sendGmail(dataCallSendEmail);
     }
-
-
     const dataQuery = ref();
     let trigger = ref<boolean>(false);
     watch(
       () => props.modalStatus,
       (newValue, old) => {
         if (newValue) {
-          // visible.value = newValue;
           dataQuery.value = { id: props.idRowEdit };
           trigger.value = true;
-
-          refetch();
-        } else {
-          // visible.value = newValue;
-          trigger.value = false;
-        }
+        } 
       }
     );
-
     const validateEmail = (e: any) => {
       let checkMail = e.target.value.match(
         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -404,7 +352,6 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
-
     watch(result, (value) => {
       if (value && value.getUser) {
         formState.value.id = value.getUser.id;
@@ -424,18 +371,49 @@ export default defineComponent({
         formState.value.facilityBusinesses = value.getUser.facilityBusinesses;
         formState.value.screenRoleGroups = value.getUser.screenRoleGroups;
         formState.value.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
+        originData.value.types = [value.getUser.type]
+        triggerSearchRoleGroup.value = true
+
+        let arrSelect: any = []
+        formState.value.screenRoleGroups.map((e) => {
+          arrSelect.push(e.id)
+        })
+        checkedNames.value = arrSelect
 
       }
-
+    });
+    const onFinish = (values: any) => {
+     
+    };
+    const triggerSearchRoleGroup = ref<boolean>(false);
+    const originData = ref({
+      page: 1,
+      rows: 20,
+      types: ["m"],
     });
 
+    // querie searchScreenRoleGroups
+    const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
+      queries.searchScreenRoleGroups, originData,
+      () => ({
+        enabled: triggerSearchRoleGroup.value,
+        fetchPolicy: "no-cache",
+      })
+    );
 
-    const onFinish = (values: any) => {
-      console.log("Success:", values);
-    };
+    const arrData = ref()
+    watch(resRoleGroup, (value: any) => {
+      if (value && value.searchScreenRoleGroups) {
+        arrData.value = value.searchScreenRoleGroups.datas
+      }
+    });
 
+   
+
+    const checkedNames = ref([])
 
     return {
+      checkedNames,
       labelCol,
       wrapperCol,
       layout,
@@ -454,12 +432,13 @@ export default defineComponent({
       sendGmail,
       sendMessToGmail,
       confirmUpdate,
-      statusMailValidate
+      statusMailValidate,
+      arrData,
+      
     };
   },
   methods: {
     onlyNumber(e: any) {
-      //console.log($event.keyCode); //keyCodes value
       let keyCode = e.keyCode ? e.keyCode : e.which;
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
         // 46 is dot
@@ -487,17 +466,10 @@ export default defineComponent({
     closePopupEmail() {
       this.visible = false
     },
-    // closeModal() {
-    //   this.isShow = false;
-    // },
+
     triggerToggleEvent(value: any) {
       this.toggleActive = value;
     },
-    // validateEmail(email: any): any {
-    //   const re =
-    //     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    //   return re.test(email);
-    // },
 
   },
 });
@@ -582,7 +554,6 @@ export default defineComponent({
 
 .email-input .ant-form-item-label {
   white-space: normal;
-
   display: inline-block;
   text-align: center;
   line-height: 16px;
@@ -612,8 +583,12 @@ export default defineComponent({
 .ant-popover-arrow {
   display: none;
 }
+
+.table-scroll {
+  height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
 </style>
 
-function emit(arg0: string, arg1: boolean) {
-  throw new Error("Function not implemented.");
-}
+
