@@ -161,33 +161,19 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
   },
-  created() {
-    // console.log("createUser", this.createUser);
-  },
+ 
   data() {
     return {
-      // isShow: ref<boolean>(false),
+      
       dataMode: {
         color: "",
       },
     };
   },
-  // computed: {
-  //   validated() {
-  //     return this.validateEmail(this.createUser.email);
-  //   },
-  // },
+  
 
   setup(props, { emit }) {
-    const userCreated = reactive({
-      type: "r",
-      username: "",
-      name: "",
-      salesRepresentativeId: null,
-      screenRoleGroupIds: ["CONFIG_ACCOUNTING", "CONFIG_ACCOUNTING_CODE"],
-      mobilePhone: "",
-      email: "",
-    });
+    
     const ScreenRoleGroup = reactive({
       id: "",
       name: "",
@@ -240,16 +226,7 @@ export default defineComponent({
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
 
-    // const validateMessages = {
-    //   required: "${label} is required!",
-    //   types: {
-    //     email: "이메일 형식이 정확하지 않습니다",
-    //     number: "Numeric only!",
-    //   },
-    //   number: {
-    //     range: "${label} must be between ${min} and ${max}",
-    //   },
-    // };
+    
 
     const changeValueType = (data: any) => {
       triggerGroup.value = true;
@@ -306,9 +283,7 @@ export default defineComponent({
         active: true
       }
     });
-    // const onFinish = (values: any) => {
-    //   console.log("Success:", values);
-    // };
+   
 
 
     const findGroups = reactive({
@@ -480,9 +455,7 @@ export default defineComponent({
       layout,
       formTailLayout,
       confirm,
-      formState,
-      // onFinish,
-      // validateMessages,
+      formState,      
       isShow,
       showModal,
       handleSuccsess,
@@ -492,8 +465,7 @@ export default defineComponent({
       handleBlur,
       handleChange,
       createUser,
-      ScreenRoleGroup,
-      userCreated,
+      ScreenRoleGroup,      
       changeValueType,
       checkDuplicateUsername,
       statusMailValidate,
@@ -526,12 +498,7 @@ export default defineComponent({
 
     closeModal() {
       this.isShow = false;
-    },
-    // validateEmail(email: any): any {
-    //   const re =
-    //     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    //   return re.test(email);
-    // },
+    },   
   },
 });
 </script>
