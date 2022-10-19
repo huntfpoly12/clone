@@ -133,11 +133,11 @@
                 </DxDataGrid>
                 <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
                 <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
-                    :idRowEdit="idRowEdit" typeHistory="bf-210 -pop" title="회원관리 [ bf-210 –pop ]" />
+                    :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idRowEdit" typeHistory="bf-210" />
+                    :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
                 <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
-                    title="로그인이력 [ cm-000-popLogin ]" :idRow="rowChoose" />
+                    title="로그인이력" :idRow="rowChoose" />
             </div>
         </div>
     </a-spin>
