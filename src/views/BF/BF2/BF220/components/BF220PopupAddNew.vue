@@ -86,6 +86,7 @@ import { message } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
+import { AdminScreenRole, ScreenRole, ScreenRoleInfo, ScreenRoleTool } from '@bankda/jangbuda-common';
 export default defineComponent({
     props: ['modalStatus'],
     components: {
@@ -96,6 +97,17 @@ export default defineComponent({
         DxColumn
     },
     setup(props, { emit }) {
+
+       
+       
+        const info = new ScreenRoleInfo('00c00000-0000ffff-0000000');
+        const tool = ScreenRoleTool.createByScreenRoleInfo(info);
+        // Work screen role (업무 화면역할)
+        const tool2 = ScreenRoleTool.createWorkScreenRoleTool();
+        const valuex = tool.toString();
+        const valuey = tool2.toString();
+    
+        console.log(valuex,valuey);
         const dataSource = ref([])
         const spinning = ref<boolean>(false);
         const layout = {
@@ -209,6 +221,24 @@ export default defineComponent({
             }
             createScreenRole(dataCall)
         }
+
+        const setModalVisible = ()=>{
+            emit('closePopupAdd', false)
+        }
+
+        const closeModalEdit = ()=>{
+            emit('closePopupEdit', false)
+        }
+
+        const getColorTag = (data: string)=>{
+            if (data === "정상") {
+                return "#108ee9";
+            } else if (data === "해지") {
+                return "#cd201f";
+            } else if (data === "전체") {
+                return "grey";
+            }
+        }
         return {
             createScrenRole,
             spinning,
@@ -226,24 +256,10 @@ export default defineComponent({
             confirmPopup,
             confirm,
             handleOkConfirm,
+            setModalVisible,
+            closeModalEdit,
+            getColorTag
         }
-    },
-    methods: {
-        setModalVisible() {
-            this.$emit('closePopupAdd', false)
-        },
-        closeModalEdit() {
-            this.$emit('closePopupEdit', false)
-        },
-        getColorTag(data: string) {
-            if (data === "정상") {
-                return "#108ee9";
-            } else if (data === "해지") {
-                return "#cd201f";
-            } else if (data === "전체") {
-                return "grey";
-            }
-        },
     }
 })
 </script>
