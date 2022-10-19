@@ -161,19 +161,19 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
   },
- 
+
   data() {
     return {
-      
+
       dataMode: {
         color: "",
       },
     };
   },
-  
+
 
   setup(props, { emit }) {
-    
+
     const ScreenRoleGroup = reactive({
       id: "",
       name: "",
@@ -192,12 +192,12 @@ export default defineComponent({
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
-    const handleChange = (value: any) => { 
-      
+    const handleChange = (value: any) => {
+
     };
-    const handleBlur = () => { 
+    const handleBlur = () => {
     };
-    const handleFocus = () => { 
+    const handleFocus = () => {
     };
     const data = props.data;
     const isShow = ref<boolean>(false);
@@ -205,7 +205,7 @@ export default defineComponent({
     const showModal = () => {
       isShow.value = true;
     };
-    const handleSuccsess = (e: MouseEvent) => { 
+    const handleSuccsess = (e: MouseEvent) => {
       isShow.value = false;
     };
 
@@ -217,7 +217,7 @@ export default defineComponent({
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
     };
-    const focus = () => { 
+    const focus = () => {
     };
 
     const dateFormat = "YYYY-MM-DD";
@@ -226,7 +226,7 @@ export default defineComponent({
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
 
-    
+
 
     const changeValueType = (data: any) => {
       triggerGroup.value = true;
@@ -240,7 +240,7 @@ export default defineComponent({
           type: value
         }
         originData.value.types = value
-        reqGroup(dataCall) 
+        reqGroup(dataCall)
 
         reqRoleGroup()
       }, 100);
@@ -283,7 +283,7 @@ export default defineComponent({
         active: true
       }
     });
-   
+
 
 
     const findGroups = reactive({
@@ -349,7 +349,7 @@ export default defineComponent({
     );
 
     const arrData = ref()
-    watch(resRoleGroup, (value: any) => { 
+    watch(resRoleGroup, (value: any) => {
       if (value && value.searchScreenRoleGroups) {
         arrData.value = value.searchScreenRoleGroups.datas
       }
@@ -366,7 +366,7 @@ export default defineComponent({
     resGroup(e => {
 
       let option: any = []
-      e.data.findGroups.map((val: any) => { 
+      e.data.findGroups.map((val: any) => {
         option.push({
           label: val.groupCode + '  ' + val.groupName,
           value: val.groupId
@@ -455,7 +455,7 @@ export default defineComponent({
       layout,
       formTailLayout,
       confirm,
-      formState,      
+      formState,
       isShow,
       showModal,
       handleSuccsess,
@@ -465,7 +465,7 @@ export default defineComponent({
       handleBlur,
       handleChange,
       createUser,
-      ScreenRoleGroup,      
+      ScreenRoleGroup,
       changeValueType,
       checkDuplicateUsername,
       statusMailValidate,
@@ -498,7 +498,7 @@ export default defineComponent({
 
     closeModal() {
       this.isShow = false;
-    },   
+    },
   },
 });
 </script>
