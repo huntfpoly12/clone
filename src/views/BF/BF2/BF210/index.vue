@@ -68,7 +68,7 @@
                             <a-input style="width: 150px" v-model:value="dataSearch.name" />
                         </a-col>
                         <a-col style="display: flex; align-items: center">
-                            <a-checkbox v-model:checked="checkStatus.checkBox1">
+                            <a-checkbox v-model:checked="checkStatus.checkBox1" value="true">
                                 <a-tag :color="getAbleDisable(true)">이용중</a-tag>
                             </a-checkbox>
                             <a-checkbox v-model:checked="checkStatus.checkBox2">

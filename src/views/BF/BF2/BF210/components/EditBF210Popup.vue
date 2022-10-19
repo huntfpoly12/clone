@@ -614,6 +614,4 @@ export default defineComponent({
 }
 </style>
 
-function emit(arg0: string, arg1: boolean) {
-  throw new Error("Function not implemented.");
-}
+
