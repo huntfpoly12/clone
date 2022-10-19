@@ -94,6 +94,7 @@
                     <p><strong>비밀번호 설정 이메일</strong></p>
                     <p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
                     <p>계속 진행하시겠습니까?</p>
+
                   </a-col>
                 </a-row>
                 <template #footer>
@@ -110,10 +111,15 @@
         <div style="position: relative">
           <div class="overlay" v-if="formState.type=='c'"></div>
           <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
-            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll"> 
-            <DxSelection data-field="active" mode="multiple" />
+            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll">
 
-            <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
+            <DxColumn caption="" data-field="id" cell-template="active" css-class="cell-center"/>
+            <template #active="{data}">
+              <div style="width: 100%; text-align: center;"> 
+                <input type="checkbox" :value="data.data.id" v-model="checkedNames" />
+              </div>
+            </template>
+            <DxColumn data-field="id" caption="코드" :width="200" />
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
@@ -220,7 +226,7 @@ export default defineComponent({
       groupCode: "",
       groupName: "",
       facilityBusinesses: [],
-      screenRoleGroups: {
+      screenRoleGroups: [{
         id: "",
         name: "",
         type: "",
@@ -233,18 +239,18 @@ export default defineComponent({
         updatedBy: "",
         ip: "",
         active: true
-      }
+      }]
       ,
     });
 
     const handleChange = (value: any) => {
-      console.log(`selected ${value}`);
+           
     };
     const handleBlur = () => {
-      console.log("blur");
+      
     };
     const handleFocus = () => {
-      console.log("focus");
+     
     };
     const showModal = () => {
       visible.value = true;
@@ -260,6 +266,7 @@ export default defineComponent({
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
     let confirm = ref<string>("");
+
     //Update info user
     const {
       mutate: updateUser,
@@ -267,7 +274,7 @@ export default defineComponent({
       onError: onErrorUpdate
     } = useMutation(mutations.updateUser);
     onDoneUpdate((e) => {
-      message.success(`Update success!`);
+      message.success(`업데이트 완료!`);
       emit("closePopup", false)
     })
     onErrorUpdate(e => {
@@ -276,10 +283,10 @@ export default defineComponent({
     const confirmUpdate = () => {
       if (statusMailValidate.value == true) {
         let dataUpdate = {
-          id: props.data.id,
+          id: props.idRowEdit,
           input: {
             name: formState.value.name,
-            screenRoleGroupIds: [formState.value.id],
+            screenRoleGroupIds: checkedNames.value,
             mobilePhone: formState.value.mobilePhone,
             email: formState.value.email,
             active: formState.value.active,
@@ -292,6 +299,9 @@ export default defineComponent({
         Url.select()
       }
     }
+
+   
+
     //Send mail 
     const {
       mutate: sendGmail,
@@ -309,7 +319,7 @@ export default defineComponent({
       let dataCallSendEmail = {
         id: props.idRowEdit,
       }
-      console.log(dataCallSendEmail);
+      
       sendGmail(dataCallSendEmail);
     }
     const dataQuery = ref();
@@ -320,10 +330,7 @@ export default defineComponent({
         if (newValue) {
           dataQuery.value = { id: props.idRowEdit };
           trigger.value = true;
-          refetch();
-        } else {
-          trigger.value = false;
-        }
+        } 
       }
     );
     const validateEmail = (e: any) => {
@@ -336,6 +343,7 @@ export default defineComponent({
         statusMailValidate.value = true;
       }
     }
+
     const { result, refetch } = useQuery(
       queries.getUser,
       dataQuery,
@@ -366,10 +374,16 @@ export default defineComponent({
         originData.value.types = [value.getUser.type]
         triggerSearchRoleGroup.value = true
 
+        let arrSelect: any = []
+        formState.value.screenRoleGroups.map((e) => {
+          arrSelect.push(e.id)
+        })
+        checkedNames.value = arrSelect
+
       }
     });
     const onFinish = (values: any) => {
-      console.log("Success:", values);
+     
     };
     const triggerSearchRoleGroup = ref<boolean>(false);
     const originData = ref({
@@ -392,11 +406,14 @@ export default defineComponent({
       if (value && value.searchScreenRoleGroups) {
         arrData.value = value.searchScreenRoleGroups.datas
       }
-      console.log(arrData);
-
     });
 
+   
+
+    const checkedNames = ref([])
+
     return {
+      checkedNames,
       labelCol,
       wrapperCol,
       layout,
@@ -416,7 +433,8 @@ export default defineComponent({
       sendMessToGmail,
       confirmUpdate,
       statusMailValidate,
-      arrData
+      arrData,
+      
     };
   },
   methods: {
@@ -565,6 +583,7 @@ export default defineComponent({
 .ant-popover-arrow {
   display: none;
 }
+
 .table-scroll {
   height: 300px;
   overflow-y: auto;
