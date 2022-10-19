@@ -22,7 +22,7 @@
                   <search-outlined :size="14" class="ant-select-suffix" />
                 </template>
               </a-select> -->
-              <a-select v-model:value="formState.groupCode" label-in-value style="width: 120px" :options="selectSearch"
+              <a-select v-model:value="formState.groupCode" style="width: 120px" :options="selectSearch"
                 @change="handleChange"></a-select>
 
             </a-form-item>
@@ -36,10 +36,10 @@
             <a-form-item label="회원종류">
               <a-select style="width: 10px" v-model:value="formState.type" option-label-prop="children"
                 class="select_disable" @change="changeValueType">
-                <a-select-option :value="2" label="중간매니저">
+                <a-select-option value="2" label="중간매니저">
                   <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
                 </a-select-option>
-                <a-select-option :value="3" label="담당매니저">
+                <a-select-option value="3" label="담당매니저">
                   <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
                 </a-select-option>
                 <a-select-option value="r" label="영업자">
@@ -94,7 +94,8 @@
 
         <div style="position: relative">
           <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
-            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll">
+            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll"
+            @selection-changed="onSelectionChanged">
             <DxPaging :page-size="0" />
             <DxSelection data-field="active" mode="multiple" />
 
@@ -109,16 +110,15 @@
                 <menu-outlined />
               </div>
             </template>
-
-            <template #footer>
-              <div style="text-align: center;">
-                <a-button @click="setModalVisible()">그냥 나가기</a-button>
-                <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
-              </div>
-            </template>
           </DxDataGrid>
         </div>
       </div>
+      <template #footer>
+        <div style="text-align: center;">
+          <a-button @click="setModalVisible()">그냥 나가기</a-button>
+          <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
+        </div>
+      </template>
     </a-modal>
   </div>
 </template>
@@ -179,6 +179,7 @@ export default defineComponent({
   // },
 
   setup(props, { emit }) {
+    const dataGrid = {};
     const userCreated = reactive({
       type: "r",
       username: "",
@@ -206,12 +207,12 @@ export default defineComponent({
     const filterOption = (input: string, option: any) => {
       return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
-    const handleChange = (value: any) => { 
-      
+    const handleChange = (value: any) => {
+
     };
-    const handleBlur = () => { 
+    const handleBlur = () => {
     };
-    const handleFocus = () => { 
+    const handleFocus = () => {
     };
     const data = props.data;
     const isShow = ref<boolean>(false);
@@ -219,7 +220,7 @@ export default defineComponent({
     const showModal = () => {
       isShow.value = true;
     };
-    const handleSuccsess = (e: MouseEvent) => { 
+    const handleSuccsess = (e: MouseEvent) => {
       isShow.value = false;
     };
 
@@ -231,7 +232,7 @@ export default defineComponent({
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
     };
-    const focus = () => { 
+    const focus = () => {
     };
 
     const dateFormat = "YYYY-MM-DD";
@@ -263,7 +264,7 @@ export default defineComponent({
           type: value
         }
         originData.value.types = value
-        reqGroup(dataCall) 
+        reqGroup(dataCall)
 
         reqRoleGroup()
       }, 100);
@@ -374,7 +375,7 @@ export default defineComponent({
     );
 
     const arrData = ref()
-    watch(resRoleGroup, (value: any) => { 
+    watch(resRoleGroup, (value: any) => {
       if (value && value.searchScreenRoleGroups) {
         arrData.value = value.searchScreenRoleGroups.datas
       }
@@ -391,13 +392,12 @@ export default defineComponent({
     resGroup(e => {
 
       let option: any = []
-      e.data.findGroups.map((val: any) => { 
+      e.data.findGroups.map((val: any) => {
         option.push({
           label: val.groupCode + '  ' + val.groupName,
           value: val.groupId
         })
       })
-      console.log(option, "value");
       selectSearch.value = option
     })
     watch(resGroup, (value: any) => {
@@ -447,22 +447,29 @@ export default defineComponent({
       emit("closePopup", false)
       message.success("신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!")
     })
-    const creactUserNew = () => {
-      if (statusMailValidate.value == true) {
-        let dataCallApiCreate = {
-          companyId: props.data.companyId,
-          id: props.data.id,
-          input: {
-            name: formState.value.name,
-            screenRoleGroup: {
-              id: formState.value.id,
-            },
 
-            mobilePhone: formState.value.mobilePhone,
-            email: formState.value.email,
-            active: formState.value.active,
-          }
+    var idRoleGroup: any = [];
+    const onSelectionChanged = (selectedRows: any) => {
+      idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
+    };
+
+    const creactUserNew = () => {
+
+      var RoleGroup = idRoleGroup.map((row: any) => {
+        return row.id;
+      })
+      if (statusMailValidate.value == true) {
+        let dataCallApiCreate = { input : {
+          type: (formState.value.type == '2' || formState.value.type == '3') ? 'm' : formState.value.type,
+          name: formState.value.name,
+          username: formState.value.username,
+          screenRoleGroupIds: RoleGroup,
+          mobilePhone: formState.value.mobilePhone,
+          email: formState.value.email,
+          groupId: formState.value.groupCode,
+          managerGrade: (formState.value.type == '2' || formState.value.type == '3') ? parseInt(formState.value.type) : null,
         }
+      }
         creactUser(dataCallApiCreate)
       } else {
         message.error(`이메일형식이 정확하지 않습니다.`)
@@ -498,7 +505,8 @@ export default defineComponent({
       checkDuplicateUsername,
       statusMailValidate,
       validateEmail,
-      creactUserNew
+      creactUserNew,
+      onSelectionChanged
     };
   },
 
