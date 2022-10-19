@@ -99,8 +99,8 @@
                     <template #check-box="{ data }">
                         <a-tag :color="getAbleDisable(data.value)">{{ data.value == true ? "이용중" : "이용중지" }}</a-tag>
                     </template>
-                    <DxColumn data-field="id" caption="회원ID" css-class="cell-center" />
-                    <DxColumn data-field="username" caption="회원명" />
+                    <DxColumn data-field="username" caption="회원ID" css-class="cell-center" />
+                    <DxColumn data-field="name" caption="회원명" />
                     <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" />
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)">

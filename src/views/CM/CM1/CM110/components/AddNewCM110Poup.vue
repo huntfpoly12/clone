@@ -249,8 +249,7 @@ export default defineComponent({
 			checkUserName,
 			validateCharacter,
 		};
-	}
-	,
+	},
 	methods: {
 		setModalVisible() {
 			this.$emit('closePopup', false)

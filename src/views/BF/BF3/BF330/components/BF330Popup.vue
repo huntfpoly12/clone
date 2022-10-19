@@ -10,7 +10,7 @@
             </template>
             <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
                 <a-collapse v-model:activeKey="activeKey" accordion>
-                    <a-collapse-panel key="1" header="이용서비스" class="popup-scroll">
+                    <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
                         <a-form :label-col="labelCol" style="height: 500px">
                             <a-row>
                                 <a-col :span="10">
