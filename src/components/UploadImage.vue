@@ -142,6 +142,7 @@ export default defineComponent({
                 return;
             }
             const formData = new FormData();
+            formData.append("category", "SubscriptionRequestCompanyLicense");
             formData.append("file", file);
             fileName.value = file.name;
             try {
@@ -196,7 +197,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .fileName {
     display: flex;
     align-items: center;
@@ -233,28 +234,7 @@ export default defineComponent({
     font-size: 10pt;
 }
 
-.img-preview {
-    margin-top: 20px;
-    position: relative;
-    width: 100%;
-    padding-top: 142%;
 
-    img {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-    }
-}
-
-.imgPreview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
 .title {
     padding-right: 8px;
