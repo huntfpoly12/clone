@@ -142,6 +142,7 @@ export default defineComponent({
                 return;
             }
             const formData = new FormData();
+            formData.append("category", "SubscriptionRequestCompanyLicense");
             formData.append("file", file);
             fileName.value = file.name;
             try {
