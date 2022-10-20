@@ -40,7 +40,7 @@
                             <a-input style="width: 120px" v-model:value="dataSearchDef.code" />
                         </a-col>
                         <a-col>
-                            <label class="lable-item">상호:</label>select
+                            <label class="lable-item">상호:</label>
                             <a-input style="width: 120px" v-model:value="dataSearchDef.name" />
                         </a-col>
                         <a-col>
@@ -61,6 +61,7 @@
                             <ListManagerDropdown v-model:selected="dataSearchDef.manageUserId"/>
                         </a-col>
                         <a-col>
+                            <label class="lable-item">영업자명 :</label>
                             <ListSalesDropdownVue v-model:selected="dataSearchDef.salesRepresentativeId"/>
                         </a-col>
                         <!-- <a-col>
@@ -73,7 +74,7 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id" @exporting="onExporting">
-                    <DxSelection mode="multiple" />
+                    <!-- <DxSelection mode="multiple" /> -->
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="code" caption="사업자코드"/>
