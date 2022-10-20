@@ -48,7 +48,7 @@
                     <a-col :span="24" class="title-modal" style="margin-top: 10px;">
                         <span>권한그룹메뉴별 권한</span>
                     </a-col>
-                    <a-col :span="20">
+                    <a-col :span="24">
                         <a-spin :spinning="spinning" size="large">
                             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id"
                                 class="table-sevice">
