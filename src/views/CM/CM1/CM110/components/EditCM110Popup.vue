@@ -163,7 +163,7 @@ export default defineComponent({
             onError: errorSendGmail
         } = useMutation(mutations.sendEmail);
         onDoneUpdate((e) => {
-            message.success(`Update success!`);
+            message.success(`업데이트 완료되었습니다!`);
             emit("closePopup", false)
         })
         onErrorUpdate(e => {

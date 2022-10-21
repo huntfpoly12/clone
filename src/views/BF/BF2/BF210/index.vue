@@ -212,7 +212,7 @@ export default defineComponent({
         let triggersearching = ref<boolean>(false);
         const spinning = ref<boolean>(true);
         const checkStatus = ref({
-            checkBox1: false,
+            checkBox1: true,
             checkBox2: false
         })
         const rowChoose = ref()
