@@ -11,6 +11,7 @@ import getMyCompanyAuthentications from "./getMyCompanyAuthentications";
 import getWithholdingConfigPayItemsLogs from "./getWithholdingConfigPayItemsLogs";
 import getScreenRoleGroupLogs from "./getScreenRoleGroupLogs";
 import searchPublicInstitutions from "./searchPublicInstitutions";
+import getSaleRequestContact from "./getSaleRequestContact";
 
 const queries = {
   getListSale: getListSale,
@@ -26,6 +27,7 @@ const queries = {
   getWithholdingConfigPayItemsLogs:getWithholdingConfigPayItemsLogs,
   getScreenRoleGroupLogs :getScreenRoleGroupLogs,
   searchPublicInstitutions:searchPublicInstitutions,
+  getSaleRequestContact:getSaleRequestContact,
 };
 
 export default queries;
