@@ -68,7 +68,7 @@
                             <a-input style="width: 150px" v-model:value="dataSearch.name" />
                         </a-col>
                         <a-col style="display: flex; align-items: center">
-                            <a-checkbox v-model:checked="checkStatus.checkBox1">
+                            <a-checkbox v-model:checked="checkStatus.checkBox1" value="true">
                                 <a-tag :color="getAbleDisable(true)">이용중</a-tag>
                             </a-checkbox>
                             <a-checkbox v-model:checked="checkStatus.checkBox2">
@@ -209,6 +209,7 @@ export default defineComponent({
         };
     },
     setup() {
+        let triggersearching = ref<boolean>(false);
         const spinning = ref<boolean>(true);
         const checkStatus = ref({
             checkBox1: false,
@@ -217,7 +218,7 @@ export default defineComponent({
         const rowChoose = ref()
         const dataSearch = ref({
             page: 1,
-            rows: 1000,
+            rows: 10,
             type: "",
             groupCode: "",
             groupName: "",
@@ -227,8 +228,8 @@ export default defineComponent({
         var idRowEdit = ref<number>(0)
         const originData = ref({
             page: 1,
-            rows: 1000,
-            type: "m",
+            rows: 10,
+            type: "",
             groupCode: "",
             groupName: "",
             username: "",
@@ -239,12 +240,15 @@ export default defineComponent({
         }, 1000);
         const dataSource = ref([])
         const { refetch: refetchData, onResult } = useQuery(queries.searchUsers, originData, () => ({
+            enabled: triggersearching.value,
             fetchPolicy: "no-cache",
         }))
         onResult((res) => {
             dataSource.value = res.data.searchUsers.datas
         })
+
         const searching = () => {
+
             spinning.value = !spinning.value;
             let dataNew = ref()
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
@@ -280,8 +284,8 @@ export default defineComponent({
                     name: dataSearch.value.name,
                 }
             }
-
-            refetchData(dataNew.value)
+            originData.value = dataNew.value
+            triggersearching.value = true             
             setTimeout(() => {
                 spinning.value = !spinning.value;
             }, 1000);
@@ -330,7 +334,7 @@ export default defineComponent({
             this.popupData = data;
         },
         modalLogin(data: any) {
-            console.log(data);
+
             this.rowChoose = data.key
             this.modalLoginStatus = true;
             this.popupData = data;
