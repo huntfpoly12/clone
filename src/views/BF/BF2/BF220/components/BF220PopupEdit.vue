@@ -51,9 +51,9 @@
                     </a-col>
                     <a-col :span="24">
                         <a-spin :spinning="spinning" size="large">
-                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id"
+                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="enumKey"
                                 class="table-sevice">
-                                <DxColumn data-field="id" caption="메뉴" :fixed="true" />
+                                <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{data}" class="custom-action">
                                     <div class="custom-action">
@@ -99,22 +99,12 @@ export default defineComponent({
         DxColumn
     },
     setup(props, { emit }) {
-        const x = new ScreenRoleInfo('00000050');
-        console.log(x.hasReadScreenRole(AdminScreenRole.SALES_REPRESENTATIVE_MANAGE),x.hasWriteScreenRole(AdminScreenRole.SERVICE_MANAGE),'ffffff');
-        // const tool = ScreenRoleTool.createAdminScreenRoleTool();
-        // tool.addReadScreenRole(AdminScreenRole.SALES_REPRESENTATIVE_MANAGE);
-        // tool.addReadScreenRole(AdminScreenRole.SERVICE_MANAGE);
-        // const value = tool.toString();
-        // console.log(value,tool,'xxxxxx');
-        const dataSource = ref([])
+
+        const dataSource = ref(AdminScreenRole.all())
         const spinning = ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
-        };
-        const formTailLayout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 16, },
         };
         const visible = ref<boolean>(false);
         const triggersTable = ref(false)
@@ -143,32 +133,32 @@ export default defineComponent({
             }
         }
 
-        const getDataTable = ref({
-            page: 1,
-            rows: 1000,
-            types: ["m"]
-        })
-        const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
-            enabled: triggersTable.value,
-            fetchPolicy: "no-cache",
-        }))
-        watch(() => props.modalStatus, (value) => {
-            dataCallApiDetail.value = {
-                id: props.idRowIndex
-            }
-            setTimeout(() => {
-                if (value == true) {
-                    spinning.value = true
-                    triggersGetData.value = true
-                }
-            }, 500);
-        })
-        watch(resListTable, (value) => {
-            dataSource.value = value.searchScreenRoleGroups.datas
-            setTimeout(() => {
-                spinning.value = false;
-            }, 500);
-        });
+        // const getDataTable = ref({
+        //     page: 1,
+        //     rows: 1000,
+        //     types: ["m"]
+        // })
+        // const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
+        //     enabled: triggersTable.value,
+        //     fetchPolicy: "no-cache",
+        // }))
+        // watch(() => props.modalStatus, (value) => {
+        //     dataCallApiDetail.value = {
+        //         id: props.idRowIndex
+        //     }
+        //     setTimeout(() => {
+        //         if (value == true) {
+        //             spinning.value = true
+        //             triggersGetData.value = true
+        //         }
+        //     }, 500);
+        // })
+        // watch(resListTable, (value) => {
+        //     dataSource.value = value.searchScreenRoleGroups.datas
+        //     setTimeout(() => {
+        //         spinning.value = false;
+        //     }, 500);
+        // });
 
         //Creat new group roll
         const {
@@ -176,6 +166,7 @@ export default defineComponent({
             onDone: editDone,
             onError: editError
         } = useMutation(mutations.updateScreenRoleGroup);
+
         editDone(e => {
             message.success('그룹이 생성되었습니다.')
             emit("closePopupEdit", false)
@@ -203,14 +194,10 @@ export default defineComponent({
 
         watch(resDataDetail, (value) => {
             dataRes.value = value.getScreenRoleGroup
-            setTimeout(() => {
-                getDataTable.value.types = [value.getScreenRoleGroup.type]
-                triggersTable.value = true
-            }, 500);
         });
 
         const setReadWrite = (data: any,type: string)=>{
-
+            // waiting APi...
         }
         
         return {
@@ -222,8 +209,6 @@ export default defineComponent({
             wrapperCol,
             dataRes,
             layout,
-            formTailLayout,
-            value1: ref<Dayjs>(),
             visible,
             confirmPopup,
             confirm,

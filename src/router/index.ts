@@ -5,6 +5,7 @@ import DefaultLayout from '../layouts/DefaultLayout.vue'
 import RquestContract from "../views/requestContract/index.vue"
 import ResetPassword from "../views/ResetPassword.vue"
 import ChangePassword from "../views/ChangePassword.vue"
+import NotFound from "../views/NotFound.vue"
 const routes = [
   { path: "/", component: DefaultLayout, 
     meta: {
@@ -94,7 +95,8 @@ const routes = [
         component: () => import('../views/CM/CM1/CM130/index.vue')
       }
     ]
-  }
+  },
+  { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
 ];
 
 const router = createRouter({
