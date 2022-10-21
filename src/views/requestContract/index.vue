@@ -212,7 +212,7 @@
                             <p class="red">⁙ 운영사업</p>
                         </div>
 
-                        <DxDataGrid id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
+                        <DxDataGrid id="gridContainer" disable :data-source="valueFacilityBusinesses" :show-borders="true"
                             :selected-row-keys="selectedItemKeys">
                             <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                 :allow-deleting="true" template="button-template" mode="cell">
@@ -246,7 +246,7 @@
 
                         <div class="form-item">
                             <label class="red">장기요양기관등록번호 :</label>
-                            <a-input placeholder="1234567898"
+                            <a-input placeholder="1234567898" @change="validateNumber('longTermCareInstitutionNumber')"
                                 v-model:value="contractCreacted.longTermCareInstitutionNumber" />
                         </div>
 
@@ -283,18 +283,15 @@
 
                         <div class="form-item">
                             <label>서비스 시작년월 :</label>
-                            <div style="width: 170px">
-                                <CustomDatepicker v-if="contractCreacted.startYearMonthHolding == ''"
-                                    @valueDateChange="changeValueDateHoding" :styleDate="'m'" />
-                                <CustomDatepicker v-else :valueDate="contractCreacted.startYearMonthHolding"
-                                    @valueDateChange="changeValueDateHoding" :styleDate="'m'" />
-                            </div>
+                            <a-date-picker style="width: 170px" v-model:value="contractCreacted.startYearMonthHolding"
+                                :format="monthFormat" placeholder="" picker="month" />
                         </div>
 
                         <div class="form-item">
                             <label>직 원 수:</label>
                             <a-input placeholder="장기요양기관등록번호" style="width: 170px"
-                                v-model:value="contractCreacted.capacityHolding" />
+                                v-model:value="contractCreacted.capacityHolding"
+                                @change="validateNumber('capacityHolding')" />
                         </div>
                         <div class="form-item">
                             <label>부가서비스 :</label>
@@ -507,6 +504,7 @@ export default {
         },
     },
     setup() {
+        const monthFormat = 'YYYY/MM';
         const contractCreacted = reactive({
             terms: true,
             personalInfo: true,
@@ -659,6 +657,7 @@ export default {
             fileName,
             fileNamestep,
             removeImgStep,
+            monthFormat
         };
     },
     watch: {
@@ -783,6 +782,16 @@ export default {
 
         passwordComparison() {
             return this.password;
+        },
+        validateNumber(key) {
+            if (key == 'capacityHolding') {
+                let e = this.contractCreacted.capacityHolding
+                this.contractCreacted.capacityHolding = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            }
+            if (key == 'longTermCareInstitutionNumber') {
+                let e = this.contractCreacted.longTermCareInstitutionNumber
+                this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            }
         },
     },
 };
