@@ -49,21 +49,21 @@
                     <a-col :span="24" class="title-modal" style="margin-top: 10px;">
                         <span>권한그룹메뉴별 권한</span>
                     </a-col>
-                    <a-col :span="20">
+                    <a-col :span="24">
                         <a-spin :spinning="spinning" size="large">
                             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id"
                                 class="table-sevice">
                                 <DxColumn data-field="id" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
-                                <template #col1="{}" class="custom-action">
+                                <template #col1="{data}" class="custom-action">
                                     <div class="custom-action">
-                                        <a-checkbox></a-checkbox>
+                                        <a-checkbox @change="setReadWrite(data,'read')"></a-checkbox>
                                     </div>
                                 </template>
                                 <DxColumn caption="쓰기" cell-template="col2" alignment="center" :width="100" />
-                                <template #col2="{}" class="custom-action">
+                                <template #col2="{data}" class="custom-action">
                                     <div class="custom-action">
-                                        <a-checkbox></a-checkbox>
+                                        <a-checkbox @change="setReadWrite(data,'read')"></a-checkbox>
                                     </div>
                                 </template>
                             </DxDataGrid>
@@ -87,6 +87,8 @@ import { message } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
+import { AdminScreenRole, ScreenRoleInfo, ScreenRoleTool } from '@bankda/jangbuda-common';
+
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
@@ -97,6 +99,13 @@ export default defineComponent({
         DxColumn
     },
     setup(props, { emit }) {
+        const x = new ScreenRoleInfo('00000050');
+        console.log(x.hasReadScreenRole(AdminScreenRole.SALES_REPRESENTATIVE_MANAGE),x.hasWriteScreenRole(AdminScreenRole.SERVICE_MANAGE),'ffffff');
+        // const tool = ScreenRoleTool.createAdminScreenRoleTool();
+        // tool.addReadScreenRole(AdminScreenRole.SALES_REPRESENTATIVE_MANAGE);
+        // tool.addReadScreenRole(AdminScreenRole.SERVICE_MANAGE);
+        // const value = tool.toString();
+        // console.log(value,tool,'xxxxxx');
         const dataSource = ref([])
         const spinning = ref<boolean>(false);
         const layout = {
@@ -108,7 +117,6 @@ export default defineComponent({
             wrapperCol: { span: 16, },
         };
         const visible = ref<boolean>(false);
-        const triggers = ref(false)
         const triggersTable = ref(false)
         const triggersGetData = ref(false)
         const labelCol = { style: { width: "300px" } };
@@ -148,8 +156,6 @@ export default defineComponent({
             dataCallApiDetail.value = {
                 id: props.idRowIndex
             }
-            console.log(dataCallApiDetail);
-
             setTimeout(() => {
                 if (value == true) {
                     spinning.value = true
@@ -203,6 +209,10 @@ export default defineComponent({
             }, 500);
         });
 
+        const setReadWrite = (data: any,type: string)=>{
+
+        }
+        
         return {
             updateScreenRole,
             spinning,
@@ -217,6 +227,7 @@ export default defineComponent({
             visible,
             confirmPopup,
             confirm,
+            setReadWrite
         }
     },
     methods: {

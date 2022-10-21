@@ -108,7 +108,7 @@ export default defineComponent({
       message.error(error.message, 5);
     })
     onDoneAdd((res) => {
-      message.success(`Add new with holding Config pay item success !`, 5);
+      message.success(`원천항목 새로 추가되었습니다!`, 5);
       setModalVisible();
     })
 

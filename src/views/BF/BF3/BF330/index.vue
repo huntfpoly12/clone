@@ -1,8 +1,8 @@
 <template>
-    <a-spin :spinning="spinning" size="large">
+    <a-spin :spinning="loading" size="large">
         <div id="bf-330">
             <div class="top-content">
-                <a-typography-title :level="3"> 서비스관리
+                <a-typography-title :level="3"> 서비스관리 {{trigger}}
                 </a-typography-title>
                 <div class="list-action">
                     <a-tooltip>
@@ -37,32 +37,33 @@
                     <a-row justify="start" :gutter="[16, 8]">
                         <a-col>
                             <label class="lable-item"> 사업자코드 : </label>
-                            <a-input style="width: 120px" v-model:value="dataSearchDef.code" />
+                            <a-input style="width: 120px" v-model:value="originData.filter.code" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">상호:</label>
-                            <a-input style="width: 120px" v-model:value="dataSearchDef.name" />
+                            <a-input style="width: 120px" v-model:value="originData.filter.name" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">대표자:</label>
-                            <a-input style="width: 120px" v-model:value="dataSearchDef.presidentName" />
+                            <a-input style="width: 120px" v-model:value="originData.filter.presidentName" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">해지:</label>
-                            <a-switch v-model:checked="dataSearchDef.excludeCancel" checked-children="포함" un-checked-children="제외" />
+                            <a-switch v-model:checked="originData.filter.excludeCancel" checked-children="포함"
+                                un-checked-children="제외" />
                         </a-col>
 
                         <a-col>
                             <label class="lable-item">주소 :</label>
-                            <a-input style="width: 120px" v-model:value="dataSearchDef.address" />
+                            <a-input style="width: 120px" v-model:value="originData.filter.address" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">매니저명 :</label>
-                            <ListManagerDropdown v-model:selected="dataSearchDef.manageUserId"/>
+                            <ListManagerDropdown v-model:selected="originData.filter.manageUserId" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">영업자명 :</label>
-                            <ListSalesDropdownVue v-model:selected="dataSearchDef.salesRepresentativeId"/>
+                            <ListSalesDropdownVue v-model:selected="originData.filter.salesRepresentativeId" />
                         </a-col>
                         <!-- <a-col>
                             <label class="lable-item"></label>
@@ -73,21 +74,26 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id" @exporting="onExporting">
+                <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
+                    @exporting="onExporting" :allow-column-resizing="true">
+
                     <!-- <DxSelection mode="multiple" /> -->
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
-                    <DxColumn data-field="code" caption="사업자코드"/>
-                    <DxColumn data-field="status" caption="상태"/>
+                    <DxColumn data-field="code" caption="사업자코드" />
+                    <DxColumn data-field="active" caption="상태" cell-template="active-cell" />
+                    <template #active-cell="{ data }" class="custom-action">
+                        {{data.value === true ? '정상' : '해지'}}
+                    </template>
                     <DxColumn data-field="name" caption="상호" data-type="date" />
                     <DxColumn data-field="presidentName" caption="대표자" />
-                    <DxColumn data-field="address"  caption="주소" data-type="date" />
+                    <DxColumn data-field="address" caption="주소" data-type="date" />
                     <DxColumn data-field="phone" caption="연락처" />
-                    <DxColumn data-field="매니저" caption="매니저"/>
-                    <DxColumn data-field="manageStartDate"  caption="관리시작일" data-type="date" />
+                    <DxColumn data-field="manageCompactUser.name" caption="매니저" />
+                    <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                    <DxColumn data-field="서비스" caption="서비스" />
-                    <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number"/>
+                    <DxColumn data-field="usedWithholding" caption="서비스" />
+                    <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
@@ -105,19 +111,19 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <div class="pagination-table" v-if="rowTable > originData.rows">
-                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
-                        show-less-items @change="changePage" />
+                <div class="pagination-table" v-if="rowTable > originData.filter.rows">
+                    <a-pagination v-model:current="originData.filter.page" v-model:page-size="originData.filter.rows"
+                        :total="rowTable" show-less-items @change="changePage" />
                 </div>
                 <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :idRowEdit="idSubRequest" />
-                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-                    title="변경이력[cm-000-pop]" :idRowEdit="idSubRequest" typeHistory="bf-330"/>
+                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idSubRequest" typeHistory="bf-330" />
             </div>
         </div>
     </a-spin>
 </template>
 <script>
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 import {
     DxDataGrid,
     DxColumn,
@@ -128,11 +134,11 @@ import {
 } from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
-import DxButton from "devextreme-vue/button"; 
+import DxButton from "devextreme-vue/button";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-import { EditOutlined, HistoryOutlined,SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -155,65 +161,30 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        SearchOutlined, 
-        SaveOutlined, 
-        DeleteOutlined, 
+        SearchOutlined,
+        SaveOutlined,
+        DeleteOutlined,
         PrinterOutlined,
         ListManagerDropdown,
         ListSalesDropdownVue
     },
     data() {
         return {
-            amountFormat: { currency: 'VND', useGrouping: true }, 
+            amountFormat: { currency: 'VND', useGrouping: true },
             popupData: [],
             modalStatus: false,
             modalHistoryStatus: false,
         };
     },
     setup() {
-        const spinning = ref(true);
         const idRowEdit = ref(0)
         const idSubRequest = ref();
-        const dataSearchDef = ref({
-            page: 1,
-            rows: 10,
-            code: "",
-            name: "",
-            presidentName: "",
-            address: "",
-            manageUserId: null,
-            salesRepresentativeId: null,
-            excludeCancel: true
-        })
+        let trigger = ref(true);
 
         const listServiceContract = ref([])
         const rowTable = ref(10)
         const originData = ref({
-            page: 1,
-            rows: 10,
-            code: "",
-            name: "",
-            presidentName: "",
-            address: "",
-            manageUserId: null,
-            salesRepresentativeId: null,
-            excludeCancel: true
-        })
-
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchServiceContract, originData)
-        onResult((res) => {
-            rowTable.value = res.data.searchServiceContracts.totalCount
-            listServiceContract.value = res.data.searchServiceContracts.datas
-        })
-
-        setTimeout(() => {
-            spinning.value = !spinning.value;
-        }, 1);
-
-        const searching = () => {
-            spinning.value = !spinning.value;
-
-            originData.value = {
+            filter: {
                 page: 1,
                 rows: 10,
                 code: "",
@@ -224,36 +195,39 @@ export default defineComponent({
                 salesRepresentativeId: null,
                 excludeCancel: true
             }
+        })
 
-            let dataNew = {
-                page: dataSearchDef.value.page,
-                rows: dataSearchDef.value.rows,
-                code: dataSearchDef.value.code,
-                name: dataSearchDef.value.name,
-                presidentName: dataSearchDef.value.presidentName,
-                address: dataSearchDef.value.address,
-                manageUserId: dataSearchDef.value.manageUserId,
-                salesRepresentativeId: dataSearchDef.value.salesRepresentativeId,
-                excludeCancel: dataSearchDef.value.excludeCancel
-            }
+        const { refetch: refetchData, loading, error, result } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
+        // process data after call getServiceContracts api
+        watch(result, (value) => {
+            rowTable.value = value.searchServiceContracts.totalCount
+            listServiceContract.value = value.searchServiceContracts.datas
+            trigger.value = false;
+        });
 
-            refetchData(dataNew)
 
-            setTimeout(() => {
-                spinning.value = !spinning.value;
-            }, 1000);
+
+        const changePage = () => {
+            trigger.value = true;
+            refetchData();
+        }
+
+        const searching = () => {
+            trigger.value = true;
+            refetchData()
         }
 
         return {
             idRowEdit,
-            spinning,
             listServiceContract,
-            dataSearchDef,
+            loading,
             searching,
             originData,
             refetchData,
             rowTable,
-            idSubRequest 
+            idSubRequest,
+            changePage,
+            trigger
         }
     },
     methods: {
@@ -284,26 +258,6 @@ export default defineComponent({
             this.modalHistoryStatus = true;
             this.popupData = data;
         },
-        changePage() {
-            let dataNew = {
-                page: this.dataSearchDef.page,
-                rows: this.dataSearchDef.rows,
-                code: this.dataSearchDef.code,
-                name: this.dataSearchDef.name,
-                presidentName: this.dataSearchDef.presidentName,
-                address: this.dataSearchDef.address,
-                manageUserId: this.dataSearchDef.manageUserId,
-                salesRepresentativeId: this.dataSearchDef.salesRepresentativeId,
-                excludeCancel: this.dataSearchDef.excludeCancel
-            }
-
-            this.refetchData(dataNew)
-
-            this.spinning = !this.spinning;
-            setTimeout(() => {
-                this.spinning = !this.spinning;
-            }, 1000);
-        },
     },
 });
 </script>
@@ -321,6 +275,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
 }
+
 ::v-deep .dx-toolbar-after {
     display: flex;
 
