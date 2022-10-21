@@ -7,7 +7,6 @@
             <a-step :status="checkStepThree" title="서비스신청CMS정보" />
             <a-step :status="checkStepFour" title="신청완료!" />
         </a-steps>
-
         <div class="step-content">
             <template v-if="step === 0">
                 <div class="form-group">
@@ -68,7 +67,6 @@
                         </div>
                         <div class="form-item">
                             <label class="red">사업자등록번호 :</label>
-
                             <DxTextBox mask="000-00-00000" v-model:value="contractCreacted.bizNumber"
                                 mask-invalid-message="Chưa nhập đủ thông tin">
                                 <DxValidator>
@@ -82,12 +80,10 @@
                                 <a-radio :value="1" @click="changeTypeCompany(1)">법인사업자</a-radio>
                                 <a-radio :value="2" @click="changeTypeCompany(2)">개인사업자</a-radio>
                             </a-radio-group>
-
                             <div class="group-label">
                                 <p>{{ textIDNo }}:</p>
                                 <!-- <a-input class="width-auto" v-model:value="contractCreacted.residentId"
                                     placeholder="800123-1234567" /> -->
-
                                 <DxTextBox mask="000000-0000000" v-model:value="contractCreacted.residentId"
                                     mask-invalid-message="Chưa nhập đủ thông tin">
                                     <DxValidator>
@@ -96,7 +92,6 @@
                                 </DxTextBox>
                             </div>
                         </div>
-
                         <div class="form-item">
                             <label class="red">주 소 :</label>
                             <div class="group-label">
@@ -142,7 +137,6 @@
                                 <imgUpload :title="titleModal" v-model:imageId="imageId" @update-img="getImgUrl"
                                     style="margin-top: 10px" />
                             </div>
-
                             <a-col :span="7">
                                 <div v-if="this.imageValue" class="img-preview">
                                     <img :src="this.imageValue" @click="handlePreview" />
@@ -207,13 +201,12 @@
                             <a-radio-group v-model:value="dataInputCallApi.dossier" :options="plainOptions"
                                 @change="changeOptionService1" />
                         </div>
-
                         <div class="group-title">
                             <p class="red">⁙ 운영사업</p>
                         </div>
-
-                        <DxDataGrid id="gridContainer" disable :data-source="valueFacilityBusinesses" :show-borders="true"
-                            :selected-row-keys="selectedItemKeys">
+                        <DxDataGrid id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
+                            :selected-row-keys="selectedItemKeys" :allow-column-reordering="true"
+                            :allow-column-resizing="true" :column-auto-width="true">
                             <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                 :allow-deleting="true" template="button-template" mode="cell">
                                 <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -225,37 +218,30 @@
                             <DxPaging :enabled="false" />
                             <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                 cell-template="indexCell" />
-
                             <template #indexCell="{ data }">
                                 <div>{{ data.rowIndex + 1 }}</div>
                             </template>
-
                             <DxColumn data-field="name" caption="사업명 (중복불가)" />
                             <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                 <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                             </DxColumn>
-
                             <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
                                 :format="'yyyy-MM-dd'" />
-
-                            <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
+                            <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
                             <DxToolbar>
                                 <DxItem name="addRowButton" />
                             </DxToolbar>
                         </DxDataGrid>
-
                         <div class="form-item">
                             <label class="red">장기요양기관등록번호 :</label>
                             <a-input placeholder="1234567898" @change="validateNumber('longTermCareInstitutionNumber')"
                                 v-model:value="contractCreacted.longTermCareInstitutionNumber" />
                         </div>
-
                         <div style="display: flex">
                             <div>
                                 <imgUpload :title="titleModal" @update-step="getImgUrlAccounting"
-                                    style="margin-top: 10px" />
+                                    style="margin-top: 10px; " />
                             </div>
-
                             <a-col :span="7">
                                 <div v-if="this.imagestep" class="img-preview">
                                     <img :src="this.imagestep" @click="handlePreview" />
@@ -280,13 +266,11 @@
                             <a-radio-group v-model:value="dataInputCallApi.applicationService"
                                 :options="plainOptions" />
                         </div>
-
                         <div class="form-item">
                             <label>서비스 시작년월 :</label>
                             <a-date-picker style="width: 170px" v-model:value="contractCreacted.startYearMonthHolding"
                                 :format="monthFormat" placeholder="" picker="month" />
                         </div>
-
                         <div class="form-item">
                             <label>직 원 수:</label>
                             <a-input placeholder="장기요양기관등록번호" style="width: 170px"
@@ -307,8 +291,8 @@
                         </div>
                         <div class="form-item">
                             <label class="red">출금계좌번호 :</label>
-                            <!-- <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" /> -->
-                            <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber" />
+                            <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber"
+                                @change="validateNumber('accountNumber')" />
                         </div>
                         <div class="form-item">
                             <label class="red">예금주명 :</label>
@@ -317,10 +301,10 @@
                         <div class="form-item">
                             <label class="red">사업자(주민)등록번호:</label>
                             <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다"
-                                v-model:value="contractCreacted.ownerBizNumber" />
+                                v-model:value="contractCreacted.ownerBizNumber"
+                                @change="validateNumber('ownerBizNumber')" />
                             <p>i: 예금주의 사업자등록번호 또는 주민등록번호입니다</p>
                         </div>
-
                         <div class="form-item">
                             <label class="red">자동이체출금일자 :</label>
                             <a-radio-group v-model:value="contractCreacted.withdrawDay">
@@ -364,7 +348,6 @@
                 <h4>신청완료!!!</h4>
                 <p>서비스 가입신청이 완료되었습니다.</p>
             </a-modal>
-
             <div class="group-button">
                 <a-button v-if="step > 0" type="secondary" @click="prevStep">이 전
                 </a-button>
@@ -383,7 +366,6 @@ import {
     EditOutlined,
     DeleteOutlined,
 } from "@ant-design/icons-vue";
-
 import moment from "moment";
 import { notification } from "ant-design-vue";
 import bizTypeList from "../../constants/facilityBizType";
@@ -411,7 +393,6 @@ import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
-
 import DxTextBox from "devextreme-vue/text-box";
 import {
     DxValidator,
@@ -420,7 +401,6 @@ import {
     DxPatternRule,
     DxStringLengthRule,
 } from "devextreme-vue/validator";
-
 export default {
     components: {
         CheckOutlined,
@@ -561,7 +541,6 @@ export default {
         const imageValue = ref("");
         const fileName = ref("");
         const fileNamestep = ref("");
-
         const removeImg = () => {
             imageValue.value = "";
             fileName.value = "";
@@ -581,15 +560,12 @@ export default {
                 facilityBusinesses: listDataConvert.value,
             },
         }));
-
         signinDone((res) => {
             visibleModal.value = true;
         });
-
         onError((res) => {
             openNotificationWithIcon("error", res);
         });
-
         const openNotificationWithIcon = (type, mes) => {
             if (type == "error")
                 notification[type]({
@@ -601,7 +577,6 @@ export default {
                 });
             }
         };
-
         const validateMessages = {
             required: "${label} is required!",
             types: {
@@ -612,16 +587,12 @@ export default {
                 range: "${label} must be between ${min} and ${max}",
             },
         };
-
         const onFinish = (values) => {
-
         };
-
         const layout = {
             labelCol: { span: 8 },
             wrapperCol: { span: 16 },
         };
-
         const formState = reactive({
             user: {
                 name: "",
@@ -631,11 +602,9 @@ export default {
                 introduction: "",
             },
         });
-
         const changeOptionService1 = () => {
             console.log(dataInputCallApi.dossier, "Val");
         }
-
         return {
             dataInputCallApi,
             changeOptionService1,
@@ -730,11 +699,9 @@ export default {
                 this.textIDNo = "법인등록번호";
             }
         },
-
         prevStep() {
             this.step--;
         },
-
         nextStep() {
             if (this.step == 0) {
                 if (this.contractCreacted.terms == true && this.contractCreacted.personalInfo == true && this.contractCreacted.accountingService == true && this.contractCreacted.withholdingService == true) {
@@ -769,17 +736,14 @@ export default {
             this.imageValue = img.url;
             this.fileName = img.fileName;
         },
-
         getImgUrlAccounting(img) {
             this.imagestep = img.url;
             this.fileNamestep = img.fileNamestep;
             this.contractCreacted.registrationCardFileStorageId = img;
         },
-
         getIDBank(data) {
             this.contractCreacted.bankType = data;
         },
-
         passwordComparison() {
             return this.password;
         },
@@ -792,12 +756,42 @@ export default {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
                 this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
             }
+            if (key == 'accountNumber') {
+                let e = this.contractCreacted.accountNumber
+                this.contractCreacted.accountNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            }
+            if (key == 'accountNumber') {
+                let e = this.contractCreacted.ownerBizNumber
+                this.contractCreacted.ownerBizNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            }
         },
     },
 };
 </script>
+<style lang="scss" scoped>
+.img-preview {
+    margin-top: 20px;
+    position: relative;
+    width: 100%;
+    padding-top: 142%;
 
-<style scoped>
+    img {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+.imgPreview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .contract-container {
     max-width: 960px;
     margin: 50px auto;
@@ -876,12 +870,10 @@ export default {
 .form-item .ant-input-affix-wrapper ::v-deep {
     max-width: calc(100% - 165px);
 } */
-
 /* ::v-deep input.dp__input.dp__input_icon_pad {
     width: 150px;
     max-width: 200px !important;
 } */
-
 ::v-deep #nest-messages_user_email {
     min-width: 350px !important;
 }
