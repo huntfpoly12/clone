@@ -329,11 +329,6 @@
                             <label>영업관리담당 :</label>
                             <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택"
                                 :disabled="disableFormVal" :options="optionSale">
-                                <!-- <a-select-option :value="1">A 대리점</a-select-option>
-                                <a-select-option :value="2">농협</a-select-option>
-                                <a-select-option :value="3">C 영업사원</a-select-option>
-                                <a-select-option :value="4">D 영업사원</a-select-option>
-                                <a-select-option :value="5">E 본사영업사원</a-select-option> -->
                             </a-select>
                         </div>
                         <div class="form-item">
@@ -390,7 +385,8 @@ import {
     DxToolbar,
     DxItem,
     DxTexts,
-    DxRequiredRule
+    DxRequiredRule,
+    DxAsyncRule
 } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
@@ -409,7 +405,7 @@ dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
 import DxTextBox from "devextreme-vue/text-box";
 import {
-    DxValidator, 
+    DxValidator,
     DxCompareRule,
     DxPatternRule,
     DxStringLengthRule,
@@ -440,6 +436,7 @@ export default {
         DxTextBox,
         DxStringLengthRule,
         DeleteOutlined,
+        DxAsyncRule
     },
     data() {
         return {
@@ -653,6 +650,10 @@ export default {
             optionSale.value = dataOption
         });
 
+        watch(valueFacilityBusinesses, (value) => {
+            console.log(value);
+        });
+
         return {
             optionSale,
             disableFormVal,
@@ -718,6 +719,17 @@ export default {
                             this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
+
+                var result = Object.values(newVal.reduce((c, v) => {
+                    let k = v.name;
+                    c[k] = c[k] || [];
+                    c[k].push(v);
+                    return c;
+                }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
+                if (result.length > 0) {
+                    message.error("Trùng name")
+                }
+
             },
             deep: true,
         },
