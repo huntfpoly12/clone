@@ -1,9 +1,9 @@
 import getServiceContract from "./getServiceContract";
-import searchServiceContract from "./searchServiceContract";
+import searchServiceContracts from "./searchServiceContracts";
 import getServiceContractManageMemos from "./getServiceContractManageMemos";
 const queries = {
     getServiceContract: getServiceContract,
-    searchServiceContract: searchServiceContract,
+    searchServiceContracts: searchServiceContracts,
     getServiceContractManageMemos : getServiceContractManageMemos
 };
 
