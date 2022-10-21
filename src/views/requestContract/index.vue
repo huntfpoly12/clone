@@ -58,9 +58,7 @@
                                 <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany"
                                     placeholder="가나다라마바사아자차카타파하 요양병원">
                                     <DxValidator>
-                                        <DxRequiredRule message="Name is required" />
-                                        <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" />
-                                        <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
+                                        <DxRequiredRule message="이항목은 필수 입력사항입니다" />                                       
                                     </DxValidator>
                                 </DxTextBox>
                             </div>
@@ -70,7 +68,7 @@
                             <DxTextBox mask="000-00-00000" v-model:value="contractCreacted.bizNumber"
                                 mask-invalid-message="입력한 정보가 충분하지 않습니다!">
                                 <DxValidator>
-                                    <DxPatternRule message="The phone must have a correct USA phone format" />
+                                    <DxPatternRule message="" />
                                 </DxValidator>
                             </DxTextBox>
                         </div>
@@ -87,7 +85,7 @@
                                 <DxTextBox mask="000000-0000000" v-model:value="contractCreacted.residentId"
                                     mask-invalid-message="입력한 정보가 충분하지 않습니다!">
                                     <DxValidator>
-                                        <DxPatternRule message="The phone must have a correct USA phone format" />
+                                        <DxPatternRule message="" />
                                     </DxValidator>
                                 </DxTextBox>
                             </div>
@@ -158,7 +156,7 @@
                             <DxTextBox placeholder="홍길동" style="width: 150px"
                                 v-model:value="contractCreacted.namePresident">
                                 <DxValidator>
-                                    <DxRequiredRule message="Name is required" />
+                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                 </DxValidator>
                             </DxTextBox>
                         </div>
@@ -204,7 +202,8 @@
                             <div class="overlay" v-if="disableFormVal2 == true"></div>
                             <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
                                 :show-borders="true" :selected-row-keys="selectedItemKeys"
-                                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+                                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
+                                :repaint-changes-only="true">
                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                     :allow-deleting="true" template="button-template" mode="cell">
                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -219,7 +218,10 @@
                                 <template #indexCell="{ data }">
                                     <div>{{ data.rowIndex + 1 }}</div>
                                 </template>
-                                <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                                <DxColumn data-field="name" caption="사업명 (중복불가)">
+                                    <DxRequiredRule />
+                                </DxColumn>
+
                                 <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                     <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                 </DxColumn>
@@ -324,12 +326,7 @@
                         <div class="form-item">
                             <label>영업관리담당 :</label>
                             <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택"
-                                :disabled="disableFormVal">
-                                <a-select-option :value="1">A 대리점</a-select-option>
-                                <a-select-option :value="2">농협</a-select-option>
-                                <a-select-option :value="3">C 영업사원</a-select-option>
-                                <a-select-option :value="4">D 영업사원</a-select-option>
-                                <a-select-option :value="5">E 본사영업사원</a-select-option>
+                                :disabled="disableFormVal" :options="optionSale">
                             </a-select>
                         </div>
                         <div class="form-item">
@@ -367,7 +364,7 @@
     </div>
 </template>
 <script>
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import {
     CheckOutlined,
     EditOutlined,
@@ -386,13 +383,15 @@ import {
     DxToolbar,
     DxItem,
     DxTexts,
+    DxRequiredRule,
+    DxAsyncRule
 } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "../../graphql/mutations/RqContract/index";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -405,12 +404,10 @@ import { message } from 'ant-design-vue';
 import DxTextBox from "devextreme-vue/text-box";
 import {
     DxValidator,
-    DxRequiredRule,
     DxCompareRule,
     DxPatternRule,
     DxStringLengthRule,
 } from "devextreme-vue/validator";
-import { watch } from "fs";
 export default {
     components: {
         CheckOutlined,
@@ -437,6 +434,7 @@ export default {
         DxTextBox,
         DxStringLengthRule,
         DeleteOutlined,
+        DxAsyncRule
     },
     data() {
         return {
@@ -632,18 +630,30 @@ export default {
 
         const { result: resultConfig, refetch: refetchConfig } = useQuery(
             queries.getSaleRequestContact,
-            dataQuery,
+            {},
             () => ({
                 fetchPolicy: "no-cache",
             })
         );
 
+        const optionSale = ref()
         watch(resultConfig, (value) => {
-            console.log(value);
+            let dataOption = []
+            value.getSalesRepresentativesForPublicScreen.map(e => {
+                dataOption.push({
+                    label: e.name,
+                    value: e.id
+                })
+            })
+            optionSale.value = dataOption
+        });
 
+        watch(valueFacilityBusinesses, (value) => {
+            console.log(value);
         });
 
         return {
+            optionSale,
             disableFormVal,
             disableFormVal2,
             disableForm2,
@@ -707,6 +717,17 @@ export default {
                             this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
+
+                var result = Object.values(newVal.reduce((c, v) => {
+                    let k = v.name;
+                    c[k] = c[k] || [];
+                    c[k].push(v);
+                    return c;
+                }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
+                if (result.length > 0) {
+                    message.error("중복되었습니다!")
+                }
+
             },
             deep: true,
         },
@@ -748,21 +769,20 @@ export default {
                 if (this.contractCreacted.terms == true && this.contractCreacted.personalInfo == true && this.contractCreacted.accountingService == true && this.contractCreacted.withholdingService == true) {
                     this.step++;
                 } else {
-                    message.error("Vui lòng chấp nhận hết các điều khoản để tiếp tục")
+                    message.error("계속하려면 모든 조건을 수락하십시오")
                 }
             } else {
                 this.step++;
             }
         },
         openPopup() {
-            //validate data call api
             var obj = this.contractCreacted;
             let countNull = 0;
             for (const [key, value] of Object.entries(obj)) {
             }
             if (countNull > 0) {
                 notification["error"]({
-                    message: "Vui lòng nhập đầy đủ thông tin cần thiết",
+                    message: "필수 항목을 입력하십시오",
                 });
             } else {
                 this.Creat();
@@ -789,7 +809,6 @@ export default {
             return this.password;
         },
         validateNumber(key) {
-
             if (key == 'capacityHolding') {
                 let e = this.contractCreacted.capacityHolding
                 this.contractCreacted.capacityHolding = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
