@@ -204,7 +204,8 @@
                             <div class="overlay" v-if="disableFormVal2 == true"></div>
                             <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
                                 :show-borders="true" :selected-row-keys="selectedItemKeys"
-                                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+                                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
+                                :repaint-changes-only="true">
                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                     :allow-deleting="true" template="button-template" mode="cell">
                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -219,7 +220,10 @@
                                 <template #indexCell="{ data }">
                                     <div>{{ data.rowIndex + 1 }}</div>
                                 </template>
-                                <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                                <DxColumn data-field="name" caption="사업명 (중복불가)">
+                                    <DxRequiredRule />
+                                </DxColumn>
+
                                 <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                     <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                 </DxColumn>
@@ -324,12 +328,12 @@
                         <div class="form-item">
                             <label>영업관리담당 :</label>
                             <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택"
-                                :disabled="disableFormVal">
-                                <a-select-option :value="1">A 대리점</a-select-option>
+                                :disabled="disableFormVal" :options="optionSale">
+                                <!-- <a-select-option :value="1">A 대리점</a-select-option>
                                 <a-select-option :value="2">농협</a-select-option>
                                 <a-select-option :value="3">C 영업사원</a-select-option>
                                 <a-select-option :value="4">D 영업사원</a-select-option>
-                                <a-select-option :value="5">E 본사영업사원</a-select-option>
+                                <a-select-option :value="5">E 본사영업사원</a-select-option> -->
                             </a-select>
                         </div>
                         <div class="form-item">
@@ -367,7 +371,7 @@
     </div>
 </template>
 <script>
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import {
     CheckOutlined,
     EditOutlined,
@@ -386,13 +390,14 @@ import {
     DxToolbar,
     DxItem,
     DxTexts,
+    DxRequiredRule
 } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "../../graphql/mutations/RqContract/index";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -404,13 +409,11 @@ dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
 import DxTextBox from "devextreme-vue/text-box";
 import {
-    DxValidator,
-    DxRequiredRule,
+    DxValidator, 
     DxCompareRule,
     DxPatternRule,
     DxStringLengthRule,
 } from "devextreme-vue/validator";
-import { watch } from "fs";
 export default {
     components: {
         CheckOutlined,
@@ -632,18 +635,26 @@ export default {
 
         const { result: resultConfig, refetch: refetchConfig } = useQuery(
             queries.getSaleRequestContact,
-            dataQuery,
+            {},
             () => ({
                 fetchPolicy: "no-cache",
             })
         );
 
+        const optionSale = ref()
         watch(resultConfig, (value) => {
-            console.log(value);
-
+            let dataOption = []
+            value.getSalesRepresentativesForPublicScreen.map(e => {
+                dataOption.push({
+                    label: e.name,
+                    value: e.id
+                })
+            })
+            optionSale.value = dataOption
         });
 
         return {
+            optionSale,
             disableFormVal,
             disableFormVal2,
             disableForm2,
@@ -755,7 +766,6 @@ export default {
             }
         },
         openPopup() {
-            //validate data call api
             var obj = this.contractCreacted;
             let countNull = 0;
             for (const [key, value] of Object.entries(obj)) {
@@ -789,7 +799,6 @@ export default {
             return this.password;
         },
         validateNumber(key) {
-
             if (key == 'capacityHolding') {
                 let e = this.contractCreacted.capacityHolding
                 this.contractCreacted.capacityHolding = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
