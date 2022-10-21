@@ -100,7 +100,7 @@
                                 </div>
                                 <div style="display: flex; margin-left: 150px;">
                                     <a-form-item label="휴대폰">
-                                        <a-input v-model:value="formState.extendInfo.detail.phone" style="width: 100px;"
+                                        <a-input v-model:value="formState.extendInfo.detail.phone" style="width: 150px;"
                                             @change="validateCharacter('phone')" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
@@ -301,11 +301,11 @@ export default defineComponent({
         } = useMutation(mutations.updateCompany);
         onDoneAdd((res) => {
             spinning.value = !spinning.value;
-            message.success(`Update successfully`);
+            message.success(`업데이트 완료되었습니다!`);
         })
         onErrorUpdate((res) => {
             spinning.value = !spinning.value;
-            message.error(`Update false`);
+            message.error(`업데이트 실패되었습니다!`);
         })
         const statusMailValidate = ref<boolean>(true);
         let formState = ref({

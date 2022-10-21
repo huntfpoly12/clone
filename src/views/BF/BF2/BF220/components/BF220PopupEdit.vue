@@ -49,21 +49,21 @@
                     <a-col :span="24" class="title-modal" style="margin-top: 10px;">
                         <span>권한그룹메뉴별 권한</span>
                     </a-col>
-                    <a-col :span="20">
+                    <a-col :span="24">
                         <a-spin :spinning="spinning" size="large">
-                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id"
+                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="enumKey"
                                 class="table-sevice">
-                                <DxColumn data-field="id" caption="메뉴" :fixed="true" />
+                                <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
-                                <template #col1="{}" class="custom-action">
+                                <template #col1="{data}" class="custom-action">
                                     <div class="custom-action">
-                                        <a-checkbox></a-checkbox>
+                                        <a-checkbox @change="setReadWrite(data,'read')"></a-checkbox>
                                     </div>
                                 </template>
                                 <DxColumn caption="쓰기" cell-template="col2" alignment="center" :width="100" />
-                                <template #col2="{}" class="custom-action">
+                                <template #col2="{data}" class="custom-action">
                                     <div class="custom-action">
-                                        <a-checkbox></a-checkbox>
+                                        <a-checkbox @change="setReadWrite(data,'read')"></a-checkbox>
                                     </div>
                                 </template>
                             </DxDataGrid>
@@ -87,6 +87,8 @@ import { message } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
+import { AdminScreenRole, ScreenRoleInfo, ScreenRoleTool } from '@bankda/jangbuda-common';
+
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
@@ -97,18 +99,14 @@ export default defineComponent({
         DxColumn
     },
     setup(props, { emit }) {
-        const dataSource = ref([])
+
+        const dataSource = ref(AdminScreenRole.all())
         const spinning = ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         };
-        const formTailLayout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 16, },
-        };
         const visible = ref<boolean>(false);
-        const triggers = ref(false)
         const triggersTable = ref(false)
         const triggersGetData = ref(false)
         const labelCol = { style: { width: "300px" } };
@@ -135,34 +133,32 @@ export default defineComponent({
             }
         }
 
-        const getDataTable = ref({
-            page: 1,
-            rows: 1000,
-            types: ["m"]
-        })
-        const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
-            enabled: triggersTable.value,
-            fetchPolicy: "no-cache",
-        }))
-        watch(() => props.modalStatus, (value) => {
-            dataCallApiDetail.value = {
-                id: props.idRowIndex
-            }
-            console.log(dataCallApiDetail);
-
-            setTimeout(() => {
-                if (value == true) {
-                    spinning.value = true
-                    triggersGetData.value = true
-                }
-            }, 500);
-        })
-        watch(resListTable, (value) => {
-            dataSource.value = value.searchScreenRoleGroups.datas
-            setTimeout(() => {
-                spinning.value = false;
-            }, 500);
-        });
+        // const getDataTable = ref({
+        //     page: 1,
+        //     rows: 1000,
+        //     types: ["m"]
+        // })
+        // const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
+        //     enabled: triggersTable.value,
+        //     fetchPolicy: "no-cache",
+        // }))
+        // watch(() => props.modalStatus, (value) => {
+        //     dataCallApiDetail.value = {
+        //         id: props.idRowIndex
+        //     }
+        //     setTimeout(() => {
+        //         if (value == true) {
+        //             spinning.value = true
+        //             triggersGetData.value = true
+        //         }
+        //     }, 500);
+        // })
+        // watch(resListTable, (value) => {
+        //     dataSource.value = value.searchScreenRoleGroups.datas
+        //     setTimeout(() => {
+        //         spinning.value = false;
+        //     }, 500);
+        // });
 
         //Creat new group roll
         const {
@@ -170,6 +166,7 @@ export default defineComponent({
             onDone: editDone,
             onError: editError
         } = useMutation(mutations.updateScreenRoleGroup);
+
         editDone(e => {
             message.success('그룹이 생성되었습니다.')
             emit("closePopupEdit", false)
@@ -197,12 +194,12 @@ export default defineComponent({
 
         watch(resDataDetail, (value) => {
             dataRes.value = value.getScreenRoleGroup
-            setTimeout(() => {
-                getDataTable.value.types = [value.getScreenRoleGroup.type]
-                triggersTable.value = true
-            }, 500);
         });
 
+        const setReadWrite = (data: any,type: string)=>{
+            // waiting APi...
+        }
+        
         return {
             updateScreenRole,
             spinning,
@@ -212,11 +209,10 @@ export default defineComponent({
             wrapperCol,
             dataRes,
             layout,
-            formTailLayout,
-            value1: ref<Dayjs>(),
             visible,
             confirmPopup,
             confirm,
+            setReadWrite
         }
     },
     methods: {

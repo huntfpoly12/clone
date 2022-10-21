@@ -48,11 +48,11 @@
                     <a-col :span="24" class="title-modal" style="margin-top: 10px;">
                         <span>권한그룹메뉴별 권한</span>
                     </a-col>
-                    <a-col :span="20">
+                    <a-col :span="24">
                         <a-spin :spinning="spinning" size="large">
-                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id"
+                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="enumKey"
                                 class="table-sevice">
-                                <DxColumn data-field="id" caption="메뉴" :fixed="true" />
+                                <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{}" class="custom-action">
                                     <div class="custom-action">
@@ -97,18 +97,18 @@ export default defineComponent({
         DxColumn
     },
     setup(props, { emit }) {
-
-       
-       
-        const info = new ScreenRoleInfo('00c00000-0000ffff-0000000');
-        const tool = ScreenRoleTool.createByScreenRoleInfo(info);
-        // Work screen role (업무 화면역할)
-        const tool2 = ScreenRoleTool.createWorkScreenRoleTool();
-        const valuex = tool.toString();
-        const valuey = tool2.toString();
+        //console.log(AdminScreenRole.all());
+        // const info = new ScreenRoleInfo('00c00000-0000ffff-0000000');
+        // const tool = ScreenRoleTool.createByScreenRoleInfo(info);
+        // // Work screen role (업무 화면역할)
+        // const tool2 = ScreenRoleTool.createWorkScreenRoleTool();
+        // const valuex = tool.toString();
+        // const valuey = tool2.toString();
     
-        console.log(valuex,valuey);
-        const dataSource = ref([])
+        // console.log(valuex,valuey);
+
+
+        const dataSource = ref(AdminScreenRole.all())
         const spinning = ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
@@ -171,31 +171,32 @@ export default defineComponent({
                 message.error(`이미 존재하는 그룹코드 입니다. 다른 코드를 입력해주세요`)
             }
         });
-        const getDataTable = ref({
-            page: 1,
-            rows: 1000,
-            types: ["m"]
-        })
-        const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
-            enabled: triggersTable.value,
-            fetchPolicy: "no-cache",
-        }))
-        watch(() => props.modalStatus, (value) => {
-            if (value == true) {
-                spinning.value = true
-                triggersTable.value = true
-            }
-        })
-        watch(resListTable, (value) => {
-            dataSource.value = value.searchScreenRoleGroups.datas
-            setTimeout(() => {
-                spinning.value = false;
-            }, 500);
-        });
+        // const getDataTable = ref({
+        //     page: 1,
+        //     rows: 1000,
+        //     types: ["m"]
+        // })
+        // const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
+        //     enabled: triggersTable.value,
+        //     fetchPolicy: "no-cache",
+        // }))
+        // watch(() => props.modalStatus, (value) => {
+        //     if (value == true) {
+        //         spinning.value = true
+        //         triggersTable.value = true
+        //     }
+        // })
+        // watch(resListTable, (value) => {
+        //     dataSource.value = value.searchScreenRoleGroups.datas
+        //     setTimeout(() => {
+        //         spinning.value = false;
+        //     }, 500);
+        // });
         const changeTypeGroup = () => {
-            spinning.value = true
-            getDataTable.value.types = [dataRes.value.type]
+            // spinning.value = true
+            // getDataTable.value.types = [dataRes.value.type]
         }
+
         //Creat new group roll
         const {
             mutate: createScreenRole,
@@ -209,6 +210,7 @@ export default defineComponent({
         creactError(e => {
             message.error(e.message)
         })
+
         const createScrenRole = () => {
             let dataCall = {
                 input: {

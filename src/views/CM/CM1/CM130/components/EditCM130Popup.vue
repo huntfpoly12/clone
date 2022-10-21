@@ -144,7 +144,7 @@ export default defineComponent({
       message.error(error.message, 5);
     })
     onDoneUpdated(() => {
-      message.success(`Update was successful`, 4);
+      message.success(`업데이트 성공되었습니다!`, 4);
       refetchConfigPayItem();
       setModalVisible();
     });
