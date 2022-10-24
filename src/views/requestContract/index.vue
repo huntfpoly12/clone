@@ -1,7 +1,7 @@
 <template>
     <div class="contract-container">
         <h2>서비스가입신청</h2>
-        <a-steps :current="step" type="navigation" :style="stepStyle">
+        <a-steps :current="step" type="navigation">
             <a-step :status="step === 0 ? 'process' : 'finish'" title="약관동의" />
             <a-step :status="checkStepTwo" title="사업자대표자정보" />
             <a-step :status="checkStepThree" title="서비스신청CMS정보" />
@@ -73,8 +73,8 @@
                         <div class="form-item">
                             <label class="red">사업자유형 :</label>
                             <a-radio-group v-model:value="contractCreacted.bizType">
-                                <a-radio :value="1" @click="changeTypeCompany(1)">법인사업자</a-radio>
-                                <a-radio :value="2" @click="changeTypeCompany(2)">개인사업자</a-radio>
+                                <a-radio :value="1" @click="changeTypeCompany">법인사업자</a-radio>
+                                <a-radio :value="2" @click="changeTypeCompany">개인사업자</a-radio>
                             </a-radio-group>
                             <div class="group-label">
                                 <p>{{ textIDNo }}:</p>
@@ -109,7 +109,6 @@
                                     <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
                                 </DxValidator>
                             </DxTextBox> -->
-
                             <a-input v-model:value="contractCreacted.addressExtend"></a-input>
                         </div>
                         <div class="form-item">
@@ -117,7 +116,6 @@
                             <a-input placeholder="0298765432" @change="validateNumber('phone')"
                                 v-model:value="contractCreacted.phone" style="width: 180px;">
                             </a-input>
-
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
@@ -130,14 +128,14 @@
                                     style="margin-top: 10px" />
                             </div>
                             <a-col :span="7">
-                                <div v-if="this.imageValue" class="img-preview">
-                                    <img :src="this.imageValue" @click="handlePreview" />
+                                <div v-if="imageValue" class="img-preview">
+                                    <img :src="imageValue" />
                                 </div>
                                 <div v-else class="img-preview">
                                     <img src="../../assets/images/imgdefault.jpg" />
                                 </div>
-                                <div v-if="this.fileName">
-                                    <span style="padding-right: 10px">{{ this.fileName }}</span>
+                                <div v-if="fileName">
+                                    <span style="padding-right: 10px">{{ fileName }}</span>
                                     <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
                                 </div>
                             </a-col>
@@ -197,9 +195,8 @@
                         <div style="position: relative;">
                             <div class="overlay" v-if="disableFormVal2 == true"></div>
                             <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
-                                :show-borders="true" :selected-row-keys="selectedItemKeys"
-                                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
-                                :repaint-changes-only="true">
+                                :show-borders="true" :allow-column-reordering="true" :allow-column-resizing="true"
+                                :column-auto-width="true" :repaint-changes-only="true">
                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                     :allow-deleting="true" template="button-template" mode="cell">
                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -217,7 +214,6 @@
                                 <DxColumn data-field="name" caption="사업명 (중복불가)">
                                     <DxRequiredRule />
                                 </DxColumn>
-
                                 <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                     <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                 </DxColumn>
@@ -241,14 +237,14 @@
                                     @update-step="getImgUrlAccounting" style="margin-top: 10px; " />
                             </div>
                             <a-col :span="7">
-                                <div v-if="this.imagestep" class="img-preview">
-                                    <img :src="this.imagestep" @click="handlePreview" />
+                                <div v-if="imagestep" class="img-preview">
+                                    <img :src="imagestep" />
                                 </div>
                                 <div v-else class="img-preview">
                                     <img src="../../assets/images/imgdefault.jpg" />
                                 </div>
-                                <div v-if="this.fileNamestep">
-                                    <span style="padding-right: 10px">{{ this.fileNamestep }}</span>
+                                <div v-if="fileNamestep">
+                                    <span style="padding-right: 10px">{{ fileNamestep }}</span>
                                     <delete-outlined @click="removeImgStep" style="color: red; cursor: pointer" />
                                 </div>
                             </a-col>
@@ -273,8 +269,8 @@
                         </div>
                         <div class="form-item">
                             <label>직 원 수:</label>
-                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px" min="0"
-                                v-model:value="contractCreacted.capacityHolding"
+                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px"
+                                min="0" v-model:value="contractCreacted.capacityHolding"
                                 @change="validateNumber('capacityHolding')" />
                         </div>
                         <div class="form-item">
@@ -359,14 +355,13 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { reactive, ref, watch } from "vue";
 import {
     CheckOutlined,
     EditOutlined,
     DeleteOutlined,
 } from "@ant-design/icons-vue";
-import moment from "moment";
 import { notification } from "ant-design-vue";
 import bizTypeList from "../../constants/facilityBizType";
 import {
@@ -393,7 +388,6 @@ import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import queries from "../../graphql/queries/common/index";
-
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
@@ -420,7 +414,6 @@ export default {
         DxButton,
         imgUpload,
         CustomDatepicker,
-        moment,
         selectBank,
         postCode,
         DxRequiredRule,
@@ -448,7 +441,6 @@ export default {
                     value: 2
                 }
             ],
-            imageId: null
         };
     },
     computed: {
@@ -479,16 +471,12 @@ export default {
                 return "finish";
             }
         },
-        changeValueInputEmit(data) {
-            if (data.name == "nameCompany") {
-                this.dataSearch.nameCompany = data.value;
-            }
-        },
     },
     setup() {
         const monthFormat = 'YYYY/MM';
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
+        const imageId = ref()
         const contractCreacted = reactive({
             terms: false,
             personalInfo: false,
@@ -533,6 +521,7 @@ export default {
             salesRepresentativeId: 1,
             comment: "",
             ownerName: "",
+            registrationCardFileStorageId: null
         });
         const dataInputCallApi = reactive({
             dossier: 1,
@@ -541,7 +530,7 @@ export default {
         var visibleModal = ref(false);
         const listDataConvert = ref([]);
         const valueFacilityBusinesses = ref([]);
-        const imagestep = ref("");
+        const imagestep: any = ref("");
         const imageValue = ref("");
         const fileName = ref("");
         const fileNamestep = ref("");
@@ -570,16 +559,12 @@ export default {
         onError((res) => {
             openNotificationWithIcon("error", res);
         });
-        const openNotificationWithIcon = (type, mes) => {
-            if (type == "error")
-                notification[type]({
-                    message: { mes }.mes.message,
-                });
-            else {
-                notification[type]({
-                    message: mes,
-                });
-            }
+        const openNotificationWithIcon = (type: any, mes: any) => {
+            if (type == "error") {
+                message.error(mes.message)
+            } else {
+                message.success(mes)
+            } 
         };
         const validateMessages = {
             required: "${label} is required!",
@@ -591,7 +576,7 @@ export default {
                 range: "${label} must be between ${min} and ${max}",
             },
         };
-        const onFinish = (values) => {
+        const onFinish = () => {
         };
         const layout = {
             labelCol: { span: 8 },
@@ -604,7 +589,6 @@ export default {
                 disableFormVal2.value = false
             }
         }
-
         const disableForm2 = () => {
             if (dataInputCallApi.applicationService == 2) {
                 disableFormVal.value = true
@@ -612,7 +596,6 @@ export default {
                 disableFormVal.value = false
             }
         }
-
         const { result: resultConfig, refetch: refetchConfig } = useQuery(
             queries.getSaleRequestContact,
             {},
@@ -620,11 +603,10 @@ export default {
                 fetchPolicy: "no-cache",
             })
         );
-
         const optionSale = ref()
         watch(resultConfig, (value) => {
-            let dataOption = []
-            value.getSalesRepresentativesForPublicScreen.map(e => {
+            let dataOption: any = []
+            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
                 dataOption.push({
                     label: e.name,
                     value: e.id
@@ -632,13 +614,11 @@ export default {
             })
             optionSale.value = dataOption
         });
-
         watch(valueFacilityBusinesses, (value) => {
             console.log(value);
         });
-
         const statusMailValidate = ref(false)
-        const validateEmail = (e) => {
+        const validateEmail = (e: any) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
@@ -648,8 +628,8 @@ export default {
                 statusMailValidate.value = true;
             }
         }
-
         return {
+            imageId,
             statusMailValidate,
             validateEmail,
             optionSale,
@@ -668,8 +648,7 @@ export default {
             validateMessages,
             onFinish,
             layout,
-            listDataConvert,
-            // formState,
+            listDataConvert, 
             imagestep,
             removeImg,
             imageValue,
@@ -682,63 +661,60 @@ export default {
     watch: {
         "contractCreacted.longTermCareInstitutionNumber"(newVal) {
             if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item) => {
+                this.listDataConvert.forEach((item: any) => {
                     item.longTermCareInstitutionNumber = newVal;
                 });
             }
         },
         "contractCreacted.registrationCardFileStorageId"(newVal) {
             if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item) => {
+                this.listDataConvert.forEach((item: any) => {
                     item.registrationCardFileStorageId = newVal;
                 });
             }
         },
         registrationCardFileStorageId(newVal) {
             if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item) => {
+                this.listDataConvert.forEach((item: any) => {
                     item.registrationCardFileStorageId = newVal;
                 });
             }
         },
         valueFacilityBusinesses: {
             handler(newVal) {
-                this.listDataConvert = [];
-                newVal.forEach((item) => {
-                    this.listDataConvert.push({
-                        longTermCareInstitutionNumber:
-                            this.contractCreacted.longTermCareInstitutionNumber,
+                let arr: any = []
+                newVal.forEach((item: any) => {
+                    arr.push({
+                        longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
                         facilityBizType: item?.facilityBizType,
                         name: item?.name,
                         startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
                         capacity: parseInt(item?.capacity),
-                        registrationCardFileStorageId:
-                            this.contractCreacted.registrationCardFileStorageId,
+                        registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
-
-                var result = Object.values(newVal.reduce((c, v) => {
+                this.listDataConvert = arr
+                var result: any = Object.values(newVal.reduce((c: any, v: any) => {
                     let k = v.name;
                     c[k] = c[k] || [];
                     c[k].push(v);
                     return c;
-                }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
+                }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
                 if (result.length > 0) {
                     message.error("중복되었습니다!")
                 }
-
             },
             deep: true,
         },
     },
     methods: {
-        changeValueDate(data) {
+        changeValueDate(data: any) {
             this.contractCreacted.birthday = data;
         },
-        changeValueDateHoding(data) {
+        changeValueDateHoding(data: any) {
             this.contractCreacted.startYearMonthHolding = data;
         },
-        funcAddress(data) {
+        funcAddress(data: any) {
             this.contractCreacted.zipcode = data.zonecode;
             this.contractCreacted.roadAddress = data.roadAddress;
             this.contractCreacted.jibunAddress = data.jibunAddress;
@@ -762,6 +738,7 @@ export default {
         },
         prevStep() {
             this.step--;
+            window.scrollTo(0,0);
         },
         nextStep() {
             if (this.step == 0) {
@@ -770,7 +747,7 @@ export default {
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오!")
                 }
-            } else if (this.step == 1) { 
+            } else if (this.step == 1) {
                 if (this.contractCreacted.nameCompany != ""
                     && this.contractCreacted.bizNumber != ""
                     && this.contractCreacted.zipcode != ""
@@ -781,7 +758,7 @@ export default {
                     && this.contractCreacted.phone != ""
                     && this.contractCreacted.bizNumber.length == 10
                     && this.statusMailValidate == true
-                ) { 
+                ) {
                     this.step++;
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오")
@@ -798,7 +775,6 @@ export default {
                             count++
                         }
                     }
-
                     if (this.dataInputCallApi.applicationService == 1) {
                         if (this.contractCreacted.bankType == ''
                             || this.contractCreacted.accountNumber == ''
@@ -808,16 +784,14 @@ export default {
                             count++
                         }
                     }
-
                     if (count > 0) {
                         message.error('계속하려면 모든 조건을 수락하십시오!')
                     } else {
                         this.step++;
                     }
                 }
-
-
             }
+            window.scrollTo(0,0);
         },
         openPopup() {
             var obj = this.contractCreacted;
@@ -836,23 +810,20 @@ export default {
             this.visibleModal = false;
             this.$router.push("/login");
         },
-        getImgUrl(img) {
+        getImgUrl(img: any) {
             this.contractCreacted.licenseFileStorageId = img;
             this.imageValue = img.url;
             this.fileName = img.fileName;
         },
-        getImgUrlAccounting(img) {
+        getImgUrlAccounting(img: any) {
             this.imagestep = img.url;
             this.fileNamestep = img.fileNamestep;
             this.contractCreacted.registrationCardFileStorageId = img;
         },
-        getIDBank(data) {
+        getIDBank(data: any) {
             this.contractCreacted.bankType = data;
         },
-        passwordComparison() {
-            return this.password;
-        },
-        validateNumber(key) { 
+        validateNumber(key: any) {
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
                 this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
@@ -877,243 +848,5 @@ export default {
     },
 };
 </script>
-
-<style lang="scss" scoped>
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 0.3);
-}
-
-.img-preview {
-    margin-top: 20px;
-    position: relative;
-    width: 100%;
-    padding-top: 142%;
-
-    img {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-    }
-}
-
-.imgPreview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.contract-container {
-    max-width: 960px;
-    margin: 50px auto;
-    text-align: left;
-    padding-bottom: 50px;
-}
-
-.contract-container h2 {
-    font-weight: bold;
-}
-
-.ant-steps-navigation {
-    box-shadow: 0px -1px 0 0 #e8e8e8 inset;
-}
-
-.form-group {
-    margin-top: 30px;
-}
-
-.form-group label {
-    margin-bottom: 5px;
-}
-
-.radio-group {
-    text-align: right;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
-    margin-right: -15px;
-}
-
-::v-deep textarea {
-    height: 100px;
-}
-
-.group-button {
-    display: flex;
-    justify-content: center;
-}
-
-.group-button {
-    margin-top: 20px;
-}
-
-.group-button ::v-deep button {
-    margin: 0 10px;
-}
-
-.info-box {
-    border: 1px solid #ccc;
-    padding: 30px;
-}
-
-.form-item {
-    display: flex;
-    margin-top: 15px;
-}
-
-.form-item label {
-    min-width: 165px;
-}
-
-.red {
-    color: red;
-}
-
-.width-auto {
-    width: auto;
-}
-
-.form-item ::v-deep button {
-    margin-left: 5px;
-}
-
-/* .form-item ::v-deep input,
-.form-item .ant-input-affix-wrapper ::v-deep {
-    max-width: calc(100% - 165px);
-} */
-/* ::v-deep input.dp__input.dp__input_icon_pad {
-    width: 150px;
-    max-width: 200px !important;
-} */
-::v-deep #nest-messages_user_email {
-    min-width: 350px !important;
-}
-
-.form-item p {
-    margin-left: 30px;
-    margin-top: 5px;
-    margin-bottom: 0;
-}
-
-.group-label {
-    display: flex;
-    align-items: center;
-}
-
-.group-label p {
-    margin-right: 15px;
-    margin-bottom: 0;
-}
-
-.checkbox-item {
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-
-.editable-cell {
-    position: relative;
-}
-
-.editable-cell .editable-cell-input-wrapper,
-.editable-cell .editable-cell-text-wrapper {
-    padding-right: 24px;
-}
-
-.editable-cell .editable-cell-text-wrapper {
-    padding: 5px 24px 5px 5px;
-}
-
-.editable-cell .editable-cell-icon,
-.editable-cell .editable-cell-icon-check {
-    position: absolute;
-    right: 0;
-    width: 20px;
-    cursor: pointer;
-}
-
-.date-picker label {
-    width: 165px;
-    display: inline-block;
-}
-
-.editable-cell .editable-cell-icon {
-    margin-top: 4px;
-    display: none;
-}
-
-::v-deep .ant-radio-group {
-    display: flex;
-}
-
-.editable-cell .editable-cell-icon-check {
-    line-height: 28px;
-}
-
-.editable-cell .editable-cell-icon:hover,
-.editable-cell .editable-cell-icon-check:hover {
-    color: #108ee9;
-}
-
-.editable-cell .editable-add-btn {
-    margin-bottom: 8px;
-}
-
-.editable-cell:hover .editable-cell-icon {
-    display: inline-block;
-}
-
-::v-deep .ant-pagination {
-    display: none;
-}
-
-.group-title {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
-    position: relative;
-    z-index: 20;
-    width: 200px;
-}
-
-#gridContainer {
-    margin-top: -40px;
-}
-
-.mt-3 {
-    margin-top: 30px;
-}
-
-::v-deep .ant-checkbox-wrapper {
-    display: flex;
-}
-
-::v-deep .ant-select {
-    width: 180px;
-}
-
-::v-deep .dx-toolbar-text-auto-hide .dx-button .dx-button-text {
-    display: inline-block;
-}
-
-.list-checkbox {
-    margin-top: 10px;
-}
-
-.dx-texteditor.dx-editor-outlined {
-    border-radius: 2px !important;
-}
-
-::v-deep .dx-texteditor-input {
-    min-height: 30px;
-    max-height: 20px !important;
-}
+<style lang="scss" scoped src="./style.scss">
 </style>
