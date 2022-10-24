@@ -97,9 +97,9 @@
                     <a-input v-model:value="formState.companyName" />
                   </a-form-item>
                   <a-form-item label="사업자등록번호" class="clr">
-                    <a-input style="width: 300px" :value="formState.companyBizNumber" :disabled="!canChangeableBizNumber"/>
+                    <a-input style="width: 300px" :value="formState.companyBizNumber"
+                      :disabled="!canChangeableBizNumber" />
                   </a-form-item>
-
                   <a-row>
                     <a-col :span="12">
                       <a-form-item label="사업자유형" class="clr">
@@ -145,17 +145,34 @@
                     </a-row>
                     <a-row> </a-row>
                   </a-form-item>
-                  <a-row :gutter="[16, 16]">
-                    <a-col :span="18">
-                      <a-form-item label="연락처" class="clr">
-                        <a-input v-model:value="formState.companyPhone" />
-                      </a-form-item>
-                      <a-form-item label="팩 스">
-                        <a-input v-model:value="formState.companyFax" />
-                      </a-form-item>
+
+                  <div style="display: flex">
+                    <div>
+                      <a-row :gutter="[16, 16]">
+                        <a-col :span="15">
+                          <a-form-item label="연락처" class="clr">
+                            <a-input v-model:value="formState.companyPhone" />
+                          </a-form-item>
+                          <a-form-item label="팩 스">
+                            <a-input v-model:value="formState.companyFax" />
+                          </a-form-item>
+                        </a-col>
+                      </a-row>
+                      <imgUpload :title="titleModal" @update-img="getUrlLicenseFile" style="margin-top: 10px" />
+                    </div>
+                    <a-col :span="7">
+                      <div v-if="imageLicenseFile" class="img-preview">
+                        <img :src="imageLicenseFile" />
+                      </div>
+                      <div v-else class="img-preview">
+                        <img src="../../../../../assets/images/imgdefault.jpg" />
+                      </div>
+                      <div v-if="licenseFileName">
+                        <span style="padding-right: 10px">{{ licenseFileName }}</span>
+                        <delete-outlined @click="removeLicenseFile" style="color: red; cursor: pointer" />
+                      </div>
                     </a-col>
-                    <imgUpload :title="titleModal" @update-img="getImgUrl" :srcimg="'scsadsaf'" />
-                  </a-row>
+                  </div>
                 </a-collapse-panel>
                 <a-collapse-panel key="3" header="대표자정보">
                   <a-form-item has-feedback label="대표자명" class="clr">
@@ -216,7 +233,23 @@
                         <a-input placeholder="1234567898" style="width: 250px"
                           v-model:value="formState.accountinglongTermCareInstitutionNumber" />
                       </a-form-item>
-                      <imgUpload :title="titleModal2" @update-img="getImgUrl" :srcimg="'scsadsaf'" />
+                      <div style="display: flex">
+                        <div>
+                          <imgUpload :title="titleModal" @update-img="getregCardFile" style="margin-top: 10px" />
+                        </div>
+                        <a-col :span="7">
+                          <div v-if="imageRegCardFile" class="img-preview">
+                            <img :src="imageRegCardFile" />
+                          </div>
+                          <div v-else class="img-preview">
+                            <img src="../../../../../assets/images/imgdefault.jpg" />
+                          </div>
+                          <div v-if="regCardFileName">
+                            <span style="padding-right: 10px">{{ regCardFileName }}</span>
+                            <delete-outlined @click="removeRegCardFile" style="color: red; cursor: pointer" />
+                          </div>
+                        </a-col>
+                      </div>
                       <div>
                         <a-row>
                           <a-col :span="12">
@@ -257,13 +290,15 @@
                     <selectBank :selectValue="formState.cmsBankType" width="150px" />
                   </a-form-item>
                   <a-form-item label="출금계좌번호" class="clr">
-                    <a-input placeholder="100100056489011" v-model:value="formState.accountNumber" />
+                    <a-input placeholder="100100056489011" v-model:value="formState.accountNumber"
+                      style="width: 250px" />
                   </a-form-item>
                   <a-form-item label="예금주명" class="clr">
-                    <a-input placeholder="주식회사 타운소프트비나" v-model:value="formState.ownerName" />
+                    <a-input placeholder="주식회사 타운소프트비나" v-model:value="formState.ownerName" style="width: 250px" />
                   </a-form-item>
                   <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
-                    <a-input placeholder="100100056489011" v-model:value="formState.ownerBizNumber" />
+                    <a-input placeholder="100100056489011" v-model:value="formState.ownerBizNumber"
+                      style="width: 250px" />
                     <div class="noteImage">
                       <a-row>
                         <a-col :span="1">
@@ -343,6 +378,7 @@ import {
   MinusCircleOutlined,
   InfoCircleFilled,
   PlusOutlined,
+  DeleteOutlined
 } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import imgUpload from "../../../../../components/UploadImage.vue";
@@ -359,7 +395,7 @@ export default defineComponent({
       checked: true,
       dateFormat: "YYYY-MM-DD",
       labelCol: { style: { width: "150px" } },
-      wrapperCol: { span: 14 },
+      wrapperCol: { span: 18 },
       radioStyle: {
         display: "flex",
         height: "20px",
@@ -380,6 +416,7 @@ export default defineComponent({
     DxSelection,
     UploadOutlined,
     MinusCircleOutlined,
+    DeleteOutlined,
     CustomDatepicker,
     InfoCircleFilled,
     PlusOutlined,
@@ -394,6 +431,14 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const facilityBizType = FacilityBizType.all();
+
+    const imageRegCardFile = ref("");
+    const regCardFileName = ref("");
+    const regCardFileId = ref("");
+
+    const imageLicenseFile = ref("");
+    const licenseFileName = ref("");
+
     let visible = ref(false);
     let activeKey = ref(1);
     const dataQuery = ref();
@@ -422,7 +467,8 @@ export default defineComponent({
       date: "2022-08-25",
       color: "green",
     });
-    const formState = reactive({
+
+    const initialFormState = {
       id: null,
       status: 10,
       code: "",
@@ -497,7 +543,15 @@ export default defineComponent({
 
       extraSalesRepresentativeId: 1,
       extraComment: "",
-    });
+    };
+    const formState = reactive({ ...initialFormState });
+
+    // event close popup
+    const setModalVisible = () => {
+      triggerCheckPer.value = false;
+      trigger.value = false;
+      emit("closePopup", false);
+    };
 
     const validateMessages = {
       required: "${label} is required!",
@@ -519,9 +573,20 @@ export default defineComponent({
           dataQuery.value = { id: props.data };
           trigger.value = true;
           refetch();
+          Object.assign(formState, initialFormState);
+
         } else {
+          // reset image if close popup
+          regCardFileId.value = "";
+          imageRegCardFile.value = "";
+          regCardFileName.value = "";
+          imageLicenseFile.value = "";
+          licenseFileName.value = "";
           visible.value = newValue;
+
           trigger.value = false;
+          
+          activeKey.value = 1;
         }
       }
     );
@@ -536,7 +601,7 @@ export default defineComponent({
 
     // query check if can be change business registration number 
     const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
-      queries.isSubscriptionRequestChangeableBizNumber,dataQueryCheckPer,
+      queries.isSubscriptionRequestChangeableBizNumber, dataQueryCheckPer,
       () => ({
         enabled: triggerCheckPer.value,
         fetchPolicy: "no-cache",
@@ -550,6 +615,18 @@ export default defineComponent({
 
     watch(result, (value) => {
       if (value && value.getSubscriptionRequest) {
+        // set value license 
+        imageLicenseFile.value = value.getSubscriptionRequest.content.company.license.url;
+        licenseFileName.value = value.getSubscriptionRequest.content.company.license.name;
+
+        // set value Term Care Institution 
+        let faBusinesses = value.getSubscriptionRequest.content.accounting.facilityBusinesses;
+        console.log(faBusinesses);
+        if(faBusinesses.length > 0 && faBusinesses[0].registrationCard != null){
+          imageRegCardFile.value = faBusinesses[0].registrationCard.url;
+          regCardFileName.value = faBusinesses[0].registrationCard.name;
+        }
+        
         formState.id = value.getSubscriptionRequest.id;
         formState.status = value.getSubscriptionRequest.status;
         formState.code = value.getSubscriptionRequest.code;
@@ -716,18 +793,11 @@ export default defineComponent({
             break;
         }
         triggerCheckPer.value = true;
-        dataQueryCheckPer.value = {id: value.getSubscriptionRequest.id ,bizNumber: value.getSubscriptionRequest.companyBizNumber};
+        dataQueryCheckPer.value = { id: value.getSubscriptionRequest.id, bizNumber: value.getSubscriptionRequest.companyBizNumber };
         // trigger query check if can be change business registration number 
         refetchCheckPer()
       }
     });
-
-    const setModalVisible = () => {
-      triggerCheckPer.value = false;
-      trigger.value = false;
-      emit("closePopup", false);
-    };
-
     const changeTypeCompany = (bizType: number) => {
       if (bizType == 2) {
         return "주민등록번호";
@@ -796,17 +866,18 @@ export default defineComponent({
     const updateSubscriptionRequest = (e: any) => {
       let customAccountingfacilityBusinesses: any = [];
       if (formState.accountingfacilityBusinesses) {
-          customAccountingfacilityBusinesses = formState.accountingfacilityBusinesses.map((facilityBusinesses: any) => ({
+        customAccountingfacilityBusinesses = formState.accountingfacilityBusinesses.map((facilityBusinesses: any) => ({
           longTermCareInstitutionNumber: formState.accountinglongTermCareInstitutionNumber,
           capacity: facilityBusinesses.capacity,
           facilityBizType: facilityBusinesses.facilityBizType,
           name: facilityBusinesses.name,
           registrationCard: facilityBusinesses.registrationCard,
-          registrationCardFileStorageId: facilityBusinesses.registrationCardFileStorageId,
+          registrationCardFileStorageId: regCardFileId.value == '' ? facilityBusinesses.registrationCardFileStorageId : regCardFileId.value,
           startYearMonth: facilityBusinesses.startYearMonth,
         }));
       }
 
+      // process data befor handle update
       let contentData = {
         agreements: {
           terms: formState.agreementsTerms,
@@ -867,6 +938,7 @@ export default defineComponent({
           comment: formState.extraComment,
         },
       };
+
       const cleanData = JSON.parse(
         JSON.stringify(contentData, (name, val) => {
           if (val == null) {
@@ -893,6 +965,31 @@ export default defineComponent({
       actionUpdate(variables);
     };
 
+    // handle License File upload
+    const getUrlLicenseFile = (img: any) => {
+      formState.companyLicenseFileStorageId = img.id;
+      imageLicenseFile.value = img.url;
+      licenseFileName.value = img.fileName;
+    }
+
+    const removeLicenseFile = () => {
+      imageLicenseFile.value = "";
+      licenseFileName.value = "";
+    };
+
+    // handle registration CardFile Storage upload
+    const getregCardFile = (img: any) => {
+      regCardFileId.value = img.id;
+      imageRegCardFile.value = img.url;
+      regCardFileName.value = img.fileName;
+    }
+
+    const removeRegCardFile = () => {
+      regCardFileId.value = "";
+      imageRegCardFile.value = "";
+      regCardFileName.value = "";
+    };
+
     return {
       visible,
       formState,
@@ -911,14 +1008,18 @@ export default defineComponent({
       funcAddress,
       updateSubscriptionRequest,
       facilityBizType,
-      canChangeableBizNumber
+      canChangeableBizNumber,
+      getregCardFile,
+      imageRegCardFile,
+      regCardFileName,
+      removeRegCardFile,
+      getUrlLicenseFile,
+      licenseFileName,
+      imageLicenseFile,
+      removeLicenseFile,
     };
   },
   methods: {
-    getImgUrl(img: any) {
-      
-    },
-
     formarDate(date: any) {
       return dayjs(date).format("YYYY/MM/DD");
     },
@@ -1034,5 +1135,28 @@ export default defineComponent({
 
 #data-grid-demo {
   margin-bottom: 10px;
+}
+
+.img-preview {
+  margin-top: 20px;
+  position: relative;
+  width: 100%;
+  padding-top: 142%;
+
+  img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
+.imgPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>
