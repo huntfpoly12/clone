@@ -273,7 +273,7 @@
                         </div>
                         <div class="form-item">
                             <label>직 원 수:</label>
-                            <a-input :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px"
+                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px" min="0"
                                 v-model:value="contractCreacted.capacityHolding"
                                 @change="validateNumber('capacityHolding')" />
                         </div>
@@ -852,11 +852,7 @@ export default {
         passwordComparison() {
             return this.password;
         },
-        validateNumber(key) {
-            if (key == 'capacityHolding') {
-                let e = this.contractCreacted.capacityHolding
-                this.contractCreacted.capacityHolding = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
-            }
+        validateNumber(key) { 
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
                 this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
