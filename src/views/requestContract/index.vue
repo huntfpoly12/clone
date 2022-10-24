@@ -496,10 +496,10 @@ export default {
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
         const contractCreacted = reactive({
-            terms: true,
-            personalInfo: true,
-            accountingService: true,
-            withholdingService: true,
+            terms: false,
+            personalInfo: false,
+            accountingService: false,
+            withholdingService: false,
             nameCompany: "",
             zipcode: "",
             roadAddress: "",
