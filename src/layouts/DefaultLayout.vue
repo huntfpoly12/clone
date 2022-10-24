@@ -32,9 +32,8 @@
 					<div class="wrap-search">
 						<a-select v-model:value="selectedItems" :options="menuData.map(item => ({
 							value: item.id + ' | ' + item.name
-						}))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px;" @change="addMenuTab" /> 
-					</div>
-					
+						}))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px;" @change="addMenuTab" />
+					</div>  
 				</div>
 
 				<div class="right">
@@ -71,7 +70,7 @@
 									item.id === activeTab.id
 										? 'ant-menu-item-selected-active'
 										: ''
-								" @click.enter="addMenuTab(item)">
+								" @click.enter="addMenuTab(item.id + ' | ' + item.name)">
 									<router-link :to="item.url">{{ item.name }}</router-link>
 								</a-menu-item>
 							</a-sub-menu>
@@ -297,17 +296,19 @@ export default defineComponent({
 			}
 		},
 		addMenuTab(item) {
+			console.log(item);
 			let itemNew = []
 			let id = item.split(" | ")
+			let tabAc = {}
 			this.menuData.map(e => {
 				if (e.id == id[0]) {
-					this.activeTab = e;
+					tabAc = e;
 					itemNew = e
 				}
 			})
 			if (this.menuTab.length < 20) {
 				this.menuTab.push(itemNew);
-			} 
+			}
 			const obj = {};
 			for (let i = 0, len = this.menuTab.length; i < len; i++) {
 				obj[this.menuTab[i]["id"]] = this.menuTab[i];
@@ -316,6 +317,22 @@ export default defineComponent({
 			for (const key in obj) {
 				this.menuTab.push(obj[key]);
 			}
+			console.log(tabAc);
+			this.activeTab = tabAc;
+
+			// if (this.menuTab.length < 20) {
+			// 	this.menuTab.push(item);
+			// }
+			// const obj = {};
+			// for (let i = 0, len = this.menuTab.length; i < len; i++) {
+			// 	obj[this.menuTab[i]["id"]] = this.menuTab[i];
+			// }
+
+			// this.menuTab = new Array();
+			// for (const key in obj) {
+			// 	this.menuTab.push(obj[key]);
+			// }
+			// this.activeTab = item;
 		},
 		removeItemTab(item) {
 			this.menuTab.splice(item, 1);
