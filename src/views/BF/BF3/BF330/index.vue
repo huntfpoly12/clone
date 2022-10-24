@@ -122,7 +122,7 @@
         </div>
     </a-spin>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent, onMounted, ref, watch } from "vue";
 import {
     DxDataGrid,
@@ -231,7 +231,7 @@ export default defineComponent({
         }
     },
     methods: {
-        onExporting(e) {
+        onExporting(e:any) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
             exportDataGrid({
@@ -248,12 +248,12 @@ export default defineComponent({
             });
             e.cancel = true;
         },
-        setModalVisible(data) {
+        setModalVisible(data: any) {
             this.idSubRequest = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
         },
-        modalHistory(data) {
+        modalHistory(data: any) {
             this.idSubRequest = data.data.id;
             this.modalHistoryStatus = true;
             this.popupData = data;

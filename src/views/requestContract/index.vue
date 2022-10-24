@@ -359,8 +359,8 @@
         </div>
     </div>
 </template>
-<script>
-import { reactive, ref, watch } from "vue";
+<script lang="ts">
+import { reactive, ref, watch ,computed} from "vue";
 import {
     CheckOutlined,
     EditOutlined,
@@ -435,7 +435,6 @@ export default {
     data() {
         return {
             textIDNo: "법인등록번호",
-            step: 0,
             radio: "",
             states: bizTypeList,
             titleModal: "사업자등록증",
@@ -452,44 +451,14 @@ export default {
         };
     },
     computed: {
-        checkStepTwo() {
-            if (this.step === 0) {
-                return "wait";
-            } else if (this.step === 1) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        checkStepThree() {
-            if (this.step < 2) {
-                return "wait";
-            } else if (this.step === 2) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        checkStepFour() {
-            if (this.step < 3) {
-                return "wait";
-            } else if (this.step === 3) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        changeValueInputEmit(data) {
-            if (data.name == "nameCompany") {
-                this.dataSearch.nameCompany = data.value;
-            }
-        },
+ 
     },
     setup() {
+        const step = ref(0);
         const monthFormat = 'YYYY/MM';
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
-        const contractCreacted = reactive({
+        const initialFormState = {
             terms: false,
             personalInfo: false,
             accountingService: false,
@@ -533,13 +502,16 @@ export default {
             salesRepresentativeId: 1,
             comment: "",
             ownerName: "",
+        };
+        const contractCreacted = reactive({
+            ...initialFormState
         });
         const dataInputCallApi = reactive({
             dossier: 1,
             applicationService: 1,
         })
         var visibleModal = ref(false);
-        const listDataConvert = ref([]);
+        const listDataConvert = ref(Array());
         const valueFacilityBusinesses = ref([]);
         const imagestep = ref("");
         const imageValue = ref("");
@@ -570,7 +542,7 @@ export default {
         onError((res) => {
             openNotificationWithIcon("error", res);
         });
-        const openNotificationWithIcon = (type, mes) => {
+        const openNotificationWithIcon = (type: any, mes: any) => {
             if (type == "error")
                 notification[type]({
                     message: { mes }.mes.message,
@@ -591,7 +563,7 @@ export default {
                 range: "${label} must be between ${min} and ${max}",
             },
         };
-        const onFinish = (values) => {
+        const onFinish = (values: any) => {
         };
         const layout = {
             labelCol: { span: 8 },
@@ -623,8 +595,8 @@ export default {
 
         const optionSale = ref()
         watch(resultConfig, (value) => {
-            let dataOption = []
-            value.getSalesRepresentativesForPublicScreen.map(e => {
+            let dataOption: { label: any; value: any; }[] = []
+            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
                 dataOption.push({
                     label: e.name,
                     value: e.id
@@ -638,7 +610,7 @@ export default {
         });
 
         const statusMailValidate = ref(false)
-        const validateEmail = (e) => {
+        const validateEmail = (e:any) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
@@ -649,6 +621,41 @@ export default {
             }
         }
 
+
+        // all Computed 
+        const checkStepTwo = computed(()=>{
+            if (step.value === 0) {
+                return "wait";
+            } else if (step.value === 1) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+        const checkStepThree =  computed(()=>{
+            if (step.value < 2) {
+                return "wait";
+            } else if (step.value === 2) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+        const checkStepFour = computed(()=>{
+            if (step.value < 3) {
+                return "wait";
+            } else if (step.value === 3) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+
+        const changeValueInputEmit = computed((data)=>{
+            if (data.name == "nameCompany") {
+                //dataSearch.nameCompany = data.value;
+            }
+        });
         return {
             statusMailValidate,
             validateEmail,
@@ -669,6 +676,7 @@ export default {
             onFinish,
             layout,
             listDataConvert,
+            step,
             // formState,
             imagestep,
             removeImg,
@@ -676,7 +684,11 @@ export default {
             fileName,
             fileNamestep,
             removeImgStep,
-            monthFormat
+            monthFormat,
+            checkStepTwo,
+            checkStepThree,
+            checkStepFour,
+            changeValueInputEmit
         };
     },
     watch: {
@@ -732,13 +744,13 @@ export default {
         },
     },
     methods: {
-        changeValueDate(data) {
+        changeValueDate(data: any) {
             this.contractCreacted.birthday = data;
         },
         changeValueDateHoding(data) {
             this.contractCreacted.startYearMonthHolding = data;
         },
-        funcAddress(data) {
+        funcAddress(data: any) {
             this.contractCreacted.zipcode = data.zonecode;
             this.contractCreacted.roadAddress = data.roadAddress;
             this.contractCreacted.jibunAddress = data.jibunAddress;
