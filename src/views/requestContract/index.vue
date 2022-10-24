@@ -359,7 +359,7 @@
         </div>
     </div>
 </template>
-<script lang="ts">
+<script>
 import { reactive, ref, watch } from "vue";
 import {
     CheckOutlined,
