@@ -109,7 +109,6 @@
                                     <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
                                 </DxValidator>
                             </DxTextBox> -->
-
                             <a-input v-model:value="contractCreacted.addressExtend"></a-input>
                         </div>
                         <div class="form-item">
@@ -117,7 +116,6 @@
                             <a-input placeholder="0298765432" @change="validateNumber('phone')"
                                 v-model:value="contractCreacted.phone" style="width: 180px;">
                             </a-input>
-
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
@@ -216,7 +214,6 @@
                                 <DxColumn data-field="name" caption="사업명 (중복불가)">
                                     <DxRequiredRule />
                                 </DxColumn>
-
                                 <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                     <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                 </DxColumn>
@@ -391,7 +388,6 @@ import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import queries from "../../graphql/queries/common/index";
-
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
@@ -445,7 +441,6 @@ export default {
                     value: 2
                 }
             ],
-
         };
     },
     computed: {
@@ -481,7 +476,6 @@ export default {
         const monthFormat = 'YYYY/MM';
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
-
         const imageId = ref()
         const contractCreacted = reactive({
             terms: false,
@@ -570,17 +564,7 @@ export default {
                 message.error(mes.message)
             } else {
                 message.success(mes)
-            }
-
-            // if (type == "error")
-            //     notification[type]({
-            //         message: { mes }.mes.message,
-            //     });
-            // else {
-            //     notification[type]({
-            //         message: mes,
-            //     });
-            // }
+            } 
         };
         const validateMessages = {
             required: "${label} is required!",
@@ -605,7 +589,6 @@ export default {
                 disableFormVal2.value = false
             }
         }
-
         const disableForm2 = () => {
             if (dataInputCallApi.applicationService == 2) {
                 disableFormVal.value = true
@@ -613,7 +596,6 @@ export default {
                 disableFormVal.value = false
             }
         }
-
         const { result: resultConfig, refetch: refetchConfig } = useQuery(
             queries.getSaleRequestContact,
             {},
@@ -621,7 +603,6 @@ export default {
                 fetchPolicy: "no-cache",
             })
         );
-
         const optionSale = ref()
         watch(resultConfig, (value) => {
             let dataOption: any = []
@@ -633,11 +614,9 @@ export default {
             })
             optionSale.value = dataOption
         });
-
         watch(valueFacilityBusinesses, (value) => {
             console.log(value);
         });
-
         const statusMailValidate = ref(false)
         const validateEmail = (e: any) => {
             let checkMail = e.target.value.match(
@@ -649,7 +628,6 @@ export default {
                 statusMailValidate.value = true;
             }
         }
-
         return {
             imageId,
             statusMailValidate,
@@ -670,8 +648,7 @@ export default {
             validateMessages,
             onFinish,
             layout,
-            listDataConvert,
-            // formState,
+            listDataConvert, 
             imagestep,
             removeImg,
             imageValue,
@@ -716,9 +693,7 @@ export default {
                         registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
-
                 this.listDataConvert = arr
-
                 var result: any = Object.values(newVal.reduce((c: any, v: any) => {
                     let k = v.name;
                     c[k] = c[k] || [];
@@ -728,7 +703,6 @@ export default {
                 if (result.length > 0) {
                     message.error("중복되었습니다!")
                 }
-
             },
             deep: true,
         },
@@ -764,6 +738,7 @@ export default {
         },
         prevStep() {
             this.step--;
+            window.scrollTo(0,0);
         },
         nextStep() {
             if (this.step == 0) {
@@ -800,7 +775,6 @@ export default {
                             count++
                         }
                     }
-
                     if (this.dataInputCallApi.applicationService == 1) {
                         if (this.contractCreacted.bankType == ''
                             || this.contractCreacted.accountNumber == ''
@@ -810,16 +784,14 @@ export default {
                             count++
                         }
                     }
-
                     if (count > 0) {
                         message.error('계속하려면 모든 조건을 수락하십시오!')
                     } else {
                         this.step++;
                     }
                 }
-
-
             }
+            window.scrollTo(0,0);
         },
         openPopup() {
             var obj = this.contractCreacted;
@@ -876,7 +848,5 @@ export default {
     },
 };
 </script>
-
 <style lang="scss" scoped src="./style.scss">
-
 </style>
