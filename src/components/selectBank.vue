@@ -1,16 +1,11 @@
 <template>
   <div>
     <a-space>
-    <a-select
-      ref="select"
-      v-model:value="selectValue"
-      style="width: 120px"
-      @change="handleChange"
-    >
-      <a-select-option v-for="item in bankTypeSelect" :key="item.c" :value="item.c">{{item.n}}</a-select-option>
-    </a-select>
-  
-  </a-space>
+      <a-select :disabled="disableFormVal" ref="select" v-model:value="selectValue" style="width: 120px" @change="handleChange">
+        <a-select-option v-for="item in bankTypeSelect" :key="item.c" :value="item.c">{{item.n}}</a-select-option>
+      </a-select>
+
+    </a-space>
   </div>
 </template>
 <script lang="ts">
@@ -27,7 +22,11 @@ export default {
       default: "100%",
       type: String,
     },
-    
+
+    disableFormVal: {
+      default: false,
+      type: Boolean,
+    },
   },
   mounted() { },
   setup(props: any, { emit }: any) {

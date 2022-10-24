@@ -52,15 +52,11 @@
                     <div class="info-box">
                         <div class="form-item">
                             <label class="red">상 호 :</label>
-                            <!-- <a-input v-model:value="contractCreacted.nameCompany" placeholder="가나다라마바사아자차카타파하 요양병원"
-                                style="width: 40%;" /> -->
                             <div>
                                 <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany"
                                     placeholder="가나다라마바사아자차카타파하 요양병원">
                                     <DxValidator>
-                                        <DxRequiredRule message="Name is required" />
-                                        <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" />
-                                        <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
+                                        <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                     </DxValidator>
                                 </DxTextBox>
                             </div>
@@ -68,9 +64,9 @@
                         <div class="form-item">
                             <label class="red">사업자등록번호 :</label>
                             <DxTextBox mask="000-00-00000" v-model:value="contractCreacted.bizNumber"
-                                mask-invalid-message="Chưa nhập đủ thông tin">
+                                mask-invalid-message="입력한 정보가 충분하지 않습니다!">
                                 <DxValidator>
-                                    <DxPatternRule message="The phone must have a correct USA phone format" />
+                                    <DxPatternRule message="" />
                                 </DxValidator>
                             </DxTextBox>
                         </div>
@@ -82,12 +78,10 @@
                             </a-radio-group>
                             <div class="group-label">
                                 <p>{{ textIDNo }}:</p>
-                                <!-- <a-input class="width-auto" v-model:value="contractCreacted.residentId"
-                                    placeholder="800123-1234567" /> -->
                                 <DxTextBox mask="000000-0000000" v-model:value="contractCreacted.residentId"
-                                    mask-invalid-message="Chưa nhập đủ thông tin">
+                                    mask-invalid-message="입력한 정보가 충분하지 않습니다!">
                                     <DxValidator>
-                                        <DxPatternRule message="The phone must have a correct USA phone format" />
+                                        <DxPatternRule message="" />
                                     </DxValidator>
                                 </DxTextBox>
                             </div>
@@ -108,29 +102,27 @@
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <!-- <a-input placeholder="확장 주소" v-model:value="contractCreacted.addressExtend" /> -->
-                            <DxTextBox style="width: 100%" v-model:value="contractCreacted.addressExtend"
+                            <!-- <DxTextBox style="width: 100%" v-model:value="contractCreacted.addressExtend"
                                 placeholder="확장 주소">
                                 <DxValidator>
                                     <DxRequiredRule message="Name is required" />
-                                    <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
                                     <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
                                 </DxValidator>
-                            </DxTextBox>
+                            </DxTextBox> -->
+
+                            <a-input v-model:value="contractCreacted.addressExtend"></a-input>
                         </div>
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <DxTextBox placeholder="0298765432" v-model:value="contractCreacted.phone">
-                                <DxValidator>
-                                    <DxRequiredRule message="Name is required" />
-                                    <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
-                                    <!-- <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" /> -->
-                                </DxValidator>
-                            </DxTextBox>
+                            <a-input placeholder="0298765432" @change="validateNumber('phone')"
+                                v-model:value="contractCreacted.phone" style="width: 180px;">
+                            </a-input>
+
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
-                            <DxTextBox placeholder="0212345678" v-model:value="contractCreacted.fax" />
+                            <a-input placeholder="0212345678" v-model:value="contractCreacted.fax"
+                                @change="validateNumber('fax')" style="width: 180px;" />
                         </div>
                         <div style="display: flex">
                             <div>
@@ -160,9 +152,7 @@
                             <DxTextBox placeholder="홍길동" style="width: 150px"
                                 v-model:value="contractCreacted.namePresident">
                                 <DxValidator>
-                                    <DxRequiredRule message="Name is required" />
-                                    <!-- <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" /> -->
-                                    <!-- <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" /> -->
+                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                 </DxValidator>
                             </DxTextBox>
                         </div>
@@ -182,11 +172,11 @@
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
-                            <a-form :model="formState" v-bind="layout" name="nest-messages"
-                                :validate-messages="validateMessages" @finish="onFinish">
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
                                 <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="formState.user.email"
-                                        placeholder="abc123@mailaddress.com" />
+                                    <a-input v-model:value="contractCreacted.email" placeholder="abc123@mailaddress.com"
+                                        @change="validateEmail" />
                                 </a-form-item>
                             </a-form>
                         </div>
@@ -199,48 +189,56 @@
                         <label>1. 회계서비스 신청</label>
                         <div class="list-checkbox">
                             <a-radio-group v-model:value="dataInputCallApi.dossier" :options="plainOptions"
-                                @change="changeOptionService1" />
+                                @change="disableForm1" />
                         </div>
                         <div class="group-title">
                             <p class="red">⁙ 운영사업</p>
                         </div>
-                        <DxDataGrid id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
-                            :selected-row-keys="selectedItemKeys" :allow-column-reordering="true"
-                            :allow-column-resizing="true" :column-auto-width="true">
-                            <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                :allow-deleting="true" template="button-template" mode="cell">
-                                <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                <DxTexts addRow="추 가" />
-                            </DxEditing>
-                            <template #button-template>
-                                <DxButton icon="plus" />
-                            </template>
-                            <DxPaging :enabled="false" />
-                            <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
-                                cell-template="indexCell" />
-                            <template #indexCell="{ data }">
-                                <div>{{ data.rowIndex + 1 }}</div>
-                            </template>
-                            <DxColumn data-field="name" caption="사업명 (중복불가)" />
-                            <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
-                                <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
-                            </DxColumn>
-                            <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
-                                :format="'yyyy-MM-dd'" />
-                            <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
-                            <DxToolbar>
-                                <DxItem name="addRowButton" />
-                            </DxToolbar>
-                        </DxDataGrid>
+                        <div style="position: relative;">
+                            <div class="overlay" v-if="disableFormVal2 == true"></div>
+                            <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
+                                :show-borders="true" :selected-row-keys="selectedItemKeys"
+                                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
+                                :repaint-changes-only="true">
+                                <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+                                    :allow-deleting="true" template="button-template" mode="cell">
+                                    <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                    <DxTexts addRow="추 가" />
+                                </DxEditing>
+                                <template #button-template>
+                                    <DxButton icon="plus" />
+                                </template>
+                                <DxPaging :enabled="false" />
+                                <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                                    cell-template="indexCell" />
+                                <template #indexCell="{ data }">
+                                    <div>{{ data.rowIndex + 1 }}</div>
+                                </template>
+                                <DxColumn data-field="name" caption="사업명 (중복불가)">
+                                    <DxRequiredRule />
+                                </DxColumn>
+
+                                <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
+                                    <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
+                                </DxColumn>
+                                <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
+                                    :format="'yyyy-MM-dd'" />
+                                <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
+                                <DxToolbar>
+                                    <DxItem name="addRowButton" />
+                                </DxToolbar>
+                            </DxDataGrid>
+                        </div>
                         <div class="form-item">
                             <label class="red">장기요양기관등록번호 :</label>
-                            <a-input placeholder="1234567898" @change="validateNumber('longTermCareInstitutionNumber')"
+                            <a-input :disabled="disableFormVal2" placeholder="1234567898"
+                                @change="validateNumber('longTermCareInstitutionNumber')"
                                 v-model:value="contractCreacted.longTermCareInstitutionNumber" />
                         </div>
                         <div style="display: flex">
                             <div>
-                                <imgUpload :title="titleModal" @update-step="getImgUrlAccounting"
-                                    style="margin-top: 10px; " />
+                                <imgUpload :disabledImg="disableFormVal2" :title="titleModal"
+                                    @update-step="getImgUrlAccounting" style="margin-top: 10px; " />
                             </div>
                             <a-col :span="7">
                                 <div v-if="this.imagestep" class="img-preview">
@@ -257,29 +255,32 @@
                         </div>
                         <div class="form-item">
                             <label>부가서비스:</label>
-                            <a-checkbox v-model:checked="contractCreacted.accountingServiceTypes">회계입력대행서비스</a-checkbox>
+                            <a-checkbox :disabled="disableFormVal2"
+                                v-model:checked="contractCreacted.accountingServiceTypes">회계입력대행서비스</a-checkbox>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>2. 원천서비스 신청</label>
                         <div class="list-checkbox">
-                            <a-radio-group v-model:value="dataInputCallApi.applicationService"
-                                :options="plainOptions" />
+                            <a-radio-group v-model:value="dataInputCallApi.applicationService" :options="plainOptions"
+                                @change="disableForm2" />
                         </div>
                         <div class="form-item">
                             <label>서비스 시작년월 :</label>
-                            <a-date-picker style="width: 170px" v-model:value="contractCreacted.startYearMonthHolding"
-                                :format="monthFormat" placeholder="" picker="month" />
+                            <a-date-picker :disabled="disableFormVal" style="width: 170px"
+                                v-model:value="contractCreacted.startYearMonthHolding" :format="monthFormat"
+                                placeholder="" picker="month" />
                         </div>
                         <div class="form-item">
                             <label>직 원 수:</label>
-                            <a-input placeholder="장기요양기관등록번호" style="width: 170px"
+                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px" min="0"
                                 v-model:value="contractCreacted.capacityHolding"
                                 @change="validateNumber('capacityHolding')" />
                         </div>
                         <div class="form-item">
                             <label>부가서비스 :</label>
-                            <a-checkbox v-model:checked="contractCreacted.withholdingServiceTypes">4대보험신고서비스
+                            <a-checkbox :disabled="disableFormVal"
+                                v-model:checked="contractCreacted.withholdingServiceTypes">4대보험신고서비스
                             </a-checkbox>
                         </div>
                     </div>
@@ -287,27 +288,29 @@
                         <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                         <div class="form-item">
                             <label class="red">출금은행 :</label>
-                            <selectBank @bank="getIDBank" :width="'178px'" />
+                            <selectBank :disableFormVal="disableFormVal" @bank="getIDBank" :width="'178px'" />
                         </div>
                         <div class="form-item">
                             <label class="red">출금계좌번호 :</label>
-                            <a-input placeholder="출금계좌번호" v-model:value="contractCreacted.accountNumber"
+                            <a-input placeholder="출금계좌번호" :disabled="disableFormVal"
+                                v-model:value="contractCreacted.accountNumber"
                                 @change="validateNumber('accountNumber')" />
                         </div>
                         <div class="form-item">
                             <label class="red">예금주명 :</label>
-                            <a-input placeholder="주식회사 타운소프트비나" v-model:value="contractCreacted.ownerName" />
+                            <a-input placeholder="주식회사 타운소프트비나" :disabled="disableFormVal"
+                                v-model:value="contractCreacted.ownerName" />
                         </div>
                         <div class="form-item">
                             <label class="red">사업자(주민)등록번호:</label>
                             <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다"
-                                v-model:value="contractCreacted.ownerBizNumber"
+                                v-model:value="contractCreacted.ownerBizNumber" :disabled="disableFormVal"
                                 @change="validateNumber('ownerBizNumber')" />
                             <p>i: 예금주의 사업자등록번호 또는 주민등록번호입니다</p>
                         </div>
                         <div class="form-item">
                             <label class="red">자동이체출금일자 :</label>
-                            <a-radio-group v-model:value="contractCreacted.withdrawDay">
+                            <a-radio-group v-model:value="contractCreacted.withdrawDay" :disabled="disableFormVal">
                                 <a-radio value="매월 5일">매월 5일</a-radio>
                                 <a-radio value="매월 12일">매월 12일</a-radio>
                                 <a-radio value="매월 19일">매월 19일</a-radio>
@@ -318,17 +321,14 @@
                         <label>4. 기타</label>
                         <div class="form-item">
                             <label>영업관리담당 :</label>
-                            <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택">
-                                <a-select-option :value="1">A 대리점</a-select-option>
-                                <a-select-option :value="2">농협</a-select-option>
-                                <a-select-option :value="3">C 영업사원</a-select-option>
-                                <a-select-option :value="4">D 영업사원</a-select-option>
-                                <a-select-option :value="5">E 본사영업사원</a-select-option>
+                            <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택"
+                                :disabled="disableFormVal" :options="optionSale">
                             </a-select>
                         </div>
                         <div class="form-item">
                             <label>전달사항 :</label>
-                            <a-textarea v-model:value="contractCreacted.comment" placeholder="전달사항입력" allow-clear />
+                            <a-textarea v-model:value="contractCreacted.comment" :disabled="disableFormVal"
+                                placeholder="전달사항입력" allow-clear />
                         </div>
                     </div>
                 </a-form>
@@ -360,7 +360,7 @@
     </div>
 </template>
 <script>
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import {
     CheckOutlined,
     EditOutlined,
@@ -379,24 +379,27 @@ import {
     DxToolbar,
     DxItem,
     DxTexts,
+    DxRequiredRule,
+    DxAsyncRule
 } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "../../graphql/mutations/RqContract/index";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+import queries from "../../graphql/queries/common/index";
+
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
 import DxTextBox from "devextreme-vue/text-box";
 import {
     DxValidator,
-    DxRequiredRule,
     DxCompareRule,
     DxPatternRule,
     DxStringLengthRule,
@@ -427,6 +430,7 @@ export default {
         DxTextBox,
         DxStringLengthRule,
         DeleteOutlined,
+        DxAsyncRule
     },
     data() {
         return {
@@ -434,9 +438,7 @@ export default {
             step: 0,
             radio: "",
             states: bizTypeList,
-            marginTopModal: "margin-top : 10px",
             titleModal: "사업자등록증",
-            namePattern: /^[^0-9]+$/,
             plainOptions: [
                 {
                     label: "신청합니다",
@@ -485,11 +487,13 @@ export default {
     },
     setup() {
         const monthFormat = 'YYYY/MM';
+        const disableFormVal = ref(false)
+        const disableFormVal2 = ref(false)
         const contractCreacted = reactive({
-            terms: true,
-            personalInfo: true,
-            accountingService: true,
-            withholdingService: true,
+            terms: false,
+            personalInfo: false,
+            accountingService: false,
+            withholdingService: false,
             nameCompany: "",
             zipcode: "",
             roadAddress: "",
@@ -522,7 +526,7 @@ export default {
             startYearMonthHolding: "",
             capacityHolding: null,
             withholdingServiceTypes: 1,
-            bankType: "39",
+            bankType: "",
             accountNumber: "",
             ownerBizNumber: "",
             withdrawDay: "매월 5일",
@@ -531,8 +535,8 @@ export default {
             ownerName: "",
         });
         const dataInputCallApi = reactive({
-            dossier: "신청합니다",
-            applicationService: "신청합니다",
+            dossier: 1,
+            applicationService: 1,
         })
         var visibleModal = ref(false);
         const listDataConvert = ref([]);
@@ -593,21 +597,67 @@ export default {
             labelCol: { span: 8 },
             wrapperCol: { span: 16 },
         };
-        const formState = reactive({
-            user: {
-                name: "",
-                age: undefined,
-                email: "",
-                website: "",
-                introduction: "",
-            },
-        });
-        const changeOptionService1 = () => {
-            console.log(dataInputCallApi.dossier, "Val");
+        const disableForm1 = () => {
+            if (dataInputCallApi.dossier == 2) {
+                disableFormVal2.value = true
+            } else {
+                disableFormVal2.value = false
+            }
         }
+
+        const disableForm2 = () => {
+            if (dataInputCallApi.applicationService == 2) {
+                disableFormVal.value = true
+            } else {
+                disableFormVal.value = false
+            }
+        }
+
+        const { result: resultConfig, refetch: refetchConfig } = useQuery(
+            queries.getSaleRequestContact,
+            {},
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        const optionSale = ref()
+        watch(resultConfig, (value) => {
+            let dataOption = []
+            value.getSalesRepresentativesForPublicScreen.map(e => {
+                dataOption.push({
+                    label: e.name,
+                    value: e.id
+                })
+            })
+            optionSale.value = dataOption
+        });
+
+        watch(valueFacilityBusinesses, (value) => {
+            console.log(value);
+        });
+
+        const statusMailValidate = ref(false)
+        const validateEmail = (e) => {
+            let checkMail = e.target.value.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+            if (!checkMail) {
+                statusMailValidate.value = false;
+            } else {
+                statusMailValidate.value = true;
+            }
+        }
+
         return {
+            statusMailValidate,
+            validateEmail,
+            optionSale,
+            disableFormVal,
+            disableFormVal2,
+            disableForm2,
             dataInputCallApi,
-            changeOptionService1,
+            disableForm1,
             contractCreacted,
             Creat,
             valueFacilityBusinesses,
@@ -619,7 +669,7 @@ export default {
             onFinish,
             layout,
             listDataConvert,
-            formState,
+            // formState,
             imagestep,
             removeImg,
             imageValue,
@@ -666,6 +716,17 @@ export default {
                             this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
+
+                var result = Object.values(newVal.reduce((c, v) => {
+                    let k = v.name;
+                    c[k] = c[k] || [];
+                    c[k].push(v);
+                    return c;
+                }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
+                if (result.length > 0) {
+                    message.error("중복되었습니다!")
+                }
+
             },
             deep: true,
         },
@@ -707,21 +768,65 @@ export default {
                 if (this.contractCreacted.terms == true && this.contractCreacted.personalInfo == true && this.contractCreacted.accountingService == true && this.contractCreacted.withholdingService == true) {
                     this.step++;
                 } else {
-                    message.error("Vui lòng chấp nhận hết các điều khoản để tiếp tục")
+                    message.error("계속하려면 모든 조건을 수락하십시오!")
                 }
-            } else {
-                this.step++;
+            } else if (this.step == 1) { 
+                if (this.contractCreacted.nameCompany != ""
+                    && this.contractCreacted.bizNumber != ""
+                    && this.contractCreacted.zipcode != ""
+                    && this.contractCreacted.namePresident != ""
+                    && this.contractCreacted.birthday != ""
+                    && this.contractCreacted.mobilePhone != ""
+                    && this.contractCreacted.email != ""
+                    && this.contractCreacted.phone != ""
+                    && this.contractCreacted.bizNumber.length == 10
+                    && this.statusMailValidate == true
+                ) { 
+                    this.step++;
+                } else {
+                    message.error("계속하려면 모든 조건을 수락하십시오")
+                }
+            } else if (this.step == 2) {
+                if (this.dataInputCallApi.dossier == 2 && this.dataInputCallApi.applicationService == 2) {
+                    message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ    ')
+                } else {
+                    let count = 0
+                    if (this.dataInputCallApi.dossier == 1) {
+                        if (this.valueFacilityBusinesses.length == 0
+                            || this.contractCreacted.longTermCareInstitutionNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+
+                    if (this.dataInputCallApi.applicationService == 1) {
+                        if (this.contractCreacted.bankType == ''
+                            || this.contractCreacted.accountNumber == ''
+                            || this.contractCreacted.ownerName == ''
+                            || this.contractCreacted.ownerBizNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+
+                    if (count > 0) {
+                        message.error('계속하려면 모든 조건을 수락하십시오!')
+                    } else {
+                        this.step++;
+                    }
+                }
+
+
             }
         },
         openPopup() {
-            //validate data call api
             var obj = this.contractCreacted;
             let countNull = 0;
             for (const [key, value] of Object.entries(obj)) {
             }
             if (countNull > 0) {
                 notification["error"]({
-                    message: "Vui lòng nhập đầy đủ thông tin cần thiết",
+                    message: "필수 항목을 입력하십시오",
                 });
             } else {
                 this.Creat();
@@ -747,11 +852,7 @@ export default {
         passwordComparison() {
             return this.password;
         },
-        validateNumber(key) {
-            if (key == 'capacityHolding') {
-                let e = this.contractCreacted.capacityHolding
-                this.contractCreacted.capacityHolding = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
-            }
+        validateNumber(key) { 
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
                 this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
@@ -764,11 +865,30 @@ export default {
                 let e = this.contractCreacted.ownerBizNumber
                 this.contractCreacted.ownerBizNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
             }
+            if (key == 'phone') {
+                let e = this.contractCreacted.phone
+                this.contractCreacted.phone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            }
+            if (key == 'fax') {
+                let e = this.contractCreacted.fax
+                this.contractCreacted.fax = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+            }
         },
     },
 };
 </script>
+
 <style lang="scss" scoped>
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
 .img-preview {
     margin-top: 20px;
     position: relative;
@@ -986,5 +1106,14 @@ export default {
 
 .list-checkbox {
     margin-top: 10px;
+}
+
+.dx-texteditor.dx-editor-outlined {
+    border-radius: 2px !important;
+}
+
+::v-deep .dx-texteditor-input {
+    min-height: 30px;
+    max-height: 20px !important;
 }
 </style>

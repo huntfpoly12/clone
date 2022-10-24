@@ -2,15 +2,19 @@
     <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
         <a-col>
             <div>
-                <a-form-item class="title" :label="title">
+                <a-form-item class="title" :label="title" disable="true">
                     <a-row>
-                        <div>
+                        <div v-if="disabledImg == false">
                             <input class="custom-file-input" type="file" @change="onFileChange" />
                             <p v-if="messageUpload">{{ messageUpload }}</p>
                             <div v-if="fileName" class="fileName">
                                 <span style="padding-right: 10px">{{ fileName }}</span>
                                 <delete-outlined @click="onRemove" style="color: red; cursor: pointer" />
                             </div>
+                        </div>
+                        <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
+                            <input class="custom-file-input" type="file" disabled />
+
                         </div>
                     </a-row>
                     <a-row>
@@ -65,6 +69,10 @@ export default defineComponent({
     props: {
         title: {
             type: String,
+        },
+        disabledImg: {
+            default: false,
+            type: Boolean,
         },
         category: {
             type: String,
@@ -146,7 +154,7 @@ export default defineComponent({
             formData.append("file", file);
             fileName.value = file.name;
             try {
-                
+
                 const data = await uploadRepository.public(formData);
 
                 getBase64(file, (base64Url: string) => {

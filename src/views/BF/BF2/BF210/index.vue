@@ -219,7 +219,7 @@ export default defineComponent({
         const dataSearch = ref({
             page: 1,
             rows: 10,
-            type: "",
+            type: "m",
             groupCode: "",
             groupName: "",
             username: "",
