@@ -273,8 +273,8 @@
                         </div>
                         <div class="form-item">
                             <label>직 원 수:</label>
-                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px" min="0"
-                                v-model:value="contractCreacted.capacityHolding"
+                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px"
+                                min="0" v-model:value="contractCreacted.capacityHolding"
                                 @change="validateNumber('capacityHolding')" />
                         </div>
                         <div class="form-item">
@@ -767,10 +767,11 @@ export default {
             if (this.step == 0) {
                 if (this.contractCreacted.terms == true && this.contractCreacted.personalInfo == true && this.contractCreacted.accountingService == true && this.contractCreacted.withholdingService == true) {
                     this.step++;
+                    window.scrollTo(0, 0);
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오!")
                 }
-            } else if (this.step == 1) { 
+            } else if (this.step == 1) {
                 if (this.contractCreacted.nameCompany != ""
                     && this.contractCreacted.bizNumber != ""
                     && this.contractCreacted.zipcode != ""
@@ -781,8 +782,9 @@ export default {
                     && this.contractCreacted.phone != ""
                     && this.contractCreacted.bizNumber.length == 10
                     && this.statusMailValidate == true
-                ) { 
+                ) {
                     this.step++;
+                    window.scrollTo(0, 0);
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오")
                 }
@@ -813,6 +815,7 @@ export default {
                         message.error('계속하려면 모든 조건을 수락하십시오!')
                     } else {
                         this.step++;
+                        window.scrollTo(0, 0);
                     }
                 }
 
@@ -852,7 +855,7 @@ export default {
         passwordComparison() {
             return this.password;
         },
-        validateNumber(key) { 
+        validateNumber(key) {
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
                 this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
@@ -878,242 +881,6 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 0.3);
-}
+<style lang="scss" scoped src="./style.scss">
 
-.img-preview {
-    margin-top: 20px;
-    position: relative;
-    width: 100%;
-    padding-top: 142%;
-
-    img {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-    }
-}
-
-.imgPreview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.contract-container {
-    max-width: 960px;
-    margin: 50px auto;
-    text-align: left;
-    padding-bottom: 50px;
-}
-
-.contract-container h2 {
-    font-weight: bold;
-}
-
-.ant-steps-navigation {
-    box-shadow: 0px -1px 0 0 #e8e8e8 inset;
-}
-
-.form-group {
-    margin-top: 30px;
-}
-
-.form-group label {
-    margin-bottom: 5px;
-}
-
-.radio-group {
-    text-align: right;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
-    margin-right: -15px;
-}
-
-::v-deep textarea {
-    height: 100px;
-}
-
-.group-button {
-    display: flex;
-    justify-content: center;
-}
-
-.group-button {
-    margin-top: 20px;
-}
-
-.group-button ::v-deep button {
-    margin: 0 10px;
-}
-
-.info-box {
-    border: 1px solid #ccc;
-    padding: 30px;
-}
-
-.form-item {
-    display: flex;
-    margin-top: 15px;
-}
-
-.form-item label {
-    min-width: 165px;
-}
-
-.red {
-    color: red;
-}
-
-.width-auto {
-    width: auto;
-}
-
-.form-item ::v-deep button {
-    margin-left: 5px;
-}
-
-/* .form-item ::v-deep input,
-.form-item .ant-input-affix-wrapper ::v-deep {
-    max-width: calc(100% - 165px);
-} */
-/* ::v-deep input.dp__input.dp__input_icon_pad {
-    width: 150px;
-    max-width: 200px !important;
-} */
-::v-deep #nest-messages_user_email {
-    min-width: 350px !important;
-}
-
-.form-item p {
-    margin-left: 30px;
-    margin-top: 5px;
-    margin-bottom: 0;
-}
-
-.group-label {
-    display: flex;
-    align-items: center;
-}
-
-.group-label p {
-    margin-right: 15px;
-    margin-bottom: 0;
-}
-
-.checkbox-item {
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-
-.editable-cell {
-    position: relative;
-}
-
-.editable-cell .editable-cell-input-wrapper,
-.editable-cell .editable-cell-text-wrapper {
-    padding-right: 24px;
-}
-
-.editable-cell .editable-cell-text-wrapper {
-    padding: 5px 24px 5px 5px;
-}
-
-.editable-cell .editable-cell-icon,
-.editable-cell .editable-cell-icon-check {
-    position: absolute;
-    right: 0;
-    width: 20px;
-    cursor: pointer;
-}
-
-.date-picker label {
-    width: 165px;
-    display: inline-block;
-}
-
-.editable-cell .editable-cell-icon {
-    margin-top: 4px;
-    display: none;
-}
-
-::v-deep .ant-radio-group {
-    display: flex;
-}
-
-.editable-cell .editable-cell-icon-check {
-    line-height: 28px;
-}
-
-.editable-cell .editable-cell-icon:hover,
-.editable-cell .editable-cell-icon-check:hover {
-    color: #108ee9;
-}
-
-.editable-cell .editable-add-btn {
-    margin-bottom: 8px;
-}
-
-.editable-cell:hover .editable-cell-icon {
-    display: inline-block;
-}
-
-::v-deep .ant-pagination {
-    display: none;
-}
-
-.group-title {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
-    position: relative;
-    z-index: 20;
-    width: 200px;
-}
-
-#gridContainer {
-    margin-top: -40px;
-}
-
-.mt-3 {
-    margin-top: 30px;
-}
-
-::v-deep .ant-checkbox-wrapper {
-    display: flex;
-}
-
-::v-deep .ant-select {
-    width: 180px;
-}
-
-::v-deep .dx-toolbar-text-auto-hide .dx-button .dx-button-text {
-    display: inline-block;
-}
-
-.list-checkbox {
-    margin-top: 10px;
-}
-
-.dx-texteditor.dx-editor-outlined {
-    border-radius: 2px !important;
-}
-
-::v-deep .dx-texteditor-input {
-    min-height: 30px;
-    max-height: 20px !important;
-}
 </style>
