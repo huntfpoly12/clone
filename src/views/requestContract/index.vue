@@ -52,13 +52,11 @@
                     <div class="info-box">
                         <div class="form-item">
                             <label class="red">상 호 :</label>
-                            <!-- <a-input v-model:value="contractCreacted.nameCompany" placeholder="가나다라마바사아자차카타파하 요양병원"
-                                style="width: 40%;" /> -->
                             <div>
                                 <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany"
                                     placeholder="가나다라마바사아자차카타파하 요양병원">
                                     <DxValidator>
-                                        <DxRequiredRule message="이항목은 필수 입력사항입니다" />                                       
+                                        <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                     </DxValidator>
                                 </DxTextBox>
                             </div>
@@ -80,8 +78,6 @@
                             </a-radio-group>
                             <div class="group-label">
                                 <p>{{ textIDNo }}:</p>
-                                <!-- <a-input class="width-auto" v-model:value="contractCreacted.residentId"
-                                    placeholder="800123-1234567" /> -->
                                 <DxTextBox mask="000000-0000000" v-model:value="contractCreacted.residentId"
                                     mask-invalid-message="입력한 정보가 충분하지 않습니다!">
                                     <DxValidator>
@@ -176,11 +172,11 @@
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
-                            <a-form :model="formState" v-bind="layout" name="nest-messages"
-                                :validate-messages="validateMessages" @finish="onFinish">
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
                                 <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="formState.user.email"
-                                        placeholder="abc123@mailaddress.com" />
+                                    <a-input v-model:value="contractCreacted.email" placeholder="abc123@mailaddress.com"
+                                        @change="validateEmail" />
                                 </a-form-item>
                             </a-form>
                         </div>
@@ -277,7 +273,7 @@
                         </div>
                         <div class="form-item">
                             <label>직 원 수:</label>
-                            <a-input :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px"
+                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px" min="0"
                                 v-model:value="contractCreacted.capacityHolding"
                                 @change="validateNumber('capacityHolding')" />
                         </div>
@@ -442,9 +438,7 @@ export default {
             step: 0,
             radio: "",
             states: bizTypeList,
-            marginTopModal: "margin-top : 10px",
             titleModal: "사업자등록증",
-            namePattern: /^[^0-9]+$/,
             plainOptions: [
                 {
                     label: "신청합니다",
@@ -496,10 +490,10 @@ export default {
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
         const contractCreacted = reactive({
-            terms: true,
-            personalInfo: true,
-            accountingService: true,
-            withholdingService: true,
+            terms: false,
+            personalInfo: false,
+            accountingService: false,
+            withholdingService: false,
             nameCompany: "",
             zipcode: "",
             roadAddress: "",
@@ -532,7 +526,7 @@ export default {
             startYearMonthHolding: "",
             capacityHolding: null,
             withholdingServiceTypes: 1,
-            bankType: "39",
+            bankType: "",
             accountNumber: "",
             ownerBizNumber: "",
             withdrawDay: "매월 5일",
@@ -603,15 +597,6 @@ export default {
             labelCol: { span: 8 },
             wrapperCol: { span: 16 },
         };
-        const formState = reactive({
-            user: {
-                name: "",
-                age: undefined,
-                email: "",
-                website: "",
-                introduction: "",
-            },
-        });
         const disableForm1 = () => {
             if (dataInputCallApi.dossier == 2) {
                 disableFormVal2.value = true
@@ -652,7 +637,21 @@ export default {
             console.log(value);
         });
 
+        const statusMailValidate = ref(false)
+        const validateEmail = (e) => {
+            let checkMail = e.target.value.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+            if (!checkMail) {
+                statusMailValidate.value = false;
+            } else {
+                statusMailValidate.value = true;
+            }
+        }
+
         return {
+            statusMailValidate,
+            validateEmail,
             optionSale,
             disableFormVal,
             disableFormVal2,
@@ -670,7 +669,7 @@ export default {
             onFinish,
             layout,
             listDataConvert,
-            formState,
+            // formState,
             imagestep,
             removeImg,
             imageValue,
@@ -769,10 +768,55 @@ export default {
                 if (this.contractCreacted.terms == true && this.contractCreacted.personalInfo == true && this.contractCreacted.accountingService == true && this.contractCreacted.withholdingService == true) {
                     this.step++;
                 } else {
+                    message.error("계속하려면 모든 조건을 수락하십시오!")
+                }
+            } else if (this.step == 1) { 
+                if (this.contractCreacted.nameCompany != ""
+                    && this.contractCreacted.bizNumber != ""
+                    && this.contractCreacted.zipcode != ""
+                    && this.contractCreacted.namePresident != ""
+                    && this.contractCreacted.birthday != ""
+                    && this.contractCreacted.mobilePhone != ""
+                    && this.contractCreacted.email != ""
+                    && this.contractCreacted.phone != ""
+                    && this.contractCreacted.bizNumber.length == 10
+                    && this.statusMailValidate == true
+                ) { 
+                    this.step++;
+                } else {
                     message.error("계속하려면 모든 조건을 수락하십시오")
                 }
-            } else {
-                this.step++;
+            } else if (this.step == 2) {
+                if (this.dataInputCallApi.dossier == 2 && this.dataInputCallApi.applicationService == 2) {
+                    message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ    ')
+                } else {
+                    let count = 0
+                    if (this.dataInputCallApi.dossier == 1) {
+                        if (this.valueFacilityBusinesses.length == 0
+                            || this.contractCreacted.longTermCareInstitutionNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+
+                    if (this.dataInputCallApi.applicationService == 1) {
+                        if (this.contractCreacted.bankType == ''
+                            || this.contractCreacted.accountNumber == ''
+                            || this.contractCreacted.ownerName == ''
+                            || this.contractCreacted.ownerBizNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+
+                    if (count > 0) {
+                        message.error('계속하려면 모든 조건을 수락하십시오!')
+                    } else {
+                        this.step++;
+                    }
+                }
+
+
             }
         },
         openPopup() {
@@ -808,11 +852,7 @@ export default {
         passwordComparison() {
             return this.password;
         },
-        validateNumber(key) {
-            if (key == 'capacityHolding') {
-                let e = this.contractCreacted.capacityHolding
-                this.contractCreacted.capacityHolding = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
-            }
+        validateNumber(key) { 
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
                 this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
