@@ -1,7 +1,7 @@
 <template>
     <div class="contract-container">
         <h2>서비스가입신청</h2>
-        <a-steps :current="step" type="navigation">
+        <a-steps :current="step" type="navigation" :style="stepStyle">
             <a-step :status="step === 0 ? 'process' : 'finish'" title="약관동의" />
             <a-step :status="checkStepTwo" title="사업자대표자정보" />
             <a-step :status="checkStepThree" title="서비스신청CMS정보" />
@@ -73,8 +73,8 @@
                         <div class="form-item">
                             <label class="red">사업자유형 :</label>
                             <a-radio-group v-model:value="contractCreacted.bizType">
-                                <a-radio :value="1" @click="changeTypeCompany">법인사업자</a-radio>
-                                <a-radio :value="2" @click="changeTypeCompany">개인사업자</a-radio>
+                                <a-radio :value="1" @click="changeTypeCompany(1)">법인사업자</a-radio>
+                                <a-radio :value="2" @click="changeTypeCompany(2)">개인사업자</a-radio>
                             </a-radio-group>
                             <div class="group-label">
                                 <p>{{ textIDNo }}:</p>
@@ -109,6 +109,7 @@
                                     <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
                                 </DxValidator>
                             </DxTextBox> -->
+
                             <a-input v-model:value="contractCreacted.addressExtend"></a-input>
                         </div>
                         <div class="form-item">
@@ -116,6 +117,7 @@
                             <a-input placeholder="0298765432" @change="validateNumber('phone')"
                                 v-model:value="contractCreacted.phone" style="width: 180px;">
                             </a-input>
+
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
@@ -128,14 +130,14 @@
                                     style="margin-top: 10px" />
                             </div>
                             <a-col :span="7">
-                                <div v-if="imageValue" class="img-preview">
-                                    <img :src="imageValue" />
+                                <div v-if="this.imageValue" class="img-preview">
+                                    <img :src="this.imageValue" @click="handlePreview" />
                                 </div>
                                 <div v-else class="img-preview">
                                     <img src="../../assets/images/imgdefault.jpg" />
                                 </div>
-                                <div v-if="fileName">
-                                    <span style="padding-right: 10px">{{ fileName }}</span>
+                                <div v-if="this.fileName">
+                                    <span style="padding-right: 10px">{{ this.fileName }}</span>
                                     <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
                                 </div>
                             </a-col>
@@ -195,8 +197,9 @@
                         <div style="position: relative;">
                             <div class="overlay" v-if="disableFormVal2 == true"></div>
                             <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
-                                :show-borders="true" :allow-column-reordering="true" :allow-column-resizing="true"
-                                :column-auto-width="true" :repaint-changes-only="true">
+                                :show-borders="true" :selected-row-keys="selectedItemKeys"
+                                :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
+                                :repaint-changes-only="true">
                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                     :allow-deleting="true" template="button-template" mode="cell">
                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -214,6 +217,7 @@
                                 <DxColumn data-field="name" caption="사업명 (중복불가)">
                                     <DxRequiredRule />
                                 </DxColumn>
+
                                 <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                     <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                 </DxColumn>
@@ -237,14 +241,14 @@
                                     @update-step="getImgUrlAccounting" style="margin-top: 10px; " />
                             </div>
                             <a-col :span="7">
-                                <div v-if="imagestep" class="img-preview">
-                                    <img :src="imagestep" />
+                                <div v-if="this.imagestep" class="img-preview">
+                                    <img :src="this.imagestep" @click="handlePreview" />
                                 </div>
                                 <div v-else class="img-preview">
                                     <img src="../../assets/images/imgdefault.jpg" />
                                 </div>
-                                <div v-if="fileNamestep">
-                                    <span style="padding-right: 10px">{{ fileNamestep }}</span>
+                                <div v-if="this.fileNamestep">
+                                    <span style="padding-right: 10px">{{ this.fileNamestep }}</span>
                                     <delete-outlined @click="removeImgStep" style="color: red; cursor: pointer" />
                                 </div>
                             </a-col>
@@ -362,6 +366,7 @@ import {
     EditOutlined,
     DeleteOutlined,
 } from "@ant-design/icons-vue";
+import moment from "moment";
 import { notification } from "ant-design-vue";
 import bizTypeList from "../../constants/facilityBizType";
 import {
@@ -388,6 +393,7 @@ import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import queries from "../../graphql/queries/common/index";
+
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
@@ -414,6 +420,7 @@ export default {
         DxButton,
         imgUpload,
         CustomDatepicker,
+        moment,
         selectBank,
         postCode,
         DxRequiredRule,
@@ -441,6 +448,7 @@ export default {
                     value: 2
                 }
             ],
+            imageId: null
         };
     },
     computed: {
@@ -471,12 +479,16 @@ export default {
                 return "finish";
             }
         },
+        changeValueInputEmit(data) {
+            if (data.name == "nameCompany") {
+                this.dataSearch.nameCompany = data.value;
+            }
+        },
     },
     setup() {
         const monthFormat = 'YYYY/MM';
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
-        const imageId = ref()
         const contractCreacted = reactive({
             terms: false,
             personalInfo: false,
@@ -521,7 +533,6 @@ export default {
             salesRepresentativeId: 1,
             comment: "",
             ownerName: "",
-            registrationCardFileStorageId: null
         });
         const dataInputCallApi = reactive({
             dossier: 1,
@@ -530,7 +541,7 @@ export default {
         var visibleModal = ref(false);
         const listDataConvert = ref([]);
         const valueFacilityBusinesses = ref([]);
-        const imagestep: any = ref("");
+        const imagestep = ref("");
         const imageValue = ref("");
         const fileName = ref("");
         const fileNamestep = ref("");
@@ -559,12 +570,16 @@ export default {
         onError((res) => {
             openNotificationWithIcon("error", res);
         });
-        const openNotificationWithIcon = (type: any, mes: any) => {
-            if (type == "error") {
-                message.error(mes.message)
-            } else {
-                message.success(mes)
-            } 
+        const openNotificationWithIcon = (type, mes) => {
+            if (type == "error")
+                notification[type]({
+                    message: { mes }.mes.message,
+                });
+            else {
+                notification[type]({
+                    message: mes,
+                });
+            }
         };
         const validateMessages = {
             required: "${label} is required!",
@@ -576,7 +591,7 @@ export default {
                 range: "${label} must be between ${min} and ${max}",
             },
         };
-        const onFinish = () => {
+        const onFinish = (values) => {
         };
         const layout = {
             labelCol: { span: 8 },
@@ -589,6 +604,7 @@ export default {
                 disableFormVal2.value = false
             }
         }
+
         const disableForm2 = () => {
             if (dataInputCallApi.applicationService == 2) {
                 disableFormVal.value = true
@@ -596,6 +612,7 @@ export default {
                 disableFormVal.value = false
             }
         }
+
         const { result: resultConfig, refetch: refetchConfig } = useQuery(
             queries.getSaleRequestContact,
             {},
@@ -603,10 +620,11 @@ export default {
                 fetchPolicy: "no-cache",
             })
         );
+
         const optionSale = ref()
         watch(resultConfig, (value) => {
-            let dataOption: any = []
-            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
+            let dataOption = []
+            value.getSalesRepresentativesForPublicScreen.map(e => {
                 dataOption.push({
                     label: e.name,
                     value: e.id
@@ -614,11 +632,13 @@ export default {
             })
             optionSale.value = dataOption
         });
+
         watch(valueFacilityBusinesses, (value) => {
             console.log(value);
         });
+
         const statusMailValidate = ref(false)
-        const validateEmail = (e: any) => {
+        const validateEmail = (e) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
@@ -628,8 +648,8 @@ export default {
                 statusMailValidate.value = true;
             }
         }
+
         return {
-            imageId,
             statusMailValidate,
             validateEmail,
             optionSale,
@@ -648,7 +668,8 @@ export default {
             validateMessages,
             onFinish,
             layout,
-            listDataConvert, 
+            listDataConvert,
+            // formState,
             imagestep,
             removeImg,
             imageValue,
@@ -661,60 +682,63 @@ export default {
     watch: {
         "contractCreacted.longTermCareInstitutionNumber"(newVal) {
             if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item: any) => {
+                this.listDataConvert.forEach((item) => {
                     item.longTermCareInstitutionNumber = newVal;
                 });
             }
         },
         "contractCreacted.registrationCardFileStorageId"(newVal) {
             if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item: any) => {
+                this.listDataConvert.forEach((item) => {
                     item.registrationCardFileStorageId = newVal;
                 });
             }
         },
         registrationCardFileStorageId(newVal) {
             if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item: any) => {
+                this.listDataConvert.forEach((item) => {
                     item.registrationCardFileStorageId = newVal;
                 });
             }
         },
         valueFacilityBusinesses: {
             handler(newVal) {
-                let arr: any = []
-                newVal.forEach((item: any) => {
-                    arr.push({
-                        longTermCareInstitutionNumber: this.contractCreacted.longTermCareInstitutionNumber,
+                this.listDataConvert = [];
+                newVal.forEach((item) => {
+                    this.listDataConvert.push({
+                        longTermCareInstitutionNumber:
+                            this.contractCreacted.longTermCareInstitutionNumber,
                         facilityBizType: item?.facilityBizType,
                         name: item?.name,
                         startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
                         capacity: parseInt(item?.capacity),
-                        registrationCardFileStorageId: this.contractCreacted.registrationCardFileStorageId,
+                        registrationCardFileStorageId:
+                            this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
-                this.listDataConvert = arr
-                var result: any = Object.values(newVal.reduce((c: any, v: any) => {
+
+                var result = Object.values(newVal.reduce((c, v) => {
                     let k = v.name;
                     c[k] = c[k] || [];
                     c[k].push(v);
                     return c;
-                }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
+                }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
                 if (result.length > 0) {
                     message.error("중복되었습니다!")
                 }
+
             },
             deep: true,
         },
     },
     methods: {
-        changeValueDate(data: any) {
+        changeValueDate(data) {
             this.contractCreacted.birthday = data;
         },
-        changeValueDateHoding(data: any) {
+        changeValueDateHoding(data) {
             this.contractCreacted.startYearMonthHolding = data;
         },
-        funcAddress(data: any) {
+        funcAddress(data) {
             this.contractCreacted.zipcode = data.zonecode;
             this.contractCreacted.roadAddress = data.roadAddress;
             this.contractCreacted.jibunAddress = data.jibunAddress;
@@ -738,12 +762,12 @@ export default {
         },
         prevStep() {
             this.step--;
-            window.scrollTo(0,0);
         },
         nextStep() {
             if (this.step == 0) {
                 if (this.contractCreacted.terms == true && this.contractCreacted.personalInfo == true && this.contractCreacted.accountingService == true && this.contractCreacted.withholdingService == true) {
                     this.step++;
+                    window.scrollTo(0, 0);
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오!")
                 }
@@ -760,6 +784,7 @@ export default {
                     && this.statusMailValidate == true
                 ) {
                     this.step++;
+                    window.scrollTo(0, 0);
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오")
                 }
@@ -775,6 +800,7 @@ export default {
                             count++
                         }
                     }
+
                     if (this.dataInputCallApi.applicationService == 1) {
                         if (this.contractCreacted.bankType == ''
                             || this.contractCreacted.accountNumber == ''
@@ -784,14 +810,17 @@ export default {
                             count++
                         }
                     }
+
                     if (count > 0) {
                         message.error('계속하려면 모든 조건을 수락하십시오!')
                     } else {
                         this.step++;
+                        window.scrollTo(0, 0);
                     }
                 }
+
+
             }
-            window.scrollTo(0,0);
         },
         openPopup() {
             var obj = this.contractCreacted;
@@ -810,20 +839,23 @@ export default {
             this.visibleModal = false;
             this.$router.push("/login");
         },
-        getImgUrl(img: any) {
+        getImgUrl(img) {
             this.contractCreacted.licenseFileStorageId = img;
             this.imageValue = img.url;
             this.fileName = img.fileName;
         },
-        getImgUrlAccounting(img: any) {
+        getImgUrlAccounting(img) {
             this.imagestep = img.url;
             this.fileNamestep = img.fileNamestep;
             this.contractCreacted.registrationCardFileStorageId = img;
         },
-        getIDBank(data: any) {
+        getIDBank(data) {
             this.contractCreacted.bankType = data;
         },
-        validateNumber(key: any) {
+        passwordComparison() {
+            return this.password;
+        },
+        validateNumber(key) {
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
                 this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
@@ -848,5 +880,7 @@ export default {
     },
 };
 </script>
+
 <style lang="scss" scoped src="./style.scss">
+
 </style>
