@@ -273,8 +273,8 @@
                         </div>
                         <div class="form-item">
                             <label>직 원 수:</label>
-                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px" min="0"
-                                v-model:value="contractCreacted.capacityHolding"
+                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px"
+                                min="0" v-model:value="contractCreacted.capacityHolding"
                                 @change="validateNumber('capacityHolding')" />
                         </div>
                         <div class="form-item">
@@ -770,7 +770,7 @@ export default {
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오!")
                 }
-            } else if (this.step == 1) { 
+            } else if (this.step == 1) {
                 if (this.contractCreacted.nameCompany != ""
                     && this.contractCreacted.bizNumber != ""
                     && this.contractCreacted.zipcode != ""
@@ -781,7 +781,7 @@ export default {
                     && this.contractCreacted.phone != ""
                     && this.contractCreacted.bizNumber.length == 10
                     && this.statusMailValidate == true
-                ) { 
+                ) {
                     this.step++;
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오")
@@ -852,7 +852,7 @@ export default {
         passwordComparison() {
             return this.password;
         },
-        validateNumber(key) { 
+        validateNumber(key) {
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
                 this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
