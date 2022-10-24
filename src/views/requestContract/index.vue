@@ -58,9 +58,7 @@
                                 <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany"
                                     placeholder="가나다라마바사아자차카타파하 요양병원">
                                     <DxValidator>
-                                        <DxRequiredRule message="Name is required" />
-                                        <DxPatternRule :pattern="namePattern" message="Do not use digits in the Name" />
-                                        <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
+                                        <DxRequiredRule message="이항목은 필수 입력사항입니다" />                                       
                                     </DxValidator>
                                 </DxTextBox>
                             </div>
@@ -70,7 +68,7 @@
                             <DxTextBox mask="000-00-00000" v-model:value="contractCreacted.bizNumber"
                                 mask-invalid-message="입력한 정보가 충분하지 않습니다!">
                                 <DxValidator>
-                                    <DxPatternRule message="The phone must have a correct USA phone format" />
+                                    <DxPatternRule message="" />
                                 </DxValidator>
                             </DxTextBox>
                         </div>
@@ -87,7 +85,7 @@
                                 <DxTextBox mask="000000-0000000" v-model:value="contractCreacted.residentId"
                                     mask-invalid-message="입력한 정보가 충분하지 않습니다!">
                                     <DxValidator>
-                                        <DxPatternRule message="The phone must have a correct USA phone format" />
+                                        <DxPatternRule message="" />
                                     </DxValidator>
                                 </DxTextBox>
                             </div>
@@ -158,7 +156,7 @@
                             <DxTextBox placeholder="홍길동" style="width: 150px"
                                 v-model:value="contractCreacted.namePresident">
                                 <DxValidator>
-                                    <DxRequiredRule message="Name is required" />
+                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                 </DxValidator>
                             </DxTextBox>
                         </div>
@@ -727,7 +725,7 @@ export default {
                     return c;
                 }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
                 if (result.length > 0) {
-                    message.error("Trùng name")
+                    message.error("중복되었습니다!")
                 }
 
             },
@@ -771,7 +769,7 @@ export default {
                 if (this.contractCreacted.terms == true && this.contractCreacted.personalInfo == true && this.contractCreacted.accountingService == true && this.contractCreacted.withholdingService == true) {
                     this.step++;
                 } else {
-                    message.error("Vui lòng chấp nhận hết các điều khoản để tiếp tục")
+                    message.error("계속하려면 모든 조건을 수락하십시오")
                 }
             } else {
                 this.step++;
@@ -784,7 +782,7 @@ export default {
             }
             if (countNull > 0) {
                 notification["error"]({
-                    message: "Vui lòng nhập đầy đủ thông tin cần thiết",
+                    message: "필수 항목을 입력하십시오",
                 });
             } else {
                 this.Creat();
