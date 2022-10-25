@@ -51,7 +51,8 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="resList ? resList.searchScreenRoleGroups.datas : ''" :show-borders="true"
-                    key-expr="id" @exporting="onExporting">
+                    key-expr="id" @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
+                    :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
