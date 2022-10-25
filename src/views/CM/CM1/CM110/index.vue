@@ -9,7 +9,7 @@
                             <a-form-item label="상호">
                                 <a-input v-model:value="formState.name" :disabled="true" style="width: 300px" />
                             </a-form-item>
-                            <div style="display: flex;">
+                            <div class="dflex">
                                 <div>
                                     <a-form-item label="사업자유형">
                                         <a-input v-model:value="formState.bizType" :disabled="true"
@@ -26,18 +26,18 @@
                             <a-form-item label="주소">
                                 <a-input v-model:value="formState.address" :disabled="true" style="width: 647px" />
                             </a-form-item>
-                            <div style="display: flex;">
-                                <div style="display: flex;">
+                            <div class="dflex">
+                                <div class="dflex">
                                     <a-form-item label="대표번호">
-                                        <a-input v-model:value="formState.presidentMobilePhone" min="0"
-                                            style="width: 150px;" @change="validateCharacter('presidentMobilePhone')" />
+                                        <a-input v-model:value="formState.presidentMobilePhone"
+                                            @keyup="validateNumber('presidentMobilePhone')" style="width: 150px;" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
                                 </div>
                                 <div style="display: flex">
                                     <a-form-item label="팩스번호">
                                         <a-input v-model:value="formState.extendInfo.detail.fax" style="width: 150px;"
-                                            @change="validateCharacter('fax')" />
+                                            @keyup="validateNumber('fax')" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
                                 </div>
@@ -91,7 +91,7 @@
                                 </a-col>
                             </a-row>
                             <h2 class="title-h2">대표자정보</h2>
-                            <div style="display: flex;">
+                            <div class="dflex">
                                 <div>
                                     <a-form-item label="대표자명">
                                         <a-input v-model:value="formState.extendInfo.president.name" :disabled="true"
@@ -101,12 +101,12 @@
                                 <div style="display: flex; margin-left: 150px;">
                                     <a-form-item label="휴대폰">
                                         <a-input v-model:value="formState.extendInfo.detail.phone" style="width: 150px;"
-                                            @change="validateCharacter('phone')" />
+                                            @keyup="validateNumber('phone')" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
                                 </div>
                             </div>
-                            <div style="display: flex;">
+                            <div class="dflex">
                                 <a-form-item label="생년월일" style="width: 327px;">
                                     <CustomDatepicker :valueDate="formState.extendInfo.president.birthday"
                                         date-format="MM/DD/YYYY" @valueDateChange="changeDate" />
@@ -115,11 +115,11 @@
                                     ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
                                 </p>
                             </div>
-                            <div style="display: flex;">
+                            <div class="dflex">
                                 <a-form-item label="이메일">
                                     <a-input v-model:value="formState.extendInfo.president.email" style="width: 300px"
                                         @change="validateEmail"
-                                        :style="!statusMailValidate ? { borderColor: 'red'}: ''" />
+                                        :style="!statusMailValidate ? { borderColor: 'red' } : ''" />
                                 </a-form-item>
                                 <p class="validate-message" v-if="!statusMailValidate">
                                     이메일 형식이 정확하지 않습니다.
@@ -174,7 +174,7 @@
                                 v-else>
                             </div>
                         </template>
-                        <DxColumn :width=" 80" cell-template="pupop" />
+                        <DxColumn :width="80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
@@ -413,6 +413,8 @@ export default defineComponent({
                 }
                 spinning.value = !spinning.value;
                 updateDataCompany(dataUpdateCompany)
+            } else {
+                message.error('이메일형식이 정확하지 않습니다.')
             }
         };
         const getColorTag = (data: boolean) => {
@@ -422,35 +424,21 @@ export default defineComponent({
                 return "rgb(205 32 31 / 51%)";
             }
         }
-        const checkedRow = (data: any) => {
-            // dataTableShow.value[data.key].원천권한 = !dataTableShow.value[data.key].원천권한;
-        }
-        const changeValueInputEmit = (data: { name: string; value: any; }) => {
-            if (data.name == 'fax') {
+        const validateNumber = (name: String) => {
+            if (name == 'presidentMobilePhone' && formState.value.presidentMobilePhone.length > 0) {
+                let e = formState.value.presidentMobilePhone
+                formState.value.presidentMobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
             }
-            switch (data.name) {
-                case 'fax':
-                    formState.value.fax = data.value;
-                    break;
-                case 'presidentMobilePhone':
-                    formState.value.presidentMobilePhone = data.value;
-                    break;
-                default:
+            if (name == 'fax' && formState.value.extendInfo.detail.fax.length > 0) {
+                let e = formState.value.extendInfo.detail.fax
+                formState.value.extendInfo.detail.fax = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
             }
-        }
-        const validateNumber = (e: any, name: string) => {
-            let valNumberOnly = e.target.value.replace(/\D+/g, '');
-            switch (name) {
-                case 'presidentMobilePhone':
-                    formState.value.presidentMobilePhone = valNumberOnly;
-                    break;
-                case 'fax':
-                    formState.value.fax = valNumberOnly;
-                    break;
-                default:
-                // code block
+            if (name == 'phone' && formState.value.extendInfo.detail.phone.length > 0) {
+                let e = formState.value.extendInfo.detail.phone.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                formState.value.extendInfo.detail.phone = e
             }
-        }
+        } 
+ 
         const validateEmail = (e: any) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -460,6 +448,7 @@ export default defineComponent({
             } else {
                 statusMailValidate.value = true;
             }
+
         }
         const originData = {
             companyId: companyId
@@ -523,7 +512,6 @@ export default defineComponent({
             refetchDataUsers,
             resultDataUsers,
             spinning,
-            checkedRow,
             handleChange,
             previewImage,
             stampReview,
@@ -542,7 +530,6 @@ export default defineComponent({
             validateNumber,
             validateEmail,
             statusMailValidate,
-            changeValueInputEmit,
             listDataMyCompanyUser,
             updateDataCompany,
             companyId,
@@ -577,74 +564,10 @@ export default defineComponent({
             this.modalAddNewStatus = false
             this.refetchDataUsers()
         },
-        validateCharacter(name: any) {
-            if (name == 'presidentMobilePhone' && this.formState.presidentMobilePhone.length > 0) {
-                let e = this.formState.presidentMobilePhone
-                this.formState.presidentMobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
-            }
-            if (name == 'fax' && this.formState.extendInfo.detail.fax.length > 0) {
-                let e = this.formState.extendInfo.detail.fax
-                this.formState.extendInfo.detail.fax = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
-            }
-            if (name == 'phone' && this.formState.extendInfo.detail.phone.length > 0) {
-                let e = this.formState.extendInfo.detail.phone.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
-                this.formState.extendInfo.detail.phone = e
 
-            }
-
-        }
     },
 });
 </script>
-<style scoped>
-.page-content>>>.cell-button-add {
-    padding-left: 100px !important;
-}
+<style lang="scss" scoped src="./style.scss">
 
-.page-content>>>.ant-tag {
-    width: 65px;
-    text-align: center;
-}
-
-.container {
-    width: 1200px;
-    padding-right: 10px;
-    padding-left: 10px;
-}
-
-.title-h2 {
-    margin-left: 1%;
-}
-
-.validate-message {
-    margin-left: 10px;
-    color: #c3baba;
-}
-
-.btn-upload-image {
-    width: 100px;
-    margin-left: 150px;
-}
-
-.btn-submit-table {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.btn-submit {
-    margin-top: 20px;
-    margin-left: 280px;
-}
-
-.page-content>>>.cell-center {
-    text-align: center !important
-}
-
-.ant-form-item {
-    margin-bottom: 10px;
-}
-
-.pagination-margin {
-    margin-top: 10px;
-}
 </style>

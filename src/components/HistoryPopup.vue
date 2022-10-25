@@ -3,10 +3,10 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220 ">
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts"
                     :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
-                    <DxColumn caption="기록일시" data-field="loggedAt" data-type="text"/>
+                    <DxColumn caption="기록일시" data-field="loggedAt" data-type="text" />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
                     <template #createdAtCell="{ data }">
@@ -18,8 +18,7 @@
                         {{ formarDate(data.value) }}
                     </template>
                     <DxColumn caption="수정자ID" data-field="updatedBy" />
-                    <DxColumn caption="삭제여부" data-field="active" :width="80"
-                    />
+                    <DxColumn caption="삭제여부" data-field="active" :width="80" />
                     <DxColumn caption="IP주소" data-field="ip" />
                     <DxColumn caption="상세" cell-template="detail" css-class="cell-center" :width="50" />
                     <template #detail="{}">
@@ -30,8 +29,7 @@
                             </a-tooltip>
                         </a-space>
                     </template>
-                </DxDataGrid>
-
+                </DxDataGrid> 
             </a-spin>
             <template #footer>
             </template>
@@ -273,6 +271,3 @@ export default defineComponent({
 
 })
 </script>
-<style>
-
-</style>

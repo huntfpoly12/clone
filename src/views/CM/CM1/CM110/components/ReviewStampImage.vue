@@ -100,6 +100,7 @@ export default defineComponent({
             triggers.value = true
         }
         const handOk = () => {
+            disabledBtnPreview.value = true
             emit("urlSeal" , sealData.value)
             emit("closePopup", false);
         }

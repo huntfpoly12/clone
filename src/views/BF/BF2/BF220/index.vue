@@ -33,7 +33,7 @@
         <div id="bf-220">
             <div class="search-form">
                 <div id="components-grid-demo-flex">
-                    <a-row justify="start" :gutter="[16,8]">
+                    <a-row justify="start" :gutter="[16, 8]">
                         <a-col>
                             <label class="lable-item">대상회원 :</label>
                             <a-checkbox v-model:checked="buttonSearch.typeSevice1">
@@ -65,14 +65,14 @@
                     <template #button-template>
                         <DxButton icon="plus" @click="openAddNewModal" />
                     </template>
-
                     <DxColumn data-field="id" caption="그룹코드" data-type="text" :fixed="true" />
                     <DxColumn data-field="name" caption="그룹명" />
                     <DxColumn data-field="type" caption="대상회원" cell-template="button" />
                     <template #button="{ data }" class="custom-action">
                         <a-tag :color="getColorTag(data.value)">
                             {{ data.value == 'm' ? '매니저' : (data.value == 'r' ? '영업자' : (data.value == 'p' ? '파트너' :
-                            '')) }}
+                                    ''))
+                            }}
                         </a-tag>
                     </template>
                     <DxColumn data-field="memo" caption="메모" />
@@ -96,13 +96,10 @@
                     <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
                         :total="totalRow" show-less-items />
                 </div>
-
                 <BF220PopupAddNew :modalStatus="modalAddNewStatus" @closePopupAdd="closePopupAdd" />
                 <BF220PopupEdit :modalStatus="modalEditStatus" @closePopupEdit="closePopupEdit" :idRowIndex="IDRow" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력" :idRowEdit="IDRow" typeHistory="cm-220"/>
-
-
+                    :data="popupData" title="변경이력" :idRowEdit="IDRow" typeHistory="cm-220" />
                 <!-- <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-110"
                     :companyId="companyIdPopup" /> -->
@@ -184,16 +181,13 @@ export default defineComponent({
             typeSevice2: true,
             typeSevice3: true
         })
-
         const modalAddNewStatus = ref(false)
         const modalEditStatus = ref(false)
-
         const dataSearch = ref({
             page: 1,
             rows: 10,
             types: ["m", "r", "p"]
         })
-
         const searching = () => {
             let arrayStatus = []
             if (buttonSearch.value.typeSevice1 == true) {
@@ -215,28 +209,23 @@ export default defineComponent({
                 }, 100);
             }
         }
-
         const { refetch: refetchData, result: resList } = useQuery(queries.searchScreenRoleGroups, dataSearch, () => ({
             fetchPolicy: "no-cache",
         }))
-
         watch(resList, (value) => {
             totalRow.value = value.searchScreenRoleGroups.totalCount
             setTimeout(() => {
                 spinning.value = false
             }, 500);
         });
-
         const closePopupAdd = () => {
             modalAddNewStatus.value = false
             refetchData()
         }
-
         const closePopupEdit = () => {
             modalEditStatus.value = false
             refetchData()
         }
-
         return {
             modalAddNewStatus,
             closePopupAdd,
@@ -291,164 +280,8 @@ export default defineComponent({
                 return "gray";
             }
         },
-
     },
 });
 </script>
-
-<style lang="scss" scoped>
-.page-content {
-    padding: 10px 10px;
-}
-
-#data-grid-demo {
-    min-height: 700px;
-}
-
-.dx-select-checkbox {
-    display: inline-block !important;
-}
-
-.modal-note {
-    max-height: 500px;
-    overflow: auto;
-
-    .title-note {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    th {
-        display: none;
-    }
-
-    .ant-collapse-content-box {
-        padding: 0px;
-    }
-}
-
-.anticon {
-    cursor: pointer;
-}
-
-.custom-action {
-    text-align: center;
-}
-
-.search-form {
-    margin-bottom: 10px;
-    background: #f1f3f4;
-    padding: 10px 24px;
-
-    >div {
-        width: 100%;
-        justify-content: flex-start !important;
-        align-items: center;
-        margin-right: 15px;
-    }
-
-    label {
-        margin-right: 10px;
-    }
-
-    .lable-item {
-        white-space: nowrap;
-        margin-right: 10px;
-        width: auto !important;
-    }
-
-    .col {
-        align-items: center;
-        display: flex;
-        align-items: center;
-        margin-top: 20px;
-
-        .lable-item {
-            width: 110px;
-            display: inline-block;
-        }
-
-        .item:nth-child(2) {
-            margin-left: 30px;
-        }
-    }
-}
-
-.ant-row {
-    align-items: center;
-}
-
-.ant-form-item {
-    margin-bottom: 4px;
-}
-
-.ant-collapse {
-    .ant-collapse-item {
-        .ant-collapse-header {
-            padding: 7px;
-        }
-    }
-}
-
-.warring-modal {
-    font-size: 12px;
-    line-height: 0px;
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
-
-.clr {
-    label {
-        color: red;
-    }
-}
-
-.clr-text {
-    color: red;
-}
-
-.clb,
-.clb-label label {
-    color: black !important;
-}
-
-::v-deep.components-modal-demo-position {
-    ::v-deep.test-local {
-        background-color: pink !important;
-        width: 1000px !important;
-        height: 200px !important;
-    }
-
-    .imgPreview img {
-        width: 1000px !important;
-    }
-
-    .ant-form-item-label {
-        text-align: left;
-    }
-}
-
-.dflex {
-    display: flex;
-}
-
-.custom-flex {
-    align-items: flex-start;
-}
-
-.warring-bank {
-    display: flex;
-    align-items: center;
-}
-
-.pl-5 {
-    padding-left: 5px;
-}
-
-.custom-lineHeight {
-    line-height: 3px;
-}
+<style lang="scss" scoped src="./style.scss"> 
 </style>

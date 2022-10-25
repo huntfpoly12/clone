@@ -12,11 +12,21 @@ export default gql`
         page
         rows
         datas {
-            id
-            name
-            type
-            screenRoles 
-            memo   
+          id
+          name
+          type
+          lock
+          memo
+          readAdminScreenRoles
+          writeAdminScreenRoles
+          readWorkScreenRoles
+          writeWorkScreenRoles
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          ip
+          active
         }
     }
   }`

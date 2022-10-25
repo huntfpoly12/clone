@@ -5,16 +5,19 @@
                 <a-form-item class="title" :label="title" disable="true">
                     <a-row>
                         <div v-if="disabledImg == false">
-                            <input class="custom-file-input" type="file" @change="onFileChange" />
-                            <p v-if="messageUpload">{{ messageUpload }}</p>
-                            <div v-if="fileName" class="fileName">
-                                <span style="padding-right: 10px">{{ fileName }}</span>
-                                <delete-outlined @click="onRemove" style="color: red; cursor: pointer" />
+                            <div style="display: flex;">
+                                <input class="custom-file-input" type="file" @change="onFileChange" />
+                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading"/>
                             </div>
+
+                            <p v-if="messageUpload">{{ messageUpload }}</p>
+                         
                         </div>
                         <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
-                            <input class="custom-file-input" type="file" disabled />
-
+                            <div style="display: flex;">
+                                <input class="custom-file-input" type="file" disabled />
+                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading"/>
+                            </div>
                         </div>
                     </a-row>
                     <a-row>
@@ -154,8 +157,9 @@ export default defineComponent({
             formData.append("file", file);
             fileName.value = file.name;
             try {
-
+                loading.value = true;
                 const data = await uploadRepository.public(formData);
+
 
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
@@ -190,6 +194,7 @@ export default defineComponent({
             handleCancel,
             handlePreview,
             imageUrl,
+            loading,
             // handleChange,
             messageUpload,
             fileList,

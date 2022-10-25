@@ -2,7 +2,7 @@
     <a-spin :spinning="loading" size="large">
         <div id="bf-330">
             <div class="top-content">
-                <a-typography-title :level="3"> 서비스관리 {{trigger}}
+                <a-typography-title :level="3"> 서비스관리
                 </a-typography-title>
                 <div class="list-action">
                     <a-tooltip>
