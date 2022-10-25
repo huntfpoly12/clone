@@ -79,9 +79,9 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting">
-                    <DxPaging :page-size="5" :allow-column-reordering="true" :allow-column-resizing="true"
-                        :column-auto-width="true" />
+                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
+                        :column-auto-width="true" >
+                    <DxPaging :page-size="5" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
