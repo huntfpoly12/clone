@@ -4,7 +4,7 @@
 			@cancel="setModalVisible()" width="700px">
 			<div class="cm-100-popup-add">
 				<a-form :model="formState" :label-col="labelCol">
-					<h2 class="title-h2">기초정보설정</h2>
+					<h2 class="title-h2">이용자정보</h2>
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="이용자ID">
@@ -58,7 +58,7 @@
 								<a-col :span="15">
 									<a-form-item label="이메일">
 										<a-input v-model:value="formState.email" @change="validateEmail"
-											:style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
+											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
