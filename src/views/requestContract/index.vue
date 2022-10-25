@@ -102,14 +102,6 @@
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <!-- <DxTextBox style="width: 100%" v-model:value="contractCreacted.addressExtend"
-                                placeholder="확장 주소">
-                                <DxValidator>
-                                    <DxRequiredRule message="Name is required" />
-                                    <DxStringLengthRule :min="2" message="Name must have at least 2 symbols" />
-                                </DxValidator>
-                            </DxTextBox> -->
-
                             <a-input v-model:value="contractCreacted.addressExtend"></a-input>
                         </div>
                         <div class="form-item">
@@ -880,7 +872,6 @@ export default {
     },
 };
 </script>
-
 <style lang="scss" scoped src="./style.scss">
 
 </style>

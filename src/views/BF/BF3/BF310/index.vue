@@ -193,8 +193,7 @@ export default defineComponent({
     },
     data() {
         return {
-            dateSearch: [dayjs().subtract(1, 'year'), dayjs()],
-            status: ref([]),
+            dateSearch: [dayjs().subtract(1, 'year'), dayjs()], 
             startDate: '',
             finishDate: '',
             displayMode: 'full',
