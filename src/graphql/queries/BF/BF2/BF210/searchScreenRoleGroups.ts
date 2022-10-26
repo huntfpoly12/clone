@@ -8,7 +8,10 @@ export default gql`
         id
         name
         type
-        screenRoles
+        readAdminScreenRoles
+        writeAdminScreenRoles
+        readWorkScreenRoles
+        writeWorkScreenRoles
         lock
         memo
         createdAt
