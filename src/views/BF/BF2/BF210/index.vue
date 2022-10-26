@@ -132,8 +132,10 @@
                     </template>
                 </DxDataGrid>
                 <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+
                 <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
                     :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
+
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
                 <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
@@ -226,15 +228,7 @@ export default defineComponent({
             name: "",
         })
         var idRowEdit = ref<number>(0)
-        const originData = ref({
-            page: 1,
-            rows: 10,
-            type: "",
-            groupCode: "",
-            groupName: "",
-            username: "",
-            name: "",
-        })
+        const originData = ref()
         setTimeout(() => {
             spinning.value = !spinning.value;
         }, 1000);
@@ -245,12 +239,15 @@ export default defineComponent({
         }))
         onResult((res) => {
             dataSource.value = res.data.searchUsers.datas
+            setTimeout(() => {
+                spinning.value = false;
+            }, 500);
         })
 
         const searching = () => {
-
             spinning.value = !spinning.value;
             let dataNew = ref()
+
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
                 dataNew.value = {
                     page: 1,
@@ -283,13 +280,16 @@ export default defineComponent({
                     username: dataSearch.value.username,
                     name: dataSearch.value.name,
                 }
+            } 
+            
+            triggersearching.value = true  
+            if(originData){
+                originData.value = dataNew.value
+                refetchData()
             }
-            originData.value = dataNew.value
-            triggersearching.value = true             
-            setTimeout(() => {
-                spinning.value = !spinning.value;
-            }, 1000);
+                     
         }
+        
         return {
             spinning,
             dataSource,

@@ -304,8 +304,11 @@ export default defineComponent({
         watch(() => props.modalStatus,
             (newValue, old) => {
                 if (newValue) {
-                    dataQuery.value = { id: props.idRowEdit };
                     trigger.value = true;
+                    if (dataQuery) {
+                        dataQuery.value = { id: props.idRowEdit };
+                        refetch()
+                    }
                 }
             }
         );
