@@ -149,8 +149,52 @@
                     </DxDataGrid>
                 </div>
             </div>
+<<<<<<< HEAD
         </a-modal>
     </div>
+=======
+          </a-col>
+        </a-row>
+      </a-form>
+      <div style="margin-top: 50px">
+        <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
+        <div style="position: relative">
+          <div class="overlay" v-if="formState.type == 'c'"></div>
+          <DxDataGrid :data-source="arrData" :show-bordes="true" :allow-column-reordering="true"
+            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll">
+
+            <DxColumn caption="" data-field="id" cell-template="active" css-class="cell-center" />
+            <template #active="{ data }">
+              <div style="width: 100%; text-align: center;">
+                <input type="checkbox" :value="data.data.id" v-model="checkedNames" />
+              </div>
+            </template>
+            <DxColumn data-field="id" caption="코드" :width="200" />
+
+            <DxColumn data-field="name" caption="권한그룹명" />
+
+            <DxColumn data-field="memo" caption="권한그룹설명" />          
+           
+            <template class="custom-action">
+              <div class="custom-action">
+                <a-space :size="10">
+                  <a-tooltip placement="top">
+                    <template #title>편집</template>
+                    <EditOutlined />
+                  </a-tooltip>
+                  <a-tooltip placement="top">
+                    <template #title>변경이력</template>
+                    <HistoryOutlined />
+                  </a-tooltip>
+                </a-space>
+              </div>
+            </template>
+          </DxDataGrid>
+        </div>
+      </div>
+    </a-modal>
+  </div>
+>>>>>>> hongnt
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch } from "vue";
@@ -167,6 +211,7 @@ import {
     DxExport,
     DxSelection,
     DxSearchPanel,
+<<<<<<< HEAD
 } from "devextreme-vue/data-grid";
 import {
     SearchOutlined,
@@ -393,6 +438,271 @@ export default defineComponent({
             statusMailValidate,
             arrData,
         };
+=======
+    DxSelectBox,
+    DxCheckBox
+  },
+  created() { },
+  data() {
+    return {
+      toggleActive: false,
+      selectionChanged: (data: any) => {
+        this.selectedItemKeys = data.selectedRowKeys;
+      },
+      reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
+    };
+  },
+  setup(props, { emit }) {
+    const visible = ref<boolean>(false);
+    const statusMailValidate = ref<boolean>(true);
+    const filterOption = (input: string, option: any) => {
+      return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    };
+    const formState = ref({
+      id: 1,
+      type: "",
+      username: "",
+      name: "",
+      mobilePhone: "",
+      email: "",
+      president: true,
+      managerGrade: 1,
+      accountingRole: true,
+      withholdingRole: true,
+      createdAt: 1,
+      createdBy: "",
+      updatedAt: 1,
+      updatedBy: "",
+      ip: "",
+      active: true,
+      groupId: "",
+      groupCode: "",
+      groupName: "",
+      facilityBusinesses: [],
+      screenRoleGroups: [{
+        id: "",
+        name: "",
+        type: "",
+        readAdminScreenRoles: [],
+        writeAdminScreenRoles: [],
+        readWorkScreenRoles: [],
+        writeWorkScreenRoles: [],
+        lock: true,
+        memo: "",
+        createdAt: "",
+        createdBy: "",
+        updatedAt: "",
+        updatedBy: "",
+        ip: "",
+        active: true
+      }]
+      ,
+    });
+
+    const handleChange = (value: any) => {
+
+    };
+    const handleBlur = () => {
+
+    };
+    const handleFocus = () => {
+
+    };
+    const showModal = () => {
+      visible.value = true;
+    };
+    const layout = {
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 },
+    };
+    const formTailLayout = {
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 },
+    };
+    const labelCol = { style: { width: "300px" } };
+    const wrapperCol = { span: 14 };
+    let confirm = ref<string>("");
+
+    //Update info user
+    const {
+      mutate: updateUser,
+      onDone: onDoneUpdate,
+      onError: onErrorUpdate
+    } = useMutation(mutations.updateUser);
+    onDoneUpdate((e) => {
+      message.success(`업데이트 완료!`);
+      emit("closePopup", false)
+    })
+    onErrorUpdate(e => {
+      message.error(e.message);
+    })
+    const confirmUpdate = () => {
+      if (statusMailValidate.value == true) {
+        let dataUpdate = {
+          id: props.idRowEdit,
+          input: {
+            name: formState.value.name,
+            screenRoleGroupIds: checkedNames.value,
+            mobilePhone: formState.value.mobilePhone,
+            email: formState.value.email,
+            active: formState.value.active,
+          }
+        }
+        updateUser(dataUpdate);
+      } else {
+        message.error(`이메일형식이 정확하지 않습니다.`)
+        var Url = document.getElementById("email") as HTMLInputElement;
+        Url.select()
+      }
+    }
+
+
+
+    //Send mail 
+    const {
+      mutate: sendGmail,
+      onDone: doneSendGmail,
+      onError: errorSendGmail
+    } = useMutation(mutations.sendEmailToResetUserPassword);
+    errorSendGmail(e => {
+      message.error(e.message)
+    })
+    doneSendGmail((e) => {
+      message.success(`비밀번호 재설정을 위한 이메일을 확인해주세요!`);
+      visible.value = false
+    })
+    const sendMessToGmail = () => {
+      let dataCallSendEmail = {
+        id: props.idRowEdit,
+      }
+
+      sendGmail(dataCallSendEmail);
+    }
+    const dataQuery = ref();
+    let trigger = ref<boolean>(false);
+    watch(
+      () => props.modalStatus,
+      (newValue, old) => {
+        if (newValue) {
+          dataQuery.value = { id: props.idRowEdit };
+          refGetUser();
+          trigger.value = true;         
+          
+        }
+      }
+    );
+    const validateEmail = (e: any) => {
+      let checkMail = e.target.value.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+      if (!checkMail) {
+        statusMailValidate.value = false;
+      } else {
+        statusMailValidate.value = true;
+      }
+    }
+
+    const { result, refetch: refGetUser } = useQuery(
+      queries.getUser,
+      dataQuery,
+      () => ({
+        enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    watch(result, (value) => {
+      if (value && value.getUser) {
+        formState.value.id = value.getUser.id;
+        formState.value.type = value.getUser.type != "m" ? value.getUser.type : value.getUser.managerGrade;
+        formState.value.username = value.getUser.username;
+        formState.value.name = value.getUser.name;
+        formState.value.mobilePhone = value.getUser.mobilePhone;
+        formState.value.email = value.getUser.email;
+        formState.value.president = value.getUser.president;
+        formState.value.managerGrade = value.getUser.managerGrade;
+        formState.value.accountingRole = value.getUser.accountingRole;
+        formState.value.createdAt = value.getUser.createdAt;
+        formState.value.updatedAt = value.getUser.updatedAt;
+        formState.value.updatedBy = value.getUser.updatedBy;
+        formState.value.ip = value.getUser.ip;
+        formState.value.active = value.getUser.active;
+        formState.value.facilityBusinesses = value.getUser.facilityBusinesses;
+        formState.value.screenRoleGroups = value.getUser.screenRoleGroups;
+        formState.value.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
+        originData.value.types = [value.getUser.type]
+        triggerSearchRoleGroup.value = true
+
+        let arrSelect: any = []
+        formState.value.screenRoleGroups.map((e) => {
+          arrSelect.push(e.id)
+        })
+        checkedNames.value = arrSelect
+
+      }
+    });
+    const onFinish = (values: any) => {
+
+    };
+    const triggerSearchRoleGroup = ref<boolean>(false);
+    const originData = ref({
+      page: 1,
+      rows: 20,
+      types: ["m"],
+    });
+
+    // querie searchScreenRoleGroups
+    const { result: resRoleGroup, refetch: refRoleGroup } = useQuery(
+      queries.searchScreenRoleGroups, originData,
+      () => ({
+        enabled: triggerSearchRoleGroup.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+
+    const arrData = ref()
+    watch(resRoleGroup, (value: any) => {
+      if (value && value.searchScreenRoleGroups) {
+        arrData.value = value.searchScreenRoleGroups.datas
+      }
+    });
+
+
+
+    const checkedNames = ref([])
+
+    return {
+      checkedNames,
+      labelCol,
+      wrapperCol,
+      layout,
+      formTailLayout,
+      value1: ref<Dayjs>(),
+      confirm,
+      formState,
+      onFinish,
+      validateEmail,
+      showModal,
+      filterOption,
+      handleFocus,
+      handleBlur,
+      handleChange,
+      visible,
+      sendGmail,
+      sendMessToGmail,
+      confirmUpdate,
+      statusMailValidate,
+      arrData,
+
+    };
+  },
+  methods: {
+    onlyNumber(e: any) {
+      let keyCode = e.keyCode ? e.keyCode : e.which;
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
+        // 46 is dot
+        e.preventDefault();
+      }
+>>>>>>> hongnt
     },
     methods: {
         onlyNumber(e: any) {
