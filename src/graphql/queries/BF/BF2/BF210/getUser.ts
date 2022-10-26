@@ -41,6 +41,10 @@ export default gql`
         id
         name
         type
+        readAdminScreenRoles
+        writeAdminScreenRoles
+        readWorkScreenRoles
+        writeWorkScreenRoles
         lock
         memo
         readAdminScreenRoles

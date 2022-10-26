@@ -19,9 +19,9 @@
               </button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input v-if="formState.type!='c'" v-model:value="formState.name"
+              <a-input v-if="formState.type != 'c'" v-model:value="formState.name"
                 style="width: 150px; margin-right: 10px" />
-              <a-input v-if="formState.type=='c'" disabled v-model:value="formState.name"
+              <a-input v-if="formState.type == 'c'" disabled v-model:value="formState.name"
                 style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
@@ -30,9 +30,9 @@
           </a-col>
           <a-col :span="12">
             <a-form-item label="상태">
-              <a-switch v-if="formState.type!='c'" v-model:checked="formState.active" checked-children="이용중"
+              <a-switch v-if="formState.type != 'c'" v-model:checked="formState.active" checked-children="이용중"
                 un-checked-children="이용중지" style="width: 100px" />
-              <a-switch v-if="formState.type=='c'" disabled v-model:checked="formState.active" checked-children="이용중"
+              <a-switch v-if="formState.type == 'c'" disabled v-model:checked="formState.active" checked-children="이용중"
                 un-checked-children="이용중지" style="width: 100px" />
             </a-form-item>
             <a-form-item label="회원종류">
@@ -64,9 +64,9 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4">
               <div style="display: flex; align-items: flex-end">
-                <a-input v-if="formState.type !=='c'" @keypress="onlyNumber" type="text"
+                <a-input v-if="formState.type !== 'c'" @keypress="onlyNumber" type="text"
                   v-model:value="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
-                <a-input v-if="formState.type =='c'" disabled @keypress="onlyNumber" type="text"
+                <a-input v-if="formState.type == 'c'" disabled @keypress="onlyNumber" type="text"
                   v-model:value="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
               </div>
               <div :class="{ active: toggleActive }" class="toggle_container">
@@ -74,21 +74,21 @@
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" :span="8">
-              <a-input v-if="formState.type!=='c'" @change="validateEmail" v-model:value="formState.email"
-                style="width: 230px" :style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
-              <a-input v-if="formState.type=='c'" disabled v-model:value="formState.email" style="width: 230px" />
+              <a-input v-if="formState.type !== 'c'" @change="validateEmail" v-model:value="formState.email"
+                style="width: 230px" :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
+              <a-input v-if="formState.type == 'c'" disabled v-model:value="formState.email" style="width: 230px" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
 
-              <a-button v-if="formState.type!=='c'" html-type="submit" danger class="btn_sendemail" @click="showModal">
+              <a-button v-if="formState.type !== 'c'" html-type="submit" danger class="btn_sendemail" @click="showModal">
                 비밀번호 변경</a-button>
-              <a-button v-if="formState.type =='c'" disabled html-type="submit" danger class="btn_sendemail">비밀번호 변경
+              <a-button v-if="formState.type == 'c'" disabled html-type="submit" danger class="btn_sendemail">비밀번호 변경
               </a-button>
             </a-form-item>
             <div class="confirm-popup">
               <a-modal v-model:visible="visible" :mask-closable="false">
                 <a-row>
                   <a-col :span="4">
-                    <mail-outlined :style="{fontSize: '70px'}" />
+                    <mail-outlined :style="{ fontSize: '70px' }" />
                   </a-col>
                   <a-col :span="20">
                     <p><strong>비밀번호 설정 이메일</strong></p>
@@ -109,13 +109,13 @@
       <div style="margin-top: 50px">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
         <div style="position: relative">
-          <div class="overlay" v-if="formState.type=='c'"></div>
-          <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
+          <div class="overlay" v-if="formState.type == 'c'"></div>
+          <DxDataGrid :data-source="arrData" :show-bordes="true" :allow-column-reordering="true"
             :allow-column-resizing="true" :column-auto-width="true" class="table-scroll">
 
-            <DxColumn caption="" data-field="id" cell-template="active" css-class="cell-center"/>
-            <template #active="{data}">
-              <div style="width: 100%; text-align: center;"> 
+            <DxColumn caption="" data-field="id" cell-template="active" css-class="cell-center" />
+            <template #active="{ data }">
+              <div style="width: 100%; text-align: center;">
                 <input type="checkbox" :value="data.data.id" v-model="checkedNames" />
               </div>
             </template>
@@ -123,7 +123,7 @@
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="screenRoles" caption="권한그룹설명" />
+            <DxColumn data-field="memo" caption="권한그룹설명" />
             <DxColumn :width="50" cell-template="modal-table" />
             <template #modal-table="{}">
               <div class="action-menu">
@@ -230,7 +230,10 @@ export default defineComponent({
         id: "",
         name: "",
         type: "",
-        screenRoles: "",
+        readAdminScreenRoles: [],
+        writeAdminScreenRoles: [],
+        readWorkScreenRoles: [],
+        writeWorkScreenRoles: [],
         lock: true,
         memo: "",
         createdAt: "",
@@ -244,13 +247,13 @@ export default defineComponent({
     });
 
     const handleChange = (value: any) => {
-           
+
     };
     const handleBlur = () => {
-      
+
     };
     const handleFocus = () => {
-     
+
     };
     const showModal = () => {
       visible.value = true;
@@ -300,7 +303,7 @@ export default defineComponent({
       }
     }
 
-   
+
 
     //Send mail 
     const {
@@ -319,7 +322,7 @@ export default defineComponent({
       let dataCallSendEmail = {
         id: props.idRowEdit,
       }
-      
+
       sendGmail(dataCallSendEmail);
     }
     const dataQuery = ref();
@@ -330,7 +333,7 @@ export default defineComponent({
         if (newValue) {
           dataQuery.value = { id: props.idRowEdit };
           trigger.value = true;
-        } 
+        }
       }
     );
     const validateEmail = (e: any) => {
@@ -383,7 +386,7 @@ export default defineComponent({
       }
     });
     const onFinish = (values: any) => {
-     
+
     };
     const triggerSearchRoleGroup = ref<boolean>(false);
     const originData = ref({
@@ -408,7 +411,7 @@ export default defineComponent({
       }
     });
 
-   
+
 
     const checkedNames = ref([])
 
@@ -434,7 +437,7 @@ export default defineComponent({
       confirmUpdate,
       statusMailValidate,
       arrData,
-      
+
     };
   },
   methods: {
