@@ -22,8 +22,8 @@ export default defineComponent({
     props: {
         textLabel: String,
         selected: {
-            type: Number,
-            default: null,
+            type: Number ,
+            default: 0,
             required: true
         }
     },

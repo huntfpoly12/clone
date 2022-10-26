@@ -4,11 +4,17 @@ export default gql`
     searchScreenRoleGroups(
       filter: { page: $page, rows: $rows, types: $types }
     ) {
+      totalCount
+      page
+      rows
       datas {
         id
         name
         type
-        screenRoles
+        readAdminScreenRoles
+        writeAdminScreenRoles
+        readWorkScreenRoles
+        writeWorkScreenRoles
         lock
         memo
         createdAt

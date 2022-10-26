@@ -103,7 +103,7 @@
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="screenRoles" caption="권한그룹설명" />
+            <DxColumn data-field="memo" caption="권한그룹설명" />
             <DxColumn :width="50" cell-template="modal-table" />
             <template #modal-table="{}">
               <div class="action-menu">
@@ -271,7 +271,10 @@ export default defineComponent({
         id: "",
         name: "",
         type: "",
-        screenRoles: "",
+        readAdminScreenRoles: [],
+        writeAdminScreenRoles: [],
+        readWorkScreenRoles: [],
+        writeWorkScreenRoles: [],
         lock: true,
         memo: "",
         createdAt: "",
