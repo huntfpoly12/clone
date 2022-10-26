@@ -351,7 +351,7 @@
         </div>
     </div>
 </template>
-<script lang="ts">
+<script >
 import { reactive, ref, watch ,computed} from "vue";
 import {
     CheckOutlined,
@@ -534,7 +534,7 @@ export default {
         onError((res) => {
             openNotificationWithIcon("error", res);
         });
-        const openNotificationWithIcon = (type: any, mes: any) => {
+        const openNotificationWithIcon = (type, mes) => {
             if (type == "error")
                 notification[type]({
                     message: { mes }.mes.message,
@@ -555,7 +555,7 @@ export default {
                 range: "${label} must be between ${min} and ${max}",
             },
         };
-        const onFinish = (values: any) => {
+        const onFinish = (values) => {
         };
         const layout = {
             labelCol: { span: 8 },
@@ -587,8 +587,8 @@ export default {
 
         const optionSale = ref()
         watch(resultConfig, (value) => {
-            let dataOption: { label: any; value: any; }[] = []
-            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
+            let dataOption = []
+            value.getSalesRepresentativesForPublicScreen.map((e) => {
                 dataOption.push({
                     label: e.name,
                     value: e.id
@@ -602,7 +602,7 @@ export default {
         });
 
         const statusMailValidate = ref(false)
-        const validateEmail = (e:any) => {
+        const validateEmail = (e) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
@@ -736,13 +736,13 @@ export default {
         },
     },
     methods: {
-        changeValueDate(data: any) {
+        changeValueDate(data) {
             this.contractCreacted.birthday = data;
         },
         changeValueDateHoding(data) {
             this.contractCreacted.startYearMonthHolding = data;
         },
-        funcAddress(data: any) {
+        funcAddress(data) {
             this.contractCreacted.zipcode = data.zonecode;
             this.contractCreacted.roadAddress = data.roadAddress;
             this.contractCreacted.jibunAddress = data.jibunAddress;
