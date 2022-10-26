@@ -110,7 +110,7 @@
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
         <div style="position: relative">
           <div class="overlay" v-if="formState.type == 'c'"></div>
-          <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
+          <DxDataGrid :data-source="arrData" :show-bordes="true" :allow-column-reordering="true"
             :allow-column-resizing="true" :column-auto-width="true" class="table-scroll">
 
             <DxColumn caption="" data-field="id" cell-template="active" css-class="cell-center" />
