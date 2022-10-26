@@ -427,18 +427,18 @@ export default defineComponent({
         const validateNumber = (name: String) => {
             if (name == 'presidentMobilePhone' && formState.value.presidentMobilePhone.length > 0) {
                 let e = formState.value.presidentMobilePhone
-                formState.value.presidentMobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                formState.value.presidentMobilePhone = e.replace(/\D/g, '');
             }
             if (name == 'fax' && formState.value.extendInfo.detail.fax.length > 0) {
                 let e = formState.value.extendInfo.detail.fax
-                formState.value.extendInfo.detail.fax = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                formState.value.extendInfo.detail.fax = e.replace(/\D/g, '');
             }
             if (name == 'phone' && formState.value.extendInfo.detail.phone.length > 0) {
-                let e = formState.value.extendInfo.detail.phone.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                let e = formState.value.extendInfo.detail.phone.replace(/\D/g, '');
                 formState.value.extendInfo.detail.phone = e
             }
-        } 
- 
+        }
+
         const validateEmail = (e: any) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
