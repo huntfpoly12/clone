@@ -22,8 +22,8 @@ import { useQuery } from "@vue/apollo-composable";
 export default defineComponent({
     props: {
         selected: {
-            type: Number,
-            default: null,
+            type: Number ,
+            default: 0,
             required: true
         },
         hasUsername: {

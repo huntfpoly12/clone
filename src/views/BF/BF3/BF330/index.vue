@@ -191,15 +191,15 @@ export default defineComponent({
                 name: "",
                 presidentName: "",
                 address: "",
-                manageUserId: null,
-                salesRepresentativeId: null,
+                manageUserId: undefined,
+                salesRepresentativeId: undefined,
                 excludeCancel: true
             }
         })
 
         const { refetch: refetchData, loading, error, result } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
         // process data after call getServiceContracts api
-        watch(result, (value) => {
+        watch(result, (value : any) => {
             rowTable.value = value.searchServiceContracts.totalCount
             listServiceContract.value = value.searchServiceContracts.datas
             trigger.value = false;
