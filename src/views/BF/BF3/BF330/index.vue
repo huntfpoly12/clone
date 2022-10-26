@@ -122,7 +122,7 @@
         </div>
     </a-spin>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent, onMounted, ref, watch } from "vue";
 import {
     DxDataGrid,
@@ -191,15 +191,15 @@ export default defineComponent({
                 name: "",
                 presidentName: "",
                 address: "",
-                manageUserId: null,
-                salesRepresentativeId: null,
+                manageUserId: undefined,
+                salesRepresentativeId: undefined,
                 excludeCancel: true
             }
         })
 
         const { refetch: refetchData, loading, error, result } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
         // process data after call getServiceContracts api
-        watch(result, (value) => {
+        watch(result, (value : any) => {
             rowTable.value = value.searchServiceContracts.totalCount
             listServiceContract.value = value.searchServiceContracts.datas
             trigger.value = false;
@@ -231,7 +231,7 @@ export default defineComponent({
         }
     },
     methods: {
-        onExporting(e) {
+        onExporting(e:any) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
             exportDataGrid({
@@ -248,12 +248,12 @@ export default defineComponent({
             });
             e.cancel = true;
         },
-        setModalVisible(data) {
+        setModalVisible(data: any) {
             this.idSubRequest = data.data.id;
             this.modalStatus = true;
             this.popupData = data;
         },
-        modalHistory(data) {
+        modalHistory(data: any) {
             this.idSubRequest = data.data.id;
             this.modalHistoryStatus = true;
             this.popupData = data;

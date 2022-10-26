@@ -351,8 +351,8 @@
         </div>
     </div>
 </template>
-<script>
-import { reactive, ref, watch } from "vue";
+<script >
+import { reactive, ref, watch ,computed} from "vue";
 import {
     CheckOutlined,
     EditOutlined,
@@ -427,7 +427,6 @@ export default {
     data() {
         return {
             textIDNo: "법인등록번호",
-            step: 0,
             radio: "",
             states: bizTypeList,
             titleModal: "사업자등록증",
@@ -444,44 +443,14 @@ export default {
         };
     },
     computed: {
-        checkStepTwo() {
-            if (this.step === 0) {
-                return "wait";
-            } else if (this.step === 1) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        checkStepThree() {
-            if (this.step < 2) {
-                return "wait";
-            } else if (this.step === 2) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        checkStepFour() {
-            if (this.step < 3) {
-                return "wait";
-            } else if (this.step === 3) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        changeValueInputEmit(data) {
-            if (data.name == "nameCompany") {
-                this.dataSearch.nameCompany = data.value;
-            }
-        },
+ 
     },
     setup() {
+        const step = ref(0);
         const monthFormat = 'YYYY/MM';
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
-        const contractCreacted = reactive({
+        const initialFormState = {
             terms: false,
             personalInfo: false,
             accountingService: false,
@@ -525,13 +494,16 @@ export default {
             salesRepresentativeId: 1,
             comment: "",
             ownerName: "",
+        };
+        const contractCreacted = reactive({
+            ...initialFormState
         });
         const dataInputCallApi = reactive({
             dossier: 1,
             applicationService: 1,
         })
         var visibleModal = ref(false);
-        const listDataConvert = ref([]);
+        const listDataConvert = ref(Array());
         const valueFacilityBusinesses = ref([]);
         const imagestep = ref("");
         const imageValue = ref("");
@@ -616,7 +588,7 @@ export default {
         const optionSale = ref()
         watch(resultConfig, (value) => {
             let dataOption = []
-            value.getSalesRepresentativesForPublicScreen.map(e => {
+            value.getSalesRepresentativesForPublicScreen.map((e) => {
                 dataOption.push({
                     label: e.name,
                     value: e.id
@@ -641,6 +613,41 @@ export default {
             }
         }
 
+
+        // all Computed 
+        const checkStepTwo = computed(()=>{
+            if (step.value === 0) {
+                return "wait";
+            } else if (step.value === 1) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+        const checkStepThree =  computed(()=>{
+            if (step.value < 2) {
+                return "wait";
+            } else if (step.value === 2) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+        const checkStepFour = computed(()=>{
+            if (step.value < 3) {
+                return "wait";
+            } else if (step.value === 3) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+
+        const changeValueInputEmit = computed((data)=>{
+            if (data.name == "nameCompany") {
+                //dataSearch.nameCompany = data.value;
+            }
+        });
         return {
             statusMailValidate,
             validateEmail,
@@ -661,6 +668,7 @@ export default {
             onFinish,
             layout,
             listDataConvert,
+            step,
             // formState,
             imagestep,
             removeImg,
@@ -668,7 +676,11 @@ export default {
             fileName,
             fileNamestep,
             removeImgStep,
-            monthFormat
+            monthFormat,
+            checkStepTwo,
+            checkStepThree,
+            checkStepFour,
+            changeValueInputEmit
         };
     },
     watch: {
