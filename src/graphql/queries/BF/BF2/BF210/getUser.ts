@@ -41,6 +41,13 @@ export default gql`
         id
         name
         type
+<<<<<<< HEAD
+=======
+        readAdminScreenRoles
+        writeAdminScreenRoles
+        readWorkScreenRoles
+        writeWorkScreenRoles
+>>>>>>> hongnt
         lock
         memo
         readAdminScreenRoles
