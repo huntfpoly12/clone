@@ -285,6 +285,7 @@ export default defineComponent({
                 }
             }
             originData.value = dataNew.value
+            refetchData()
             triggersearching.value = true             
             setTimeout(() => {
                 spinning.value = !spinning.value;
