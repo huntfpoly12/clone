@@ -123,13 +123,8 @@
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="memo" caption="권한그룹설명" />
-            <DxColumn :width="50" cell-template="modal-table" />
-            <template #modal-table="{}">
-              <div class="action-menu">
-                <menu-outlined />
-              </div>
-            </template>
+            <DxColumn data-field="memo" caption="권한그룹설명" />          
+           
             <template class="custom-action">
               <div class="custom-action">
                 <a-space :size="10">
@@ -332,7 +327,9 @@ export default defineComponent({
       (newValue, old) => {
         if (newValue) {
           dataQuery.value = { id: props.idRowEdit };
-          trigger.value = true;
+          refGetUser();
+          trigger.value = true;         
+          
         }
       }
     );
@@ -347,7 +344,7 @@ export default defineComponent({
       }
     }
 
-    const { result, refetch } = useQuery(
+    const { result, refetch: refGetUser } = useQuery(
       queries.getUser,
       dataQuery,
       () => ({
@@ -396,7 +393,7 @@ export default defineComponent({
     });
 
     // querie searchScreenRoleGroups
-    const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
+    const { result: resRoleGroup, refetch: refRoleGroup } = useQuery(
       queries.searchScreenRoleGroups, originData,
       () => ({
         enabled: triggerSearchRoleGroup.value,
