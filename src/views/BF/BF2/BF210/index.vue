@@ -181,7 +181,7 @@ import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
-    props: ["modalStatus",],  
+    
     components: {
         DxDataGrid,
         DxColumn,
@@ -207,12 +207,13 @@ export default defineComponent({
         return {
             popupData: [],
             modalAddNewStatus: false,
-            modalEditStatus: false,
+           
             modalHistoryStatus: false,
             modalLoginStatus: false,
         };
     },
     setup(props) {
+        const modalEditStatus = ref<boolean>(false);
         let triggersearching = ref<boolean>(false);
         const spinning = ref<boolean>(true);
         const checkStatus = ref({
@@ -245,17 +246,12 @@ export default defineComponent({
                 spinning.value = false;
             }, 500);
         })
-        // watch(
-        //     () => props.modalStatus,
-        //     (newValue, old) => {
-        //         if (newValue) {
-        //             dataSource.value = { id: props.idRowEdit};
-        //             refetchData();
-        //             triggersearching.value = true;
-
-        //         }
-        //     }
-        // );
+        watch(() => modalEditStatus.value,
+            () => {  
+                
+                    refetchData()
+            }
+        );
         const searching = () => {
             spinning.value = !spinning.value;
             let dataNew = ref()
@@ -299,19 +295,11 @@ export default defineComponent({
                 originData.value = dataNew.value
                 refetchData()
             }
-<<<<<<< HEAD
-            originData.value = dataNew.value
-            refetchData()
-            triggersearching.value = true
-            setTimeout(() => {
-                spinning.value = !spinning.value;
-            }, 1000);
-=======
                      
->>>>>>> develop
         }
         
         return {
+            modalEditStatus,
             spinning,
             dataSource,
             idRowEdit,
