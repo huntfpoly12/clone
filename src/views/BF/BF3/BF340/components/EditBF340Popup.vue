@@ -527,7 +527,7 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .confirm-md>>>.ant-modal-body {
     padding: 10px !important;
 }
