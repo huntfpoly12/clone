@@ -79,8 +79,8 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
-                        :column-auto-width="true" >
+                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
+                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                     <DxPaging :page-size="20" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -105,8 +105,9 @@
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)">
                             {{ data.value == "m" ? "매니저" : (data.value == "c"
-                            ? "고객사" :
-                            (data.value == "p"? "파트너": "영업자")) }}</a-tag>
+                                    ? "고객사" :
+                                    (data.value == "p" ? "파트너" : "영업자"))
+                            }}</a-tag>
                     </template>
                     <DxColumn data-field="mobilePhone" caption="휴대폰" />
                     <DxColumn data-field="groupCode" caption="소속코드" />
@@ -143,7 +144,7 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import {
     DxDataGrid,
     DxColumn,
@@ -178,6 +179,7 @@ import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
+    props: ["modalStatus",],  
     components: {
         DxDataGrid,
         DxColumn,
@@ -208,7 +210,7 @@ export default defineComponent({
             modalLoginStatus: false,
         };
     },
-    setup() {
+    setup(props) {
         let triggersearching = ref<boolean>(false);
         const spinning = ref<boolean>(true);
         const checkStatus = ref({
@@ -246,7 +248,17 @@ export default defineComponent({
         onResult((res) => {
             dataSource.value = res.data.searchUsers.datas
         })
+        // watch(
+        //     () => props.modalStatus,
+        //     (newValue, old) => {
+        //         if (newValue) {
+        //             dataSource.value = { id: props.idRowEdit};
+        //             refetchData();
+        //             triggersearching.value = true;
 
+        //         }
+        //     }
+        // );
         const searching = () => {
 
             spinning.value = !spinning.value;
@@ -286,7 +298,7 @@ export default defineComponent({
             }
             originData.value = dataNew.value
             refetchData()
-            triggersearching.value = true             
+            triggersearching.value = true
             setTimeout(() => {
                 spinning.value = !spinning.value;
             }, 1000);

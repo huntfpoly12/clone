@@ -146,7 +146,7 @@
   </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, reactive } from "vue";
+import { ref, defineComponent, watch, } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
