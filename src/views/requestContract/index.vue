@@ -53,8 +53,7 @@
                         <div class="form-item">
                             <label class="red">상 호 :</label>
                             <div>
-                                <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany"
-                                    placeholder="가나다라마바사아자차카타파하 요양병원">
+                                <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany">
                                     <DxValidator>
                                         <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                     </DxValidator>
@@ -89,7 +88,7 @@
                         <div class="form-item">
                             <label class="red">주 소 :</label>
                             <div class="group-label">
-                                <a-input class="width-auto" placeholder="검색어입력" v-model:value="contractCreacted.zipcode"
+                                <a-input class="width-auto" placeholder="우편번호" v-model:value="contractCreacted.zipcode"
                                     disabled />
                                 <a-button>
                                     <postCode @dataAddress="funcAddress" />
@@ -98,22 +97,29 @@
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input placeholder="도로명 주소" v-model:value="contractCreacted.roadAddress" disabled />
+                            <a-input placeholder="주소" v-model:value="contractCreacted.roadAddress" disabled />
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input v-model:value="contractCreacted.addressExtend"></a-input>
+                            <a-input placeholder="상세주소(입력)" v-model:value="contractCreacted.addressExtend"></a-input>
                         </div>
+                        <!-- <div class="form-item">
+                            <label class="red">연락처 :</label>
+                            <a-input placeholder="'-'없이 슷자만 입력" @change="validateNumber('phone')"
+                                v-model:value="contractCreacted.phone" style="width: 180px;">                                
+                            </a-input>
+                        </div> -->
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <a-input placeholder="0298765432" @change="validateNumber('phone')"
-                                v-model:value="contractCreacted.phone" style="width: 180px;">
-                            </a-input>
-
+                            <a-form-item name="username"
+                                :rules="[{ required: true, message: 'Please input your username!' }]">
+                                <a-input v-model:value="contractCreacted.phone" />
+                            </a-form-item>
                         </div>
+
                         <div class="form-item">
                             <label>팩 스 :</label>
-                            <a-input placeholder="0212345678" v-model:value="contractCreacted.fax"
+                            <a-input placeholder="'-'없이 슷자만 입력" v-model:value="contractCreacted.fax"
                                 @change="validateNumber('fax')" @keyup="validateNumber('fax')" style="width: 180px;" />
                         </div>
                         <div style="display: flex">
@@ -155,15 +161,29 @@
                                     @valueDateChange="changeValueDate" />
                                 <CustomDatepicker v-else :valueDate="contractCreacted.birthday"
                                     @valueDateChange="changeValueDate" />
+                                <!-- <DxValidator>
+                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
+                                </DxValidator> -->
                             </div>
                         </div>
                         <div class="form-item">
                             <label class="red">휴대폰번호:</label>
-                            <a-input style="width: 150px" placeholder="01098765432"
-                                v-model:value="contractCreacted.mobilePhone" />
+                            <DxTextBox placeholder="01098765432" style="width: 150px"
+                                v-model:value="contractCreacted.mobilePhone">
+                                <DxValidator>
+                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
+                                </DxValidator>
+                            </DxTextBox>
+
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
+                            <!-- <DxTextBox placeholder="abc123@mailaddress.com" style="width: 250px" v-model:value="contractCreacted.email" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <DxValidator>
+                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
+                                </DxValidator>
+                            </DxTextBox> -->
                             <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
                                 @finish="onFinish">
                                 <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
