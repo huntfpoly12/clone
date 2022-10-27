@@ -527,10 +527,7 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.confirm-md>>>.ant-modal-body {
-    padding: 10px !important;
-}
+<style lang="scss" scoped>
 
 .confirm-button {
     margin-left: 100px;
