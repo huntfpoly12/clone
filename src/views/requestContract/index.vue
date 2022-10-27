@@ -114,7 +114,7 @@
                         <div class="form-item">
                             <label>팩 스 :</label>
                             <a-input placeholder="0212345678" v-model:value="contractCreacted.fax"
-                                @change="validateNumber('fax')" style="width: 180px;" />
+                                @change="validateNumber('fax')" @keyup="validateNumber('fax')" style="width: 180px;" />
                         </div>
                         <div style="display: flex">
                             <div>
@@ -225,6 +225,7 @@
                             <label class="red">장기요양기관등록번호 :</label>
                             <a-input :disabled="disableFormVal2" placeholder="1234567898"
                                 @change="validateNumber('longTermCareInstitutionNumber')"
+                                @keyup="validateNumber('longTermCareInstitutionNumber')"
                                 v-model:value="contractCreacted.longTermCareInstitutionNumber" />
                         </div>
                         <div style="display: flex">
@@ -267,7 +268,8 @@
                             <label>직 원 수:</label>
                             <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px"
                                 min="0" v-model:value="contractCreacted.capacityHolding"
-                                @change="validateNumber('capacityHolding')" />
+                                @change="validateNumber('capacityHolding')"
+                                @keyup="validateNumber('capacityHolding')" />
                         </div>
                         <div class="form-item">
                             <label>부가서비스 :</label>
@@ -285,8 +287,8 @@
                         <div class="form-item">
                             <label class="red">출금계좌번호 :</label>
                             <a-input placeholder="출금계좌번호" :disabled="disableFormVal"
-                                v-model:value="contractCreacted.accountNumber"
-                                @change="validateNumber('accountNumber')" />
+                                v-model:value="contractCreacted.accountNumber" @change="validateNumber('accountNumber')"
+                                @keyup="validateNumber('accountNumber')" />
                         </div>
                         <div class="form-item">
                             <label class="red">예금주명 :</label>
@@ -297,7 +299,7 @@
                             <label class="red">사업자(주민)등록번호:</label>
                             <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다"
                                 v-model:value="contractCreacted.ownerBizNumber" :disabled="disableFormVal"
-                                @change="validateNumber('ownerBizNumber')" />
+                                @change="validateNumber('ownerBizNumber')" @keyup="validateNumber('ownerBizNumber')" />
                             <p>i: 예금주의 사업자등록번호 또는 주민등록번호입니다</p>
                         </div>
                         <div class="form-item">
@@ -351,8 +353,8 @@
         </div>
     </div>
 </template>
-<script>
-import { reactive, ref, watch } from "vue";
+<script >
+import { reactive, ref, watch, computed } from "vue";
 import {
     CheckOutlined,
     EditOutlined,
@@ -427,7 +429,6 @@ export default {
     data() {
         return {
             textIDNo: "법인등록번호",
-            step: 0,
             radio: "",
             states: bizTypeList,
             titleModal: "사업자등록증",
@@ -444,44 +445,14 @@ export default {
         };
     },
     computed: {
-        checkStepTwo() {
-            if (this.step === 0) {
-                return "wait";
-            } else if (this.step === 1) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        checkStepThree() {
-            if (this.step < 2) {
-                return "wait";
-            } else if (this.step === 2) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        checkStepFour() {
-            if (this.step < 3) {
-                return "wait";
-            } else if (this.step === 3) {
-                return "process";
-            } else {
-                return "finish";
-            }
-        },
-        changeValueInputEmit(data) {
-            if (data.name == "nameCompany") {
-                this.dataSearch.nameCompany = data.value;
-            }
-        },
+
     },
     setup() {
+        const step = ref(0);
         const monthFormat = 'YYYY/MM';
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
-        const contractCreacted = reactive({
+        const initialFormState = {
             terms: false,
             personalInfo: false,
             accountingService: false,
@@ -525,13 +496,16 @@ export default {
             salesRepresentativeId: 1,
             comment: "",
             ownerName: "",
+        };
+        const contractCreacted = reactive({
+            ...initialFormState
         });
         const dataInputCallApi = reactive({
             dossier: 1,
             applicationService: 1,
         })
         var visibleModal = ref(false);
-        const listDataConvert = ref([]);
+        const listDataConvert = ref(Array());
         const valueFacilityBusinesses = ref([]);
         const imagestep = ref("");
         const imageValue = ref("");
@@ -616,7 +590,7 @@ export default {
         const optionSale = ref()
         watch(resultConfig, (value) => {
             let dataOption = []
-            value.getSalesRepresentativesForPublicScreen.map(e => {
+            value.getSalesRepresentativesForPublicScreen.map((e) => {
                 dataOption.push({
                     label: e.name,
                     value: e.id
@@ -641,6 +615,41 @@ export default {
             }
         }
 
+
+        // all Computed 
+        const checkStepTwo = computed(() => {
+            if (step.value === 0) {
+                return "wait";
+            } else if (step.value === 1) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+        const checkStepThree = computed(() => {
+            if (step.value < 2) {
+                return "wait";
+            } else if (step.value === 2) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+        const checkStepFour = computed(() => {
+            if (step.value < 3) {
+                return "wait";
+            } else if (step.value === 3) {
+                return "process";
+            } else {
+                return "finish";
+            }
+        });
+
+        const changeValueInputEmit = computed((data) => {
+            if (data.name == "nameCompany") {
+                //dataSearch.nameCompany = data.value;
+            }
+        });
         return {
             statusMailValidate,
             validateEmail,
@@ -661,6 +670,7 @@ export default {
             onFinish,
             layout,
             listDataConvert,
+            step,
             // formState,
             imagestep,
             removeImg,
@@ -668,7 +678,11 @@ export default {
             fileName,
             fileNamestep,
             removeImgStep,
-            monthFormat
+            monthFormat,
+            checkStepTwo,
+            checkStepThree,
+            checkStepFour,
+            changeValueInputEmit
         };
     },
     watch: {
@@ -850,23 +864,23 @@ export default {
         validateNumber(key) {
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
-                this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.longTermCareInstitutionNumber = e.replace(/\D/g, '');
             }
             if (key == 'accountNumber') {
                 let e = this.contractCreacted.accountNumber
-                this.contractCreacted.accountNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.accountNumber = e.replace(/\D/g, '');
             }
             if (key == 'accountNumber') {
                 let e = this.contractCreacted.ownerBizNumber
-                this.contractCreacted.ownerBizNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
             }
             if (key == 'phone') {
                 let e = this.contractCreacted.phone
-                this.contractCreacted.phone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.phone = e.replace(/\D/g, '');
             }
             if (key == 'fax') {
                 let e = this.contractCreacted.fax
-                this.contractCreacted.fax = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.fax = e.replace(/\D/g, '');
             }
         },
     },
