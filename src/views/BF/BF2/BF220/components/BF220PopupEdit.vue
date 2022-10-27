@@ -51,19 +51,21 @@
                     </a-col>
                     <a-col :span="24">
                         <a-spin :spinning="spinning" size="large">
-                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="enumKey"
-                                class="table-sevice">
+                            <DxDataGrid :data-source="dataSource" :selected-row-keys="keyChecked" :show-borders="true"
+                                key-expr="enumKey" class="table-sevice">
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
+
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
-                                <template #col1="{data}" class="custom-action">
+                                <template #col1="{ data }" class="custom-action">
                                     <div class="custom-action">
-                                        <a-checkbox @change="setReadWrite(data,'read')"></a-checkbox>
+                                        <DxCheckBox :value="setReadWrite(data.data.enumKey, 'read')" />
                                     </div>
                                 </template>
+
                                 <DxColumn caption="쓰기" cell-template="col2" alignment="center" :width="100" />
-                                <template #col2="{data}" class="custom-action">
+                                <template #col2="{ data }" class="custom-action">
                                     <div class="custom-action">
-                                        <a-checkbox @change="setReadWrite(data,'read')"></a-checkbox>
+                                        <DxCheckBox :value="setReadWrite(data.data.enumKey, 'read')" />
                                     </div>
                                 </template>
                             </DxDataGrid>
@@ -77,18 +79,18 @@
 <script lang="ts">
 import { ref, defineComponent, watch } from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
-import { Dayjs } from 'dayjs';
 import {
     DxDataGrid,
     DxColumn,
     DxPaging,
+    DxSelection
 } from 'devextreme-vue/data-grid';
 import { message } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
-import { AdminScreenRole, ScreenRoleInfo, ScreenRoleTool } from '@bankda/jangbuda-common';
-
+import { AdminScreenRole } from '@bankda/jangbuda-common';
+import { DxCheckBox } from 'devextreme-vue/check-box';
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
@@ -96,18 +98,20 @@ export default defineComponent({
         WarningOutlined,
         DxDataGrid,
         DxPaging,
-        DxColumn
+        DxColumn,
+        DxSelection,
+        DxCheckBox
     },
     setup(props, { emit }) {
-
         const dataSource = ref(AdminScreenRole.all())
+
+
         const spinning = ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         };
         const visible = ref<boolean>(false);
-        const triggersTable = ref(false)
         const triggersGetData = ref(false)
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
@@ -121,6 +125,10 @@ export default defineComponent({
             screenRoles: "",
             memo: ""
         });
+        let readAdminScreenRoles: any = ref([])
+        let writeAdminScreenRoles: any = ref([])
+
+
         const changeID = (e: any) => {
             checkIDName.value = {
                 id: dataRes.value.id
@@ -132,34 +140,20 @@ export default defineComponent({
                 visible.value = true;
             }
         }
+        const keyChecked = ref([])
+        watch(() => props.modalStatus, (value) => {
+            dataCallApiDetail.value = {
+                id: props.idRowIndex
+            }
+            if (value == true) {
+                spinning.value = true
+                triggersGetData.value = true
+                if (dataCallApiDetail) {
+                    refetchDataEdit()
+                }
+            }
 
-        // const getDataTable = ref({
-        //     page: 1,
-        //     rows: 1000,
-        //     types: ["m"]
-        // })
-        // const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
-        //     enabled: triggersTable.value,
-        //     fetchPolicy: "no-cache",
-        // }))
-        // watch(() => props.modalStatus, (value) => {
-        //     dataCallApiDetail.value = {
-        //         id: props.idRowIndex
-        //     }
-        //     setTimeout(() => {
-        //         if (value == true) {
-        //             spinning.value = true
-        //             triggersGetData.value = true
-        //         }
-        //     }, 500);
-        // })
-        // watch(resListTable, (value) => {
-        //     dataSource.value = value.searchScreenRoleGroups.datas
-        //     setTimeout(() => {
-        //         spinning.value = false;
-        //     }, 500);
-        // });
-
+        })
         //Creat new group roll
         const {
             mutate: editScreenRole,
@@ -180,7 +174,8 @@ export default defineComponent({
                     id: dataRes.value.id,
                     name: dataRes.value.name,
                     type: dataRes.value.type,
-                    screenRoles: "0000000c",
+                    readAdminScreenRoles: readAdminScreenRoles.value,
+                    writeAdminScreenRoles: writeAdminScreenRoles.value,
                     memo: dataRes.value.memo
                 }
             }
@@ -194,12 +189,33 @@ export default defineComponent({
 
         watch(resDataDetail, (value) => {
             dataRes.value = value.getScreenRoleGroup
+            readAdminScreenRoles.value = value.getScreenRoleGroup.readAdminScreenRoles
+            writeAdminScreenRoles.value = value.getScreenRoleGroup.writeAdminScreenRoles
+            spinning.value = false
         });
 
-        const setReadWrite = (data: any,type: string)=>{
-            // waiting APi...
+        const setReadWrite = (data: any, type: string) => {
+            let count = 0
+            if (type == 'read') {
+                readAdminScreenRoles.value.map((e: any) => {
+                    if (e == data) {
+                        count++
+                    }
+                })
+            }
+            if (type == 'write') {
+                writeAdminScreenRoles.value.map((e: any) => {
+                    if (e == data) {
+                        count++
+                    }
+                })
+            }
+
+            if (count > 0)
+                return true
+            else
+                return false
         }
-        
         return {
             updateScreenRole,
             spinning,
@@ -212,7 +228,10 @@ export default defineComponent({
             visible,
             confirmPopup,
             confirm,
-            setReadWrite
+            setReadWrite,
+            keyChecked,
+            readAdminScreenRoles,
+            writeAdminScreenRoles
         }
     },
     methods: {
@@ -417,5 +436,19 @@ export default defineComponent({
 
 .custom-lineHeight {
     line-height: 3px;
+}
+
+::v-deep label.ant-checkbox-wrapper.ant-checkbox-group-item>span:last-child {
+    display: none;
+}
+
+::v-deep .dx-checkbox-icon {
+    width: 16px;
+    height: 16px;
+}
+
+::v-deep .dx-checkbox-checked .dx-checkbox-icon::before {
+    font-size: 13px;
+    top: 6px;
 }
 </style>
