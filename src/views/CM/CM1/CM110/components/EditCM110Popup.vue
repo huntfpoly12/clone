@@ -51,7 +51,7 @@
                             <a-row>
                                 <a-col :span="15">
                                     <a-form-item label="휴대폰">
-                                        <a-input v-model:value="formState.mobilePhone" @change="validateNumber" />
+                                        <a-input v-model:value="formState.mobilePhone" @keyup="validateNumber" @change="validateNumber" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="8">
@@ -290,9 +290,7 @@ export default defineComponent({
         },
         validateNumber() {
             let e = this.formState.mobilePhone
-            this.formState.mobilePhone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
-            console.log(this.formState.mobilePhone);
-
+            this.formState.mobilePhone = e.replace(/\D/g, ''); 
         },
         closePopupEmail(){
             this.visible=false
