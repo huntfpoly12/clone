@@ -4,7 +4,7 @@
         <a-steps :current="step" type="navigation" :style="stepStyle">
             <a-step :status="step === 0 ? 'process' : 'finish'" title="약관동의" @click="changeStep(1)" />
             <a-step :status="checkStepTwo" title="사업자대표자정보" @click="changeStep(2)" />
-            <a-step :status="checkStepThree" title="서비스신청CMS정보"  @click="changeStep(3)"/>
+            <a-step :status="checkStepThree" title="서비스신청CMS정보" @click="changeStep(3)" />
             <a-step :status="checkStepFour" title="신청완료!" />
         </a-steps>
         <div class="step-content">
@@ -53,8 +53,7 @@
                         <div class="form-item">
                             <label class="red">상 호 :</label>
                             <div>
-                                <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany"
-                                    placeholder="가나다라마바사아자차카타파하 요양병원">
+                                <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany">
                                     <DxValidator>
                                         <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                     </DxValidator>
@@ -89,7 +88,7 @@
                         <div class="form-item">
                             <label class="red">주 소 :</label>
                             <div class="group-label">
-                                <a-input class="width-auto" placeholder="검색어입력" v-model:value="contractCreacted.zipcode"
+                                <a-input class="width-auto" placeholder="우편번호" v-model:value="contractCreacted.zipcode"
                                     disabled />
                                 <a-button>
                                     <postCode @dataAddress="funcAddress" />
@@ -98,22 +97,22 @@
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input placeholder="도로명 주소" v-model:value="contractCreacted.roadAddress" disabled />
+                            <a-input placeholder="주소" v-model:value="contractCreacted.roadAddress" disabled />
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input v-model:value="contractCreacted.addressExtend"></a-input>
+                            <a-input v-model:value="contractCreacted.addressExtend" placeholder="상세주소(입력)"></a-input>
                         </div>
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <a-input placeholder="0298765432" @change="validateNumber('phone')"
+                            <a-input placeholder="'-' 앖이 숫자만 인력" @change="validateNumber('phone')"
                                 v-model:value="contractCreacted.phone" style="width: 180px;">
                             </a-input>
 
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
-                            <a-input placeholder="0212345678" v-model:value="contractCreacted.fax"
+                            <a-input placeholder="'-' 앖이 숫자만 인력" v-model:value="contractCreacted.fax"
                                 @change="validateNumber('fax')" @keyup="validateNumber('fax')" style="width: 180px;" />
                         </div>
                         <div style="display: flex">
@@ -160,17 +159,19 @@
                         <div class="form-item">
                             <label class="red">휴대폰번호:</label>
                             <a-input style="width: 150px" placeholder="01098765432"
-                                v-model:value="contractCreacted.mobilePhone" />
+                                v-model:value="contractCreacted.mobilePhone" @change="validateNumber('mobilePhone')"
+                                @keyup="validateNumber('mobilePhone')" />
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
-                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
-                                @finish="onFinish">
-                                <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="contractCreacted.email" placeholder="abc123@mailaddress.com"
-                                        @change="validateEmail" />
-                                </a-form-item>
-                            </a-form>
+
+                            <a-input v-model:value="contractCreacted.email" placeholder="abc123@mailaddress.com"
+                                @keyup="validateEmail" /> 
+                            <div v-if="statusMailValidate == true">
+                                Vui lòng nhập đúng mail
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -428,7 +429,7 @@ export default {
     },
     data() {
         return {
-            textIDNo: "법인등록번호",
+            textIDNo: "주민등록번호",
             radio: "",
             states: bizTypeList,
             titleModal: "사업자등록증",
@@ -604,15 +605,14 @@ export default {
         });
 
         const statusMailValidate = ref(false)
-        const validateEmail = (e) => {
-            let checkMail = e.target.value.match(
-                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            );
-            if (!checkMail) {
-                statusMailValidate.value = false;
-            } else {
+        const validateEmail = () => {
+            console.log(contractCreacted.email);
+            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/; 
+            if (reg.test(contractCreacted.email) == false)
                 statusMailValidate.value = true;
-            }
+            else
+                statusMailValidate.value = false;
+
         }
 
 
@@ -662,6 +662,8 @@ export default {
                 step.value = 2
             }
         }
+
+
         return {
             changeStep,
             statusMailValidate,
@@ -894,6 +896,10 @@ export default {
             if (key == 'fax') {
                 let e = this.contractCreacted.fax
                 this.contractCreacted.fax = e.replace(/\D/g, '');
+            }
+            if (key == 'mobilePhone') {
+                let e = this.contractCreacted.mobilePhone
+                this.contractCreacted.mobilePhone = e.replace(/\D/g, '');
             }
         },
     },
