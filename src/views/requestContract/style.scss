@@ -235,3 +235,11 @@
     min-height: 30px;
     max-height: 20px !important;
 }
+
+.ant-form-item {
+    margin-bottom: 0px !important;
+}
+
+::v-deep .ant-form-item-explain-error {
+    min-width: 300px!important;
+}

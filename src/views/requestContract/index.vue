@@ -101,14 +101,23 @@
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input v-model:value="contractCreacted.addressExtend" placeholder="상세주소(입력)"></a-input>
+                            <!-- <a-input v-model:value="contractCreacted.addressExtend" placeholder="상세주소(입력)"></a-input> -->
+                            <a-form :model="contractCreacted" style="width: 100%;" name="nest-messages"
+                                :validate-messages="validateMessages" @finish="onFinish">
+                                <a-form-item :name="['addressExtend']" :rules="[{ required: true }]">
+                                    <a-input placeholder="상세주소(입력)" v-model:value="contractCreacted.addressExtend" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <a-input placeholder="'-' 앖이 숫자만 인력" @change="validateNumber('phone')"
-                                v-model:value="contractCreacted.phone" style="width: 180px;">
-                            </a-input>
-
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <a-form-item :name="['phone']" :rules="[{ required: true }]">
+                                    <a-input placeholder="'-' 앖이 숫자만 인력" @change="validateNumber('phone')"
+                                        v-model:value="contractCreacted.phone" style="width: 180px" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
@@ -140,38 +149,43 @@
                     <div class="info-box">
                         <div class="form-item">
                             <label class="red">대표자명:</label>
-                            <DxTextBox placeholder="홍길동" style="width: 150px"
-                                v-model:value="contractCreacted.namePresident">
-                                <DxValidator>
-                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
-                                </DxValidator>
-                            </DxTextBox>
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <a-form-item :name="['namePresident']" :rules="[{ required: true }]">
+                                    <a-input v-model:value="contractCreacted.namePresident" style="width: 150px" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                         <div class="form-item">
                             <label class="red">생년월일 :</label>
                             <div style="width: 150px">
-                                <CustomDatepicker v-if="contractCreacted.birthday == ''"
-                                    @valueDateChange="changeValueDate" />
-                                <CustomDatepicker v-else :valueDate="contractCreacted.birthday"
-                                    @valueDateChange="changeValueDate" />
+                                <a-form :model="contractCreacted" name="nest-messages"
+                                    :validate-messages="validateMessages" @finish="onFinish">
+                                    <a-form-item :name="['birthday']" :rules="[{ required: true }]">
+                                        <a-date-picker v-model:value="contractCreacted.birthday"
+                                            value-format="YYYY-MM-DD" placeholder="" />
+                                    </a-form-item>
+                                </a-form>
                             </div>
                         </div>
                         <div class="form-item">
                             <label class="red">휴대폰번호:</label>
-                            <a-input style="width: 150px" placeholder="01098765432"
-                                v-model:value="contractCreacted.mobilePhone" @change="validateNumber('mobilePhone')"
-                                @keyup="validateNumber('mobilePhone')" />
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <a-form-item :name="['mobilePhone']" :rules="[{ required: true }]">
+                                    <a-input v-model:value="contractCreacted.mobilePhone" placeholder="'-' 앖이 숫자만 인력"
+                                        @keyup="validateNumber('mobilePhone')" style="width: 150px" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
-
-                            <a-input v-model:value="contractCreacted.email" placeholder="abc123@mailaddress.com"
-                                @keyup="validateEmail" /> 
-                            <div v-if="statusMailValidate == true">
-                                Vui lòng nhập đúng mail
-                            </div>
-
-
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <a-form-item :name="['email']" :rules="[{ type: 'email', required: true }]">
+                                    <a-input v-model:value="contractCreacted.email" style="width: 350px" @keyup="validateEmail"/>
+                                </a-form-item>
+                            </a-form>
                         </div>
                     </div>
                 </div>
@@ -210,7 +224,6 @@
                                 <DxColumn data-field="name" caption="사업명 (중복불가)">
                                     <DxRequiredRule />
                                 </DxColumn>
-
                                 <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                     <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                 </DxColumn>
@@ -388,7 +401,6 @@ import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import queries from "../../graphql/queries/common/index";
-
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
@@ -429,7 +441,7 @@ export default {
     },
     data() {
         return {
-            textIDNo: "주민등록번호",
+            textIDNo: "법인등록번호",
             radio: "",
             states: bizTypeList,
             titleModal: "사업자등록증",
@@ -446,7 +458,6 @@ export default {
         };
     },
     computed: {
-
     },
     setup() {
         const step = ref(0);
@@ -549,9 +560,10 @@ export default {
             }
         };
         const validateMessages = {
-            required: "${label} is required!",
+            required: "이항목은 필수 입력사항입니다!",
             types: {
                 email: "이메일 형식이 정확하지 않습니다",
+                mobilePhone: "이메일 형식이 정확하지 않습니다",
                 number: "Numeric only!",
             },
             number: {
@@ -559,6 +571,7 @@ export default {
             },
         };
         const onFinish = (values) => {
+            console.log('Success:', values);
         };
         const layout = {
             labelCol: { span: 8 },
@@ -571,7 +584,6 @@ export default {
                 disableFormVal2.value = false
             }
         }
-
         const disableForm2 = () => {
             if (dataInputCallApi.applicationService == 2) {
                 disableFormVal.value = true
@@ -579,7 +591,6 @@ export default {
                 disableFormVal.value = false
             }
         }
-
         const { result: resultConfig, refetch: refetchConfig } = useQuery(
             queries.getSaleRequestContact,
             {},
@@ -587,7 +598,6 @@ export default {
                 fetchPolicy: "no-cache",
             })
         );
-
         const optionSale = ref()
         watch(resultConfig, (value) => {
             let dataOption = []
@@ -599,23 +609,17 @@ export default {
             })
             optionSale.value = dataOption
         });
-
         watch(valueFacilityBusinesses, (value) => {
             console.log(value);
         });
-
         const statusMailValidate = ref(false)
-        const validateEmail = () => {
-            console.log(contractCreacted.email);
-            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/; 
+        const validateEmail = () => { 
+            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
             if (reg.test(contractCreacted.email) == false)
                 statusMailValidate.value = true;
             else
                 statusMailValidate.value = false;
-
         }
-
-
         // all Computed 
         const checkStepTwo = computed(() => {
             if (step.value === 0) {
@@ -644,13 +648,11 @@ export default {
                 return "finish";
             }
         });
-
         const changeValueInputEmit = computed((data) => {
             if (data.name == "nameCompany") {
                 //dataSearch.nameCompany = data.value;
             }
         });
-
         const changeStep = (val) => {
             if (val == 1) {
                 step.value = 0
@@ -662,8 +664,6 @@ export default {
                 step.value = 2
             }
         }
-
-
         return {
             changeStep,
             statusMailValidate,
@@ -686,7 +686,6 @@ export default {
             layout,
             listDataConvert,
             step,
-            // formState,
             imagestep,
             removeImg,
             imageValue,
@@ -737,7 +736,6 @@ export default {
                             this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
-
                 var result = Object.values(newVal.reduce((c, v) => {
                     let k = v.name;
                     c[k] = c[k] || [];
@@ -747,7 +745,6 @@ export default {
                 if (result.length > 0) {
                     message.error("중복되었습니다!")
                 }
-
             },
             deep: true,
         },
@@ -775,7 +772,7 @@ export default {
             this.contractCreacted.zonecode = data.zonecode;
         },
         changeTypeCompany() {
-            if (this.contractCreacted.bizType == 2) {
+            if (this.contractCreacted.bizType == 1) {
                 this.textIDNo = "주민등록번호";
             } else {
                 this.textIDNo = "법인등록번호";
@@ -792,7 +789,7 @@ export default {
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오!")
                 }
-            } else if (this.step == 1) {
+            } else if (this.step == 1) {  
                 if (this.contractCreacted.nameCompany != ""
                     && this.contractCreacted.bizNumber != ""
                     && this.contractCreacted.zipcode != ""
@@ -802,7 +799,7 @@ export default {
                     && this.contractCreacted.email != ""
                     && this.contractCreacted.phone != ""
                     && this.contractCreacted.bizNumber.length == 10
-                    && this.statusMailValidate == true
+                    && this.statusMailValidate == false
                 ) {
                     this.step++;
                     window.scrollTo(0, 0);
@@ -821,7 +818,6 @@ export default {
                             count++
                         }
                     }
-
                     if (this.dataInputCallApi.applicationService == 1) {
                         if (this.contractCreacted.bankType == ''
                             || this.contractCreacted.accountNumber == ''
@@ -831,7 +827,6 @@ export default {
                             count++
                         }
                     }
-
                     if (count > 0) {
                         message.error('계속하려면 모든 조건을 수락하십시오!')
                     } else {
@@ -839,15 +834,10 @@ export default {
                         window.scrollTo(0, 0);
                     }
                 }
-
-
             }
         },
         openPopup() {
-            var obj = this.contractCreacted;
             let countNull = 0;
-            for (const [key, value] of Object.entries(obj)) {
-            }
             if (countNull > 0) {
                 notification["error"]({
                     message: "필수 항목을 입력하십시오",
@@ -906,5 +896,4 @@ export default {
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
-
 </style>
