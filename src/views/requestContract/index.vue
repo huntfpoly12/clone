@@ -2,9 +2,9 @@
     <div class="contract-container">
         <h2>서비스가입신청</h2>
         <a-steps :current="step" type="navigation" :style="stepStyle">
-            <a-step :status="step === 0 ? 'process' : 'finish'" title="약관동의" />
-            <a-step :status="checkStepTwo" title="사업자대표자정보" />
-            <a-step :status="checkStepThree" title="서비스신청CMS정보" />
+            <a-step :status="step === 0 ? 'process' : 'finish'" title="약관동의" @click="changeStep(1)" />
+            <a-step :status="checkStepTwo" title="사업자대표자정보" @click="changeStep(2)" />
+            <a-step :status="checkStepThree" title="서비스신청CMS정보" @click="changeStep(3)" />
             <a-step :status="checkStepFour" title="신청완료!" />
         </a-steps>
         <div class="step-content">
@@ -53,12 +53,19 @@
                         <div class="form-item">
                             <label class="red">상 호 :</label>
                             <div>
-                                <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany"
-                                    placeholder="가나다라마바사아자차카타파하 요양병원">
+                                <!-- <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany">
                                     <DxValidator>
                                         <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                     </DxValidator>
-                                </DxTextBox>
+                                </DxTextBox> -->
+
+
+                                <a-form :model="contractCreacted" style="width: 100%;" name="nest-messages"
+                                    :validate-messages="validateMessages" @finish="onFinish">
+                                    <a-form-item :name="['nameCompany']" :rules="[{ required: true }]">
+                                        <a-input style="width: 400px" v-model:value="contractCreacted.nameCompany" />
+                                    </a-form-item>
+                                </a-form>
                             </div>
                         </div>
                         <div class="form-item">
@@ -89,7 +96,7 @@
                         <div class="form-item">
                             <label class="red">주 소 :</label>
                             <div class="group-label">
-                                <a-input class="width-auto" placeholder="검색어입력" v-model:value="contractCreacted.zipcode"
+                                <a-input class="width-auto" placeholder="우편번호" v-model:value="contractCreacted.zipcode"
                                     disabled />
                                 <a-button>
                                     <postCode @dataAddress="funcAddress" />
@@ -98,23 +105,38 @@
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input placeholder="도로명 주소" v-model:value="contractCreacted.roadAddress" disabled />
+                            <a-input placeholder="주소" v-model:value="contractCreacted.roadAddress" disabled />
                         </div>
                         <div class="form-item">
                             <label></label>
-                            <a-input v-model:value="contractCreacted.addressExtend"></a-input>
+                            <a-form :model="contractCreacted" style="width: 100%;" name="nest-messages"
+                                :validate-messages="validateMessages" @finish="onFinish">
+                                <a-form-item :name="['addressExtend']" :rules="[{ required: true }]">
+                                    <a-input placeholder="상세주소(입력)" v-model:value="contractCreacted.addressExtend" />
+                                </a-form-item>
+                            </a-form>
                         </div>
+                        <!-- <div class="form-item">
+                            <label class="red">연락처 :</label>
+                            <a-input placeholder="'-'없이 슷자만 입력" @change="validateNumber('phone')"
+                                v-model:value="contractCreacted.phone" style="width: 180px;">                                
+                            </a-input>
+                        </div> -->
                         <div class="form-item">
                             <label class="red">연락처 :</label>
-                            <a-input placeholder="0298765432" @change="validateNumber('phone')"
-                                v-model:value="contractCreacted.phone" style="width: 180px;">
-                            </a-input>
-
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <a-form-item :name="['phone']" :rules="[{ required: true }]">
+                                    <a-input placeholder="'-' 앖이 숫자만 인력" @change="validateNumber('phone')"
+                                        v-model:value="contractCreacted.phone" style="width: 180px" />
+                                </a-form-item>
+                            </a-form>
                         </div>
+
                         <div class="form-item">
                             <label>팩 스 :</label>
-                            <a-input placeholder="0212345678" v-model:value="contractCreacted.fax"
-                                @change="validateNumber('fax')" style="width: 180px;" />
+                            <a-input placeholder="'-' 앖이 숫자만 인력" v-model:value="contractCreacted.fax"
+                                @change="validateNumber('fax')" @keyup="validateNumber('fax')" style="width: 180px;" />
                         </div>
                         <div style="display: flex">
                             <div>
@@ -123,7 +145,7 @@
                             </div>
                             <a-col :span="7">
                                 <div v-if="this.imageValue" class="img-preview">
-                                    <img :src="this.imageValue" @click="handlePreview" />
+                                    <a-image :src="this.imageValue" @click="handlePreview" />
                                 </div>
                                 <div v-else class="img-preview">
                                     <img src="../../assets/images/imgdefault.jpg" />
@@ -141,34 +163,48 @@
                     <div class="info-box">
                         <div class="form-item">
                             <label class="red">대표자명:</label>
-                            <DxTextBox placeholder="홍길동" style="width: 150px"
-                                v-model:value="contractCreacted.namePresident">
-                                <DxValidator>
-                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
-                                </DxValidator>
-                            </DxTextBox>
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <a-form-item :name="['namePresident']" :rules="[{ required: true }]">
+                                    <a-input v-model:value="contractCreacted.namePresident" style="width: 150px" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                         <div class="form-item">
                             <label class="red">생년월일 :</label>
                             <div style="width: 150px">
-                                <CustomDatepicker v-if="contractCreacted.birthday == ''"
-                                    @valueDateChange="changeValueDate" />
-                                <CustomDatepicker v-else :valueDate="contractCreacted.birthday"
-                                    @valueDateChange="changeValueDate" />
+                                <a-form :model="contractCreacted" name="nest-messages"
+                                    :validate-messages="validateMessages" @finish="onFinish">
+                                    <a-form-item :name="['birthday']" :rules="[{ required: true }]">
+                                        <a-date-picker v-model:value="contractCreacted.birthday"
+                                            value-format="YYYY-MM-DD" placeholder="" />
+                                    </a-form-item>
+                                </a-form>
                             </div>
                         </div>
                         <div class="form-item">
                             <label class="red">휴대폰번호:</label>
-                            <a-input style="width: 150px" placeholder="01098765432"
-                                v-model:value="contractCreacted.mobilePhone" />
+                            <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <a-form-item :name="['mobilePhone']" :rules="[{ required: true }]">
+                                    <a-input v-model:value="contractCreacted.mobilePhone" placeholder="'-' 앖이 숫자만 인력"
+                                        @keyup="validateNumber('mobilePhone')" style="width: 150px" />
+                                </a-form-item>
+                            </a-form>
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
+                            <!-- <DxTextBox placeholder="abc123@mailaddress.com" style="width: 250px" v-model:value="contractCreacted.email" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <DxValidator>
+                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
+                                </DxValidator>
+                            </DxTextBox> -->
                             <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
                                 @finish="onFinish">
-                                <a-form-item :name="['user', 'email']" :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="contractCreacted.email" placeholder="abc123@mailaddress.com"
-                                        @change="validateEmail" />
+                                <a-form-item :name="['email']" :rules="[{ type: 'email', required: true }]">
+                                    <a-input v-model:value="contractCreacted.email" style="width: 350px"
+                                        @keyup="validateEmail" />
                                 </a-form-item>
                             </a-form>
                         </div>
@@ -209,7 +245,6 @@
                                 <DxColumn data-field="name" caption="사업명 (중복불가)">
                                     <DxRequiredRule />
                                 </DxColumn>
-
                                 <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                     <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
                                 </DxColumn>
@@ -225,6 +260,7 @@
                             <label class="red">장기요양기관등록번호 :</label>
                             <a-input :disabled="disableFormVal2" placeholder="1234567898"
                                 @change="validateNumber('longTermCareInstitutionNumber')"
+                                @keyup="validateNumber('longTermCareInstitutionNumber')"
                                 v-model:value="contractCreacted.longTermCareInstitutionNumber" />
                         </div>
                         <div style="display: flex">
@@ -267,7 +303,8 @@
                             <label>직 원 수:</label>
                             <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px"
                                 min="0" v-model:value="contractCreacted.capacityHolding"
-                                @change="validateNumber('capacityHolding')" />
+                                @change="validateNumber('capacityHolding')"
+                                @keyup="validateNumber('capacityHolding')" />
                         </div>
                         <div class="form-item">
                             <label>부가서비스 :</label>
@@ -285,8 +322,8 @@
                         <div class="form-item">
                             <label class="red">출금계좌번호 :</label>
                             <a-input placeholder="출금계좌번호" :disabled="disableFormVal"
-                                v-model:value="contractCreacted.accountNumber"
-                                @change="validateNumber('accountNumber')" />
+                                v-model:value="contractCreacted.accountNumber" @change="validateNumber('accountNumber')"
+                                @keyup="validateNumber('accountNumber')" />
                         </div>
                         <div class="form-item">
                             <label class="red">예금주명 :</label>
@@ -297,7 +334,7 @@
                             <label class="red">사업자(주민)등록번호:</label>
                             <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다"
                                 v-model:value="contractCreacted.ownerBizNumber" :disabled="disableFormVal"
-                                @change="validateNumber('ownerBizNumber')" />
+                                @change="validateNumber('ownerBizNumber')" @keyup="validateNumber('ownerBizNumber')" />
                             <p>i: 예금주의 사업자등록번호 또는 주민등록번호입니다</p>
                         </div>
                         <div class="form-item">
@@ -352,7 +389,7 @@
     </div>
 </template>
 <script >
-import { reactive, ref, watch ,computed} from "vue";
+import { reactive, ref, watch, computed } from "vue";
 import {
     CheckOutlined,
     EditOutlined,
@@ -385,7 +422,6 @@ import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import queries from "../../graphql/queries/common/index";
-
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
@@ -443,7 +479,6 @@ export default {
         };
     },
     computed: {
- 
     },
     setup() {
         const step = ref(0);
@@ -546,9 +581,10 @@ export default {
             }
         };
         const validateMessages = {
-            required: "${label} is required!",
+            required: "이항목은 필수 입력사항입니다!",
             types: {
                 email: "이메일 형식이 정확하지 않습니다",
+                mobilePhone: "이메일 형식이 정확하지 않습니다",
                 number: "Numeric only!",
             },
             number: {
@@ -556,6 +592,7 @@ export default {
             },
         };
         const onFinish = (values) => {
+            console.log('Success:', values);
         };
         const layout = {
             labelCol: { span: 8 },
@@ -568,7 +605,6 @@ export default {
                 disableFormVal2.value = false
             }
         }
-
         const disableForm2 = () => {
             if (dataInputCallApi.applicationService == 2) {
                 disableFormVal.value = true
@@ -576,7 +612,6 @@ export default {
                 disableFormVal.value = false
             }
         }
-
         const { result: resultConfig, refetch: refetchConfig } = useQuery(
             queries.getSaleRequestContact,
             {},
@@ -584,7 +619,6 @@ export default {
                 fetchPolicy: "no-cache",
             })
         );
-
         const optionSale = ref()
         watch(resultConfig, (value) => {
             let dataOption = []
@@ -596,26 +630,19 @@ export default {
             })
             optionSale.value = dataOption
         });
-
         watch(valueFacilityBusinesses, (value) => {
             console.log(value);
         });
-
         const statusMailValidate = ref(false)
-        const validateEmail = (e) => {
-            let checkMail = e.target.value.match(
-                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            );
-            if (!checkMail) {
-                statusMailValidate.value = false;
-            } else {
+        const validateEmail = () => {
+            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if (reg.test(contractCreacted.email) == false)
                 statusMailValidate.value = true;
-            }
+            else
+                statusMailValidate.value = false;
         }
-
-
         // all Computed 
-        const checkStepTwo = computed(()=>{
+        const checkStepTwo = computed(() => {
             if (step.value === 0) {
                 return "wait";
             } else if (step.value === 1) {
@@ -624,7 +651,7 @@ export default {
                 return "finish";
             }
         });
-        const checkStepThree =  computed(()=>{
+        const checkStepThree = computed(() => {
             if (step.value < 2) {
                 return "wait";
             } else if (step.value === 2) {
@@ -633,7 +660,7 @@ export default {
                 return "finish";
             }
         });
-        const checkStepFour = computed(()=>{
+        const checkStepFour = computed(() => {
             if (step.value < 3) {
                 return "wait";
             } else if (step.value === 3) {
@@ -642,13 +669,24 @@ export default {
                 return "finish";
             }
         });
-
-        const changeValueInputEmit = computed((data)=>{
+        const changeValueInputEmit = computed((data) => {
             if (data.name == "nameCompany") {
                 //dataSearch.nameCompany = data.value;
             }
         });
+        const changeStep = (val) => {
+            if (val == 1) {
+                step.value = 0
+            }
+            if (val == 2 && step.value >= 2) {
+                step.value = 1
+            }
+            if (val == 3 && step.value == 3) {
+                step.value = 2
+            }
+        }
         return {
+            changeStep,
             statusMailValidate,
             validateEmail,
             optionSale,
@@ -669,7 +707,6 @@ export default {
             layout,
             listDataConvert,
             step,
-            // formState,
             imagestep,
             removeImg,
             imageValue,
@@ -720,7 +757,6 @@ export default {
                             this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
-
                 var result = Object.values(newVal.reduce((c, v) => {
                     let k = v.name;
                     c[k] = c[k] || [];
@@ -730,7 +766,6 @@ export default {
                 if (result.length > 0) {
                     message.error("중복되었습니다!")
                 }
-
             },
             deep: true,
         },
@@ -758,7 +793,7 @@ export default {
             this.contractCreacted.zonecode = data.zonecode;
         },
         changeTypeCompany() {
-            if (this.contractCreacted.bizType == 2) {
+            if (this.contractCreacted.bizType == 1) {
                 this.textIDNo = "주민등록번호";
             } else {
                 this.textIDNo = "법인등록번호";
@@ -785,7 +820,7 @@ export default {
                     && this.contractCreacted.email != ""
                     && this.contractCreacted.phone != ""
                     && this.contractCreacted.bizNumber.length == 10
-                    && this.statusMailValidate == true
+                    && this.statusMailValidate == false
                 ) {
                     this.step++;
                     window.scrollTo(0, 0);
@@ -804,7 +839,6 @@ export default {
                             count++
                         }
                     }
-
                     if (this.dataInputCallApi.applicationService == 1) {
                         if (this.contractCreacted.bankType == ''
                             || this.contractCreacted.accountNumber == ''
@@ -814,7 +848,6 @@ export default {
                             count++
                         }
                     }
-
                     if (count > 0) {
                         message.error('계속하려면 모든 조건을 수락하십시오!')
                     } else {
@@ -822,15 +855,10 @@ export default {
                         window.scrollTo(0, 0);
                     }
                 }
-
-
             }
         },
         openPopup() {
-            var obj = this.contractCreacted;
             let countNull = 0;
-            for (const [key, value] of Object.entries(obj)) {
-            }
             if (countNull > 0) {
                 notification["error"]({
                     message: "필수 항목을 입력하십시오",
@@ -862,23 +890,27 @@ export default {
         validateNumber(key) {
             if (key == 'longTermCareInstitutionNumber') {
                 let e = this.contractCreacted.longTermCareInstitutionNumber
-                this.contractCreacted.longTermCareInstitutionNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.longTermCareInstitutionNumber = e.replace(/\D/g, '');
             }
             if (key == 'accountNumber') {
                 let e = this.contractCreacted.accountNumber
-                this.contractCreacted.accountNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.accountNumber = e.replace(/\D/g, '');
             }
             if (key == 'accountNumber') {
                 let e = this.contractCreacted.ownerBizNumber
-                this.contractCreacted.ownerBizNumber = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
             }
             if (key == 'phone') {
                 let e = this.contractCreacted.phone
-                this.contractCreacted.phone = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.phone = e.replace(/\D/g, '');
             }
             if (key == 'fax') {
                 let e = this.contractCreacted.fax
-                this.contractCreacted.fax = e.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~A-Za-z]/g, '')
+                this.contractCreacted.fax = e.replace(/\D/g, '');
+            }
+            if (key == 'mobilePhone') {
+                let e = this.contractCreacted.mobilePhone
+                this.contractCreacted.mobilePhone = e.replace(/\D/g, '');
             }
         },
     },

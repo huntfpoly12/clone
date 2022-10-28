@@ -103,13 +103,7 @@
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="memo" caption="권한그룹설명" />
-            <DxColumn :width="50" cell-template="modal-table" />
-            <template #modal-table="{}">
-              <div class="action-menu">
-                <menu-outlined />
-              </div>
-            </template>
+            <DxColumn data-field="memo" caption="권한그룹설명" />            
           </DxDataGrid>
         </div>
       </div>

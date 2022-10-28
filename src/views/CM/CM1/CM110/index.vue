@@ -30,6 +30,7 @@
                                 <div class="dflex">
                                     <a-form-item label="대표번호">
                                         <a-input v-model:value="formState.presidentMobilePhone"
+                                            @change="validateNumber('presidentMobilePhone')"
                                             @keyup="validateNumber('presidentMobilePhone')" style="width: 150px;" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
@@ -37,7 +38,7 @@
                                 <div style="display: flex">
                                     <a-form-item label="팩스번호">
                                         <a-input v-model:value="formState.extendInfo.detail.fax" style="width: 150px;"
-                                            @keyup="validateNumber('fax')" />
+                                            @keyup="validateNumber('fax')" @change="validateNumber('fax')" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
                                 </div>
@@ -101,7 +102,7 @@
                                 <div style="display: flex; margin-left: 150px;">
                                     <a-form-item label="휴대폰">
                                         <a-input v-model:value="formState.extendInfo.detail.phone" style="width: 150px;"
-                                            @keyup="validateNumber('phone')" />
+                                            @keyup="validateNumber('phone')" @change="validateNumber('phone')" />
                                     </a-form-item>
                                     <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
                                 </div>

@@ -1,6 +1,7 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered width="1000px" @cancel="setModalVisible()">
+        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
+            @cancel="setModalVisible()">
             <template #footer>
                 <a-button @click="setModalVisible">그냥 나가기</a-button>
                 <a-button key="submit" type="primary" @click="createScrenRole">
@@ -27,7 +28,7 @@
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="대상회원">
-                            <a-radio-group v-model:value="dataRes.type" @change="changeTypeGroup">
+                            <a-radio-group v-model:value="dataRes.type">
                                 <a-radio value="m">
                                     <a-tag color="black">매니저</a-tag>
                                 </a-radio>
@@ -54,15 +55,19 @@
                                 class="table-sevice">
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
-                                <template #col1="{}" class="custom-action">
+                                <template #col1="{ data }" class="custom-action">
                                     <div class="custom-action">
-                                        <a-checkbox></a-checkbox>
+                                        <div class="custom-action" @click="changeValRoles(data.data.enumKey, 'read')">
+                                            <DxCheckBox />
+                                        </div>
                                     </div>
                                 </template>
                                 <DxColumn caption="쓰기" cell-template="col2" alignment="center" :width="100" />
-                                <template #col2="{}" class="custom-action">
+                                <template #col2="{ data }" class="custom-action">
                                     <div class="custom-action">
-                                        <a-checkbox></a-checkbox>
+                                        <div class="custom-action" @click="changeValRoles(data.data.enumKey, 'read')">
+                                            <DxCheckBox />
+                                        </div>
                                     </div>
                                 </template>
                             </DxDataGrid>
@@ -76,7 +81,6 @@
 <script lang="ts">
 import { ref, defineComponent, watch } from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
-import { Dayjs } from 'dayjs';
 import {
     DxDataGrid,
     DxColumn,
@@ -86,7 +90,8 @@ import { message } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
-import { AdminScreenRole, ScreenRole, ScreenRoleInfo, ScreenRoleTool } from '@bankda/jangbuda-common';
+import { AdminScreenRole } from '@bankda/jangbuda-common';
+import { DxCheckBox } from 'devextreme-vue/check-box';
 export default defineComponent({
     props: ['modalStatus'],
     components: {
@@ -94,36 +99,20 @@ export default defineComponent({
         WarningOutlined,
         DxDataGrid,
         DxPaging,
-        DxColumn
+        DxColumn,
+        DxCheckBox
     },
     setup(props, { emit }) {
-        //console.log(AdminScreenRole.all());
-        // const info = new ScreenRoleInfo('00c00000-0000ffff-0000000');
-        // const tool = ScreenRoleTool.createByScreenRoleInfo(info);
-        // // Work screen role (업무 화면역할)
-        // const tool2 = ScreenRoleTool.createWorkScreenRoleTool();
-        // const valuex = tool.toString();
-        // const valuey = tool2.toString();
-    
-        // console.log(valuex,valuey);
-
-
         const dataSource = ref(AdminScreenRole.all())
         const spinning = ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         };
-        const formTailLayout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 16, },
-        };
         const visible = ref<boolean>(false);
         const triggers = ref(false)
-        const triggersTable = ref(false)
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
-        let confirm = ref<string>('');
         const checkIDName = ref()
         const dataRes: any = ref({
             id: '',
@@ -132,24 +121,13 @@ export default defineComponent({
             screenRoles: "",
             memo: ""
         });
+        let readAdminScreenRoles: any = ref([])
+        let writeAdminScreenRoles: any = ref([])
         const changeID = (e: any) => {
             checkIDName.value = {
                 id: dataRes.value.id
             }
             dataRes.value.id = e.target.value.replace(/[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
-        }
-        const confirmPopup = (value: any) => {
-            if (value == '해지') {
-                visible.value = true;
-            }
-        }
-        const handleOkConfirm = () => {
-            // if (confirm.value == '확인') {
-            //     visible.value = false;
-            // } else {
-            //     dataRes.value.상태 = '정상';
-            //     visible.value = false;
-            // }
         }
         const checkId = () => {
             if (dataRes.value.id != '') {
@@ -171,32 +149,6 @@ export default defineComponent({
                 message.error(`이미 존재하는 그룹코드 입니다. 다른 코드를 입력해주세요`)
             }
         });
-        // const getDataTable = ref({
-        //     page: 1,
-        //     rows: 1000,
-        //     types: ["m"]
-        // })
-        // const { refetch: refetchDataTable, result: resListTable } = useQuery(queries.searchScreenRoleGroups, getDataTable, () => ({
-        //     enabled: triggersTable.value,
-        //     fetchPolicy: "no-cache",
-        // }))
-        // watch(() => props.modalStatus, (value) => {
-        //     if (value == true) {
-        //         spinning.value = true
-        //         triggersTable.value = true
-        //     }
-        // })
-        // watch(resListTable, (value) => {
-        //     dataSource.value = value.searchScreenRoleGroups.datas
-        //     setTimeout(() => {
-        //         spinning.value = false;
-        //     }, 500);
-        // });
-        const changeTypeGroup = () => {
-            // spinning.value = true
-            // getDataTable.value.types = [dataRes.value.type]
-        }
-
         //Creat new group roll
         const {
             mutate: createScreenRole,
@@ -210,57 +162,74 @@ export default defineComponent({
         creactError(e => {
             message.error(e.message)
         })
-
         const createScrenRole = () => {
             let dataCall = {
                 input: {
                     id: dataRes.value.id,
                     name: dataRes.value.name,
                     type: dataRes.value.type,
-                    screenRoles: "0000000c",
+                    readAdminScreenRoles: readAdminScreenRoles.value,
+                    writeAdminScreenRoles: writeAdminScreenRoles.value,
                     memo: dataRes.value.memo
                 }
             }
             createScreenRole(dataCall)
         }
-
-        const setModalVisible = ()=>{
+        const setModalVisible = () => {
             emit('closePopupAdd', false)
         }
-
-        const closeModalEdit = ()=>{
-            emit('closePopupEdit', false)
-        }
-
-        const getColorTag = (data: string)=>{
-            if (data === "정상") {
-                return "#108ee9";
-            } else if (data === "해지") {
-                return "#cd201f";
-            } else if (data === "전체") {
-                return "grey";
+        const changeValRoles = (data: any, type: string) => {
+            let count = 0
+            if (type == 'read') {
+                if (readAdminScreenRoles.value.length == 0) {
+                    readAdminScreenRoles.value.push(data)
+                } else {
+                    readAdminScreenRoles.value.map((e: any) => {
+                        if (e == data) {
+                            count++
+                        }
+                    })
+                    if (count > 0) {
+                        readAdminScreenRoles.value = readAdminScreenRoles.value.filter((obj: any) => { return obj !== data });
+                    }
+                    else {
+                        readAdminScreenRoles.value.push(data)
+                    }
+                }
+            }
+            if (type == 'write') {
+                if (writeAdminScreenRoles.value.length == 0) {
+                    writeAdminScreenRoles.value.push(data)
+                } else {
+                    writeAdminScreenRoles.value.map((e: any) => {
+                        if (e == data) {
+                            count++
+                        }
+                    })
+                    if (count > 0) {
+                        writeAdminScreenRoles.value = writeAdminScreenRoles.value.filter((obj: any) => { return obj !== data });
+                    }
+                    else {
+                        writeAdminScreenRoles.value.push(data)
+                    }
+                }
             }
         }
         return {
+            changeValRoles,
             createScrenRole,
             spinning,
             dataSource,
-            changeTypeGroup,
             changeID,
             checkId,
             labelCol,
             wrapperCol,
             dataRes,
             layout,
-            formTailLayout,
-            value1: ref<Dayjs>(),
             visible,
-            confirmPopup,
-            confirm,
-            handleOkConfirm,
             setModalVisible,
-            closeModalEdit,
-            getColorTag
+            readAdminScreenRoles,
+            writeAdminScreenRoles
         }
     }
 })
@@ -269,95 +238,120 @@ export default defineComponent({
 .table-sevice {
     max-height: 300px;
 }
+
 .ant-form-item {
     margin-bottom: 10px;
 }
+
 .warring-modal {
     font-size: 13px;
     line-height: 5px;
 }
+
 .ant-form-item-label {
     text-align: left;
 }
+
 .title-modal {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
 }
+
 .ant-modal-body {
     padding: 10px;
 }
+
 .mr5 {
     margin-right: 5px;
 }
+
 .custom-action {
     text-align: center;
 }
+
 #data-grid-demo {
     min-height: 700px;
 }
+
 .dx-select-checkbox {
     display: inline-block !important;
 }
+
 .modal-note {
     max-height: 500px;
     overflow: auto;
+
     .title-note {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
+
     th {
         display: none;
     }
+
     .ant-collapse-content-box {
         padding: 0px;
     }
 }
+
 .anticon {
     cursor: pointer;
 }
+
 .custom-action {
     text-align: center;
 }
+
 .search-form {
     margin-bottom: 10px;
     background: #f1f3f4;
     padding: 10px 24px;
+
     >div {
         width: 100%;
         justify-content: flex-start !important;
         align-items: center;
         margin-right: 15px;
     }
+
     label {
         margin-right: 10px;
     }
+
     .lable-item {
         white-space: nowrap;
         margin-right: 10px;
         width: auto !important;
     }
+
     .col {
         align-items: center;
         display: flex;
         align-items: center;
         margin-top: 20px;
+
         .lable-item {
             width: 110px;
             display: inline-block;
         }
+
         .item:nth-child(2) {
             margin-left: 30px;
         }
     }
 }
+
 .ant-row {
     align-items: center;
 }
+
 .ant-form-item {
     margin-bottom: 4px;
 }
+
 .ant-collapse {
     .ant-collapse-item {
         .ant-collapse-header {
@@ -365,52 +359,75 @@ export default defineComponent({
         }
     }
 }
+
 .warring-modal {
     font-size: 12px;
     line-height: 0px;
 }
+
 .ant-form-item-label {
     text-align: left;
 }
+
 .clr {
     label {
         color: red;
     }
 }
+
 .clr-text {
     color: red;
 }
+
 .clb,
 .clb-label label {
     color: black !important;
 }
+
 ::v-deep.components-modal-demo-position {
     ::v-deep.test-local {
         background-color: pink !important;
         width: 1000px !important;
         height: 200px !important;
     }
+
     .imgPreview img {
         width: 1000px !important;
     }
+
     .ant-form-item-label {
         text-align: left;
     }
 }
+
 .dflex {
     display: flex;
 }
+
 .custom-flex {
     align-items: flex-start;
 }
+
 .warring-bank {
     display: flex;
     align-items: center;
 }
+
 .pl-5 {
     padding-left: 5px;
 }
+
 .custom-lineHeight {
     line-height: 3px;
+}
+
+::v-deep .dx-checkbox-checked .dx-checkbox-icon::before {
+    font-size: 13px;
+    top: 6px;
+}
+
+::v-deep .dx-checkbox-icon {
+    width: 16px;
+    height: 16px;
 }
 </style>

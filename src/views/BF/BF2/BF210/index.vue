@@ -79,8 +79,8 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
-                        :column-auto-width="true" >
+                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
+                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                     <DxPaging :page-size="20" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -105,8 +105,9 @@
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)">
                             {{ data.value == "m" ? "매니저" : (data.value == "c"
-                            ? "고객사" :
-                            (data.value == "p"? "파트너": "영업자")) }}</a-tag>
+                                    ? "고객사" :
+                                    (data.value == "p" ? "파트너" : "영업자"))
+                            }}</a-tag>
                     </template>
                     <DxColumn data-field="mobilePhone" caption="휴대폰" />
                     <DxColumn data-field="groupCode" caption="소속코드" />
@@ -132,8 +133,10 @@
                     </template>
                 </DxDataGrid>
                 <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+
                 <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
                     :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
+
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
                 <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
@@ -143,7 +146,7 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import {
     DxDataGrid,
     DxColumn,
@@ -178,6 +181,7 @@ import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
+    
     components: {
         DxDataGrid,
         DxColumn,
@@ -203,12 +207,13 @@ export default defineComponent({
         return {
             popupData: [],
             modalAddNewStatus: false,
-            modalEditStatus: false,
+           
             modalHistoryStatus: false,
             modalLoginStatus: false,
         };
     },
-    setup() {
+    setup(props) {
+        const modalEditStatus = ref<boolean>(false);
         let triggersearching = ref<boolean>(false);
         const spinning = ref<boolean>(true);
         const checkStatus = ref({
@@ -226,15 +231,7 @@ export default defineComponent({
             name: "",
         })
         var idRowEdit = ref<number>(0)
-        const originData = ref({
-            page: 1,
-            rows: 10,
-            type: "",
-            groupCode: "",
-            groupName: "",
-            username: "",
-            name: "",
-        })
+        const originData = ref()
         setTimeout(() => {
             spinning.value = !spinning.value;
         }, 1000);
@@ -245,12 +242,20 @@ export default defineComponent({
         }))
         onResult((res) => {
             dataSource.value = res.data.searchUsers.datas
+            setTimeout(() => {
+                spinning.value = false;
+            }, 500);
         })
-
+        watch(() => modalEditStatus.value,
+            () => {  
+                
+                    refetchData()
+            }
+        );
         const searching = () => {
-
             spinning.value = !spinning.value;
             let dataNew = ref()
+
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
                 dataNew.value = {
                     page: 1,
@@ -283,14 +288,18 @@ export default defineComponent({
                     username: dataSearch.value.username,
                     name: dataSearch.value.name,
                 }
+            } 
+            
+            triggersearching.value = true  
+            if(originData){
+                originData.value = dataNew.value
+                refetchData()
             }
-            originData.value = dataNew.value
-            triggersearching.value = true             
-            setTimeout(() => {
-                spinning.value = !spinning.value;
-            }, 1000);
+                     
         }
+        
         return {
+            modalEditStatus,
             spinning,
             dataSource,
             idRowEdit,
