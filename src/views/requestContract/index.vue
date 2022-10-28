@@ -250,7 +250,7 @@
                             </div>
                             <a-col :span="7">
                                 <div v-if="this.imagestep" class="img-preview">
-                                    <img :src="this.imagestep" @click="handlePreview" />
+                                    <a-image :src="this.imagestep" @click="handlePreview" />
                                 </div>
                                 <div v-else class="img-preview">
                                     <img src="../../assets/images/imgdefault.jpg" />
@@ -281,7 +281,7 @@
                         </div>
                         <div class="form-item">
                             <label>직 원 수:</label>
-                            <a-input-number :disabled="disableFormVal" placeholder="장기요양기관등록번호" style="width: 170px"
+                            <a-input-number :disabled="disableFormVal" style="width: 170px"
                                 min="0" v-model:value="contractCreacted.capacityHolding"
                                 @change="validateNumber('capacityHolding')"
                                 @keyup="validateNumber('capacityHolding')" />
