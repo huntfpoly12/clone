@@ -53,11 +53,19 @@
                         <div class="form-item">
                             <label class="red">상 호 :</label>
                             <div>
-                                <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany">
+                                <!-- <DxTextBox style="width: 400px" v-model:value="contractCreacted.nameCompany">
                                     <DxValidator>
                                         <DxRequiredRule message="이항목은 필수 입력사항입니다" />
                                     </DxValidator>
-                                </DxTextBox>
+                                </DxTextBox> -->
+
+
+                                <a-form :model="contractCreacted" style="width: 100%;" name="nest-messages"
+                                    :validate-messages="validateMessages" @finish="onFinish">
+                                    <a-form-item :name="['nameCompany']" :rules="[{ required: true }]">
+                                        <a-input style="width: 400px" v-model:value="contractCreacted.nameCompany" />
+                                    </a-form-item>
+                                </a-form>
                             </div>
                         </div>
                         <div class="form-item">
@@ -100,7 +108,7 @@
                             <a-input placeholder="주소" v-model:value="contractCreacted.roadAddress" disabled />
                         </div>
                         <div class="form-item">
-                            <label></label> 
+                            <label></label>
                             <a-form :model="contractCreacted" style="width: 100%;" name="nest-messages"
                                 :validate-messages="validateMessages" @finish="onFinish">
                                 <a-form-item :name="['addressExtend']" :rules="[{ required: true }]">
@@ -195,7 +203,8 @@
                             <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
                                 @finish="onFinish">
                                 <a-form-item :name="['email']" :rules="[{ type: 'email', required: true }]">
-                                    <a-input v-model:value="contractCreacted.email" style="width: 350px" @keyup="validateEmail"/>
+                                    <a-input v-model:value="contractCreacted.email" style="width: 350px"
+                                        @keyup="validateEmail" />
                                 </a-form-item>
                             </a-form>
                         </div>
@@ -625,7 +634,7 @@ export default {
             console.log(value);
         });
         const statusMailValidate = ref(false)
-        const validateEmail = () => { 
+        const validateEmail = () => {
             var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
             if (reg.test(contractCreacted.email) == false)
                 statusMailValidate.value = true;
@@ -801,7 +810,7 @@ export default {
                 } else {
                     message.error("계속하려면 모든 조건을 수락하십시오!")
                 }
-            } else if (this.step == 1) {  
+            } else if (this.step == 1) {
                 if (this.contractCreacted.nameCompany != ""
                     && this.contractCreacted.bizNumber != ""
                     && this.contractCreacted.zipcode != ""
@@ -908,4 +917,5 @@ export default {
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
+
 </style>
