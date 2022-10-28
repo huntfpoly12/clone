@@ -162,7 +162,7 @@
                     </div>
                     <a-col :span="7">
                       <div v-if="imageLicenseFile" class="img-preview">
-                        <img :src="imageLicenseFile" />
+                        <a-image :src="imageLicenseFile" />
                       </div>
                       <div v-else class="img-preview">
                         <img src="../../../../../assets/images/imgdefault.jpg" />
@@ -239,7 +239,7 @@
                         </div>
                         <a-col :span="7">
                           <div v-if="imageRegCardFile" class="img-preview">
-                            <img :src="imageRegCardFile" />
+                            <a-image :src="imageRegCardFile" />
                           </div>
                           <div v-else class="img-preview">
                             <img src="../../../../../assets/images/imgdefault.jpg" />
@@ -1137,21 +1137,16 @@ export default defineComponent({
   margin-bottom: 10px;
 }
 
-.img-preview {
-  margin-top: 20px;
-  position: relative;
-  width: 100%;
-  padding-top: 142%;
-
-  img {
-    position: absolute;
-    left: 0;
-    top: 0;
+::v-deep img-preview {
+    position: relative;
+    width: 100%;   
+}
+::v-deep img {
+    position: relative;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
+    height: 345px;
+    margin-top: 20px;
+      
 }
 
 .imgPreview img {

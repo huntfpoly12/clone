@@ -76,6 +76,7 @@
                             </a-checkbox>
                         </a-col>
                     </a-row>
+                    
                 </div>
             </div>
             <div class="page-content">
