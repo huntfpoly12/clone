@@ -10,7 +10,7 @@
     </div>
 </template>
 
-<script>
+<script >
 import { defineComponent } from 'vue';
 import DxNumberBox from 'devextreme-vue/number-box';
 export default defineComponent({

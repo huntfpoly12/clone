@@ -133,6 +133,9 @@ const CM130 = defineAsyncComponent(() =>
 const Test = defineAsyncComponent(() =>
 	import("../views/DefaultComponent.vue")
 );
+const Example = defineAsyncComponent(() =>
+	import("../views/Example.vue")
+);
 import {
 	MenuFoldOutlined,
 	MenuUnfoldOutlined,
@@ -171,6 +174,7 @@ export default defineComponent({
 		CM110,
 		CM130,
 		Test,
+		Example,
 		MenuFoldOutlined,
 		MenuUnfoldOutlined,
 		MailOutlined,
@@ -263,6 +267,7 @@ export default defineComponent({
 			if (this.activeTab.id === "bf-220") return BF220;
 			if (this.activeTab.id === "cm-110") return CM110;
 			if (this.activeTab.id === "cm-130") return CM130;
+			if (this.activeTab.id === "example") return Example;
 			return Test;
 		},
 	},
