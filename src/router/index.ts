@@ -6,6 +6,7 @@ import RquestContract from "../views/requestContract/index.vue"
 import ResetPassword from "../views/ResetPassword.vue"
 import ChangePassword from "../views/ChangePassword.vue"
 import NotFound from "../views/NotFound.vue"
+import ExampleCom from "../views/Example.vue"
 const routes = [
   { path: "/", component: DefaultLayout, 
     meta: {
@@ -23,6 +24,7 @@ const routes = [
       }
     ]
   },
+  
   {
     path: "/user",
     component: LoginLayout,
@@ -93,6 +95,10 @@ const routes = [
       {
         path: "cm-130",
         component: () => import('../views/CM/CM1/CM130/index.vue')
+      },
+      {
+        path: "example",
+        component: ExampleCom
       }
     ]
   },
