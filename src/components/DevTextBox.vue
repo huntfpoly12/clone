@@ -13,20 +13,60 @@
       :mask-rules="rules"
       :mask="mask"
       :mask-invalid-message="maskMess"
-    />
+    >
+    
+      <DxValidator v-if="validator">
+        <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxEmailRule v-if="modeInput === 'email'" message="Email is invalid @..@ "/>
+        <DxPatternRule
+          v-if="usePattern"
+          :pattern="pattern"
+          :message="maskMess"
+        />
+        <DxStringLengthRule
+          :min="minCharacter"
+          :message="'Input must have at least ' +minCharacter+ ' symbols'"
+        />
+      </DxValidator>
+    </DxTextBox>
   </div>
 </template>
-ClearButton, Placeholder, disabled, readOnly, MaxCha
+
 <script lang="ts">
+import {
+  DxValidator,
+  DxRequiredRule,
+  DxCompareRule,
+  DxEmailRule,
+  DxPatternRule,
+  DxStringLengthRule,
+  DxRangeRule,
+  DxAsyncRule,
+} from "devextreme-vue/validator";
 import { defineComponent, ref } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
-import { switchCase } from "@babel/types";
 export default defineComponent({
   props: {
+    validator: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    messRequired: {
+      type: String,
+      default: 'Input is required :) !!!!',
+    },
     width: String,
     format: String,
     nameService: String,
     maxCharacter: Number,
+    minCharacter: {
+      type: Number,
+      default: 0,
+    },
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
@@ -37,8 +77,7 @@ export default defineComponent({
     readOnly: Boolean,
     modeInput: {
       validator(value: string) {
-        // The value must match one of these strings
-        return ["email", "password", "search", "tel", "text", "url"].includes(
+        return ["email", "password", "search", "text", "url"].includes(
           value
         );
       },
@@ -46,7 +85,6 @@ export default defineComponent({
     },
     validateType: {
       validator(value: string) {
-        // The value must match one of these strings
         return [
           "bisinessId",
           "corperateId",
@@ -61,11 +99,19 @@ export default defineComponent({
   },
   components: {
     DxTextBox,
+    DxValidator,
+    DxRequiredRule,
+    DxCompareRule,
+    DxEmailRule,
+    DxPatternRule,
+    DxStringLengthRule,
+    DxRangeRule,
+    DxAsyncRule
   },
   mounted() {
     switch (this.validateType) {
       case "bisinessId":
-        this.rules =  { X: /[02-9]/ };
+        this.rules = { X: /[02-9]/ };
         this.mask = "";
         break;
       case "corperateId":
@@ -78,23 +124,25 @@ export default defineComponent({
         break;
       case "telNo":
         this.rules = "";
-        this.mask = "";
+        this.mask = "0000-000000000";
         break;
       case "birthDay":
-        this.rules =  { X: /[02-9]/ };
-        this.mask = "00-00-0000";
-        this.maskMess = "sai định dạng"
+        this.usePattern = true;
+        this.pattern = /\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])*/;
+        this.mask = "0000-00-00";
+        this.maskMess = "The birthDay must have a correct birthDay format";
         break;
       default:
         break;
     }
-    console.log(this.validateType, "tu mounted"); // 0
   },
   setup(props, { emit }) {
     const rules = ref({});
     const mask = ref("");
     const maskMess = ref("");
     const value = ref(props.valueInput);
+    const usePattern = ref(false);
+    const pattern = ref<RegExp>();
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -104,7 +152,9 @@ export default defineComponent({
       value,
       rules,
       mask,
-      maskMess
+      maskMess,
+      pattern,
+      usePattern
     };
   },
 });
