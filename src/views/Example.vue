@@ -117,7 +117,7 @@
             </div>
           </div>
           <div class="dx-field">
-            <div class="dx-field-label">Birth Day</div>
+            <div class="dx-field-label">Birth Day {{bday}}</div>
             <div class="dx-field-value">
               <DevTextBoxVue
                 width="500px"
@@ -125,6 +125,7 @@
                 :clearButton="true"
                 :validator="true"
                 :required="true"
+                v-model:valueInput="bday"
                 validateType="birthDay"
               ></DevTextBoxVue>
             </div>
@@ -169,6 +170,7 @@ export default defineComponent({
     DxValidationSummary
   },
   setup() {
+    const bday  = ref("");
     const text1 = ref("text example.....");
     function onFormSubmit(e) {
      console.log('dsdfsfsdf');
@@ -184,6 +186,7 @@ export default defineComponent({
     };
     return {
       text1,
+      bday,
       onFormSubmit
     };
   },
