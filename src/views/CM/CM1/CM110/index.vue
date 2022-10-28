@@ -439,7 +439,6 @@ export default defineComponent({
                 formState.value.extendInfo.detail.phone = e
             }
         }
-
         const validateEmail = (e: any) => {
             let checkMail = e.target.value.match(
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -449,7 +448,6 @@ export default defineComponent({
             } else {
                 statusMailValidate.value = true;
             }
-
         }
         const originData = {
             companyId: companyId
@@ -554,7 +552,6 @@ export default defineComponent({
                 else
                     stringConvert += e.name
             })
-
             return stringConvert
         },
         closePopupEdit() {
@@ -565,10 +562,8 @@ export default defineComponent({
             this.modalAddNewStatus = false
             this.refetchDataUsers()
         },
-
     },
 });
 </script>
 <style lang="scss" scoped src="./style.scss">
-
 </style>
