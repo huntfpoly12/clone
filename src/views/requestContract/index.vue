@@ -100,8 +100,7 @@
                             <a-input placeholder="주소" v-model:value="contractCreacted.roadAddress" disabled />
                         </div>
                         <div class="form-item">
-                            <label></label>
-                            <!-- <a-input v-model:value="contractCreacted.addressExtend" placeholder="상세주소(입력)"></a-input> -->
+                            <label></label> 
                             <a-form :model="contractCreacted" style="width: 100%;" name="nest-messages"
                                 :validate-messages="validateMessages" @finish="onFinish">
                                 <a-form-item :name="['addressExtend']" :rules="[{ required: true }]">
@@ -109,6 +108,12 @@
                                 </a-form-item>
                             </a-form>
                         </div>
+                        <!-- <div class="form-item">
+                            <label class="red">연락처 :</label>
+                            <a-input placeholder="'-'없이 슷자만 입력" @change="validateNumber('phone')"
+                                v-model:value="contractCreacted.phone" style="width: 180px;">                                
+                            </a-input>
+                        </div> -->
                         <div class="form-item">
                             <label class="red">연락처 :</label>
                             <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
@@ -119,6 +124,7 @@
                                 </a-form-item>
                             </a-form>
                         </div>
+
                         <div class="form-item">
                             <label>팩 스 :</label>
                             <a-input placeholder="'-' 앖이 숫자만 인력" v-model:value="contractCreacted.fax"
@@ -131,7 +137,7 @@
                             </div>
                             <a-col :span="7">
                                 <div v-if="this.imageValue" class="img-preview">
-                                    <img :src="this.imageValue" @click="handlePreview" />
+                                    <a-image :src="this.imageValue" @click="handlePreview" />
                                 </div>
                                 <div v-else class="img-preview">
                                     <img src="../../assets/images/imgdefault.jpg" />
@@ -180,6 +186,12 @@
                         </div>
                         <div class="form-item">
                             <label class="red">이메일 :</label>
+                            <!-- <DxTextBox placeholder="abc123@mailaddress.com" style="width: 250px" v-model:value="contractCreacted.email" name="nest-messages" :validate-messages="validateMessages"
+                                @finish="onFinish">
+                                <DxValidator>
+                                    <DxRequiredRule message="이항목은 필수 입력사항입니다" />
+                                </DxValidator>
+                            </DxTextBox> -->
                             <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
                                 @finish="onFinish">
                                 <a-form-item :name="['email']" :rules="[{ type: 'email', required: true }]">
