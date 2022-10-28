@@ -129,7 +129,7 @@
                             </div>
                             <a-col :span="7">
                                 <div v-if="this.imageValue" class="img-preview">
-                                    <img :src="this.imageValue" @click="handlePreview" />
+                                    <a-image :src="this.imageValue" @click="handlePreview" />
                                 </div>
                                 <div v-else class="img-preview">
                                     <img src="../../assets/images/imgdefault.jpg" />
