@@ -117,7 +117,7 @@
             </div>
           </div>
           <div class="dx-field">
-            <div class="dx-field-label">Birth Day {{bday}}</div>
+            <div class="dx-field-label">Birth Day</div>
             <div class="dx-field-value">
               <DevTextBoxVue
                 width="500px"

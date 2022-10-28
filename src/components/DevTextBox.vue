@@ -144,7 +144,6 @@ export default defineComponent({
     const usePattern = ref(false);
     const pattern = ref();
     const updateValue = (value: any) => {
-      console.log(value);
       emit("update:valueInput", value);
     };
 
