@@ -468,7 +468,7 @@ export default defineComponent({
             companyId: companyId,
             filter: {
                 page: 1,
-                rows: 10
+                rows: 20
             }
         })
         const rowTable = ref(0)

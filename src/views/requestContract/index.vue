@@ -108,26 +108,20 @@
                                     <a-input placeholder="상세주소(입력)" v-model:value="contractCreacted.addressExtend" />
                                 </a-form-item>
                             </a-form>
-                        </div>
-                        <!-- <div class="form-item">
-                            <label class="red">연락처 :</label>
-                            <a-input placeholder="'-'없이 슷자만 입력" @change="validateNumber('phone')"
-                                v-model:value="contractCreacted.phone" style="width: 180px;">                                
-                            </a-input>
-                        </div> -->
+                        </div> 
                         <div class="form-item">
                             <label class="red">연락처 :</label>
                             <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
                                 @finish="onFinish">
                                 <a-form-item :name="['phone']" :rules="[{ required: true }]">
-                                    <a-input placeholder="'-' 앖이 숫자만 인력" @change="validateNumber('phone')"
+                                    <a-input placeholder="‘-’ 앖이 숫자만 인력" @change="validateNumber('phone')"
                                         v-model:value="contractCreacted.phone" style="width: 180px" />
                                 </a-form-item>
                             </a-form>
                         </div>
                         <div class="form-item">
                             <label>팩 스 :</label>
-                            <a-input placeholder="'-' 앖이 숫자만 인력" v-model:value="contractCreacted.fax"
+                            <a-input placeholder="‘-’ 앖이 숫자만 인력" v-model:value="contractCreacted.fax"
                                 @change="validateNumber('fax')" @keyup="validateNumber('fax')" style="width: 180px;" />
                         </div>
                         <div style="display: flex">
@@ -179,7 +173,7 @@
                             <a-form :model="contractCreacted" name="nest-messages" :validate-messages="validateMessages"
                                 @finish="onFinish">
                                 <a-form-item :name="['mobilePhone']" :rules="[{ required: true }]">
-                                    <a-input v-model:value="contractCreacted.mobilePhone" placeholder="'-' 앖이 숫자만 인력"
+                                    <a-input v-model:value="contractCreacted.mobilePhone" placeholder="‘-’ 앖이 숫자만 인력"
                                         @keyup="validateNumber('mobilePhone')" style="width: 150px" />
                                 </a-form-item>
                             </a-form>
