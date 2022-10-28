@@ -144,7 +144,7 @@
 
                                     <a-col :span="7">
                                         <div v-if="imageValue" class="img-preview">
-                                            <img :src="imageValue" />
+                                            <a-image :src="imageValue" />
                                         </div>
                                         <div v-else class="img-preview">
                                             <img src="../../../../../assets/images/imgdefault.jpg" />
@@ -1055,21 +1055,16 @@ export default defineComponent({
     text-align: right;
 }
 
-.img-preview {
-    margin-top: 20px;
+::v-deep img-preview {
+    position: relative;
+    width: 100%;   
+}
+::v-deep img {
     position: relative;
     width: 100%;
-    padding-top: 142%;
-
-    img {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-    }
+    height: 345px;
+    margin-top: 20px;
+      
 }
 
 .imgPreview img {

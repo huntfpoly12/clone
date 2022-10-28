@@ -75,9 +75,7 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-resizing="true">
-
-                    <!-- <DxSelection mode="multiple" /> -->
+                    @exporting="onExporting" :allow-column-resizing="true">                 
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="code" caption="사업자코드" />
