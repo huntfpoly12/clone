@@ -577,8 +577,7 @@ export default {
                 range: "${label} must be between ${min} and ${max}",
             },
         };
-        const onFinish = (values) => {
-            console.log('Success:', values);
+        const onFinish = (values) => { 
         };
         const layout = {
             labelCol: { span: 8 },
@@ -616,8 +615,7 @@ export default {
             })
             optionSale.value = dataOption
         });
-        watch(valueFacilityBusinesses, (value) => {
-            console.log(value);
+        watch(valueFacilityBusinesses, (value) => { 
         });
         const statusMailValidate = ref(false)
         const validateEmail = () => {
@@ -707,8 +705,7 @@ export default {
                 && contractCreacted.bizNumber.length == 10
                 && statusMailValidate.value == false
             ) {
-                if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                    console.log('1');
+                if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) { 
                 } else {
                     let count = 0
                     if (dataInputCallApi.dossier == 1) {
@@ -727,13 +724,10 @@ export default {
                             count++
                         }
                     }
-                    if (count == 0) {
-                        console.log('2');
+                    if (count == 0) { 
                         step.value = 3
                         window.scrollTo(0, 0);
-                    }else{
-                        console.log('3');
-                    }
+                    } 
                 }
             }
         }
