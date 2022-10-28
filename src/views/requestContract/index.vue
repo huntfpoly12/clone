@@ -2,9 +2,9 @@
     <div class="contract-container">
         <h2>서비스가입신청</h2>
         <a-steps :current="step" type="navigation" :style="stepStyle">
-            <a-step :status="step === 0 ? 'process' : 'finish'" title="약관동의" />
-            <a-step :status="checkStepTwo" title="사업자대표자정보" />
-            <a-step :status="checkStepThree" title="서비스신청CMS정보" />
+            <a-step :status="step === 0 ? 'process' : 'finish'" title="약관동의" @click="changeStep(1)" />
+            <a-step :status="checkStepTwo" title="사업자대표자정보" @click="changeStep(2)" />
+            <a-step :status="checkStepThree" title="서비스신청CMS정보"  @click="changeStep(3)"/>
             <a-step :status="checkStepFour" title="신청완료!" />
         </a-steps>
         <div class="step-content">
@@ -670,7 +670,20 @@ export default {
                 //dataSearch.nameCompany = data.value;
             }
         });
+
+        const changeStep = (val) => {
+            if (val == 1) {
+                step.value = 0
+            }
+            if (val == 2 && step.value >= 2) {
+                step.value = 1
+            }
+            if (val == 3 && step.value == 3) {
+                step.value = 2
+            }
+        }
         return {
+            changeStep,
             statusMailValidate,
             validateEmail,
             optionSale,
