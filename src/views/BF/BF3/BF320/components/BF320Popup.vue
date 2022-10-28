@@ -84,7 +84,26 @@
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
-                                <imgUpload :title="titleModal" @update-img="getImgUrl" :marginTop="marginTopModal" />
+                                <div style="display: flex">
+                                    <div>
+                                        <imgUpload :title="titleModal" @update-img="getImgUrl"
+                                            style="margin-top: 10px" />
+                                    </div>
+
+                                    <a-col :span="7">
+                                        <div v-if="imageValue" class="img-preview">
+                                            <a-image :src="imageValue" />
+                                        </div>
+                                        <div v-else class="img-preview">
+                                            <img src="../../../../../assets/images/imgdefault.jpg" />
+                                        </div>
+                                        <div v-if="fileName">
+                                            <span style="padding-right: 10px">{{ fileName }}</span>
+                                            <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
+                                        </div>
+                                    </a-col>
+                                </div>
+                                <!-- <imgUpload :title="titleModal" @update-img="getImgUrl" :marginTop="marginTopModal" /> -->
                             </a-row>
                         </a-form>
                     </a-collapse-panel>
@@ -248,7 +267,8 @@ export default defineComponent({
         const dataQueryCheckPer = ref({});
         let trigger = ref<boolean>(false);
         let triggerCheckPer = ref<boolean>(false);
-
+            const imageValue = ref("");
+        const fileName = ref("");
         const previewTitle = ref("");
         const fileList = ref<UploadProps["fileList"]>([]);
         const activeKey = ref([1]);
@@ -328,6 +348,10 @@ export default defineComponent({
             lineHeight: "30px",
         });
         const titleModal = "사업자등록증";
+        const removeImg = () => {
+            imageValue.value = "";
+            fileName.value = "";
+        };
 
         watch(
             () => props.modalStatus,
@@ -621,11 +645,16 @@ export default defineComponent({
             handleDeleteMemo,
             handleAddMemo,
             loadingUpdate,
-            updateCompany
+            updateCompany,
+            fileName,
+            removeImg,
+            imageValue,
         };
     },
     methods: {
         getImgUrl(img: any) {
+            this.imageValue = img.url;
+            this.fileName = img.fileName;
         },
         setModalVisible() {
             this.$emit("closePopup", false);
@@ -672,7 +701,17 @@ export default defineComponent({
         padding: 0px;
     }
 }
-
+::v-deep img-preview {
+    position: relative;
+    width: 100%;   
+}
+::v-deep img {
+    position: relative;
+    width: 100%;
+    height: 345px;
+    margin-top: 20px;
+      
+}
 .anticon {
     cursor: pointer;
 }
