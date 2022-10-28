@@ -9,7 +9,7 @@
       :disabled="disabled"
       :maxLength="maxCharacter"
       :readOnly="readOnly"
-      @input="updateValue(value)"
+      @change="updateValue(value)"
       :mask-rules="rules"
       :mask="mask"
       :mask-invalid-message="maskMess"
@@ -128,9 +128,9 @@ export default defineComponent({
         break;
       case "birthDay":
         this.usePattern = true;
-        this.pattern = /\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])*/;
+        this.pattern = /((19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01]))/;
         this.mask = "0000-00-00";
-        this.maskMess = "The birthDay must have a correct birthDay format";
+        this.maskMess = "The value must have a correct date format";
         break;
       default:
         break;
@@ -142,7 +142,7 @@ export default defineComponent({
     const maskMess = ref("");
     const value = ref(props.valueInput);
     const usePattern = ref(false);
-    const pattern = ref<RegExp>();
+    const pattern = ref();
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
