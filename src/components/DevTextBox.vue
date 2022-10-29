@@ -123,7 +123,7 @@ export default defineComponent({
         this.mask = "";
         break;
       case "telNo":
-        this.rules = "";
+        this.rules = { X: /[02-9]/ };
         this.mask = "0000-000000000";
         break;
       case "birthDay":
