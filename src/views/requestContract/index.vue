@@ -277,7 +277,6 @@
                                     <a-checkbox :disabled="disableFormVal2"
                                         v-model:checked="contractCreacted.accountingServiceTypes">회계입력대행서비스</a-checkbox>
                                 </div>
-
                             </div>
                         </div>
                         <div class="form-group">
@@ -493,7 +492,6 @@ export default {
             imageId: null
         };
     },
-
     setup() {
         const spinning = ref(false);
         const textIDNo = ref("법인등록번호")
@@ -582,7 +580,6 @@ export default {
         signinDone((res) => {
             visibleModal.value = true;
         });
-
         onError((res) => {
             spinning.value = false 
             message.error(res.message)
@@ -754,7 +751,6 @@ export default {
             }
         }
         const pagePass = reactive(0)
-
         const changeTypeCompany = (number) => {
             if (number == 1) {
                 textIDNo.value = "법인등록번호";
@@ -873,7 +869,6 @@ export default {
             this.contractCreacted.sigunguCode = data.sigunguCode;
             this.contractCreacted.zonecode = data.zonecode;
         },
-
         prevStep() {
             this.step--;
         },
@@ -996,5 +991,4 @@ export default {
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
-
 </style>
