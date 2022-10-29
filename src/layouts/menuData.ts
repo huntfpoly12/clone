@@ -85,4 +85,5 @@ export default
         { name: "4대보험EDI 데이터연동", url: "/dashboard/bf-310", id: "pa-910", },
         { name: "파트너십 계좌통합 데이터연동", url: "/dashboard/bf-310", id: "pa-920", },
         { name: "뱅크다K 데이터연동", url: "/dashboard/bf-310", id: "pa-930" },
+        { name: "example", url: "/dashboard", id: "" },
       ]
