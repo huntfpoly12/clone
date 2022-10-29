@@ -9,7 +9,6 @@
       <div>
         <DxTabPanel
           v-model:data-source="allTab"
-          
           :defer-rendering="false"
           :show-nav-buttons="true"
           :repaint-changes-only="true"
@@ -19,11 +18,10 @@
         >
           <template #title="{ data: employee }">
             <div>
-              <span>{{ employee.TabName }}</span
-              >
+              <span>{{ employee.TabName }}</span>
             </div>
           </template>
-          <template #itemTemplate="{  data: employee }">
+          <template #itemTemplate="{ data: employee }">
             <component v-bind:is="employee.layoutName" />
           </template>
         </DxTabPanel>
@@ -35,15 +33,14 @@
 <script>
 import DxSortable from "devextreme-vue/sortable";
 import DxTabPanel from "devextreme-vue/tab-panel";
-import { DxDataGrid } from "devextreme-vue/data-grid";
 import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
 import DevTextBoxVue from "../../components/DevTextBox.vue";
-import { defineComponent, ref , defineAsyncComponent } from "vue";
+import { defineComponent, ref, defineAsyncComponent } from "vue";
 import notify from "devextreme/ui/notify";
 import service from "./listTab.ts";
 const TextBoxFrom = defineAsyncComponent(() =>
-	import("../base/TextBoxFrom.vue")
+  import("../base/TextBoxFrom.vue")
 );
 const allListTab = service.getListTab();
 export default defineComponent({
