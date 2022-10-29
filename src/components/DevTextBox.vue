@@ -60,8 +60,6 @@ export default defineComponent({
       default: 'Input is required :) !!!!',
     },
     width: String,
-    format: String,
-    nameService: String,
     maxCharacter: Number,
     minCharacter: {
       type: Number,

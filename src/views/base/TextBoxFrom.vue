@@ -157,11 +157,100 @@
           </div>
         </form>
       </a-col>
-      <a-col :span="10"> 
-        <div >
-
+      <a-col :span="10">
+        <div>
+          <p><strong> List Props Text Box:</strong></p>
+          <ol>
+            <li>
+              <p>validator : Allow validate input or not?</p>
+              <ul>
+                <li>Type : Boolean</li>
+                <li>Default : false</li>
+              </ul>
+            </li>
+            <li>
+              <p>validateType : select the validation type from the following validation types ("bisinessId", "corperateId", "personalId", "email", "telNo", "birthDay") ( this prop needs
+                validator = true )</p>
+              <ul>
+                <li>Type : String</li>
+                <li>Default : ""</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                required : Requires a value to be entered ( this prop needs
+                validator = true )
+              </p>
+              <ul>
+                <li>Type : Boolean</li>
+                <li>Default : false</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                maxCharacter : Maximum number of characters that can be input
+              </p>
+              <ul>
+                <li>Type : Number</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                minCharacter : Minimum number of characters that can be input
+              </p>
+              <ul>
+                <li>Type : Number</li>
+                <li>Default : 0</li>
+              </ul>
+            </li>
+            <li>
+              <p>disabled : disable input</p>
+              <ul>
+                <li>Type : Boolean</li>
+                <li>Default : false</li>
+              </ul>
+            </li>
+            <li>
+              <p>clearButton : Hide or show clear button</p>
+              <ul>
+                <li>Type : Boolean</li>
+                <li>Default : false</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                valueInput : Transmit and get data from input (use v-model for
+                bidirectional data transfer and retrieval)
+              </p>
+              <ul>
+                <li>Type : String</li>
+                <li>Default : ""</li>
+              </ul>
+            </li>
+            <li>
+              <p>placeholder : Set placeholder</p>
+              <ul>
+                <li>Type : String</li>
+                <li>Default : ""</li>
+              </ul>
+            </li>
+            <li>
+              <p>readOnly : Set read-only state for input</p>
+              <ul>
+                <li>Type : Boolean</li>
+                <li>Default : false</li>
+              </ul>
+            </li>
+            <li>
+              <p>modeInput : Select the input type to use from the following values ("email", "password", "search", "text", "url")</p>
+              <ul>
+                <li>Type : String</li>
+                <li>Default : "text"</li>
+              </ul>
+            </li>
+          </ol>
         </div>
-    </a-col>
+      </a-col>
     </a-row>
   </div>
 </template>
