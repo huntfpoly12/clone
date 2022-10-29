@@ -162,15 +162,15 @@
           <p><strong> List Props Text Box:</strong></p>
           <ol>
             <li>
-              <p>validator : Allow validate input or not?</p>
+              <p><strong>validator </strong>: Allow validate input or not?</p>
               <ul>
                 <li>Type : Boolean</li>
                 <li>Default : false</li>
               </ul>
             </li>
             <li>
-              <p>validateType : select the validation type from the following validation types ("bisinessId", "corperateId", "personalId", "email", "telNo", "birthDay") ( this prop needs
-                validator = true )</p>
+              <p><strong>validateType</strong> : select the validation type from the following validation types ( <i>"bisinessId", "corperateId", "personalId", "email", "telNo", "birthDay"</i>) ( <i>this prop needs
+                validator = true </i>)</p>
               <ul>
                 <li>Type : String</li>
                 <li>Default : ""</li>
@@ -178,8 +178,8 @@
             </li>
             <li>
               <p>
-                required : Requires a value to be entered ( this prop needs
-                validator = true )
+                <strong>required</strong> : Requires a value to be entered ( <i>this prop needs
+                validator = true </i>)
               </p>
               <ul>
                 <li>Type : Boolean</li>
@@ -188,7 +188,7 @@
             </li>
             <li>
               <p>
-                maxCharacter : Maximum number of characters that can be input
+                <strong>maxCharacter</strong> : Maximum number of characters that can be input
               </p>
               <ul>
                 <li>Type : Number</li>
@@ -196,7 +196,7 @@
             </li>
             <li>
               <p>
-                minCharacter : Minimum number of characters that can be input
+                <strong>minCharacter</strong> : Minimum number of characters that can be input
               </p>
               <ul>
                 <li>Type : Number</li>
@@ -204,14 +204,14 @@
               </ul>
             </li>
             <li>
-              <p>disabled : disable input</p>
+              <p><strong>disabled</strong> : disable input</p>
               <ul>
                 <li>Type : Boolean</li>
                 <li>Default : false</li>
               </ul>
             </li>
             <li>
-              <p>clearButton : Hide or show clear button</p>
+              <p><strong>clearButton</strong> : Hide or show clear button</p>
               <ul>
                 <li>Type : Boolean</li>
                 <li>Default : false</li>
@@ -219,7 +219,7 @@
             </li>
             <li>
               <p>
-                valueInput : Transmit and get data from input (use v-model for
+                <strong>valueInput</strong> : Transmit and get data from input (use v-model for
                 bidirectional data transfer and retrieval)
               </p>
               <ul>
@@ -228,21 +228,21 @@
               </ul>
             </li>
             <li>
-              <p>placeholder : Set placeholder</p>
+              <p><strong>placeholder</strong> : Set placeholder</p>
               <ul>
                 <li>Type : String</li>
                 <li>Default : ""</li>
               </ul>
             </li>
             <li>
-              <p>readOnly : Set read-only state for input</p>
+              <p><strong>readOnly</strong> : Set read-only state for input</p>
               <ul>
                 <li>Type : Boolean</li>
                 <li>Default : false</li>
               </ul>
             </li>
             <li>
-              <p>modeInput : Select the input type to use from the following values ("email", "password", "search", "text", "url")</p>
+              <p><strong>modeInput</strong> : Select the input type to use from the following values (<i>"email", "password", "search", "text", "url"</i>)</p>
               <ul>
                 <li>Type : String</li>
                 <li>Default : "text"</li>
