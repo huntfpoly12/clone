@@ -134,7 +134,7 @@ const Test = defineAsyncComponent(() =>
 	import("../views/DefaultComponent.vue")
 );
 const Example = defineAsyncComponent(() =>
-	import("../views/Example.vue")
+	import("../views/base/Example.vue")
 );
 import {
 	MenuFoldOutlined,
@@ -258,7 +258,7 @@ export default defineComponent({
 		},
 
 		currentComponent() {
-			if (this.activeTab.id === "") return;
+			if (this.activeTab.id === "") return Example;
 			if (this.activeTab.id === "bf-310") return BF310;
 			if (this.activeTab.id === "bf-320") return BF320;
 			if (this.activeTab.id === "bf-330") return BF330;
