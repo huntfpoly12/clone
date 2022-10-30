@@ -33,14 +33,14 @@
                                             @change="validateNumber('presidentMobilePhone')"
                                             @keyup="validateNumber('presidentMobilePhone')" style="width: 150px;" />
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message" style="width: 121px;line-height: 29px;">‘-’없이 숫자만 입력</p>
                                 </div>
                                 <div style="display: flex">
                                     <a-form-item label="팩스번호">
                                         <a-input v-model:value="formState.extendInfo.detail.fax" style="width: 150px;"
                                             @keyup="validateNumber('fax')" @change="validateNumber('fax')" />
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message" style="width: 121px;line-height: 29px;">‘-’없이 숫자만 입력</p>
                                 </div>
                             </div>
                             <h2 class="title-h2">직인등록</h2>
@@ -104,13 +104,13 @@
                                         <a-input v-model:value="formState.extendInfo.detail.phone" style="width: 150px;"
                                             @keyup="validateNumber('phone')" @change="validateNumber('phone')" />
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message" style="width: 121px;line-height: 29px;">‘-’없이 숫자만 입력</p>
                                 </div>
                             </div>
                             <div class="dflex">
-                                <a-form-item label="생년월일" style="width: 327px;">
-                                    <CustomDatepicker :valueDate="formState.extendInfo.president.birthday"
-                                        date-format="MM/DD/YYYY" @valueDateChange="changeDate" />
+                                <a-form-item label="생년월일" style="width: 327px;">  
+                                    <a-date-picker v-model:value="formState.extendInfo.president.birthday" value-format="YYYY-MM-DD"
+                                        placeholder="" />
                                 </a-form-item>
                                 <p class="validate-message">
                                     ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
@@ -566,4 +566,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="./style.scss">
+
 </style>
