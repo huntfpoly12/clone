@@ -13,7 +13,7 @@ const filters = {
         return input.toLocaleString('ko-KR');
     },
     formatDate(date: any){
-        return dayjs(date).format('YYYY/MM/DD')
+        return dayjs(date).format('YYYY-MM-DD')
     }
 }
 export default filters;
