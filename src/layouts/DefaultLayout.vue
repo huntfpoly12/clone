@@ -187,12 +187,16 @@ export default defineComponent({
 		menuData.forEach((item) => {
 			if (this.$route.fullPath.includes(item.id)) {
 				this.activeTab = item;
+				return;
+			}else if(this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard'){
+
+				this.activeTab = { name: "example", url: "/dashboard", id: "" };
 			}
 		});
 	},
 	watch: {
 		activeTab: {
-			handler(newValue) {
+			handler(newValue,oldVal) {
 				if (newValue) {
 					if (newValue.id.includes("bf-1")) {
 						this.openKeys = ["bf-000", "bf-100"];
@@ -301,7 +305,6 @@ export default defineComponent({
 			}
 		},
 		addMenuTab(item) {
-			console.log(item);
 			let itemNew = []
 			let id = item.split(" | ")
 			let tabAc = {}
@@ -322,7 +325,6 @@ export default defineComponent({
 			for (const key in obj) {
 				this.menuTab.push(obj[key]);
 			}
-			console.log(tabAc);
 			this.activeTab = tabAc;
 
 			// if (this.menuTab.length < 20) {
