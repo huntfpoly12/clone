@@ -10,14 +10,15 @@
 
 ::v-deep img-preview {
     position: relative;
-    width: 100%;   
+    width: 100%;
 }
+
 ::v-deep img {
     position: relative;
     width: 100%;
     height: 345px;
     margin-top: 20px;
-      
+
 }
 
 .imgPreview img {
@@ -236,5 +237,29 @@
 }
 
 ::v-deep .ant-form-item-explain-error {
-    min-width: 300px!important;
+    min-width: 300px !important;
+}
+
+::v-deep .width-400 {
+    width: 400px;
+}
+
+::v-deep .width-150 {
+    width: 150px;
+}
+
+::v-deep .width-350 {
+    width: 350px;
+}
+
+.custom-checkbox-location {
+    position: absolute;
+    margin-top: -200px;
+    display: flex;
+}
+
+::v-deep .confirm-modal {
+    .ant-modal-footer {
+        display: none !important;
+    }
 }
