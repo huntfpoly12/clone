@@ -150,6 +150,10 @@ export default defineComponent({
 	name: `LayoutDefault`,
 	data() {
 		return {
+			styles: {
+				main : this.$config_styles.Main,
+				sub : this.$config_styles.Sub,
+			},
 			user: null,
 			inputSearchText: "",
 			filteredResult: [],
@@ -404,7 +408,7 @@ export default defineComponent({
 .ant-layout-header {
 	display: flex;
 	justify-content: space-between;
-	background: #7dbcea;
+	background: v-bind('styles.main');
 	color: #fff;
 }
 
@@ -419,7 +423,7 @@ export default defineComponent({
 
 .header-content {
 	display: block;
-	background: #91d5ff;
+	background: v-bind('styles.sub');
 	align-items: center;
 	position: relative;
 

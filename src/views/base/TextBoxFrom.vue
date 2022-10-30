@@ -8,14 +8,14 @@
               <div class="dx-field">
                 <div class="dx-field-label">Default mode</div>
                 <div class="dx-field-value">
-                  <DevTextBoxVue width="500px"></DevTextBoxVue>
+                  <DevTextBoxVue width="300px"></DevTextBoxVue>
                 </div>
               </div>
               <div class="dx-field">
                 <div class="dx-field-label">With placeholder</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :validator="true"
                     :required="true"
@@ -26,7 +26,7 @@
                 <div class="dx-field-label">Type Email</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     modeInput="email"
                     :validator="true"
@@ -38,7 +38,7 @@
                 <div class="dx-field-label">Type search</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     modeInput="search"
                   ></DevTextBoxVue>
@@ -48,7 +48,7 @@
                 <div class="dx-field-label">Type tel</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :clearButton="true"
                     :validator="true"
@@ -62,7 +62,7 @@
                 <div class="dx-field-label">With clear button</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :clearButton="true"
                     :valueInput="text1"
@@ -73,7 +73,7 @@
                 <div class="dx-field-label">Password mode</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :clearButton="true"
                     :valueInput="text1"
@@ -85,7 +85,7 @@
                 <div class="dx-field-label">Text mask</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :clearButton="true"
                     :validator="true"
@@ -98,7 +98,7 @@
                 <div class="dx-field-label">Disabled</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :clearButton="true"
                     :valueInput="text1"
@@ -110,7 +110,7 @@
                 <div class="dx-field-label">Read Only</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :clearButton="true"
                     :valueInput="text1"
@@ -122,7 +122,7 @@
                 <div class="dx-field-label">Birth Day</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :clearButton="true"
                     :validator="true"
@@ -136,13 +136,27 @@
                 <div class="dx-field-label">Min Character</div>
                 <div class="dx-field-value">
                   <DevTextBoxVue
-                    width="500px"
+                    width="300px"
                     placeholder="This is placeholder"
                     :clearButton="true"
                     :validator="true"
                     :required="true"
                     :minCharacter="10"
                   ></DevTextBoxVue>
+                </div>
+              </div>
+              <div class="dx-field">
+                <div class="dx-field-label">Month Picker</div>
+                <div class="dx-field-value">
+                  <MonthPickerBox width="300px"></MonthPickerBox>
+                </div>
+              </div>
+              <div class="dx-field">
+                <div class="dx-field-label">Year Picker</div>
+                <div class="dx-field-value">
+                  <YearPickerBox
+                    width="300px"
+                  ></YearPickerBox>
                 </div>
               </div>
               <div class="dx-fieldset">
@@ -169,8 +183,14 @@
               </ul>
             </li>
             <li>
-              <p><strong>validateType</strong> : select the validation type from the following validation types ( <i>"bisinessId", "corperateId", "personalId", "email", "telNo", "birthDay"</i>) ( <i>this prop needs
-                validator = true </i>)</p>
+              <p>
+                <strong>validateType</strong> : select the validation type from
+                the following validation types (
+                <i
+                  >"bisinessId", "corperateId", "personalId", "email", "telNo",
+                  "birthDay"</i
+                >) ( <i>this prop needs validator = true </i>)
+              </p>
               <ul>
                 <li>Type : String</li>
                 <li>Default : ""</li>
@@ -178,8 +198,8 @@
             </li>
             <li>
               <p>
-                <strong>required</strong> : Requires a value to be entered ( <i>this prop needs
-                validator = true </i>)
+                <strong>required</strong> : Requires a value to be entered (
+                <i>this prop needs validator = true </i>)
               </p>
               <ul>
                 <li>Type : Boolean</li>
@@ -188,7 +208,8 @@
             </li>
             <li>
               <p>
-                <strong>maxCharacter</strong> : Maximum number of characters that can be input
+                <strong>maxCharacter</strong> : Maximum number of characters
+                that can be input
               </p>
               <ul>
                 <li>Type : Number</li>
@@ -196,7 +217,8 @@
             </li>
             <li>
               <p>
-                <strong>minCharacter</strong> : Minimum number of characters that can be input
+                <strong>minCharacter</strong> : Minimum number of characters
+                that can be input
               </p>
               <ul>
                 <li>Type : Number</li>
@@ -219,8 +241,8 @@
             </li>
             <li>
               <p>
-                <strong>valueInput</strong> : Transmit and get data from input (use v-model for
-                bidirectional data transfer and retrieval)
+                <strong>valueInput</strong> : Transmit and get data from input
+                (use v-model for bidirectional data transfer and retrieval)
               </p>
               <ul>
                 <li>Type : String</li>
@@ -242,7 +264,12 @@
               </ul>
             </li>
             <li>
-              <p><strong>modeInput</strong> : Select the input type to use from the following values (<i>"email", "password", "search", "text", "url"</i>)</p>
+              <p>
+                <strong>modeInput</strong> : Select the input type to use from
+                the following values (<i
+                  >"email", "password", "search", "text", "url"</i
+                >)
+              </p>
               <ul>
                 <li>Type : String</li>
                 <li>Default : "text"</li>
@@ -256,14 +283,19 @@
 </template>
 
 <script>
+import { defineComponent, ref } from "vue";
+import notify from "devextreme/ui/notify";
 import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
 import DevTextBoxVue from "../../components/DevTextBox.vue";
-import { defineComponent, ref } from "vue";
-import notify from "devextreme/ui/notify";
+import MonthPickerBox from "../../components/DateTimeBox/MonthPickerBox.vue";
+import YearPickerBox from "../../components/DateTimeBox/YearPickerBox.vue";
+
 export default defineComponent({
   components: {
     DevTextBoxVue,
+    MonthPickerBox,
+    YearPickerBox,
     DxButton,
     DxValidationSummary,
   },
