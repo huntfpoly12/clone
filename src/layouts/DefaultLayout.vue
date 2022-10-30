@@ -188,7 +188,8 @@ export default defineComponent({
 			if (this.$route.fullPath.includes(item.id)) {
 				this.activeTab = item;
 				return;
-			}else if(this.$route.fullPath === '/dashboard/'){
+			}else if(this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard'){
+
 				this.activeTab = { name: "example", url: "/dashboard", id: "" };
 			}
 		});
