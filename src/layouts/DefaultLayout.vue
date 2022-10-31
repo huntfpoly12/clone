@@ -42,14 +42,8 @@
 							<li v-for="(item, index) in menuTab" :class="activeTab.id === item.id ? 'active' : ''"
 								:key="index" @click="changeActiveTab(item)">
 								{{ item.name }}
-								<button @click="removeItemTab(index)">
-									<svg focusable="false" class="" data-icon="close" width="1em" height="1em"
-										fill="currentColor" aria-hidden="true" viewBox="64 64 896 896">
-										<path
-											d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
-										</path>
-									</svg>
-								</button>
+								<close-circle-filled @click="removeItemTab(index)" :style="{ marginLeft: '2px' , color:activeTab.id === item.id ? 'red' : '#888'}"/>
+								
 							</li>
 						</ul>
 					</nav>
@@ -57,9 +51,9 @@
 			</div>
 
 			<a-layout>
-				<a-layout-sider width="300" v-model:collapsed="collapsed" :trigger="null" collapsible>
+				<a-layout-sider width="250" v-model:collapsed="collapsed" :trigger="null" collapsible>
 					<a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :open-keys="openKeys"
-						@openChange="onOpenChange">
+						@openChange="onOpenChange" >
 						<a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
 							<template #icon>
 								<MailOutlined />
@@ -71,7 +65,10 @@
 										? 'ant-menu-item-selected-active'
 										: ''
 								" @click.enter="addMenuTab(item.id + ' | ' + item.name)">
-									<router-link :to="item.url">{{ item.name }}</router-link>
+									<a-tooltip>
+										<template #title>{{ item.name }}</template>
+										<router-link :to="item.url">{{ item.name }}</router-link>
+									</a-tooltip>
 								</a-menu-item>
 							</a-sub-menu>
 						</a-sub-menu>
@@ -144,6 +141,7 @@ import {
 	DeleteOutlined,
 	SearchOutlined,
 	SaveOutlined,
+	CloseCircleFilled
 } from "@ant-design/icons-vue";
 
 export default defineComponent({
@@ -186,6 +184,7 @@ export default defineComponent({
 		DeleteOutlined,
 		SearchOutlined,
 		SaveOutlined,
+		CloseCircleFilled
 	},
 	created() {
 		menuData.forEach((item) => {
@@ -396,6 +395,10 @@ export default defineComponent({
 });
 </script>
 <style lang="scss">
+.list-menu-tab {
+	margin-top: 0px;
+	margin-bottom: 2px !important;
+}
 .ant-layout.ant-layout-has-sider {
 	min-height: calc(100vh - 64px);
 }
@@ -426,19 +429,20 @@ export default defineComponent({
 	background: v-bind('styles.sub');
 	align-items: center;
 	position: relative;
+	height: 40px;
 
 	.left {
-		width: 300px;
+		width: 250px;
 		float: left;
 		align-items: center;
 		padding-left: 15px;
-		height: 58px;
+		height: 40px;
 		display: flex;
 	}
 
 	.right {
-		padding-left: 24px;
-		padding-top: 5px;
+		// padding-left: 24px;
+		 padding-top: 3px;
 		float: left;
 		width: calc(100% - 324px);
 	}
@@ -544,8 +548,8 @@ export default defineComponent({
 .nav-tabs {
 	display: block;
 	box-shadow: inset 0 -1px 0 #888;
-	height: 40px;
-	margin-bottom: 5px;
+	height:35px;
+	// margin-bottom: 5px;
 
 	ul {
 		display: block;
@@ -560,13 +564,13 @@ export default defineComponent({
 			display: inline-block;
 			width: auto;
 			text-align: center;
-			height: 40px;
-			line-height: 40px;
+			height: 33px;
+			line-height: 33px;
 			padding: 0 5px 0 10px;
 			background-color: #fafafa;
 			border: 1px solid #888;
 			margin: 0 2px;
-			border-radius: 8px 8px 0 0;
+			// border-radius: 8px 8px 0 0;
 
 			button {
 				background: none;
