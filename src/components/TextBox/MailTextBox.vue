@@ -13,19 +13,19 @@
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
-        <DxEmailRule message="Email is invalid @..@ " />
+        <DxEmailRule message="Email is invalid !" />
       </DxValidator>
     </DxTextBox>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent, ref ,watch } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
   DxEmailRule,
 } from "devextreme-vue/validator";
-import { defineComponent, ref } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -51,12 +51,20 @@ export default defineComponent({
     DxTextBox,
     DxValidator,
     DxRequiredRule,
+    DxEmailRule
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
+
+    watch(
+      () => props.valueInput,
+      (newValue) => {
+        value.value = newValue;
+      }
+    );
 
     return {
       updateValue,

@@ -3,14 +3,6 @@ export default [{
     id: 'bf-000',
     subMenus: [
       {
-        title: '서비스가입',
-        id: 'bf-100',
-        items: [
-          {name: '인증', url: '#', id: 'bf-110'},
-          {name: '개인정보관리', url: '#', id: 'bf-120'}
-         ]
-      },
-      {
         title: '회원관리',
         id: 'bf-200',
         items: [
