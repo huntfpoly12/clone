@@ -2,6 +2,7 @@
   <div>
     <a-space>
       <a-select :disabled="disableFormVal" ref="select" v-model:value="selectValue" style="width: 120px" @change="handleChange">
+        <a-select-option :key="0" value="">은행 선택</a-select-option>
         <a-select-option v-for="item in bankTypeSelect" :key="item.c" :value="item.c">{{item.n}}</a-select-option>
       </a-select>
 

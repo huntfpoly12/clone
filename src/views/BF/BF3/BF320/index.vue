@@ -218,7 +218,7 @@ export default defineComponent({
 
         const originData = ref({
             page: 1,
-            rows: 10,
+            rows: 20,
             code: "",
             name: "",
             presidentName: "",

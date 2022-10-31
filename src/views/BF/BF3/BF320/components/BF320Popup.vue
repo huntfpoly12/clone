@@ -47,7 +47,7 @@
                                             <a-row>
                                                 <a-col :span="12">
                                                     <a-input style="width: 100%"
-                                                        v-model:value="formState.extendInfoDetailZipcode" disabled />
+                                                        v-model:value="formState.extendInfoDetailZipcode" disabled placeholder="우편번호"/>
                                                 </a-col>
                                                 <a-col :span="12">
                                                     <div style="margin-left: 5px">
@@ -66,21 +66,21 @@
                                         </a-col>
                                         <a-col :span="24">
                                             <a-row>
-                                                <a-input v-model:value="formState.extendInfoDetailAddressExtend" />
+                                                <a-input v-model:value="formState.extendInfoDetailAddressExtend" placeholder="상세주소 (입력)"/>
                                             </a-row>
                                         </a-col>
                                     </a-row>
                                 </a-form-item>
                                 <a-col :span="8">
                                     <a-form-item label="연락처" class="clr">
-                                        <a-input v-model:value="formState.extendInfoDetailPhone" />
+                                        <a-input v-model:value="formState.extendInfoDetailPhone" placeholder="‘-’없이 숫자만 입력"/>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
 
                                 <a-col :span="8">
                                     <a-form-item label="팩 스">
-                                        <a-input v-model:value="formState.extendInfoDetailFax" />
+                                        <a-input v-model:value="formState.extendInfoDetailFax" placeholder="‘-’없이 숫자만 입력"/>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
@@ -110,19 +110,19 @@
                     <a-collapse-panel key="2" header="대표자정보">
                         <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                             <a-form-item has-feedback label="대표자명" class="clr">
-                                <a-input placeholder="홍길동" autocomplete="off" style="width: 200px"
+                                <a-input autocomplete="off" style="width: 200px"
                                     v-model:value="formState.extendInfoPresidentName" />
                             </a-form-item>
                             <a-form-item has-feedback label="생년월일" class="clr">
-                                <a-input placeholder="19620820" autocomplete="off" style="width: 200px"
+                                <a-input autocomplete="off" style="width: 200px"
                                     v-model:value="formState.extendInfoPresidentBirthday" />
                             </a-form-item>
                             <a-form-item has-feedback label="휴대폰번호" class="clr">
-                                <a-input-number placeholder="1098765432" style="width: 200px"
+                                <a-input-number placeholder="‘-’없이 숫자만 입력" style="width: 200px"
                                     v-model:value="formState.extendInfoPresidentMobilePhone" />
                             </a-form-item>
                             <a-form-item has-feedback label="이메일" class="clr">
-                                <a-input placeholder="abc123@mailaddress.com" style="width: 400px"
+                                <a-input style="width: 400px"
                                     v-model:value="formState.extendInfoPresidentEmail" />
                             </a-form-item>
                         </a-form>
@@ -745,7 +745,7 @@ export default defineComponent({
     text-align: left;
 }
 
-.clr {
+::v-deep .clr {
     label {
         color: red;
     }

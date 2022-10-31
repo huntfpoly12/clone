@@ -1,39 +1,33 @@
 <template>
   <div>
-    <DxNumberBox
+    <DxTextBox
       :width="width"
       value-change-event="keyup"
       :show-clear-button="clearButton"
       v-model:value="value"
       :disabled="disabled"
-      :placeholder="placeholder"
-      :show-spin-buttons="spinButtons"
+      :readOnly="readOnly"
       @change="updateValue(value)"
-      :rtlEnabled="rtlEnabled"
-      :max="max"
-      :min="min"
-      :mode="mode"
-      format="0"
-      :style="{ height: $config_styles.HeightInput }"
+      :mask="mask"
+      :mask-invalid-message="maskMess"
+      :height="$config_styles.HeightInput"
     >
-    <DxValidator v-if="required">
-      <DxRequiredRule v-if="required" :message="messRequired" />
-    </DxValidator>
-    </DxNumberBox>
- 
+      <DxValidator>
+        <DxRequiredRule v-if="required" :message="messRequired" />
+      </DxValidator>
+    </DxTextBox>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
-import DxNumberBox from "devextreme-vue/number-box";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import {
+  DxValidator,
+  DxRequiredRule,
+} from "devextreme-vue/validator";
+import { defineComponent, ref ,watch } from "vue";
+import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
-    width: String,
-    clearButton: Boolean,
-    spinButtons: Boolean,
-    disabled: Boolean,
     required: {
       type: Boolean,
       default: false,
@@ -42,27 +36,25 @@ export default defineComponent({
       type: String,
       default: "Input is required :) !!!!",
     },
+    width: String,
+    clearButton: Boolean,
+    disabled: Boolean,
     valueInput: {
-      type: [String, Number],
+      type: String,
       default: "",
     },
-    min: Number,
-    max: Number,
     readOnly: Boolean,
-    rtlEnabled: {
-      type: Boolean,
-      default: false,
-    },
-    placeholder: String,
-    mode: String,
   },
   components: {
-    DxNumberBox,
+    DxTextBox,
     DxValidator,
     DxRequiredRule,
   },
   setup(props, { emit }) {
+    const mask = ref("000-00-00000");
+    const maskMess = ref("입력한 정보가 충분하지 않습니다!");
     const value = ref(props.valueInput);
+  
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -77,6 +69,8 @@ export default defineComponent({
     return {
       updateValue,
       value,
+      mask,
+      maskMess,
     };
   },
 });
