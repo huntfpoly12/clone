@@ -13,6 +13,7 @@
       :mask-rules="rules"
       :mask="mask"
       :mask-invalid-message="maskMess"
+      :height="$config_styles.HeightInput"
     >
     
       <DxValidator v-if="validator">
@@ -33,6 +34,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
@@ -43,7 +45,6 @@ import {
   DxRangeRule,
   DxAsyncRule,
 } from "devextreme-vue/validator";
-import { defineComponent, ref } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {

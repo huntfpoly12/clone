@@ -9,8 +9,8 @@
       v-on:blur="alertDate"
       @keyup="getdata"
       @update:modelValue="closeDateTime"
-      :style="{ width: width }"
       :format-locale="ko"
+      :style="{height: $config_styles.HeightInput, width: width }"
     >
     </Datepicker>
 </template>

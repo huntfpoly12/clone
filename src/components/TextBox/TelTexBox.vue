@@ -22,8 +22,8 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref ,watch } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import { defineComponent, ref } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -59,6 +59,12 @@ export default defineComponent({
       emit("update:valueInput", value);
     };
 
+    watch(
+      () => props.valueInput,
+      (newValue) => {
+        value.value = newValue;
+      }
+    );
     return {
       updateValue,
       value,

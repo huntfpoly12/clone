@@ -1,39 +1,30 @@
 <template>
   <div>
-    <DxNumberBox
+    <DxTextBox
       :width="width"
       value-change-event="keyup"
       :show-clear-button="clearButton"
-      v-model:value="value"
-      :disabled="disabled"
       :placeholder="placeholder"
-      :show-spin-buttons="spinButtons"
+      v-model:value="value"
+      mode="number"
+      :disabled="disabled"
+      :readOnly="readOnly"
       @change="updateValue(value)"
-      :rtlEnabled="rtlEnabled"
-      :max="max"
-      :min="min"
-      :mode="mode"
-      format="0"
-      :style="{ height: $config_styles.HeightInput }"
+      :height="$config_styles.HeightInput"
     >
-    <DxValidator v-if="required">
-      <DxRequiredRule v-if="required" :message="messRequired" />
-    </DxValidator>
-    </DxNumberBox>
- 
+      <DxValidator>
+        <DxRequiredRule v-if="required" :message="messRequired" />
+      </DxValidator>
+    </DxTextBox>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import DxNumberBox from "devextreme-vue/number-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
-    width: String,
-    clearButton: Boolean,
-    spinButtons: Boolean,
-    disabled: Boolean,
     required: {
       type: Boolean,
       default: false,
@@ -42,26 +33,23 @@ export default defineComponent({
       type: String,
       default: "Input is required :) !!!!",
     },
+    width: String,
+    clearButton: Boolean,
+    disabled: Boolean,
     valueInput: {
-      type: [String, Number],
+      type: String,
       default: "",
     },
-    min: Number,
-    max: Number,
-    readOnly: Boolean,
-    rtlEnabled: {
-      type: Boolean,
-      default: false,
-    },
     placeholder: String,
-    mode: String,
+    readOnly: Boolean,
   },
   components: {
-    DxNumberBox,
+    DxTextBox,
     DxValidator,
     DxRequiredRule,
   },
   setup(props, { emit }) {
+    const rules = ref({ X: /[0-9]/ });
     const value = ref(props.valueInput);
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
@@ -73,10 +61,10 @@ export default defineComponent({
         value.value = newValue;
       }
     );
-
     return {
       updateValue,
       value,
+      rules,
     };
   },
 });

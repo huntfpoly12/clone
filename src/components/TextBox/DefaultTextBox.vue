@@ -9,13 +9,18 @@
       :maxLength="maxCharacter"
       :readOnly="readOnly"
       @change="updateValue(value)"
+      :height="$config_styles.HeightInput"
     >
+    <DxValidator>
+        <DxRequiredRule v-if="required" :message="messRequired" />
+      </DxValidator>
     </DxTextBox>
   </div>
 </template>
   
   <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -41,6 +46,8 @@ export default defineComponent({
   },
   components: {
     DxTextBox,
+    DxValidator,
+    DxRequiredRule,
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);
