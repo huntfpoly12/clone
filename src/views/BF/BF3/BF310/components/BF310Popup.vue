@@ -21,10 +21,7 @@
         >
       </template>
       <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
-        <div v-if="error">
-          {{ error }}
-        </div>
-        <a-form
+        <a-form 
           :data-source="formState"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
@@ -71,7 +68,7 @@
                       <template #bodyCell="{ column, record }">
                         <div :style="{ cursor: 'pointer' }">
                           <template v-if="column.key === 'name'">
-                            <a-tag :color="record.color">{{
+                            <a-tag :color="record.color" :style="{width: '50px',textAlign: 'center'}">{{
                               record.name
                             }}</a-tag>
                           </template>
@@ -128,16 +125,10 @@
             <a-collapse-panel key="2" header="사업자정보">
               <div style="height: 400px; overflow-y: scroll">
                 <a-form-item label="상 호" class="clr">
-                  <a-input v-model:value="formState.companyName" />
+                  <default-text-box v-model:valueInput="formState.companyName" width="100%"/>
                 </a-form-item>
                 <a-form-item label="사업자등록번호" class="clr">
-                  <number-box
-                      width="300px"
-                      :disabled="!canChangeableBizNumber"
-                      v-model:valueInput="formState.companyBizNumber"
-                      :rtlEnabled="false"
-                      mode="text"
-                    />
+                  <company-registration-number-text-box  :disabled="!canChangeableBizNumber" v-model:valueInput="formState.companyBizNumber" :required="true" width="300px"/>
                 </a-form-item>
                 <a-row>
                   <a-col :span="12">
@@ -150,15 +141,11 @@
                       </a-radio-group>
                     </a-form-item>
                   </a-col>
-                  <a-col :span="2">
-                    <a-form-item
+                  <a-col :span="12" >
+                      <a-form-item
                       :label="changeTypeCompany(formState.companyBizType)"
                     >
-                      <a-input
-                        placeholder="800123-1234567"
-                        style="width: 300px"
-                        v-model:value="formState.companyResidentId"
-                      />
+                    <id-card-text-box :required="true" v-model:valueInput="formState.companyResidentId" width="224px"/>
                     </a-form-item>
                   </a-col>
                 </a-row>
@@ -167,11 +154,7 @@
                     <a-col :span="24">
                       <a-row>
                         <a-col :span="12">
-                          <a-input
-                            style="width: 100%"
-                            v-model:value="formState.companyZipcode"
-                            disabled
-                          />
+                          <default-text-box v-model:valueInput="formState.companyZipcode" width="100%" :disabled="true"/>
                         </a-col>
                         <a-col :span="12">
                           <div style="margin-left: 5px">
@@ -183,19 +166,10 @@
                       </a-row>
                     </a-col>
                     <a-col :span="24">
-                      <a-row>
-                        <a-input
-                          v-model:value="formState.companyRoadAddress"
-                          disabled
-                        />
-                      </a-row>
+                      <default-text-box v-model:valueInput="formState.companyRoadAddress" width="100%" :disabled="true"/>
                     </a-col>
                     <a-col :span="24">
-                      <a-row>
-                        <a-input
-                          v-model:value="formState.companyAddressExtend"
-                        />
-                      </a-row>
+                        <default-text-box v-model:valueInput="formState.companyAddressExtend" width="100%"/>
                     </a-col>
                   </a-row>
                   <a-row> </a-row>
@@ -206,10 +180,10 @@
                     <a-row :gutter="[16, 16]">
                       <a-col :span="15">
                         <a-form-item label="연락처" class="clr">
-                          <a-input v-model:value="formState.companyPhone" />
+                          <text-number-box v-model:valueInput="formState.companyPhone" :required="true"/>
                         </a-form-item>
                         <a-form-item label="팩 스">
-                          <a-input v-model:value="formState.companyFax" />
+                          <text-number-box v-model:valueInput="formState.companyFax"/>
                         </a-form-item>
                       </a-col>
                     </a-row>
@@ -241,29 +215,14 @@
             </a-collapse-panel>
             <a-collapse-panel key="3" header="대표자정보">
               <a-form-item has-feedback label="대표자명" class="clr">
-                <a-input
-                  placeholder="홍길동"
-                  autocomplete="off"
-                  style="width: 300px"
-                  v-model:value="formState.presidentContentName"
-                />
+                <default-text-box v-model:valueInput="formState.presidentContentName" width="300px" placeholder="홍길동" :required="true"/>
               </a-form-item>
               <a-form-item has-feedback label="생년월일" class="clr">
-                <a-input
-                  placeholder="19620820"
-                  autocomplete="off"
-                  style="width: 300px"
-                  v-model:value="formState.presidentBirthday"
-                />
+                <birth-day-box v-model:valueInput="formState.presidentBirthday" :required="true" width="300px"/>
               </a-form-item>
               <a-form-item has-feedback label="휴대폰번호" class="clr">
-                <a-input
-                  placeholder="01098765432"
-                  style="width: 200px"
-                  v-model:value="formState.presidentPhone"
-                />
+                <text-number-box v-model:valueInput="formState.presidentPhone" :required="true" width="200px" placeholder=" '_' 없이 슷자입력"/>
               </a-form-item>
-
               <a-form-item
                 has-feedback
                 label="이메일"
@@ -271,10 +230,7 @@
                 :name="['user', 'email']"
                 :rules="[{ type: 'email' }]"
               >
-                <a-input
-                  style="width: 200px"
-                  v-model:value="formState.presidentEmail"
-                />
+              <mail-text-box v-model:valueInput="formState.presidentEmail" width="200px" :required="true"/>
               </a-form-item>
             </a-collapse-panel>
             <a-collapse-panel
@@ -422,6 +378,7 @@
                   </a-form-item>
                   <a-form-item label="직 원 수" class="clr">
                     <number-box
+                      :required="true"
                       width="100px"
                       :min="0"
                       :spinButtons="true"
@@ -548,12 +505,17 @@ import DxDropDownBox from "devextreme-vue/drop-down-box";
 import MonthPickerBox from "../../../../../components/DateTimeBox/MonthPickerBox.vue";
 import DefaultTextBox from "../../../../../components/TextBox/DefaultTextBox.vue";
 import NumberBox from "../../../../../components/NumberBox/NumberBox.vue";
+import TextNumberBox from "../../../../../components/TextBox/TextNumberBox.vue";
 import ListSalesDropdown from "../../../../../components/ListSalesDropdown.vue";
 import selectBank from "../../../../../components/selectBank.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import postCode from "../../../../../components/postCode.vue";
 import imgUpload from "../../../../../components/UploadImage.vue";
+import CompanyRegistrationNumberTextBox from "../../../../../components/TextBox/CompanyRegistrationNumberTextBox.vue";
+import IdCardTextBox from "../../../../../components/TextBox/IdCardTextBox.vue";
+import BirthDayBox from "../../../../../components/TextBox/BirthDayBox.vue";
+import MailTextBox from "../../../../../components/TextBox/MailTextBox.vue";
 
 export default defineComponent({
   props: {
@@ -566,7 +528,6 @@ export default defineComponent({
   data() {
     return {
       checked: true,
-      dateFormat: "YYYY-MM-DD",
       labelCol: { style: { width: "150px" } },
       wrapperCol: { span: 18 },
       radioStyle: {
@@ -592,6 +553,7 @@ export default defineComponent({
     DeleteOutlined,
     MonthPickerBox,
     NumberBox,
+    TextNumberBox,
     DefaultTextBox,
     ListSalesDropdown,
     InfoCircleFilled,
@@ -604,6 +566,10 @@ export default defineComponent({
     DxTexts,
     selectBank,
     postCode,
+    CompanyRegistrationNumberTextBox,
+    IdCardTextBox,
+    BirthDayBox,
+    MailTextBox
   },
   setup(props, { emit }) {
     const facilityBizType = FacilityBizType.all();

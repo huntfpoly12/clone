@@ -8,6 +8,7 @@
       show-search
       @change="updateSale(sale)"
     >
+      <a-select-option key="0" value="">영업자 선택</a-select-option>
       <a-select-option
         v-for="item in result?.findSalesRepresentatives"
         :key="item.id"
@@ -24,8 +25,9 @@
       placeholder="전체"
       show-search
       @change="updateSale(sale)"
-      :style="{width: width}"
+      :style="{ width: width }"
     >
+      <a-select-option key="0" value="">영업자 선택</a-select-option>
       <a-select-option
         v-for="item in result?.findSalesRepresentatives"
         :key="item.id"
@@ -48,7 +50,7 @@ export default defineComponent({
       default: 0,
       required: true,
     },
-    width: String
+    width: String,
   },
   setup(props, { emit }) {
     const sale = ref(props.selected);
@@ -72,4 +74,3 @@ export default defineComponent({
   },
 });
 </script>
-

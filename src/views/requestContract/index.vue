@@ -64,12 +64,7 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자등록번호 :</label>
-                                <DxTextBox mask="000-00-00000" v-model:value="contractCreacted.bizNumber"
-                                    mask-invalid-message="입력한 정보가 충분하지 않습니다!">
-                                    <DxValidator>
-                                        <DxPatternRule message="" />
-                                    </DxValidator>
-                                </DxTextBox>
+                                <company-registration-number-text-box   v-model:valueInput="contractCreacted.bizNumber" :required="true"/>
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자유형 :</label>
@@ -79,12 +74,7 @@
                                 </a-radio-group>
                                 <div class="group-label">
                                     <p>{{ textIDNo }}:</p>
-                                    <DxTextBox mask="000000-0000000" v-model:value="contractCreacted.residentId"
-                                        mask-invalid-message="입력한 정보가 충분하지 않습니다!">
-                                        <DxValidator>
-                                            <DxPatternRule message="" />
-                                        </DxValidator>
-                                    </DxTextBox>
+                                    <id-card-text-box :required="true" v-model:valueInput="contractCreacted.residentId"/>
                                 </div>
                             </div>
                             <div class="form-item">
@@ -402,6 +392,7 @@
 </template>
 <script >
 import { reactive, ref, watch, computed } from "vue";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
     CheckOutlined,
     EditOutlined,
@@ -427,9 +418,11 @@ import {
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
+import CompanyRegistrationNumberTextBox from "../../components/TextBox/CompanyRegistrationNumberTextBox.vue";
+import IdCardTextBox from "../../components/TextBox/IdCardTextBox.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+
 import mutations from "../../graphql/mutations/RqContract/index";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -445,6 +438,7 @@ import {
     DxPatternRule,
     DxStringLengthRule,
 } from "devextreme-vue/validator";
+
 export default {
     components: {
         CheckOutlined,
@@ -461,6 +455,7 @@ export default {
         DxButton,
         imgUpload,
         CustomDatepicker,
+        CompanyRegistrationNumberTextBox,
         moment,
         selectBank,
         postCode,
@@ -472,7 +467,8 @@ export default {
         DxStringLengthRule,
         DeleteOutlined,
         InfoCircleFilled,
-        DxAsyncRule
+        DxAsyncRule,
+        IdCardTextBox
     },
     data() {
         return {

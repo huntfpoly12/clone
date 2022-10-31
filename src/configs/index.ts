@@ -12,6 +12,7 @@ interface Styles {
     Grey : string,
     Black : string,
     LightGrey : string,
+    HeightInput : string
 }
 
 export  const styles : Styles = {
@@ -27,4 +28,7 @@ export  const styles : Styles = {
     Grey : "#5E6C84", //( Grey )
     Black : "#172B4D", //( Black )
     LightGrey : "#5B6A81", //( Light Grey )
+
+    // height input
+    HeightInput : "33px"
 }
