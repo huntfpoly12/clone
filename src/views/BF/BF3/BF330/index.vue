@@ -184,7 +184,7 @@ export default defineComponent({
         const originData = ref({
             filter: {
                 page: 1,
-                rows: 10,
+                rows: 20,
                 code: "",
                 name: "",
                 presidentName: "",
