@@ -15,7 +15,7 @@
                             <div>
                                 <a-row>
                                     <a-col :span="10">
-                                        <a-form-item label="총일용료" style="font-weight: bold">
+                                        <a-form-item label="총이용료" style="font-weight: bold">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(totalPrice) }}
                                             </p>
@@ -122,12 +122,7 @@
                                         </div>
                                     </a-col>
                                     <a-col :span="14">
-                                        <div style="
-                      display: flex;
-                      padding-left: 155px;
-                      margin-top: 5px;
-                      margin-bottom: 10px;
-                    ">
+                                        <div style="display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                             <a-checkbox v-model:checked="formState.checkBoxAcc4wc"
                                                 @change="handleInputACCService()" style="width: 180px">W4C</a-checkbox>
                                             <DxNumberBox v-model="formState.sSIS" :format="'#,##0'"
@@ -173,7 +168,7 @@
                                             <a-input-number type="number" min="0"
                                                 v-model:value="formState.withholdingCapacity" style="width: 150px" />
                                         </a-form-item>
-                                        <a-form-item label="원천서비스 이용료:" style="font-weight: bold; width: 605px">
+                                        <a-form-item label="원천서비스 이용료:" style="font-weight: bold; width: 565px">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(totalWithholdingService) }}
                                             </p>
@@ -196,12 +191,7 @@
                                     </a-col>
                                     <a-coll :span="8"></a-coll>
                                     <a-col :span="14">
-                                        <div style="
-                      display: flex;
-                      padding-left: 155px;
-                      margin-top: 5px;
-                      margin-bottom: 10px;
-                    ">
+                                        <div style="display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                             <a-checkbox v-model:checked="formState.checkBoxMajorInsurance"
                                                 @change="handleInputTexService()" style="width: 180px">4대보험</a-checkbox>
                                             <DxNumberBox v-model="formState.fourMajorInsurance" :format="'#,##0'"
@@ -722,7 +712,7 @@ export default defineComponent({
 
         onCreatedMemo((res) => {
             refetchMemo();
-            message.success("Created memo successfully", 4);
+            message.success("매모 추가 완료", 4);
         });
 
         // mutation update memo
@@ -863,7 +853,7 @@ export default defineComponent({
         };
 
         updateDone((res) => {
-            message.success(`Update was successful`, 4);
+            message.success(`업데이트 완료!`, 4);
             setModalVisible();
         });
 
@@ -1057,14 +1047,15 @@ export default defineComponent({
 
 ::v-deep img-preview {
     position: relative;
-    width: 100%;   
+    width: 100%;
 }
+
 ::v-deep img {
     position: relative;
     width: 100%;
     height: 345px;
     margin-top: 20px;
-      
+
 }
 
 .imgPreview img {
