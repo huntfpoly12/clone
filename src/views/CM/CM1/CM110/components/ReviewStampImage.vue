@@ -49,7 +49,7 @@ function getBase64(file: File) {
     });
 }
 export default defineComponent({
-    props: ["modalStatus", "data", "previewImageCall"],
+    props: ["modalStatus", "data"],
     components: {
         InfoCircleFilled,
     },
@@ -59,9 +59,9 @@ export default defineComponent({
         let disabledBtnPreview = ref(true);
         let triggers = ref<boolean>(false);
         watch(() => props.modalStatus, async (currentValue, oldValue) => {
-            if (typeof currentValue !== "undefined" && props.data) {
-                previewImage.value = await getBase64(props.data.file.originFileObj);
-            }
+            // if (typeof currentValue !== "undefined" && props.data) {
+            //     previewImage.value = await getBase64(props.data.file.originFileObj);
+            // }
             
         });
         const setModalVisible = () => {

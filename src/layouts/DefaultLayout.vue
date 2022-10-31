@@ -133,6 +133,9 @@ const CM130 = defineAsyncComponent(() =>
 const Test = defineAsyncComponent(() =>
 	import("../views/DefaultComponent.vue")
 );
+const Example = defineAsyncComponent(() =>
+	import("../views/base/Example.vue")
+);
 import {
 	MenuFoldOutlined,
 	MenuUnfoldOutlined,
@@ -147,6 +150,10 @@ export default defineComponent({
 	name: `LayoutDefault`,
 	data() {
 		return {
+			styles: {
+				main : this.$config_styles.Main,
+				sub : this.$config_styles.Sub,
+			},
 			user: null,
 			inputSearchText: "",
 			filteredResult: [],
@@ -171,6 +178,7 @@ export default defineComponent({
 		CM110,
 		CM130,
 		Test,
+		Example,
 		MenuFoldOutlined,
 		MenuUnfoldOutlined,
 		MailOutlined,
@@ -183,12 +191,16 @@ export default defineComponent({
 		menuData.forEach((item) => {
 			if (this.$route.fullPath.includes(item.id)) {
 				this.activeTab = item;
+				return;
+			}else if(this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard'){
+
+				this.activeTab = { name: "example", url: "/dashboard", id: "" };
 			}
 		});
 	},
 	watch: {
 		activeTab: {
-			handler(newValue) {
+			handler(newValue,oldVal) {
 				if (newValue) {
 					if (newValue.id.includes("bf-1")) {
 						this.openKeys = ["bf-000", "bf-100"];
@@ -254,7 +266,7 @@ export default defineComponent({
 		},
 
 		currentComponent() {
-			if (this.activeTab.id === "") return;
+			if (this.activeTab.id === "") return Example;
 			if (this.activeTab.id === "bf-310") return BF310;
 			if (this.activeTab.id === "bf-320") return BF320;
 			if (this.activeTab.id === "bf-330") return BF330;
@@ -263,6 +275,7 @@ export default defineComponent({
 			if (this.activeTab.id === "bf-220") return BF220;
 			if (this.activeTab.id === "cm-110") return CM110;
 			if (this.activeTab.id === "cm-130") return CM130;
+			if (this.activeTab.id === "example") return Example;
 			return Test;
 		},
 	},
@@ -296,7 +309,6 @@ export default defineComponent({
 			}
 		},
 		addMenuTab(item) {
-			console.log(item);
 			let itemNew = []
 			let id = item.split(" | ")
 			let tabAc = {}
@@ -317,7 +329,6 @@ export default defineComponent({
 			for (const key in obj) {
 				this.menuTab.push(obj[key]);
 			}
-			console.log(tabAc);
 			this.activeTab = tabAc;
 
 			// if (this.menuTab.length < 20) {
@@ -397,7 +408,7 @@ export default defineComponent({
 .ant-layout-header {
 	display: flex;
 	justify-content: space-between;
-	background: #7dbcea;
+	background: v-bind('styles.main');
 	color: #fff;
 }
 
@@ -412,7 +423,7 @@ export default defineComponent({
 
 .header-content {
 	display: block;
-	background: #91d5ff;
+	background: v-bind('styles.sub');
 	align-items: center;
 	position: relative;
 

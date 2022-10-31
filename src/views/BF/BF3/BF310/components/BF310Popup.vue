@@ -1,367 +1,527 @@
 <template>
   <div id="modal-detail-bf-310">
-    <a-modal :mask-closable="false" v-model:visible="visible" title="계약정보관리&심사 " centered @cancel="setModalVisible()"
-      width="1000px">
+    <a-modal
+      :mask-closable="false"
+      v-model:visible="visible"
+      title="계약정보관리&심사 "
+      centered
+      @cancel="setModalVisible()"
+      width="1000px"
+      :bodyStyle="{ height: '800px' }"
+    >
       <template #footer>
         <a-button @click="setModalVisible">그냥 나가기</a-button>
-        <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateSubscriptionRequest">
-          저장하고 나가기</a-button>
+        <a-button
+          key="submit"
+          type="primary"
+          :loading="loading || loadingUpdate"
+          @click="updateSubscriptionRequest"
+        >
+          저장하고 나가기</a-button
+        >
       </template>
       <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
         <div v-if="error">
           {{ error }}
         </div>
-        <Suspense v-else-if="result && result.getSubscriptionRequest">
-          <template #default>
-            <a-form :data-source="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-collapse v-model:activeKey="activeKey" accordion>
-                <a-collapse-panel key="1" header="심사정보">
-                  <a-form-item label="승인상태">
-                    <a-dropdown :trigger="['hover']">
-                      <button style="
-                          width: 200px;
-                          height: 36px;
-                          text-align: left;
-                          background: white;
-                          border: 1px solid #d9d9d9;
-                          padding: 4px 6px;
-                        ">
-                        <div style="display: flex; width: 100%">
-                          <div style="padding-right: 6px; margin-right: 0px">
-                            <span>
-                              <a-tag v-model:color="dataSelectStatus.color">{{
-                              dataSelectStatus.name
-                              }}</a-tag>
-                            </span>
-                          </div>
-                          <span
-                            style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">{{
-                            dataSelectStatus.date }}</span>
-                        </div>
-                      </button>
-                      <template #overlay>
-                        <a-table :columns="[
-                          { name: 'Name', dataIndex: 'name', key: 'name' },
-                          { title: 'date', dataIndex: 'date', key: 'date' },
-                        ]" :data-source="dataStatus" :pagination="false" :showHeader="false" :customRow="customRow">
-                          <template #bodyCell="{ column, record }">
-                            <template v-if="column.key === 'name'">
-                              <a-tag :color="record.color">{{
+        <a-form
+          :data-source="formState"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+        >
+          <a-collapse v-model:activeKey="activeKey" accordion>
+            <a-collapse-panel key="1" header="심사정보">
+              <a-form-item label="승인상태">
+                <a-dropdown :trigger="['hover']">
+                  <button
+                    style="
+                      width: 200px;
+                      height: 36px;
+                      text-align: left;
+                      background: white;
+                      border: 1px solid #d9d9d9;
+                      padding: 4px 6px;
+                    "
+                  >
+                    <div style="display: flex; width: 100%">
+                      <div style="padding-right: 6px; margin-right: 0px">
+                        <span>
+                          <a-tag v-model:color="dataSelectStatus.color">{{
+                            dataSelectStatus.name
+                          }}</a-tag>
+                        </span>
+                      </div>
+                      <span
+                        style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;"
+                        >{{  $filters.formatDate(dataSelectStatus.date) }}</span
+                      >
+                    </div>
+                  </button>
+                  <template #overlay>
+                    <a-table
+                      :columns="[
+                        { name: 'Name', dataIndex: 'name', key: 'name' },
+                        { title: 'date', dataIndex: 'date', key: 'date' },
+                      ]"
+                      :data-source="dataStatus"
+                      :pagination="false"
+                      :showHeader="false"
+                      :customRow="customRow"
+                    >
+                      <template #bodyCell="{ column, record }">
+                        <div :style="{ cursor: 'pointer' }">
+                          <template v-if="column.key === 'name'">
+                            <a-tag :color="record.color">{{
                               record.name
-                              }}</a-tag>
-                            </template>
-                            <template v-if="column.key === 'date'">
-                              {{ record.date }}
-                            </template>
+                            }}</a-tag>
                           </template>
-                        </a-table>
+                          <template v-if="column.key === 'date'">
+                            {{ $filters.formatDate(record.date) }}
+                          </template>
+                        </div>
                       </template>
-                    </a-dropdown>
-                  </a-form-item>
+                    </a-table>
+                  </template>
+                </a-dropdown>
+              </a-form-item>
 
-                  <a-form-item label="사업자코드">
-                    <a-typography-title :level="5">
-                      {{ formState.companyBizNumber }}
+              <a-form-item label="사업자코드">
+                <a-typography-title :level="5">
+                  {{ formState.companyBizNumber }}
+                </a-typography-title>
+              </a-form-item>
+              <a-row>
+                <a-col :span="12">
+                  <a-form-item label="신청코드">
+                    <a-typography-title :level="5"
+                      >{{ formState.code }}
                     </a-typography-title>
                   </a-form-item>
-                  <a-row>
-                    <a-col :span="12">
-                      <a-form-item label="신청코드">
-                        <a-typography-title :level="5">{{ formState.code }}
-                        </a-typography-title>
-                      </a-form-item>
+                </a-col>
+                <a-col :span="12">
+                  <a-form-item label="신청일자">
+                    <a-typography-title :level="5">
+                      {{ $filters.formatDate(formState.createdAt) }}
+                    </a-typography-title>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-form-item label="심사메모">
+                <a-input v-model:value="value" placeholder="Basic usage" />
+              </a-form-item>
+              <a-form-item label="약관동의">
+                <a-button type="link" style="padding: 0px">서비스약관</a-button>
+                |
+                <a-button type="link" style="padding: 0px"
+                  >개인정보제공활용동의</a-button
+                >
+                |
+                <a-button type="link" style="padding: 0px"
+                  >회계서비스약관동의</a-button
+                >
+                |
+                <a-button type="link" style="padding: 0px"
+                  >원천서비스약관동의</a-button
+                >
+              </a-form-item>
+            </a-collapse-panel>
+            <a-collapse-panel key="2" header="사업자정보">
+              <div style="height: 400px; overflow-y: scroll">
+                <a-form-item label="상 호" class="clr">
+                  <a-input v-model:value="formState.companyName" />
+                </a-form-item>
+                <a-form-item label="사업자등록번호" class="clr">
+                  <number-box
+                      width="300px"
+                      :disabled="!canChangeableBizNumber"
+                      v-model:valueInput="formState.companyBizNumber"
+                      :rtlEnabled="false"
+                      mode="text"
+                    />
+                </a-form-item>
+                <a-row>
+                  <a-col :span="12">
+                    <a-form-item label="사업자유형" class="clr">
+                      <a-radio-group v-model:value="formState.companyBizType">
+                        <a-radio :value="1" class="clb" checked
+                          >법인사업자</a-radio
+                        >
+                        <a-radio :value="2" class="clb">개인사업자</a-radio>
+                      </a-radio-group>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :span="2">
+                    <a-form-item
+                      :label="changeTypeCompany(formState.companyBizType)"
+                    >
+                      <a-input
+                        placeholder="800123-1234567"
+                        style="width: 300px"
+                        v-model:value="formState.companyResidentId"
+                      />
+                    </a-form-item>
+                  </a-col>
+                </a-row>
+                <a-form-item label="주소" class="clr">
+                  <a-row :gutter="[0, 4]">
+                    <a-col :span="24">
+                      <a-row>
+                        <a-col :span="12">
+                          <a-input
+                            style="width: 100%"
+                            v-model:value="formState.companyZipcode"
+                            disabled
+                          />
+                        </a-col>
+                        <a-col :span="12">
+                          <div style="margin-left: 5px">
+                            <a-button type="primary" ghost>
+                              <postCode @dataAddress="funcAddress" />
+                            </a-button>
+                          </div>
+                        </a-col>
+                      </a-row>
                     </a-col>
-                    <a-col :span="12">
-                      <a-form-item label="신청일자">
-                        <a-typography-title :level="5">
-                          {{ formarDate(formState.createdAt) }}
-                        </a-typography-title>
-                      </a-form-item>
+                    <a-col :span="24">
+                      <a-row>
+                        <a-input
+                          v-model:value="formState.companyRoadAddress"
+                          disabled
+                        />
+                      </a-row>
+                    </a-col>
+                    <a-col :span="24">
+                      <a-row>
+                        <a-input
+                          v-model:value="formState.companyAddressExtend"
+                        />
+                      </a-row>
                     </a-col>
                   </a-row>
-                  <a-form-item label="심사메모">
-                    <a-input v-model:value="value" placeholder="Basic usage" />
-                  </a-form-item>
-                  <a-form-item label="약관동의">
-                    <a-button type="link" style="padding: 0px">서비스약관</a-button>
-                    |
-                    <a-button type="link" style="padding: 0px">개인정보제공활용동의</a-button>
-                    |
-                    <a-button type="link" style="padding: 0px">회계서비스약관동의</a-button>
-                    |
-                    <a-button type="link" style="padding: 0px">원천서비스약관동의</a-button>
-                  </a-form-item>
-                </a-collapse-panel>
-                <a-collapse-panel key="2" header="사업자정보">
-                  <a-form-item label="상 호" class="clr">
-                    <a-input v-model:value="formState.companyName" />
-                  </a-form-item>
-                  <a-form-item label="사업자등록번호" class="clr">
-                    <a-input style="width: 300px" :value="formState.companyBizNumber"
-                      :disabled="!canChangeableBizNumber" />
-                  </a-form-item>
-                  <a-row>
-                    <a-col :span="12">
-                      <a-form-item label="사업자유형" class="clr">
-                        <a-radio-group v-model:value="formState.companyBizType">
-                          <a-radio :value="1" class="clb" checked>법인사업자</a-radio>
-                          <a-radio :value="2" class="clb">개인사업자</a-radio>
-                        </a-radio-group>
-                      </a-form-item>
-                    </a-col>
-                    <a-col :span="2">
-                      <a-form-item :label="changeTypeCompany(formState.companyBizType)">
-                        <a-input placeholder="800123-1234567" style="width: 300px"
-                          v-model:value="formState.companyResidentId" />
-                      </a-form-item>
-                    </a-col>
-                  </a-row>
-                  <a-form-item label="주소" class="clr">
-                    <a-row :gutter="[0, 4]">
-                      <a-col :span="24">
-                        <a-row>
-                          <a-col :span="12">
-                            <a-input style="width: 100%" v-model:value="formState.companyZipcode" disabled />
-                          </a-col>
-                          <a-col :span="12">
-                            <div style="margin-left: 5px">
-                              <a-button type="primary" ghost>
-                                <postCode @dataAddress="funcAddress" />
-                              </a-button>
-                            </div>
-                          </a-col>
-                        </a-row>
-                      </a-col>
-                      <a-col :span="24">
-                        <a-row>
-                          <a-input v-model:value="formState.companyRoadAddress" disabled />
-                        </a-row>
-                      </a-col>
-                      <a-col :span="24">
-                        <a-row>
-                          <a-input v-model:value="formState.companyAddressExtend" />
-                        </a-row>
+                  <a-row> </a-row>
+                </a-form-item>
+
+                <div style="display: flex">
+                  <div>
+                    <a-row :gutter="[16, 16]">
+                      <a-col :span="15">
+                        <a-form-item label="연락처" class="clr">
+                          <a-input v-model:value="formState.companyPhone" />
+                        </a-form-item>
+                        <a-form-item label="팩 스">
+                          <a-input v-model:value="formState.companyFax" />
+                        </a-form-item>
                       </a-col>
                     </a-row>
-                    <a-row> </a-row>
-                  </a-form-item>
+                    <imgUpload
+                      :title="titleModal"
+                      @update-img="getUrlLicenseFile"
+                      style="margin-top: 10px"
+                    />
+                  </div>
+                  <a-col :span="7">
+                    <div v-if="imageLicenseFile" class="img-preview">
+                      <a-image :src="imageLicenseFile" />
+                    </div>
+                    <div v-else class="img-preview">
+                      <img src="../../../../../assets/images/imgdefault.jpg" />
+                    </div>
+                    <div v-if="licenseFileName">
+                      <span style="padding-right: 10px">{{
+                        licenseFileName
+                      }}</span>
+                      <delete-outlined
+                        @click="removeLicenseFile"
+                        style="color: red; cursor: pointer"
+                      />
+                    </div>
+                  </a-col>
+                </div>
+              </div>
+            </a-collapse-panel>
+            <a-collapse-panel key="3" header="대표자정보">
+              <a-form-item has-feedback label="대표자명" class="clr">
+                <a-input
+                  placeholder="홍길동"
+                  autocomplete="off"
+                  style="width: 300px"
+                  v-model:value="formState.presidentContentName"
+                />
+              </a-form-item>
+              <a-form-item has-feedback label="생년월일" class="clr">
+                <a-input
+                  placeholder="19620820"
+                  autocomplete="off"
+                  style="width: 300px"
+                  v-model:value="formState.presidentBirthday"
+                />
+              </a-form-item>
+              <a-form-item has-feedback label="휴대폰번호" class="clr">
+                <a-input
+                  placeholder="01098765432"
+                  style="width: 200px"
+                  v-model:value="formState.presidentPhone"
+                />
+              </a-form-item>
 
+              <a-form-item
+                has-feedback
+                label="이메일"
+                class="clr"
+                :name="['user', 'email']"
+                :rules="[{ type: 'email' }]"
+              >
+                <a-input
+                  style="width: 200px"
+                  v-model:value="formState.presidentEmail"
+                />
+              </a-form-item>
+            </a-collapse-panel>
+            <a-collapse-panel
+              key="4"
+              header="회계서비스신청"
+              class="popup-scroll"
+            >
+              <div style="height: 400px; overflow-y: scroll">
+                <a-checkbox v-model:checked="checked"
+                  >회계서비스 신청합니다.</a-checkbox
+                >
+                <div>
+                  <a-card
+                    title="⁙ 운영사업"
+                    :bordered="false"
+                    style="width: 100%"
+                    :headStyle="{ padding: '5px', color: 'red' }"
+                    bodyStyle="padding: 0px 0px"
+                  >
+                  </a-card>
+                  <div id="data-grid-demo">
+                    <DxDataGrid
+                      id="gridContainer"
+                      :data-source="formState.accountingfacilityBusinesses"
+                      :show-borders="true"
+                      :selected-row-keys="selectedItemKeys"
+                    >
+                      <DxEditing
+                        :use-icons="true"
+                        :allow-updating="true"
+                        :allow-adding="true"
+                        :allow-deleting="true"
+                        template="button-template"
+                        mode="cell"
+                      >
+                        <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                      </DxEditing>
+                      <template #button-template>
+                        <DxButton icon="plus" />
+                      </template>
+                      <DxPaging :enabled="false" />
+                      <DxColumn
+                        data-field="No"
+                        :allow-editing="false"
+                        :width="50"
+                        caption="#"
+                        cell-template="indexCell"
+                      />
+                      <template #indexCell="{ data }">
+                        <div>{{ data.rowIndex + 1 }}</div>
+                      </template>
+
+                      <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                      <DxColumn data-field="facilityBizType" caption="사업분류">
+                        <DxLookup
+                          :data-source="facilityBizType"
+                          value-expr="v"
+                          display-expr="n"
+                        />
+                      </DxColumn>
+                      <DxColumn
+                        data-field="startYearMonth"
+                        caption="서비스시작년월"
+                        data-type="date"
+                        :format="'yyyy-MM-dd'"
+                      />
+                      <DxColumn
+                        :width="100"
+                        data-field="capacity"
+                        caption="정원수 (명)"
+                      />
+
+                      <DxToolbar>
+                        <DxItem name="addRowButton" />
+                      </DxToolbar>
+                    </DxDataGrid>
+                  </div>
+                  <a-form-item label="장기요양기관등록번호" class="clr">
+                    <a-input
+                      placeholder="1234567898"
+                      style="width: 250px"
+                      v-model:value="
+                        formState.accountinglongTermCareInstitutionNumber
+                      "
+                    />
+                  </a-form-item>
                   <div style="display: flex">
                     <div>
-                      <a-row :gutter="[16, 16]">
-                        <a-col :span="15">
-                          <a-form-item label="연락처" class="clr">
-                            <a-input v-model:value="formState.companyPhone" />
-                          </a-form-item>
-                          <a-form-item label="팩 스">
-                            <a-input v-model:value="formState.companyFax" />
-                          </a-form-item>
-                        </a-col>
-                      </a-row>
-                      <imgUpload :title="titleModal" @update-img="getUrlLicenseFile" style="margin-top: 10px" />
+                      <imgUpload
+                        :title="titleModal"
+                        @update-img="getregCardFile"
+                        style="margin-top: 10px"
+                      />
+                      <div>
+                    <a-row>
+                      <a-col :span="12">
+                        <p>부가서비스</p>
+                      </a-col>
+                      <a-col :span="12">
+                        <a-checkbox
+                          v-model:checked="formState.accountingServiceTypes[0]"
+                        >
+                          회계입력대행서비스</a-checkbox
+                        >
+                      </a-col>
+                    </a-row>
+                  </div>
                     </div>
                     <a-col :span="7">
-                      <div v-if="imageLicenseFile" class="img-preview">
-                        <a-image :src="imageLicenseFile" />
+                      <div v-if="imageRegCardFile" class="img-preview">
+                        <a-image :src="imageRegCardFile" />
                       </div>
                       <div v-else class="img-preview">
-                        <img src="../../../../../assets/images/imgdefault.jpg" />
+                        <img
+                          src="../../../../../assets/images/imgdefault.jpg"
+                        />
                       </div>
-                      <div v-if="licenseFileName">
-                        <span style="padding-right: 10px">{{ licenseFileName }}</span>
-                        <delete-outlined @click="removeLicenseFile" style="color: red; cursor: pointer" />
+                      <div v-if="regCardFileName">
+                        <span style="padding-right: 10px">{{
+                          regCardFileName
+                        }}</span>
+                        <delete-outlined
+                          @click="removeRegCardFile"
+                          style="color: red; cursor: pointer"
+                        />
                       </div>
                     </a-col>
                   </div>
-                </a-collapse-panel>
-                <a-collapse-panel key="3" header="대표자정보">
-                  <a-form-item has-feedback label="대표자명" class="clr">
-                    <a-input placeholder="홍길동" autocomplete="off" style="width: 300px"
-                      v-model:value="formState.presidentContentName" />
+                </div>
+              </div>
+            </a-collapse-panel>
+            <a-collapse-panel key="5" header="원천서비스신청">
+              <div>
+                <a-checkbox v-model:checked="checked"
+                  >회계서비스 신청합니다.</a-checkbox
+                >
+                <div style="margin-top: 20px">
+                  <a-form-item label="서비스 시작년월" class="clr">
+                    <div style="width: 200px">
+                      <month-picker-box
+                        v-model:value="formState.withholdingYearMonth"
+                        className="0"
+                      />
+                    </div>
                   </a-form-item>
-                  <a-form-item has-feedback label="생년월일" class="clr">
-                    <a-input placeholder="19620820" autocomplete="off" style="width: 300px"
-                      v-model:value="formState.presidentBirthday" />
+                  <a-form-item label="직 원 수" class="clr">
+                    <number-box
+                      width="100px"
+                      :min="0"
+                      :spinButtons="true"
+                      v-model:valueInput="formState.withholdingCapacity"
+                    />
                   </a-form-item>
-                  <a-form-item has-feedback label="휴대폰번호" class="clr">
-                    <a-input placeholder="01098765432" style="width: 200px" v-model:value="formState.presidentPhone" />
+                  <a-form-item label="부가서비스">
+                    <a-checkbox
+                      v-model:checked="formState.withholdingServiceTypes[0]"
+                    >
+                      4대보험신고서비스</a-checkbox
+                    >
                   </a-form-item>
-
-                  <a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
-                    :rules="[{ type: 'email' }]">
-                    <a-input style="width: 200px" v-model:value="formState.presidentEmail" />
-                  </a-form-item>
-                </a-collapse-panel>
-                <a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
-                  <div>
-                    <a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
-                    <div>
-                      <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                        :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
-                      </a-card>
-                      <div id="data-grid-demo">
-                        <DxDataGrid id="gridContainer" :data-source="formState.accountingfacilityBusinesses"
-                          :show-borders="true" :selected-row-keys="selectedItemKeys">
-                          <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                            :allow-deleting="true" template="button-template" mode="cell">
-                            <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                          </DxEditing>
-                          <template #button-template>
-                            <DxButton icon="plus" />
-                          </template>
-                          <DxPaging :enabled="false" />
-                          <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
-                            cell-template="indexCell" />
-                          <template #indexCell="{ data }">
-                            <div>{{ data.rowIndex + 1 }}</div>
-                          </template>
-
-                          <DxColumn data-field="name" caption="사업명 (중복불가)" />
-                          <DxColumn data-field="facilityBizType" caption="사업분류">
-                            <DxLookup :data-source="facilityBizType" value-expr="v" display-expr="n" />
-                          </DxColumn>
-                          <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
-                            :format="'yyyy-MM-dd'" />
-                          <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
-
-                          <DxToolbar>
-                            <DxItem name="addRowButton" />
-                          </DxToolbar>
-                        </DxDataGrid>
-                      </div>
-                      <a-form-item label="장기요양기관등록번호" class="clr">
-                        <a-input placeholder="1234567898" style="width: 250px"
-                          v-model:value="formState.accountinglongTermCareInstitutionNumber" />
-                      </a-form-item>
-                      <div style="display: flex">
-                        <div>
-                          <imgUpload :title="titleModal" @update-img="getregCardFile" style="margin-top: 10px" />
-                        </div>
-                        <a-col :span="7">
-                          <div v-if="imageRegCardFile" class="img-preview">
-                            <a-image :src="imageRegCardFile" />
-                          </div>
-                          <div v-else class="img-preview">
-                            <img src="../../../../../assets/images/imgdefault.jpg" />
-                          </div>
-                          <div v-if="regCardFileName">
-                            <span style="padding-right: 10px">{{ regCardFileName }}</span>
-                            <delete-outlined @click="removeRegCardFile" style="color: red; cursor: pointer" />
-                          </div>
-                        </a-col>
-                      </div>
+                </div>
+              </div>
+            </a-collapse-panel>
+            <a-collapse-panel
+              key="6"
+              header="CMS (자동이체출금) 계좌 정보 입력"
+            >
+              <a-form-item label="출금은행" class="clr">
+                <selectBank
+                  :selectValue="formState.cmsBankType"
+                  width="150px"
+                />
+              </a-form-item>
+              <a-form-item label="출금계좌번호" class="clr">
+                <a-input
+                  placeholder="100100056489011"
+                  v-model:value="formState.accountNumber"
+                  style="width: 250px"
+                />
+              </a-form-item>
+              <a-form-item label="예금주명" class="clr">
+                <a-input
+                  placeholder="주식회사 타운소프트비나"
+                  v-model:value="formState.ownerName"
+                  style="width: 250px"
+                />
+              </a-form-item>
+              <a-form-item
+                label="사업자(주민)등록번호:"
+                class="d-flex align-items-start clr"
+              >
+                <a-input
+                  placeholder="100100056489011"
+                  v-model:value="formState.ownerBizNumber"
+                  style="width: 250px"
+                />
+                <div class="noteImage">
+                  <a-row>
+                    <a-col :span="1">
                       <div>
-                        <a-row>
-                          <a-col :span="12">
-                            <p>부가서비스</p>
-                          </a-col>
-                          <a-col :span="12">
-                            <a-checkbox v-model:checked="
-                              formState.accountingServiceTypes[0]
-                            ">
-                              회계입력대행서비스</a-checkbox>
-                          </a-col>
-                        </a-row>
+                        <InfoCircleFilled />
                       </div>
-                    </div>
-                  </div>
-                </a-collapse-panel>
-                <a-collapse-panel key="5" header="원천서비스신청">
-                  <div>
-                    <a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
-                    <div style="margin-top: 20px">
-                      <a-form-item label="서비스 시작년월" class="clr">
-                        <div style="width: 200px">
-                          <CustomDatepicker :valueDate="formState.withholdingYearMonth" className="0" />
-                        </div>
-                      </a-form-item>
-                      <a-form-item label="직 원 수" class="clr">
-                        <a-input-number style="width: 100px" min="0" v-model:value="formState.withholdingCapacity" />
-                      </a-form-item>
-                      <a-form-item label="부가서비스">
-                        <a-checkbox v-model:checked="formState.withholdingServiceTypes[0]">
-                          4대보험신고서비스</a-checkbox>
-                      </a-form-item>
-                    </div>
-                  </div>
-                </a-collapse-panel>
-                <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
-                  <a-form-item label="출금은행" class="clr">
-                    <selectBank :selectValue="formState.cmsBankType" width="150px" />
-                  </a-form-item>
-                  <a-form-item label="출금계좌번호" class="clr">
-                    <a-input placeholder="100100056489011" v-model:value="formState.accountNumber"
-                      style="width: 250px" />
-                  </a-form-item>
-                  <a-form-item label="예금주명" class="clr">
-                    <a-input placeholder="주식회사 타운소프트비나" v-model:value="formState.ownerName" style="width: 250px" />
-                  </a-form-item>
-                  <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
-                    <a-input placeholder="100100056489011" v-model:value="formState.ownerBizNumber"
-                      style="width: 250px" />
-                    <div class="noteImage">
-                      <a-row>
-                        <a-col :span="1">
-                          <div>
-                            <InfoCircleFilled />
-                          </div>
-                        </a-col>
-                        <a-col :span="22">
-                          <div class="noteText">
-                            <p>
-                              예금주의 사업자등록번호 또는 주민등록번호입니다.
-                            </p>
-                          </div>
-                        </a-col>
-                      </a-row>
-                    </div>
-                  </a-form-item>
-                  <a-form-item label="자동이체출금일자" class="clr">
-                    <a-radio-group v-model:value="formState.withdrawDay">
-                      <a-radio class="clb" :style="radioStyle" value="매월 5일">매월 5일</a-radio>
-                      <a-radio class="clb" :style="radioStyle" value="매월 12일">매월 12일</a-radio>
-                      <a-radio class="clb" :style="radioStyle" value="매월 19일">매월 19일</a-radio>
-                    </a-radio-group>
-                  </a-form-item>
-                </a-collapse-panel>
-                <a-collapse-panel key="7" header="기타">
-                  <a-form-item label="영업관리담당">
-                    <a-select ref="select" v-model:value="formState.extraSalesRepresentativeId" style="width: 200px">
-                      <a-select-option :value="1">A 대리점</a-select-option>
-                      <a-select-option :value="2">농협</a-select-option>
-                      <a-select-option :value="3">C 영업사원</a-select-option>
-                      <a-select-option :value="4">D 영업사원</a-select-option>
-                      <a-select-option :value="5">E 본사영업사원</a-select-option>
-                    </a-select>
-                  </a-form-item>
-                  <a-form-item label="전달사항">
-                    <a-textarea v-model:value="formState.extraComment" placeholder="전달사항입력" />
-                  </a-form-item>
-                </a-collapse-panel>
-              </a-collapse>
-            </a-form>
-          </template>
-          <template #fallback>
-            <div>Loading...</div>
-          </template>
-        </Suspense>
+                    </a-col>
+                    <a-col :span="22">
+                      <div class="noteText">
+                        <p>예금주의 사업자등록번호 또는 주민등록번호입니다.</p>
+                      </div>
+                    </a-col>
+                  </a-row>
+                </div>
+              </a-form-item>
+              <a-form-item label="자동이체출금일자" class="clr">
+                <a-radio-group v-model:value="formState.withdrawDay">
+                  <a-radio class="clb" :style="radioStyle" value="매월 5일"
+                    >매월 5일</a-radio
+                  >
+                  <a-radio class="clb" :style="radioStyle" value="매월 12일"
+                    >매월 12일</a-radio
+                  >
+                  <a-radio class="clb" :style="radioStyle" value="매월 19일"
+                    >매월 19일</a-radio
+                  >
+                </a-radio-group>
+              </a-form-item>
+            </a-collapse-panel>
+            <a-collapse-panel key="7" header="기타">
+              <a-form-item label="영업관리담당">
+                <ListSalesDropdown
+                  v-model:selected="formState.extraSalesRepresentativeId"
+                  width="200px"
+                />
+              </a-form-item>
+              <a-form-item label="전달사항">
+                <a-textarea
+                  v-model:value="formState.extraComment"
+                  placeholder="전달사항입력"
+                />
+              </a-form-item>
+            </a-collapse-panel>
+          </a-collapse>
+        </a-form>
       </a-spin>
     </a-modal>
   </div>
 </template>
 <script lang="ts">
-import { FacilityBizType } from "@bankda/jangbuda-common";
-import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import selectBank from "../../../../../components/selectBank.vue";
-import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
-import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
-import postCode from "../../../../../components/postCode.vue";
-
-import { message } from "ant-design-vue";
-import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch } from "vue";
-import DxDropDownBox from "devextreme-vue/drop-down-box";
-
 import {
   DxDataGrid,
   DxColumn,
@@ -378,10 +538,23 @@ import {
   MinusCircleOutlined,
   InfoCircleFilled,
   PlusOutlined,
-  DeleteOutlined
+  DeleteOutlined,
 } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
+import { message } from "ant-design-vue";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+import { FacilityBizType } from "@bankda/jangbuda-common";
+import DxDropDownBox from "devextreme-vue/drop-down-box";
+import MonthPickerBox from "../../../../../components/DateTimeBox/MonthPickerBox.vue";
+import DefaultTextBox from "../../../../../components/TextBox/DefaultTextBox.vue";
+import NumberBox from "../../../../../components/NumberBox/NumberBox.vue";
+import ListSalesDropdown from "../../../../../components/ListSalesDropdown.vue";
+import selectBank from "../../../../../components/selectBank.vue";
+import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
+import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
+import postCode from "../../../../../components/postCode.vue";
 import imgUpload from "../../../../../components/UploadImage.vue";
+
 export default defineComponent({
   props: {
     modalStatus: {
@@ -417,7 +590,10 @@ export default defineComponent({
     UploadOutlined,
     MinusCircleOutlined,
     DeleteOutlined,
-    CustomDatepicker,
+    MonthPickerBox,
+    NumberBox,
+    DefaultTextBox,
+    ListSalesDropdown,
     InfoCircleFilled,
     PlusOutlined,
     imgUpload,
@@ -516,7 +692,7 @@ export default defineComponent({
       presidentPhone: "",
       presidentEmail: "",
       accountingfacilityBusinesses: [],
-      accountinglongTermCareInstitutionNumber: '',
+      accountinglongTermCareInstitutionNumber: "",
       accountingServiceTypes: [],
 
       withholdingYearMonth: "",
@@ -574,8 +750,8 @@ export default defineComponent({
           trigger.value = true;
           refetch();
           Object.assign(formState, initialFormState);
-
         } else {
+          Object.assign(formState, initialFormState);
           // reset image if close popup
           regCardFileId.value = "";
           imageRegCardFile.value = "";
@@ -585,7 +761,7 @@ export default defineComponent({
           visible.value = newValue;
 
           trigger.value = false;
-          
+
           activeKey.value = 1;
         }
       }
@@ -599,9 +775,10 @@ export default defineComponent({
       })
     );
 
-    // query check if can be change business registration number 
+    // query check if can be change business registration number
     const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
-      queries.isSubscriptionRequestChangeableBizNumber, dataQueryCheckPer,
+      queries.isSubscriptionRequestChangeableBizNumber,
+      dataQueryCheckPer,
       () => ({
         enabled: triggerCheckPer.value,
         fetchPolicy: "no-cache",
@@ -610,23 +787,30 @@ export default defineComponent({
 
     // watch result resCheckPerEdit
     watch(resCheckPerEdit, (value) => {
-      canChangeableBizNumber.value = value.isSubscriptionRequestChangeableBizNumber;
+      canChangeableBizNumber.value =
+        value.isSubscriptionRequestChangeableBizNumber;
     });
 
     watch(result, (value) => {
       if (value && value.getSubscriptionRequest) {
-        // set value license 
-        imageLicenseFile.value = value.getSubscriptionRequest.content.company.license.url;
-        licenseFileName.value = value.getSubscriptionRequest.content.company.license.name;
+        // set value license
+        imageLicenseFile.value =
+          value.getSubscriptionRequest.content.company.license.url;
+        licenseFileName.value =
+          value.getSubscriptionRequest.content.company.license.name;
 
-        // set value Term Care Institution 
-        let faBusinesses = value.getSubscriptionRequest.content.accounting.facilityBusinesses;
+        // set value Term Care Institution
+        let faBusinesses =
+          value.getSubscriptionRequest.content.accounting.facilityBusinesses;
         console.log(faBusinesses);
-        if(faBusinesses.length > 0 && faBusinesses[0].registrationCard != null){
+        if (
+          faBusinesses.length > 0 &&
+          faBusinesses[0].registrationCard != null
+        ) {
           imageRegCardFile.value = faBusinesses[0].registrationCard.url;
           regCardFileName.value = faBusinesses[0].registrationCard.name;
         }
-        
+
         formState.id = value.getSubscriptionRequest.id;
         formState.status = value.getSubscriptionRequest.status;
         formState.code = value.getSubscriptionRequest.code;
@@ -709,7 +893,12 @@ export default defineComponent({
           value.getSubscriptionRequest.content.accounting.facilityBusinesses;
         formState.accountingServiceTypes =
           value.getSubscriptionRequest.content.accounting.accountingServiceTypes;
-        formState.accountinglongTermCareInstitutionNumber = value.getSubscriptionRequest.content.accounting.facilityBusinesses.length > 0 ? value.getSubscriptionRequest.content.accounting.facilityBusinesses[0].longTermCareInstitutionNumber : '';
+        formState.accountinglongTermCareInstitutionNumber =
+          value.getSubscriptionRequest.content.accounting.facilityBusinesses
+            .length > 0
+            ? value.getSubscriptionRequest.content.accounting
+                .facilityBusinesses[0].longTermCareInstitutionNumber
+            : "";
 
         formState.withholdingYearMonth =
           value.getSubscriptionRequest.content.withholding.startYearMonth;
@@ -751,51 +940,46 @@ export default defineComponent({
         formState.active = value.getSubscriptionRequest.active;
 
         // set date list status value
-        dataStatus[0].date = formarDate(value.getSubscriptionRequest.createdAt);
-        dataStatus[1].date = formarDate(value.getSubscriptionRequest.createdAt);
+        dataStatus[0].date = value.getSubscriptionRequest.createdAt;
+        dataStatus[1].date = value.getSubscriptionRequest.createdAt;
         dataStatus[2].date = value.getSubscriptionRequest.approvedAt
-          ? formarDate(value.getSubscriptionRequest.approvedAt)
-          : formarDate(value.getSubscriptionRequest.createdAt);
+          ? value.getSubscriptionRequest.approvedAt
+          : value.getSubscriptionRequest.createdAt;
         dataStatus[3].date = value.getSubscriptionRequest.approvedAt
-          ? formarDate(value.getSubscriptionRequest.rejectedAt)
-          : formarDate(value.getSubscriptionRequest.createdAt);
+          ? value.getSubscriptionRequest.rejectedAt
+          : value.getSubscriptionRequest.createdAt;
         // set status subcription
         switch (value.getSubscriptionRequest.status) {
           case 10:
             dataSelectStatus.name = "신청";
             dataSelectStatus.color = "red";
-            dataSelectStatus.date = formarDate(
-              value.getSubscriptionRequest.createdAt
-            );
+            dataSelectStatus.date = value.getSubscriptionRequest.createdAt;
             break;
           case 20:
             dataSelectStatus.name = "심사중";
             dataSelectStatus.color = "blue";
-            dataSelectStatus.date = formarDate(
-              value.getSubscriptionRequest.createdAt
-            );
+            dataSelectStatus.date = value.getSubscriptionRequest.createdAt;
             break;
           case 30:
             dataSelectStatus.name = "승인";
             dataSelectStatus.color = "green";
-            dataSelectStatus.date = formarDate(
-              value.getSubscriptionRequest.approvedAt
-            );
+            dataSelectStatus.date = value.getSubscriptionRequest.approvedAt;
             break;
           case 99:
             dataSelectStatus.name = "반려";
             dataSelectStatus.color = "grey";
-            dataSelectStatus.date = formarDate(
-              value.getSubscriptionRequest.rejectedAt
-            );
+            dataSelectStatus.date = value.getSubscriptionRequest.rejectedAt;
             break;
           default:
             break;
         }
         triggerCheckPer.value = true;
-        dataQueryCheckPer.value = { id: value.getSubscriptionRequest.id, bizNumber: value.getSubscriptionRequest.companyBizNumber };
-        // trigger query check if can be change business registration number 
-        refetchCheckPer()
+        dataQueryCheckPer.value = {
+          id: value.getSubscriptionRequest.id,
+          bizNumber: value.getSubscriptionRequest.companyBizNumber,
+        };
+        // trigger query check if can be change business registration number
+        refetchCheckPer();
       }
     });
     const changeTypeCompany = (bizType: number) => {
@@ -817,11 +1001,6 @@ export default defineComponent({
         },
       };
     };
-
-    const formarDate = (date: any) => {
-      return dayjs(date).format("YYYY/MM/DD");
-    };
-
     const funcAddress = (data: any) => {
       formState.companyZipcode = data.zonecode;
       formState.companyRoadAddress = data.roadAddress;
@@ -846,10 +1025,10 @@ export default defineComponent({
       onDone: updateDone,
     } = useMutation(mutations.updateSubscriptionRequest);
 
-    // query create company by subscription 
-    const {
-      mutate: actionCreateCompany
-    } = useMutation(mutations.createCompanyBySubscriptionRequest);
+    // query create company by subscription
+    const { mutate: actionCreateCompany } = useMutation(
+      mutations.createCompanyBySubscriptionRequest
+    );
 
     updateDone((res) => {
       if (res.data.updateSubscriptionRequest.status == 30) {
@@ -866,15 +1045,22 @@ export default defineComponent({
     const updateSubscriptionRequest = (e: any) => {
       let customAccountingfacilityBusinesses: any = [];
       if (formState.accountingfacilityBusinesses) {
-        customAccountingfacilityBusinesses = formState.accountingfacilityBusinesses.map((facilityBusinesses: any) => ({
-          longTermCareInstitutionNumber: formState.accountinglongTermCareInstitutionNumber,
-          capacity: facilityBusinesses.capacity,
-          facilityBizType: facilityBusinesses.facilityBizType,
-          name: facilityBusinesses.name,
-          registrationCard: facilityBusinesses.registrationCard,
-          registrationCardFileStorageId: regCardFileId.value == '' ? facilityBusinesses.registrationCardFileStorageId : regCardFileId.value,
-          startYearMonth: facilityBusinesses.startYearMonth,
-        }));
+        customAccountingfacilityBusinesses =
+          formState.accountingfacilityBusinesses.map(
+            (facilityBusinesses: any) => ({
+              longTermCareInstitutionNumber:
+                formState.accountinglongTermCareInstitutionNumber,
+              capacity: facilityBusinesses.capacity,
+              facilityBizType: facilityBusinesses.facilityBizType,
+              name: facilityBusinesses.name,
+              registrationCard: facilityBusinesses.registrationCard,
+              registrationCardFileStorageId:
+                regCardFileId.value == ""
+                  ? facilityBusinesses.registrationCardFileStorageId
+                  : regCardFileId.value,
+              startYearMonth: facilityBusinesses.startYearMonth,
+            })
+          );
       }
 
       // process data befor handle update
@@ -970,7 +1156,7 @@ export default defineComponent({
       formState.companyLicenseFileStorageId = img.id;
       imageLicenseFile.value = img.url;
       licenseFileName.value = img.fileName;
-    }
+    };
 
     const removeLicenseFile = () => {
       imageLicenseFile.value = "";
@@ -982,7 +1168,7 @@ export default defineComponent({
       regCardFileId.value = img.id;
       imageRegCardFile.value = img.url;
       regCardFileName.value = img.fileName;
-    }
+    };
 
     const removeRegCardFile = () => {
       regCardFileId.value = "";
@@ -1019,139 +1205,9 @@ export default defineComponent({
       removeLicenseFile,
     };
   },
-  methods: {
-    formarDate(date: any) {
-      return dayjs(date).format("YYYY/MM/DD");
-    },
-  },
 });
 </script> 
 
 <style lang="scss" scoped>
-// ::v-deep #modal-detail-bf-310 {
-::v-deep .clr {
-  label {
-    color: red;
-  }
-}
-
-::v-deep .clr-text {
-  color: red;
-}
-
-.clb {
-  color: black !important;
-}
-
-.ant-select {
-  width: 145px;
-}
-
-.dx-select-checkbox {
-  display: inline-block !important;
-}
-
-.noteText p {
-  margin-bottom: 1px;
-}
-
-.noteImage {
-  font-size: 11px;
-  width: 100%;
-  padding-top: 2px;
-}
-
-.ant-card-head-title {
-  padding: 0px;
-}
-
-.ant-form-item {
-  margin-bottom: 4px;
-}
-
-.title-number-modal {
-  margin-top: 7px;
-}
-
-.ant-collapse {
-  .ant-collapse-item {
-    .ant-collapse-header {
-      padding: 7px;
-    }
-  }
-}
-
-.ant-form-item-label {
-  text-align: left;
-}
-
-.ant-card-extra {
-  padding: 0px;
-}
-
-.ant-card-head {
-  min-height: 30px;
-}
-
-.ant-table-thead {
-  tr {
-    th {
-      padding: 7px;
-    }
-  }
-}
-
-.ant-table-tbody {
-  tr {
-    td {
-      padding: 7px;
-    }
-  }
-}
-
-::v-deep .ant-table-tbody>tr>td {
-  padding: 5 10px !important;
-}
-
-::v-deep .ant-table-cell {
-  padding: 10px !important;
-}
-
-.ant-card {
-  height: 45px;
-}
-
-::v-deep .dx-toolbar .dx-toolbar-after {
-  margin-top: -35px !important;
-}
-
-::v-deep .dx-datagrid-headers.dx-datagrid-nowrap {
-  margin-top: -35px;
-}
-
-::v-deep .dx-texteditor-input {
-  text-align: right;
-}
-
-#data-grid-demo {
-  margin-bottom: 10px;
-}
-
-::v-deep img-preview {
-    position: relative;
-    width: 100%;   
-}
-::v-deep img {
-    position: relative;
-    width: 100%;
-    height: 345px;
-    margin-top: 20px;
-      
-}
-
-.imgPreview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+@import "../style/popupStyle.scss";
 </style>
