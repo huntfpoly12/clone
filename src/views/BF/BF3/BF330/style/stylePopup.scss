@@ -1,0 +1,149 @@
+.custom-money {
+    display: flex;
+    padding-left: 60px;
+    margin-bottom: 5px;
+    align-items: center;
+
+    >label {
+        width: 200px;
+    }
+
+    >div {
+        width: 100%;
+    }
+}
+
+.warring-modal {
+    font-size: 13px;
+    line-height: 5px;
+}
+
+::v-deep .dx-select-checkbox {
+    display: inline-block !important;
+}
+
+::v-deep .ant-form-item-label {
+    text-align: left;
+}
+
+.ant-form-item {
+    margin-bottom: 3px;
+}
+
+.ant-table-tbody>tr>td {
+    padding: 2px 8px;
+}
+
+.popup-scroll {
+    overflow-y: auto;
+}
+
+.table-scroll {
+    height: 190px;
+    border: 1px solid #333;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.ant-collapse-content>.ant-collapse-content-box {
+    padding: 10px 0px 10px 16px;
+}
+
+.ant-collapse>.ant-collapse-item>.ant-collapse-header {
+    background-color: #fafafa;
+}
+
+.ant-collapse-item.ant-collapse-item-active.popup-scroll {
+    background-color: white;
+}
+
+.input-form {
+    margin-top: 5px;
+}
+
+.ant-card-extra,
+.ant-card-head-title {
+    padding: 0 !important;
+}
+
+::v-deep .ant-badge-not-a-wrapper {
+    position: absolute;
+    left: 77px;
+    top: 12px;
+    z-index: 5;
+}
+
+.data-grid-demo {
+    min-height: 700px;
+}
+
+.gridDeleteSelected {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    margin: 1px;
+    top: 0;
+}
+
+.gridDeleteSelected .dx-button-text {
+    line-height: 0;
+}
+
+.input-disble {
+    background: rgb(240, 239, 239);
+    padding: 5px 10px;
+    border: 1px solid rgb(206, 198, 198);
+    border-radius: 5px;
+    margin: 1px;
+    text-align: right;
+}
+
+.title-note {
+    display: flex;
+    justify-content: space-between;
+}
+
+::v-deep .ant-collapse-header .ant-collapse-extra {
+    margin-left: 8px !important;
+    border-radius: 200px;
+    background-color: hwb(120 84% 15%);
+    background-size: 100px;
+    padding: 4px 7px;
+    line-height: 8px;
+    border: 1px solid rgb(22, 6, 6);
+}
+
+.ant-card {
+    height: 45px;
+}
+
+::v-deep .dx-toolbar .dx-toolbar-after {
+    margin-top: -35px !important;
+}
+
+::v-deep .dx-datagrid-headers.dx-datagrid-nowrap {
+    margin-top: -35px;
+}
+
+::v-deep .dx-texteditor-input {
+    text-align: right;
+}
+
+::v-deep img-preview {
+    position: relative;
+    width: 100%;
+}
+
+::v-deep img {
+    position: relative;
+    width: 100%;
+    height: 345px;
+    margin-top: 20px;
+
+}
+
+.imgPreview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
