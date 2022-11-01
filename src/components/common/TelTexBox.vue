@@ -53,7 +53,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const rules = ref({ X: /[02-9]/ });
     const mask = ref("0000-000000000");
-    const maskMess = ref("");
+    const maskMess = ref("The phone number is not in the correct format!");
     const value = ref(props.valueInput);
     const updateValue = (value: any) => {
       emit("update:valueInput", value);

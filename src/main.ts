@@ -28,13 +28,22 @@ const app = createApp({
   render: () => h(App),
 });
 
-const requireComponent = import.meta.glob('./components/common/*.vue')
+const requireBaseComponent = import.meta.glob('./components/common/*.vue')
+
+Object.entries(requireBaseComponent).forEach((fileComponent) => {
+  let nameFile = fileComponent[0]?.split('/')?.pop()?.replace(/\.\w+$/, '');
+  let componentImport : any = fileComponent[1];
+  const componentName = upperFirst(camelCase(nameFile));
+  // Register component globally
+  app.component(componentName,defineAsyncComponent(componentImport))
+})
+
+const requireComponent = import.meta.glob('./components/*.vue')
 
 Object.entries(requireComponent).forEach((fileComponent) => {
   let nameFile = fileComponent[0]?.split('/')?.pop()?.replace(/\.\w+$/, '');
   let componentImport : any = fileComponent[1];
   const componentName = upperFirst(camelCase(nameFile));
-
   // Register component globally
   app.component(componentName,defineAsyncComponent(componentImport))
 })

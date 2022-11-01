@@ -12,36 +12,33 @@
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
                         <a-form-item label="영업자코드">
-                            <a-input v-model:value="formState.code" style="width: 200px" />
+                            <default-text-box v-model:valueInput="formState.code" width="200px"/>
                         </a-form-item>
                         <a-form-item label="영업자명">
-                            <a-input v-model:value="formState.detailName" style="width: 200px" :disabled="!canChangeCompanyName"/>
+                            <default-text-box v-model:valueInput="formState.detailName" width="200px"  :disabled="!canChangeCompanyName"/>
                         </a-form-item>
                         <a-form-item label="사업자유형" class="label-br">
-                            <a-select ref="select" v-model:value="formState.detailBizType" style="width: 200px">
-                                <a-select-option :value="1">법인사업자</a-select-option>
-                                <a-select-option :value="2">개인사업자</a-select-option>
-                            </a-select>
+                            <biz-type-select-box   v-model:valueInput="formState.detailBizType" width="200px" /> 
                         </a-form-item>
 
                         <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]">
-                            <a-input v-model:value="formState.detailEmail" style="width: 250px" />
+                            <mail-text-box v-model:valueInput="formState.detailEmail" width="250px"/>
                         </a-form-item>
                         <a-form-item label="연락처">
-                            <a-input v-model:value="formState.detailPhone" style="width: 200px" />
+                            <tel-tex-box v-model:valueInput="formState.detailPhone" width="200px"/>
                         </a-form-item>
                         <a-form-item label="팩스">
-                            <a-input v-model:value="formState.detailFax" style="width: 200px" />
+                            <text-number-box v-model:valueInput="formState.detailFax" width="200px"/>
                         </a-form-item>
                         <a-form-item label="주소">
                             <a-row>
                                 <a-col :span="12">
-                                    <a-input style="width: 100%" v-model:value="formState.detailZipcode" disabled />
+                                    <default-text-box v-model:valueInput="formState.detailZipcode"  width="100%" :disabled="true"/>
                                 </a-col>
                                 <a-col :span="12">
                                     <div style="margin-left: 5px">
                                         <a-button type="primary" ghost>
-                                            <postCode @dataAddress="funcAddress" />
+                                            <post-code @dataAddress="funcAddress"/>
                                         </a-button>
                                     </div>
                                 </a-col>
@@ -81,12 +78,12 @@
                 <a-row>
                     <a-col :span="15" :md="13" :lg="12">
                         <a-form-item class="result-address" :wrapper-col="{ span: 24 }">
-                            <a-input v-model:value="formState.detailRoadAddress" style="width: 100%" :disabled="true" />
+                            <default-text-box v-model:valueInput="formState.detailRoadAddress"  width="100%" :disabled="true"/>
                         </a-form-item>
                     </a-col>
                     <a-col :span="8" :md="13" :lg="11">
                         <a-form-item :wrapper-col="{ span: 24}" class="detail-address">
-                            <a-input v-model:value="formState.detailAddressExtend" placeholder="상세주소" />
+                            <default-text-box v-model:valueInput="formState.detailAddressExtend"  placeholder="상세주소"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -115,7 +112,7 @@
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
                         <a-form-item label="은행">
-                            <selectBank :selectValue="formState.detailBankType" width="200px" />
+                            <select-bank :selectValue="formState.detailBankType" width="200px" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -126,7 +123,7 @@
                         </a-form-item>
                         <a-form-item label="가입일자">
                             <div style="width: 150px">
-                                <CustomDatepicker :valueDate="formState.detailRegisterDate" />
+                                <date-time-box v-model:valueDate="formState.detailRegisterDate"/>
                             </div>
                         </a-form-item>
                     </a-col>
@@ -136,7 +133,7 @@
                         </a-form-item>
                         <a-form-item label="해지일자">
                             <div style="width: 150px">
-                                <CustomDatepicker :valueDate="formState.detailCancelDate" />
+                                <date-time-box v-model:valueDate="formState.detailCancelDate"/>
                             </div>
                         </a-form-item>
                     </a-col>
@@ -179,26 +176,21 @@
 </template>
 
 <script lang="ts">
-import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import queries from "../../../../../graphql/queries/BF/BF3/BF340/index";
-import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
-import selectBank from "../../../../../components/selectBank.vue";
-import postCode from "../../../../../components/postCode.vue";
 import { ref, defineComponent, reactive, watch } from 'vue';
 import { SearchOutlined, WarningOutlined, } from '@ant-design/icons-vue';
+import { useQuery, useMutation ,useLazyQuery } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from 'dayjs';
 import { message } from "ant-design-vue";
+import { formState340 } from '../utils'
+import queries from "../../../../../graphql/queries/BF/BF3/BF340/index";
+import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 
-import { useQuery, useMutation ,useLazyQuery } from "@vue/apollo-composable";
 export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
     components: {
         SearchOutlined,
-        WarningOutlined,
-        CustomDatepicker,
-        selectBank,
-        postCode
+        WarningOutlined
     },
 
     setup(props, { emit }) {
@@ -240,60 +232,7 @@ export default defineComponent({
             }
         );
 
-        let formState = reactive({
-            id: '',
-            code: '',
-            status: 0,
-            name: '',
-            address: '',
-            grade: 0,
-            phone: '',
-            mobilePhone: '',
-            registerDate: '',
-            cancelDate: null,
-
-            detailStatus: 0,
-            detailName: '',
-            detailGrade: 0,
-            detailBizType: 0,
-            detailBizNumber: '',
-            detailResidentId: null,
-            detailEmail: '',
-            detailMobilePhone: '',
-            detailPhone: '',
-            detailFax: '',
-            detailZipcode: '',
-            detailRoadAddress: '',
-            detailJibunAddress: '',
-            detailAddressExtend: '',
-
-            detailAddressDetailBcode: '',
-            detailAddressDetailBname: '',
-            detailAddressDetailBuildingCode: '',
-            detailAddressDetailBuildingName: '',
-            detailAddressDetailRoadname: '',
-            detailAddressDetailRoadnameCode: '',
-            detailAddressDetailSido: '',
-            detailAddressDetailSigungu: '',
-            detailAddressDetailSigunguCode: '',
-            detailAddressDetailZonecode: '',
-
-            detailTaxInvoice: false,
-            detailEmailTaxInvoice: '',
-            detailBankType: '',
-            detailAccountNumber: '',
-            detailAccountOwner: '',
-            detailRegisterDate: '',
-            detailCancelDate: '',
-            detailRemark: '',
-
-            createdAt: 0,
-            createdBy: '',
-            updatedAt: 0,
-            updatedBy: '',
-            ip: '',
-            active: false,
-        });
+        let formState = reactive({...formState340});
 
         // query check if can be change name company 
         const { result: resCheckPerEdit, refetch: refetchCheckPer } = useLazyQuery(
@@ -527,49 +466,5 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-
-.confirm-button {
-    margin-left: 100px;
-}
-
-.confirm-modal p {
-    white-space: normal;
-    font-size: 13px;
-    line-height: 16px;
-}
-
-.email-input .ant-form-item-label {
-    white-space: normal;
-
-    display: inline-block;
-    text-align: center;
-    line-height: 16px;
-}
-
-.detail-address {
-    margin-left: 7px;
-}
-
-.result-address {
-    margin-left: 20%;
-}
-
-.ant-form-item {
-    margin-bottom: 10px;
-}
-
-.warring-modal {
-    font-size: 13px;
-    line-height: 5px;
-}
-
-.label-br label {
-    white-space: normal;
-}
-
-.textarea_340 {
-    margin-right: 45px;
-    margin-left: 25px;
-}
+<style lang="scss" scoped src="../style/editStyle.scss">
 </style>
