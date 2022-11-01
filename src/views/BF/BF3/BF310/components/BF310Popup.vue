@@ -14,26 +14,18 @@
                         <a-collapse-panel key="1" header="심사정보">
                             <a-form-item label="승인상태">
                                 <a-dropdown :trigger="['hover']">
-                                    <button style="
-                      width: 200px;
-                      height: 36px;
-                      text-align: left;
-                      background: white;
-                      border: 1px solid #d9d9d9;
-                      padding: 4px 6px;
-                    ">
+                                    <button class="custom-button">
                                         <div style="display: flex; width: 100%">
                                             <div style="padding-right: 6px; margin-right: 0px">
                                                 <span>
-                                                    <a-tag v-model:color="dataSelectStatus.color">{{
-                                                            dataSelectStatus.name
-                                                    }}</a-tag>
+                                                    <a-tag v-model:color="dataSelectStatus.color">
+                                                        {{ dataSelectStatus.name }}
+                                                    </a-tag>
                                                 </span>
                                             </div>
-                                            <span
-                                                style="border: 1px solid  padding:4px; border-radius: 5px; padding: 1px 5px;margin-right: 5px;">{{
-                                                        $filters.formatDate(dataSelectStatus.date)
-                                                }}</span>
+                                            <span class="custiom-date">
+                                                {{ $filters.formatDate(dataSelectStatus.date) }}
+                                            </span>
                                         </div>
                                     </button>
                                     <template #overlay>
@@ -81,7 +73,7 @@
                                 </a-col>
                             </a-row>
                             <a-form-item label="심사메모">
-                                <a-input v-model:value="value" placeholder="Basic usage" />
+                                <a-input v-model:value="formState.memo" placeholder="Basic usage" />
                             </a-form-item>
                             <a-form-item label="약관동의">
                                 <a-button type="link" style="padding: 0px">서비스약관</a-button>
@@ -192,17 +184,16 @@
                             <a-form-item has-feedback label="생년월일" class="clr">
                                 <!-- <birth-day-box v-model:valueInput="formState.presidentBirthday" :required="true"
                                     width="300px" messRequired="이항목은 필수 입력사항입니다!" /> -->
-
                                 <a-form :model="formState" name="nest-messages" :validate-messages="validateMessages">
                                     <a-form-item :name="['presidentBirthday']" :rules="[{ required: true }]">
                                         <a-date-picker v-model:value="formState.presidentBirthday"
-                                            value-format="YYYY-MM-DD" placeholder="" class="custom-width-date"/>
+                                            value-format="YYYY-MM-DD" placeholder="" class="custom-width-date" />
                                     </a-form-item>
                                 </a-form>
                             </a-form-item>
                             <a-form-item has-feedback label="휴대폰번호" class="clr">
                                 <text-number-box v-model:valueInput="formState.presidentPhone" :required="true"
-                                    width="200px" placeholder=" '_' 없이 슷자입력" messRequired="이항목은 필수 입력사항입니다!" />
+                                    width="200px" placeholder="‘-’ 없이 슷자입력" messRequired="이항목은 필수 입력사항입니다!" />
                             </a-form-item>
                             <a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
                                 :rules="[{ type: 'email' }]">
