@@ -33,7 +33,7 @@
         </div>
         <div id="bf-310">
             <div class="search-form">
-                <a-row :gutter="[8,8]">
+                <a-row :gutter="[8, 8]">
                     <a-col>
                         <label class="lable-item">서비스종류 :</label>
                         <a-checkbox v-model:checked="originData.accounting">회계</a-checkbox>
@@ -47,11 +47,11 @@
                             <a-select-option :value="10">신청</a-select-option>
                             <a-select-option :value="20">심사중</a-select-option>
                             <a-select-option :value="30">승인</a-select-option>
-                            <a-select-option :value="99 ">반려</a-select-option>
+                            <a-select-option :value="99">반려</a-select-option>
                         </a-select>
                     </a-col>
                     <a-col>
-                        <ListSalesDropdownVue :textLabel="'영업자'" />
+                        <ListSalesDropdownVue :textLabel="'영업자'" v-model:selected="originData.salesRepresentativeId" />
                     </a-col>
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
@@ -73,7 +73,7 @@
                     <DxColumn data-field="code" caption="신청코드" />
                     <DxColumn data-field="status" caption="심사상태" cell-template="grid-cell" css-class="cell-center" />
                     <template #grid-cell="{ data }">
-                        <a-tag :color="getColorTag(data.value)?.name">{{getColorTag(data.value)?.tag_name}}</a-tag>
+                        <a-tag :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
                     </template>
                     <DxColumn data-field="compactSalesRepresentative.code" caption="사업자코드" css-class="cell-center" />
                     <DxColumn data-field="companyName" caption="상호" />
@@ -85,30 +85,31 @@
                         <span>회계
                             <a-popover>
                                 <template #content>
-                                    <a-table :columns="[ {
-                                      title: 'Name',
-                                      dataIndex: 'name',
+                                    <a-table :columns="[{
+                                        title: 'Name',
+                                        dataIndex: 'name',
                                     },
                                     {
-                                      title: 'Year Month',
-                                      dataIndex: 'startYearMonth',
+                                        title: 'Year Month',
+                                        dataIndex: 'startYearMonth',
                                     }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
                                     </a-table>
                                 </template>
-                                <a-tag v-if="data.data.simpleAccountingInfos">{{data.data.simpleAccountingInfos.length}}
+                                <a-tag v-if="data.data.simpleAccountingInfos">{{ data.data.simpleAccountingInfos.length
+                                }}
                                 </a-tag>
                             </a-popover>
                         </span>
                         <span>원천
                             <a-popover>
                                 <template #content>
-                                    <a-table :columns="[ {
-                                      title: 'Name',
-                                      dataIndex: 'name',
+                                    <a-table :columns="[{
+                                        title: 'Name',
+                                        dataIndex: 'name',
                                     },
                                     {
-                                      title: 'Year Month',
-                                      dataIndex: 'startYearMonth',
+                                        title: 'Year Month',
+                                        dataIndex: 'startYearMonth',
                                     }]" :data-source="[data.data.simpleWithholdingInfo]" bordered :pagination="false">
                                     </a-table>
                                 </template>
@@ -193,7 +194,7 @@ export default defineComponent({
     },
     data() {
         return {
-            dateSearch: [dayjs().subtract(1, 'year'), dayjs()], 
+            dateSearch: [dayjs().subtract(1, 'year'), dayjs()],
             startDate: '',
             finishDate: '',
             displayMode: 'full',
@@ -220,7 +221,7 @@ export default defineComponent({
         const originData = ref({
             page: 1,
             rows: 20,
-            salesRepresentativeId: null,
+            salesRepresentativeId: 0,
             startDate: '',
             finishDate: '',
             accounting: true,
@@ -230,7 +231,7 @@ export default defineComponent({
         const originDataCall = ref({
             page: 1,
             rows: 20,
-            salesRepresentativeId: null,
+            salesRepresentativeId: 0,
             startDate: '',
             finishDate: '',
             accounting: true,
@@ -362,14 +363,18 @@ export default defineComponent({
 .page-content {
     padding-top: 10px;
 }
+
 .pagination-table {
     margin-top: 10px;
 }
+
 .dx-button-has-text .dx-button-content {
     padding: 0px 15px !important;
 }
+
 ::v-deep .dx-toolbar-after {
     display: flex;
+
     .dx-toolbar-item {
         &:first-child {
             order: 2;
@@ -377,61 +382,78 @@ export default defineComponent({
         }
     }
 }
+
 .search-form {
     background: #f1f3f4;
     padding: 10px 24px;
+
     >div {
         justify-content: flex-start !important;
         align-items: center;
         margin-right: 15px;
     }
+
     label {
         margin-right: 10px;
     }
 }
+
 .ant-select {
     width: 145px;
 }
+
 ::v-deep .dx-button-text {
     line-height: 0.5;
 }
+
 #data-grid-demo {
     min-height: 700px;
 }
+
 .dx-select-checkbox {
     display: inline-block !important;
 }
+
 .search-form .col {
     display: flex;
     align-items: center;
 }
+
 .search-form .col {
     margin-top: 20px;
 }
+
 .search-form .col .lable-item {
     width: 110px;
     display: inline-block;
 }
+
 .search-form .col .item:nth-child(2) {
     margin-left: 30px;
 }
+
 .noteText p {
     margin-bottom: 1px;
 }
+
 .noteImage {
     font-size: 11px;
     width: 100%;
     padding-top: 2px;
 }
+
 .ant-card-head-title {
     padding: 0px;
 }
+
 .ant-form-item {
     margin-bottom: 4px;
 }
+
 .title-number-modal {
     margin-top: 7px;
 }
+
 .ant-collapse {
     .ant-collapse-item {
         .ant-collapse-header {
@@ -439,15 +461,19 @@ export default defineComponent({
         }
     }
 }
+
 .ant-form-item-label {
     text-align: left;
 }
+
 .ant-card-extra {
     padding: 0px;
 }
+
 .ant-card-head {
     min-height: 30px;
 }
+
 .ant-table-thead {
     tr {
         th {
@@ -455,6 +481,7 @@ export default defineComponent({
         }
     }
 }
+
 .ant-table-tbody {
     tr {
         td {
@@ -462,9 +489,11 @@ export default defineComponent({
         }
     }
 }
+
 ::v-deep .cell-center {
     text-align: center !important
 }
+
 ::v-deep .ant-pagination-options {
     display: none;
 }
