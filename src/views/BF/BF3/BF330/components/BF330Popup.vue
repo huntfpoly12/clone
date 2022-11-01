@@ -74,19 +74,27 @@
                                         <DxToolbar>
                                             <DxItem name="addRowButton" />
                                         </DxToolbar>
-                                        <DxMasterDetail :enabled="true" template="detailTemplate" />
-                                        <template #detailTemplate="{ data: formState }">                                         
-                                            <a-col>
+                                        <DxMasterDetail :enabled="false" template="detailTemplate" />
+                                        <template #detailTemplate="{ data: formState }">
+                                            <div>
                                                 <a-form-item label="회계서비스 이용료:"
-                                                    style="margin-top: 11px; font-weight: bold">
+                                                    style="margin-top: 10px; font-weight: bold">
+                                                    <p class="input-disble">
+                                                        {{ $filters.formatCurrency(totalPriceAccountingService) }}
+                                                    </p>
+                                                </a-form-item>
+                                            </div>
+                                            <a-col :span="14">
+                                                <a-form-item label="회계서비스 이용료:"
+                                                    style="margin-top: 10px; font-weight: bold">
                                                     <p class="input-disble">
                                                         {{ $filters.formatCurrency(totalPriceAccountingService) }}
                                                     </p>
                                                 </a-form-item>
                                             </a-col>
-                                            
-                                            <a-col>
-                                                <div style="display: flex; padding-left: 15px">
+                                            <a-coll :span="10"></a-coll>
+                                            <a-col :span="14">
+                                                <div style="display: flex; padding-left: 155px">
                                                     <a-checkbox v-model:checked="formState.checkBoxAccBasicFee"
                                                         @change="handleInputACCService()" style="width: 180px">기본이용료
                                                     </a-checkbox>
@@ -94,9 +102,9 @@
                                                         :format="'#,##0'" :disabled="formState.disableNumber1" />
                                                 </div>
                                             </a-col>
-                                            
-                                            <a-col>
-                                                <div style="display: flex; padding-left: 15px; margin-top: 5px">
+                                            <a-col :sapn="10"></a-col>
+                                            <a-col :span="14">
+                                                <div style="display: flex; padding-left: 155px; margin-top: 5px">
                                                     <a-checkbox v-model:checked="formState.checkBoxAccInput"
                                                         @change="handleInputACCService()" style="width: 180px">입력대행
                                                     </a-checkbox>
@@ -104,8 +112,8 @@
                                                         :disabled="formState.disableNumber2" />
                                                 </div>
                                             </a-col>
-                                            <a-col>
-                                                <div style="display: flex; padding-left: 15px; margin-top: 5px">
+                                            <a-col :span="14">
+                                                <div style="display: flex; padding-left: 155px; margin-top: 5px">
                                                     <a-checkbox v-model:checked="formState.checkBoxAccConso"
                                                         @change="handleInputACCService()" style="width: 180px">계좌통합
                                                     </a-checkbox>
@@ -113,9 +121,9 @@
                                                         :format="'#,##0'" :disabled="formState.disableNumber3" />
                                                 </div>
                                             </a-col>
-                                            <a-col>
+                                            <a-col :span="14">
                                                 <div
-                                                    style="display: flex; padding-left: 15px; margin-top: 5px; margin-bottom: 10px;">
+                                                    style="display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                                     <a-checkbox v-model:checked="formState.checkBoxAcc4wc"
                                                         @change="handleInputACCService()" style="width: 180px">W4C
                                                     </a-checkbox>
@@ -274,8 +282,7 @@
                                         </div>
                                     </a-col>
                                 </div> -->
-                               
-                                
+                                <hr />
                                 <a-row>
                                     <a-col>
                                         <a-form-item label="원천서비스" style="font-weight: bold">
@@ -1099,7 +1106,7 @@ export default defineComponent({
     padding: 5px;
 }
 
-::v-deep .ant-collapse-content>.ant-collapse-content-box {
+.ant-collapse-content>.ant-collapse-content-box {
     padding: 10px 0px 10px 16px;
 }
 
@@ -1116,7 +1123,7 @@ export default defineComponent({
 }
 
 .ant-card-extra,
-::v-deep .ant-card-head-title {
+.ant-card-head-title {
     padding: 0 !important;
 }
 
