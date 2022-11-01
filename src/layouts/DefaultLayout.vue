@@ -413,6 +413,8 @@ export default defineComponent({
 	justify-content: space-between;
 	background: v-bind('styles.main');
 	color: #fff;
+	height: 50px;
+	line-height: 50px;
 }
 
 .ant-layout-header a {
@@ -542,7 +544,7 @@ export default defineComponent({
 }
 
 .nav-logo img {
-	max-width: 150px;
+	max-width: 100px;
 }
 
 .nav-tabs {
