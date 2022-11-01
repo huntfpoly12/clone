@@ -35,17 +35,18 @@
                             <a-input v-model:value="bf340Detail.fax" style="width: 200px" />
                         </a-form-item>
                         <a-form-item label="주소">
-                            <a-input-search v-model:value="bf340Detail.zipcode" placeholder="우편번호검색..."
-                                style="width: 200px">
-                                <template #prefix>
-                                    <postCode @dataAddress="funcAddress" />
-                                </template>
-                                <template #enterButton>
-                                    <a-button>
-                                        <postCode @dataAddress="funcAddress" />
-                                    </a-button>
-                                </template>
-                            </a-input-search>
+                            <a-row>
+                                <a-col :span="12">
+                                    <a-input style="width: 100%" v-model:value="bf340Detail.detailZipcode" disabled />
+                                </a-col>
+                                <a-col :span="12">
+                                    <div style="margin-left: 5px">
+                                        <a-button type="primary" ghost>
+                                            <post-code @dataAddress="funcAddress"/>
+                                        </a-button>
+                                    </div>
+                                </a-col>
+                            </a-row>
                         </a-form-item>
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
@@ -182,7 +183,6 @@ import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent, computed } from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import selectBank from "../../../../../components/selectBank.vue";
-import postCode from "./postCode.vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 import { message } from "ant-design-vue";
@@ -196,7 +196,7 @@ export default defineComponent({
         WarningOutlined,
         CustomDatepicker,
         selectBank,
-        postCode
+        
     },
     setup(props, { emit }) {
         const layout = {
@@ -365,39 +365,6 @@ export default defineComponent({
     }
 })
 </script>
-<style scoped>
-.email-input .ant-form-item-label {
-    white-space: normal;
+<style scoped lang="scss" src="../style/addnewStyle.scss">
 
-    display: inline-block;
-    text-align: center;
-    line-height: 16px;
-}
-
-.detail-address {
-    margin-left: 7px;
-}
-
-.result-address {
-    margin-left: 20%;
-}
-
-.ant-form-item {
-    margin-bottom: 10px;
-}
-
-.warring-modal {
-    font-size: 13px;
-    line-height: 5px;
-}
-
-
-.label-br label {
-    white-space: normal;
-}
-
-.textarea_340 {
-    margin-right: 45px;
-    margin-left: 25px;
-}
 </style>

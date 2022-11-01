@@ -1,31 +1,27 @@
 <template>
   <div>
-    <DxTextBox
+    <DxSelectBox
       :width="width"
-      value-change-event="keyup"
+      :data-source="bizType"
+      :placeholder="placeholder"
       :show-clear-button="clearButton"
       v-model:value="value"
-      :disabled="disabled"
-      :readOnly="readOnly"
-      @change="updateValue(value)"
-      :mask="mask"
-      :mask-invalid-message="maskMess"
+      :read-only="readOnly"
+      display-expr="label"
+      value-expr="value"
+      @value-changed="updateValue(value)"
       :height="$config_styles.HeightInput"
-    >
-      <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
-      </DxValidator>
-    </DxTextBox>
+    />
   </div>
 </template>
-
 <script lang="ts">
-import {
-  DxValidator,
-  DxRequiredRule,
-} from "devextreme-vue/validator";
-import { defineComponent, ref ,watch } from "vue";
-import DxTextBox from "devextreme-vue/text-box";
+import { defineComponent, ref, watch } from "vue";
+import DxSelectBox from "devextreme-vue/select-box";
+import { BizType } from "@bankda/jangbuda-common";
+const bizType = Object.keys(BizType.all()).map((k, index) => ({
+  value: BizType.all()[index].enumOrdinal,
+  label: BizType.all()[index].name,
+}));
 export default defineComponent({
   props: {
     required: {
@@ -34,44 +30,41 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "이항목은 필수 입력사항입니다!",
+      default: "Input is required!",
     },
     width: String,
+    maxCharacter: Number,
+
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: String,
-      default: "",
+      type: Number,
+      default: 0,
     },
+    placeholder: String,
     readOnly: Boolean,
   },
   components: {
-    DxTextBox,
-    DxValidator,
-    DxRequiredRule,
+    DxSelectBox,
   },
   setup(props, { emit }) {
-    const mask = ref("000-00-00000");
-    const maskMess = ref("입력한 정보가 충분하지 않습니다!");
     const value = ref(props.valueInput);
-  
+   
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
-
     watch(
       () => props.valueInput,
       (newValue) => {
         value.value = newValue;
       }
     );
-
     return {
       updateValue,
       value,
-      mask,
-      maskMess,
+      bizType
     };
   },
 });
 </script>
+<style scoped></style>

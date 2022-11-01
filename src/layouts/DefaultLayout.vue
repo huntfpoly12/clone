@@ -65,10 +65,7 @@
 										? 'ant-menu-item-selected-active'
 										: ''
 								" @click.enter="addMenuTab(item.id + ' | ' + item.name)">
-									<a-tooltip>
-										<template #title>{{ item.name }}</template>
-										<router-link :to="item.url">{{ item.name }}</router-link>
-									</a-tooltip>
+									<router-link :to="item.url">{{ item.name }}</router-link>
 								</a-menu-item>
 							</a-sub-menu>
 						</a-sub-menu>

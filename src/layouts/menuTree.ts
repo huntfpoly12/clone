@@ -8,7 +8,6 @@ export default [{
         items: [
           {name: '회원등록', url: '/dashboard/bf-210',id: 'bf-210'}, 
           {name: '권한그룹관리', url: '/dashboard/bf-220',id: 'bf-220'}, 
-          {name: '기초정보설정', url: '#',id: 'bf-230'}
           ]
       },
       {
