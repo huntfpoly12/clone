@@ -23,7 +23,6 @@ export default defineComponent({
         clearButton: Boolean,
         disabled: Boolean,
         valueInput: String
-
     },
     components: {
         DxNumberBox
