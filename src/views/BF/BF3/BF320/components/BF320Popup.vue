@@ -133,11 +133,11 @@
                                 <selectBank :selectValue="formState.extendInfoCmsBankBankType" width="150px" />
                             </a-form-item>
                             <a-form-item label="출금계좌번호" class="clr">
-                                <a-input placeholder="100100056489011" style="width: 300px"
+                                <a-input placeholder="‘-’없이 숫자만 입력" style="width: 300px"
                                     v-model:value="formState.extendInfoCmsBankAccountNumber" />
                             </a-form-item>
                             <a-form-item label="예금주명" class="clr">
-                                <a-input placeholder="주식회사 타운소프트비나" style="width: 300px"
+                                <a-input style="width: 300px"
                                     v-model:value="formState.extendInfoCmsBankOwnerName" />
                             </a-form-item>
                             <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
@@ -421,7 +421,7 @@ export default defineComponent({
 
         onCreatedMemo((res) => {
             refetchMemo();
-            message.success('Created memo successfully', 4);
+            message.success('메모 추가 완료!', 4);
         });
 
         // mutation update memo 
@@ -616,7 +616,7 @@ export default defineComponent({
         }
 
         updateDone((res) => {
-            message.success(`Update was successful`, 4);
+            message.success(`업데이트 완료!`, 4);
             setModalVisible();
         });
         const formarDate = (date: any) => {

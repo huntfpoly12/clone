@@ -330,51 +330,5 @@ export default defineComponent({
     },
 });
 </script>
-<style scoped>
-.page-content {
-    padding: 10px 10px;
-}
-
-.cell-button-add {
-    padding-left: 100px !important;
-}
-
-.cell-center {
-    text-align: center !important
-}
-
-.dx-button-has-text .dx-button-content {
-    padding: 0px 15px !important;
-}
-
-.search-form {
-    background: #f1f3f4;
-    padding: 10px 24px;
-}
-
-.dx-select-checkbox {
-    display: inline-block !important;
-}
-
-#data-grid-demo {
-    min-height: 700px;
-}
-
-.search-form .col {
-    display: flex;
-    align-items: center;
-}
-
-.search-form .col {
-    margin-top: 20px;
-}
-
-.search-form .col .lable-item {
-    width: 110px;
-    display: inline-block;
-}
-
-.search-form .col .item:nth-child(2) {
-    margin-left: 30px;
-}
+<style scoped lang="scss" src="./style/style.scss">
 </style>
