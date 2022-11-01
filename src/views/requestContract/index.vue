@@ -418,8 +418,6 @@ import {
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
-import CompanyRegistrationNumberTextBox from "../../components/TextBox/CompanyRegistrationNumberTextBox.vue";
-import IdCardTextBox from "../../components/TextBox/IdCardTextBox.vue";
 import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
 
@@ -455,7 +453,6 @@ export default {
         DxButton,
         imgUpload,
         CustomDatepicker,
-        CompanyRegistrationNumberTextBox,
         moment,
         selectBank,
         postCode,
@@ -467,8 +464,7 @@ export default {
         DxStringLengthRule,
         DeleteOutlined,
         InfoCircleFilled,
-        DxAsyncRule,
-        IdCardTextBox
+        DxAsyncRule
     },
     data() {
         return {

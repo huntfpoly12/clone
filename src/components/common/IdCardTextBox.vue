@@ -24,7 +24,7 @@ import {
   DxValidator,
   DxRequiredRule,
 } from "devextreme-vue/validator";
-import { defineComponent, ref ,watch } from "vue";
+import { defineComponent, ref,watch } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -34,7 +34,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "이항목은 필수 입력사항입니다!",
+      default: "Input is required :) !!!!",
     },
     width: String,
     clearButton: Boolean,
@@ -51,7 +51,7 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
-    const mask = ref("000-00-00000");
+    const mask = ref("000000-0000000");
     const maskMess = ref("입력한 정보가 충분하지 않습니다!");
     const value = ref(props.valueInput);
   
@@ -65,7 +65,6 @@ export default defineComponent({
         value.value = newValue;
       }
     );
-
     return {
       updateValue,
       value,

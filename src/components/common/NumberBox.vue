@@ -40,7 +40,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "이항목은 필수 입력사항입니다!",
+      default: "Input is required :) !!!!",
     },
     valueInput: {
       type: [String, Number],

@@ -4,11 +4,10 @@
     <a-select
       ref="select"
       v-model:value="sale"
-      placeholder="전체"
+      placeholder="영업자 선택"
       show-search
       @change="updateSale(sale)"
     >
-      <a-select-option key="0" value="">영업자 선택</a-select-option>
       <a-select-option
         v-for="item in result?.findSalesRepresentatives"
         :key="item.id"
@@ -22,12 +21,11 @@
     <a-select
       ref="select"
       v-model:value="sale"
-      placeholder="전체"
+      placeholder="영업자 선택"
       show-search
       @change="updateSale(sale)"
       :style="{ width: width }"
     >
-      <a-select-option key="0" value="">영업자 선택</a-select-option>
       <a-select-option
         v-for="item in result?.findSalesRepresentatives"
         :key="item.id"

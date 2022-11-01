@@ -14,17 +14,24 @@
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxPatternRule :pattern="pattern" :message="maskMess" />
       </DxValidator>
     </DxTextBox>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent, ref ,watch } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
+  DxCompareRule,
+  DxEmailRule,
+  DxPatternRule,
+  DxStringLengthRule,
+  DxRangeRule,
+  DxAsyncRule,
 } from "devextreme-vue/validator";
-import { defineComponent, ref ,watch } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -34,7 +41,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "이항목은 필수 입력사항입니다!",
+      default: "Input is required :) !!!!",
     },
     width: String,
     clearButton: Boolean,
@@ -49,12 +56,18 @@ export default defineComponent({
     DxTextBox,
     DxValidator,
     DxRequiredRule,
+    DxCompareRule,
+    DxEmailRule,
+    DxPatternRule,
+    DxStringLengthRule,
+    DxRangeRule,
+    DxAsyncRule,
   },
   setup(props, { emit }) {
-    const mask = ref("000-00-00000");
-    const maskMess = ref("입력한 정보가 충분하지 않습니다!");
-    const value = ref(props.valueInput);
-  
+    const mask = ref("0000-00-00");
+    const maskMess = ref("The value must have a correct date format");
+    const value = ref(props.valueInput.replaceAll('-', ''));
+    const pattern = ref(/((19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01]))/);
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -62,15 +75,15 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
-        value.value = newValue;
+        value.value = newValue.replaceAll('-', '');
       }
     );
-
     return {
       updateValue,
       value,
       mask,
       maskMess,
+      pattern,
     };
   },
 });

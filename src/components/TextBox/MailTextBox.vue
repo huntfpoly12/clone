@@ -1,26 +1,18 @@
 <template>
   <div>
-    <DxTextBox
-      :width="width"
-      value-change-event="keyup"
-      :show-clear-button="clearButton"
-      mode="mail"
-      :placeholder="placeholder"
-      v-model:value="value"
-      :disabled="disabled"
-      :readOnly="readOnly"
-      @change="updateValue(value)"
-    >
+    <DxTextBox :width="width" value-change-event="keyup" :show-clear-button="clearButton" mode="mail"
+      :placeholder="placeholder" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
+      @change="updateValue(value)">
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
-        <DxEmailRule message="Email is invalid !" />
+        <DxEmailRule message="이메일 형식이 정확하지 않습니다" />
       </DxValidator>
     </DxTextBox>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref ,watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
@@ -35,7 +27,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required :) !!!!",
+      default: "이항목은 필수 입력사항입니다!",
     },
     width: String,
     clearButton: Boolean,

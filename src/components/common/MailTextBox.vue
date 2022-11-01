@@ -4,27 +4,28 @@
       :width="width"
       value-change-event="keyup"
       :show-clear-button="clearButton"
+      mode="mail"
+      :placeholder="placeholder"
       v-model:value="value"
       :disabled="disabled"
       :readOnly="readOnly"
       @change="updateValue(value)"
-      :mask="mask"
-      :mask-invalid-message="maskMess"
-      :height="$config_styles.HeightInput"
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxEmailRule message="Email is invalid !" />
       </DxValidator>
     </DxTextBox>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent, ref ,watch } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
+  DxEmailRule,
 } from "devextreme-vue/validator";
-import { defineComponent, ref ,watch } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -34,7 +35,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "이항목은 필수 입력사항입니다!",
+      default: "Input is required :) !!!!",
     },
     width: String,
     clearButton: Boolean,
@@ -43,18 +44,17 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    placeholder: String,
     readOnly: Boolean,
   },
   components: {
     DxTextBox,
     DxValidator,
     DxRequiredRule,
+    DxEmailRule
   },
   setup(props, { emit }) {
-    const mask = ref("000-00-00000");
-    const maskMess = ref("입력한 정보가 충분하지 않습니다!");
     const value = ref(props.valueInput);
-  
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -69,8 +69,6 @@ export default defineComponent({
     return {
       updateValue,
       value,
-      mask,
-      maskMess,
     };
   },
 });

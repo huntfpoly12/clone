@@ -31,7 +31,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required :) !!!!",
+      default: "이항목은 필수 입력사항입니다!",
     },
     width: String,
     clearButton: Boolean,

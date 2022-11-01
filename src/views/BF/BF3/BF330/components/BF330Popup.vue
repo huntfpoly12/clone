@@ -49,6 +49,116 @@
                                     </a-col>
                                 </a-row>
                                 <div>
+                                    <div>
+                                        <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
+                                            :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
+                                        </a-card>
+                                    </div>
+                                    <DxDataGrid id="grid-container" :show-borders="true" :data-source="formState.accountingfacilityBusinesses"
+                                        key-expr="capacity" @selection-changed="selectionChanged"
+                                        @content-ready="contentReady">
+                                        <DxEditing :allow-updating="false" :allow-adding="true" :allow-deleting="true"
+                                            mode="cell" />
+                                        <DxSelection mode="single" />
+                                        <DxPaging :enabled="false" />
+                                        <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                                            cell-template="indexCell" />
+                                        <template #indexCell="{ data }">
+                                            <div>{{ data.rowIndex + 1 }}</div>
+                                        </template>
+                                        <DxColumn :width="70" data-field="name" caption="사업명 (중복불가)" />
+                                        <DxColumn data-field="facilityBizType" caption="사업분류" />
+                                        <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
+                                            :format="'yyyy-MM-dd'" />
+                                        <DxColumn :width="170" data-field="capacity" caption="정원수 (명)" />
+                                        <DxToolbar>
+                                            <DxItem name="addRowButton" />
+                                        </DxToolbar>
+                                        <DxMasterDetail :enabled="false" template="detailTemplate" />
+                                        <template #detailTemplate="{ data: formState }">
+                                            <div>
+                                                <a-form-item label="회계서비스 이용료:"
+                                                    style="margin-top: 10px; font-weight: bold">
+                                                    <p class="input-disble">
+                                                        {{ $filters.formatCurrency(totalPriceAccountingService) }}
+                                                    </p>
+                                                </a-form-item>
+                                            </div>
+                                            <a-col :span="14">
+                                                <a-form-item label="회계서비스 이용료:"
+                                                    style="margin-top: 10px; font-weight: bold">
+                                                    <p class="input-disble">
+                                                        {{ $filters.formatCurrency(totalPriceAccountingService) }}
+                                                    </p>
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-coll :span="10"></a-coll>
+                                            <a-col :span="14">
+                                                <div style="display: flex; padding-left: 155px">
+                                                    <a-checkbox v-model:checked="formState.checkBoxAccBasicFee"
+                                                        @change="handleInputACCService()" style="width: 180px">기본이용료
+                                                    </a-checkbox>
+                                                    <DxNumberBox v-model="formState.usedServiceInfoAccountingPrice"
+                                                        :format="'#,##0'" :disabled="formState.disableNumber1" />
+                                                </div>
+                                            </a-col>
+                                            <a-col :sapn="10"></a-col>
+                                            <a-col :span="14">
+                                                <div style="display: flex; padding-left: 155px; margin-top: 5px">
+                                                    <a-checkbox v-model:checked="formState.checkBoxAccInput"
+                                                        @change="handleInputACCService()" style="width: 180px">입력대행
+                                                    </a-checkbox>
+                                                    <DxNumberBox v-model="formState.inputAgent" :format="'#,##0'"
+                                                        :disabled="formState.disableNumber2" />
+                                                </div>
+                                            </a-col>
+                                            <a-col :span="14">
+                                                <div style="display: flex; padding-left: 155px; margin-top: 5px">
+                                                    <a-checkbox v-model:checked="formState.checkBoxAccConso"
+                                                        @change="handleInputACCService()" style="width: 180px">계좌통합
+                                                    </a-checkbox>
+                                                    <DxNumberBox v-model="formState.accountIntegration"
+                                                        :format="'#,##0'" :disabled="formState.disableNumber3" />
+                                                </div>
+                                            </a-col>
+                                            <a-col :span="14">
+                                                <div
+                                                    style="display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
+                                                    <a-checkbox v-model:checked="formState.checkBoxAcc4wc"
+                                                        @change="handleInputACCService()" style="width: 180px">W4C
+                                                    </a-checkbox>
+                                                    <DxNumberBox v-model="formState.sSIS" :format="'#,##0'"
+                                                        :disabled="formState.disableNumber4" />
+                                                </div>
+                                            </a-col>
+                                            <a-col>
+                                                <div style="display: flex">
+                                                    <div>
+                                                        <imgUpload :title="titleModal" @update-img="getImgUrl"
+                                                            style="margin-top: 10px" />
+                                                    </div>
+                                                    <a-col :span="7">
+                                                        <div v-if="imageValue" class="img-preview">
+                                                            <a-image :src="imageValue" />
+                                                        </div>
+                                                        <div v-else class="img-preview">
+                                                            <img src="../../../../../assets/images/imgdefault.jpg" />
+                                                        </div>
+                                                        <div v-if="fileName">
+                                                            <span style="padding-right: 10px">{{ fileName }}</span>
+                                                            <delete-outlined @click="removeImg"
+                                                                style="color: red; cursor: pointer" />
+                                                        </div>
+                                                    </a-col>
+                                                </div>
+                                            </a-col>
+
+                                        </template>
+                                    </DxDataGrid>
+                                </div>
+
+                                <!-- Accounting Table
+                                <div>
                                     <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                         :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                     </a-card>
@@ -122,16 +232,38 @@
                                         </div>
                                     </a-col>
                                     <a-col :span="14">
-                                        <div style="display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
+                                        <div
+                                            style="display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                             <a-checkbox v-model:checked="formState.checkBoxAcc4wc"
                                                 @change="handleInputACCService()" style="width: 180px">W4C</a-checkbox>
                                             <DxNumberBox v-model="formState.sSIS" :format="'#,##0'"
                                                 :disabled="formState.disableNumber4" />
                                         </div>
                                     </a-col>
-                                </a-row>
+                                    <a-col >
+                                        <div style="display: flex">
+                                            <div>
+                                                <imgUpload :title="titleModal" @update-img="getImgUrl"
+                                                    style="margin-top: 10px" />
+                                            </div>
+                                            <a-col :span="7">
+                                                <div v-if="imageValue" class="img-preview">
+                                                    <a-image :src="imageValue" />
+                                                </div>
+                                                <div v-else class="img-preview">
+                                                    <img src="../../../../../assets/images/imgdefault.jpg" />
+                                                </div>
+                                                <div v-if="fileName">
+                                                    <span style="padding-right: 10px">{{ fileName }}</span>
+                                                    <delete-outlined @click="removeImg"
+                                                        style="color: red; cursor: pointer" />
+                                                </div>
+                                            </a-col>
+                                        </div>
+                                    </a-col>
+                                </a-row> -->
                                 <!-- <imgUpload :title="titleModal" :imageUrl="imageUrl" /> -->
-                                <div style="display: flex">
+                                <!-- <div style="display: flex">
                                     <div>
                                         <imgUpload :title="titleModal" @update-img="getImgUrl"
                                             style="margin-top: 10px" />
@@ -149,7 +281,7 @@
                                             <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
                                         </div>
                                     </a-col>
-                                </div>
+                                </div> -->
                                 <hr />
                                 <a-row>
                                     <a-col>
@@ -191,7 +323,8 @@
                                     </a-col>
                                     <a-coll :span="8"></a-coll>
                                     <a-col :span="14">
-                                        <div style="display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
+                                        <div
+                                            style="display: flex; padding-left: 155px; margin-top: 5px; margin-bottom: 10px;">
                                             <a-checkbox v-model:checked="formState.checkBoxMajorInsurance"
                                                 @change="handleInputTexService()" style="width: 180px">4대보험</a-checkbox>
                                             <DxNumberBox v-model="formState.fourMajorInsurance" :format="'#,##0'"
@@ -275,6 +408,7 @@ import {
     DxToolbar,
     DxItem,
     DxTexts,
+    DxMasterDetail,
 } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import {
@@ -331,6 +465,8 @@ export default defineComponent({
         inputFormat,
         DxNumberBox,
         DxTexts,
+        DxMasterDetail,
+        
     },
     props: {
         modalStatus: Boolean,
@@ -347,14 +483,23 @@ export default defineComponent({
             담당자선택: "담당자선택",
             영업자선택: "영업자선택",
             직원수: "직원수",
-            selectionChanged: (data: any) => {
-                this.selectedItemKeys = data.selectedRowKeys;
-            },
-            selectedItemKeys: [],
+            // selectionChanged: (data: any) => {
+            //     this.selectedItemKeys = data.selectedRowKeys;
+            // },
+            // selectedItemKeys: [],
+            
+
         };
     },
     computed: {},
     methods: {
+        contentReady(e: any) {
+            if (!e.component.getSelectedRowKeys().length) { e.component.selectRowsByIndexes(0); }
+        },
+        selectionChanged(e: any) {           
+            e.component.collapseAll(-1);
+            e.component.expandRow(e.currentSelectedRowKeys[0]);
+        },
         getImgUrl(img: any) {
             this.imageValue = img.url;
             this.fileName = img.fileName;
