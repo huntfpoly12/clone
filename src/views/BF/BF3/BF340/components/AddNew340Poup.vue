@@ -291,7 +291,7 @@ export default defineComponent({
 
 
         onDoneAdd((res) => {
-            message.success(`Add new sale success !`, 5);
+            message.success(`새러운 영업자 추가 완료!`, 5);
             emit("closePopup", false);
             emit("addNewDone", false);
         })
