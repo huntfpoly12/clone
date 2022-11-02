@@ -25,7 +25,7 @@
                             <mail-text-box v-model:valueInput="formState.detailEmail" width="250px"/>
                         </a-form-item>
                         <a-form-item label="연락처">
-                            <tel-tex-box v-model:valueInput="formState.detailPhone" width="200px"/>
+                            <tel-tex-box v-model:valueInput="formState.detailPhone" width="200px" placeholder="전화번호를 입력"/>
                         </a-form-item>
                         <a-form-item label="팩스">
                             <text-number-box v-model:valueInput="formState.detailFax" width="200px"/>
@@ -47,31 +47,19 @@
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
                         <a-form-item label="상태">
-                            <a-select style="width: 100px" v-model:value="formState.status" option-label-prop="children"
-                                @select="confirmPopup">
-                                <a-select-option :value="1" label="정상">
-                                    <a-tag :color="getColorTag('정상')">정상</a-tag>
-                                </a-select-option>
-                                <a-select-option :value="2" label="해지">
-                                    <a-tag :color="getColorTag('해지')">해지</a-tag>
-                                </a-select-option>
-                            </a-select>
+                            <sale-status-select-box v-model:valueInput="formState.status" width="100px"/>
                         </a-form-item>
                         <a-form-item label="등급">
-                            <a-select ref="select" v-model:value="formState.detailGrade" style="width: 100px">
-                                <a-select-option :value="0">본사</a-select-option>
-                                <a-select-option :value="1">지사</a-select-option>
-                                <a-select-option :value="2">대리점</a-select-option>
-                            </a-select>
+                            <sale-grade-select-box v-model:valueInput="formState.detailGrade" width="100px"/>
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="label-br">
-                            <a-input v-model:value="formState.detailResidentId" />
+                            <id-card-text-box :required="true" v-model:valueInput="formState.detailResidentId" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                         <a-form-item label="사업자등록번호" class="label-br">
-                            <a-input v-model:value="formState.detailBizNumber" />
+                            <company-registration-number-text-box v-model:valueInput="formState.detailBizNumber"  :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                         <a-form-item label="휴대폰">
-                            <a-input v-model:value="formState.detailMobilePhone" />
+                            <tel-tex-box v-model:valueInput="formState.detailMobilePhone" placeholder="전화번호를 입력"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -100,11 +88,7 @@
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
                             <a-col :span="16" :md="16" :lg="17">
-                                <a-form-item class="email-input" :wrapper-col="{ span: 24 }"
-                                    :name="['detailEmailTaxInvoice']" :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="formState.detailEmailTaxInvoice" placeholder=""
-                                        style="width: 100%" />
-                                </a-form-item>
+                                <mail-text-box v-model:valueInput="formState.detailEmailTaxInvoice" width="100%"/>
                             </a-col>
                         </a-row>
                     </a-col>
@@ -112,7 +96,7 @@
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
                         <a-form-item label="은행">
-                            <select-bank :selectValue="formState.detailBankType" width="200px" />
+                            <bank-select-box :selectValue="formState.detailBankType" width="200px" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -149,35 +133,12 @@
                 </a-row>
             </a-form>
         </a-modal>
-
-        <a-modal v-model:visible="visibleConfirm" :mask-closable="false" :afterClose="afterConfirmClose"
-            class="confirm-md" :width="521">
-            <a-row>
-                <a-col :span="4">
-                    <warning-outlined :style="{fontSize: '70px', color: '#faad14',paddingTop: '20px'}" />
-                </a-col>
-                <a-col :span="20">
-                    <h3><b>해지 확인</b></h3>
-                    <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
-                    <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을 </p>
-                    <p>누르세요</p>
-
-                </a-col>
-                <div style="text-align: center;width: 100%;margin-left: 100px;">
-                    <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
-                    <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px;">완료</a-button>
-                </div>
-            </a-row>
-            <template #footer>
-            </template>
-        </a-modal>
-
     </div>
 </template>
 
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from 'vue';
-import { SearchOutlined, WarningOutlined, } from '@ant-design/icons-vue';
+import { SearchOutlined } from '@ant-design/icons-vue';
 import { useQuery, useMutation ,useLazyQuery } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from 'dayjs';
 import { message } from "ant-design-vue";
@@ -189,8 +150,7 @@ export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
     components: {
-        SearchOutlined,
-        WarningOutlined
+        SearchOutlined
     },
 
     setup(props, { emit }) {
@@ -204,10 +164,8 @@ export default defineComponent({
             wrapperCol: { span: 16 },
         };
         const visible = ref<boolean>(false);
-        const visibleConfirm = ref<boolean>(false);
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
-        let confirm = ref<string>('');
         const validateMessages = {
             required: true,
             types: {
@@ -382,30 +340,6 @@ export default defineComponent({
             setModalVisible();
         });
 
-        // confirm popup 
-        const confirmPopup = (value: any) => {
-            if (value == 2) {
-                visibleConfirm.value = true;
-            }
-        }
-
-        const handleOkConfirm = () => {
-            if (confirm.value == '확인') {
-                visibleConfirm.value = false;
-            } else {
-                formState.status = 1;
-                visibleConfirm.value = false;
-            }
-        }
-
-        const afterConfirmClose = () => {
-            if (confirm.value == '확인') {
-                formState.status = 2;
-            } else {
-                formState.status = 1;
-            }
-        }
-
         const dateValue = (date: string | number | Date | dayjs.Dayjs | null | undefined) => {
             return dayjs(date, "YYYY-MM-DD");
         }
@@ -436,11 +370,6 @@ export default defineComponent({
             layout,
             value1: ref<Dayjs>(),
             visible,
-            visibleConfirm,
-            confirmPopup,
-            confirm,
-            handleOkConfirm,
-            afterConfirmClose,
             dateValue,
             validateMessages,
             funcAddress,

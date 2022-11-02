@@ -1,29 +1,32 @@
 <template>
   <div>
-    <DxTextBox
+    <DxSelectBox
       :width="width"
-      value-change-event="keyup"
-      :show-clear-button="clearButton"
-      mode="number"
+      :data-source="saleGrade"
       :placeholder="placeholder"
+      :show-clear-button="clearButton"
       v-model:value="value"
-      :disabled="disabled"
-      :readOnly="readOnly"
-      @change="updateValue(value)"
-      :on-input="onInputValue"
+      :read-only="readOnly"
+      display-expr="label"
+      value-expr="value"
+      @value-changed="updateValue(value)"
       :height="$config_styles.HeightInput"
-    >
-      <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
-      </DxValidator>
-    </DxTextBox>
+    />
   </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
-import DxTextBox from "devextreme-vue/text-box";
+import DxSelectBox from "devextreme-vue/select-box";
+import {
+  SalesRepresentativeGrade,
+  enum2Entries,
+} from "@bankda/jangbuda-common";
+
+const saleGrade = enum2Entries(SalesRepresentativeGrade).map((value) => ({
+  value: value[1],
+  label: value[0],
+}));
+
 export default defineComponent({
   props: {
     required: {
@@ -32,35 +35,29 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required :) !!!!",
+      default: "Input is required!",
     },
     width: String,
+    maxCharacter: Number,
+
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: String,
-      default: "",
+      type: Number,
+      default: 0,
     },
     placeholder: String,
     readOnly: Boolean,
   },
   components: {
-    DxTextBox,
-    DxValidator,
-    DxRequiredRule,
+    DxSelectBox,
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);
+
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
-
-    const onInputValue = (e: any) => {
-      var inputElement = e.event.target;
-      if (inputElement.value.length > 11)
-        inputElement.value = inputElement.value.slice(0, 11);
-    };
-
     watch(
       () => props.valueInput,
       (newValue) => {
@@ -69,9 +66,10 @@ export default defineComponent({
     );
     return {
       updateValue,
-      onInputValue,
+      saleGrade,
       value,
     };
   },
 });
 </script>
+<style scoped></style>

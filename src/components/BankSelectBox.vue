@@ -1,10 +1,10 @@
 <template>
   <div>
+    
     <a-space>
       <a-select :disabled="disableFormVal" ref="select" v-model:value="selectValue" style="width: 120px" @change="handleChange" placeholder="은행 선택">
         <a-select-option v-for="item in bankTypeSelect" :key="item.c" :value="item.c">{{item.n}}</a-select-option>
       </a-select>
-
     </a-space>
   </div>
 </template>
