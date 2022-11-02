@@ -96,7 +96,7 @@
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
                         <a-form-item label="은행">
-                            <bank-select-box :selectValue="formState.detailBankType" width="200px" />
+                            <bank-select-box v-model:valueInput="formState.detailBankType" width="200px" />
                         </a-form-item>
                     </a-col>
                 </a-row>
