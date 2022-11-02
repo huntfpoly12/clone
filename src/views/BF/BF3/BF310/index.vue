@@ -61,8 +61,7 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
-                    <DxSelection mode="multiple" />
+                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">                    
                     <DxPaging :page-size="rowTable" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
