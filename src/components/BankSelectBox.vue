@@ -1,49 +1,70 @@
 <template>
   <div>
-    
-    <a-space>
-      <a-select :disabled="disableFormVal" ref="select" v-model:value="selectValue" style="width: 120px" @change="handleChange" placeholder="은행 선택">
-        <a-select-option v-for="item in bankTypeSelect" :key="item.c" :value="item.c">{{item.n}}</a-select-option>
-      </a-select>
-    </a-space>
+    <DxSelectBox
+      :width="width"
+      :data-source="bankTypeSelect"
+      placeholder="은행 선택"
+      :show-clear-button="clearButton"
+      v-model:value="value"
+      :read-only="readOnly"
+      display-expr="n"
+      value-expr="c"
+      @value-changed="updateValue(value)"
+      :height="$config_styles.HeightInput"
+    />
   </div>
+
 </template>
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted,watch } from "vue";
+import DxSelectBox from "devextreme-vue/select-box";
 import { BankType } from "@bankda/jangbuda-common";
 import type { SelectProps } from "ant-design-vue";
 export default {
   props: {
-    selectValue: {
-      default: "39",
-      type: String,
-    },
-    width: {
-      default: "100%",
-      type: String,
-    },
-
-    disableFormVal: {
-      default: false,
+    required: {
       type: Boolean,
+      default: false,
     },
+    messRequired: {
+      type: String,
+      default: "Input is required!",
+    },
+    width: String,
+    maxCharacter: Number,
+
+    clearButton: Boolean,
+    disabled: Boolean,
+    valueInput: {
+      type: Number,
+      default: 0,
+    },
+    placeholder: String,
+    readOnly: Boolean,
   },
-  mounted() { },
-  setup(props: any, { emit }: any) {
-    const styleBank = ref({
-      width: props.width
-    })
+  components: {
+    DxSelectBox,
+  },
+  setup(props, { emit }) {
+    const value = ref(props.valueInput);
     const bankTypeSelect = ref<SelectProps["options"]>([]);
     onMounted(() => {
       bankTypeSelect.value = BankType.all()
     })
-    const handleChange = (value: any) => {
-      emit("bank", value);
+    const updateValue = (value: any) => {
+      emit("update:valueInput", value);
     };
+
+    watch(
+      () => props.valueInput,
+      (newValue) => {
+        value.value = newValue;
+      }
+    );
     return {
       bankTypeSelect,
-      handleChange,
-      styleBank
+      updateValue,
+      value
     };
   },
 };
