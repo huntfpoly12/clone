@@ -15,7 +15,6 @@
                     <a-col :span="16">
                         <a-form-item label="그룹코드">
                             <div class="dflex">
-                                <default-text-box/>
                                 <a-input v-model:value="dataRes.id" @change="changeID" class="mr5"
                                     placeholder="영문,숫자 5~10자 (중복불가)" />
                                 <a-button type="button" @click="checkId">중복체크</a-button>
