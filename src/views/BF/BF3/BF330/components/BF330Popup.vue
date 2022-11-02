@@ -48,7 +48,6 @@
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
-
                                 <div>
                                     <div>
                                         <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
@@ -59,7 +58,6 @@
                                         :data-source="formState.accountingfacilityBusinesses"
                                         key-expr="facilityBusinessId" :allow-column-reordering="true"
                                         :allow-column-resizing="true" :column-auto-width="true">
-
                                         <DxEditing :allow-updating="true" :allow-adding="true" :allow-deleting="true"
                                             mode="cell" />
                                         <DxSelection mode="single" />
@@ -67,7 +65,7 @@
                                         <DxColumn data-field="No" :allow-editing="false" caption="#"
                                             cell-template="indexCell" />
                                         <template #indexCell="{ data }">
-                                            <div>{{ data.rowIndex + 1 }}</div>
+                                            <div>{{ data.rowIndex }}</div>
                                         </template>
                                         <DxColumn data-field="name" caption="사업명 (중복불가)" />
                                         <DxColumn data-field="facilityBizType" caption="사업분류" />
@@ -80,59 +78,50 @@
                                         <DxMasterDetail :enabled="true" template="detailTemplate" />
                                         <template #detailTemplate="{ data }">
                                             <a-row :gutter="24">
-                                                <a-col :span="12">
+                                                <a-col :span="10">
                                                     <a-form-item label="회계서비스 이용료:" style=" font-weight: bold">
-                                                        <p class="input-disble">
+                                                        <p class="input-disble" :id="'price-' + data.data.name">
                                                             {{
-                                                                    $filters.formatCurrency(totalPriceAccountingService)
+                                                                    $filters.formatCurrency(getTotalAmount(data))
                                                             }}
                                                         </p>
                                                     </a-form-item>
 
                                                     <div class="custom-money">
-                                                        <a-checkbox checked="checked">
-                                                            기본이용료
-                                                        </a-checkbox>
-                                                        <DxNumberBox :format="'#,###'" :min="0" />
+                                                        <DxCheckBox :value="true" text="기본이용료" class="custom-checkbox"
+                                                            :disabled="true" />
+                                                        <DxNumberBox :format="'#,###'" :min="0" :value="data.data.price"
+                                                            @keyDown="changeValueInput($event.component, 0, data.data)" />
                                                     </div>
 
                                                     <div class="custom-money">
-                                                        <a-checkbox @change="handleChangeDataTable($event.target)"
-                                                            :id="'option1-' + data.rowIndex"
-                                                            :checked="checkOption(data.data.options, 1)">
-                                                            입력대행
-                                                        </a-checkbox>
-                                                        <div :id="'value1-' + data.rowIndex">
-                                                            <DxNumberBox :format="'#,###'" :min="0" />
-                                                        </div>
+                                                        <DxCheckBox :value="checkOption(data.data.options, 1)"
+                                                            text="입력대행" class="custom-checkbox" />
+                                                        <DxNumberBox :format="'#,###'" :min="0"
+                                                            :value="getPriceOption(data.data.options, 1)"
+                                                            @keyDown="changeValueInput($event.component, 1, data.data)" />
                                                     </div>
 
                                                     <div class="custom-money">
-                                                        <a-checkbox @change="handleChangeDataTable($event.target)"
-                                                            :id="'option2-' + data.rowIndex"
-                                                            :checked="checkOption(data.data.options, 2)">
-                                                            계좌통합
-                                                        </a-checkbox>
-                                                        <div :id="'value2-' + data.rowIndex">
-                                                            <DxNumberBox :format="'#,###'" :min="0" />
-                                                        </div>
+                                                        <DxCheckBox :value="checkOption(data.data.options, 2)"
+                                                            text="계좌통합" class="custom-checkbox" />
+                                                        <DxNumberBox :format="'#,###'" :min="0"
+                                                            :value="getPriceOption(data.data.options, 2)"
+                                                            @keyDown="changeValueInput($event.component, 2, data.data)" />
                                                     </div>
 
                                                     <div class="custom-money">
-                                                        <a-checkbox @change="handleChangeDataTable($event.target)"
-                                                            :id="'option3-' + data.rowIndex"
-                                                            :checked="checkOption(data.data.options, 3)">
-                                                            W4C
-                                                        </a-checkbox>
+                                                        <DxCheckBox :value="checkOption(data.data.options, 3)"
+                                                            text="W4C" class="custom-checkbox" /> 
+                                                        <DxNumberBox :min="0" :format="'#,###'"
+                                                            :value="getPriceOption(data.data.options, 3)"
+                                                            @keyDown="changeValueInput($event.component, 3, data.data)" />
 
-                                                        <div :id="'value3-' + data.rowIndex">
-                                                            <DxNumberBox :min="0" :format="'#,###'" />
-                                                        </div>
                                                     </div>
 
 
                                                 </a-col>
-                                                <a-col :span="12">
+                                                <a-col :span="14">
                                                     <div style="display: flex">
                                                         <div>
                                                             <imgUpload :title="titleModal" @update-img="getImgUrl"
@@ -275,6 +264,7 @@ import { ref, defineComponent, watch, reactive, computed } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
+import { DxCheckBox } from 'devextreme-vue/check-box';
 import {
     DxDataGrid,
     DxColumn,
@@ -343,7 +333,7 @@ export default defineComponent({
         DxNumberBox,
         DxTexts,
         DxMasterDetail,
-
+        DxCheckBox
     },
     props: {
         modalStatus: Boolean,
@@ -353,7 +343,7 @@ export default defineComponent({
             default: null,
         },
     },
- 
+
     methods: {
         contentReady(e: any) {
             if (!e.component.getSelectedRowKeys().length) { e.component.selectRowsByIndexes(0); }
@@ -429,7 +419,17 @@ export default defineComponent({
             } else {
                 return true
             }
+        },
 
+        getPriceOption(arr: any, value: number) {
+            let price = 0
+            arr.map((e: any) => {
+                if (e.accountingServiceType == value) {
+                    price = e.price
+                }
+            })
+
+            return price
         }
     },
     watch: {
@@ -529,11 +529,11 @@ export default defineComponent({
         watch(
             () => props.modalStatus,
             (newValue) => {
+                trigger.value = true;
                 if (newValue) {
                     dataQuery.value = { id: props.idRowEdit };
                     dataQueryMemos.value = { companyId: props.idRowEdit };
                     refetchMemo();
-                    trigger.value = true;
                 } else {
                     formStateMomes.value = [
                         {
@@ -923,7 +923,50 @@ export default defineComponent({
             return dayjs(date).format("YYYY/MM/DD");
         };
 
+        const getTotalAmount = (data: any) => {
+            let totalAmount = 0
+            data.data.options.map((e: any) => {
+                totalAmount += e.price
+            })
+            totalAmount += data.data.price
+            return totalAmount
+        }
+
+        const changeValueInput = (event: any, indexOP: any, val: any) => {
+            setTimeout(() => {
+                // Nếu thay đổi giá trị trong options
+                if (indexOP != 0) {
+                    let total = 0
+                    val.options.map((e: any) => {
+                        if (e.accountingServiceType != indexOP) {
+                            total += e.price
+                        }
+                    })
+                    total += event._parsedValue + val.price
+                    formState.accountingfacilityBusinesses.map((e: any) => {
+                        if (e.name == val.name) {
+
+                            e.options.map((k: any) => {
+                                if (indexOP == k.accountingServiceType) {
+                                    k.price = event._parsedValue
+                                }
+                            })
+                            
+                        }
+                    })
+                }else {
+                    formState.accountingfacilityBusinesses.map((e: any) => {
+                        if (e.name == val.name) {
+                            e.price = event._parsedValue
+                        }
+                    })
+                }
+            }, 100);
+        }
+
         return {
+            changeValueInput,
+            getTotalAmount,
             fileList,
             setModalVisible,
             loading,
@@ -956,7 +999,7 @@ export default defineComponent({
             totalPriceByDay,
             totalPriceAccountingService,
             totalWithholdingService,
-            totalPrice, 
+            totalPrice,
             dataOption,
         };
     },

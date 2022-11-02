@@ -147,3 +147,13 @@
     height: 100%;
     object-fit: cover;
 }
+
+::v-deep .dx-checkbox-checked .dx-checkbox-icon::before {
+    font-size: 13px;
+    top: 8px;
+}
+
+::v-deep .dx-checkbox-icon {
+    width: 18px;
+    height: 18px;
+}
