@@ -7,17 +7,21 @@
                 <a-button key="submit" type="primary" @click="updateScreenRole">
                     저장하고 나가기</a-button>
             </template>
-            <a-form v-bind="layout" name="nest-messages">
+            <a-form v-bind="layout" name="nest-messages" :rules="rules">
                 <a-row :gutter="24">
                     <a-col :span="24" class="title-modal">
                         <span>권한그룹 기본정보</span>
                     </a-col>
                     <a-col :span="16">
-                        <a-form-item label="그룹코드">
+                        <a-form-item label="그룹코드" name="id">
                             <div class="dflex">
+<!--                              <default-text-box-->
+<!--                                max-character="10"-->
+<!--                                required-->
+<!--                              ></default-text-box>-->
                                 <a-input v-model:value="dataRes.id" @change="changeID" class="mr5"
-                                    placeholder="영문,숫자 5~10자 (중복불가)" disabled="true" />
-                                <a-button type="button" disabled="true">중복체크</a-button>
+                                    placeholder="영문,숫자 5~10자 (중복불가)"  disabled/>
+                                <a-button type="button" disabled>중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
@@ -28,7 +32,7 @@
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="대상회원">
-                            <a-radio-group v-model:value="dataRes.type" disabled="true">
+                            <a-radio-group v-model:value="dataRes.type" disabled>
                                 <a-radio value="m">
                                     <a-tag color="black">매니저</a-tag>
                                 </a-radio>
@@ -36,7 +40,7 @@
                                     <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                                 </a-radio>
                                 <a-radio value="p">
-                                    <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                                    <a-tag class="ant-tag-yellow"  >파트너</a-tag>
                                 </a-radio>
                             </a-radio-group>
                         </a-form-item>
@@ -75,7 +79,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch } from 'vue'
+import {ref, defineComponent, watch, reactive} from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import {
     DxDataGrid,
@@ -89,9 +93,11 @@ import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
 import { AdminScreenRole } from '@bankda/jangbuda-common';
 import { DxCheckBox } from 'devextreme-vue/check-box';
+import DefaultTextBox from "../../../../../components/common/DefaultTextBox.vue";
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
+      DefaultTextBox,
         SearchOutlined,
         WarningOutlined,
         DxDataGrid,
@@ -107,6 +113,7 @@ export default defineComponent({
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         };
+
         const visible = ref<boolean>(false);
         const triggersGetData = ref(false)
         const labelCol = { style: { width: "300px" } };
@@ -136,13 +143,15 @@ export default defineComponent({
         }
         const keyChecked = ref([])
         watch(() => props.modalStatus, (value) => {
-            dataCallApiDetail.value = {
+            if(value == true) {
+              dataCallApiDetail.value = {
                 id: props.idRowIndex
-            }
-            spinning.value = true
-            triggersGetData.value = true
-            if (dataCallApiDetail) {
+              }
+              spinning.value = true
+              triggersGetData.value = true
+              if (dataCallApiDetail) {
                 refetchDataEdit()
+              }
             }
         })
         //Creat new group roll
@@ -171,16 +180,19 @@ export default defineComponent({
             }
             editScreenRole(dataCall)
         }
-        const { refetch: refetchDataEdit, result: resDataDetail } = useQuery(queries.getScreenRoleGroup, dataCallApiDetail, () => ({
+        const { refetch: refetchDataEdit, result: resDataDetail} = useQuery(queries.getScreenRoleGroup, dataCallApiDetail, () => ({
             enabled: triggersGetData.value,
             fetchPolicy: "no-cache",
         }))
+
         watch(resDataDetail, (value) => {
-            dataRes.value = value.getScreenRoleGroup
-            readAdminScreenRoles.value = value.getScreenRoleGroup.readAdminScreenRoles
-            writeAdminScreenRoles.value = value.getScreenRoleGroup.writeAdminScreenRoles
-            spinning.value = false
-        });
+            if(value) {
+              dataRes.value = value.getScreenRoleGroup
+              readAdminScreenRoles.value = value.getScreenRoleGroup.readAdminScreenRoles
+              writeAdminScreenRoles.value = value.getScreenRoleGroup.writeAdminScreenRoles
+              spinning.value = false
+            }
+        }, {deep: true});
         const setReadWrite = (data: any, type: string) => {
             let count = 0
             if (type == 'read') {

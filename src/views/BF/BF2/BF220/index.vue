@@ -43,7 +43,7 @@
                                 <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                             </a-checkbox>
                             <a-checkbox v-model:checked="buttonSearch.typeSevice3">
-                                <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                                <a-tag class="ant-tag-yellow" >파트너</a-tag>
                             </a-checkbox>
                         </a-col>
                     </a-row>
@@ -186,7 +186,7 @@ export default defineComponent({
         const modalEditStatus = ref(false)
         const dataSearch = ref({
             page: 1,
-            rows: 10,
+            rows: 20,
             types: ["m", "r", "p"]
         })
         const searching = () => {
