@@ -130,7 +130,7 @@
                     <a-collapse-panel key="3" header="CMS (자동이체출금) 계좌 정보 입력">
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                             <a-form-item label="출금은행" class="clr">
-                                <bank-select-box :selectValue="formState.extendInfoCmsBankBankType" width="150px" />
+                                <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType" width="150px" />
                             </a-form-item>
                             <a-form-item label="출금계좌번호" class="clr">
                                 <a-input placeholder="‘-’없이 숫자만 입력" style="width: 300px"

@@ -36,7 +36,7 @@ export default {
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: Number,
+      type: [Number,String],
       default: 0,
     },
     placeholder: String,
