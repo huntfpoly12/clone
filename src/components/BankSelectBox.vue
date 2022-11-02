@@ -13,10 +13,9 @@
       :height="$config_styles.HeightInput"
     />
   </div>
-
 </template>
 <script lang="ts">
-import { ref, onMounted,watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import { BankType } from "@bankda/jangbuda-common";
 import type { SelectProps } from "ant-design-vue";
@@ -36,7 +35,7 @@ export default {
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: [Number,String],
+      type: [Number, String],
       default: 0,
     },
     placeholder: String,
@@ -45,12 +44,12 @@ export default {
   components: {
     DxSelectBox,
   },
-  setup(props, { emit }) {
+  setup(props:any, { emit }:any) {
     const value = ref(props.valueInput);
     const bankTypeSelect = ref<SelectProps["options"]>([]);
     onMounted(() => {
-      bankTypeSelect.value = BankType.all()
-    })
+      bankTypeSelect.value = BankType.all();
+    });
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -64,7 +63,7 @@ export default {
     return {
       bankTypeSelect,
       updateValue,
-      value
+      value,
     };
   },
 };
