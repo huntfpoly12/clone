@@ -20,7 +20,6 @@
                         <a-form-item label="사업자유형" class="label-br">
                             <biz-type-select-box   v-model:valueInput="formState.detailBizType" width="200px" /> 
                         </a-form-item>
-
                         <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]">
                             <mail-text-box v-model:valueInput="formState.detailEmail" width="250px"/>
                         </a-form-item>
@@ -103,7 +102,7 @@
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
                         <a-form-item label="계좌번호">
-                            <a-input v-model:value="formState.detailAccountNumber" style="width: 200px" />
+                            <text-number-box v-model:valueInput="formState.detailAccountNumber" width="200px"/>
                         </a-form-item>
                         <a-form-item label="가입일자">
                             <div style="width: 150px">
@@ -113,7 +112,7 @@
                     </a-col>
                     <a-col :span="12" :md="13" :lg="14">
                         <a-form-item label="예금주">
-                            <a-input v-model:value="formState.detailAccountOwner" />
+                            <default-text-box v-model:valueInput="formState.detailAccountOwner" />
                         </a-form-item>
                         <a-form-item label="해지일자">
                             <div style="width: 150px">
@@ -121,13 +120,12 @@
                             </div>
                         </a-form-item>
                     </a-col>
-
                 </a-row>
                 <a-row>
                     <a-col :span="24" :md="24" :lg="24">
                         <a-form-item label="비고" :label-col="{ span: 2 }" :wrapper-col="{ span: 24 }"
                             class="textarea_340">
-                            <a-textarea v-model:value="formState.detailRemark" placeholder="500자 이내" />
+                            <text-area-box v-model:valueDate="formState.detailRemark" placeholder="500자 이내" :required="true"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -172,7 +170,6 @@ export default defineComponent({
                 email: "이메일 형식이 정확하지 않습니다",
             },
         };
-
 
         // watch event modal popup
         watch(

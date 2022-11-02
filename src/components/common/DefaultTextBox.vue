@@ -11,16 +11,20 @@
       @change="updateValue(value)"
       :height="$config_styles.HeightInput"
     >
-    <DxValidator>
+      <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxStringLengthRule v-if="minCharacter > 0"
+                :min="minCharacter"
+                :message="messageString"
+              />
       </DxValidator>
     </DxTextBox>
   </div>
 </template>
-  
-  <script lang="ts">
+
+<script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule,DxStringLengthRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -32,9 +36,13 @@ export default defineComponent({
       type: String,
       default: "Input is required!",
     },
+
     width: String,
     maxCharacter: Number,
-
+    minCharacter: {
+      type: Number,
+      default: 0,
+    },
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
@@ -48,10 +56,12 @@ export default defineComponent({
     DxTextBox,
     DxValidator,
     DxRequiredRule,
+    DxStringLengthRule
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);
-
+    const messageString = ref('Input must have at least ' +props.minCharacter+ ' symbols');
+    
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -62,10 +72,10 @@ export default defineComponent({
       }
     );
     return {
+      messageString,
       updateValue,
       value,
     };
   },
 });
 </script>
-  
