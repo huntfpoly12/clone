@@ -67,7 +67,7 @@
                             </div>
                         </a-col>
                         <a-col>
-                            <ListManagerDropdown />
+                            <ListManagerDropdown/>
                         </a-col>
                         <a-col>
                             <!-- Doanh nghiệp -->

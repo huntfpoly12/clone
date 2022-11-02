@@ -186,7 +186,7 @@ export default defineComponent({
         const modalEditStatus = ref(false)
         const dataSearch = ref({
             page: 1,
-            rows: 10,
+            rows: 15,
             types: ["m", "r", "p"]
         })
         const searching = () => {
