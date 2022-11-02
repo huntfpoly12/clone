@@ -1,31 +1,32 @@
 <template>
   <div>
-    <DxTextBox
+    <DxSelectBox
       :width="width"
-      :show-clear-button="clearButton"
+      :data-source="saleGrade"
       :placeholder="placeholder"
+      :show-clear-button="clearButton"
       v-model:value="value"
-      :disabled="disabled"
-      :maxLength="maxCharacter"
-      :readOnly="readOnly"
-      @change="updateValue(value)"
+      :read-only="readOnly"
+      display-expr="label"
+      value-expr="value"
+      @value-changed="updateValue(value)"
       :height="$config_styles.HeightInput"
-    >
-      <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
-        <DxStringLengthRule v-if="minCharacter > 0"
-                :min="minCharacter"
-                :message="messageString"
-              />
-      </DxValidator>
-    </DxTextBox>
+    />
   </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { DxValidator, DxRequiredRule,DxStringLengthRule } from "devextreme-vue/validator";
-import DxTextBox from "devextreme-vue/text-box";
+import DxSelectBox from "devextreme-vue/select-box";
+import {
+  SalesRepresentativeGrade,
+  enum2Entries,
+} from "@bankda/jangbuda-common";
+
+const saleGrade = enum2Entries(SalesRepresentativeGrade).map((value) => ({
+  value: value[1],
+  label: value[0],
+}));
+
 export default defineComponent({
   props: {
     required: {
@@ -36,32 +37,24 @@ export default defineComponent({
       type: String,
       default: "Input is required!",
     },
-
     width: String,
     maxCharacter: Number,
-    minCharacter: {
-      type: Number,
-      default: 0,
-    },
+
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: String,
-      default: "",
+      type: Number,
+      default: 0,
     },
     placeholder: String,
     readOnly: Boolean,
   },
   components: {
-    DxTextBox,
-    DxValidator,
-    DxRequiredRule,
-    DxStringLengthRule
+    DxSelectBox,
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);
-    const messageString = ref('Input must have at least ' +props.minCharacter+ ' symbols');
-    
+
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -72,10 +65,11 @@ export default defineComponent({
       }
     );
     return {
-      messageString,
       updateValue,
+      saleGrade,
       value,
     };
   },
 });
 </script>
+<style scoped></style>
