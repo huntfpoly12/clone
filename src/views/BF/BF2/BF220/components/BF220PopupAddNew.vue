@@ -19,19 +19,19 @@
                                     class="mr5"
                                     v-model:value="dataRes.id"
                                     placeholder="영문,숫자 5~10자 (중복불가)"
+                                    :max-character="10"
+                                    :min-character="5"
                                     :required="true"
                                     mess-required="Id is required"
+                                    style="width: 350px"
                                 ></default-text-box>
-<!--                                <a-input v-model:value="dataRes.id" @change="changeID" class="mr5"-->
-<!--                                    placeholder="영문,숫자 5~10자 (중복불가)" />-->
                                 <a-button type="button" @click="checkId">중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <default-text-box v-model:value="dataRes.name" placeholder="최대 20자" />
-<!--                            <a-input v-model:value="dataRes.name" placeholder="최대 20자" />-->
+                            <default-text-box v-model:value="dataRes.name" placeholder="최대 20자" :max-character="20" required />
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">

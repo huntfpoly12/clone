@@ -106,14 +106,14 @@
                                 <a-form :model="contractCreacted" name="nest-messages"
                                     :validate-messages="validateMessages" @finish="onFinish">
                                     <a-form-item :name="['phone']" :rules="[{ required: true }]">
-                                        <a-input placeholder="‘-’ 앖이 숫자만 인력" @change="validateNumber('phone')"
+                                        <a-input placeholder="‘-’ 없이 슷자입력" @change="validateNumber('phone')"
                                             v-model:value="contractCreacted.phone" style="width: 180px" />
                                     </a-form-item>
                                 </a-form>
                             </div>
                             <div class="form-item">
                                 <label>팩 스 :</label>
-                                <a-input placeholder="‘-’ 앖이 숫자만 인력" v-model:value="contractCreacted.fax"
+                                <a-input placeholder="‘-’ 없이 슷자입력" v-model:value="contractCreacted.fax"
                                     @change="validateNumber('fax')" @keyup="validateNumber('fax')"
                                     style="width: 180px;" />
                             </div>
@@ -167,7 +167,7 @@
                                     :validate-messages="validateMessages" @finish="onFinish">
                                     <a-form-item :name="['mobilePhone']" :rules="[{ required: true }]">
                                         <a-input v-model:value="contractCreacted.mobilePhone"
-                                            placeholder="‘-’ 앖이 숫자만 인력" @keyup="validateNumber('mobilePhone')"
+                                            placeholder="‘-’ 없이 슷자입력" @keyup="validateNumber('mobilePhone')"
                                             @change="validateNumber('mobilePhone')" style="width: 150px" />
                                     </a-form-item>
                                 </a-form>
@@ -236,7 +236,7 @@
                                     :validate-messages="validateMessages" @finish="onFinish" style="width: 100%;">
                                     <a-form-item :name="['longTermCareInstitutionNumber']"
                                         :rules="[{ required: true }]">
-                                        <a-input :disabled="disableFormVal2" placeholder="1234567898"
+                                        <a-input :disabled="disableFormVal2" placeholder="‘-’ 없이 슷자입력"
                                             @change="validateNumber('longTermCareInstitutionNumber')"
                                             @keyup="validateNumber('longTermCareInstitutionNumber')"
                                             v-model:value="contractCreacted.longTermCareInstitutionNumber" />
@@ -299,7 +299,7 @@
                             <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                             <div class="form-item">
                                 <label class="red">출금은행 :</label>
-                                <selectBank :disableFormVal="disableFormVal" @bank="getIDBank" :width="'178px'" />
+                                <bank-select-box :disableFormVal="disableFormVal" @bank="getIDBank" :width="'178px'" />
                             </div>
                             <div class="form-item">
                                 <label class="red">출금계좌번호 :</label>
@@ -318,7 +318,7 @@
                                 <a-form :model="contractCreacted" :validate-messages="validateMessages"
                                     style="width: 100%;">
                                     <a-form-item :name="['ownerName']" :rules="[{ required: true }]">
-                                        <a-input placeholder="주식회사 타운소프트비나" :disabled="disableFormVal"
+                                        <a-input :disabled="disableFormVal"
                                             v-model:value="contractCreacted.ownerName" />
                                     </a-form-item>
                                 </a-form>
@@ -418,7 +418,6 @@ import {
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
-import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
 
 import mutations from "../../graphql/mutations/RqContract/index";
@@ -454,7 +453,6 @@ export default {
         imgUpload,
         CustomDatepicker,
         moment,
-        selectBank,
         postCode,
         DxRequiredRule,
         DxCompareRule,

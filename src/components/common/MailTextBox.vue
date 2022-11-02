@@ -10,6 +10,7 @@
       :disabled="disabled"
       :readOnly="readOnly"
       @change="updateValue(value)"
+      :height="$config_styles.HeightInput"
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />

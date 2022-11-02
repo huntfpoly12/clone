@@ -15,19 +15,25 @@
                     <a-col :span="16">
                         <a-form-item label="그룹코드" name="id">
                             <div class="dflex">
-<!--                              <default-text-box-->
-<!--                                max-character="10"-->
-<!--                                required-->
-<!--                              ></default-text-box>-->
-                                <a-input v-model:value="dataRes.id" @change="changeID" class="mr5"
-                                    placeholder="영문,숫자 5~10자 (중복불가)"  disabled/>
+                              <default-text-box
+                                v-model:value="dataRes.id"
+                                class="mr5"
+                                placeholder="영문,숫자 5~10자 (중복불가)"
+                                disabled
+                                :max-character="10"
+                                :min-character="5"
+                                required
+                                style="width: 350px"
+                              ></default-text-box>
                                 <a-button type="button" disabled>중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <a-input v-model:value="dataRes.name" placeholder="최대 20자" />
+                          <default-text-box
+                              v-model:value="dataRes.name" placeholder="최대 20자"
+                          ></default-text-box>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
