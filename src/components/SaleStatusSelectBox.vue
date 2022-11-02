@@ -12,7 +12,7 @@
         <a-tag :color="getColorTag(saleStatus.label)">{{saleStatus.label}}</a-tag>
       </a-select-option>
     </a-select>
-    <a-modal
+    <a-modal v-if="confirmStatus"
       v-model:visible="visibleConfirm"
       :mask-closable="false"
       :afterClose="afterConfirmClose"
@@ -79,11 +79,15 @@ export default defineComponent({
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: Number,
+      type: [Number,String],
       default: 0,
     },
     placeholder: String,
     readOnly: Boolean,
+    confirmStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     DxSelectBox,

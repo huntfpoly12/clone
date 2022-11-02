@@ -7,8 +7,7 @@
                 <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateSale">
                     저장하고 나가기</a-button>
             </template>
-            <a-form :model="formState" v-bind="layout" label-align="right" name="nest-messages"
-                :validate-messages="validateMessages">
+            <a-form :model="formState" v-bind="layout" label-align="right" name="nest-messages">
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
                         <a-form-item label="영업자코드">
@@ -46,7 +45,7 @@
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
                         <a-form-item label="상태">
-                            <sale-status-select-box v-model:valueInput="formState.status" width="100px"/>
+                            <sale-status-select-box v-model:valueInput="formState.status" width="100px" :confirmStatus="true"/>
                         </a-form-item>
                         <a-form-item label="등급">
                             <sale-grade-select-box v-model:valueInput="formState.detailGrade" width="100px"/>
@@ -164,12 +163,6 @@ export default defineComponent({
         const visible = ref<boolean>(false);
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
-        const validateMessages = {
-            required: true,
-            types: {
-                email: "이메일 형식이 정확하지 않습니다",
-            },
-        };
 
         // watch event modal popup
         watch(
@@ -286,7 +279,6 @@ export default defineComponent({
 
 
         const updateSale = () => {
-
             let salesRepresentativeDetailInput = {
                 status: formState.status,
                 name: formState.detailName,
@@ -337,10 +329,6 @@ export default defineComponent({
             setModalVisible();
         });
 
-        const dateValue = (date: string | number | Date | dayjs.Dayjs | null | undefined) => {
-            return dayjs(date, "YYYY-MM-DD");
-        }
-
         const funcAddress = (data: any) => {
             formState.detailZipcode = data.zonecode;
             formState.detailRoadAddress = data.roadAddress;
@@ -367,8 +355,6 @@ export default defineComponent({
             layout,
             value1: ref<Dayjs>(),
             visible,
-            dateValue,
-            validateMessages,
             funcAddress,
             loading,
             updateSale,
@@ -376,18 +362,6 @@ export default defineComponent({
             canChangeCompanyName,
             setModalVisible
         }
-    },
-    methods: {
-        getColorTag(data: string) {
-            if (data === "정상") {
-                return "#108ee9";
-            } else if (data === "해지") {
-                return "#cd201f";
-            } else if (data === "전체") {
-                return "grey";
-            }
-        },
-
     }
 })
 </script>
