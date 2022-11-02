@@ -4,15 +4,14 @@
       :width="width"
       value-change-event="keyup"
       :show-clear-button="clearButton"
-      mode="tel"
+      mode="number"
       :placeholder="placeholder"
       v-model:value="value"
       :disabled="disabled"
       :readOnly="readOnly"
       @change="updateValue(value)"
-      :mask-rules="rules"
-      :mask="mask"
-      :mask-invalid-message="maskMess"
+      :on-input="onInputValue"
+      :height="$config_styles.HeightInput"
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
@@ -22,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref ,watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
@@ -51,12 +50,15 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
-    const rules = ref({ X: /[02-9]/ });
-    const mask = ref("0000-000000000");
-    const maskMess = ref("");
     const value = ref(props.valueInput);
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
+    };
+
+    const onInputValue = (e: any) => {
+      var inputElement = e.event.target;
+      if (inputElement.value.length > 11)
+        inputElement.value = inputElement.value.slice(0, 11);
     };
 
     watch(
@@ -67,10 +69,8 @@ export default defineComponent({
     );
     return {
       updateValue,
+      onInputValue,
       value,
-      rules,
-      mask,
-      maskMess,
     };
   },
 });

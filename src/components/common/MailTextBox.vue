@@ -10,10 +10,11 @@
       :disabled="disabled"
       :readOnly="readOnly"
       @change="updateValue(value)"
+      :height="$config_styles.HeightInput"
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
-        <DxEmailRule message="Email is invalid !" />
+        <DxEmailRule message="이메일 형식이 정확하지 않습니다" />
       </DxValidator>
     </DxTextBox>
   </div>
