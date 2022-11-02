@@ -115,7 +115,7 @@
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
                         <a-form-item label="은행">
-                            <selectBank @bank="getIDBank" :width="'200px'" />
+                            <select-bank @bank="getIDBank" :width="'200px'" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -126,7 +126,7 @@
                         </a-form-item>
                         <a-form-item label="가입일자">
                             <div style="width: 150px">
-                                <CustomDatepicker :valueDate="bf340Detail.registerDate"
+                                <custom-date-picker :valueDate="bf340Detail.registerDate"
                                     @valueDateChange="dataDateStart" />
                             </div>
                         </a-form-item>
@@ -137,7 +137,7 @@
                         </a-form-item>
                         <a-form-item label="해지일자">
                             <div style="width: 150px">
-                                <CustomDatepicker :valueDate="bf340Detail.cancelDate" @valueDateChange="dataDateEnd" />
+                                <custom-date-picker :valueDate="bf340Detail.cancelDate" @valueDateChange="dataDateEnd" />
                             </div>
                         </a-form-item>
                     </a-col>
@@ -182,7 +182,6 @@
 import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent, computed } from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
-import selectBank from "../../../../../components/selectBank.vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 import { message } from "ant-design-vue";
@@ -195,8 +194,6 @@ export default defineComponent({
         SearchOutlined,
         WarningOutlined,
         CustomDatepicker,
-        selectBank,
-        
     },
     setup(props, { emit }) {
         const layout = {

@@ -25,7 +25,7 @@
                             <mail-text-box v-model:valueInput="formState.detailEmail" width="250px"/>
                         </a-form-item>
                         <a-form-item label="연락처">
-                            <tel-tex-box v-model:valueInput="formState.detailPhone" width="200px"/>
+                            <tel-tex-box v-model:valueInput="formState.detailPhone" width="200px" placeholder="전화번호를 입력"/>
                         </a-form-item>
                         <a-form-item label="팩스">
                             <text-number-box v-model:valueInput="formState.detailFax" width="200px"/>
@@ -46,23 +46,20 @@
                         </a-form-item>
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
-                        
                         <a-form-item label="상태">
-                            {{formState.status}}
-                            
-                         
+                            <sale-status-select-box v-model:valueInput="formState.status" width="100px"/>
                         </a-form-item>
                         <a-form-item label="등급">
                             <sale-grade-select-box v-model:valueInput="formState.detailGrade" width="100px"/>
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="label-br">
-                            <a-input v-model:value="formState.detailResidentId" />
+                            <id-card-text-box :required="true" v-model:valueInput="formState.detailResidentId" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                         <a-form-item label="사업자등록번호" class="label-br">
-                            <a-input v-model:value="formState.detailBizNumber" />
+                            <company-registration-number-text-box v-model:valueInput="formState.detailBizNumber"  :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                         <a-form-item label="휴대폰">
-                            <a-input v-model:value="formState.detailMobilePhone" />
+                            <tel-tex-box v-model:valueInput="formState.detailMobilePhone" placeholder="전화번호를 입력"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -91,11 +88,7 @@
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
                             <a-col :span="16" :md="16" :lg="17">
-                                <a-form-item class="email-input" :wrapper-col="{ span: 24 }"
-                                    :name="['detailEmailTaxInvoice']" :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="formState.detailEmailTaxInvoice" placeholder=""
-                                        style="width: 100%" />
-                                </a-form-item>
+                                <mail-text-box v-model:valueInput="formState.detailEmailTaxInvoice" width="100%"/>
                             </a-col>
                         </a-row>
                     </a-col>
@@ -157,7 +150,7 @@ export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
     components: {
-        SearchOutlined,
+        SearchOutlined
     },
 
     setup(props, { emit }) {

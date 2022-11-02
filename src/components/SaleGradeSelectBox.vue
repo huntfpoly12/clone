@@ -17,9 +17,15 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
-import { SalesRepresentativeGrade,getEnumKey,enum2Array ,enum2KeysByValueMap,enum2Entries} from "@bankda/jangbuda-common";
+import {
+  SalesRepresentativeGrade,
+  enum2Entries,
+} from "@bankda/jangbuda-common";
 
-const saleGrade = enum2Entries(SalesRepresentativeGrade).map(value => ({ value:value[1],label: value[0]}));
+const saleGrade = enum2Entries(SalesRepresentativeGrade).map((value) => ({
+  value: value[1],
+  label: value[0],
+}));
 
 export default defineComponent({
   props: {
@@ -66,5 +72,4 @@ export default defineComponent({
   },
 });
 </script>
-  <style scoped></style>
-  
+<style scoped></style>

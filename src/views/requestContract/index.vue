@@ -299,7 +299,7 @@
                             <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                             <div class="form-item">
                                 <label class="red">출금은행 :</label>
-                                <selectBank :disableFormVal="disableFormVal" @bank="getIDBank" :width="'178px'" />
+                                <select-bank :disableFormVal="disableFormVal" @bank="getIDBank" :width="'178px'" />
                             </div>
                             <div class="form-item">
                                 <label class="red">출금계좌번호 :</label>
@@ -418,7 +418,6 @@ import {
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
-import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
 
 import mutations from "../../graphql/mutations/RqContract/index";
@@ -454,7 +453,6 @@ export default {
         imgUpload,
         CustomDatepicker,
         moment,
-        selectBank,
         postCode,
         DxRequiredRule,
         DxCompareRule,

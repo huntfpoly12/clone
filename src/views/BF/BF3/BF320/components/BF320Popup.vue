@@ -130,7 +130,7 @@
                     <a-collapse-panel key="3" header="CMS (자동이체출금) 계좌 정보 입력">
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                             <a-form-item label="출금은행" class="clr">
-                                <selectBank :selectValue="formState.extendInfoCmsBankBankType" width="150px" />
+                                <select-bank :selectValue="formState.extendInfoCmsBankBankType" width="150px" />
                             </a-form-item>
                             <a-form-item label="출금계좌번호" class="clr">
                                 <a-input placeholder="‘-’없이 숫자만 입력" style="width: 300px"
@@ -198,7 +198,6 @@ import imgUpload from "../../../../../components/UploadImage.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF320/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF320/index";
 import postCode from "../../../../../components/postCode.vue";
-import selectBank from "../../../../../components/selectBank.vue";
 
 import { message } from "ant-design-vue";
 import dayjs, { Dayjs } from 'dayjs';
@@ -252,8 +251,7 @@ export default defineComponent({
         WarningFilled,
         imgUpload,
         InfoCircleFilled,
-        postCode,
-        selectBank
+        postCode
     },
     data() {
         return {

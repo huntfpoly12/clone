@@ -1,36 +1,17 @@
 <template>
   <div>
-    {{value}} {{valueInput}}
-    <DxSelectBox
-      :width="width"
-      :data-source="saleGrade"
-      :placeholder="placeholder"
-      :show-clear-button="clearButton"
+    <a-select
+      :style="{width: width , height:$config_styles.HeightInput}"
       v-model:value="value"
-      :read-only="readOnly"
-      display-expr="label"
-      value-expr="value"
-      @value-changed="updateValue(value)"
-      :height="$config_styles.HeightInput"
-      field-template="field"
-      item-template="item"
+      :disabled="disabled"
+      option-label-prop="children"
+      @select="updateValue(value)"
+      :placeholder="placeholder"
     >
-      <template #field="{ data }">
-        <div>
-          <a-tag :color="getColorTag(data.label)">{{
-            data.label.trim()
-          }}</a-tag>
-        </div>
-      </template>
-      <template #item="{ data }"
-        ><div>
-      
-          <a-tag :color="getColorTag(data.label)">{{
-            data.label.trim()
-          }}</a-tag>
-        </div>
-      </template>
-    </DxSelectBox>
+      <a-select-option v-for="saleStatus in saleGrade"  :key="saleStatus.value" :label="saleStatus.label" :style="{width: width}">
+        <a-tag :color="getColorTag(saleStatus.label)">{{saleStatus.label}}</a-tag>
+      </a-select-option>
+    </a-select>
     <a-modal
       v-model:visible="visibleConfirm"
       :mask-closable="false"
@@ -39,7 +20,6 @@
       :width="521"
     >
       <a-row>
-        {{ visibleConfirm }}
         <a-col :span="4">
           <warning-outlined
             :style="{ fontSize: '70px', color: '#faad14', paddingTop: '20px' }"
