@@ -51,8 +51,8 @@
                     </div>
                 </a-row>
                 <a-row>
-                    <a-space :size="10" style="margin-top: 8px">
-                        <div class="warring-modal" >
+                    <a-space :size="8" style="margin-top: 8px">
+                        <div class="warring-modal">
                             <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
                             <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
                             <p>파일용량 : 최대 5MB</p>
