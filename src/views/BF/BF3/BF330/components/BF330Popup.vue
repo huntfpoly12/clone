@@ -128,6 +128,12 @@
 
                                                 </a-col>
                                                 <a-col :span="14">
+
+                                                    <div class="custom-money" style="padding-left: 0px">
+                                                        <div style="width: auto;padding-right: 10px;">장기요양기관등록번호 :</div>
+                                                        <DxNumberBox :format="'#,###'" :min="0" />
+                                                    </div>
+
                                                     <div style="display: flex">
                                                         <div>
                                                             <imgUpload :title="titleModal"
