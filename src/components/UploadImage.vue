@@ -1,22 +1,22 @@
 <template>
     <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
         <a-col>
-            <div>
+            <div v-if="!customrow">
                 <a-form-item class="title" :label="title" disable="true">
                     <a-row>
                         <div v-if="disabledImg == false">
                             <div style="display: flex;">
                                 <input class="custom-file-input" type="file" @change="onFileChange" />
-                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading"/>
+                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                             </div>
 
                             <p v-if="messageUpload">{{ messageUpload }}</p>
-                         
+
                         </div>
                         <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
                             <div style="display: flex;">
                                 <input class="custom-file-input" type="file" disabled />
-                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading"/>
+                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                             </div>
                         </div>
                     </a-row>
@@ -30,6 +30,35 @@
                         </a-space>
                     </a-row>
                 </a-form-item>
+            </div>
+            <div v-else>
+                <div>{{ title }}</div>
+                <a-row>
+                    <div v-if="disabledImg == false">
+                        <div style="display: flex;">
+                            <input class="custom-file-input" type="file" @change="onFileChange" />
+                            <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                        </div>
+
+                        <p v-if="messageUpload">{{ messageUpload }}</p>
+
+                    </div>
+                    <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
+                        <div style="display: flex;">
+                            <input class="custom-file-input" type="file" disabled />
+                            <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                        </div>
+                    </div>
+                </a-row>
+                <a-row>
+                    <a-space :size="8" style="margin-top: 8px">
+                        <div class="warring-modal">
+                            <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
+                            <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
+                            <p>파일용량 : 최대 5MB</p>
+                        </div>
+                    </a-space>
+                </a-row>
             </div>
         </a-col>
         <a-col> </a-col>
@@ -95,6 +124,9 @@ export default defineComponent({
             default: null,
             require: true
         },
+        customrow: {
+            type: Number
+        }
     },
     components: {
         UploadOutlined,

@@ -5,11 +5,11 @@
           <template #footer>
               <a-button @click="setModalVisible">그냥 나가기</a-button>
               <a-button key="submit" type="primary" :loading="loading || loadingUpdate"
-                  @click="updateSubscriptionRequest">
+                  @click.prevent="updateSubscriptionRequest">
                   저장하고 나가기</a-button>
           </template>
           <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
-              <a-form :data-source="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
                   <a-collapse v-model:activeKey="activeKey" accordion>
                       <a-collapse-panel key="1" header="심사정보">
                           <a-form-item label="승인상태">
@@ -436,6 +436,7 @@ export default defineComponent({
     BankSelectBox
   },
   setup(props, { emit }) {
+      const formRef = ref();
       const facilityBizType = FacilityBizType.all();
 
       const imageRegCardFile = ref("");
@@ -873,112 +874,120 @@ export default defineComponent({
       });
 
       const updateSubscriptionRequest = (e: any) => {
-          let customAccountingfacilityBusinesses: any = [];
-          if (formState.accountingfacilityBusinesses) {
-              customAccountingfacilityBusinesses =
-                  formState.accountingfacilityBusinesses.map(
-                      (facilityBusinesses: any) => ({
-                          longTermCareInstitutionNumber:
-                              formState.accountinglongTermCareInstitutionNumber,
-                          capacity: facilityBusinesses.capacity,
-                          facilityBizType: facilityBusinesses.facilityBizType,
-                          name: facilityBusinesses.name,
-                          registrationCard: facilityBusinesses.registrationCard,
-                          registrationCardFileStorageId:
-                              regCardFileId.value == ""
-                                  ? facilityBusinesses.registrationCardFileStorageId
-                                  : regCardFileId.value,
-                          startYearMonth: facilityBusinesses.startYearMonth,
-                      })
-                  );
-          }
+        formRef.value
+        .validate()
+        .then(() => {
+          console.log('values', formState);
+        })
+        .catch((error : any) => {
+          console.log('error', error);
+        });
+        //   let customAccountingfacilityBusinesses: any = [];
+        //   if (formState.accountingfacilityBusinesses) {
+        //       customAccountingfacilityBusinesses =
+        //           formState.accountingfacilityBusinesses.map(
+        //               (facilityBusinesses: any) => ({
+        //                   longTermCareInstitutionNumber:
+        //                       formState.accountinglongTermCareInstitutionNumber,
+        //                   capacity: facilityBusinesses.capacity,
+        //                   facilityBizType: facilityBusinesses.facilityBizType,
+        //                   name: facilityBusinesses.name,
+        //                   registrationCard: facilityBusinesses.registrationCard,
+        //                   registrationCardFileStorageId:
+        //                       regCardFileId.value == ""
+        //                           ? facilityBusinesses.registrationCardFileStorageId
+        //                           : regCardFileId.value,
+        //                   startYearMonth: facilityBusinesses.startYearMonth,
+        //               })
+        //           );
+        //   }
 
-          // process data befor handle update
-          let contentData = {
-              agreements: {
-                  terms: formState.agreementsTerms,
-                  personalInfo: formState.agreementsPersonalInfo,
-                  accountingService: formState.agreementsAccountingService,
-                  withholdingService: formState.agreementsWithholdingService,
-              },
+        //   // process data befor handle update
+        //   let contentData = {
+        //       agreements: {
+        //           terms: formState.agreementsTerms,
+        //           personalInfo: formState.agreementsPersonalInfo,
+        //           accountingService: formState.agreementsAccountingService,
+        //           withholdingService: formState.agreementsWithholdingService,
+        //       },
 
-              company: {
-                  name: formState.companyName,
-                  zipcode: formState.companyZipcode,
-                  roadAddress: formState.companyRoadAddress,
-                  jibunAddress: formState.companyJibunAddress,
-                  addressExtend: formState.companyAddressExtend,
-                  addressDetail: {
-                      bcode: formState.companyAddressDetailBcode,
-                      bname: formState.companyAddressDetailBname,
-                      buildingCode: formState.companyAddressDetailBuildingCode,
-                      buildingName: formState.companyAddressDetailBuildingName,
-                      roadname: formState.companyAddressDetailRoadname,
-                      roadnameCode: formState.companyAddressDetailRoadnameCode,
-                      sido: formState.companyAddressDetailSido,
-                      sigungu: formState.companyAddressDetailSigungu,
-                      sigunguCode: formState.companyAddressDetailSigunguCode,
-                      zonecode: formState.companyAddressDetailZonecode,
-                  },
-                  phone: formState.companyPhone,
-                  fax: formState.companyFax,
-                  licenseFileStorageId: formState.companyLicenseFileStorageId,
-                  bizNumber: formState.companyBizNumber,
-                  bizType: formState.companyBizType,
-                  residentId: formState.companyResidentId,
-              },
-              president: {
-                  name: formState.presidentContentName,
-                  birthday: formState.presidentBirthday,
-                  mobilePhone: formState.presidentPhone,
-                  email: formState.presidentEmail,
-              },
-              accounting: {
-                  facilityBusinesses: customAccountingfacilityBusinesses,
-                  accountingServiceTypes: formState.accountingServiceTypes,
-              },
-              withholding: {
-                  startYearMonth: formState.withholdingYearMonth,
-                  capacity: formState.withholdingCapacity,
-                  withholdingServiceTypes: formState.withholdingServiceTypes,
-              },
-              cmsBank: {
-                  bankType: formState.cmsBankType,
-                  accountNumber: formState.accountNumber,
-                  ownerBizNumber: formState.ownerBizNumber,
-                  ownerName: formState.ownerName,
-                  withdrawDay: formState.withdrawDay,
-              },
-              extra: {
-                  salesRepresentativeId: formState.extraSalesRepresentativeId,
-                  comment: formState.extraComment,
-              },
-          };
+        //       company: {
+        //           name: formState.companyName,
+        //           zipcode: formState.companyZipcode,
+        //           roadAddress: formState.companyRoadAddress,
+        //           jibunAddress: formState.companyJibunAddress,
+        //           addressExtend: formState.companyAddressExtend,
+        //           addressDetail: {
+        //               bcode: formState.companyAddressDetailBcode,
+        //               bname: formState.companyAddressDetailBname,
+        //               buildingCode: formState.companyAddressDetailBuildingCode,
+        //               buildingName: formState.companyAddressDetailBuildingName,
+        //               roadname: formState.companyAddressDetailRoadname,
+        //               roadnameCode: formState.companyAddressDetailRoadnameCode,
+        //               sido: formState.companyAddressDetailSido,
+        //               sigungu: formState.companyAddressDetailSigungu,
+        //               sigunguCode: formState.companyAddressDetailSigunguCode,
+        //               zonecode: formState.companyAddressDetailZonecode,
+        //           },
+        //           phone: formState.companyPhone,
+        //           fax: formState.companyFax,
+        //           licenseFileStorageId: formState.companyLicenseFileStorageId,
+        //           bizNumber: formState.companyBizNumber,
+        //           bizType: formState.companyBizType,
+        //           residentId: formState.companyResidentId,
+        //       },
+        //       president: {
+        //           name: formState.presidentContentName,
+        //           birthday: formState.presidentBirthday,
+        //           mobilePhone: formState.presidentPhone,
+        //           email: formState.presidentEmail,
+        //       },
+        //       accounting: {
+        //           facilityBusinesses: customAccountingfacilityBusinesses,
+        //           accountingServiceTypes: formState.accountingServiceTypes,
+        //       },
+        //       withholding: {
+        //           startYearMonth: formState.withholdingYearMonth,
+        //           capacity: formState.withholdingCapacity,
+        //           withholdingServiceTypes: formState.withholdingServiceTypes,
+        //       },
+        //       cmsBank: {
+        //           bankType: formState.cmsBankType,
+        //           accountNumber: formState.accountNumber,
+        //           ownerBizNumber: formState.ownerBizNumber,
+        //           ownerName: formState.ownerName,
+        //           withdrawDay: formState.withdrawDay,
+        //       },
+        //       extra: {
+        //           salesRepresentativeId: formState.extraSalesRepresentativeId,
+        //           comment: formState.extraComment,
+        //       },
+        //   };
 
-          const cleanData = JSON.parse(
-              JSON.stringify(contentData, (name, val) => {
-                  if (val == null) {
-                      //message.error(`${name} is null`, 4);
-                      return;
-                  }
-                  if (
-                      name === "__typename" ||
-                      name === "registrationCard" ||
-                      name === "__KEY__"
-                  ) {
-                      delete val[name];
-                  } else {
-                      return val;
-                  }
-              })
-          );
-          let variables = {
-              id: formState.id,
-              status: formState.status,
-              memo: formState.memo,
-              content: cleanData,
-          };
-          actionUpdate(variables);
+        //   const cleanData = JSON.parse(
+        //       JSON.stringify(contentData, (name, val) => {
+        //           if (val == null) {
+        //               //message.error(`${name} is null`, 4);
+        //               return;
+        //           }
+        //           if (
+        //               name === "__typename" ||
+        //               name === "registrationCard" ||
+        //               name === "__KEY__"
+        //           ) {
+        //               delete val[name];
+        //           } else {
+        //               return val;
+        //           }
+        //       })
+        //   );
+        //   let variables = {
+        //       id: formState.id,
+        //       status: formState.status,
+        //       memo: formState.memo,
+        //       content: cleanData,
+        //   };
+        //   actionUpdate(variables);
       };
 
       // handle License File upload
@@ -1007,6 +1016,7 @@ export default defineComponent({
       };
 
       return {
+          formRef,
           visible,
           formState,
           layout,
