@@ -307,7 +307,7 @@
                       </a-collapse-panel>
                       <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
                           <a-form-item label="출금은행" class="clr">
-                              <select-bank :selectValue="formState.cmsBankType" width="150px" />
+                              <bank-select-box :selectValue="formState.cmsBankType" width="150px" />
                           </a-form-item>
                           <a-form-item label="출금계좌번호" class="clr">
                               <a-input placeholder="100100056489011" v-model:value="formState.accountNumber"
@@ -387,6 +387,7 @@ import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import postCode from "../../../../../components/postCode.vue";
 import imgUpload from "../../../../../components/UploadImage.vue";
+import BankSelectBox from "../../../../../components/BankSelectBox.vue";
 
 export default defineComponent({
   props: {
@@ -431,7 +432,8 @@ export default defineComponent({
       DxToolbar,
       DxItem,
       DxTexts,
-      postCode
+      postCode,
+    BankSelectBox
   },
   setup(props, { emit }) {
       const facilityBizType = FacilityBizType.all();

@@ -299,7 +299,7 @@
                             <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                             <div class="form-item">
                                 <label class="red">출금은행 :</label>
-                                <select-bank :disableFormVal="disableFormVal" @bank="getIDBank" :width="'178px'" />
+                                <bank-select-box :disableFormVal="disableFormVal" @bank="getIDBank" :width="'178px'" />
                             </div>
                             <div class="form-item">
                                 <label class="red">출금계좌번호 :</label>
