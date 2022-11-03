@@ -146,8 +146,8 @@
                                   <div>
                                       <a-row :gutter="[16, 16]">
                                           <a-col :span="15">
-                                              <a-form-item label="연락처" class="clr">
-                                                  <text-number-box v-model:valueInput="formState.companyPhone"
+                                              <a-form-item label="연락처" class="clr">{{formState.companyPhone}}
+                                                  <tel-tex-box v-model:valueInput="formState.companyPhone"
                                                       :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                                               </a-form-item>
                                               <a-form-item label="팩 스">

@@ -1,99 +1,79 @@
 <template>
     <div ref="root">
-        <a-modal :visible="modalStatus" title="영업자관리" centered @cancel="setModalVisible()" :mask-closable="false"
-            :width="1028" :afterClose="afterPopupClose">
+        <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered @cancel="setModalVisible()"
+            :mask-closable="false" :width="1028">
             <template #footer>
-                <a-button @click="setModalVisible">그냥 나가기</a-button>
-                <a-button key="submit" type="primary" @click="creactedSaleSetValue">
-                    저장하고 나가기</a-button>
             </template>
-            <a-form :model="bf340Detail" v-bind="layout" label-align="right" name="nest-messages"
-                :validate-messages="validateMessages" @finish="onFinish">
+            <form  action="your-action" @submit.prevent="createSale()" >
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
-                        <a-form-item label="영업자코드">
-                            <a-input disabled="true" style="width: 200px" />
+                        <a-form-item label="영업자코드" label-align="right" :label-col="labelCol">         
+                            <default-text-box  width="200px" :disabled="true"/>
                         </a-form-item>
-                        <a-form-item label="영업자명">
-                            <a-input v-model:value="bf340Detail.name" style="width: 200px" />
+                        <a-form-item label="영업자명" label-align="right" :label-col="labelCol">
+                            <default-text-box v-model:valueInput="formState.name" width="200px"/>
                         </a-form-item>
-                        <a-form-item label="사업자유형" class="label-br">
-                            <a-select ref="select" v-model:value="bf340Detail.bizType" style="width: 200px">
-                                <!-- <a-select-option value="법인">법인</a-select-option> -->
-                                <a-select-option :value="1">개인사업자</a-select-option>
-                                <a-select-option :value="2">개인</a-select-option>
-                            </a-select>
+                        <a-form-item label="사업자유형" class="label-br" label-align="right" :label-col="labelCol">
+                            <biz-type-select-box   v-model:valueInput="formState.bizType" width="200px" /> 
                         </a-form-item>
-
-                        <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]">
-                            <a-input v-model:value="bf340Detail.email" style="width: 250px" />
+                        <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]" label-align="right" :label-col="labelCol">
+                            <mail-text-box v-model:valueInput="formState.email" width="250px"/>
                         </a-form-item>
-                        <a-form-item label="연락처">
-                            <a-input v-model:value="bf340Detail.phone" style="width: 200px" />
+                        <a-form-item label="연락처" label-align="right" :label-col="labelCol">
+                            <tel-text-box v-model:valueInput="formState.phone" width="200px" placeholder="전화번호를 입력" />
                         </a-form-item>
-                        <a-form-item label="팩스">
-                            <a-input v-model:value="bf340Detail.fax" style="width: 200px" />
-                        </a-form-item>
-                        <a-form-item label="주소">
-                            <a-row>
-                                <a-col :span="12">
-                                    <a-input style="width: 100%" v-model:value="bf340Detail.detailZipcode" disabled />
-                                </a-col>
-                                <a-col :span="12">
-                                    <div style="margin-left: 5px">
-                                        <a-button type="primary" ghost>
-                                            <post-code @dataAddress="funcAddress"/>
-                                        </a-button>
-                                    </div>
-                                </a-col>
-                            </a-row>
+                        <a-form-item label="팩스" label-align="right" :label-col="labelCol">
+                            <text-number-box v-model:valueInput="formState.fax" width="200px"/>
                         </a-form-item>
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
-                        <a-form-item label="상태">
-                            <a-select style="width: 100px" v-model:value="bf340Detail.status"
-                                option-label-prop="children" @select="confirmPopup">
-                                <a-select-option :value="1" label="정상">
-                                    <a-tag :color="getColorTag('정상')">정상</a-tag>
-                                </a-select-option>
-                                <a-select-option :value="2" label="해지">
-                                    <a-tag :color="getColorTag('해지')">해지</a-tag>
-                                </a-select-option>
-                            </a-select>
+                        <a-form-item label="상태" label-align="right" :label-col="labelCol">
+                            <sale-status-select-box v-model:valueInput="formState.status" width="100px" :confirmStatus="true"/>
                         </a-form-item>
-                        <a-form-item label="등급">
-                            <a-select ref="select" v-model:value="bf340Detail.grade" style="width: 100px">
-                                <a-select-option :value="1">지사</a-select-option>
-                                <a-select-option :value="2">대리점</a-select-option>
-                            </a-select>
+                        <a-form-item label="등급" label-align="right" :label-col="labelCol">
+                            <sale-grade-select-box v-model:valueInput="formState.grade" width="100px"/>
                         </a-form-item>
-                        <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="label-br">
-                            <a-input v-model:value="bf340Detail.residentId" />
+                        <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="label-br" label-align="right" :label-col="labelCol">
+                            <id-card-text-box :required="true" v-model:valueInput="formState.residentId" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
-                        <a-form-item label="사업자등록번호" class="label-br">
-                            <a-input v-model:value="bf340Detail.bizNumber" />
+                        <a-form-item label="사업자등록번호" class="label-br" label-align="right" :label-col="labelCol">
+                            <company-registration-number-text-box v-model:valueInput="formState.bizNumber"  :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
-                        <a-form-item label="휴대폰">
-                            <a-input v-model:value="bf340Detail.mobilePhone" />
+                        <a-form-item label="휴대폰" label-align="right" :label-col="labelCol">
+                            <tel-text-box v-model:valueInput="formState.mobilePhone" placeholder="전화번호를 입력"/>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+                <a-row >
+                    <a-col :lg="15">
+                        <a-form-item label="주소" label-align="right" :label-col="{span: 3}" :wrapper-col="{ span: 21 }" class="post-code">
+                          <div style="display:flex">
+                            <default-text-box v-model:valueInput="formState.zipcode"  width="200px" :disabled="true"/>
+                             <div style="margin-left: 5px">
+                                <a-button type="primary" ghost>
+                                    <post-code @dataAddress="funcAddress"/>
+                                </a-button>
+                            </div>
+                         </div>
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="15" :md="13" :lg="12">
-                        <a-form-item class="result-address" :wrapper-col="{ span: 24 }">
-                            <a-input v-model:value="bf340Detail.roadAddress" style="width: 100%" :disabled="true" />
+                        <a-form-item class="result-address" :wrapper-col="{ span: 24 }" label-align="right" :label-col="labelCol">
+                            <default-text-box v-model:valueInput="formState.roadAddress"  width="100%" :disabled="true"/>
                         </a-form-item>
                     </a-col>
                     <a-col :span="8" :md="13" :lg="11">
-                        <a-form-item :wrapper-col="{ span: 24}" class="detail-address">
-                            <a-input v-model:value="bf340Detail.addressExtend" placeholder="상세주소" />
+                        <a-form-item :wrapper-col="{ span: 24}" class="detail-address" label-align="right" :label-col="labelCol">
+                            <default-text-box v-model:valueInput="formState.addressExtend"  placeholder="상세주소"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }" class="label-br">
-                            <a-switch v-model:checked="bf340Detail.taxInvoice" checked-children="발행"
+                        <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }" class="label-br" label-align="right" >
+                            <a-switch v-model:checked="formState.taxInvoice" checked-children="발행"
                                 un-checked-children="미발행" style="width: 80px" />
                         </a-form-item>
                     </a-col>
@@ -103,86 +83,77 @@
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
                             <a-col :span="16" :md="16" :lg="17">
-                                <a-form-item class="email-input" :wrapper-col="{ span: 24 }" :name="['전자세금계산서수신이메일']"
-                                    :rules="[{ type: 'email' }]">
-                                    <a-input v-model:value="bf340Detail.emailTaxInvoice" placeholder=""
-                                        style="width: 100%" />
-                                </a-form-item>
+                                <mail-text-box v-model:valueInput="formState.emailTaxInvoice" width="100%"/>
                             </a-col>
                         </a-row>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
-                        <a-form-item label="은행">
-                            <bank-select-box @bank="getIDBank" :width="'200px'" />
+                        <a-form-item label="은행" label-align="right" :label-col="labelCol">
+                            <bank-select-box v-model:valueInput="formState.bankType" width="200px" />
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
-                        <a-form-item label="계좌번호">
-                            <a-input v-model:value="bf340Detail.accountNumber" style="width: 200px" />
+                        <a-form-item label="계좌번호" label-align="right" :label-col="labelCol">
+                            <text-number-box v-model:valueInput="formState.accountNumber" width="200px"/>
                         </a-form-item>
-                        <a-form-item label="가입일자">
+                        <a-form-item label="가입일자" label-align="right" :label-col="labelCol">
                             <div style="width: 150px">
-                                <custom-date-picker :valueDate="bf340Detail.registerDate"
-                                    @valueDateChange="dataDateStart" />
+                                <date-time-box v-model:valueDate="formState.registerDate"/>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="12" :md="13" :lg="14">
-                        <a-form-item label="예금주">
-                            <a-input v-model:value="bf340Detail.accountOwner" />
+                        <a-form-item label="예금주" label-align="right" :label-col="labelCol">
+                            <default-text-box v-model:valueInput="formState.accountOwner" />
                         </a-form-item>
-                        <a-form-item label="해지일자">
+                        <a-form-item label="해지일자" label-align="right" :label-col="labelCol">{{formState.cancelDate}}
                             <div style="width: 150px">
-                                <custom-date-picker :valueDate="bf340Detail.cancelDate" @valueDateChange="dataDateEnd" />
+                                <date-time-box v-model:valueDate="formState.cancelDate"/>
                             </div>
                         </a-form-item>
                     </a-col>
-
                 </a-row>
                 <a-row>
                     <a-col :span="24" :md="24" :lg="24">
-                        <a-form-item label="비고" :label-col="{ span: 2 }" :wrapper-col="{ span: 24 }"
+                        <a-form-item label="비고" :label-col="{ span: 2 }" :wrapper-col="{ span: 22 }"
                             class="textarea_340">
-                            <a-textarea v-model:value="bf340Detail.remark" placeholder="500자 이내" />
+                            <text-area-box v-model:valueInput="formState.remark" placeholder="500자 이내"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
-            </a-form>
-        </a-modal>
-
-        <a-modal v-model:visible="visible" :mask-closable="false" :afterClose="afterConfirmClose" class="confirm-md"
-            :width="521">
-            <a-row>
-                <a-col :span="4">
-                    <warning-outlined :style="{fontSize: '70px', color: '#faad14',paddingTop: '20px'}" />
-                </a-col>
-                <a-col :span="20">
-                    <h3><b>해지 확인</b></h3>
-                    <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
-                    <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을 </p>
-                    <p>누르세요</p>
-
-                </a-col>
-                <div style="text-align: center;width: 100%;margin-left: 100px;">
-                    <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
-                    <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px;">완료</a-button>
-                </div>
-            </a-row>
-            <template #footer>
-            </template>
+                <a-row style="margin-top: 20px;">
+                    <a-col :span="16" :offset="8">
+                        <DxButton
+                            :width="120"
+                            text="취소"
+                            type="default"
+                            styling-mode="outlined"
+                            @click="setModalVisible"
+                            style="margin-right: 10px;"
+                            />
+                        <DxButton
+                            id="button"
+                            :use-submit-behavior="true"
+                            text="저장하고 나가기"
+                            type="default"
+                        />
+                    </a-col>
+                </a-row>
+            </form>
         </a-modal>
     </div>
 </template>
 
 <script lang="ts">
-import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
-import { ref, defineComponent, computed } from 'vue'
+import { ref, defineComponent, watch } from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import { useMutation } from "@vue/apollo-composable";
+import DxButton from 'devextreme-vue/button';
+import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 import { message } from "ant-design-vue";
 
@@ -194,6 +165,7 @@ export default defineComponent({
         SearchOutlined,
         WarningOutlined,
         CustomDatepicker,
+        DxButton
     },
     setup(props, { emit }) {
         const layout = {
@@ -201,7 +173,7 @@ export default defineComponent({
             wrapperCol: { span: 16 },
         };
         const visible = ref<boolean>(false);
-        const labelCol = { style: { width: "300px" } };
+        const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
         const validateMessages = {
@@ -210,8 +182,7 @@ export default defineComponent({
                 email: "이메일 형식이 정확하지 않습니다",
             },
         };
-
-        const bf340Detail = ref<any>({
+        const initialFormState = {
             status: 1,
             name: "",
             grade: 1,
@@ -246,33 +217,18 @@ export default defineComponent({
             registerDate: "",
             cancelDate: "",
             remark: "",
-        });
-
-
-        const confirmPopup = (value: any) => {
-            if (value == 2) {
-                visible.value = true;
-            }
-        }
-
-        const handleOkConfirm = () => {
-            if (confirm.value == '확인') {
-                bf340Detail.value.status = 2;
-                visible.value = false;
-            } else {
-                bf340Detail.value.status = 1;
-                visible.value = false;
-            }
-        }
-
-        const afterConfirmClose = () => {  
-            if (confirm.value == '확인') { 
-                bf340Detail.value.status = 2;
-            } else { 
-                bf340Detail.value.status = 1;
-            }
         };
+        const formState = ref<any>({...initialFormState});
 
+      // watch event modal popup
+      watch(
+          () => props.modalStatus,
+          (newValue, old) => {
+              if (newValue) {
+                  Object.assign(formState, initialFormState);
+              }
+          }
+      );
         const afterPopupClose = () => {
 
         };
@@ -293,73 +249,55 @@ export default defineComponent({
             emit("addNewDone", false);
         })
 
+        const setModalVisible = ()=>{
+            emit('closePopup', false)
+        }
+  
+
+        const funcAddress = (data: any)=>{
+            formState.value.zipcode = data.zonecode;
+            formState.value.roadAddress = data.roadAddress;
+            formState.value.jibunAddress = data.jibunAddress;
+            formState.value.addressDetail.bcode = data.bcode;
+            formState.value.addressDetail.bname = data.bname;
+            formState.value.addressDetail.buildingCode = data.buildingCode;
+            formState.value.addressDetail.buildingName = data.buildingName;
+            formState.value.addressDetail.roadname = data.roadname;
+            formState.value.addressDetail.roadnameCode = data.roadnameCode;
+            formState.value.addressDetail.sido = data.sido;
+            formState.value.addressDetail.sigungu = data.sigungu;
+            formState.value.addressDetail.sigunguCode = data.sigunguCode;
+            formState.value.addressDetail.zonecode = data.zonecode;
+        }
+
+        const createSale = () => {
+          
+            let dataNew = {
+                input: {
+                    ...formState.value
+                }
+            }
+            creactSale(dataNew)
+        }
         return {
             labelCol,
             wrapperCol,
-            bf340Detail,
+            formState,
             layout,
             visible,
-            confirmPopup,
             confirm,
-            handleOkConfirm,
-            afterConfirmClose,
             afterPopupClose,
             validateMessages,
             onFinish,
-            creactSale
+            creactSale,
+            funcAddress,
+            setModalVisible,
+            createSale
         }
-    },
-    methods: {
-        setModalVisible() {
-            this.$emit('closePopup', false)
-        },
-        getColorTag(data: string) {
-            if (data === "정상") {
-                return "#108ee9";
-            } else if (data === "해지") {
-                return "#cd201f";
-            } else if (data === "전체") {
-                return "grey";
-            }
-        },
-
-        getIDBank(data: any) {
-            this.bf340Detail.bankType = data
-        },
-
-        funcAddress(data: any) {
-            this.bf340Detail.zipcode = data.zonecode;
-            this.bf340Detail.roadAddress = data.roadAddress;
-            this.bf340Detail.jibunAddress = data.jibunAddress;
-            this.bf340Detail.addressDetail.bcode = data.bcode;
-            this.bf340Detail.addressDetail.bname = data.bname;
-            this.bf340Detail.addressDetail.buildingCode = data.buildingCode;
-            this.bf340Detail.addressDetail.buildingName = data.buildingName;
-            this.bf340Detail.addressDetail.roadname = data.roadname;
-            this.bf340Detail.addressDetail.roadnameCode = data.roadnameCode;
-            this.bf340Detail.addressDetail.sido = data.sido;
-            this.bf340Detail.addressDetail.sigungu = data.sigungu;
-            this.bf340Detail.addressDetail.sigunguCode = data.sigunguCode;
-            this.bf340Detail.addressDetail.zonecode = data.zonecode;
-        },
-
-        creactedSaleSetValue() {
-            let dataNew = {
-                input: {
-                    ...this.bf340Detail
-                }
-            }
-            this.creactSale(dataNew)
-        },
-
-        dataDateStart(data: any) {
-            this.bf340Detail.registerDate = data
-        },
-
-        dataDateEnd(data: any) {
-            this.bf340Detail.cancelDate = data
-        }
+    }, methods: {
+      
     }
+    
 })
 </script>
 <style scoped lang="scss" src="../style/addnewStyle.scss">
