@@ -10,26 +10,26 @@
               <a-input v-model:value="formState.username" style="width: 170px; margin-right: 10px"
                 @change="changeValueID" />
 
-              <a-button style="border: 1px solid grey" @click="checkDuplicateUsername">중복체크</a-button>
+              <a-button style="border: 1px solid grey" :disabled="disabledBtn" @click="checkDuplicateUsername" >중복체크</a-button>
             </a-form-item>
-            <a-form-item label="회원명">
+            <a-form-item label="회원명" class="red">
               <!-- <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" /> -->
-              <default-text-box v-model:valueInput="formState.name" :required="true"
-                width="170px" messRequired="이항목은 필수 입력사항입니다!" />
+              <default-text-box v-model:valueInput="formState.name" :required="true" width="170px"
+                messRequired="이항목은 필수 입력사항입니다!" />
             </a-form-item>
-            <a-form-item label="소속">
+            <a-form-item label="소속" class="red">
               <a-select v-model:value="formState.groupCode" style="width: 170px" :options="selectSearch"
                 @change="handleChange"></a-select>
 
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="상태">
+            <a-form-item label="상태" class="red">
               <a-switch v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
                 style="width: 100px" />
             </a-form-item>
 
-            <a-form-item label="회원종류">
+            <a-form-item label="회원종류" class="red">
               <a-select style="width: 10px" v-model:value="formState.type" option-label-prop="children"
                 class="select_disable" @change="changeValueType">
                 <a-select-option value="2" label="중간매니저">
@@ -51,13 +51,13 @@
 
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item type="number" :name="['user', 'number']" label="휴대폰">
+            <a-form-item type="number" :name="['user', 'number']" label="휴대폰" class="red">
               <div style="display: flex; align-items: flex-end">
                 <a-input @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
                   style="width: 170px; margin-right: 8px" />
               </div>
             </a-form-item>
-            <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]">
+            <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" class="red">
               <a-input v-model:value="formState.email" style="width: 270px" @change="validateEmail"
                 :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
@@ -209,7 +209,7 @@ export default defineComponent({
     };
     const focus = () => {
     };
-
+    let disabledBtn = ref(true);
 
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
@@ -229,7 +229,9 @@ export default defineComponent({
           type: value
         }
         originData.value.types = value
-        reqGroup(dataCall)
+        if(dataCall){
+          reqGroup(dataCall)
+        }
 
         reqRoleGroup()
       }, 100);
@@ -275,15 +277,7 @@ export default defineComponent({
         active: true
       }
     });
-
-
-
-    const findGroups = reactive({
-      groupId: 1,
-      groupCode: "",
-      groupName: "",
-      active: true
-    });
+  
     const statusMailValidate = ref<boolean>(true);
     const validateEmail = (e: any) => {
       let checkMail = e.target.value.match(
@@ -308,7 +302,7 @@ export default defineComponent({
     const originData = ref({
       page: 1,
       rows: 20,
-      types: ["r", "m", "c", "p", "s"],
+      types: ["r"],
     });
     const dataQuery = ref();
 
@@ -319,11 +313,18 @@ export default defineComponent({
     watch(
       () => props.modalStatus,
       (newValue, old) => {
-        if (newValue) {
+        let dataCallGroup = {
+          type: "r" 
+        }
+        triggerGroup.value = true
+        if (newValue && dataCallGroup) {
           visible.value = newValue;
           dataQuery.value = {};
           trigger.value = true;
-
+          setTimeout(() => {
+            reqGroup(dataCallGroup) 
+          }, 500);
+          
           reqRoleGroup();
         } else {
           visible.value = newValue;
@@ -378,6 +379,7 @@ export default defineComponent({
       useQuery(queries.isUserRegistableUsername, dataCallCheck, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
 
     const checkDuplicateUsername = () => {
+      disabledBtn.value = true;
       if (formState.value.username !== '') {
         triggerDuplication.value = true
         refetchUserName()
@@ -394,10 +396,17 @@ export default defineComponent({
         }
     })
     const changeValueID = () => {
-      dataCallCheck.value = {
+      if(formState.value.username !== ''){
+        disabledBtn.value = false
+        dataCallCheck.value = {         
         username: formState.value.username
+      }}
+      else{
+        disabledBtn.value = true;
       }
-    }
+      }
+      
+    
 
     //Creact user 
     const {
@@ -470,7 +479,8 @@ export default defineComponent({
       statusMailValidate,
       validateEmail,
       creactUserNew,
-      onSelectionChanged
+      onSelectionChanged,
+      disabledBtn
     };
   },
 
@@ -481,7 +491,7 @@ export default defineComponent({
         e.preventDefault();
       }
     },
-    setModalVisible() {
+    setModalVisible() {      
       this.$emit("closePopup", false);
     },
     getColorTag(data: string) {
@@ -502,9 +512,11 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.red {
-  color: rgb(255, 17, 0);
+<style lang="scss" scoped>
+::v-deep .red {
+  label {
+    color: red;
+  }
 }
 
 ::v-deep .ant-modal-footer {
