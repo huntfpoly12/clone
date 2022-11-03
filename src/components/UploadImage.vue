@@ -76,8 +76,7 @@
 
 <script src="" lang="ts">
 import { ref, defineComponent } from "vue";
-import { message, Upload } from "ant-design-vue";
-import type { UploadProps } from "ant-design-vue";
+import { message, Upload, UploadProps } from "ant-design-vue"; 
 import Repository from "../repositories/index";
 const uploadRepository = Repository.get("upload");
 
@@ -112,7 +111,7 @@ export default defineComponent({
         },
         srcimg: {
             type: String,
-            // default: "../assets/images/imgdefault.jpg",
+            default: "../assets/images/imgdefault.jpg",
         },
         imageId: {
             type: Number,

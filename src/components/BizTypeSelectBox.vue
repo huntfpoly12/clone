@@ -34,7 +34,6 @@ export default defineComponent({
     },
     width: String,
     maxCharacter: Number,
-
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
