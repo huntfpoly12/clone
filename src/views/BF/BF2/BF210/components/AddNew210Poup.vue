@@ -6,19 +6,23 @@
       <a-form v-bind="layout" name="nest-messages" v-model:value="formState">
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item label="회원ID" class="red">
-              <a-input v-model:value="formState.username" style="width: 170px; margin-right: 10px"
-                @change="changeValueID" />
+            <a-form-item label="회원ID" class="red" compact>
+              <div class="dflex">
+                <default-text-box v-model:value="formState.username" style="width: 190px; margin-right: 10px"
+                  @change="changeValueID" required mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
 
-              <a-button style="border: 1px solid grey" :disabled="disabledBtn" @click="checkDuplicateUsername" >중복체크</a-button>
+                <a-button type="primary" style="border: 1px solid" :disabled="disabledBtn"
+                  @click="checkDuplicateUsername">중복체크
+                </a-button>
+              </div>
             </a-form-item>
             <a-form-item label="회원명" class="red">
               <!-- <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" /> -->
-              <default-text-box v-model:valueInput="formState.name" :required="true" width="170px"
+              <default-text-box v-model:valueInput="formState.name" :required="true" width="190px"
                 messRequired="이항목은 필수 입력사항입니다!" />
             </a-form-item>
             <a-form-item label="소속" class="red">
-              <a-select v-model:value="formState.groupCode" style="width: 170px" :options="selectSearch"
+              <a-select v-model:value="formState.groupCode" style="width: 190px" :options="selectSearch"
                 @change="handleChange"></a-select>
 
             </a-form-item>
@@ -54,7 +58,7 @@
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" class="red">
               <div style="display: flex; align-items: flex-end">
                 <a-input @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
-                  style="width: 170px; margin-right: 8px" />
+                  style="width: 190px; margin-right: 8px" />
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" class="red">
@@ -229,7 +233,7 @@ export default defineComponent({
           type: value
         }
         originData.value.types = value
-        if(dataCall){
+        if (dataCall) {
           reqGroup(dataCall)
         }
 
@@ -277,7 +281,7 @@ export default defineComponent({
         active: true
       }
     });
-  
+
     const statusMailValidate = ref<boolean>(true);
     const validateEmail = (e: any) => {
       let checkMail = e.target.value.match(
@@ -313,18 +317,16 @@ export default defineComponent({
     watch(
       () => props.modalStatus,
       (newValue, old) => {
-        let dataCallGroup = {
-          type: "r" 
-        }
+
         triggerGroup.value = true
-        if (newValue && dataCallGroup) {
+        if (newValue) {
           visible.value = newValue;
           dataQuery.value = {};
           trigger.value = true;
           setTimeout(() => {
-            reqGroup(dataCallGroup) 
+            reqGroup()
           }, 500);
-          
+
           reqRoleGroup();
         } else {
           visible.value = newValue;
@@ -348,9 +350,12 @@ export default defineComponent({
       }
     });
 
+    let dataCallGroup = reactive({
+      type: "r"
+    })
     //query find group
     const { onResult: resGroup, refetch: reqGroup } = useQuery(
-      queries.findGroups, {},
+      queries.findGroups, dataCallGroup,
       () => ({
         enabled: triggerGroup.value,
         fetchPolicy: "no-cache",
@@ -396,17 +401,18 @@ export default defineComponent({
         }
     })
     const changeValueID = () => {
-      if(formState.value.username !== ''){
+      if (formState.value.username !== '') {
         disabledBtn.value = false
-        dataCallCheck.value = {         
-        username: formState.value.username
-      }}
-      else{
+        dataCallCheck.value = {
+          username: formState.value.username
+        }
+      }
+      else {
         disabledBtn.value = true;
       }
-      }
-      
-    
+    }
+
+
 
     //Creact user 
     const {
@@ -491,7 +497,7 @@ export default defineComponent({
         e.preventDefault();
       }
     },
-    setModalVisible() {      
+    setModalVisible() {
       this.$emit("closePopup", false);
     },
     getColorTag(data: string) {
@@ -546,7 +552,9 @@ export default defineComponent({
   margin-left: 5px;
   padding-top: 5px;
 }
-
+.dflex {
+    display: flex;
+}
 .overlay {
   position: absolute;
   top: 0;

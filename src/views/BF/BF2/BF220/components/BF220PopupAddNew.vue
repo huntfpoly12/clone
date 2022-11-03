@@ -25,7 +25,7 @@
                                     mess-required="이항목은 필수 입력사항입니다!"
                                     style="width: 350px"
                                 ></default-text-box>
-                                <a-button type="button" @click="checkId" :disabled="isDisable">중복체크</a-button>
+                                <a-button type="primary" @click="checkId" :disabled="isDisable">중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
