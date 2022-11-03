@@ -56,7 +56,7 @@ export default defineComponent({
     watch(
       () => props.selected,
       (newValue) => {
-        sale.value = props.selected;
+        sale.value = newValue;
       }
     );
     const updateSale = (value: any) => {
