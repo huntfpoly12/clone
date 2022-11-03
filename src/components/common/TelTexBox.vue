@@ -2,7 +2,7 @@
   <div>
     <DxTextBox
       :width="width"
-      value-change-event="keyup"
+      value-change-event="input"
       :show-clear-button="clearButton"
       mode="number"
       :placeholder="placeholder"

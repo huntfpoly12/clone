@@ -2,6 +2,7 @@
   <div>
     <DxTextBox
       :width="width"
+      value-change-event="input"
       :show-clear-button="clearButton"
       :placeholder="placeholder"
       v-model:value="value"
