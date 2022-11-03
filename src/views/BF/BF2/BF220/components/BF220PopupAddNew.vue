@@ -15,15 +15,23 @@
                     <a-col :span="16">
                         <a-form-item label="그룹코드">
                             <div class="dflex">
-                                <a-input v-model:value="dataRes.id" @change="changeID" class="mr5"
-                                    placeholder="영문,숫자 5~10자 (중복불가)" />
+                                <default-text-box
+                                    class="mr5"
+                                    v-model:value="dataRes.id"
+                                    placeholder="영문,숫자 5~10자 (중복불가)"
+                                    :max-character="10"
+                                    :min-character="5"
+                                    :required="true"
+                                    mess-required="Id is required"
+                                    style="width: 350px"
+                                ></default-text-box>
                                 <a-button type="button" @click="checkId">중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명">
-                            <a-input v-model:value="dataRes.name" placeholder="최대 20자" />
+                            <default-text-box v-model:value="dataRes.name" placeholder="최대 20자" :max-character="20" required />
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -36,7 +44,7 @@
                                     <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                                 </a-radio>
                                 <a-radio value="p">
-                                    <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                                    <a-tag class="ant-tag-yellow"  >파트너</a-tag>
                                 </a-radio>
                             </a-radio-group>
                         </a-form-item>

@@ -5,11 +5,11 @@
           <template #footer>
               <a-button @click="setModalVisible">그냥 나가기</a-button>
               <a-button key="submit" type="primary" :loading="loading || loadingUpdate"
-                  @click="updateSubscriptionRequest">
+                  @click.prevent="updateSubscriptionRequest">
                   저장하고 나가기</a-button>
           </template>
           <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
-              <a-form :data-source="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
                   <a-collapse v-model:activeKey="activeKey" accordion>
                       <a-collapse-panel key="1" header="심사정보">
                           <a-form-item label="승인상태">
@@ -73,7 +73,7 @@
                               </a-col>
                           </a-row>
                           <a-form-item label="심사메모">
-                              <a-input v-model:value="formState.memo" placeholder="Basic usage" />
+                              <a-input v-model:value="formState.memo" />
                           </a-form-item>
                           <a-form-item label="약관동의">
                               <a-button type="link" style="padding: 0px">서비스약관</a-button>
@@ -136,7 +136,7 @@
                                       </a-col>
                                       <a-col :span="24">
                                           <default-text-box v-model:valueInput="formState.companyAddressExtend"
-                                              width="100%" />
+                                              width="100%" placeholder="상세 주소 입력"/>
                                       </a-col>
                                   </a-row>
                                   <a-row> </a-row>
@@ -307,18 +307,18 @@
                       </a-collapse-panel>
                       <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
                           <a-form-item label="출금은행" class="clr">
-                              <selectBank :selectValue="formState.cmsBankType" width="150px" />
+                              <bank-select-box v-model:valueInput="formState.cmsBankType" width="150px" />
                           </a-form-item>
                           <a-form-item label="출금계좌번호" class="clr">
-                              <a-input placeholder="100100056489011" v-model:value="formState.accountNumber"
+                              <a-input v-model:value="formState.accountNumber"
                                   style="width: 250px" />
                           </a-form-item>
                           <a-form-item label="예금주명" class="clr">
-                              <a-input placeholder="주식회사 타운소프트비나" v-model:value="formState.ownerName"
+                              <a-input v-model:value="formState.ownerName"
                                   style="width: 250px" />
                           </a-form-item>
                           <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
-                              <a-input placeholder="100100056489011" v-model:value="formState.ownerBizNumber"
+                              <a-input v-model:value="formState.ownerBizNumber"
                                   style="width: 250px" />
                               <div class="noteImage">
                                   <a-row>
@@ -383,11 +383,11 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import ListSalesDropdown from "../../../../../components/ListSalesDropdown.vue";
-import selectBank from "../../../../../components/selectBank.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import postCode from "../../../../../components/postCode.vue";
 import imgUpload from "../../../../../components/UploadImage.vue";
+import BankSelectBox from "../../../../../components/BankSelectBox.vue";
 
 export default defineComponent({
   props: {
@@ -432,10 +432,11 @@ export default defineComponent({
       DxToolbar,
       DxItem,
       DxTexts,
-      selectBank,
-      postCode
+      postCode,
+    BankSelectBox
   },
   setup(props, { emit }) {
+      const formRef = ref();
       const facilityBizType = FacilityBizType.all();
 
       const imageRegCardFile = ref("");
@@ -864,7 +865,7 @@ export default defineComponent({
           if (res.data.updateSubscriptionRequest.status == 30) {
               actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
           }
-          message.success(`Update was successful`, 4);
+          message.success(`업데이트 완료!`, 4);
           setModalVisible();
       });
 
@@ -873,112 +874,120 @@ export default defineComponent({
       });
 
       const updateSubscriptionRequest = (e: any) => {
-          let customAccountingfacilityBusinesses: any = [];
-          if (formState.accountingfacilityBusinesses) {
-              customAccountingfacilityBusinesses =
-                  formState.accountingfacilityBusinesses.map(
-                      (facilityBusinesses: any) => ({
-                          longTermCareInstitutionNumber:
-                              formState.accountinglongTermCareInstitutionNumber,
-                          capacity: facilityBusinesses.capacity,
-                          facilityBizType: facilityBusinesses.facilityBizType,
-                          name: facilityBusinesses.name,
-                          registrationCard: facilityBusinesses.registrationCard,
-                          registrationCardFileStorageId:
-                              regCardFileId.value == ""
-                                  ? facilityBusinesses.registrationCardFileStorageId
-                                  : regCardFileId.value,
-                          startYearMonth: facilityBusinesses.startYearMonth,
-                      })
-                  );
-          }
+        formRef.value
+        .validate()
+        .then(() => {
+          console.log('values', formState);
+        })
+        .catch((error : any) => {
+          console.log('error', error);
+        });
+        //   let customAccountingfacilityBusinesses: any = [];
+        //   if (formState.accountingfacilityBusinesses) {
+        //       customAccountingfacilityBusinesses =
+        //           formState.accountingfacilityBusinesses.map(
+        //               (facilityBusinesses: any) => ({
+        //                   longTermCareInstitutionNumber:
+        //                       formState.accountinglongTermCareInstitutionNumber,
+        //                   capacity: facilityBusinesses.capacity,
+        //                   facilityBizType: facilityBusinesses.facilityBizType,
+        //                   name: facilityBusinesses.name,
+        //                   registrationCard: facilityBusinesses.registrationCard,
+        //                   registrationCardFileStorageId:
+        //                       regCardFileId.value == ""
+        //                           ? facilityBusinesses.registrationCardFileStorageId
+        //                           : regCardFileId.value,
+        //                   startYearMonth: facilityBusinesses.startYearMonth,
+        //               })
+        //           );
+        //   }
 
-          // process data befor handle update
-          let contentData = {
-              agreements: {
-                  terms: formState.agreementsTerms,
-                  personalInfo: formState.agreementsPersonalInfo,
-                  accountingService: formState.agreementsAccountingService,
-                  withholdingService: formState.agreementsWithholdingService,
-              },
+        //   // process data befor handle update
+        //   let contentData = {
+        //       agreements: {
+        //           terms: formState.agreementsTerms,
+        //           personalInfo: formState.agreementsPersonalInfo,
+        //           accountingService: formState.agreementsAccountingService,
+        //           withholdingService: formState.agreementsWithholdingService,
+        //       },
 
-              company: {
-                  name: formState.companyName,
-                  zipcode: formState.companyZipcode,
-                  roadAddress: formState.companyRoadAddress,
-                  jibunAddress: formState.companyJibunAddress,
-                  addressExtend: formState.companyAddressExtend,
-                  addressDetail: {
-                      bcode: formState.companyAddressDetailBcode,
-                      bname: formState.companyAddressDetailBname,
-                      buildingCode: formState.companyAddressDetailBuildingCode,
-                      buildingName: formState.companyAddressDetailBuildingName,
-                      roadname: formState.companyAddressDetailRoadname,
-                      roadnameCode: formState.companyAddressDetailRoadnameCode,
-                      sido: formState.companyAddressDetailSido,
-                      sigungu: formState.companyAddressDetailSigungu,
-                      sigunguCode: formState.companyAddressDetailSigunguCode,
-                      zonecode: formState.companyAddressDetailZonecode,
-                  },
-                  phone: formState.companyPhone,
-                  fax: formState.companyFax,
-                  licenseFileStorageId: formState.companyLicenseFileStorageId,
-                  bizNumber: formState.companyBizNumber,
-                  bizType: formState.companyBizType,
-                  residentId: formState.companyResidentId,
-              },
-              president: {
-                  name: formState.presidentContentName,
-                  birthday: formState.presidentBirthday,
-                  mobilePhone: formState.presidentPhone,
-                  email: formState.presidentEmail,
-              },
-              accounting: {
-                  facilityBusinesses: customAccountingfacilityBusinesses,
-                  accountingServiceTypes: formState.accountingServiceTypes,
-              },
-              withholding: {
-                  startYearMonth: formState.withholdingYearMonth,
-                  capacity: formState.withholdingCapacity,
-                  withholdingServiceTypes: formState.withholdingServiceTypes,
-              },
-              cmsBank: {
-                  bankType: formState.cmsBankType,
-                  accountNumber: formState.accountNumber,
-                  ownerBizNumber: formState.ownerBizNumber,
-                  ownerName: formState.ownerName,
-                  withdrawDay: formState.withdrawDay,
-              },
-              extra: {
-                  salesRepresentativeId: formState.extraSalesRepresentativeId,
-                  comment: formState.extraComment,
-              },
-          };
+        //       company: {
+        //           name: formState.companyName,
+        //           zipcode: formState.companyZipcode,
+        //           roadAddress: formState.companyRoadAddress,
+        //           jibunAddress: formState.companyJibunAddress,
+        //           addressExtend: formState.companyAddressExtend,
+        //           addressDetail: {
+        //               bcode: formState.companyAddressDetailBcode,
+        //               bname: formState.companyAddressDetailBname,
+        //               buildingCode: formState.companyAddressDetailBuildingCode,
+        //               buildingName: formState.companyAddressDetailBuildingName,
+        //               roadname: formState.companyAddressDetailRoadname,
+        //               roadnameCode: formState.companyAddressDetailRoadnameCode,
+        //               sido: formState.companyAddressDetailSido,
+        //               sigungu: formState.companyAddressDetailSigungu,
+        //               sigunguCode: formState.companyAddressDetailSigunguCode,
+        //               zonecode: formState.companyAddressDetailZonecode,
+        //           },
+        //           phone: formState.companyPhone,
+        //           fax: formState.companyFax,
+        //           licenseFileStorageId: formState.companyLicenseFileStorageId,
+        //           bizNumber: formState.companyBizNumber,
+        //           bizType: formState.companyBizType,
+        //           residentId: formState.companyResidentId,
+        //       },
+        //       president: {
+        //           name: formState.presidentContentName,
+        //           birthday: formState.presidentBirthday,
+        //           mobilePhone: formState.presidentPhone,
+        //           email: formState.presidentEmail,
+        //       },
+        //       accounting: {
+        //           facilityBusinesses: customAccountingfacilityBusinesses,
+        //           accountingServiceTypes: formState.accountingServiceTypes,
+        //       },
+        //       withholding: {
+        //           startYearMonth: formState.withholdingYearMonth,
+        //           capacity: formState.withholdingCapacity,
+        //           withholdingServiceTypes: formState.withholdingServiceTypes,
+        //       },
+        //       cmsBank: {
+        //           bankType: formState.cmsBankType,
+        //           accountNumber: formState.accountNumber,
+        //           ownerBizNumber: formState.ownerBizNumber,
+        //           ownerName: formState.ownerName,
+        //           withdrawDay: formState.withdrawDay,
+        //       },
+        //       extra: {
+        //           salesRepresentativeId: formState.extraSalesRepresentativeId,
+        //           comment: formState.extraComment,
+        //       },
+        //   };
 
-          const cleanData = JSON.parse(
-              JSON.stringify(contentData, (name, val) => {
-                  if (val == null) {
-                      //message.error(`${name} is null`, 4);
-                      return;
-                  }
-                  if (
-                      name === "__typename" ||
-                      name === "registrationCard" ||
-                      name === "__KEY__"
-                  ) {
-                      delete val[name];
-                  } else {
-                      return val;
-                  }
-              })
-          );
-          let variables = {
-              id: formState.id,
-              status: formState.status,
-              memo: formState.memo,
-              content: cleanData,
-          };
-          actionUpdate(variables);
+        //   const cleanData = JSON.parse(
+        //       JSON.stringify(contentData, (name, val) => {
+        //           if (val == null) {
+        //               //message.error(`${name} is null`, 4);
+        //               return;
+        //           }
+        //           if (
+        //               name === "__typename" ||
+        //               name === "registrationCard" ||
+        //               name === "__KEY__"
+        //           ) {
+        //               delete val[name];
+        //           } else {
+        //               return val;
+        //           }
+        //       })
+        //   );
+        //   let variables = {
+        //       id: formState.id,
+        //       status: formState.status,
+        //       memo: formState.memo,
+        //       content: cleanData,
+        //   };
+        //   actionUpdate(variables);
       };
 
       // handle License File upload
@@ -1007,6 +1016,7 @@ export default defineComponent({
       };
 
       return {
+          formRef,
           visible,
           formState,
           layout,

@@ -64,7 +64,8 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자등록번호 :</label>
-                                <company-registration-number-text-box   v-model:valueInput="contractCreacted.bizNumber" :required="true"/>
+                                <company-registration-number-text-box v-model:valueInput="contractCreacted.bizNumber"
+                                    :required="true" />
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자유형 :</label>
@@ -74,7 +75,8 @@
                                 </a-radio-group>
                                 <div class="group-label">
                                     <p>{{ textIDNo }}:</p>
-                                    <id-card-text-box :required="true" v-model:valueInput="contractCreacted.residentId"/>
+                                    <id-card-text-box :required="true"
+                                        v-model:valueInput="contractCreacted.residentId" />
                                 </div>
                             </div>
                             <div class="form-item">
@@ -106,14 +108,14 @@
                                 <a-form :model="contractCreacted" name="nest-messages"
                                     :validate-messages="validateMessages" @finish="onFinish">
                                     <a-form-item :name="['phone']" :rules="[{ required: true }]">
-                                        <a-input placeholder="‘-’ 앖이 숫자만 인력" @change="validateNumber('phone')"
+                                        <a-input placeholder="‘-’ 없이 슷자입력" @change="validateNumber('phone')"
                                             v-model:value="contractCreacted.phone" style="width: 180px" />
                                     </a-form-item>
                                 </a-form>
                             </div>
                             <div class="form-item">
                                 <label>팩 스 :</label>
-                                <a-input placeholder="‘-’ 앖이 숫자만 인력" v-model:value="contractCreacted.fax"
+                                <a-input placeholder="‘-’ 없이 슷자입력" v-model:value="contractCreacted.fax"
                                     @change="validateNumber('fax')" @keyup="validateNumber('fax')"
                                     style="width: 180px;" />
                             </div>
@@ -166,8 +168,8 @@
                                 <a-form :model="contractCreacted" name="nest-messages"
                                     :validate-messages="validateMessages" @finish="onFinish">
                                     <a-form-item :name="['mobilePhone']" :rules="[{ required: true }]">
-                                        <a-input v-model:value="contractCreacted.mobilePhone"
-                                            placeholder="‘-’ 앖이 숫자만 인력" @keyup="validateNumber('mobilePhone')"
+                                        <a-input v-model:value="contractCreacted.mobilePhone" placeholder="‘-’ 없이 슷자입력"
+                                            @keyup="validateNumber('mobilePhone')"
                                             @change="validateNumber('mobilePhone')" style="width: 150px" />
                                     </a-form-item>
                                 </a-form>
@@ -236,7 +238,7 @@
                                     :validate-messages="validateMessages" @finish="onFinish" style="width: 100%;">
                                     <a-form-item :name="['longTermCareInstitutionNumber']"
                                         :rules="[{ required: true }]">
-                                        <a-input :disabled="disableFormVal2" placeholder="1234567898"
+                                        <a-input :disabled="disableFormVal2" placeholder="‘-’ 없이 슷자입력"
                                             @change="validateNumber('longTermCareInstitutionNumber')"
                                             @keyup="validateNumber('longTermCareInstitutionNumber')"
                                             v-model:value="contractCreacted.longTermCareInstitutionNumber" />
@@ -298,8 +300,8 @@
                         <div class="form-group">
                             <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                             <div class="form-item">
-                                <label class="red">출금은행 :</label>
-                                <selectBank :disableFormVal="disableFormVal" @bank="getIDBank" :width="'178px'" />
+                                <label class="red">출금은행:</label>
+                                <bank-select-box v-model:valueInput="contractCreacted.bankType" :width="'178px'" />
                             </div>
                             <div class="form-item">
                                 <label class="red">출금계좌번호 :</label>
@@ -318,7 +320,7 @@
                                 <a-form :model="contractCreacted" :validate-messages="validateMessages"
                                     style="width: 100%;">
                                     <a-form-item :name="['ownerName']" :rules="[{ required: true }]">
-                                        <a-input placeholder="주식회사 타운소프트비나" :disabled="disableFormVal"
+                                        <a-input :disabled="disableFormVal"
                                             v-model:value="contractCreacted.ownerName" />
                                     </a-form-item>
                                 </a-form>
@@ -370,7 +372,8 @@
                         바랍니다. )
                     </p>
                 </template>
-                <a-modal class="confirm-modal" v-model:visible="visibleModal" :mask-closable="false" ok-text="확인" cancel-text="" footer="">
+                <a-modal class="confirm-modal" v-model:visible="visibleModal" :mask-closable="false" ok-text="확인"
+                    cancel-text="" footer="">
                     <a-result status="success" title="서비스 가입신청이 완료되었습니다! "
                         sub-title="가입심사가 진행중입니다. 신청일로부터 최대 3일 이내에 승인여부를 알려드릴 예정입니다. ">
                         <template #extra>
@@ -418,7 +421,6 @@ import {
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import CustomDatepicker from "../../components/CustomDatepicker.vue";
-import selectBank from "../../components/selectBank.vue";
 import postCode from "../../components/postCode.vue";
 
 import mutations from "../../graphql/mutations/RqContract/index";
@@ -454,7 +456,6 @@ export default {
         imgUpload,
         CustomDatepicker,
         moment,
-        selectBank,
         postCode,
         DxRequiredRule,
         DxCompareRule,
@@ -573,9 +574,9 @@ export default {
             visibleModal.value = true;
         });
         onError((res) => {
-            spinning.value = false 
+            spinning.value = false
             message.error(res.message)
-        }); 
+        });
         const validateMessages = {
             required: "이항목은 필수 입력사항입니다!",
             types: {
@@ -767,7 +768,7 @@ export default {
             disableForm1,
             contractCreacted,
             Creat,
-            valueFacilityBusinesses, 
+            valueFacilityBusinesses,
             signinDone,
             onError,
             visibleModal,
@@ -891,7 +892,7 @@ export default {
                 }
             } else if (this.step == 2) {
                 if (this.dataInputCallApi.dossier == 2 && this.dataInputCallApi.applicationService == 2) {
-                    message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ    ')
+                    message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
                 } else {
                     let count = 0
                     if (this.dataInputCallApi.dossier == 1) {
@@ -944,6 +945,7 @@ export default {
             this.contractCreacted.registrationCardFileStorageId = img;
         },
         getIDBank(data) {
+            console.log(data);
             this.contractCreacted.bankType = data;
         },
         passwordComparison() {
@@ -983,4 +985,5 @@ export default {
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
+
 </style>
