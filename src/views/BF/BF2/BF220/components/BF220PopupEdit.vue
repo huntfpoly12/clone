@@ -7,7 +7,7 @@
                 <a-button key="submit" type="primary" @click="updateScreenRole">
                     저장하고 나가기</a-button>
             </template>
-            <a-form v-bind="layout" name="nest-messages" :rules="rules">
+            <a-form v-bind="layout" name="nest-messages" >
                 <a-row :gutter="24">
                     <a-col :span="24" class="title-modal">
                         <span>권한그룹 기본정보</span>

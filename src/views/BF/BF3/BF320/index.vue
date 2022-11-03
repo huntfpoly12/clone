@@ -114,7 +114,7 @@
                         :total="rowTable" show-less-items @change="changePage" />
                 </div>
 
-                <BF320Popup :modalStatus="modalStatus" @closePopup="modalStatus=false" :idRowEdit="idRowEdit"
+                <BF320Popup :modalStatus="modalStatus" @closePopup="handleClosePopup" :idRowEdit="idRowEdit"
                     :data="popupData" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
@@ -191,7 +191,7 @@ export default defineComponent({
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
             popupData: [],
-            modalStatus: false,
+            // modalStatus: false,
             modalHistoryStatus: false,
         };
     },
@@ -200,7 +200,7 @@ export default defineComponent({
         const rowTable = ref(10)
         const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
-
+        let modalStatus = ref<boolean>(false)
         var dataSearchDef = ref({
             page: 1,
             rows: 10,
@@ -266,7 +266,6 @@ export default defineComponent({
             }
 
             refetchData(dataNew)
-
             setTimeout(() => {
                 spinning.value = !spinning.value;
             }, 1000);
@@ -274,8 +273,12 @@ export default defineComponent({
 
 
         const pageSize = ref(5)
+        const handleClosePopup = () => {
+          modalStatus.value = false
+          refetchData()
+        }
 
-        return {
+      return {
             idRowEdit,
             spinning,
             responApiSearchCompanies,
@@ -283,6 +286,8 @@ export default defineComponent({
             searching,
             originData,
             refetchData,
+            handleClosePopup,
+            modalStatus,
             rowTable,
             pageSize
         }
@@ -341,195 +346,6 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
-.ant-pagination {
-    margin-top: 10px;
-}
+<style lang="scss" scoped src="./style/index.scss">
 
-.page-content {
-    padding: 10px 10px;
-}
-
-#data-grid-demo {
-    min-height: 700px;
-}
-
-::v-deep .dx-toolbar-after {
-    display: flex;
-
-    .dx-toolbar-item {
-        &:first-child {
-            order: 2;
-            margin-left: 15px;
-        }
-    }
-}
-
-::v-deep .dx-select-checkbox {
-    display: inline-block !important;
-}
-
-::v-deep .dx-texteditor-input {
-    min-height: 30px !important;
-}
-
-.modal-note {
-    max-height: 500px;
-    overflow: auto;
-
-    .title-note {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    th {
-        display: none;
-    }
-
-    .ant-collapse-content-box {
-        padding: 0px;
-    }
-}
-
-.anticon {
-    cursor: pointer;
-}
-
-.custom-action {
-    text-align: center;
-}
-
-#bf-320 {
-    .dx-texteditor-input {
-        height: 33px;
-        min-height: auto !important;
-    }
-
-    .search-form {
-        background: #f1f3f4;
-        padding: 10px 24px;
-
-
-
-        >div {
-            width: 100%;
-            justify-content: flex-start !important;
-            align-items: center;
-            margin-right: 15px;
-        }
-
-        label {
-            margin-right: 10px;
-        }
-
-        .lable-item {
-            white-space: nowrap;
-            margin-right: 10px;
-            width: auto !important;
-        }
-
-        .col {
-            align-items: center;
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-
-            .lable-item {
-                width: 110px;
-                display: inline-block;
-            }
-
-            .item:nth-child(2) {
-                margin-left: 33px;
-            }
-        }
-    }
-}
-
-.ant-row {
-    align-items: center;
-}
-
-.ant-form-item {
-    margin-bottom: 4px;
-}
-
-.ant-collapse {
-    .ant-collapse-item {
-        .ant-collapse-header {
-            padding: 7px;
-        }
-    }
-}
-
-.warring-modal {
-    font-size: 12px;
-    line-height: 0px;
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
-
-.clr {
-    label {
-        color: red;
-    }
-}
-
-.clr-text {
-    color: red;
-}
-
-.clb,
-.clb-label label {
-    color: black !important;
-}
-
-
-::v-deep.components-modal-demo-position {
-    ::v-deep.test-local {
-        background-color: pink !important;
-        width: 1000px !important;
-        height: 200px !important;
-    }
-
-    .imgPreview img {
-        width: 1000px !important;
-    }
-
-    .ant-form-item-label {
-        text-align: left;
-    }
-}
-
-.dflex {
-    display: flex;
-}
-
-.custom-flex {
-    align-items: center;
-}
-
-.warring-bank {
-    display: flex;
-    align-items: center;
-}
-
-.pl-5 {
-    padding-left: 5px;
-}
-
-.custom-lineHeight {
-    line-height: 3px;
-}
-
-.dx-texteditor-input {
-    padding: 0px 5px 6px 5px;
-}
-
-.dx-checkbox-icon {
-    border: 1px solid #d9d9d9
-}
 </style>
