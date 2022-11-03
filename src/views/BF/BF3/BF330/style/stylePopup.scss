@@ -129,24 +129,6 @@
     text-align: right;
 }
 
-::v-deep img-preview {
-    position: relative;
-    width: 100%;
-}
-
-::v-deep img {
-    position: relative;
-    width: 100%;
-    height: 345px;
-    margin-top: 20px;
-
-}
-
-.imgPreview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
 ::v-deep .dx-checkbox-checked .dx-checkbox-icon::before {
     font-size: 13px;
