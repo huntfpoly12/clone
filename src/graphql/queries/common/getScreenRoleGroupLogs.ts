@@ -6,7 +6,6 @@ query getScreenRoleGroupLogs($id: String!) {
     ts
     name
     type
-    screenRoles
     lock
     memo
     createdAt
