@@ -6,7 +6,6 @@
                 <a-button @click="setModalVisible">그냥 나가기</a-button>
                 <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateSale">
                     저장하고 나가기</a-button>
-                    <submit-button/>
             </template>
             <a-form :model="formState" v-bind="layout" label-align="right" name="nest-messages">
                 <a-row :gutter="24">
@@ -15,7 +14,7 @@
                             <default-text-box v-model:valueInput="formState.code" width="200px" :disabled="true"/>
                         </a-form-item>
                         <a-form-item label="영업자명">
-                            <default-text-box v-model:valueInput="formState.detailName" width="200px"  :disabled="!canChangeCompanyName"/>
+                            <default-text-box v-model:valueInput="formState.name" width="200px"  :disabled="!canChangeCompanyName"/>
                         </a-form-item>
                         <a-form-item label="사업자유형" class="label-br">
                             <biz-type-select-box   v-model:valueInput="formState.detailBizType" width="200px" /> 
@@ -194,7 +193,9 @@ export default defineComponent({
 
         // watch result resCheckPerEdit
         watch(resCheckPerEdit, (value) => {
-            canChangeCompanyName.value = value.isSalesRepresentativeChangableName;
+            if(value){
+                canChangeCompanyName.value = value.isSalesRepresentativeChangableName;
+            }    
         });
 
         // get  sale representative
@@ -282,7 +283,7 @@ export default defineComponent({
         const updateSale = () => {
             let salesRepresentativeDetailInput = {
                 status: formState.status,
-                name: formState.detailName,
+                name: formState.name,
                 grade: formState.detailGrade,
                 bizType: formState.detailBizType,
                 bizNumber: formState.detailBizNumber,

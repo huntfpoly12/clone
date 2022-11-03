@@ -9,7 +9,6 @@
       v-model:value="value"
       :disabled="disabled"
       :readOnly="readOnly"
-      @input="updateValue(value)"
       :on-input="onInputValue"
       :height="$config_styles.HeightInput"
     >
@@ -51,14 +50,17 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);
-    const updateValue = (value: any) => {
-      emit("update:valueInput", value);
-    };
+ 
 
     const onInputValue = (e: any) => {
       var inputElement = e.event.target;
       if (inputElement.value.length > 11)
+      {
         inputElement.value = inputElement.value.slice(0, 11);
+        emit("update:valueInput", value);
+      }
+        
+      
     };
 
     watch(
@@ -68,7 +70,7 @@ export default defineComponent({
       }
     );
     return {
-      updateValue,
+
       onInputValue,
       value,
     };
