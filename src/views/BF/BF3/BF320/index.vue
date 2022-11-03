@@ -67,7 +67,10 @@
                             </div>
                         </a-col>
                         <a-col>
+                            <div class="dflex custom-flex">
+                            <label >메니저명 :</label>
                             <ListManagerDropdown/>
+                        </div>
                         </a-col>
                         <a-col>
                             <!-- Doanh nghiệp -->

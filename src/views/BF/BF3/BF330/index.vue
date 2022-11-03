@@ -75,13 +75,13 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-resizing="true">                 
+                    @exporting="onExporting" :allow-column-resizing="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="code" caption="사업자코드" />
                     <DxColumn data-field="active" caption="상태" cell-template="active-cell" />
                     <template #active-cell="{ data }" class="custom-action">
-                        {{data.value === true ? '정상' : '해지'}}
+                        {{ data.value === true ? '정상' : '해지' }}
                     </template>
                     <DxColumn data-field="name" caption="상호" data-type="date" />
                     <DxColumn data-field="presidentName" caption="대표자" />
@@ -113,7 +113,7 @@
                     <a-pagination v-model:current="originData.filter.page" v-model:page-size="originData.filter.rows"
                         :total="rowTable" show-less-items @change="changePage" />
                 </div>
-                <BF330Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :idRowEdit="idSubRequest" />
+                <BF330Popup :modalStatus="modalStatus" @closePopup="closePopup" :idRowEdit="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idSubRequest" typeHistory="bf-330" />
             </div>
@@ -121,7 +121,7 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import {
     DxDataGrid,
     DxColumn,
@@ -170,7 +170,7 @@ export default defineComponent({
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
             popupData: [],
-            modalStatus: false,
+            
             modalHistoryStatus: false,
         };
     },
@@ -178,7 +178,7 @@ export default defineComponent({
         const idRowEdit = ref(0)
         const idSubRequest = ref();
         let trigger = ref(true);
-
+        const modalStatus = ref(false)
         const listServiceContract = ref([])
         const rowTable = ref(10)
         const originData = ref({
@@ -195,9 +195,9 @@ export default defineComponent({
             }
         })
 
-        const { refetch: refetchData, loading, error, result } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
+        const { refetch: refetchData, loading, result } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
         // process data after call getServiceContracts api
-        watch(result, (value : any) => {
+        watch(result, (value: any) => {
             rowTable.value = value.searchServiceContracts.totalCount
             listServiceContract.value = value.searchServiceContracts.datas
             trigger.value = false;
@@ -214,8 +214,14 @@ export default defineComponent({
             trigger.value = true;
             refetchData()
         }
-
+        const closePopup = () => {
+            modalStatus.value = false
+            trigger.value = true;
+            refetchData()
+        }
         return {
+            closePopup,
+            modalStatus,
             idRowEdit,
             listServiceContract,
             loading,
@@ -229,7 +235,7 @@ export default defineComponent({
         }
     },
     methods: {
-        onExporting(e:any) {
+        onExporting(e: any) {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
             exportDataGrid({

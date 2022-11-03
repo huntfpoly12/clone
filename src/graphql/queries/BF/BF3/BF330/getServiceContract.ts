@@ -25,6 +25,10 @@ query getServiceContract($id: Int!) {
           accountingServiceType
           price
         }
+        registrationCard{
+          url
+          name
+        }
       }
       withholding {
         startYearMonth

@@ -52,3 +52,12 @@ export const formState340 = {
     ip: '',
     active: false,
 }
+
+export const origindata = {
+    page: 1,
+    rows: 10,
+    statuses: [1, 2, 3],
+    grade: null,
+    name: "",
+    code: "",
+}

@@ -1,16 +1,16 @@
 <template>
   <div>
     <DxTextBox
-        :width="width"
-        :show-clear-button="clearButton"
-        :placeholder="placeholder"
-        v-model:value="value"
-        :disabled="disabled"
-        :maxLength="maxCharacter"
-        :readOnly="readOnly"
-        @input="updateValue(value)"
-        valueChangeEvent="input"
-        :height="$config_styles.HeightInput"
+      :width="width"
+      value-change-event="input"
+      :show-clear-button="clearButton"
+      :placeholder="placeholder"
+      v-model="value"
+      :disabled="disabled"
+      :maxLength="maxCharacter"
+      :readOnly="readOnly"
+      @input="updateValue(value)"
+      :height="$config_styles.HeightInput"
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
