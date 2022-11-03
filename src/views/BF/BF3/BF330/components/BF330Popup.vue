@@ -141,15 +141,6 @@
                                                                 @update-img="getImgUrl($event, data)" :customrow="1" />
                                                         </div>
                                                         <a-col>
-                                                            <!-- <div v-if="data.data.registrationCard" class="img-preview">
-                                                                <a-image :src="data.data.registrationCard.url"
-                                                                    style="height: 200px;" />
-                                                            </div>
-                                                            <div v-else class="img-preview">
-                                                                <img src="../../../../../assets/images/imgdefault.jpg"
-                                                                    style="height: 200px;" />
-                                                            </div> -->
-
                                                             <Preview :height="'250px'" :activePreview="true"
                                                                 :dataImage="data.data.registrationCard" />
                                                             <div v-if="data.data.registrationCard">

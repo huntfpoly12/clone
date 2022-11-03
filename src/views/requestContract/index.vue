@@ -11,7 +11,12 @@
             <div class="step-content">
                 <template v-if="step === 0">
                     <div class="form-group">
-                        <label>1. 서비스약관 동의</label>
+                        <div style="display: flex;justify-content: space-between;">
+                            <label>1. 서비스약관 동의</label>
+                            <div>
+                                <a-checkbox @change="checkAllFunc" v-model:checked="checkAll">전체 동의</a-checkbox>
+                            </div>
+                        </div>
                         <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
                         <div class="radio-group">
                             <a-radio-group v-model:value="radio">
@@ -751,7 +756,65 @@ export default {
                 textIDNo.value = "주민등록번호";
             }
         }
+
+        watch(() => contractCreacted.terms, (value) => {
+            if (contractCreacted.terms == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true) {
+                checkAll.value = true
+            } else {
+                checkAll.value = false
+            }
+        });
+        watch(() => contractCreacted.personalInfo, (value) => {
+            if (contractCreacted.personalInfo == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true) {
+                checkAll.value = true
+            } else {
+                checkAll.value = false
+            }
+        });
+        watch(() => contractCreacted.accountingService, (value) => {
+            if (contractCreacted.accountingService == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true) {
+                checkAll.value = true
+            } else {
+                checkAll.value = false
+            }
+        });
+        watch(() => contractCreacted.withholdingService, (value) => {
+            if (contractCreacted.withholdingService == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true) {
+                checkAll.value = true
+            } else {
+                checkAll.value = false
+            }
+        });
+
+        const checkAll = ref(false)
+        const checkAllFunc = () => {
+            if (checkAll.value == true) {
+                contractCreacted.terms = true
+                contractCreacted.personalInfo = true
+                contractCreacted.accountingService = true
+                contractCreacted.withholdingService = true
+            } else {
+                contractCreacted.terms = false
+                contractCreacted.personalInfo = false
+                contractCreacted.accountingService = false
+                contractCreacted.withholdingService = false
+            }
+        }
         return {
+            checkAll,
+            checkAllFunc,
             signinLoading,
             spinning,
             textIDNo,
@@ -942,7 +1005,7 @@ export default {
         getImgUrlAccounting(img) {
             this.imagestep = img.url;
             this.fileNamestep = img.fileNamestep;
-            this.contractCreacted.registrationCardFileStorageId = img;
+            this.contractCreacted.registrationCardFileStorageId = img.id;
         },
         getIDBank(data) {
             console.log(data);
