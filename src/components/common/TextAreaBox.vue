@@ -9,7 +9,7 @@
         v-model:value="value"
         :disabled="disabled"
         :readOnly="readOnly"
-        @change="updateValue(value)"
+        @input="updateValue(value)"
       >
         <DxValidator>
           <DxRequiredRule v-if="required" :message="messRequired" />

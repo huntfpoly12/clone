@@ -9,7 +9,7 @@
       v-model:value="value"
       :disabled="disabled"
       :readOnly="readOnly"
-      @change="updateValue(value)"
+      @input="updateValue(value)"
       :on-input="onInputValue"
       :height="$config_styles.HeightInput"
     >

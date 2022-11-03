@@ -8,7 +8,7 @@
       :disabled="disabled"
       :placeholder="placeholder"
       :show-spin-buttons="spinButtons"
-      @change="updateValue(value)"
+      @input="updateValue(value)"
       :rtlEnabled="rtlEnabled"
       :max="max"
       :min="min"
