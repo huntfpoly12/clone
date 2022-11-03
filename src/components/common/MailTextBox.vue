@@ -2,14 +2,14 @@
   <div>
     <DxTextBox
       :width="width"
-      value-change-event="keyup"
+      value-change-event="input"
       :show-clear-button="clearButton"
       mode="mail"
       :placeholder="placeholder"
       v-model:value="value"
       :disabled="disabled"
       :readOnly="readOnly"
-      @change="updateValue(value)"
+      @input="updateValue(value)"
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
