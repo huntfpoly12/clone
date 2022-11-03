@@ -43,7 +43,6 @@
 								:key="index" @click="changeActiveTab(item)">
 								{{ item.name }}
 								<close-circle-filled @click="removeItemTab(index)" :style="{ marginLeft: '2px' , color:activeTab.id === item.id ? 'red' : '#888'}"/>
-								
 							</li>
 						</ul>
 					</nav>

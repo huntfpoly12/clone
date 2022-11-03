@@ -142,12 +142,8 @@
                                                         </div>
                                                         <a-col>
                                                             <Preview :height="'250px'" :activePreview="true"
-                                                                :dataImage="data.data.registrationCard" />
-                                                            <div v-if="data.data.registrationCard">
-                                                                <span>{{ data.data.registrationCard.name }}</span>
-                                                                <delete-outlined @click="removeImg(data.data.name)"
-                                                                    style="color: red; cursor: pointer" />
-                                                            </div>
+                                                                :dataImage="data.data.registrationCard"
+                                                                :name="data.data.name" @deleteImg="removeImg($event)" />
                                                         </a-col>
                                                     </div>
                                                 </a-col>
