@@ -14,16 +14,9 @@
             <a-form-item label="회원명">
               <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" />
             </a-form-item>
-            <a-form-item label="소속">
-              <!-- <a-select v-model:value="formState.groupCode" style="width: 250px" placeholder="Select a person"
-                :options="selectSearch" :filter-option="filterOption" @focus="handleFocus" @blur="handleBlur"
-                @change="handleChange" >
-                <template #suffixIcon>
-                  <search-outlined :size="14" class="ant-select-suffix" />
-                </template>
-              </a-select> -->
+            <a-form-item label="소속">             
               <a-select v-model:value="formState.groupCode" style="width: 170px" :options="selectSearch"
-                @change="handleChange"></a-select>
+                @change="handleChange" placeholder="abc"></a-select>
 
             </a-form-item>
           </a-col>
@@ -258,7 +251,7 @@ export default defineComponent({
       ip: "",
       active: true,
       groupId: "",
-      groupCode: "",
+      groupCode: null,
       groupName: "",
       facilityBusinesses: [],
       screenRoleGroups: {
