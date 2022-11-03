@@ -12,7 +12,7 @@
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
                         <a-form-item label="영업자코드">
-                            <default-text-box v-model:valueInput="formState.code" width="200px"/>
+                            <default-text-box v-model:valueInput="formState.code" width="200px" :disabled="true"/>
                         </a-form-item>
                         <a-form-item label="영업자명">
                             <default-text-box v-model:valueInput="formState.detailName" width="200px"  :disabled="!canChangeCompanyName"/>
@@ -184,7 +184,7 @@ export default defineComponent({
         let formState = reactive({...formState340});
 
         // query check if can be change name company 
-        const { result: resCheckPerEdit, refetch: refetchCheckPer } = useLazyQuery(
+        const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
             queries.isSalesRepresentativeChangableName, dataQueryCheckPer,
             () => ({
                 enabled: triggerCheckPer.value,

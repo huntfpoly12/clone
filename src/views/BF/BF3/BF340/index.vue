@@ -1,5 +1,6 @@
 <template>
-  <a-spin :spinning="spinning" size="large">
+
+  <a-spin :spinning="spinning|| loading" size="large">
     <div class="top-content">
       <a-typography-title :level="3"> 영업자관리 </a-typography-title>
       <div class="list-action">
@@ -192,7 +193,7 @@
   </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import {
   DxDataGrid,
   DxColumn,
@@ -265,6 +266,7 @@ export default defineComponent({
     const modalAddNewStatus = ref<boolean>(false);
     const modalEditStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
+
     const statuses: any = ref([]);
     const spinning = ref<boolean>(true);
     var idRowEdit = ref<number>(0);
@@ -324,16 +326,38 @@ export default defineComponent({
     const openAddNewModal = () => {
       modalAddNewStatus.value = true;
     };
+    
+    watch(
+      modalAddNewStatus,
+      (newValue, old) => {
+        if(!newValue){
+          refetchData();
+        }
+        
+      }
+    );
     const setModalEditVisible = (data: any) => {
       idRowEdit.value = data.data.id;
       modalEditStatus.value = true;
       popupData.value = data;
+      
     };
+
+    watch(
+      modalEditStatus,
+      (newValue, old) => {
+        if(!newValue){
+          refetchData();
+        }
+        
+      }
+    );
 
     const modalHistory = (data: any) => {
       modalHistoryStatus.value = true;
       popupData.value = data;
     };
+    
     const getColorTag = (data: any) => {
       if (data === 1) {
         return "#108ee9";
@@ -374,6 +398,7 @@ export default defineComponent({
 
     return {
       spinning,
+      loading,
       onExporting,
       searching,
       dataSource,
