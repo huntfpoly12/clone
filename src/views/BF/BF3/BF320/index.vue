@@ -190,18 +190,20 @@ export default defineComponent({
     data() {
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
-            popupData: [],
+            // popupData: [],
             // modalStatus: false,
-            modalHistoryStatus: false,
+            // modalHistoryStatus: false,
         };
     },
 
     setup() {
         const rowTable = ref(10)
+        let popupData = ref([])
+        let modalHistoryStatus = ref<boolean>(false)
         const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
         let modalStatus = ref<boolean>(false)
-        var dataSearchDef = ref({
+        var dataSearchDef = ref<any>({
             page: 1,
             rows: 10,
             code: "",
@@ -277,48 +279,95 @@ export default defineComponent({
           modalStatus.value = false
           refetchData()
         }
-
-      return {
-            idRowEdit,
-            spinning,
-            responApiSearchCompanies,
-            dataSearchDef,
-            searching,
-            originData,
-            refetchData,
-            handleClosePopup,
-            modalStatus,
-            rowTable,
-            pageSize
+        const onExporting = (e: any) => {
+          const workbook = new Workbook();
+          const worksheet = workbook.addWorksheet('employees');
+          exportDataGrid({
+            component: e.component,
+            worksheet,
+            autoFilterEnabled: true,
+          }).then(() => {
+            workbook.xlsx.writeBuffer().then((buffer) => {
+              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
+            });
+          });
+          e.cancel = true;
         }
+        const setModalVisible = (data: any) => {
+          idRowEdit.value = data.data.id;
+          modalStatus.value = true;
+          popupData.value = data;
+        }
+        const modalHistory = (data: any) => {
+          idRowEdit.value = data.data.id;
+          modalHistoryStatus.value = true;
+          popupData.value = data;
+        }
+        const changePage = () => {
+          let dataNew = {
+            page: dataSearchDef.page,
+            rows: dataSearchDef.rows,
+            code: dataSearchDef.code,
+            name: dataSearchDef.name,
+            presidentName: dataSearchDef.presidentName,
+            address: dataSearchDef.address,
+            manageUserId: dataSearchDef.manageUserId,
+            salesRepresentativeId: dataSearchDef.salesRepresentativeId,
+            excludeCancel: dataSearchDef.excludeCancel
+          }
+          refetchData(dataNew)
+
+          spinning.value = !spinning.value;
+          setTimeout(() => {
+            spinning.value = !spinning.value;
+          }, 1000);
+        }
+        return {
+              idRowEdit,
+              spinning,
+              modalHistoryStatus,
+              responApiSearchCompanies,
+              dataSearchDef,
+              searching,
+              originData,
+              refetchData,
+              onExporting,
+              handleClosePopup,
+              modalStatus,
+              rowTable,
+              pageSize,
+              popupData,
+              setModalVisible,
+              modalHistory,
+              changePage,
+          }
     },
 
     methods: {
-        onExporting(e: any) {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet('employees');
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
-                });
-            });
-            e.cancel = true;
-        },
-        setModalVisible(data: any) {
-            this.idRowEdit = data.data.id;
-            this.modalStatus = true;
-            this.popupData = data;
-
-        },
-        modalHistory(data: any) {
-            this.idRowEdit = data.data.id;
-            this.modalHistoryStatus = true;
-            this.popupData = data;
-        },
+        // onExporting(e: any) {
+        //     const workbook = new Workbook();
+        //     const worksheet = workbook.addWorksheet('employees');
+        //     exportDataGrid({
+        //         component: e.component,
+        //         worksheet,
+        //         autoFilterEnabled: true,
+        //     }).then(() => {
+        //         workbook.xlsx.writeBuffer().then((buffer) => {
+        //             saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
+        //         });
+        //     });
+        //     e.cancel = true;
+        // },
+        // setModalVisible(data: any) {
+        //     this.idRowEdit = data.data.id;
+        //     this.modalStatus = true;
+        //     this.popupData = data;
+        // },
+        // modalHistory(data: any) {
+        //     this.idRowEdit = data.data.id;
+        //     this.modalHistoryStatus = true;
+        //     this.popupData = data;
+        // },
 
         changePage() {
             let dataNew = {
@@ -332,7 +381,6 @@ export default defineComponent({
                 salesRepresentativeId: this.dataSearchDef.salesRepresentativeId,
                 excludeCancel: this.dataSearchDef.excludeCancel
             }
-
             this.refetchData(dataNew)
 
             this.spinning = !this.spinning;
@@ -340,7 +388,6 @@ export default defineComponent({
                 this.spinning = !this.spinning;
             }, 1000);
         },
-
     },
 
 });
