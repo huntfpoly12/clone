@@ -14,18 +14,25 @@
                             <a-row>
                                 <a-col :span="18">
                                     <a-form-item label="상 호" class="clr">
-                                        <a-input v-model:value="formState.extendInfoDetailName" />
+                                      <default-text-box
+                                        v-model:inputValue="formState.extendInfoDetailName"
+                                        required
+                                        mess-required="이항목은 필수 입력사항입니다!"
+                                      ></default-text-box>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="6"></a-col>
 
                                 <a-col :span="8">
                                     <a-form-item label="사업자등록번호" class="clr">
-                                        <a-input v-model:value="formState.bizNumber" />
+                                      <default-text-box
+                                          v-model:inputValue="formState.bizNumber"
+                                          required
+                                          mess-required="이항목은 필수 입력사항입니다!"
+                                      ></default-text-box>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
-
                                 <a-col :span="12">
                                     <a-form-item label="사업자유형" class="clr">
                                         <a-radio-group v-model:value="formState.bizType">
@@ -73,7 +80,13 @@
                                 </a-form-item>
                                 <a-col :span="8">
                                     <a-form-item label="연락처" class="clr">
-                                        <a-input v-model:value="formState.extendInfoDetailPhone" placeholder="‘-’없이 숫자만 입력"/>
+<!--                                        <a-input v-model:value="formState.extendInfoDetailPhone" />-->
+                                      <default-text-box
+                                          v-model:inputValue="formState.extendInfoDetailPhone"
+                                          required
+                                          placeholder="‘-’없이 숫자만 입력"
+                                          mess-required="이항목은 필수 입력사항입니다!"
+                                      ></default-text-box>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
@@ -110,20 +123,40 @@
                     <a-collapse-panel key="2" header="대표자정보">
                         <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                             <a-form-item has-feedback label="대표자명" class="clr">
-                                <a-input autocomplete="off" style="width: 200px"
-                                    v-model:value="formState.extendInfoPresidentName" />
+                                <default-text-box
+                                  v-model:inputValue="formState.extendInfoPresidentName"
+                                  style="width: 200px"
+                                  autocomplete="off"
+                                  required
+                                  mess-required="이항목은 필수 입력사항입니다!"
+                                ></default-text-box>
                             </a-form-item>
                             <a-form-item has-feedback label="생년월일" class="clr">
-                                <a-input autocomplete="off" style="width: 200px"
-                                    v-model:value="formState.extendInfoPresidentBirthday" />
+                              <default-text-box
+                                  v-model:inputValue="formState.extendInfoPresidentBirthday"
+                                  style="width: 200px"
+                                  autocomplete="off"
+                                  required
+                                  mess-required="이항목은 필수 입력사항입니다!"
+                              ></default-text-box>
                             </a-form-item>
                             <a-form-item has-feedback label="휴대폰번호" class="clr">
-                                <a-input-number placeholder="‘-’없이 숫자만 입력" style="width: 200px"
-                                    v-model:value="formState.extendInfoPresidentMobilePhone" />
+<!--                                <a-input-number placeholder="‘-’없이 숫자만 입력" style="width: 200px"-->
+<!--                                    v-model:value="formState.extendInfoPresidentMobilePhone" />-->
+                                <tel-tex-box
+                                  v-model:valyeInput="formState.extendInfoPresidentMobilePhone"
+                                  placeholder="‘-’없이 숫자만 입력"
+                                  style="width: 200px"
+                                  required
+                                  mess-required="이항목은 필수 입력사항입니다!"
+                                ></tel-tex-box>
                             </a-form-item>
                             <a-form-item has-feedback label="이메일" class="clr">
-                                <a-input style="width: 400px"
-                                    v-model:value="formState.extendInfoPresidentEmail" />
+                                <mail-text-box
+                                  style="width: 400px"
+                                  v-model:inputValue="formState.extendInfoPresidentEmail"
+                                  required
+                                ></mail-text-box>
                             </a-form-item>
                         </a-form>
                     </a-collapse-panel>
@@ -133,16 +166,29 @@
                                 <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType" width="150px" />
                             </a-form-item>
                             <a-form-item label="출금계좌번호" class="clr">
-                                <a-input placeholder="‘-’없이 숫자만 입력" style="width: 300px"
-                                    v-model:value="formState.extendInfoCmsBankAccountNumber" />
+                                <default-text-box
+                                  v-model:inputValue="formState.extendInfoCmsBankAccountNumber"
+                                  placeholder="‘-’없이 숫자만 입력"
+                                  style="width: 300px"
+                                  required
+                                  mess-required="이항목은 필수 입력사항입니다!"
+                                ></default-text-box>
                             </a-form-item>
                             <a-form-item label="예금주명" class="clr">
-                                <a-input style="width: 300px"
-                                    v-model:value="formState.extendInfoCmsBankOwnerName" />
+                                <default-text-box
+                                  style="width: 300px"
+                                  v-model:valueInput="formState.extendInfoCmsBankOwnerName"
+                                  required
+                                  mess-required="이항목은 필수 입력사항입니다!"
+                                ></default-text-box>
                             </a-form-item>
                             <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
-                                <a-input style="width: 250px"
-                                    v-model:value="formState.extendInfoCmsBankOwnerBizNumber" />
+                                <default-text-box
+                                    style="width: 250px"
+                                    v-model:value="formState.extendInfoCmsBankOwnerBizNumber"
+                                    required
+                                    mess-required="이항목은 필수 입력사항입니다!"
+                                ></default-text-box>
                                 <div class="warring-bank">
                                     <InfoCircleFilled />
                                     <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>
@@ -408,8 +454,6 @@ export default defineComponent({
                 formStateMomes.value = value.getCompanyManageMemos;
             }
         });
-
-
 
         // mutation create memo 
 
@@ -678,106 +722,5 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped>
-#data-grid-demo {
-    min-height: 700px;
-}
-
-.modal-note {
-    max-height: 500px;
-    overflow: auto;
-
-    .title-note {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    th {
-        display: none;
-    }
-
-    .ant-collapse-content-box {
-        padding: 0px;
-    }
-}
-::v-deep img-preview {
-    position: relative;
-    width: 100%;   
-}
-::v-deep img {
-    position: relative;
-    width: 100%;
-    height: 345px;
-    margin-top: 20px;
-      
-}
-.anticon {
-    cursor: pointer;
-}
-
-.custom-action {
-    text-align: center;
-}
-
-.ant-row {
-    align-items: center;
-}
-
-.ant-form-item {
-    margin-bottom: 4px;
-}
-
-.ant-collapse {
-    .ant-collapse-item {
-        .ant-collapse-header {
-            padding: 7px;
-        }
-    }
-}
-
-.warring-modal {
-    font-size: 12px;
-    line-height: 0px;
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
-
-::v-deep .clr {
-    label {
-        color: red;
-    }
-}
-
-.clr-text {
-    color: red;
-}
-
-.clb,
-.clb-label label {
-    color: black !important;
-}
-
-.dflex {
-    display: flex;
-}
-
-.custom-flex {
-    align-items: flex-start;
-}
-
-.warring-bank {
-    display: flex;
-    align-items: center;
-}
-
-.pl-5 {
-    padding-left: 5px;
-}
-
-.custom-lineHeight {
-    line-height: 3px;
-}
+<style lang="scss" scoped src="../style/popup/index.scss">
 </style> 

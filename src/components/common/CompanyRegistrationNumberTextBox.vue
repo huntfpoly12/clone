@@ -2,12 +2,12 @@
   <div>
     <DxTextBox
       :width="width"
-      value-change-event="keyup"
+      value-change-event="input"
       :show-clear-button="clearButton"
       v-model:value="value"
       :disabled="disabled"
       :readOnly="readOnly"
-      @change="updateValue(value)"
+      @input="updateValue(value)"
       :mask="mask"
       :mask-invalid-message="maskMess"
       :height="$config_styles.HeightInput"

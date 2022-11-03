@@ -2,14 +2,14 @@
   <div>
     <DxTextBox
       :width="width"
-      value-change-event="keyup"
+      value-change-event="input"
       :show-clear-button="clearButton"
       :placeholder="placeholder"
       v-model:value="value"
       mode="number"
       :disabled="disabled"
       :readOnly="readOnly"
-      @change="updateValue(value)"
+      @input="updateValue(value)"
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
@@ -31,7 +31,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required :) !!!!",
+      default: "Input is required!",
     },
     width: String,
     clearButton: Boolean,
@@ -69,3 +69,15 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+::v-deep input::-webkit-outer-spin-button,
+::v-deep input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+::v-deep input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>

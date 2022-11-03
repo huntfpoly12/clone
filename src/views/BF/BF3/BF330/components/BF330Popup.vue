@@ -127,7 +127,7 @@
                                                     <!-- ---------------------/OPTION---------------- -->
 
                                                 </a-col>
-                                                <a-col :span="14"> 
+                                                <a-col :span="14">
                                                     <div class="custom-money" style="padding-left: 0px">
                                                         <div style="width: auto;padding-right: 10px;">장기요양기관등록번호 :</div>
                                                         <DxNumberBox :format="'#,###'" :min="0"
@@ -141,19 +141,9 @@
                                                                 @update-img="getImgUrl($event, data)" :customrow="1" />
                                                         </div>
                                                         <a-col>
-                                                            <div v-if="data.data.registrationCard" class="img-preview">
-                                                                <a-image :src="data.data.registrationCard.url"
-                                                                    style="height: 200px;" />
-                                                            </div>
-                                                            <div v-else class="img-preview">
-                                                                <img src="../../../../../assets/images/imgdefault.jpg"
-                                                                    style="height: 200px;" />
-                                                            </div>
-                                                            <div v-if="data.data.registrationCard">
-                                                                <span>{{ data.data.registrationCard.name }}</span>
-                                                                <delete-outlined @click="removeImg(data.data.name)"
-                                                                    style="color: red; cursor: pointer" />
-                                                            </div>
+                                                            <Preview :height="'250px'" :activePreview="true"
+                                                                :dataImage="data.data.registrationCard"
+                                                                :name="data.data.name" @deleteImg="removeImg($event)" />
                                                         </a-col>
                                                     </div>
                                                 </a-col>
@@ -277,6 +267,8 @@ import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
+import Preview
+    from "../../../../../components/common/PreviewImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import {
@@ -349,7 +341,8 @@ export default defineComponent({
         DxNumberBox,
         DxTexts,
         DxMasterDetail,
-        DxCheckBox
+        DxCheckBox,
+        Preview
     },
     props: {
         modalStatus: Boolean,
