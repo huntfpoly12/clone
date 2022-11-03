@@ -31,7 +31,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required :) !!!!",
+      default: "Input is required!",
     },
     width: String,
     clearButton: Boolean,
@@ -50,17 +50,13 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);
- 
-
     const onInputValue = (e: any) => {
       var inputElement = e.event.target;
       if (inputElement.value.length > 11)
       {
         inputElement.value = inputElement.value.slice(0, 11);
-        emit("update:valueInput", value);
       }
-        
-      
+      emit("update:valueInput", inputElement.value);
     };
 
     watch(
@@ -77,3 +73,15 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+::v-deep input::-webkit-outer-spin-button,
+::v-deep input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+::v-deep input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>

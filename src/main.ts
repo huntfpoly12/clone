@@ -9,7 +9,6 @@ import router from "./router/index";
 import store from './store/index'
 import filters from "./helpers/filters";
 import { styles } from "./configs/styles/index";
-import { userType } from "./configs/enum/index";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { client } from "./ApolloClient.d";
 

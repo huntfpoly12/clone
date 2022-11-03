@@ -23,7 +23,7 @@
                             <mail-text-box v-model:valueInput="formState.detailEmail" width="250px"/>
                         </a-form-item>
                         <a-form-item label="연락처">
-                            <tel-tex-box v-model:valueInput="formState.detailPhone" width="200px" placeholder="전화번호를 입력"/>
+                            <tel-text-box v-model:valueInput="formState.detailPhone" width="200px" placeholder="전화번호를 입력"/>
                         </a-form-item>
                         <a-form-item label="팩스">
                             <text-number-box v-model:valueInput="formState.detailFax" width="200px"/>
@@ -57,7 +57,7 @@
                             <company-registration-number-text-box v-model:valueInput="formState.detailBizNumber"  :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                         <a-form-item label="휴대폰">
-                            <tel-tex-box v-model:valueInput="formState.detailMobilePhone" placeholder="전화번호를 입력"/>
+                            <tel-text-box v-model:valueInput="formState.detailMobilePhone" placeholder="전화번호를 입력"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -139,7 +139,7 @@ import { SearchOutlined } from '@ant-design/icons-vue';
 import { useQuery, useMutation ,useLazyQuery } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from 'dayjs';
 import { message } from "ant-design-vue";
-import { formState340 } from '../utils'
+import { formState340 } from '../utils';
 import queries from "../../../../../graphql/queries/BF/BF3/BF340/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 
@@ -151,6 +151,7 @@ export default defineComponent({
     },
 
     setup(props, { emit }) {
+       
         const dataQuery = ref();
         let trigger = ref<boolean>(false);
         let triggerCheckPer = ref<boolean>(false);
