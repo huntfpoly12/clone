@@ -11,11 +11,16 @@
       value-expr="value"
       @value-changed="updateValue(value)"
       :height="$config_styles.HeightInput"
-    />
+    >
+      <DxValidator>
+        <DxRequiredRule v-if="required" :message="messRequired" />
+      </DxValidator>
+    </DxSelectBox>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import {
   SalesRepresentativeGrade,
@@ -44,13 +49,14 @@ export default defineComponent({
     disabled: Boolean,
     valueInput: {
       type: Number,
-      default: 0,
     },
     placeholder: String,
     readOnly: Boolean,
   },
   components: {
     DxSelectBox,
+    DxValidator,
+    DxRequiredRule,
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);

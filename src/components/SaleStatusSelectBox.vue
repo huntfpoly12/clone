@@ -80,7 +80,7 @@ export default defineComponent({
     disabled: Boolean,
     valueInput: {
       type: [Number,String],
-      default: 0,
+      
     },
     placeholder: String,
     readOnly: Boolean,
@@ -98,8 +98,7 @@ export default defineComponent({
     const visibleConfirm = ref<boolean>(false);
     let confirm = ref<string>("");
     const updateValue = (value: any) => {
-      console.log(visibleConfirm.value);
-      if (value == 2) {
+      if (value == 2 && props.confirmStatus == true) {
         visibleConfirm.value = true;
       } else {
         emit("update:valueInput", value);

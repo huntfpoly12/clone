@@ -230,7 +230,6 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF3/BF340/index";
-import SaleStatusSelectBox from "../../../../components/SaleStatusSelectBox.vue";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -260,18 +259,12 @@ export default defineComponent({
     PrinterOutlined,
     DeleteOutlined,
     SaveOutlined,
-    SaleStatusSelectBox,
   },
-  data() {
-    return {
-      popupData: [],
-      modalAddNewStatus: false,
-      modalEditStatus: false,
-      modalHistoryStatus: false,
-    };
-  },
-
   setup() {
+    const popupData = ref([]);
+    const modalAddNewStatus = ref<boolean>(false);
+    const modalEditStatus = ref<boolean>(false);
+    const modalHistoryStatus = ref<boolean>(false);
     const statuses: any = ref([]);
     const spinning = ref<boolean>(true);
     var idRowEdit = ref<number>(0);
@@ -310,19 +303,7 @@ export default defineComponent({
       dataSource.value = res.data.searchSalesRepresentatives.datas;
     });
 
-    return {
-      spinning,
-      dataSource,
-      idRowEdit,
-      refetchData,
-      statuses,
-      originData,
-      dataSearch,
-      rowTable,
-    };
-  },
-  methods: {
-    onExporting(e: { component: any; cancel: boolean }) {
+    const onExporting = (e: { component: any; cancel: boolean }) => {
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("employees");
       exportDataGrid({
@@ -338,20 +319,22 @@ export default defineComponent({
         });
       });
       e.cancel = true;
-    },
-    openAddNewModal() {
-      this.modalAddNewStatus = true;
-    },
-    setModalEditVisible(data: any) {
-      this.idRowEdit = data.data.id;
-      this.modalEditStatus = true;
-      this.popupData = data;
-    },
-    modalHistory(data: any) {
-      this.modalHistoryStatus = true;
-      this.popupData = data;
-    },
-    getColorTag(data: any) {
+    };
+
+    const openAddNewModal = () => {
+      modalAddNewStatus.value = true;
+    };
+    const setModalEditVisible = (data: any) => {
+      idRowEdit.value = data.data.id;
+      modalEditStatus.value = true;
+      popupData.value = data;
+    };
+
+    const modalHistory = (data: any) => {
+      modalHistoryStatus.value = true;
+      popupData.value = data;
+    };
+    const getColorTag = (data: any) => {
       if (data === 1) {
         return "#108ee9";
       } else if (data === 2) {
@@ -359,35 +342,57 @@ export default defineComponent({
       } else if (data === 3) {
         return "grey";
       }
-    },
-    searching() {
-      this.spinning = true;
-      if (this.dataSearch.grade) {
+    };
+    const searching = () => {
+      spinning.value = true;
+      if (dataSearch.value.grade) {
         let arrayNew = {
-          ...this.dataSearch,
+          ...dataSearch.value,
           page: 1,
-          rows: this.originData.rows,
-          grade: this.dataSearch.grade,
-          statuses: this.statuses.length > 0 ? this.statuses : [1, 2, 3],
+          rows: originData.rows,
+          grade: dataSearch.value.grade,
+          statuses: statuses.value > 0 ? statuses.value : [1, 2, 3],
         };
-        this.refetchData(arrayNew);
+        refetchData(arrayNew);
       } else {
         let arrayNew = {
-          ...this.dataSearch,
+          ...dataSearch.value,
           page: 1,
-          rows: this.originData.rows,
-          statuses: this.statuses.length > 0 ? this.statuses : [1, 2, 3],
+          rows: originData.rows,
+          statuses: statuses.value > 0 ? statuses.value : [1, 2, 3],
         };
-        this.refetchData(arrayNew);
+        refetchData(arrayNew);
       }
       setTimeout(() => {
-        this.spinning = false;
+        spinning.value = false;
       }, 1000);
-    },
+    };
 
-    changePage() {
-      this.searching();
-    },
+    const changePage = () => {
+      searching();
+    };
+
+    return {
+      spinning,
+      onExporting,
+      searching,
+      dataSource,
+      idRowEdit,
+      refetchData,
+      statuses,
+      originData,
+      dataSearch,
+      rowTable,
+      changePage,
+      getColorTag,
+      modalHistory,
+      setModalEditVisible,
+      openAddNewModal,
+      popupData,
+      modalAddNewStatus,
+      modalEditStatus,
+      modalHistoryStatus,
+    };
   },
 });
 </script>

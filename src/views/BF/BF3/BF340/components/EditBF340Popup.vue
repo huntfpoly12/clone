@@ -6,6 +6,7 @@
                 <a-button @click="setModalVisible">그냥 나가기</a-button>
                 <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateSale">
                     저장하고 나가기</a-button>
+                    <submit-button/>
             </template>
             <a-form :model="formState" v-bind="layout" label-align="right" name="nest-messages">
                 <a-row :gutter="24">
