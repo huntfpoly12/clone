@@ -13,25 +13,30 @@
                         <span>권한그룹 기본정보</span>
                     </a-col>
                     <a-col :span="16">
-                        <a-form-item label="그룹코드">
+                        <a-form-item label="그룹코드" class="clr">
                             <div class="dflex">
-                                <default-text-box
+                              <default-text-box
                                     class="mr5"
-                                    v-model:value="dataRes.id"
+                                    v-model:valueInput="dataRes.id"
                                     placeholder="영문,숫자 5~10자 (중복불가)"
                                     :max-character="10"
                                     :min-character="5"
-                                    :required="true"
-                                    mess-required="Id is required"
+                                    required
+                                    mess-required="이항목은 필수 입력사항입니다!"
                                     style="width: 350px"
                                 ></default-text-box>
-                                <a-button type="button" @click="checkId">중복체크</a-button>
+                                <a-button type="button" @click="checkId" :disabled="isDisable">중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
-                        <a-form-item label="그룹명">
-                            <default-text-box v-model:value="dataRes.name" placeholder="최대 20자" :max-character="20" required />
+                        <a-form-item label="그룹명" class="clr">
+                            <default-text-box
+                                v-model:valueInput="dataRes.name"
+                                placeholder="최대 20자"
+                                :max-character="20"
+                                required
+                                mess-required="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -87,7 +92,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch } from 'vue'
+import {ref, defineComponent, watch, computed, reactive} from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import {
     DxDataGrid,
@@ -110,7 +115,7 @@ export default defineComponent({
         DxColumn,
         DxCheckBox
     },
-    setup(props, { emit }) {
+  setup(props, { emit }) {
         const dataSource = ref(AdminScreenRole.all())
         const spinning = ref<boolean>(false);
         const layout = {
@@ -119,6 +124,7 @@ export default defineComponent({
         };
         const visible = ref<boolean>(false);
         const triggers = ref(false)
+        let isDisable = ref<boolean>(true);
         const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
         const checkIDName = ref()
@@ -150,6 +156,13 @@ export default defineComponent({
             enabled: triggers.value,
             fetchPolicy: "no-cache",
         }))
+        watch(() => dataRes.value.id, (value) => {
+          if(value.length < 5) {
+            isDisable.value = true
+          } else {
+            isDisable.value = false
+          }
+        }, {deep:true})
         watch(resList, (value) => {
             if (value.isScreenRoleGroupRegistableId == true) {
                 message.success(`사용 가능한 그룹코드입니다`)
@@ -237,205 +250,11 @@ export default defineComponent({
             visible,
             setModalVisible,
             readAdminScreenRoles,
-            writeAdminScreenRoles
+            writeAdminScreenRoles,
+            isDisable
         }
     }
 })
 </script>
-<style lang="scss" scoped>
-.table-sevice {
-    max-height: 300px;
-}
-
-.ant-form-item {
-    margin-bottom: 10px;
-}
-
-.warring-modal {
-    font-size: 13px;
-    line-height: 5px;
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
-
-.title-modal {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.ant-modal-body {
-    padding: 10px;
-}
-
-.mr5 {
-    margin-right: 5px;
-}
-
-.custom-action {
-    text-align: center;
-}
-
-#data-grid-demo {
-    min-height: 700px;
-}
-
-.dx-select-checkbox {
-    display: inline-block !important;
-}
-
-.modal-note {
-    max-height: 500px;
-    overflow: auto;
-
-    .title-note {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    th {
-        display: none;
-    }
-
-    .ant-collapse-content-box {
-        padding: 0px;
-    }
-}
-
-.anticon {
-    cursor: pointer;
-}
-
-.custom-action {
-    text-align: center;
-}
-
-.search-form {
-    margin-bottom: 10px;
-    background: #f1f3f4;
-    padding: 10px 24px;
-
-    >div {
-        width: 100%;
-        justify-content: flex-start !important;
-        align-items: center;
-        margin-right: 15px;
-    }
-
-    label {
-        margin-right: 10px;
-    }
-
-    .lable-item {
-        white-space: nowrap;
-        margin-right: 10px;
-        width: auto !important;
-    }
-
-    .col {
-        align-items: center;
-        display: flex;
-        align-items: center;
-        margin-top: 20px;
-
-        .lable-item {
-            width: 110px;
-            display: inline-block;
-        }
-
-        .item:nth-child(2) {
-            margin-left: 30px;
-        }
-    }
-}
-
-.ant-row {
-    align-items: center;
-}
-
-.ant-form-item {
-    margin-bottom: 4px;
-}
-
-.ant-collapse {
-    .ant-collapse-item {
-        .ant-collapse-header {
-            padding: 7px;
-        }
-    }
-}
-
-.warring-modal {
-    font-size: 12px;
-    line-height: 0px;
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
-
-.clr {
-    label {
-        color: red;
-    }
-}
-
-.clr-text {
-    color: red;
-}
-
-.clb,
-.clb-label label {
-    color: black !important;
-}
-
-::v-deep.components-modal-demo-position {
-    ::v-deep.test-local {
-        background-color: pink !important;
-        width: 1000px !important;
-        height: 200px !important;
-    }
-
-    .imgPreview img {
-        width: 1000px !important;
-    }
-
-    .ant-form-item-label {
-        text-align: left;
-    }
-}
-
-.dflex {
-    display: flex;
-}
-
-.custom-flex {
-    align-items: flex-start;
-}
-
-.warring-bank {
-    display: flex;
-    align-items: center;
-}
-
-.pl-5 {
-    padding-left: 5px;
-}
-
-.custom-lineHeight {
-    line-height: 3px;
-}
-
-::v-deep .dx-checkbox-checked .dx-checkbox-icon::before {
-    font-size: 13px;
-    top: 6px;
-}
-
-::v-deep .dx-checkbox-icon {
-    width: 16px;
-    height: 16px;
-}
+<style lang="scss" scoped src="../style/popupAdd/index.scss">
 </style>

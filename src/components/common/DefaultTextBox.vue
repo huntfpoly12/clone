@@ -15,9 +15,9 @@
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messRequired" />
         <DxStringLengthRule v-if="minCharacter > 0"
-                :min="minCharacter"
-                :message="messageString"
-              />
+                            :min="minCharacter"
+                            :message="messageString"
+        />
       </DxValidator>
     </DxTextBox>
   </div>
@@ -37,7 +37,6 @@ export default defineComponent({
       type: String,
       default: "Input is required!",
     },
-
     width: String,
     maxCharacter: Number,
     minCharacter: {
@@ -62,15 +61,15 @@ export default defineComponent({
   setup(props, { emit }) {
     const value = ref(props.valueInput);
     const messageString = ref('Input must have at least ' +props.minCharacter+ ' symbols');
-    
+
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
     watch(
-      () => props.valueInput,
-      (newValue) => {
-        value.value = newValue;
-      }
+        () => props.valueInput,
+        (newValue) => {
+          value.value = newValue;
+        }
     );
     return {
       messageString,
