@@ -16,7 +16,7 @@
     "@vuepic/vue-datepicker": "^3.4.8",
     "ant-design-vue": "^3.2.11",
     "apollo-link-context": "^1.0.20",
-    "axios": "^0.27.2",
+    "axios": "^1.0.0",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.5",
     "devextreme": "22.1",
