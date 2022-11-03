@@ -9,7 +9,7 @@
       mode="number"
       :disabled="disabled"
       :readOnly="readOnly"
-      @change="updateValue(value)"
+      @input="updateValue(value)"
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
