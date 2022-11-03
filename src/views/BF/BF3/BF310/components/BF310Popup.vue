@@ -73,7 +73,7 @@
                               </a-col>
                           </a-row>
                           <a-form-item label="심사메모">
-                              <a-input v-model:value="formState.memo" placeholder="Basic usage" />
+                              <a-input v-model:value="formState.memo" />
                           </a-form-item>
                           <a-form-item label="약관동의">
                               <a-button type="link" style="padding: 0px">서비스약관</a-button>
@@ -136,7 +136,7 @@
                                       </a-col>
                                       <a-col :span="24">
                                           <default-text-box v-model:valueInput="formState.companyAddressExtend"
-                                              width="100%" />
+                                              width="100%" placeholder="상세 주소 입력"/>
                                       </a-col>
                                   </a-row>
                                   <a-row> </a-row>
@@ -310,15 +310,15 @@
                               <bank-select-box v-model:valueInput="formState.cmsBankType" width="150px" />
                           </a-form-item>
                           <a-form-item label="출금계좌번호" class="clr">
-                              <a-input placeholder="100100056489011" v-model:value="formState.accountNumber"
+                              <a-input v-model:value="formState.accountNumber"
                                   style="width: 250px" />
                           </a-form-item>
                           <a-form-item label="예금주명" class="clr">
-                              <a-input placeholder="주식회사 타운소프트비나" v-model:value="formState.ownerName"
+                              <a-input v-model:value="formState.ownerName"
                                   style="width: 250px" />
                           </a-form-item>
                           <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr">
-                              <a-input placeholder="100100056489011" v-model:value="formState.ownerBizNumber"
+                              <a-input v-model:value="formState.ownerBizNumber"
                                   style="width: 250px" />
                               <div class="noteImage">
                                   <a-row>
@@ -865,7 +865,7 @@ export default defineComponent({
           if (res.data.updateSubscriptionRequest.status == 30) {
               actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
           }
-          message.success(`Update was successful`, 4);
+          message.success(`업데이트 완료!`, 4);
           setModalVisible();
       });
 

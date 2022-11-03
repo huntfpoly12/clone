@@ -6,22 +6,18 @@
       <a-form v-bind="layout" name="nest-messages" v-model:value="formState">
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item label="회원ID">
+            <a-form-item label="회원ID" class="red">
               <a-input v-model:value="formState.username" style="width: 170px; margin-right: 10px"
                 @change="changeValueID" />
+
               <a-button style="border: 1px solid grey" @click="checkDuplicateUsername">중복체크</a-button>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" />
+              <!-- <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" /> -->
+              <default-text-box v-model:valueInput="formState.name" :required="true"
+                width="170px" messRequired="이항목은 필수 입력사항입니다!" />
             </a-form-item>
             <a-form-item label="소속">
-              <!-- <a-select v-model:value="formState.groupCode" style="width: 250px" placeholder="Select a person"
-                :options="selectSearch" :filter-option="filterOption" @focus="handleFocus" @blur="handleBlur"
-                @change="handleChange" >
-                <template #suffixIcon>
-                  <search-outlined :size="14" class="ant-select-suffix" />
-                </template>
-              </a-select> -->
               <a-select v-model:value="formState.groupCode" style="width: 170px" :options="selectSearch"
                 @change="handleChange"></a-select>
 
@@ -63,7 +59,7 @@
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]">
               <a-input v-model:value="formState.email" style="width: 270px" @change="validateEmail"
-                :style="!statusMailValidate ? { borderColor: 'red'}: ''" id="email" />
+                :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
               <!-- <a-button html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
                 변경
@@ -103,7 +99,7 @@
 
             <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="memo" caption="권한그룹설명" />            
+            <DxColumn data-field="memo" caption="권한그룹설명" />
           </DxDataGrid>
         </div>
       </div>
@@ -167,7 +163,7 @@ export default defineComponent({
 
 
   setup(props, { emit }) {
-    
+
     const ScreenRoleGroup = reactive({
       id: "",
       name: "",
@@ -242,7 +238,7 @@ export default defineComponent({
 
     const formState = ref({
       id: 1,
-      type: "",
+      type: "r",
       username: "",
       name: "",
       mobilePhone: "",
@@ -429,17 +425,18 @@ export default defineComponent({
         return row.id;
       })
       if (statusMailValidate.value == true) {
-        let dataCallApiCreate = { input : {
-          type: (formState.value.type == '2' || formState.value.type == '3') ? 'm' : formState.value.type,
-          name: formState.value.name,
-          username: formState.value.username,
-          screenRoleGroupIds: RoleGroup,
-          mobilePhone: formState.value.mobilePhone,
-          email: formState.value.email,
-          groupId: formState.value.groupCode,
-          managerGrade: (formState.value.type == '2' || formState.value.type == '3') ? parseInt(formState.value.type) : null,
+        let dataCallApiCreate = {
+          input: {
+            type: (formState.value.type == '2' || formState.value.type == '3') ? 'm' : formState.value.type,
+            name: formState.value.name,
+            username: formState.value.username,
+            screenRoleGroupIds: RoleGroup,
+            mobilePhone: formState.value.mobilePhone,
+            email: formState.value.email,
+            groupId: formState.value.groupCode,
+            managerGrade: (formState.value.type == '2' || formState.value.type == '3') ? parseInt(formState.value.type) : null,
+          }
         }
-      }
         creactUser(dataCallApiCreate)
       } else {
         message.error(`이메일형식이 정확하지 않습니다.`)
@@ -506,6 +503,10 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+.red {
+  color: rgb(255, 17, 0);
+}
+
 ::v-deep .ant-modal-footer {
   padding-top: 0;
 }

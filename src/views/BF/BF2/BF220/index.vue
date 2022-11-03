@@ -40,10 +40,10 @@
                                 <a-tag color="black">매니저</a-tag>
                             </a-checkbox>
                             <a-checkbox v-model:checked="buttonSearch.typeSevice2">
-                                <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
+                                <a-tag color="gray">영업자</a-tag>
                             </a-checkbox>
                             <a-checkbox v-model:checked="buttonSearch.typeSevice3">
-                                <a-tag color="#FFFF00" style="color: black;border: 1px solid black">파트너</a-tag>
+                                <a-tag class="ant-tag-yellow" >파트너</a-tag>
                             </a-checkbox>
                         </a-col>
                     </a-row>
@@ -110,6 +110,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
+import {dataSearchUtils, buttonSearchUtils} from "./utils";
 import {
     DxDataGrid,
     DxColumn,
@@ -166,28 +167,19 @@ export default defineComponent({
         LoginOutlined,
         BF220PopupEdit
     },
-    data() {
-        return {
-            popupData: [],
-            modalStatus: false,
-            modalHistoryStatus: false,
-        };
-    },
     setup() {
         const totalRow = ref(0)
         const IDRow = ref()
+        const modalHistoryStatus = ref(false)
         const spinning = ref<boolean>(true);
+        const popupData = ref()
         const buttonSearch = ref({
-            typeSevice1: true,
-            typeSevice2: true,
-            typeSevice3: true
+              ...buttonSearchUtils
         })
         const modalAddNewStatus = ref(false)
         const modalEditStatus = ref(false)
         const dataSearch = ref({
-            page: 1,
-            rows: 10,
-            types: ["m", "r", "p"]
+            ...dataSearchUtils
         })
         const searching = () => {
             let arrayStatus = []
@@ -227,12 +219,54 @@ export default defineComponent({
             modalEditStatus.value = false
             refetchData()
         }
+        const onExporting = (e: any) => {
+          const workbook = new Workbook();
+          const worksheet = workbook.addWorksheet('employees');
+          exportDataGrid({
+            component: e.component,
+            worksheet,
+            autoFilterEnabled: true,
+          }).then(() => {
+            workbook.xlsx.writeBuffer().then((buffer) => {
+              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '권한그룹관리.xlsx');
+            });
+          });
+          e.cancel = true;
+        }
+        const modalHistory = (data: any) => {
+          IDRow.value = data.data.id
+          modalHistoryStatus.value = true;
+          popupData.value = data;
+        }
+        const openAddNewModal = () => {
+          modalAddNewStatus.value = true;
+        }
+        const openEditModal = (data: any) => {
+          IDRow.value = data.data.id
+          modalEditStatus.value = true;
+        }
+        const getColorTag = (data: string) => {
+          if (data === "m") {
+            return "black";
+          } else if (data === "p") {
+            return "yellow";
+          } else if (data === "r") {
+            return "gray";
+          }
+        }
         return {
             modalAddNewStatus,
+            modalHistoryStatus,
             closePopupAdd,
             closePopupEdit,
             modalEditStatus,
+            modalHistory,
             searching,
+            getColorTag,
+            onExporting,
+            openAddNewModal,
+            openEditModal,
+            popupData,
             spinning,
             dataSearch,
             resList,
@@ -241,48 +275,7 @@ export default defineComponent({
             IDRow
         }
     },
-    methods: {
-        onExporting(e: any) {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet('employees');
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '권한그룹관리.xlsx');
-                });
-            });
-            e.cancel = true;
-        },
-        setModalVisible(data: any) {
-            this.modalStatus = true;
-            this.popupData = data;
-        },
-        modalHistory(data: any) {
-            this.IDRow = data.data.id
-            this.modalHistoryStatus = true;
-            this.popupData = data;
-        },
-        openAddNewModal() {
-            this.modalAddNewStatus = true;
-        },
-        openEditModal(data: any) {
-            this.IDRow = data.data.id
-            this.modalEditStatus = true;
-        },
-        getColorTag(data: String) {
-            if (data === "m") {
-                return "black";
-            } else if (data === "p") {
-                return "yellow";
-            } else if (data === "r") {
-                return "gray";
-            }
-        },
-    },
 });
 </script>
-<style lang="scss" scoped src="./style.scss"> 
+<style lang="scss" scoped src="./style/style.scss">
 </style>

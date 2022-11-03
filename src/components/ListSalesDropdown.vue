@@ -45,8 +45,6 @@ export default defineComponent({
     textLabel: String,
     selected: {
       type: Number,
-      default: 0,
-      required: true,
     },
     width: String,
   },
