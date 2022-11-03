@@ -4,7 +4,7 @@
             <a-image :src="dataImage.url" style="height: 200px;" />
         </div>
         <div v-else class="img-preview">
-            <img src="../../src/assets/images/imgdefault.jpg" style="height: 200px;" />
+            <img src="../../../src/assets/images/imgdefault.jpg" style="height: 200px;" />
         </div> 
     </a-col>
 </template>
