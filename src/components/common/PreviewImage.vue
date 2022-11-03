@@ -9,12 +9,29 @@
             <img src="../../../src/assets/images/imgdefault.jpg" :style="{ width: width, height: height }" />
         </div>
     </a-col>
+    <div v-if="dataImage">
+        <span>{{ dataImage.name }}</span>
+        <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
+    </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-
+import { defineComponent } from 'vue'
+import {
+    DeleteOutlined
+} from "@ant-design/icons-vue";
 export default defineComponent({
-    props: ['width', 'height', 'activePreview', 'dataImage']
+    props: ['width', 'height', 'activePreview', 'dataImage', 'name'],
+    components: {
+        DeleteOutlined
+    },
+    setup(props, { emit }) {
+        const removeImg = () => {
+            emit("deleteImg", props.name)
+        }
+        return {
+            removeImg
+        }
+    },
 
 })
 </script>
