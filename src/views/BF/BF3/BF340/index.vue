@@ -194,6 +194,14 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
+import dayjs from "dayjs";
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+import { useQuery } from "@vue/apollo-composable";
+import DxButton from "devextreme-vue/button";
+import { Workbook } from "exceljs";
+import { saveAs } from "file-saver-es";
+import { exportDataGrid } from "devextreme/excel_exporter";
 import {
   DxDataGrid,
   DxColumn,
@@ -207,14 +215,6 @@ import {
   DxScrolling,
   DxItem,
 } from "devextreme-vue/data-grid";
-
-import EditBF340Popup from "./components/EditBF340Popup.vue";
-import AddNew340Poup from "./components/AddNew340Poup.vue";
-import HistoryPopup from "../../../../components/HistoryPopup.vue";
-import DxButton from "devextreme-vue/button";
-import { Workbook } from "exceljs";
-import { saveAs } from "file-saver-es";
-import { exportDataGrid } from "devextreme/excel_exporter";
 import {
   EditOutlined,
   HistoryOutlined,
@@ -226,11 +226,12 @@ import {
   DeleteOutlined,
   SaveOutlined,
 } from "@ant-design/icons-vue";
-import dayjs from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
-import { useQuery } from "@vue/apollo-composable";
+
+import EditBF340Popup from "./components/EditBF340Popup.vue";
+import AddNew340Poup from "./components/AddNew340Poup.vue";
+import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import queries from "../../../../graphql/queries/BF/BF3/BF340/index";
+import { origindata } from './utils';
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -276,14 +277,7 @@ export default defineComponent({
       code: "",
     });
 
-    const originData = {
-      page: 1,
-      rows: 10,
-      statuses: [1, 2, 3],
-      grade: null,
-      name: "",
-      code: "",
-    };
+    const originData = {...origindata};
 
     const rowTable = ref(0);
 
