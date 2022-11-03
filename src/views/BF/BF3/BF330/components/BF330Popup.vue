@@ -141,9 +141,9 @@
                                                                 @update-img="getImgUrl($event, data)" :customrow="1" />
                                                         </div>
                                                         <a-col>
-                                                            <Preview :height="'250px'" :activePreview="true"
+                                                            <preview-image :height="'250px'" :activePreview="true"
                                                                 :dataImage="data.data.registrationCard"
-                                                                :name="data.data.name" @deleteImg="removeImg($event)" />
+                                                                :name="data.data.name" @deleteImg="removeImg" />
                                                         </a-col>
                                                     </div>
                                                 </a-col>
@@ -267,8 +267,7 @@ import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
-import Preview
-    from "../../../../../components/common/PreviewImage.vue";
+
 import DxNumberBox from "devextreme-vue/number-box";
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import {
@@ -341,8 +340,7 @@ export default defineComponent({
         DxNumberBox,
         DxTexts,
         DxMasterDetail,
-        DxCheckBox,
-        Preview
+        DxCheckBox
     },
     props: {
         modalStatus: Boolean,
