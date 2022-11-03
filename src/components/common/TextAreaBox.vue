@@ -3,13 +3,13 @@
       <DxTextArea
         :height="height"
         :width="width"
-        value-change-event="keyup"
+        value-change-event="input"
         :max-length="maxCharacter"
         :placeholder="placeholder"
         v-model:value="value"
         :disabled="disabled"
         :readOnly="readOnly"
-        @change="updateValue(value)"
+        @input="updateValue(value)"
       >
         <DxValidator>
           <DxRequiredRule v-if="required" :message="messRequired" />
