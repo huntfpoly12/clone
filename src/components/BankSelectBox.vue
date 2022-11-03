@@ -31,7 +31,6 @@ export default {
     },
     width: String,
     maxCharacter: Number,
-
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
