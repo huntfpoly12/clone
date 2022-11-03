@@ -19,7 +19,7 @@ import { defineComponent, ref, watch } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import { BizType } from "@bankda/jangbuda-common";
 const bizType = Object.keys(BizType.all()).map((k, index) => ({
-  value: BizType.all()[index].enumOrdinal,
+  value: BizType.all()[index].v,
   label: BizType.all()[index].name,
 }));
 export default defineComponent({
@@ -61,7 +61,8 @@ export default defineComponent({
     return {
       updateValue,
       value,
-      bizType
+      bizType,
+      BizType
     };
   },
 });
