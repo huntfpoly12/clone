@@ -18,10 +18,12 @@
 import { defineComponent, ref, watch } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import { BizType } from "@bankda/jangbuda-common";
-const bizType = Object.keys(BizType.all()).map((k, index) => ({
-  value: BizType.all()[index].enumOrdinal,
-  label: BizType.all()[index].name,
-}));
+const bizType = Object.keys(BizType.all()).map((k, index) => {
+  let data : any = BizType.all();
+  return {
+  value: data[index].v,
+  label: data[index].name,
+}});
 export default defineComponent({
   props: {
     required: {
@@ -61,7 +63,8 @@ export default defineComponent({
     return {
       updateValue,
       value,
-      bizType
+      bizType,
+      BizType
     };
   },
 });
