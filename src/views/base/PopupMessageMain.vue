@@ -9,8 +9,12 @@
         <DxButton :width="100" text="success" type="success" styling-mode="outlined" @click="openStatus('success')" /> -
         <DxButton :width="100" text="error" type="danger" styling-mode="outlined" @click="openStatus('error')" /> -
         <DxButton :width="100" text="warning" type="default" styling-mode="outlined" @click="openStatus('warning')" /> -
+        <DxButton :width="100" text="warning" type="default" styling-mode="outlined" @click="openStatus('warning')" /> -
+        <DxButton :width="150" text="Acceop Input" type="success" styling-mode="outlined"
+          @click="openStatus('accepInput')" />
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="typeModal"
-          :title="'Title Notification'" :content="'Content notification'" />
+          :title="'Title Notification'" :content="'Content notification'" :keyAccep="'1234'"
+          @checkConfirm="statusComfirm" />
       </a-col>
       <a-col :span="6">
         <b> typeModal</b> : info/success/error/warning <br>
@@ -65,7 +69,12 @@ export default defineComponent({
       typeModal.value = type
     }
 
+    const statusComfirm = (val) => {
+      console.log(val);
+    }
+
     return {
+      statusComfirm,
       typeModal,
       modalStatus,
       openStatus,
