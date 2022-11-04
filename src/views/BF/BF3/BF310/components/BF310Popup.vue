@@ -142,49 +142,47 @@
                                     <a-row> </a-row>
                                 </a-form-item>
 
-                                <div style="display: flex">
-                                    <div>
-                                        <a-row :gutter="[16, 16]">
-                                            <a-col :span="15">
-                                                <a-form-item label="연락처" class="clr"> 
-                                                    <tel-tex-box v-model:valueInput="formState.companyPhone"
-                                                        :spinButtons="false" :required="true" :clearButton="false"
-                                                        messRequired="이항목은 필수 입력사항입니다!" :width="200" />
-                                                </a-form-item>
-                                                <a-form-item label="팩 스">
-                                                    <text-number-box v-model:valueInput="formState.companyFax"
-                                                        :clearButton="false" :width="200" />
-                                                </a-form-item>
-                                            </a-col>
-                                        </a-row>
-                                        <imgUpload :title="titleModal" @update-img="getUrlLicenseFile"
-                                            style="margin-top: 10px" />
-                                    </div>
-                                    <a-col :span="7">
-                                        <div v-if="imageLicenseFile" class="img-preview">
-                                            <a-image :src="imageLicenseFile" />
-                                        </div>
-                                        <div v-else class="img-preview">
-                                            <img src="../../../../../assets/images/imgdefault.jpg" />
-                                        </div>
-                                        <div v-if="licenseFileName">
-                                            <span style="padding-right: 10px">{{
-                                                    licenseFileName
-                                            }}</span>
-                                            <delete-outlined @click="removeLicenseFile"
-                                                style="color: red; cursor: pointer" />
-                                        </div>
-                                    </a-col>
-                                </div>
-                            </div>
-                        </a-collapse-panel>
-                        <a-collapse-panel key="3" header="대표자정보">
-                            <a-form-item has-feedback label="대표자명" class="clr">
-                                <default-text-box v-model:valueInput="formState.presidentContentName" width="300px"
-                                    :required="true" messRequired="이항목은 필수 입력사항입니다!" />
-                            </a-form-item>
-                            <a-form-item has-feedback label="생년월일" class="clr">
-                                <!-- <birth-day-box v-model:valueInput="formState.presidentBirthday" :required="true"
+                              <div style="display: flex">
+                                  <div>
+                                      <a-row :gutter="[16, 16]">
+                                          <a-col :span="15">
+                                              <a-form-item label="연락처" class="clr">
+                                                  <text-number-box v-model:valueInput="formState.companyPhone"
+                                                      :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                              </a-form-item>
+                                              <a-form-item label="팩 스">
+                                                  <text-number-box v-model:valueInput="formState.companyFax" />
+                                              </a-form-item>
+                                          </a-col>
+                                      </a-row>
+                                      <imgUpload :title="titleModal" @update-img="getUrlLicenseFile"
+                                          style="margin-top: 10px" />
+                                  </div>
+                                  <a-col :span="7">
+                                      <div v-if="imageLicenseFile" class="img-preview">
+                                          <a-image :src="imageLicenseFile" />
+                                      </div>
+                                      <div v-else class="img-preview">
+                                          <img src="../../../../../assets/images/imgdefault.jpg" />
+                                      </div>
+                                      <div v-if="licenseFileName">
+                                          <span style="padding-right: 10px">{{
+                                                  licenseFileName
+                                          }}</span>
+                                          <delete-outlined @click="removeLicenseFile"
+                                              style="color: red; cursor: pointer" />
+                                      </div>
+                                  </a-col>
+                              </div>
+                          </div>
+                      </a-collapse-panel>
+                      <a-collapse-panel key="3" header="대표자정보">
+                          <a-form-item has-feedback label="대표자명" class="clr">
+                              <default-text-box v-model:valueInput="formState.presidentContentName" width="300px"
+                                  :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                          </a-form-item>
+                          <a-form-item has-feedback label="생년월일" class="clr">
+                              <!-- <birth-day-box v-model:valueInput="formState.presidentBirthday" :required="true"
                                   width="300px" messRequired="이항목은 필수 입력사항입니다!" /> -->
                                 <a-form :model="formState" name="nest-messages" :validate-messages="validateMessages">
                                     <a-form-item :name="['presidentBirthday']" :rules="[{ required: true }]">

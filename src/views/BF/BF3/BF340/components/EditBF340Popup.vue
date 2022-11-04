@@ -3,80 +3,76 @@
         <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered @cancel="setModalVisible()"
             :mask-closable="false" :width="1028">
             <template #footer>
-                <a-button @click="setModalVisible">그냥 나가기</a-button>
-                <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateSale">
-                    저장하고 나가기</a-button>
-                    <submit-button/>
             </template>
-            <a-form :model="formState" v-bind="layout" label-align="right" name="nest-messages">
+            <form  action="your-action" @submit.prevent="updateSale()" >
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
-                        <a-form-item label="영업자코드">
+                        <a-form-item label="영업자코드" label-align="right" :label-col="labelCol">         
                             <default-text-box v-model:valueInput="formState.code" width="200px" :disabled="true"/>
                         </a-form-item>
-                        <a-form-item label="영업자명">
-                            <default-text-box v-model:valueInput="formState.detailName" width="200px"  :disabled="!canChangeCompanyName"/>
+                        <a-form-item label="영업자명" label-align="right" :label-col="labelCol">
+                            <default-text-box v-model:valueInput="formState.name" width="200px"  :disabled="!canChangeCompanyName"/>
                         </a-form-item>
-                        <a-form-item label="사업자유형" class="label-br">
+                        <a-form-item label="사업자유형" class="label-br" label-align="right" :label-col="labelCol">
                             <biz-type-select-box   v-model:valueInput="formState.detailBizType" width="200px" /> 
                         </a-form-item>
-                        <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]">
+                        <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]" label-align="right" :label-col="labelCol">
                             <mail-text-box v-model:valueInput="formState.detailEmail" width="250px"/>
                         </a-form-item>
-                        <a-form-item label="연락처">
-                            <tel-tex-box v-model:valueInput="formState.detailPhone" width="200px" placeholder="전화번호를 입력"/>
+                        <a-form-item label="연락처" label-align="right" :label-col="labelCol">
+                            <tel-text-box v-model:valueInput="formState.detailPhone" width="200px" placeholder="전화번호를 입력" />
                         </a-form-item>
-                        <a-form-item label="팩스">
+                        <a-form-item label="팩스" label-align="right" :label-col="labelCol">
                             <text-number-box v-model:valueInput="formState.detailFax" width="200px"/>
-                        </a-form-item>
-                        <a-form-item label="주소">
-                            <a-row>
-                                <a-col :span="12">
-                                    <default-text-box v-model:valueInput="formState.detailZipcode"  width="100%" :disabled="true"/>
-                                </a-col>
-                                <a-col :span="12">
-                                    <div style="margin-left: 5px">
-                                        <a-button type="primary" ghost>
-                                            <post-code @dataAddress="funcAddress"/>
-                                        </a-button>
-                                    </div>
-                                </a-col>
-                            </a-row>
                         </a-form-item>
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
-                        <a-form-item label="상태">
+                        <a-form-item label="상태" label-align="right" :label-col="labelCol">
                             <sale-status-select-box v-model:valueInput="formState.status" width="100px" :confirmStatus="true"/>
                         </a-form-item>
-                        <a-form-item label="등급">
+                        <a-form-item label="등급" label-align="right" :label-col="labelCol">
                             <sale-grade-select-box v-model:valueInput="formState.detailGrade" width="100px"/>
                         </a-form-item>
-                        <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="label-br">
+                        <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="label-br" label-align="right" :label-col="labelCol">
                             <id-card-text-box :required="true" v-model:valueInput="formState.detailResidentId" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
-                        <a-form-item label="사업자등록번호" class="label-br">
+                        <a-form-item label="사업자등록번호" class="label-br" label-align="right" :label-col="labelCol">
                             <company-registration-number-text-box v-model:valueInput="formState.detailBizNumber"  :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
-                        <a-form-item label="휴대폰">
-                            <tel-tex-box v-model:valueInput="formState.detailMobilePhone" placeholder="전화번호를 입력"/>
+                        <a-form-item label="휴대폰" label-align="right" :label-col="labelCol">
+                            <tel-text-box v-model:valueInput="formState.detailMobilePhone" placeholder="전화번호를 입력"/>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+                <a-row >
+                    <a-col :lg="15">
+                        <a-form-item label="주소" label-align="right" :label-col="{span: 3}" :wrapper-col="{ span: 21 }" class="post-code">
+                          <div style="display:flex">
+                            <default-text-box v-model:valueInput="formState.detailZipcode"  width="200px" :disabled="true"/>
+                             <div style="margin-left: 5px">
+                                <a-button type="primary" ghost>
+                                    <post-code @dataAddress="funcAddress"/>
+                                </a-button>
+                            </div>
+                         </div>
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="15" :md="13" :lg="12">
-                        <a-form-item class="result-address" :wrapper-col="{ span: 24 }">
+                        <a-form-item class="result-address" :wrapper-col="{ span: 24 }" label-align="right" :label-col="labelCol">
                             <default-text-box v-model:valueInput="formState.detailRoadAddress"  width="100%" :disabled="true"/>
                         </a-form-item>
                     </a-col>
                     <a-col :span="8" :md="13" :lg="11">
-                        <a-form-item :wrapper-col="{ span: 24}" class="detail-address">
+                        <a-form-item :wrapper-col="{ span: 24}" class="detail-address" label-align="right" :label-col="labelCol">
                             <default-text-box v-model:valueInput="formState.detailAddressExtend"  placeholder="상세주소"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }" class="label-br">
+                        <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }" class="label-br" label-align="right" >
                             <a-switch v-model:checked="formState.detailTaxInvoice" checked-children="발행"
                                 un-checked-children="미발행" style="width: 80px" />
                         </a-form-item>
@@ -94,27 +90,27 @@
                 </a-row>
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
-                        <a-form-item label="은행">
+                        <a-form-item label="은행" label-align="right" :label-col="labelCol">
                             <bank-select-box v-model:valueInput="formState.detailBankType" width="200px" />
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
                     <a-col :span="12" :md="13" :lg="10">
-                        <a-form-item label="계좌번호">
+                        <a-form-item label="계좌번호" label-align="right" :label-col="labelCol">
                             <text-number-box v-model:valueInput="formState.detailAccountNumber" width="200px"/>
                         </a-form-item>
-                        <a-form-item label="가입일자">
+                        <a-form-item label="가입일자" label-align="right" :label-col="labelCol">
                             <div style="width: 150px">
                                 <date-time-box v-model:valueDate="formState.detailRegisterDate"/>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="12" :md="13" :lg="14">
-                        <a-form-item label="예금주">
+                        <a-form-item label="예금주" label-align="right" :label-col="labelCol">
                             <default-text-box v-model:valueInput="formState.detailAccountOwner" />
                         </a-form-item>
-                        <a-form-item label="해지일자">
+                        <a-form-item label="해지일자" label-align="right" :label-col="labelCol">
                             <div style="width: 150px">
                                 <date-time-box v-model:valueDate="formState.detailCancelDate"/>
                             </div>
@@ -123,24 +119,43 @@
                 </a-row>
                 <a-row>
                     <a-col :span="24" :md="24" :lg="24">
-                        <a-form-item label="비고" :label-col="{ span: 2 }" :wrapper-col="{ span: 24 }"
+                        <a-form-item label="비고" :label-col="{ span: 2 }" :wrapper-col="{ span: 22 }"
                             class="textarea_340">
-                            <text-area-box v-model:valueDate="formState.detailRemark" placeholder="500자 이내" :required="true"/>
+                            <text-area-box v-model:valueInput="formState.detailRemark" placeholder="500자 이내"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
-            </a-form>
+                <a-row style="margin-top: 20px;">
+                    <a-col :span="16" :offset="8">
+                        <DxButton
+                            :width="120"
+                            text="취소"
+                            type="default"
+                            styling-mode="outlined"
+                            @click="setModalVisible"
+                            style="margin-right: 10px;"
+                            />
+                        <DxButton
+                            id="button"
+                            :use-submit-behavior="true"
+                            text="저장하고 나가기"
+                            type="default"
+                        />
+                    </a-col>
+                </a-row>
+            </form>
         </a-modal>
     </div>
 </template>
 
 <script lang="ts">
+import DxButton from 'devextreme-vue/button';
 import { ref, defineComponent, reactive, watch } from 'vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
-import { useQuery, useMutation ,useLazyQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from 'dayjs';
 import { message } from "ant-design-vue";
-import { formState340 } from '../utils'
+import { formState340 } from '../utils';
 import queries from "../../../../../graphql/queries/BF/BF3/BF340/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 
@@ -148,22 +163,20 @@ export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
     components: {
-        SearchOutlined
+        SearchOutlined,
+        DxButton
     },
 
     setup(props, { emit }) {
+       
         const dataQuery = ref();
         let trigger = ref<boolean>(false);
         let triggerCheckPer = ref<boolean>(false);
         const dataQueryCheckPer = ref({});
         let canChangeCompanyName =  ref<boolean>(false);
-        const layout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 16 },
-        };
         const visible = ref<boolean>(false);
-        const labelCol = { style: { width: "300px" } };
-        const wrapperCol = { span: 14 };
+        //const labelCol = { style: { width: "150px" } };
+        const labelCol = { span: 6 };
 
         // watch event modal popup
         watch(
@@ -194,7 +207,9 @@ export default defineComponent({
 
         // watch result resCheckPerEdit
         watch(resCheckPerEdit, (value) => {
-            canChangeCompanyName.value = value.isSalesRepresentativeChangableName;
+            if(value){
+                canChangeCompanyName.value = value.isSalesRepresentativeChangableName;
+            }    
         });
 
         // get  sale representative
@@ -269,7 +284,6 @@ export default defineComponent({
             }
         });
 
-
         // update sale representative
         const {
             mutate: actionUpdate,
@@ -282,7 +296,7 @@ export default defineComponent({
         const updateSale = () => {
             let salesRepresentativeDetailInput = {
                 status: formState.status,
-                name: formState.detailName,
+                name: formState.name,
                 grade: formState.detailGrade,
                 bizType: formState.detailBizType,
                 bizNumber: formState.detailBizNumber,
@@ -351,10 +365,7 @@ export default defineComponent({
 
         return {
             labelCol,
-            wrapperCol,
             formState,
-            layout,
-            value1: ref<Dayjs>(),
             visible,
             funcAddress,
             loading,
@@ -368,4 +379,5 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped src="../style/editStyle.scss">
+
 </style>
