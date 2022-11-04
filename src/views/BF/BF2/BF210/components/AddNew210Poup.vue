@@ -8,8 +8,8 @@
           <a-col :span="12">
             <a-form-item label="회원ID" class="red" compact>
               <div class="dflex">
-                <default-text-box v-model:value="formState.username" style="width: 190px; margin-right: 10px"
-                  @change="changeValueID" required mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
+                <default-text-box v-model:valueInput="formState.username" style="width: 190px; margin-right: 10px"
+                   required mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
 
                 <a-button type="primary" style="border: 1px solid" :disabled="disabledBtn"
                   @click="checkDuplicateUsername">중복체크
@@ -24,6 +24,8 @@
             <a-form-item label="소속" class="red">
               <a-select v-model:value="formState.groupCode" style="width: 190px" :options="selectSearch"
                 @change="handleChange"></a-select>
+                <!-- <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" :items="selectSearch"
+                @value-changed="handleChange" value-expr="groupId"></DxSelectBox> -->
 
             </a-form-item>
           </a-col>
@@ -57,12 +59,12 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" class="red">
               <div style="display: flex; align-items: flex-end">
-                <a-input @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
-                  style="width: 190px; margin-right: 8px" />
+                <tel-text-box @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
+                  style="width: 190px; margin-right: 8px" :required="true" messRequired="이항목은 필수 입력사항입니다!"/>
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" class="red">
-              <a-input v-model:value="formState.email" style="width: 270px" @change="validateEmail"
+              <mail-text-box v-model:value="formState.email" style="width: 270px" @change="validateEmail"
                 :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
               <!-- <a-button html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
@@ -139,6 +141,7 @@ import {
 } from "@ant-design/icons-vue";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import DxSelectBox from 'devextreme-vue/select-box';
 
 
 export default defineComponent({
@@ -155,17 +158,12 @@ export default defineComponent({
     DxSelection,
     DxExport,
     DxSearchPanel,
+    DxSelectBox
+    
     
   },
 
-  data() {
-    return {
-
-      dataMode: {
-        color: "",
-      },
-    };
-  },
+  
 
 
   setup(props, { emit }) {
@@ -410,7 +408,17 @@ export default defineComponent({
         disabledBtn.value = true;
       }
     }
-
+    watch(() => formState.value.username, (value: any) => {
+      if (value !== '') {
+        disabledBtn.value = false
+        dataCallCheck.value = {
+          username: formState.value.username
+        }
+      }
+      else {
+        disabledBtn.value = true;
+      }
+    });
 
 
     //Creact user 
