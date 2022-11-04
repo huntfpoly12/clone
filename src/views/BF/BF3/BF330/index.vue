@@ -63,7 +63,7 @@
                         </a-col>
                         <a-col>
                             <label class="lable-item">영업자명 :</label>
-                            <ListSalesDropdownVue v-model:selected="originData.filter.salesRepresentativeId" />
+                            <list-sales-dropdown v-model:selected="originData.filter.salesRepresentativeId" />
                         </a-col>
                         <!-- <a-col>
                             <label class="lable-item"></label>
@@ -144,8 +144,6 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF3/BF330/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
-import ListSalesDropdownVue from '../../../../components/ListSalesDropdown.vue';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -163,8 +161,6 @@ export default defineComponent({
         SaveOutlined,
         DeleteOutlined,
         PrinterOutlined,
-        ListManagerDropdown,
-        ListSalesDropdownVue
     },
     data() {
         return {

@@ -215,7 +215,7 @@
                             </a-form-item>
                             <a-form-item label="영업자">
                                 <div style="width: 200px">
-                                    <ListSalesDropdown v-model:selected="formState.compactSalesRepresentativeId" />
+                                    <list-sales-dropdown v-model:selected="formState.compactSalesRepresentativeId" />
                                 </div>
                             </a-form-item>
                         </a-form>
@@ -260,7 +260,6 @@ import {
     AccountingAdditionalServiceType,
     WithholdingAdditionalServiceType,
 } from "@bankda/jangbuda-common";
-import ListSalesDropdown from "../../../../../components/ListSalesDropdown.vue";
 import ListManagerDropdown from "../../../../../components/ListManagerDropdown.vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
@@ -328,7 +327,6 @@ export default defineComponent({
         WarningFilled,
         imgUpload,
         PlusOutlined,
-        ListSalesDropdown,
         ListManagerDropdown,
         DxEditing,
         DxLookup,
