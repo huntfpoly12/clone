@@ -140,6 +140,7 @@ import {
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 
+
 export default defineComponent({
   props: ["modalStatus", "data"],
 
@@ -154,6 +155,7 @@ export default defineComponent({
     DxSelection,
     DxExport,
     DxSearchPanel,
+    
   },
 
   data() {
@@ -317,16 +319,13 @@ export default defineComponent({
     watch(
       () => props.modalStatus,
       (newValue, old) => {
-
-        triggerGroup.value = true
         if (newValue) {
           visible.value = newValue;
           dataQuery.value = {};
-          trigger.value = true;
-          setTimeout(() => {
-            reqGroup()
-          }, 500);
 
+          triggerGroup.value = true
+          trigger.value = true;
+          reqGroup()
           reqRoleGroup();
         } else {
           visible.value = newValue;
@@ -350,7 +349,7 @@ export default defineComponent({
       }
     });
 
-    let dataCallGroup = reactive({
+    let dataCallGroup = ref({
       type: "r"
     })
     //query find group
@@ -555,7 +554,7 @@ export default defineComponent({
 .dflex {
     display: flex;
 }
-.overlay {
+ăn s.overlay {
   position: absolute;
   top: 0;
   left: 0;
