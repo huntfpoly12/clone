@@ -182,6 +182,42 @@
           >
         </td>
       </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">List manager select box</div>
+            <div class="dx-field-value">
+              <list-manager-dropdown
+                width="300px"
+                :required="true"
+              ></list-manager-dropdown>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li>
+              <strong>required:</strong> {type: Boolean,default: false,}
+              (option)
+            </li>
+            <li>
+              <strong>messRequired:</strong> { type: String, default: "Input is
+              required!",} (option)
+            </li>
+            <li><strong>width:</strong> String (option)</li>
+            <li><strong>clearButton:</strong> Boolean (option)</li>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
+            <li><strong>readOnly:</strong> Boolean (option)</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; list-manager-dropdown width="300px" :required="true" / &gt;
+              </pre
+          >
+        </td>
+      </tr>
     </table>
     <div class="dx-fieldset">
       <DxButton

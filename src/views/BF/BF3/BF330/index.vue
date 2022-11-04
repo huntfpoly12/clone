@@ -59,7 +59,7 @@
                         </a-col>
                         <a-col>
                             <label class="lable-item">매니저명 :</label>
-                            <ListManagerDropdown v-model:selected="originData.filter.manageUserId" />
+                            <list-manager-dropdown v-model:selected="originData.filter.manageUserId" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">영업자명 :</label>
@@ -160,7 +160,7 @@ export default defineComponent({
         SearchOutlined,
         SaveOutlined,
         DeleteOutlined,
-        PrinterOutlined,
+        PrinterOutlined
     },
     data() {
         return {

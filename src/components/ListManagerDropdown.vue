@@ -1,46 +1,73 @@
 <template>
-    <div v-if="title">
-        <label class="lable-item"> 매니저명 :</label>
-        <a-select ref="select" v-model:value="manager" placeholder="메니저 선텍" @change="updateManager(manager)" show-search>
-            <a-select-option v-for="item in result?.findManagerUsers" :key="item.id" :value="item.id" >{{item.name}}
-                {{hasUsername? item.username: ''}} 
-            </a-select-option>
-        </a-select>
-    </div>
-    <div v-else>
-        <a-select ref="select" v-model:value="manager" placeholder="메니저 선텍" @change="updateManager(manager)" show-search>
-            <a-select-option v-for="item in result?.findManagerUsers" :key="item.id" :value="item.id">{{item.name}}
-                {{hasUsername? item.username: ''}}
-            </a-select-option>
-        </a-select>
-    </div>
+  <div>
+      <DxSelectBox
+        :search-enabled="true"
+        :width="width"
+        :data-source="result.findManagerUsers"
+        :show-clear-button="clearButton"
+        v-model:value="value"
+        :read-only="readOnly"
+        display-expr="name"
+        value-expr="id"
+        :disabled="disabled"
+        @value-changed="updateValue(value)"
+        :height="$config_styles.HeightInput"
+      >
+        <DxValidator>
+          <DxRequiredRule v-if="required" :message="messRequired" />
+        </DxValidator>
+      </DxSelectBox>
+  </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, watch } from "vue";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import DxSelectBox from "devextreme-vue/select-box";
 import queries from "../graphql/queries/common/index";
-import { useQuery } from "@vue/apollo-composable"; 
+import { useQuery } from "@vue/apollo-composable";
 export default defineComponent({
-    props: {
-        selected: {
-            type: Number ,
-        },
-        hasUsername: {
-            type: Boolean,
-            default: false
-        },
-        title: String
+  props: {
+    required: {
+      type: Boolean,
+      default: false,
     },
-    setup(props, { emit }) {
-        const manager = ref(props.selected)
-        const { result, loading, error, onResult, refetch } = useQuery(queries.getListManager);
-        const updateManager = (value: any) => {
-            emit('update:selected', value)
-        }
-        return {
-            result,
-            manager,
-            updateManager
-        }
+    messRequired: {
+      type: String,
+      default: "Input is required!",
     },
-})
+    width: String,
+    clearButton: Boolean,
+    disabled: Boolean,
+    valueInput: {
+      type: Number,
+      default: "",
+    },
+    readOnly: Boolean,
+  },
+  components: {
+    DxSelectBox,
+    DxValidator,
+    DxRequiredRule,
+  },
+  setup(props, { emit }) {
+    const value = ref(props.valueInput);
+    const { result, loading, error, onResult, refetch } = useQuery(
+      queries.getListManager
+    );
+    watch(
+      () => props.valueInput,
+      (newValue) => {
+        value.value = newValue;
+      }
+    );
+    const updateValue = (value: any) => {
+      emit("update:valueInput", value);
+    };
+    return {
+      result,
+      value,
+      updateValue,
+    };
+  },
+});
 </script>
