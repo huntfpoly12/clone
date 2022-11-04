@@ -9,12 +9,17 @@ interface ListTab {
 const listTab: ListTab[] = [{
     ID: 1,
     TabName: 'Text Box',
-    layoutName: 'TextBoxFrom'
+    layoutName:'TextBoxFrom'
 },
 {
     ID: 2,
-    TabName: 'Modal Status',
-    layoutName: 'PopupMessageMain'
+    TabName: 'Number Box',
+    layoutName:'NumberBoxForm'
+},
+{
+    ID: 3,
+    TabName: 'Check Box',
+    layoutName:'CheckBoxFrom'
 }
 ];
 
