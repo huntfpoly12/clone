@@ -9,7 +9,7 @@
             <a-form-item label="회원ID" class="red" compact>
               <div class="dflex">
                 <default-text-box v-model:valueInput="formState.username" style="width: 190px; margin-right: 10px"
-                   required mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
+                  required mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
 
                 <a-button type="primary" style="border: 1px solid" :disabled="disabledBtn"
                   @click="checkDuplicateUsername">중복체크
@@ -21,11 +21,11 @@
               <default-text-box v-model:valueInput="formState.name" :required="true" width="190px"
                 messRequired="이항목은 필수 입력사항입니다!" />
             </a-form-item>
-            <a-form-item label="소속" class="red">
+            <a-form-item label="소속" class="red">{{ selectSearch }}
               <a-select v-model:value="formState.groupCode" style="width: 190px" :options="selectSearch"
                 @change="handleChange"></a-select>
-                <!-- <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" :items="selectSearch"
-                @value-changed="handleChange" value-expr="groupId"></DxSelectBox> -->
+              <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" :data-source="selectSearch"
+                @value-changed="handleChange" display-expr="label" value-expr="value" :height="$config_styles.HeightInput"></DxSelectBox>
 
             </a-form-item>
           </a-col>
@@ -60,7 +60,7 @@
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" class="red">
               <div style="display: flex; align-items: flex-end">
                 <tel-text-box @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
-                  style="width: 190px; margin-right: 8px" :required="true" messRequired="이항목은 필수 입력사항입니다!"/>
+                  style="width: 190px; margin-right: 8px" :required="true" messRequired="이항목은 필수 입력사항입니다!" />
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" class="red">
@@ -110,11 +110,21 @@
         </div>
       </div>
       <template #footer>
+        <a-row>
+          <a-col :offset="8" style="text-align: center">
+            <DxButton :width="120" text-align: center text="취소" type="default" styling-mode="outlined"
+              @click="setModalVisible" style="margin-right: 10px;" />
+            <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default" @click="creactUserNew" />
+          </a-col>
+        </a-row>
+      </template>
+      <!-- <template #footer>
         <div style="text-align: center;">
           <a-button @click="setModalVisible()">그냥 나가기</a-button>
           <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
         </div>
-      </template>
+      </template> -->
+
     </a-modal>
   </div>
 </template>
@@ -142,7 +152,7 @@ import {
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DxSelectBox from 'devextreme-vue/select-box';
-
+import DxButton from 'devextreme-vue/button';
 
 export default defineComponent({
   props: ["modalStatus", "data"],
@@ -158,12 +168,12 @@ export default defineComponent({
     DxSelection,
     DxExport,
     DxSearchPanel,
-    DxSelectBox
-    
-    
+    DxSelectBox,
+    DxButton
+
   },
 
-  
+
 
 
   setup(props, { emit }) {
@@ -534,6 +544,7 @@ export default defineComponent({
 
 ::v-deep .ant-modal-footer {
   padding-top: 0;
+  border: node;
 }
 
 ::v-deep .ant-form-item-control {
@@ -559,10 +570,12 @@ export default defineComponent({
   margin-left: 5px;
   padding-top: 5px;
 }
+
 .dflex {
-    display: flex;
+  display: flex;
 }
-ăn s.overlay {
+
+.overlay {
   position: absolute;
   top: 0;
   left: 0;

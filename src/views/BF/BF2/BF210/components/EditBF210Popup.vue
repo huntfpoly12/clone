@@ -10,13 +10,15 @@
       </template>
       <h2 class="title_modal">회원정보</h2>
       <a-form v-bind="layout" name="nest-messages" v-model:value="formState" @finish="onFinish">
-        <a-row :gutter="24">
-          <a-col :span="12">
-            <a-form-item label="회원ID">
-              <a-input disabled v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
+        <a-row :gutter="24" >
+          <a-col :span="12" >
+            <a-form-item label="회원ID" >
+              <div class="dflex">
+              <default-text-box disabled v-model:valueInput="formState.username" style="width: 150px; margin-right: 10px" />
               <button disabled style="background-color: #00000040;color: #918e8b;border: none;height: 32px;">
                 중복체크
               </button>
+            </div>
             </a-form-item>
             <a-form-item label="회원명">
               <a-input v-if="formState.type != 'c'" v-model:value="formState.name"
@@ -25,7 +27,7 @@
                 style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 230px;" />
+              <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 150px;" />
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -444,7 +446,9 @@ export default defineComponent({
 ::v-deep .ant-form-item-label>label {
   width: 110px;
 }
-
+.dflex {
+  display: flex;
+}
 .overlay {
   position: absolute;
   top: 0;
