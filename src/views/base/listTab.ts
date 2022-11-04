@@ -18,6 +18,11 @@ const listTab: ListTab[] = [{
 },
 {
     ID: 3,
+    TabName: 'Date Time Box',
+    layoutName:'DateTimeBoxForm'
+},
+{
+    ID: 4,
     TabName: 'Check Box',
     layoutName:'CheckBoxFrom'
 }
