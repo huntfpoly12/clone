@@ -218,6 +218,42 @@
           >
         </td>
       </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">List partner select box</div>
+            <div class="dx-field-value">
+              <list-partner
+                width="300px"
+                :required="true"
+              ></list-partner>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li>
+              <strong>required:</strong> {type: Boolean,default: false,}
+              (option)
+            </li>
+            <li>
+              <strong>messRequired:</strong> { type: String, default: "Input is
+              required!",} (option)
+            </li>
+            <li><strong>width:</strong> String (option)</li>
+            <li><strong>clearButton:</strong> Boolean (option)</li>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
+            <li><strong>readOnly:</strong> Boolean (option)</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; list-partner width="300px" :required="true" / &gt;
+              </pre
+          >
+        </td>
+      </tr>
     </table>
     <div class="dx-fieldset">
       <DxButton
@@ -238,7 +274,7 @@ import DxButton from "devextreme-vue/button";
 
 export default defineComponent({
   components: {
-    DxButton,
+    DxButton
   },
   data() {
     return {
@@ -254,17 +290,6 @@ export default defineComponent({
       this.$refs["formTest"].onsubmit = onFormSubmit();
     }
     function onFormSubmit(e) {
-      notify(
-        {
-          message: "You have submitted the form",
-          position: {
-            my: "center top",
-            at: "center top",
-          },
-        },
-        "success",
-        3000
-      );
     }
 
     return {

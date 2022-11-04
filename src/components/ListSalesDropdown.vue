@@ -1,9 +1,8 @@
 <template>
-  <template v-if="result?.findSalesRepresentatives?.length > 0">
     <DxSelectBox
       :search-enabled="true"
       :width="width"
-      :data-source="result.findSalesRepresentatives"
+      :data-source="result?.findSalesRepresentatives?.length > 0 ? result.findSalesRepresentatives : []"
       :show-clear-button="clearButton"
       v-model:value="value"
       :read-only="readOnly"
@@ -17,7 +16,6 @@
         <DxRequiredRule v-if="required" :message="messRequired" />
       </DxValidator>
     </DxSelectBox>
-  </template>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";

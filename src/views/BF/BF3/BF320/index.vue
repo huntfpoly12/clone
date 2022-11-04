@@ -158,7 +158,6 @@ import {
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
-import ListPartner from '../../../../components/ListPartner.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 import { DxSelectBox } from 'devextreme-vue/select-box';
@@ -179,7 +178,6 @@ export default defineComponent({
         EditOutlined,
         HistoryOutlined,
         DxSelectBox,
-        ListPartner,
         SearchOutlined,
         MenuFoldOutlined,
         MenuUnfoldOutlined,
