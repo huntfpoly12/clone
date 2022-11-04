@@ -24,7 +24,6 @@ import DxSortable from "devextreme-vue/sortable";
 import DxTabPanel from "devextreme-vue/tab-panel";
 import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
-import DevTextBoxVue from "../../components/DevTextBox.vue";
 import { defineComponent, ref, defineAsyncComponent } from "vue";
 import notify from "devextreme/ui/notify";
 import service from "./listTab.ts";
@@ -39,7 +38,6 @@ export default defineComponent({
   components: {
     PopupMessageMain,
     TextBoxFrom,
-    DevTextBoxVue,
     DxTabPanel,
     DxSortable,
     DxButton,
