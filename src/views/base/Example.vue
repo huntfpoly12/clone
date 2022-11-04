@@ -1,27 +1,16 @@
 <template>
   <div style="padding: 10px">
-    <DxSortable
-      filter=".dx-tab"
-      v-model:data="allTab"
-      item-orientation="horizontal"
-      drag-direction="horizontal"
-    >
+    <DxSortable filter=".dx-tab" v-model:data="allTab" item-orientation="horizontal" drag-direction="horizontal">
       <div>
-        <DxTabPanel
-          v-model:data-source="allTab"
-          :defer-rendering="false"
-          :show-nav-buttons="true"
-          :repaint-changes-only="true"
-          v-model:selected-index="selectedIndex"
-          item-title-template="title"
-          item-template="itemTemplate"
-        >
+        <DxTabPanel v-model:data-source="allTab" :defer-rendering="false" :show-nav-buttons="true"
+          :repaint-changes-only="true" v-model:selected-index="selectedIndex" item-title-template="title"
+          item-template="itemTemplate">
           <template #title="{ data: employee }">
             <div>
               <span>{{ employee.TabName }}</span>
             </div>
           </template>
-          <template #itemTemplate="{ data: employee }">
+          <template #itemTemplate="{ data: employee }"> 
             <component v-bind:is="employee.layoutName" />
           </template>
         </DxTabPanel>
@@ -42,9 +31,13 @@ import service from "./listTab.ts";
 const TextBoxFrom = defineAsyncComponent(() =>
   import("../base/TextBoxFrom.vue")
 );
+const PopupMessageMain = defineAsyncComponent(() =>
+  import("./PopupMessageMain.vue")
+);
 const allListTab = service.getListTab();
 export default defineComponent({
   components: {
+    PopupMessageMain,
     TextBoxFrom,
     DevTextBoxVue,
     DxTabPanel,
