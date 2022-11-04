@@ -425,7 +425,6 @@ import {
 } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
-import CustomDatepicker from "../../components/CustomDatepicker.vue";
 import postCode from "../../components/postCode.vue";
 
 import mutations from "../../graphql/mutations/RqContract/index";
@@ -459,7 +458,6 @@ export default {
         DxTexts,
         DxButton,
         imgUpload,
-        CustomDatepicker,
         moment,
         postCode,
         DxRequiredRule,
