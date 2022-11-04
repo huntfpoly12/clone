@@ -210,7 +210,7 @@
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                             <a-form-item label="담당매니저">
                                 <div style="width: 200px">
-                                    <ListManagerDropdown v-model:selected="formState.manageUserId" />
+                                    <list-manager-dropdown v-model:selected="formState.manageUserId" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="영업자">
@@ -260,7 +260,6 @@ import {
     AccountingAdditionalServiceType,
     WithholdingAdditionalServiceType,
 } from "@bankda/jangbuda-common";
-import ListManagerDropdown from "../../../../../components/ListManagerDropdown.vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
@@ -327,7 +326,6 @@ export default defineComponent({
         WarningFilled,
         imgUpload,
         PlusOutlined,
-        ListManagerDropdown,
         DxEditing,
         DxLookup,
         DxButton,

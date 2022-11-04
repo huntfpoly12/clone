@@ -69,7 +69,7 @@
                         <a-col>
                             <div class="dflex custom-flex">
                             <label >메니저명 :</label>
-                            <ListManagerDropdown/>
+                            <list-manager-dropdown/>
                         </div>
                         </a-col>
                         <a-col>
@@ -158,7 +158,6 @@ import {
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
-import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
 import ListPartner from '../../../../components/ListPartner.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
@@ -179,7 +178,6 @@ export default defineComponent({
         HistoryPopup,
         EditOutlined,
         HistoryOutlined,
-        ListManagerDropdown,
         DxSelectBox,
         ListPartner,
         SearchOutlined,
