@@ -69,19 +69,6 @@ export default defineComponent({
     const bday = ref("");
     const text1 = ref("text example.....");
     function onFormSubmit(e) {
-      console.log("dsdfsfsdf");
-      notify(
-        {
-          message: "You have submitted the form",
-          position: {
-            my: "center top",
-            at: "center top",
-          },
-        },
-        "success",
-        3000
-      );
-
       e.preventDefault();
     }
 

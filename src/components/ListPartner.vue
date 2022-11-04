@@ -1,33 +1,73 @@
 <template>
-    <label class="lable-item">매니저명 :</label>
-    <a-select ref="select" v-model:value="partner" placeholder="전체" @change="updatePartner(partner)">
-        <a-select-option v-for="item in result?.findParters" :key="item.id" :value="item.id">{{item.name}}
-        </a-select-option>
-    </a-select>
+  <div>
+    <DxSelectBox
+      :search-enabled="true"
+      :width="width"
+      :data-source="result?.findParters?.length > 0 ? result?.findParters : []"
+      :show-clear-button="clearButton"
+      v-model:value="value"
+      :read-only="readOnly"
+      display-expr="name"
+      value-expr="id"
+      :disabled="disabled"
+      @value-changed="updateValue(value)"
+      :height="$config_styles.HeightInput"
+    >
+      <DxValidator>
+        <DxRequiredRule v-if="required" :message="messRequired" />
+      </DxValidator>
+    </DxSelectBox>
+  </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, watch } from "vue";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import DxSelectBox from "devextreme-vue/select-box";
 import queries from "../graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 export default defineComponent({
-    props: {
-        selected: {
-            type: Number,
-            default: null,
-            required: true
-        }
+  props: {
+    required: {
+      type: Boolean,
+      default: false,
     },
-    setup(props , {emit}) {
-        const partner = ref(0)
-        const { result, loading, error, onResult, refetch } = useQuery(queries.getListPartner);
-        const updatePartner = (value: any) => {
-            emit('update:selected', value)
-        }
-        return {
-            result,
-            partner,
-            updatePartner
-        }
+    messRequired: {
+      type: String,
+      default: "Input is required!",
     },
-})
+    width: String,
+    clearButton: Boolean,
+    disabled: Boolean,
+    valueInput: {
+      type: Number,
+      default: "",
+    },
+    readOnly: Boolean,
+  },
+  components: {
+    DxSelectBox,
+    DxValidator,
+    DxRequiredRule,
+  },
+  setup(props, { emit }) {
+    const value = ref(props.valueInput);
+    const { result, loading, error, onResult, refetch } = useQuery(
+      queries.getListPartner
+    );
+    watch(
+      () => props.valueInput,
+      (newValue) => {
+        value.value = newValue;
+      }
+    );
+    const updateValue = (value: any) => {
+      emit("update:valueInput", value);
+    };
+    return {
+      result,
+      value,
+      updateValue,
+    };
+  },
+});
 </script>

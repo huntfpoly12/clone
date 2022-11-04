@@ -3,7 +3,7 @@
       <DxSelectBox
         :search-enabled="true"
         :width="width"
-        :data-source="result.findManagerUsers"
+        :data-source="result?.findManagerUsers?.length > 0 ? result?.findManagerUsers : []"
         :show-clear-button="clearButton"
         v-model:value="value"
         :read-only="readOnly"
