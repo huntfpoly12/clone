@@ -44,11 +44,15 @@ const TextBoxFrom = defineAsyncComponent(() =>
 const NumberBoxForm = defineAsyncComponent(() =>
   import("../base/NumberBoxForm.vue")
 );
+const DateTimeBoxForm = defineAsyncComponent(() =>
+  import("../base/DateTimeBoxForm.vue")
+);
 const allListTab = service.getListTab();
 export default defineComponent({
   components: {
     TextBoxFrom,
     NumberBoxForm,
+    DateTimeBoxForm,
     DxTabPanel,
     DxSortable,
     DxButton,
