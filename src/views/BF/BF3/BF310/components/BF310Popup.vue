@@ -342,7 +342,7 @@
                         </a-collapse-panel>
                         <a-collapse-panel key="7" header="기타">
                             <a-form-item label="영업관리담당">
-                                <ListSalesDropdown v-model:selected="formState.extraSalesRepresentativeId"
+                                <list-sales-dropdown v-model:selected="formState.extraSalesRepresentativeId"
                                     width="200px" />
                             </a-form-item>
                             <a-form-item label="전달사항">
@@ -379,7 +379,6 @@ import { message } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
-import ListSalesDropdown from "../../../../../components/ListSalesDropdown.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import postCode from "../../../../../components/postCode.vue";
@@ -420,7 +419,6 @@ export default defineComponent({
         UploadOutlined,
         MinusCircleOutlined,
         DeleteOutlined,
-        ListSalesDropdown,
         InfoCircleFilled,
         PlusOutlined,
         imgUpload,

@@ -73,8 +73,10 @@
                         </div>
                         </a-col>
                         <a-col>
-                            <!-- Doanh nghiệp -->
-                            <ListSalesDropdownVue :textLabel="'영업자명'" />
+                            <div class="dflex custom-flex">
+                            <label >영업자명 :</label>
+                            <list-sales-dropdown />
+                            </div>
                         </a-col>
                     </a-row>
                 </div>
@@ -157,7 +159,6 @@ import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
 import ListManagerDropdown from '../../../../components/ListManagerDropdown.vue';
-import ListSalesDropdownVue from '../../../../components/ListSalesDropdown.vue';
 import ListPartner from '../../../../components/ListPartner.vue';
 dayjs.extend(weekday)
 dayjs.extend(localeData)
@@ -187,8 +188,7 @@ export default defineComponent({
         MailOutlined,
         PrinterOutlined,
         DeleteOutlined,
-        SaveOutlined,
-        ListSalesDropdownVue
+        SaveOutlined
     },
     data() {
         return {

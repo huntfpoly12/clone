@@ -43,8 +43,6 @@ export default defineComponent({
       default: "Input is required!",
     },
     width: String,
-    maxCharacter: Number,
-
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {

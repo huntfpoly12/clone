@@ -51,7 +51,10 @@
                         </a-select>
                     </a-col>
                     <a-col>
-                        <ListSalesDropdownVue :textLabel="'영업자'" v-model:selected="originData.salesRepresentativeId" />
+                        <div style="display: flex;">
+                            <label class="lable-item">영업자 :</label>
+                            <list-sales-dropdown  v-model:selected="originData.salesRepresentativeId" />
+                        </div>
                     </a-col>
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
@@ -147,7 +150,6 @@ import DxDateBox from 'devextreme-vue/date-box';
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
 import { ref, defineComponent } from 'vue';
 import BF310Popup from "./components/BF310Popup.vue";
-import ListSalesDropdownVue from '../../../../components/ListSalesDropdown.vue';
 import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
 import { useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
@@ -188,8 +190,7 @@ export default defineComponent({
         MailOutlined,
         PrinterOutlined,
         DeleteOutlined,
-        SaveOutlined,
-        ListSalesDropdownVue
+        SaveOutlined
     },
     data() {
         return {
