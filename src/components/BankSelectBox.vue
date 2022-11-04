@@ -9,14 +9,20 @@
       :read-only="readOnly"
       display-expr="n"
       value-expr="c"
+      :disabled="disabled"
       @value-changed="updateValue(value)"
       :height="$config_styles.HeightInput"
-    />
+    >
+      <DxValidator>
+        <DxRequiredRule v-if="required" :message="messRequired" />
+      </DxValidator>
+    </DxSelectBox>
   </div>
 </template>
 <script lang="ts">
 import { ref, onMounted, watch } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { BankType } from "@bankda/jangbuda-common";
 import type { SelectProps } from "ant-design-vue";
 export default {
@@ -30,20 +36,20 @@ export default {
       default: "Input is required!",
     },
     width: String,
-    maxCharacter: Number,
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
       type: [Number, String],
-      default: 0,
+      default: "",
     },
-    placeholder: String,
     readOnly: Boolean,
   },
   components: {
     DxSelectBox,
+    DxValidator,
+    DxRequiredRule,
   },
-  setup(props:any, { emit }:any) {
+  setup(props: any, { emit }: any) {
     const value = ref(props.valueInput);
     const bankTypeSelect = ref<SelectProps["options"]>([]);
     onMounted(() => {

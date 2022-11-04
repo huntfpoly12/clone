@@ -1,71 +1,70 @@
 <template>
-  <template v-if="result?.findSalesRepresentatives?.length > 0 && textLabel">
-    <label class="lable-item">{{ textLabel }} :</label>
-    <a-select
-      ref="select"
-      v-model:value="sale"
-      placeholder="영업자 선택"
-      show-search
-      @change="updateSale(sale)"
+    <DxSelectBox
+      :search-enabled="true"
+      :width="width"
+      :data-source="result?.findSalesRepresentatives?.length > 0 ? result.findSalesRepresentatives : []"
+      :show-clear-button="clearButton"
+      v-model:value="value"
+      :read-only="readOnly"
+      display-expr="name"
+      value-expr="id"
+      :disabled="disabled"
+      @value-changed="updateValue(value)"
+      :height="$config_styles.HeightInput"
     >
-      <a-select-option
-        v-for="item in result?.findSalesRepresentatives"
-        :key="item.id"
-        :value="item.id"
-      >
-        {{ item.name }}</a-select-option
-      >
-    </a-select>
-  </template>
-  <template v-if="result?.findSalesRepresentatives?.length > 0 && !textLabel">
-    <a-select
-      ref="select"
-      v-model:value="sale"
-      placeholder="영업자 선택"
-      show-search
-      @change="updateSale(sale)"
-      :style="{ width: width }"
-    >
-      <a-select-option
-        v-for="item in result?.findSalesRepresentatives"
-        :key="item.id"
-        :value="item.id"
-      >
-        {{ item.name }}</a-select-option
-      >
-    </a-select>
-  </template>
+      <DxValidator>
+        <DxRequiredRule v-if="required" :message="messRequired" />
+      </DxValidator>
+    </DxSelectBox>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import DxSelectBox from "devextreme-vue/select-box";
 import queries from "../graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 export default defineComponent({
   props: {
-    textLabel: String,
-    selected: {
-      type: Number,
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    messRequired: {
+      type: String,
+      default: "Input is required!",
     },
     width: String,
+    clearButton: Boolean,
+    disabled: Boolean,
+    valueInput: {
+      type: Number,
+      default: "",
+    },
+    readOnly: Boolean,
+  },
+  components: {
+    DxSelectBox,
+    DxValidator,
+    DxRequiredRule,
   },
   setup(props, { emit }) {
-    const sale = ref(props.selected);
+    const value = ref(props.valueInput);
     const { result, loading, error, onResult, refetch } = useQuery(
       queries.getListSale
     );
     watch(
-      () => props.selected,
+      () => props.valueInput,
       (newValue) => {
-        sale.value = newValue;
+        value.value = newValue;
       }
     );
-    const updateSale = (value: any) => {
-      emit("update:selected", value);
+    const updateValue = (value: any) => {
+      emit("update:valueInput", value);
     };
     return {
       result,
-      sale,
-      updateSale,
+      value,
+      updateValue,
     };
   },
 });

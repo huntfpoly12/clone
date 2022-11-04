@@ -163,7 +163,7 @@
                                 <div>
                                     <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                                         <a-form-item label="서비스 시작년월" style="width: 300px">
-                                            <CustomDatepicker :valueDate="formState.withholdingStartYearMonth"
+                                            <date-time-box :valueDate="formState.withholdingStartYearMonth"
                                                 date-format="MM/DD/YYYY" />
                                         </a-form-item>
                                         <a-form-item label="직 원 수 ">
@@ -210,12 +210,12 @@
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                             <a-form-item label="담당매니저">
                                 <div style="width: 200px">
-                                    <ListManagerDropdown v-model:selected="formState.manageUserId" />
+                                    <list-manager-dropdown v-model:selected="formState.manageUserId" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="영업자">
                                 <div style="width: 200px">
-                                    <ListSalesDropdown v-model:selected="formState.compactSalesRepresentativeId" />
+                                    <list-sales-dropdown v-model:selected="formState.compactSalesRepresentativeId" />
                                 </div>
                             </a-form-item>
                         </a-form>
@@ -260,10 +260,7 @@ import {
     AccountingAdditionalServiceType,
     WithholdingAdditionalServiceType,
 } from "@bankda/jangbuda-common";
-import ListSalesDropdown from "../../../../../components/ListSalesDropdown.vue";
-import ListManagerDropdown from "../../../../../components/ListManagerDropdown.vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
-import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
@@ -305,6 +302,7 @@ import DxTextBox from 'devextreme-vue/text-box';
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import DateTimeBox from "../../../../../components/common/DateTimeBox.vue";
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result as string));
@@ -328,9 +326,6 @@ export default defineComponent({
         WarningFilled,
         imgUpload,
         PlusOutlined,
-        CustomDatepicker,
-        ListSalesDropdown,
-        ListManagerDropdown,
         DxEditing,
         DxLookup,
         DxButton,
@@ -340,7 +335,8 @@ export default defineComponent({
         DxNumberBox,
         DxTexts,
         DxMasterDetail,
-        DxCheckBox
+        DxCheckBox,
+        DateTimeBox
     },
     props: {
         modalStatus: Boolean,

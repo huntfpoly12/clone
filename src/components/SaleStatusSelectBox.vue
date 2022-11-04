@@ -44,22 +44,10 @@ const saleGrade = enum2Entries(SalesRepresentativeStatus).map((value) => ({
 
 export default defineComponent({
   props: {
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    messRequired: {
-      type: String,
-      default: "Input is required!",
-    },
     width: String,
-    maxCharacter: Number,
-
-    clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
       type: [Number, String],
-
     },
     placeholder: String,
     readOnly: Boolean,

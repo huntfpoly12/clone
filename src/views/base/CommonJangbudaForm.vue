@@ -9,13 +9,47 @@
       <tr>
         <td>
           <div class="dx-field">
-            <div class="dx-field-label">Default text box</div>
+            <div class="dx-field-label">Bank select box</div>
             <div class="dx-field-value">
-              <default-text-box
+              <bank-select-box width="300px" :required="true"></bank-select-box>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li>
+              <strong>required:</strong> {type: Boolean,default: false,}
+              (option)
+            </li>
+            <li>
+              <strong>messRequired:</strong> { type: String, default: "Input is
+              required!",} (option)
+            </li>
+            <li><strong>width:</strong> String (option)</li>
+            <li><strong>clearButton:</strong> Boolean (option)</li>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li>
+              <strong>valueInput:</strong> {type: [String, Number],default: "",}
+            </li>
+            <li><strong>readOnly:</strong> Boolean (option)</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; bank-select-box width="300px" :required="true" / &gt;
+              </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">Biz type select box</div>
+            <div class="dx-field-value">
+              <biz-type-select-box
                 width="300px"
                 :required="true"
-                placeholder="Default text box"
-              ></default-text-box>
+              ></biz-type-select-box>
             </div>
           </div>
         </td>
@@ -30,34 +64,30 @@
               required!",} (option)
             </li>
             <li><strong>width:</strong> String (option)</li>
-            <li><strong>maxCharacter:</strong> Number (option)</li>
-            <li>
-              <strong>minCharacter:</strong> { type: Number,default: 0,}
-              (option)
-            </li>
             <li><strong>clearButton:</strong> Boolean (option)</li>
             <li><strong>disabled:</strong> Boolean (option)</li>
-            <li><strong>valueInput:</strong> {type: String,default: "",}</li>
-            <li><strong>placeholder:</strong> String (option)</li>
+            <li>
+              <strong>valueInput:</strong> {type: [String, Number],default: "",}
+            </li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
           </ul>
         </td>
         <td>
           <pre class="mycode">
-            &lt; default-text-box width="300px" :required="true" &gt;&lt;/ default-text-box &gt;
-          </pre>
+                &lt; biz-type-select-box width="300px" :required="true" / &gt;
+              </pre
+          >
         </td>
       </tr>
       <tr>
         <td>
           <div class="dx-field">
-            <div class="dx-field-label">Text number box</div>
+            <div class="dx-field-label">Sale grade select box</div>
             <div class="dx-field-value">
-              <text-number-box
+              <sale-grade-select-box
                 width="300px"
                 :required="true"
-                placeholder="Text number box"
-              ></text-number-box>
+              ></sale-grade-select-box>
             </div>
           </div>
         </td>
@@ -74,27 +104,57 @@
             <li><strong>width:</strong> String (option)</li>
             <li><strong>clearButton:</strong> Boolean (option)</li>
             <li><strong>disabled:</strong> Boolean (option)</li>
-            <li><strong>valueInput:</strong> {type: String,default: "",}</li>
-            <li><strong>placeholder:</strong> String (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
           </ul>
         </td>
         <td>
           <pre class="mycode">
-            &lt; text-number-box width="300px" :required="true" &gt;&lt;/ text-number-box &gt;
-          </pre>
+                &lt; sale-grade-select-box width="300px" :required="true" / &gt;
+              </pre
+          >
         </td>
       </tr>
       <tr>
         <td>
           <div class="dx-field">
-            <div class="dx-field-label">Mail text box</div>
+            <div class="dx-field-label">Sale status select box</div>
             <div class="dx-field-value">
-              <mail-text-box
+              <sale-status-select-box
+                width="300px"
+                :confirmStatus="true"
+              ></sale-status-select-box>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li><strong>width:</strong> String (option)</li>
+            <li><strong>placeholder:</strong> String,</li>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
+            <li><strong>readOnly:</strong> Boolean (option)</li>
+            <li>
+              <strong>confirmStatus:</strong> { type: Boolean,default: false,}
+            </li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; sale-status-select-box width="300px" :confirmStatus="true" / &gt;
+              </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">List sale select box</div>
+            <div class="dx-field-value">
+              <list-sales-dropdown
                 width="300px"
                 :required="true"
-                placeholder="Mail text box"
-              ></mail-text-box>
+              ></list-sales-dropdown>
             </div>
           </div>
         </td>
@@ -111,23 +171,26 @@
             <li><strong>width:</strong> String (option)</li>
             <li><strong>clearButton:</strong> Boolean (option)</li>
             <li><strong>disabled:</strong> Boolean (option)</li>
-            <li><strong>valueInput:</strong> {type: String,default: "",}</li>
-            <li><strong>placeholder:</strong> String (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
           </ul>
         </td>
         <td>
           <pre class="mycode">
-            &lt; mail-text-box width="300px" :required="true" &gt;&lt;/ mail-text-box &gt;
-          </pre>
+                &lt; list-sales-dropdown width="300px" :required="true" / &gt;
+              </pre
+          >
         </td>
       </tr>
       <tr>
         <td>
           <div class="dx-field">
-            <div class="dx-field-label">Id Card text box</div>
+            <div class="dx-field-label">List manager select box</div>
             <div class="dx-field-value">
-              <id-card-text-box :required="true" />
+              <list-manager-dropdown
+                width="300px"
+                :required="true"
+              ></list-manager-dropdown>
             </div>
           </div>
         </td>
@@ -144,24 +207,26 @@
             <li><strong>width:</strong> String (option)</li>
             <li><strong>clearButton:</strong> Boolean (option)</li>
             <li><strong>disabled:</strong> Boolean (option)</li>
-            <li><strong>valueInput:</strong> {type: String,default: "",}</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
           </ul>
         </td>
         <td>
           <pre class="mycode">
-            &lt; id-card-text-box width="300px" :required="true" &gt;&lt;/ id-card-text-box &gt;
-          </pre>
+                &lt; list-manager-dropdown width="300px" :required="true" / &gt;
+              </pre
+          >
         </td>
       </tr>
       <tr>
         <td>
           <div class="dx-field">
-            <div class="dx-field-label">
-              Telephone Text Box
-            </div>
+            <div class="dx-field-label">List partner select box</div>
             <div class="dx-field-value">
-              <tel-text-box :required="true" placeholder="Telephone Text Box"/>
+              <list-partner
+                width="300px"
+                :required="true"
+              ></list-partner>
             </div>
           </div>
         </td>
@@ -178,49 +243,15 @@
             <li><strong>width:</strong> String (option)</li>
             <li><strong>clearButton:</strong> Boolean (option)</li>
             <li><strong>disabled:</strong> Boolean (option)</li>
-            <li><strong>valueInput:</strong> {type: String,default: "",}</li>
-            <li><strong>placeholder:</strong> String (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
             <li><strong>readOnly:</strong> Boolean (option)</li>
           </ul>
         </td>
         <td>
           <pre class="mycode">
-            &lt; tel-text-box width="300px" :required="true" /&gt;
-          </pre>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <div class="dx-field">
-            <div class="dx-field-label">
-              Company registration number text box
-            </div>
-            <div class="dx-field-value">
-              <company-registration-number-text-box :required="true" />
-            </div>
-          </div>
-        </td>
-        <td>
-          <ul>
-            <li>
-              <strong>required:</strong> {type: Boolean,default: false,}
-              (option)
-            </li>
-            <li>
-              <strong>messRequired:</strong> { type: String, default: "Input is
-              required!",} (option)
-            </li>
-            <li><strong>width:</strong> String (option)</li>
-            <li><strong>clearButton:</strong> Boolean (option)</li>
-            <li><strong>disabled:</strong> Boolean (option)</li>
-            <li><strong>valueInput:</strong> {type: String,default: "",}</li>
-            <li><strong>readOnly:</strong> Boolean (option)</li>
-          </ul>
-        </td>
-        <td>
-          <pre class="mycode">
-            &lt; company-registration-number-text-box width="300px" :required="true" /&gt;
-          </pre>
+                &lt; list-partner width="300px" :required="true" / &gt;
+              </pre
+          >
         </td>
       </tr>
     </table>
@@ -239,13 +270,11 @@
 <script>
 import { defineComponent, ref } from "vue";
 import notify from "devextreme/ui/notify";
-import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
 
 export default defineComponent({
   components: {
-    DxButton,
-    DxValidationSummary,
+    DxButton
   },
   data() {
     return {
@@ -261,7 +290,6 @@ export default defineComponent({
       this.$refs["formTest"].onsubmit = onFormSubmit();
     }
     function onFormSubmit(e) {
-
     }
 
     return {

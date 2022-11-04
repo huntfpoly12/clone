@@ -44,11 +44,20 @@ const TextBoxFrom = defineAsyncComponent(() =>
 const NumberBoxForm = defineAsyncComponent(() =>
   import("../base/NumberBoxForm.vue")
 );
+const DateTimeBoxForm = defineAsyncComponent(() =>
+  import("../base/DateTimeBoxForm.vue")
+);
+const CommonJangbudaForm = defineAsyncComponent(() =>
+  import("../base/CommonJangbudaForm.vue")
+);
+
 const allListTab = service.getListTab();
 export default defineComponent({
   components: {
     TextBoxFrom,
     NumberBoxForm,
+    DateTimeBoxForm,
+    CommonJangbudaForm,
     DxTabPanel,
     DxSortable,
     DxButton,
@@ -60,19 +69,6 @@ export default defineComponent({
     const bday = ref("");
     const text1 = ref("text example.....");
     function onFormSubmit(e) {
-      console.log("dsdfsfsdf");
-      notify(
-        {
-          message: "You have submitted the form",
-          position: {
-            my: "center top",
-            at: "center top",
-          },
-        },
-        "success",
-        3000
-      );
-
       e.preventDefault();
     }
 

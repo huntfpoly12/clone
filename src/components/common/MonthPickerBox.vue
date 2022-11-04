@@ -4,7 +4,7 @@
     autoApply
     monthPicker
     :format-locale="ko"
-    :style="{ width: width }"
+    :style="{height: $config_styles.HeightInput, width: width }"
     :format="format"
     :uid="id"
     @update:modelValue="handleDate"
@@ -23,9 +23,9 @@ export default defineComponent({
       default: "100%",
       type: String,
     },
-    value: {
+    valueDate: {
       type: String,
-      default: "",
+      default: new Date(),
     },
     id: {
       type: String,
@@ -33,27 +33,24 @@ export default defineComponent({
     },
     className: {
       type: String,
-    },
-    styleDate: {
-      type: String,
-    },
+    }
   },
   components: {
     Datepicker,
   },
   setup(props, { emit }) {
-    var valueDate = new Date(props.value);
+    var value = new Date(props.valueDate);
     const date = ref({
-          month: valueDate.getMonth(),
-          year: valueDate.getFullYear(),
+          month: value.getMonth(),
+          year: value.getFullYear(),
         });
     watch(
-      () => props.value,
+      () => props.valueDate,
       (newValue) => {
-        valueDate = new Date(newValue);
+        value = new Date(newValue);
         date.value = {
-          month: valueDate.getMonth(),
-          year: valueDate.getFullYear(),
+          month: value.getMonth(),
+          year: value.getFullYear(),
         };
       }
     );
@@ -72,7 +69,7 @@ export default defineComponent({
     };
 
     return {
-      valueDate,
+      value,
       handleDate,
       date,
       format,

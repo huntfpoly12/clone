@@ -97,17 +97,6 @@
         this.$refs["formTest"].onsubmit = onFormSubmit();
       }
       function onFormSubmit(e) {
-        notify(
-          {
-            message: "You have submitted the form",
-            position: {
-              my: "center top",
-              at: "center top",
-            },
-          },
-          "success",
-          3000
-        );
       }
   
       return {
