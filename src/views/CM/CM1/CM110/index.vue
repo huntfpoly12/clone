@@ -243,7 +243,6 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/CM/CM110/index"
 import { useMutation } from "@vue/apollo-composable";
 import { getJwtObject } from "@bankda/jangbuda-common";
-import CustomDatepicker from "../../../../components/CustomDatepicker.vue";
 import { companyId } from "../../../../helpers/commonFunction"
 function getBase64(file: File) {
     return new Promise((resolve, reject) => {
@@ -255,7 +254,6 @@ function getBase64(file: File) {
 }
 export default defineComponent({
     components: {
-        CustomDatepicker,
         InfoCircleFilled,
         LoginOutlined,
         EditOutlined,

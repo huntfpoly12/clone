@@ -153,7 +153,6 @@ import { ref, defineComponent, watch } from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import { useMutation } from "@vue/apollo-composable";
 import DxButton from 'devextreme-vue/button';
-import CustomDatepicker from "../../../../../components/CustomDatepicker.vue";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 import { message } from "ant-design-vue";
 
@@ -164,7 +163,6 @@ export default defineComponent({
     components: {
         SearchOutlined,
         WarningOutlined,
-        CustomDatepicker,
         DxButton
     },
     setup(props, { emit }) {

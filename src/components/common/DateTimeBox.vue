@@ -34,7 +34,7 @@ export default defineComponent({
     },
     valueDate: {
       type: String,
-      default: "",
+      default: new Date(),
     },
     id: {
       type: String,
@@ -42,10 +42,7 @@ export default defineComponent({
     },
     className: {
       type: String,
-    },
-    styleDate: {
-      type: String,
-    },
+    }
   },
   components: {
     DxDateBox,
