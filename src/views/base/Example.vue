@@ -47,12 +47,17 @@ const NumberBoxForm = defineAsyncComponent(() =>
 const DateTimeBoxForm = defineAsyncComponent(() =>
   import("../base/DateTimeBoxForm.vue")
 );
+const CommonJangbudaForm = defineAsyncComponent(() =>
+  import("../base/CommonJangbudaForm.vue")
+);
+
 const allListTab = service.getListTab();
 export default defineComponent({
   components: {
     TextBoxFrom,
     NumberBoxForm,
     DateTimeBoxForm,
+    CommonJangbudaForm,
     DxTabPanel,
     DxSortable,
     DxButton,

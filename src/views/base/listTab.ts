@@ -6,26 +6,32 @@ interface ListTab {
     layoutName: string
 }
 
-const listTab: ListTab[] = [{
-    ID: 1,
-    TabName: 'Text Box',
-    layoutName:'TextBoxFrom'
-},
-{
-    ID: 2,
-    TabName: 'Number Box',
-    layoutName:'NumberBoxForm'
-},
-{
-    ID: 3,
-    TabName: 'Date Time Box',
-    layoutName:'DateTimeBoxForm'
-},
-{
-    ID: 4,
-    TabName: 'Check Box',
-    layoutName:'CheckBoxFrom'
-}
+const listTab: ListTab[] = [
+    {
+        ID: 1,
+        TabName: 'Common Jangbuda',
+        layoutName: 'CommonJangbudaForm'
+    },
+    {
+        ID: 2,
+        TabName: 'Text Box',
+        layoutName: 'TextBoxFrom'
+    },
+    {
+        ID: 3,
+        TabName: 'Number Box',
+        layoutName: 'NumberBoxForm'
+    },
+    {
+        ID: 4,
+        TabName: 'Date Time Box',
+        layoutName: 'DateTimeBoxForm'
+    },
+    {
+        ID: 5,
+        TabName: 'Check Box',
+        layoutName: 'CheckBoxFrom'
+    }
 ];
 
 export default {
