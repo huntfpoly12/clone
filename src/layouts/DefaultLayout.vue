@@ -73,16 +73,17 @@
 				<a-layout>
 					<a-layout-content :style="{ background: '#fff', margin: 0, minHeight: '280px' }">
 						<div class="main-content">
+							
 							<template v-if="activeTab">
 								<keep-alive>
 									<component v-bind:is="currentComponent" />
 								</keep-alive>
 							</template>
-							<!-- <template v-else>
-                                <keep-alive>
-                                    <router-view></router-view>
-                                </keep-alive>
-                            </template> -->
+							<template v-else>
+								<keep-alive>
+									<component v-bind:is="'Example'" />
+								</keep-alive>
+							</template>
 						</div>
 					</a-layout-content>
 				</a-layout>
@@ -343,7 +344,10 @@ export default defineComponent({
 		removeItemTab(item) {
 			this.menuTab.splice(item, 1);
 			if (this.menuTab.length === 0) {
-				this.$router.push("/");
+				
+				this.$router.push('/dashboard');
+				this.activeTab = { name: "example", url: "/dashboard", id: "" };
+				
 			}
 		},
 		changeActiveTab(item) {
