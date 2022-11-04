@@ -35,7 +35,6 @@ import DxSortable from "devextreme-vue/sortable";
 import DxTabPanel from "devextreme-vue/tab-panel";
 import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
-import DevTextBoxVue from "../../components/DevTextBox.vue";
 import { defineComponent, ref, defineAsyncComponent } from "vue";
 import notify from "devextreme/ui/notify";
 import service from "./listTab.ts";
@@ -46,7 +45,6 @@ const allListTab = service.getListTab();
 export default defineComponent({
   components: {
     TextBoxFrom,
-    DevTextBoxVue,
     DxTabPanel,
     DxSortable,
     DxButton,
