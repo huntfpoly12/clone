@@ -13,7 +13,6 @@
       :max="max"
       :min="min"
       :mode="mode"
-      format="0"
       :style="{ height: $config_styles.HeightInput }"
     >
     <DxValidator v-if="required">
@@ -40,11 +39,11 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required :) !!!!",
+      default: "Input is required!",
     },
     valueInput: {
       type: [String, Number],
-      default: "",
+      default: 0,
     },
     min: Number,
     max: Number,
@@ -54,7 +53,10 @@ export default defineComponent({
       default: false,
     },
     placeholder: String,
-    mode: String,
+    mode: {
+      type: String,
+      default: "number",
+    },
   },
   components: {
     DxNumberBox,

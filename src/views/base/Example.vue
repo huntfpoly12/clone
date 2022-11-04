@@ -41,10 +41,14 @@ import service from "./listTab.ts";
 const TextBoxFrom = defineAsyncComponent(() =>
   import("../base/TextBoxFrom.vue")
 );
+const NumberBoxForm = defineAsyncComponent(() =>
+  import("../base/NumberBoxForm.vue")
+);
 const allListTab = service.getListTab();
 export default defineComponent({
   components: {
     TextBoxFrom,
+    NumberBoxForm,
     DxTabPanel,
     DxSortable,
     DxButton,

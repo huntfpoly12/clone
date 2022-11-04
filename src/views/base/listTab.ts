@@ -13,6 +13,11 @@ const listTab: ListTab[] = [{
 },
 {
     ID: 2,
+    TabName: 'Number Box',
+    layoutName:'NumberBoxForm'
+},
+{
+    ID: 3,
     TabName: 'Check Box',
     layoutName:'CheckBoxFrom'
 }
