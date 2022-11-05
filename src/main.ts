@@ -11,6 +11,7 @@ import filters from "./helpers/filters";
 import { styles } from "./configs/styles/index";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { client } from "./ApolloClient.d";
+import { Message } from "./configs/enum";
 
 declare module 'vue' {
   interface ComponentCustomProperties {
@@ -45,9 +46,10 @@ Object.entries(requireComponent).forEach((fileComponent) => {
   // Register component globally
   app.component(componentName,defineAsyncComponent(componentImport))
 })
-
+app.config.globalProperties.$messages = Message;
 app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$config_styles = styles;
+
 app.config.performance = true;
 
 app.use(router);

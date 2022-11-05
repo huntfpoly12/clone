@@ -1,6 +1,5 @@
 <template>
-
-  <a-spin :spinning="spinning|| loading" size="large">
+  <a-spin :spinning="loading" size="large">
     <div class="top-content">
       <a-typography-title :level="3"> 영업자관리 </a-typography-title>
       <div class="list-action">
@@ -193,7 +192,7 @@
   </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch , reactive } from "vue";
+import { defineComponent, ref, watch, reactive } from "vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -201,6 +200,7 @@ import { useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
+import { message } from "ant-design-vue";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import {
   DxDataGrid,
@@ -231,7 +231,7 @@ import EditBF340Popup from "./components/EditBF340Popup.vue";
 import AddNew340Poup from "./components/AddNew340Poup.vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import queries from "../../../../graphql/queries/BF/BF3/BF340/index";
-import { origindata } from './utils';
+import { origindata } from "./utils";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -268,39 +268,33 @@ export default defineComponent({
     const modalEditStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
 
-    const saleGrade  = ref<number>(0);
-    const saleStatus  = ref<number>(1);
-    const spinning = ref<boolean>(true);
+    const saleGrade = ref<number>(0);
+    const saleStatus = ref<number>(1);
     var idRowEdit = ref<number>(0);
 
-    const originData = reactive({...origindata});
-
+    const originData = reactive({ ...origindata });
     const rowTable = ref(0);
-
-    setTimeout(() => {
-      spinning.value = !spinning.value;
-    }, 1000);
     const dataSource = ref([]);
 
     const {
       refetch: refetchData,
       loading,
-      error,
-      onResult,
-      result
+      onError,
+      result,
     } = useQuery(queries.getDataSale, originData, () => ({
       fetchPolicy: "no-cache",
     }));
 
-    watch(
-      result,
-      (value) => {
-        if(value){
-          rowTable.value = value.searchSalesRepresentatives.totalCount;
-          dataSource.value = value.searchSalesRepresentatives.datas;
-        }
+    onError((error) => {
+      message.error(error.message, 4);
+    });
+
+    watch(result, (value) => {
+      if (value) {
+        rowTable.value = value.searchSalesRepresentatives.totalCount;
+        dataSource.value = value.searchSalesRepresentatives.datas;
       }
-    );
+    });
 
     const onExporting = (e: { component: any; cancel: boolean }) => {
       const workbook = new Workbook();
@@ -323,37 +317,29 @@ export default defineComponent({
     const openAddNewModal = () => {
       modalAddNewStatus.value = true;
     };
-    
-    watch(
-      modalAddNewStatus,
-      (newValue, old) => {
-        if(!newValue){
-          refetchData();
-        }
-        
+
+    watch(modalAddNewStatus, (newValue, old) => {
+      if (!newValue) {
+        refetchData();
       }
-    );
+    });
     const setModalEditVisible = (data: any) => {
       idRowEdit.value = data.data.id;
       modalEditStatus.value = true;
       popupData.value = data;
     };
 
-    watch(
-      modalEditStatus,
-      (newValue, old) => {
-        if(!newValue){
-          refetchData();
-        }
-        
+    watch(modalEditStatus, (newValue, old) => {
+      if (!newValue) {
+        refetchData();
       }
-    );
+    });
 
     const modalHistory = (data: any) => {
       modalHistoryStatus.value = true;
       popupData.value = data;
     };
-    
+
     const getColorTag = (data: any) => {
       if (data === 1) {
         return "#108ee9";
@@ -363,10 +349,11 @@ export default defineComponent({
         return "grey";
       }
     };
+
     const searching = () => {
-     originData.grade = saleGrade.value == 0 ? null : saleGrade.value;
-     originData.statuses = [saleStatus.value];
-     refetchData();
+      originData.grade = saleGrade.value == 0 ? null : saleGrade.value;
+      originData.statuses = [saleStatus.value];
+      refetchData();
     };
 
     const changePage = () => {
@@ -374,7 +361,6 @@ export default defineComponent({
     };
 
     return {
-      spinning,
       loading,
       onExporting,
       searching,

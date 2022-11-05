@@ -13,8 +13,8 @@
                         <a-form-item label="영업자명" label-align="right" :label-col="labelCol">
                             <default-text-box v-model:valueInput="formState.name" width="200px"  :disabled="!canChangeCompanyName"/>
                         </a-form-item>
-                        <a-form-item label="사업자유형" class="label-br" label-align="right" :label-col="labelCol">
-                            <biz-type-select-box   v-model:valueInput="formState.detailBizType" width="200px" /> 
+                        <a-form-item label="사업자유형" class="red" label-align="right" :label-col="labelCol">
+                            <biz-type-select-box   v-model:valueInput="formState.detailBizType" width="200px" :required="true"/> 
                         </a-form-item>
                         <a-form-item label="이메일" :name="['이메일']" :rules="[{ type: 'email' }]" label-align="right" :label-col="labelCol">
                             <mail-text-box v-model:valueInput="formState.detailEmail" width="250px"/>
@@ -31,12 +31,12 @@
                             <sale-status-select-box v-model:valueInput="formState.status" width="100px" :confirmStatus="true"/>
                         </a-form-item>
                         <a-form-item label="등급" label-align="right" :label-col="labelCol">
-                            <sale-grade-select-box v-model:valueInput="formState.detailGrade" width="100px"/>
+                            <sale-grade-select-box v-model:valueInput="formState.detailGrade" width="100px" :required="true" />
                         </a-form-item>
-                        <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="label-br" label-align="right" :label-col="labelCol">
+                        <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" class="red" label-align="right" :label-col="labelCol">
                             <id-card-text-box :required="true" v-model:valueInput="formState.detailResidentId" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
-                        <a-form-item label="사업자등록번호" class="label-br" label-align="right" :label-col="labelCol">
+                        <a-form-item label="사업자등록번호" class="red" label-align="right" :label-col="labelCol">
                             <company-registration-number-text-box v-model:valueInput="formState.detailBizNumber"  :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                         <a-form-item label="휴대폰" label-align="right" :label-col="labelCol">
@@ -70,7 +70,7 @@
                 </a-row>
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }" class="label-br" label-align="right" >
+                        <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }" class="red" label-align="right" >
                             <a-switch v-model:checked="formState.detailTaxInvoice" checked-children="발행"
                                 un-checked-children="미발행" style="width: 80px" />
                         </a-form-item>
@@ -211,7 +211,7 @@ export default defineComponent({
         });
 
         // get  sale representative
-        const { result, loading, error, refetch } = useQuery(
+        const { result, loading ,refetch, onError } = useQuery(
             queries.getSalesRepresentative,
             dataQuery,
             () => ({
@@ -219,6 +219,10 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
+
+        onError((error) => {
+            message.error(error.message, 4);
+        });
 
         watch(result, (value) => {
             if (value && value.getSalesRepresentative) {
@@ -285,11 +289,14 @@ export default defineComponent({
         // update sale representative
         const {
             mutate: actionUpdate,
-            onError,
+            onError : onUpdateError,
             loading: loadingUpdate,
             onDone: updateDone,
         } = useMutation(mutations.updateSalesRepresentative);
 
+        onUpdateError((error) => {
+            message.error(error.message, 4);
+        });
 
         const updateSale = () => {
             let salesRepresentativeDetailInput = {
