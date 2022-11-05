@@ -16,14 +16,19 @@
                 </dx-button>
               </div>
             </a-form-item>
-            <a-form-item label="회원명" class="red">             
+            <a-form-item label="회원명" class="red">
               <default-text-box v-model:valueInput="formState.name" :required="true" width="190px"
                 messRequired="이항목은 필수 입력사항입니다!" />
             </a-form-item>
             <a-form-item label="소속" class="red">
-              
-              <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택" :data-source="selectSearch"
-                @value-changed="handleChange" display-expr="label" value-expr="value" :height="$config_styles.HeightInput"></DxSelectBox>
+
+              <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택"
+                :data-source="selectSearch" @value-changed="handleChange" required display-expr="label"
+                value-expr="value" :height="$config_styles.HeightInput"></DxSelectBox>
+              <!-- <DxValidator>
+                <DxRequiredRule message="이항목은 필수 입력사항입니다!" />
+
+              </DxValidator> -->
 
             </a-form-item>
           </a-col>
@@ -62,8 +67,8 @@
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" class="red">
-              <mail-text-box v-model:value="formState.email" style="width: 270px" @change="validateEmail"
-                :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
+              <mail-text-box v-model:value="formState.email" style="width: 270px" :required="true"
+                @change="validateEmail" :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
               <!-- <a-button html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
                 변경
@@ -89,35 +94,35 @@
         </a-row>
 
 
-      <div class="page-content">
-        <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
+        <div class="page-content">
+          <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
 
-        <div style="position: relative">
-          <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
-            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll"
-            @selection-changed="onSelectionChanged">
-            <DxPaging :page-size="0" />
-            <DxSelection data-field="active" mode="multiple" />
+          <div style="position: relative">
+            <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
+              :allow-column-resizing="true" :column-auto-width="true" class="table-scroll"
+              @selection-changed="onSelectionChanged">
+              <DxPaging :page-size="0" />
+              <DxSelection data-field="active" mode="multiple" />
 
-            <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
+              <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
 
-            <DxColumn data-field="name" caption="권한그룹명" />
+              <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="memo" caption="권한그룹설명" />
-          </DxDataGrid>
+              <DxColumn data-field="memo" caption="권한그룹설명" />
+            </DxDataGrid>
+          </div>
         </div>
-      </div>
 
-      <a-row>
+        <a-row>
           <a-col :offset="8" style="text-align: center">
-            <DxButton :width="120" text="취소" type="default" styling-mode="outlined"
-              @click="setModalVisible" style="margin-right: 10px;" />
-            <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default"/>
+            <DxButton :width="120" text="취소" type="default" styling-mode="outlined" @click="setModalVisible"
+              style="margin-right: 10px;" />
+            <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default" />
           </a-col>
         </a-row>
-    </form>
-    <template #footer>
-       
+      </form>
+      <template #footer>
+
       </template>
     </a-modal>
   </div>
@@ -136,7 +141,13 @@ import {
   DxExport,
   DxSelection,
   DxSearchPanel,
+
+
 } from "devextreme-vue/data-grid";
+import {
+  DxValidator,
+  DxRequiredRule,
+} from "devextreme-vue/validator";
 import {
   SearchOutlined,
   WarningOutlined,
@@ -163,7 +174,9 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
     DxSelectBox,
-    DxButton
+    DxButton,
+    DxRequiredRule,
+    DxValidator,
 
   },
 
