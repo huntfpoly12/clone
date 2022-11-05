@@ -3,7 +3,7 @@
     <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
       width="50%" :mask-closable="false">
       <h2 class="title_modal">회원정보</h2>
-      <a-form v-bind="layout" name="nest-messages" v-model:value="formState">
+      <form action="" @submit.prevent="creactUserNew">
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID" class="red" compact>
@@ -11,20 +11,18 @@
                 <default-text-box v-model:valueInput="formState.username" style="width: 190px; margin-right: 10px"
                   required mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
 
-                <a-button type="primary" style="border: 1px solid" :disabled="disabledBtn"
+                <dx-button type="default" style="border: 1px solid" :disabled="disabledBtn"
                   @click="checkDuplicateUsername">중복체크
-                </a-button>
+                </dx-button>
               </div>
             </a-form-item>
-            <a-form-item label="회원명" class="red">
-              <!-- <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" /> -->
+            <a-form-item label="회원명" class="red">             
               <default-text-box v-model:valueInput="formState.name" :required="true" width="190px"
                 messRequired="이항목은 필수 입력사항입니다!" />
             </a-form-item>
-            <a-form-item label="소속" class="red">{{ selectSearch }}
-              <a-select v-model:value="formState.groupCode" style="width: 190px" :options="selectSearch"
-                @change="handleChange"></a-select>
-              <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" :data-source="selectSearch"
+            <a-form-item label="소속" class="red">
+              
+              <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택" :data-source="selectSearch"
                 @value-changed="handleChange" display-expr="label" value-expr="value" :height="$config_styles.HeightInput"></DxSelectBox>
 
             </a-form-item>
@@ -59,7 +57,7 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" class="red">
               <div style="display: flex; align-items: flex-end">
-                <tel-text-box @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
+                <tel-text-box @keypress="onlyNumber" type="text" v-model:valueInput="formState.mobilePhone"
                   style="width: 190px; margin-right: 8px" :required="true" messRequired="이항목은 필수 입력사항입니다!" />
               </div>
             </a-form-item>
@@ -89,7 +87,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-      </a-form>
+
 
       <div class="page-content">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
@@ -109,22 +107,18 @@
           </DxDataGrid>
         </div>
       </div>
-      <template #footer>
-        <a-row>
+
+      <a-row>
           <a-col :offset="8" style="text-align: center">
-            <DxButton :width="120" text-align: center text="취소" type="default" styling-mode="outlined"
+            <DxButton :width="120" text="취소" type="default" styling-mode="outlined"
               @click="setModalVisible" style="margin-right: 10px;" />
-            <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default" @click="creactUserNew" />
+            <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default"/>
           </a-col>
         </a-row>
+    </form>
+    <template #footer>
+       
       </template>
-      <!-- <template #footer>
-        <div style="text-align: center;">
-          <a-button @click="setModalVisible()">그냥 나가기</a-button>
-          <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
-        </div>
-      </template> -->
-
     </a-modal>
   </div>
 </template>
