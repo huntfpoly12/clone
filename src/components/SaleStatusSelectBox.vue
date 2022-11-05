@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <a-select :style="{ width: width, height: $config_styles.HeightInput }" v-model:value="value" :disabled="disabled"
       option-label-prop="children" @select="updateValue(value)" :placeholder="placeholder">
       <a-select-option v-for="saleStatus in saleGrade" :key="saleStatus.value" :label="saleStatus.label"

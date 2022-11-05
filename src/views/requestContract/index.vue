@@ -89,9 +89,7 @@
                                 <div class="group-label">
                                     <a-input class="width-auto" placeholder="우편번호"
                                         v-model:value="contractCreacted.zipcode" disabled />
-                                    <a-button>
-                                        <postCode @dataAddress="funcAddress" />
-                                    </a-button>
+                                        <post-code-button @dataAddress="funcAddress" />
                                 </div>
                             </div>
                             <div class="form-item">
@@ -425,7 +423,6 @@ import {
 } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
-import postCode from "../../components/postCode.vue";
 
 import mutations from "../../graphql/mutations/RqContract/index";
 import dayjs, { Dayjs } from "dayjs";
@@ -459,7 +456,6 @@ export default {
         DxButton,
         imgUpload,
         moment,
-        postCode,
         DxRequiredRule,
         DxCompareRule,
         DxValidator,

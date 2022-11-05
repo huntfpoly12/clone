@@ -53,10 +53,18 @@ export const formState340 = {
     active: false,
 }
 
-export const origindata = {
+interface Origindata {
+    page: number,
+    rows: number,
+    statuses: number[],
+    grade: null | number,
+    name: string,
+    code: string,
+}
+export const origindata : Origindata = {
     page: 1,
     rows: 10,
-    statuses: [1, 2, 3],
+    statuses: [1],
     grade: null,
     name: "",
     code: "",

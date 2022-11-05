@@ -27,7 +27,11 @@ import {
   enum2Entries,
 } from "@bankda/jangbuda-common";
 
-const saleGrade = enum2Entries(SalesRepresentativeGrade).map((value) => ({
+interface TypeObject {
+  value: number,
+  label: string,
+};
+var  saleGrade : Array<TypeObject>  = enum2Entries(SalesRepresentativeGrade).map((value) => ({
   value: value[1],
   label: value[0],
 }));
@@ -47,6 +51,7 @@ export default defineComponent({
     disabled: Boolean,
     valueInput: {
       type: Number,
+      default: 0,
     },
     placeholder: String,
     readOnly: Boolean,
@@ -57,6 +62,7 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
+    saleGrade.push({ value: 0 , label: '전체'});
     const value = ref(props.valueInput);
 
     const updateValue = (value: any) => {

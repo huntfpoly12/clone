@@ -59,7 +59,7 @@
                                                 <a-col :span="12">
                                                     <div style="margin-left: 5px">
                                                         <a-button type="primary" ghost>
-                                                            <postCode @dataAddress="funcAddress" />
+                                                            <post-code-button @dataAddress="funcAddress" />
                                                         </a-button>
                                                     </div>
                                                 </a-col>
@@ -243,7 +243,6 @@ import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF320/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF320/index";
-import postCode from "../../../../../components/postCode.vue";
 
 import { message } from "ant-design-vue";
 import dayjs, { Dayjs } from 'dayjs';
@@ -272,7 +271,6 @@ import {
 
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import BankSelectBox from "../../../../../components/BankSelectBox.vue";
 
 export default defineComponent({
     props: {
@@ -297,9 +295,7 @@ export default defineComponent({
         PlusSquareOutlined,
         WarningFilled,
         imgUpload,
-        InfoCircleFilled,
-        postCode,
-        BankSelectBox
+        InfoCircleFilled
     },
     data() {
         return {
