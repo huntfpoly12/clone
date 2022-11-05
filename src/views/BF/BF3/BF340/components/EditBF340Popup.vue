@@ -49,10 +49,8 @@
                         <a-form-item label="주소" label-align="right" :label-col="{span: 3}" :wrapper-col="{ span: 21 }" class="post-code">
                           <div style="display:flex">
                             <default-text-box v-model:valueInput="formState.detailZipcode"  width="200px" :disabled="true"/>
-                             <div style="margin-left: 5px">
-                                <a-button type="primary" ghost>
-                                    <post-code @dataAddress="funcAddress"/>
-                                </a-button>
+                             <div style="margin-left: 5px">        
+                                <post-code-button @dataAddress="funcAddress"/>
                             </div>
                          </div>
                         </a-form-item>

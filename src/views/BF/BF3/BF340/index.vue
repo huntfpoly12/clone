@@ -36,38 +36,38 @@
         <div id="components-grid-demo-flex">
           <a-row justify="start" :gutter="[16, 8]">
             <a-col>
-              <div style="display: flex">
-                <label class="lable-item"> 영업자등급 : </label>
+              <div class="dflex custom-flex">
+                <label class="lable-item"> 영업자등급 :</label>
                 <sale-grade-select-box
-                  v-model:valueInput="dataSearch.grade"
+                  v-model:valueInput="saleGrade"
                   width="120px"
                   placeholder="전체"
                 />
               </div>
             </a-col>
             <a-col>
-              <div style="display: flex">
+              <div class="dflex custom-flex">
                 <label class="lable-item">영업자명:</label>
                 <default-text-box
-                  v-model:valueInput="dataSearch.code"
+                  v-model:valueInput="originData.name"
                   width="120px"
                 ></default-text-box>
               </div>
             </a-col>
             <a-col>
-              <div style="display: flex">
+              <div class="dflex custom-flex">
                 <label class="lable-item">영업자코드:</label>
                 <default-text-box
-                  v-model:valueInput="dataSearch.name"
+                  v-model:valueInput="originData.code"
                   width="120px"
                 ></default-text-box>
               </div>
             </a-col>
             <a-col>
-              <div style="display: flex">
+              <div class="dflex custom-flex">
                 <label class="lable-item">상태 :</label>
                 <sale-status-select-box
-                  v-model:valueInput="statuses"
+                  v-model:valueInput="saleStatus"
                   placeholder="전체"
                 />
               </div>
@@ -193,7 +193,7 @@
   </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch , reactive } from "vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -268,16 +268,12 @@ export default defineComponent({
     const modalEditStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
 
-    const statuses: any = ref([]);
+    const saleGrade  = ref<number>(0);
+    const saleStatus  = ref<number>(1);
     const spinning = ref<boolean>(true);
     var idRowEdit = ref<number>(0);
-    const dataSearch = ref({
-      grade: null,
-      name: "",
-      code: "",
-    });
 
-    const originData = {...origindata};
+    const originData = reactive({...origindata});
 
     const rowTable = ref(0);
 
@@ -291,13 +287,20 @@ export default defineComponent({
       loading,
       error,
       onResult,
+      result
     } = useQuery(queries.getDataSale, originData, () => ({
       fetchPolicy: "no-cache",
     }));
-    onResult((res) => {
-      rowTable.value = res.data.searchSalesRepresentatives.totalCount;
-      dataSource.value = res.data.searchSalesRepresentatives.datas;
-    });
+
+    watch(
+      result,
+      (value) => {
+        if(value){
+          rowTable.value = value.searchSalesRepresentatives.totalCount;
+          dataSource.value = value.searchSalesRepresentatives.datas;
+        }
+      }
+    );
 
     const onExporting = (e: { component: any; cancel: boolean }) => {
       const workbook = new Workbook();
@@ -334,7 +337,6 @@ export default defineComponent({
       idRowEdit.value = data.data.id;
       modalEditStatus.value = true;
       popupData.value = data;
-      
     };
 
     watch(
@@ -362,28 +364,9 @@ export default defineComponent({
       }
     };
     const searching = () => {
-      spinning.value = true;
-      if (dataSearch.value.grade) {
-        let arrayNew = {
-          ...dataSearch.value,
-          page: 1,
-          rows: originData.rows,
-          grade: dataSearch.value.grade,
-          statuses: statuses.value > 0 ? statuses.value : [1, 2, 3],
-        };
-        refetchData(arrayNew);
-      } else {
-        let arrayNew = {
-          ...dataSearch.value,
-          page: 1,
-          rows: originData.rows,
-          statuses: statuses.value > 0 ? statuses.value : [1, 2, 3],
-        };
-        refetchData(arrayNew);
-      }
-      setTimeout(() => {
-        spinning.value = false;
-      }, 1000);
+     originData.grade = saleGrade.value == 0 ? null : saleGrade.value;
+     originData.statuses = [saleStatus.value];
+     refetchData();
     };
 
     const changePage = () => {
@@ -398,9 +381,9 @@ export default defineComponent({
       dataSource,
       idRowEdit,
       refetchData,
-      statuses,
+      saleStatus,
+      saleGrade,
       originData,
-      dataSearch,
       rowTable,
       changePage,
       getColorTag,

@@ -124,7 +124,7 @@
                                                 <a-col :span="12">
                                                     <div style="margin-left: 5px">
                                                         <a-button type="primary" ghost>
-                                                            <postCode @dataAddress="funcAddress" />
+                                                            <post-code-button @dataAddress="funcAddress" />
                                                         </a-button>
                                                     </div>
                                                 </a-col>
@@ -381,7 +381,6 @@ import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
-import postCode from "../../../../../components/postCode.vue";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import BankSelectBox from "../../../../../components/BankSelectBox.vue";
 
@@ -427,7 +426,6 @@ export default defineComponent({
         DxToolbar,
         DxItem,
         DxTexts,
-        postCode,
         BankSelectBox
     },
     setup(props, { emit }) {
