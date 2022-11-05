@@ -9,6 +9,39 @@
       <tr>
         <td>
           <div class="dx-field">
+            <div class="dx-field-label">Rank date time box</div>
+            <div class="dx-field-value">
+              <rank-date-time-box>
+                width="300px"
+                dateFormat="YYYY-MM-DD"
+              ></rank-date-time-box>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li>
+              <strong>dateFormat:</strong> { default: "YYYY-MM-DD", type:
+              String,} (option)
+            </li>
+            <li>
+              <strong>width:</strong> {default: "100%", type: String, } (option)
+            </li>
+            <li><strong>valueDate:</strong> { type: String, default: nowDate,}</li>
+            <li><strong>id:</strong> { type: String, default: "",}</li>
+            <li><strong>className:</strong>{type: String,} (option)</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+              &lt; rank-date-time-box width="300px" dateFormat="YYYY-MM-DD" / &gt;
+            </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
             <div class="dx-field-label">Date time box</div>
             <div class="dx-field-value">
               <date-time-box

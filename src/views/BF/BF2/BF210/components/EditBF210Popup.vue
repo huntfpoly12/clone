@@ -10,22 +10,27 @@
       </template>
       <h2 class="title_modal">회원정보</h2>
       <a-form v-bind="layout" name="nest-messages" v-model:value="formState" @finish="onFinish">
-        <a-row :gutter="24">
-          <a-col :span="12">
-            <a-form-item label="회원ID">
-              <a-input disabled v-model:value="formState.username" style="width: 150px; margin-right: 10px" />
-              <button disabled style="background-color: #00000040;color: #918e8b;border: none;height: 32px;">
+        <a-row :gutter="24" >
+          <a-col :span="12" >
+            <a-form-item label="회원ID" >
+              <div class="dflex">
+              <default-text-box disabled v-model:valueInput="formState.username" style="width: 150px; margin-right: 10px" />
+              <dx-button disabled=true type="default" style="border: 1px solid">
                 중복체크
-              </button>
+              </dx-button>
+            </div>
             </a-form-item>
             <a-form-item label="회원명">
-              <a-input v-if="formState.type != 'c'" v-model:value="formState.name"
+              <default-text-box v-if="formState.type != 'c'" v-model:valueInput="formState.name"
                 style="width: 150px; margin-right: 10px" />
-              <a-input v-if="formState.type == 'c'" disabled v-model:value="formState.name"
+              <default-text-box v-if="formState.type == 'c'" disabled v-model:valueInput="formState.name"
                 style="width: 150px; margin-right: 10px" />
             </a-form-item>
             <a-form-item label="소속">
-              <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 230px;" />
+              <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 150px;" />
+            </a-form-item>
+            <a-form-item label="소속">
+              <DxSelectBox :valueInput="formState.groupCode" value-expr="id" class="select-search" :height="$config_styles.HeightInput" disabled=true style="width: 150px;" />
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -64,19 +69,19 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4">
               <div style="display: flex; align-items: flex-end">
-                <a-input v-if="formState.type !== 'c'" @keypress="onlyNumber" type="text"
-                  v-model:value="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
-                <a-input v-if="formState.type == 'c'" disabled @keypress="onlyNumber" type="text"
-                  v-model:value="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
+                <tel-text-box v-if="formState.type !== 'c'" @keypress="onlyNumber" type="text"
+                  v-model:valueInput="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
+                <tel-text-box v-if="formState.type == 'c'" disabled @keypress="onlyNumber" type="text"
+                  v-model:valueInput="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
               </div>
               <div :class="{ active: toggleActive }" class="toggle_container">
                 <ToggleButton v-on:change="triggerToggleEvent" />
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" :span="8">
-              <a-input v-if="formState.type !== 'c'" @change="validateEmail" v-model:value="formState.email"
+              <mail-text-box v-if="formState.type !== 'c'" @change="validateEmail" v-model:valueInput="formState.email"
                 style="width: 230px" :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
-              <a-input v-if="formState.type == 'c'" disabled v-model:value="formState.email" style="width: 230px" />
+              <mail-text-box v-if="formState.type == 'c'" disabled v-model:valueInput="formState.email" style="width: 230px" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
               <a-button v-if="formState.type !== 'c'" html-type="submit" danger class="btn_sendemail"
                 @click="showModal">
@@ -151,6 +156,7 @@ import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 import { message } from 'ant-design-vue';
 import { DxCheckBox } from 'devextreme-vue/check-box';
+import DxButton from 'devextreme-vue/button';
 import {
   DxDataGrid,
   DxColumn,
@@ -165,6 +171,7 @@ import {
   MailOutlined,
   MenuOutlined,
 } from "@ant-design/icons-vue";
+
 export default defineComponent({
   props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
   components: {
@@ -179,8 +186,9 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
     DxSelectBox,
-    DxCheckBox
-  },
+    DxCheckBox,
+    DxButton
+},
   data() {
     return {
       toggleActive: false,
@@ -444,7 +452,9 @@ export default defineComponent({
 ::v-deep .ant-form-item-label>label {
   width: 110px;
 }
-
+.dflex {
+  display: flex;
+}
 .overlay {
   position: absolute;
   top: 0;

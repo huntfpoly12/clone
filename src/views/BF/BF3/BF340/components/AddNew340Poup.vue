@@ -28,7 +28,7 @@
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
                         <a-form-item label="상태" label-align="right" :label-col="labelCol">
-                            <sale-status-select-box v-model:valueInput="formState.status" width="100px" :confirmStatus="true"/>
+                            <sale-status-select-box v-model:valueInput="formState.status" width="100px"/>
                         </a-form-item>
                         <a-form-item label="등급" label-align="right" :label-col="labelCol">
                             <sale-grade-select-box v-model:valueInput="formState.grade" width="100px"/>
@@ -49,10 +49,8 @@
                         <a-form-item label="주소" label-align="right" :label-col="{span: 3}" :wrapper-col="{ span: 21 }" class="post-code">
                           <div style="display:flex">
                             <default-text-box v-model:valueInput="formState.zipcode"  width="200px" :disabled="true"/>
-                             <div style="margin-left: 5px">
-                                <a-button type="primary" ghost>
-                                    <post-code @dataAddress="funcAddress"/>
-                                </a-button>
+                             <div style="margin-left: 5px">                
+                                <post-code-button @dataAddress="funcAddress"/>
                             </div>
                          </div>
                         </a-form-item>

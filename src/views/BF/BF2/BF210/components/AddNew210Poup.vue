@@ -3,27 +3,27 @@
     <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
       width="50%" :mask-closable="false">
       <h2 class="title_modal">회원정보</h2>
-      <a-form v-bind="layout" name="nest-messages" v-model:value="formState">
+      <form action="" @submit.prevent="creactUserNew">
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="회원ID" class="red" compact>
               <div class="dflex">
-                <default-text-box v-model:value="formState.username" style="width: 190px; margin-right: 10px"
-                  @change="changeValueID" required mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
+                <default-text-box v-model:valueInput="formState.username" style="width: 190px; margin-right: 10px"
+                  required mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
 
-                <a-button type="primary" style="border: 1px solid" :disabled="disabledBtn"
+                <dx-button type="default" style="border: 1px solid" :disabled="disabledBtn"
                   @click="checkDuplicateUsername">중복체크
-                </a-button>
+                </dx-button>
               </div>
             </a-form-item>
-            <a-form-item label="회원명" class="red">
-              <!-- <a-input v-model:value="formState.name" style="width: 170px; margin-right: 10px" /> -->
+            <a-form-item label="회원명" class="red">             
               <default-text-box v-model:valueInput="formState.name" :required="true" width="190px"
                 messRequired="이항목은 필수 입력사항입니다!" />
             </a-form-item>
             <a-form-item label="소속" class="red">
-              <a-select v-model:value="formState.groupCode" style="width: 190px" :options="selectSearch"
-                @change="handleChange"></a-select>
+              
+              <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택" :data-source="selectSearch"
+                @value-changed="handleChange" display-expr="label" value-expr="value" :height="$config_styles.HeightInput"></DxSelectBox>
 
             </a-form-item>
           </a-col>
@@ -57,12 +57,12 @@
           <a-col :span="12">
             <a-form-item type="number" :name="['user', 'number']" label="휴대폰" class="red">
               <div style="display: flex; align-items: flex-end">
-                <a-input @keypress="onlyNumber" type="text" v-model:value="formState.mobilePhone"
-                  style="width: 190px; margin-right: 8px" />
+                <tel-text-box @keypress="onlyNumber" type="text" v-model:valueInput="formState.mobilePhone"
+                  style="width: 190px; margin-right: 8px" :required="true" messRequired="이항목은 필수 입력사항입니다!" />
               </div>
             </a-form-item>
             <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" class="red">
-              <a-input v-model:value="formState.email" style="width: 270px" @change="validateEmail"
+              <mail-text-box v-model:value="formState.email" style="width: 270px" @change="validateEmail"
                 :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
               <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
               <!-- <a-button html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
@@ -87,7 +87,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-      </a-form>
+
 
       <div class="page-content">
         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
@@ -107,11 +107,17 @@
           </DxDataGrid>
         </div>
       </div>
-      <template #footer>
-        <div style="text-align: center;">
-          <a-button @click="setModalVisible()">그냥 나가기</a-button>
-          <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
-        </div>
+
+      <a-row>
+          <a-col :offset="8" style="text-align: center">
+            <DxButton :width="120" text="취소" type="default" styling-mode="outlined"
+              @click="setModalVisible" style="margin-right: 10px;" />
+            <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default"/>
+          </a-col>
+        </a-row>
+    </form>
+    <template #footer>
+       
       </template>
     </a-modal>
   </div>
@@ -139,7 +145,8 @@ import {
 } from "@ant-design/icons-vue";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-
+import DxSelectBox from 'devextreme-vue/select-box';
+import DxButton from 'devextreme-vue/button';
 
 export default defineComponent({
   props: ["modalStatus", "data"],
@@ -155,17 +162,12 @@ export default defineComponent({
     DxSelection,
     DxExport,
     DxSearchPanel,
-    
+    DxSelectBox,
+    DxButton
+
   },
 
-  data() {
-    return {
 
-      dataMode: {
-        color: "",
-      },
-    };
-  },
 
 
   setup(props, { emit }) {
@@ -410,7 +412,17 @@ export default defineComponent({
         disabledBtn.value = true;
       }
     }
-
+    watch(() => formState.value.username, (value: any) => {
+      if (value !== '') {
+        disabledBtn.value = false
+        dataCallCheck.value = {
+          username: formState.value.username
+        }
+      }
+      else {
+        disabledBtn.value = true;
+      }
+    });
 
 
     //Creact user 
@@ -526,6 +538,7 @@ export default defineComponent({
 
 ::v-deep .ant-modal-footer {
   padding-top: 0;
+  border: node;
 }
 
 ::v-deep .ant-form-item-control {
@@ -551,10 +564,12 @@ export default defineComponent({
   margin-left: 5px;
   padding-top: 5px;
 }
+
 .dflex {
-    display: flex;
+  display: flex;
 }
-ăn s.overlay {
+
+.overlay {
   position: absolute;
   top: 0;
   left: 0;
