@@ -1,31 +1,28 @@
 <template>
   <div>
-    
-    <a-select :style="{ width: width, height: $config_styles.HeightInput }" v-model:value="value" :disabled="disabled"
-      option-label-prop="children" @select="updateValue(value)" :placeholder="placeholder">
+    <a-select :style="{ width: width, height: $config_styles.HeightInput }" v-model:value="data" :disabled="disabled"
+      option-label-prop="children" @select="selectedValue(data)" :placeholder="placeholder">
       <a-select-option v-for="saleStatus in saleGrade" :key="saleStatus.value" :label="saleStatus.label"
         :style="{ width: width }">
         <a-tag :color="getColorTag(saleStatus.label)">{{ saleStatus.label }}</a-tag>
       </a-select-option>
     </a-select>
-    <a-modal v-if="confirmStatus" v-model:visible="visibleConfirm" :mask-closable="false"
-      :afterClose="afterConfirmClose" class="confirm-md" :width="521">
+    <a-modal v-if="confirmStatus" v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md" :width="521" @cancel="confirmClose(data)" :footer="null" >
       <a-row>
         <a-col :span="4">
           <warning-outlined :style="{ fontSize: '70px', color: '#faad14', paddingTop: '20px' }" />
         </a-col>
         <a-col :span="20">
-          <h3><b>해지 확인</b></h3>
-          <p>해지하실 경우 본 영업자에 속한 사업자들은 본사로 귀속됩니다.</p>
-          <p>해지처리를 확정하시려면 “확인”을 입력하신 후 완료 버튼을</p>
-          <p>누르세요</p>
+          <h3><b>해지(숨김) 확인</b></h3>
+          <p>해지(또는 숨김)하면 본 영업자와 연계된 모든 사업자는 본사로 이관됩니다.
+          해지(또는 숨김)하려면 “확인”을 입력한 후 완료를
+          누르세요</p>
         </a-col>
         <div style="text-align: center; width: 100%; margin-left: 100px">
           <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
-          <a-button type="primary" @click="handleOkConfirm" style="margin-left: 100px">완료</a-button>
+          <a-button type="primary" @click="handleOkConfirm(data)" style="margin-left: 100px">완료</a-button>
         </div>
       </a-row>
-      <template #footer> </template>
     </a-modal>
   </div>
 </template>
@@ -62,39 +59,43 @@ export default defineComponent({
     WarningOutlined,
   },
   setup(props, { emit }) {
-    const value = ref(props.valueInput);
+    let data = ref(props.valueInput);
+    let oldData  = ref(props.valueInput);
+    let flag = ref<boolean>(false);
     const visibleConfirm = ref<boolean>(false);
     let confirm = ref<string>("");
-    const updateValue = (value: any) => {
-      if (value == 2 && props.confirmStatus == true) {
+    const selectedValue = (val: any) => {
+      if ((val == 2 || val == 3) && props.confirmStatus == true) {
         visibleConfirm.value = true;
+       
       } else {
-        emit("update:valueInput", value);
+        emit("update:valueInput", val);
       }
     };
     watch(
       () => props.valueInput,
-      (newValue) => {
-        value.value = newValue;
+      (newValue,oldValue) => {
+        data.value = newValue;
+        if(newValue != 1){
+          oldData.value = newValue;
+        }
       }
     );
 
     // confirm popup
-    const handleOkConfirm = () => {
+    const handleOkConfirm = (val: any) => {
       if (confirm.value == "확인") {
         visibleConfirm.value = false;
+        emit("update:valueInput", val);
       } else {
-        value.value = 1;
+        data.value = 1;
         visibleConfirm.value = false;
       }
+      confirm.value = '';
     };
 
-    const afterConfirmClose = () => {
-      if (confirm.value == "확인") {
-        value.value = 2;
-      } else {
-        value.value = 1;
-      }
+    const confirmClose = (val: any) => {
+      data.value = oldData.value;
     };
 
     const getColorTag = (data: string) => {
@@ -107,14 +108,15 @@ export default defineComponent({
       }
     };
     return {
-      updateValue,
+      selectedValue,
       saleGrade,
-      afterConfirmClose,
       visibleConfirm,
       confirm,
       getColorTag,
       handleOkConfirm,
-      value,
+      confirmClose,
+      data,
+      oldData
     };
   },
 });

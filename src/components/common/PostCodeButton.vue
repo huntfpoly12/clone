@@ -1,7 +1,8 @@
 <template>
   <div style="margin-left: 5px">
-    <DxButton
-      :width="128"
+    <DxButton 
+      icon="search"
+      :width="155"
       text="우편번호 검색"
       type="default"
       styling-mode="outlined"
