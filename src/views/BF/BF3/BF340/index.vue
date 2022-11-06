@@ -171,7 +171,6 @@
         <AddNew340Poup
           :modalStatus="modalAddNewStatus"
           @closePopup="modalAddNewStatus = false"
-          @addNewDone="refetchData"
         />
         <EditBF340Popup
           :modalStatus="modalEditStatus"

@@ -58,7 +58,6 @@ export class Message extends BaseType {
         const items = Message.COMMON;
         let item : any = items.name;
         let resMess : any  = item[codeMess];
-        console.log(item[codeMess]);
         return item[codeMess] ? resMess.replaceAll('{object}', obj) : '';
     }
 
