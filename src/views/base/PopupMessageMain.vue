@@ -1,6 +1,6 @@
 <template>
     <div style="padding: 10px">
-        <a-row :gutter="[0, 4]">
+        <a-row>
             <a-col :span="2">
                 <div>Modal Notification</div>
             </a-col>
@@ -23,15 +23,15 @@
                 <b> Return</b> : Status modal = false<br>
             </a-col>
         </a-row>
-        <a-row :gutter="[0, 4]" style="margin-top: 20px;">
+        <a-row style="margin-top: 20px;">
             <a-col :span="2">
                 <div>Modal Accept</div>
             </a-col>
             <a-col :span="8">
                 <DxButton :width="150" text="Accept Input" type="success" styling-mode="outlined"
-                    @click="openStatus('acceptInput')"/>
+                    @click="openStatus('acceptInput')" />
                 <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="typeModal"
-                    :title="'Title Notification'" :content="'Content notification'" :keyAccept="'1234'"  :okText="'이해했다'"
+                    :title="'Title Notification'" :content="'Content notification'" :keyAccept="'1234'" :okText="'이해했다'"
                     @checkConfirm="statusComfirm" />
             </a-col>
             <a-col :span="8">
