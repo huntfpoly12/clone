@@ -220,7 +220,13 @@ export default defineComponent({
         );
 
         onError((error) => {
-            message.error(error.message, 4);
+            message.error({
+                content: () => error.message,
+                class: 'custom-class',
+                style: {
+                marginTop: '20vh',
+                },
+            }, 4);
         });
 
         watch(result, (value) => {
@@ -277,7 +283,13 @@ export default defineComponent({
         } = useMutation(mutations.updateSalesRepresentative);
 
         onUpdateError((error) => {
-            message.error(error.message, 4);
+            message.error({
+                content: () => error.message,
+                class: 'custom-class',
+                style: {
+                marginTop: '20vh',
+                },
+            }, 4);
         });
 
         const updateSale = (e : any) => {
@@ -294,7 +306,13 @@ export default defineComponent({
         }
 
         updateDone((res) => {
-            message.success(`Update was successful`, 4);
+            message.success({
+                content: () => `업데이트가 완료되었습니다!`,
+                class: 'custom-class',
+                style: {
+                marginTop: '20vh',
+                },
+            }, 4);
             setModalVisible();
         });
 
