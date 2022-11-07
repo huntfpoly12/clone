@@ -11,9 +11,10 @@ export class Message extends BaseType {
     */
     private static COMMON = new Message({
         '101': {"저장되었습니다.", "iconInfo" }, // Save successful!
-        '102': {"저장실패! {object}는 필수입력 사항입니다.", "iconError"}, // {object} is required field
-        '103': {"저장실패! {object}는 최소 {minCount}자 이상입니다.", "iconError"}, // {object} more then {minCount} characters
-        '104': {"저장실패! {object}가 올바른 형식이 아닙니다.", "iconError"}, // {object} is incorrect format
+        '102': {"저장실패! {object}는 필수입력 사항입니다.", "iconError"}, // {object} is required field.
+        '103': {"저장실패! {object}는 최소 {minCount}자 이상입니다.", "iconError"}, // {object} more then {minCount} characters.
+        '104': {"저장실패! {object}가 정해진 글자수를 초과하였습니다.", "iconError"}, // {object} exceeds the maximum number of characters.
+        '105': {"저장실패! {object}가 올바른 형식이 아닙니다.", "iconError"}, // {object} has incorrect format.
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
