@@ -293,7 +293,13 @@ export default defineComponent({
     }));
 
     onError((error) => {
-      message.error(error.message, 4);
+      message.error({
+        content: () => error.message,
+        class: 'custom-class',
+        style: {
+          marginTop: '20vh',
+        },
+      }, 4);
     });
 
     watch(result, (value) => {
