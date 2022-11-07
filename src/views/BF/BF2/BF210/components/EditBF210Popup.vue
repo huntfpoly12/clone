@@ -32,8 +32,9 @@
               <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 150px;" />
             </a-form-item> -->
             <a-form-item label="소속" class="red">
-              <DxSelectBox v-model:value="formState.groupCode" value-expr="groupCode" class="select-search"
-                :height="$config_styles.HeightInput" disabled=true style="width: 150px;" />
+              <default-text-box v-model:valueInput="formState.groupCode" style="width: 150px; margin-right: 10px"
+                :disabled="true" />
+              <!-- <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" /> -->
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -81,17 +82,17 @@
                 <ToggleButton v-on:change="triggerToggleEvent" />
               </div>
             </a-form-item>
-            <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" :span="8" class="red">
-              <mail-text-box v-if="formState.type !== 'c'" @change="validateEmail" v-model:valueInput="formState.email"
-                style="width: 230px" :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
-              <mail-text-box v-if="formState.type == 'c'" disabled v-model:valueInput="formState.email"
-                style="width: 230px" />
-              <!-- <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p> -->
+            <a-form-item label="이메일" :span="8" class="red">
+              <mail-text-box v-if="formState.type !== 'c'" v-model:valueInput="formState.email" />
+              <mail-text-box v-else disabled v-model:valueInput="formState.email" />
+
               <DxButton v-if="formState.type !== 'c'" html-type="submit" danger class="btn_sendemail"
                 @click="showModal">
                 비밀번호 변경</DxButton>
-              <DxButton v-if="formState.type == 'c'" disabled=true html-type="submit" danger class="btn_sendemail">비밀번호 변경
+              <DxButton v-if="formState.type == 'c'" disabled=true html-type="submit" danger class="btn_sendemail">비밀번호
+                변경
               </DxButton>
+
             </a-form-item>
             <div class="confirm-popup">
               <a-modal v-model:visible="visible" :mask-closable="false">
@@ -258,6 +259,7 @@ export default defineComponent({
     };
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
+    let disabledBtn = ref(true);
     //Update info user
     const {
       mutate: updateUser,
@@ -322,16 +324,18 @@ export default defineComponent({
         }
       }
     );
-    const validateEmail = (e: any) => {
-      let checkMail = e.target.value.match(
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-      if (!checkMail) {
-        statusMailValidate.value = false;
-      } else {
-        statusMailValidate.value = true;
-      }
-    }
+    // const validateEmail = (e: any) => {
+    //   let checkMail = e.target.value.match(
+    //     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    //   );
+    //   if (!checkMail) {
+    //     statusMailValidate.value = false;
+    //     disabledBtn.value = true;
+    //   } else {
+    //     statusMailValidate.value = true;
+    //     disabledBtn.value = false;
+    //   }
+    // }
     const { result, refetch } = useQuery(
       queries.getUser,
       dataQuery,
@@ -390,7 +394,15 @@ export default defineComponent({
         arrData.value = value.searchScreenRoleGroups.datas
       }
     });
-
+    
+    watch(() => formState.value.email, (value: any) => {
+      if (value == true) {
+        disabledBtn.value = false
+      }
+      else {
+        disabledBtn.value = true;
+      }
+    });
     return {
       checkedNames,
       labelCol,
@@ -398,7 +410,7 @@ export default defineComponent({
       layout,
       formState,
       onFinish,
-      validateEmail,
+      // validateEmail,
       showModal,
       visible,
       sendGmail,
@@ -406,6 +418,7 @@ export default defineComponent({
       confirmUpdate,
       statusMailValidate,
       arrData,
+      disabledBtn
     };
   },
   methods: {
