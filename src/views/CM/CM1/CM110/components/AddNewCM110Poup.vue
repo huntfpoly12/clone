@@ -8,7 +8,11 @@
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="이용자ID">
-								<a-input v-model:value="formState.username" @change="validateCharacter" />
+								<default-text-box 
+									v-model:value="formState.username"
+								 	@change="validateCharacter"
+                					:required="true">
+								</default-text-box>
 							</a-form-item>
 						</a-col>
 						<a-col :span="12">
@@ -18,7 +22,7 @@
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="성명">
-								<a-input v-model:value="formState.name" />
+								<default-text-box  v-model:value="formState.name" :required="true"></default-text-box>
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -43,7 +47,7 @@
 							<a-row>
 								<a-col :span="15">
 									<a-form-item label="휴대폰">
-										<a-input v-model:value="formState.mobilePhone" @change="validateNumber"  @keyup="validateNumber" />
+										<default-text-box  v-model:value="formState.mobilePhone" @change="validateNumber"  @keyup="validateNumber" :required="true"></default-text-box>
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
@@ -57,8 +61,10 @@
 							<a-row>
 								<a-col :span="15">
 									<a-form-item label="이메일">
-										<a-input v-model:value="formState.email" @change="validateEmail"
-											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
+										<default-text-box v-model:value="formState.email" @change="validateEmail"
+											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" 
+											:required="true">
+										</default-text-box>
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
