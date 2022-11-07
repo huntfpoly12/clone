@@ -45,7 +45,7 @@ interface Origindata {
 }
 export const origindata : Origindata = {
     page: 1,
-    rows: 10,
+    rows: 20,
     statuses: [1],
     grade: null,
     name: "",

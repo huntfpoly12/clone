@@ -4,6 +4,7 @@
       v-model="date"
       :class="classNameProps"
       textInput
+      language="ko"
       autoApply
       :format="format"
       @focus="focusDatetime"
