@@ -1,5 +1,6 @@
 <template>
-    <a-modal v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md" footer="" :width="521">
+    <a-modal v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md" footer="" :width="521"
+        @cancel="cancelModal">
         <a-row>
             <a-col :span="4">
                 <warning-outlined :style="{ fontSize: '70px', color: '#faad14', paddingTop: '20px' }" />
@@ -8,9 +9,9 @@
                 <h3><b>{{ title }}</b></h3>
                 <p> {{ content }}</p>
             </a-col>
-            <div style="text-align: center; width: 100%; margin-left: 100px">
+            <div style="text-align: center; width: 100%;">
                 <a-input placeholder="확인" style="width: 200px" v-model:value="inputAccep" />
-                <a-button type="primary" style="margin-left: 100px" @click="handleOk">완료</a-button>
+                <a-button type="primary" style="margin-left: 10px" @click="handleOk">{{ okText }}</a-button>
             </div>
         </a-row>
     </a-modal>
@@ -35,7 +36,7 @@ export default defineComponent({
         content: {
             type: String
         },
-        keyAccep: {
+        keyAccept: {
             type: String
         },
         okText: {
@@ -49,9 +50,6 @@ export default defineComponent({
     setup(props, { emit }) {
         const inputAccep = ref()
         const visibleConfirm = ref<boolean>(false);
-        const hideModal = () => {
-            emit("closePopup", '')
-        }
         let visible = ref(false);
         watch(
             () => props.modalStatus,
@@ -93,7 +91,7 @@ export default defineComponent({
                                 emit("closePopup", false)
                             },
                         });
-                    else if (props.typeModal == "accepInput") {
+                    else if (props.typeModal == "acceptInput") {
                         visibleConfirm.value = true
                     }
                 }
@@ -101,7 +99,7 @@ export default defineComponent({
         );
 
         const handleOk = () => {
-            if (props.keyAccep == inputAccep.value)
+            if (props.keyAccept == inputAccep.value)
                 emit("checkConfirm", true)
             else
                 emit("checkConfirm", false)
@@ -109,12 +107,16 @@ export default defineComponent({
             visibleConfirm.value = false
         }
 
+        const cancelModal = () => {
+            emit("closePopup", false)
+        }
+
         return {
             handleOk,
             visible,
-            hideModal,
             visibleConfirm,
             inputAccep,
+            cancelModal
         }
     },
 })

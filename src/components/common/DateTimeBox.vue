@@ -1,5 +1,6 @@
 <template>
-    <Datepicker
+    <div>
+      <Datepicker
       v-model="date"
       :class="classNameProps"
       textInput
@@ -13,6 +14,8 @@
       :style="{height: $config_styles.HeightInput, width: width }"
     >
     </Datepicker>
+    </div>
+
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";

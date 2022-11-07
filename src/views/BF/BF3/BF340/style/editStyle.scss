@@ -45,3 +45,9 @@
 .post-code {
     margin-left: 25px;
 }
+
+::v-deep .red {
+    label {
+      color: red;
+    }
+}

@@ -35,7 +35,7 @@ var  saleGrade : Array<TypeObject>  = enum2Entries(SalesRepresentativeGrade).map
   value: value[1],
   label: value[0],
 }));
-
+saleGrade.push({ value: 0 , label: '전체'});
 export default defineComponent({
   props: {
     required: {
@@ -62,7 +62,7 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
-    saleGrade.push({ value: 0 , label: '전체'});
+    
     const value = ref(props.valueInput);
 
     const updateValue = (value: any) => {
