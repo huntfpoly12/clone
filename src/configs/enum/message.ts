@@ -28,11 +28,13 @@ export class Message extends BaseType {
      * $messages.getMessage('BF340','001') --> return  계좌번호,계좌비밀번호,사업자등록번호
      */
     public static BF210 = new Message({
-        '001': "회원ID가 이미 사용중입니다",
+        '001': {"사용 가능한 ID입니다", "iconInfo"}, // ID available
+        '002': {"회원ID가 이미 사용중입니다", "iconError"}, // ID is already in use.
+        '003': "<확인>을 누르면 비밀번호 설정 링크가 포함된 이메일이 발송됩니다. 계속 진행하시겠습니까?"
     });
 
     public static BF340 = new Message({
-        '001': "영업자명이 이미 사용중입니다.",
+        '001': {"영업자명이 이미 사용중입니다.", "iconError"}, // Sales Representitive Name is already in use.
         '002': "해지(또는 숨김)하면 본 영업자와 연계된 모든 사업자는 본사로 이관됩니다. 해지(또는 숨김)하려면 <확인>을 입력한 후 완료를 누르세요.",
     });
 
