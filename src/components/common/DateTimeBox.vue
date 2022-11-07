@@ -63,7 +63,8 @@ export default defineComponent({
     var date = ref(new Date(props.valueDate));
 
     const format = (date: any) => {
-      const day = date.getDate();
+      let day = date.getDate();
+      day = day > 9 ? day : "0" + day.toString();
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
