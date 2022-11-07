@@ -23,14 +23,14 @@
             <a-form-item label="소속" class="red">
 
               <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택"
-                :data-source="selectSearch" @value-changed="handleChange" required display-expr="label"
+                :data-source="selectSearch" @value-changed="handleChange" display-expr="label"
                 value-expr="value" :height="$config_styles.HeightInput"></DxSelectBox>
             
 
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="상태" class="red">
+            <a-form-item label="상태">
               <a-switch v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
                 style="width: 100px" />
             </a-form-item>
@@ -119,7 +119,6 @@
         </a-row>
       </form>
       <template #footer>
-
       </template>
     </a-modal>
   </div>
