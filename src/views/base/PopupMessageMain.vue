@@ -29,9 +29,9 @@
             </a-col>
             <a-col :span="8">
                 <DxButton :width="150" text="Accept Input" type="success" styling-mode="outlined"
-                    @click="openStatus('acceptInput')" :okText="'Đéo'"/>
+                    @click="openStatus('acceptInput')"/>
                 <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="typeModal"
-                    :title="'Title Notification'" :content="'Content notification'" :keyAccept="'1234'"
+                    :title="'Title Notification'" :content="'Content notification'" :keyAccept="'1234'"  :okText="'이해했다'"
                     @checkConfirm="statusComfirm" />
             </a-col>
             <a-col :span="8">

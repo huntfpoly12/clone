@@ -8,9 +8,9 @@
                 <h3><b>{{ title }}</b></h3>
                 <p> {{ content }}</p>
             </a-col>
-            <div style="text-align: center; width: 100%; margin-left: 100px">
+            <div style="text-align: center; width: 100%;">
                 <a-input placeholder="확인" style="width: 200px" v-model:value="inputAccep" />
-                <a-button type="primary" style="margin-left: 100px" @click="handleOk">{{ okText }}</a-button>
+                <a-button type="primary" style="margin-left: 10px" @click="handleOk">{{ okText }}</a-button>
             </div>
         </a-row>
     </a-modal>
