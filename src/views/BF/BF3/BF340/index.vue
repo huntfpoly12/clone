@@ -41,6 +41,7 @@
                   v-model:valueInput="saleGrade"
                   width="120px"
                   placeholder="전체"
+                  :selectAll="true"
                 />
               </div>
             </a-col>
@@ -119,7 +120,7 @@
           <DxColumn caption="영업자명" data-field="name" />
           <DxColumn caption="등급" data-field="grade" data-type="text" cell-template="grade-cell"/>
           <template #grade-cell="{ data }">
-              {{ getEnumValue(SalesRepresentativeStatus,data.value) }}
+              {{ getEnumValue(SalesRepresentativeGrade,data.value) }}
           </template>
           <DxColumn caption="주소" data-field="address" />
           <DxColumn caption="연락처" data-field="phone" />
@@ -196,7 +197,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, reactive } from "vue";
 import {
-  SalesRepresentativeStatus,
+  SalesRepresentativeGrade,
   getEnumValue,
 } from "@bankda/jangbuda-common";
 import dayjs from "dayjs";
@@ -292,7 +293,13 @@ export default defineComponent({
     }));
 
     onError((error) => {
-      message.error(error.message, 4);
+      message.error({
+        content: () => error.message,
+        class: 'custom-class',
+        style: {
+          marginTop: '20vh',
+        },
+      }, 4);
     });
 
     watch(result, (value) => {
@@ -387,7 +394,7 @@ export default defineComponent({
       modalEditStatus,
       modalHistoryStatus,
       getEnumValue,
-      SalesRepresentativeStatus
+      SalesRepresentativeGrade
     };
   },
 });
