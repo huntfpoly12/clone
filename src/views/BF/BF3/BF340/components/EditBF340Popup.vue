@@ -124,7 +124,7 @@
                 <a-row style="margin-top: 20px;">
                     <a-col :span="16" :offset="8">
                         <DxButton
-                            :width="120"
+                            :width="70"
                             text="취소"
                             type="default"
                             styling-mode="outlined"
