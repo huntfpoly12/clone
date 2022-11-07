@@ -1,5 +1,6 @@
 <template>
-    <a-modal v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md" footer="" :width="521">
+    <a-modal v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md" footer="" :width="521"
+        @cancel="cancelModal">
         <a-row>
             <a-col :span="4">
                 <warning-outlined :style="{ fontSize: '70px', color: '#faad14', paddingTop: '20px' }" />
@@ -49,9 +50,6 @@ export default defineComponent({
     setup(props, { emit }) {
         const inputAccep = ref()
         const visibleConfirm = ref<boolean>(false);
-        const hideModal = () => {
-            emit("closePopup", '')
-        }
         let visible = ref(false);
         watch(
             () => props.modalStatus,
@@ -109,12 +107,16 @@ export default defineComponent({
             visibleConfirm.value = false
         }
 
+        const cancelModal = () => {
+            emit("closePopup", false)
+        }
+
         return {
             handleOk,
             visible,
-            hideModal,
             visibleConfirm,
             inputAccep,
+            cancelModal
         }
     },
 })
