@@ -50,6 +50,9 @@ const DateTimeBoxForm = defineAsyncComponent(() =>
 const CommonJangbudaForm = defineAsyncComponent(() =>
   import("../base/CommonJangbudaForm.vue")
 );
+const ModalMessage = defineAsyncComponent(() =>
+  import("../base/PopupMessageMain.vue")
+);
 
 const allListTab = service.getListTab();
 export default defineComponent({
@@ -62,6 +65,7 @@ export default defineComponent({
     DxSortable,
     DxButton,
     DxValidationSummary,
+    ModalMessage
   },
   setup() {
     const allTab = ref(allListTab);
