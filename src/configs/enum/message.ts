@@ -10,8 +10,10 @@ export class Message extends BaseType {
     * $messages.getCommonMessage('xxxxxx','001') --> return  계좌번호,계좌비밀 xxxxxx 번호,사업자등록번호
     */
     private static COMMON = new Message({
-        '001': "계좌번호,계좌비밀 {object} 번호,사업자등록번호",
-        '002': "{object} 계좌번호,계좌비밀번호,생년월일(YYMMDD0000000)",
+        '101': {"저장되었습니다.", "iconInfo" }, // Save successful!
+        '102': {"저장실패! {object}는 필수입력 사항입니다.", "iconError"}, // {object} is required field
+        '103': {"저장실패! {object}는 최소 {minCount}자 이상입니다.", "iconError"}, // {object} more then {minCount} characters
+        '104': {"저장실패! {object}가 올바른 형식이 아닙니다.", "iconError"}, // {object} is incorrect format
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
