@@ -4,7 +4,7 @@
       :width="width"
       value-change-event="input"
       :show-clear-button="clearButton"
-      mode="number"
+      mode="text"
       :placeholder="placeholder"
       v-model:value="value"
       :disabled="disabled"
@@ -52,6 +52,7 @@ export default defineComponent({
     const value = ref(props.valueInput);
     const onInputValue = (e: any) => {
       var inputElement = e.event.target;
+      inputElement.value = inputElement.value.replace(/\D/g, '');
       if (inputElement.value.length > 11)
       {
         inputElement.value = inputElement.value.slice(0, 11);
@@ -66,7 +67,6 @@ export default defineComponent({
       }
     );
     return {
-
       onInputValue,
       value,
     };
