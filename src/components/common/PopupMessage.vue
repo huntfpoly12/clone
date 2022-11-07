@@ -10,7 +10,7 @@
             </a-col>
             <div style="text-align: center; width: 100%; margin-left: 100px">
                 <a-input placeholder="확인" style="width: 200px" v-model:value="inputAccep" />
-                <a-button type="primary" style="margin-left: 100px" @click="handleOk">완료</a-button>
+                <a-button type="primary" style="margin-left: 100px" @click="handleOk">{{ okText }}</a-button>
             </div>
         </a-row>
     </a-modal>
@@ -35,7 +35,7 @@ export default defineComponent({
         content: {
             type: String
         },
-        keyAccep: {
+        keyAccept: {
             type: String
         },
         okText: {
@@ -93,7 +93,7 @@ export default defineComponent({
                                 emit("closePopup", false)
                             },
                         });
-                    else if (props.typeModal == "accepInput") {
+                    else if (props.typeModal == "acceptInput") {
                         visibleConfirm.value = true
                     }
                 }
@@ -101,7 +101,7 @@ export default defineComponent({
         );
 
         const handleOk = () => {
-            if (props.keyAccep == inputAccep.value)
+            if (props.keyAccept == inputAccep.value)
                 emit("checkConfirm", true)
             else
                 emit("checkConfirm", false)
