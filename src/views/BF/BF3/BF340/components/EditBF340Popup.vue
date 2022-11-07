@@ -294,7 +294,7 @@ export default defineComponent({
         }
 
         updateDone((res) => {
-            message.success(`Update was successful`, 4);
+            message.success(`업데이트가 완료되었습니다!`, 4);
             setModalVisible();
         });
 
