@@ -41,6 +41,7 @@
                   v-model:valueInput="saleGrade"
                   width="120px"
                   placeholder="전체"
+                  :selectAll="true"
                 />
               </div>
             </a-col>
