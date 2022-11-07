@@ -12,7 +12,7 @@
 							</a-form-item>
 						</a-col>
 						<a-col :span="12">
-							<a-button @click="checkUserName">중복체크</a-button>
+							<a-button :type="addTypeButton ? 'primary' : '' " @click="checkUserName">중복체크</a-button>
 						</a-col>
 					</a-row>
 					<a-row>
@@ -105,6 +105,7 @@ export default defineComponent({
 		];
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(false);
+		const addTypeButton = ref<boolean>(false);
 		const options = ref<SelectProps['options']>([]);
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
@@ -220,6 +221,11 @@ export default defineComponent({
 			dataCallApiCheck.value = {
 				username: formState.value.username
 			}
+			if (formState.value.username.length >= 1) {
+				addTypeButton.value = true
+			} else {
+				addTypeButton.value = false
+			}
 		}
 
 		const {
@@ -243,6 +249,7 @@ export default defineComponent({
 			confirmPopup,
 			validateEmail,
 			statusMailValidate,
+			addTypeButton,
 			bizTypeList,
 			creactUserNew,
 			refetchData,
