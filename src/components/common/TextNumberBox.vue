@@ -1,15 +1,16 @@
 <template>
   <div>
     <DxTextBox
+      :ref="numberTextBox"
       :width="width"
       value-change-event="input"
       :show-clear-button="clearButton"
       :placeholder="placeholder"
       v-model:value="value"
-      mode="number"
+      mode="text"
       :disabled="disabled"
       :readOnly="readOnly"
-      @input="updateValue(value)"
+      :on-input="onInputValue"
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
@@ -49,10 +50,13 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
+    const numberTextBox = ref();
     const rules = ref({ X: /[0-9]/ });
     const value = ref(props.valueInput);
-    const updateValue = (value: any) => {
-      emit("update:valueInput", value);
+    const onInputValue = (e: any) => {
+      var inputElement = e.event.target;
+      inputElement.value = inputElement.value.replaceAll(/\D/g, '');
+      emit("update:valueInput", inputElement.value);
     };
 
     watch(
@@ -62,7 +66,8 @@ export default defineComponent({
       }
     );
     return {
-      updateValue,
+      onInputValue,
+      numberTextBox,
       value,
       rules,
     };
