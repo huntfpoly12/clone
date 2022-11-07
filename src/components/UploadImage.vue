@@ -32,7 +32,7 @@
                 </a-form-item>
             </div>
             <div v-else>
-                <div>{{ title }}</div>
+                <p><b>{{ title }}</b></p>
                 <a-row>
                     <div v-if="disabledImg == false">
                         <div style="display: flex;">
@@ -76,7 +76,7 @@
 
 <script src="" lang="ts">
 import { ref, defineComponent } from "vue";
-import { message, Upload, UploadProps } from "ant-design-vue"; 
+import { message, Upload, UploadProps } from "ant-design-vue";
 import Repository from "../repositories/index";
 const uploadRepository = Repository.get("upload");
 

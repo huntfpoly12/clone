@@ -41,6 +41,7 @@
                   v-model:valueInput="saleGrade"
                   width="120px"
                   placeholder="전체"
+                  :selectAll="true"
                 />
               </div>
             </a-col>
@@ -117,7 +118,10 @@
             </a-tag>
           </template>
           <DxColumn caption="영업자명" data-field="name" />
-          <DxColumn caption="등급" data-field="grade" data-type="text" />
+          <DxColumn caption="등급" data-field="grade" data-type="text" cell-template="grade-cell"/>
+          <template #grade-cell="{ data }">
+              {{ getEnumValue(SalesRepresentativeGrade,data.value) }}
+          </template>
           <DxColumn caption="주소" data-field="address" />
           <DxColumn caption="연락처" data-field="phone" />
           <DxColumn caption="휴대폰" data-field="mobilePhone" />
@@ -192,6 +196,10 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive } from "vue";
+import {
+  SalesRepresentativeGrade,
+  getEnumValue,
+} from "@bankda/jangbuda-common";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -285,7 +293,13 @@ export default defineComponent({
     }));
 
     onError((error) => {
-      message.error(error.message, 4);
+      message.error({
+        content: () => error.message,
+        class: 'custom-class',
+        style: {
+          marginTop: '20vh',
+        },
+      }, 4);
     });
 
     watch(result, (value) => {
@@ -379,6 +393,8 @@ export default defineComponent({
       modalAddNewStatus,
       modalEditStatus,
       modalHistoryStatus,
+      getEnumValue,
+      SalesRepresentativeGrade
     };
   },
 });
