@@ -31,6 +31,11 @@ const listTab: ListTab[] = [
         ID: 5,
         TabName: 'Check Box',
         layoutName: 'CheckBoxFrom'
+    },
+    {
+        ID: 6,
+        TabName: 'Modal Message',
+        layoutName: 'ModalMessage'
     }
 ];
 
