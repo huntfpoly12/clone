@@ -25,10 +25,7 @@
               <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택"
                 :data-source="selectSearch" @value-changed="handleChange" required display-expr="label"
                 value-expr="value" :height="$config_styles.HeightInput"></DxSelectBox>
-              <!-- <DxValidator>
-                <DxRequiredRule message="이항목은 필수 입력사항입니다!" />
-
-              </DxValidator> -->
+            
 
             </a-form-item>
           </a-col>

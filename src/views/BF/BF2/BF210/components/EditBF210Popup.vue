@@ -30,7 +30,7 @@
               <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 150px;" />
             </a-form-item>
             <a-form-item label="소속">
-              <DxSelectBox :valueInput="formState.groupCode" value-expr="id" class="select-search" :height="$config_styles.HeightInput" disabled=true style="width: 150px;" />
+              <DxSelectBox :data-source="formState" value-expr="groupCode" class="select-search" :height="$config_styles.HeightInput" disabled=true style="width: 150px;" />
             </a-form-item>
           </a-col>
           <a-col :span="12">
