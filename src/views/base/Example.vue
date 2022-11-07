@@ -53,6 +53,13 @@ const CommonJangbudaForm = defineAsyncComponent(() =>
 const ModalMessage = defineAsyncComponent(() =>
   import("../base/PopupMessageMain.vue")
 );
+const PreviewImage = defineAsyncComponent(() =>
+  import("../base/PreviewImage.vue")
+);
+
+const ButtonBasic = defineAsyncComponent(() =>
+  import("../base/ButtonBasic.vue")
+);
 
 const allListTab = service.getListTab();
 export default defineComponent({
@@ -65,7 +72,9 @@ export default defineComponent({
     DxSortable,
     DxButton,
     DxValidationSummary,
-    ModalMessage
+    ModalMessage,
+    PreviewImage,
+    ButtonBasic
   },
   setup() {
     const allTab = ref(allListTab);

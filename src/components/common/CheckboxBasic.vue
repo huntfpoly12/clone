@@ -1,0 +1,56 @@
+<template> 
+    <DxCheckBox v-model:value="valueCheck" :disabled="disabled" :icon-size="size" />
+</template>
+<script lang="ts">
+import { defineComponent, getCurrentInstance, watch, ref } from "vue";
+import DxCheckBox from 'devextreme-vue/check-box';
+
+export default defineComponent({
+    props: {
+        valueCheckbox: {
+            default: false,
+            type: Boolean,
+        },
+        disabled: {
+            default: false,
+            type: Boolean,
+        },
+        size: {
+            type: String
+        },
+    },
+    components: {
+        DxCheckBox
+    },
+
+    setup(props, { emit }) {
+        const app: any = getCurrentInstance()
+        const styleCheckBox = app.appContext.config.globalProperties.$config_styles
+
+        const valueCheck = ref(props.valueCheckbox)
+
+        watch(
+            () => valueCheck.value,
+            (newValue) => { 
+                emit("update:valueCheckbox", newValue);
+            }
+        );
+        return {
+            valueCheck,
+            styleCheckBox
+        }
+    },
+});
+</script>
+
+<style lang="scss" scoped>
+::v-deep .dx-checkbox-icon {
+    color: v-bind("styleCheckBox.ColorCheckBox");
+    border-color: v-bind("styleCheckBox.ColorCheckBox") !important;
+}
+
+::v-deep .dx-checkbox-icon:hover,
+.dx-checkbox-container {
+   
+}
+</style>

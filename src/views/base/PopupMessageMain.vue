@@ -5,12 +5,13 @@
                 <div>Modal Notification</div>
             </a-col>
             <a-col :span="8">
-                <DxButton :width="100" text="info" type="normal" styling-mode="outlined" @click="openStatus('info')" />-
-                <DxButton :width="100" text="success" type="success" styling-mode="outlined"
+                <DxButton :width="100" text="info" type="normal" styling-mode="outlined" @click="openStatus('info')"
+                    :okText="'확인'" />-
+                <DxButton :width="100" text="success" type="success" styling-mode="outlined" :okText="'확인'"
                     @click="openStatus('success')" /> -
-                <DxButton :width="100" text="error" type="danger" styling-mode="outlined"
+                <DxButton :width="100" text="error" type="danger" styling-mode="outlined" :okText="'확인'"
                     @click="openStatus('error')" /> -
-                <DxButton :width="100" text="warning" type="default" styling-mode="outlined"
+                <DxButton :width="100" text="warning" type="default" styling-mode="outlined" :okText="'확인'"
                     @click="openStatus('warning')" />
             </a-col>
             <a-col :span="8">
@@ -31,7 +32,7 @@
                 <DxButton :width="150" text="Accept Input" type="success" styling-mode="outlined"
                     @click="openStatus('acceptInput')" />
                 <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="typeModal"
-                    :title="'Title Notification'" :content="'Content notification'" :keyAccept="'1234'" :okText="'이해했다'"
+                    :title="'Title Notification'" :content="'Content notification'" :keyAccept="'1234'" :okText="'확인'"
                     @checkConfirm="statusComfirm" />
             </a-col>
             <a-col :span="8">
@@ -66,7 +67,6 @@ export default defineComponent({
         const bday = ref("");
         const text1 = ref("text example.....");
         function submit() {
-            console.log('ffffff');
             this.$refs['formTest'].onsubmit = onFormSubmit()
         }
         function onFormSubmit(e) {
