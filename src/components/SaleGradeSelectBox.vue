@@ -19,22 +19,13 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch , computed} from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import {
   SalesRepresentativeGrade,
   enum2Entries,
 } from "@bankda/jangbuda-common";
-
-interface TypeObject {
-  value: number,
-  label: string,
-};
-var  saleGrade : Array<TypeObject>  = enum2Entries(SalesRepresentativeGrade).map((value) => ({
-  value: value[1],
-  label: value[0],
-}));
 
 export default defineComponent({
   props: {
@@ -66,9 +57,18 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
-    if(props.selectAll){
-      saleGrade.push({ value: 0 , label: '전체'});
-    }
+
+    var  saleGrade : any  = computed(() => {
+        let slGrade : any =  enum2Entries(SalesRepresentativeGrade).map((value) => ({
+        value: value[1],
+        label: value[0],
+      }));
+      if(props.selectAll){
+        slGrade.push({ value: 0 , label: '전체'});
+      }
+      return slGrade;
+    }) ;
+
     const value = ref(props.valueInput);
 
     const updateValue = (value: any) => {
