@@ -2,35 +2,39 @@
   <div id="components-modal-demo-position">
     <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
       @cancel="setModalVisible()" width="50%" :mask-closable="false">
+
       <template #footer>
-        <div>
+        <!-- <div>
           <a-button @click="setModalVisible()">그냥 나가기</a-button>
           <a-button type="primary" @click="confirmUpdate">저장하고 나가기</a-button>
-        </div>
+        </div> -->
       </template>
       <h2 class="title_modal">회원정보</h2>
       <a-form v-bind="layout" name="nest-messages" v-model:value="formState" @finish="onFinish">
-        <a-row :gutter="24" >
-          <a-col :span="12" >
-            <a-form-item label="회원ID" >
+        <a-row :gutter="24">
+          <a-col :span="12">
+            <a-form-item label="회원ID" class="red">
               <div class="dflex">
-              <default-text-box disabled v-model:valueInput="formState.username" style="width: 150px; margin-right: 10px" />
-              <dx-button disabled=true type="default" style="border: 1px solid">
-                중복체크
-              </dx-button>
-            </div>
+                <default-text-box disabled v-model:valueInput="formState.username"
+                  style="width: 150px; margin-right: 10px" />
+                <dx-button disabled=true type="default" style="border: 1px solid">
+                  중복체크
+                </dx-button>
+              </div>
             </a-form-item>
-            <a-form-item label="회원명">
+            <a-form-item label="회원명" class="red">
               <default-text-box v-if="formState.type != 'c'" v-model:valueInput="formState.name"
                 style="width: 150px; margin-right: 10px" />
               <default-text-box v-if="formState.type == 'c'" disabled v-model:valueInput="formState.name"
                 style="width: 150px; margin-right: 10px" />
             </a-form-item>
-            <a-form-item label="소속">
+            <!-- <a-form-item label="소속">
               <a-select v-model:value="formState.groupCode" class="select-search" disabled style="width: 150px;" />
-            </a-form-item>
-            <a-form-item label="소속">
-              <DxSelectBox :valueInput="formState.groupCode" value-expr="id" class="select-search" :height="$config_styles.HeightInput" disabled=true style="width: 150px;" />
+            </a-form-item> -->
+            <a-form-item label="소속" class="red">
+              <default-text-box v-model:valueInput="formState.groupCode" style="width: 150px; margin-right: 10px"
+                :disabled="true" />
+              <!-- <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" /> -->
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -40,7 +44,7 @@
               <a-switch v-if="formState.type == 'c'" disabled v-model:checked="formState.active" checked-children="이용중"
                 un-checked-children="이용중지" style="width: 100px" />
             </a-form-item>
-            <a-form-item label="회원종류">
+            <a-form-item label="회원종류" class="red">
               <a-select style="width: 150px" v-model:value="formState.type" option-label-prop="children"
                 class="select_disable" disabled>
                 <a-select-option value="c" label="고객사">
@@ -67,7 +71,7 @@
         </a-row>
         <a-row :gutter="24">
           <a-col :span="12">
-            <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4">
+            <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4" class="red">
               <div style="display: flex; align-items: flex-end">
                 <tel-text-box v-if="formState.type !== 'c'" @keypress="onlyNumber" type="text"
                   v-model:valueInput="formState.mobilePhone" style="width: 150px; margin-right: 8px" />
@@ -78,16 +82,17 @@
                 <ToggleButton v-on:change="triggerToggleEvent" />
               </div>
             </a-form-item>
-            <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" :span="8">
-              <mail-text-box v-if="formState.type !== 'c'" @change="validateEmail" v-model:valueInput="formState.email"
-                style="width: 230px" :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
-              <mail-text-box v-if="formState.type == 'c'" disabled v-model:valueInput="formState.email" style="width: 230px" />
-              <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
-              <a-button v-if="formState.type !== 'c'" html-type="submit" danger class="btn_sendemail"
-                @click="showModal">
-                비밀번호 변경</a-button>
-              <a-button v-if="formState.type == 'c'" disabled html-type="submit" danger class="btn_sendemail">비밀번호 변경
-              </a-button>
+            <a-form-item label="이메일" :span="8" class="red" >
+              <mail-text-box v-if="formState.type !== 'c'" v-model:valueInput="formState.email" style="width: 237px" />
+              <mail-text-box v-else disabled v-model:valueInput="formState.email" style="width: 237px"/>
+
+              <DxButton v-if="formState.type !== 'c'" html-type="submit" danger class="btn_sendemail"
+                @click="showModal" :disabled="disabledBtn">
+                비밀번호 변경</DxButton>
+              <DxButton v-if="formState.type == 'c'" disabled=true html-type="submit" danger class="btn_sendemail">비밀번호
+                변경
+              </DxButton>
+
             </a-form-item>
             <div class="confirm-popup">
               <a-modal v-model:visible="visible" :mask-closable="false">
@@ -145,6 +150,13 @@
           </DxDataGrid>
         </div>
       </div>
+      <a-row>
+        <a-col :offset="8" style="text-align: center; margin-top: 20px;">
+          <DxButton :width="120" text="취소" type="default" styling-mode="outlined" @click="setModalVisible"
+            style="margin-right: 10px;" />
+          <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default" @click="confirmUpdate" />
+        </a-col>
+      </a-row>
     </a-modal>
   </div>
 </template>
@@ -188,7 +200,7 @@ export default defineComponent({
     DxSelectBox,
     DxCheckBox,
     DxButton
-},
+  },
   data() {
     return {
       toggleActive: false,
@@ -247,6 +259,7 @@ export default defineComponent({
     };
     const labelCol = { style: { width: "300px" } };
     const wrapperCol = { span: 14 };
+    let disabledBtn = ref(true);
     //Update info user
     const {
       mutate: updateUser,
@@ -300,27 +313,31 @@ export default defineComponent({
     }
     const dataQuery = ref();
     let trigger = ref<boolean>(false);
+
     watch(() => props.modalStatus,
       (newValue, old) => {
         if (newValue) {
           trigger.value = true;
           if (dataQuery) {
             dataQuery.value = { id: props.idRowEdit };
-            refetch()
+            refetch();
+           
           }
         }
       }
     );
-    const validateEmail = (e: any) => {
-      let checkMail = e.target.value.match(
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-      if (!checkMail) {
-        statusMailValidate.value = false;
-      } else {
-        statusMailValidate.value = true;
-      }
-    }
+    // const validateEmail = (e: any) => {
+    //   let checkMail = e.target.value.match(
+    //     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    //   );
+    //   if (!checkMail) {
+    //     statusMailValidate.value = false;
+    //     disabledBtn.value = true;
+    //   } else {
+    //     statusMailValidate.value = true;
+    //     disabledBtn.value = false;
+    //   }
+    // }
     const { result, refetch } = useQuery(
       queries.getUser,
       dataQuery,
@@ -379,7 +396,27 @@ export default defineComponent({
         arrData.value = value.searchScreenRoleGroups.datas
       }
     });
+    
+    watch(() => formState.value.email, (newValue, old) => {
+      if (newValue) {
+        console.log(newValue);
+        
+        let checkMail = newValue.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );console.log(checkMail);
 
+      if (!checkMail) {
+        statusMailValidate.value = false;
+        disabledBtn.value = true;
+      } else {
+        statusMailValidate.value = true;
+        disabledBtn.value = false;
+      }
+      }  
+      else {
+        disabledBtn.value = true;
+      }
+    });
     return {
       checkedNames,
       labelCol,
@@ -387,7 +424,7 @@ export default defineComponent({
       layout,
       formState,
       onFinish,
-      validateEmail,
+      // validateEmail,
       showModal,
       visible,
       sendGmail,
@@ -395,6 +432,7 @@ export default defineComponent({
       confirmUpdate,
       statusMailValidate,
       arrData,
+      disabledBtn
     };
   },
   methods: {
@@ -443,6 +481,12 @@ export default defineComponent({
   flex-direction: row;
 }
 
+::v-deep .red {
+  label {
+    color: red;
+  }
+}
+
 ::v-deep .ant-form-item-explain-error {
   width: 400px;
   margin-left: 5px;
@@ -452,9 +496,11 @@ export default defineComponent({
 ::v-deep .ant-form-item-label>label {
   width: 110px;
 }
+
 .dflex {
   display: flex;
 }
+
 .overlay {
   position: absolute;
   top: 0;
@@ -505,6 +551,9 @@ export default defineComponent({
 
 .btn_sendemail {
   margin-top: 10px;
+  padding: 7px;
+  color: red;
+  border: 1px solid red
 }
 
 .confirm-button {

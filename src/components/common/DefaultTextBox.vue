@@ -11,9 +11,10 @@
       :readOnly="readOnly"
       @input="updateValue(value)"
       :height="$config_styles.HeightInput"
+      @value-changed="valueChanged"
     >
       <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxRequiredRule v-if="required" :message="messageRequired" />
         <DxStringLengthRule v-if="minCharacter > 0"
                             :min="minCharacter"
                             :message="messageString"
@@ -24,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch , getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule,DxStringLengthRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
@@ -35,7 +36,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required!",
+      default: "",
     },
     width: String,
     maxCharacter: Number,
@@ -43,11 +44,19 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    replaceRegex: {
+      type: Boolean,
+      default: false,
+    },
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
       type: String,
       default: "",
+    },
+    label: {
+      type: String,
+      required: true
     },
     placeholder: String,
     readOnly: Boolean,
@@ -59,20 +68,33 @@ export default defineComponent({
     DxStringLengthRule
   },
   setup(props, { emit }) {
+    const app : any= getCurrentInstance()
+    const messages = app.appContext.config.globalProperties.$messages;
     const value = ref(props.valueInput);
-    const messageString = ref('이 덱스트를 ' +props.minCharacter+ '자 이상으로 늘리세요!');
-
+    const messageString = ref(messages.getCommonMessage('103').message.replaceAll('{object}', props.label).replaceAll('{minCount}', props.minCharacter));
+    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
+    if(props.messRequired != ""){
+      messageRequired.value = props.messRequired;
+    }
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
-    watch(
-        () => props.valueInput,
-        (newValue) => {
-          value.value = newValue;
+    watch(() => props.valueInput, (newValue) => {
+            value.value = newValue;
         }
     );
+
+    const valueChanged = () => {
+      if (props.replaceRegex) {
+        setTimeout(() => {
+          value.value= value.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+        }, 100);
+      }
+    }
     return {
+      valueChanged,
       messageString,
+      messageRequired,
       updateValue,
       value,
     };

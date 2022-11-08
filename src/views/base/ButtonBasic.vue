@@ -9,17 +9,18 @@
             </tr>
             <tr>
                 <td>
-                    <button-basic :text="'단추'" :type="'success'" :mode="'contained'" @onClick="clickButton" /> -
-                    <button-basic :text="'단추'" :type="'success'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'success'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'contained'"
+                        @onClick="clickButton" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'text'" />
 
-                    <button-basic :text="'단추'" :type="'default'" :mode="'contained'" /> -
-                    <button-basic :text="'단추'" :type="'default'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'default'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'contained'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'text'" />
 
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'contained'" /> -
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'contained'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'text'" />
                 </td>
 
                 <td>
@@ -68,7 +69,7 @@
 
                 <td>
                     <b>arrayValue</b> : Array data <br>
-                    <b>v-model:valueRadioCheck</b> : Row data default and data after change <br>
+                    <b>v-model:valueRadioCheck</b> : Id default <br>
                     <b>layoutCustom</b> : Layout horizontal and vertical ( horizontal / '' )
                 </td>
 
@@ -136,7 +137,7 @@ export default defineComponent({
         { id: 3, text: 'High' }])
 
         const valueCheckBox = ref(false)
-        const valueRadioBox = ref(arrayRadioCheck.value[3])
+        const valueRadioBox = ref(3)
         const valueSwitchChange = ref(true)
 
         return {
