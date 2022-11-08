@@ -9,23 +9,25 @@
             </tr>
             <tr>
                 <td>
-                    <button-basic :text="'단추'" :type="'success'" :mode="'contained'" @onClick="clickButton" /> -
-                    <button-basic :text="'단추'" :type="'success'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'success'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'contained'"
+                        @onClick="clickButton" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'text'" />
 
-                    <button-basic :text="'단추'" :type="'default'" :mode="'contained'" /> -
-                    <button-basic :text="'단추'" :type="'default'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'default'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'contained'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'text'" />
 
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'contained'" /> -
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'contained'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'text'" />
                 </td>
 
                 <td>
                     <b> text</b> : Text button <br />
                     <b> type </b>: Choose type button : success / default / danger <br />
                     <b> mode </b>: Choose styling mode button : contained / outlined / text
+                    <b> width </b>: Set width button
                 </td>
 
                 <td>
@@ -38,7 +40,7 @@
                     </span>
                 </td>
             </tr>
-            <tr> 
+            <tr>
                 <td>
                     <checkbox-basic v-model:valueCheckbox="valueCheckBox" :disabled="false" :size="'18'" />
                 </td>
@@ -88,7 +90,9 @@
                 </td>
 
                 <td>
-                    <b>v-model:valueSwitch</b> : Data default ( true / false)
+                    <b>v-model:valueSwitch</b> : Data default ( true / false)<br>
+                    <b>textCheck</b> : text when checked<br>
+                    <b>v-textUnCheck</b> : text when un-checked
                 </td>
 
                 <td>
@@ -97,7 +101,8 @@
 
                 <td>
                     <span class="mycode">
-
+                        &lt;switch-basic v-model:valueSwitch="valueSwitchChange" :textCheck="'포함'" :textUnCheck="'제외'" /
+                        &gt;
                     </span>
                 </td>
             </tr>
