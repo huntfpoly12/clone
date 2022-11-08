@@ -66,7 +66,8 @@ export default defineComponent({
     const format = (date: any) => {
       let day = date.getDate();
       day = day > 9 ? day : "0" + day.toString();
-      const month = date.getMonth() + 1;
+      let month = date.getMonth() + 1;
+      month = month > 9 ? month : "0" + month.toString();
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
     };
