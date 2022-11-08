@@ -14,14 +14,13 @@
                                     <default-text-box v-model:valueInput="dataRes.id" class="mr5"
                                         placeholder="영문,숫자 5~10자 (중복불가)" disabled :max-character="10" :min-character="5"
                                         width="250"></default-text-box>
-                                    <button-basic type="default" text="중복체크" mode="contained" :height="33" disabled />
                                 </div>
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
                             <a-form-item label="그룹명" class="clr">
                                 <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" disabled
-                                    width="250" mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
+                                    width="250"></default-text-box>
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
@@ -87,17 +86,15 @@ import {
     DxSelection
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
-import { message } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
 import { AdminScreenRole } from '@bankda/jangbuda-common';
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import DefaultTextBox from "../../../../../components/common/DefaultTextBox.vue";
+import notification from '../../../../../utils/notification';
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
-        DefaultTextBox,
         SearchOutlined,
         WarningOutlined,
         DxDataGrid,
@@ -153,11 +150,11 @@ export default defineComponent({
             onError: editError
         } = useMutation(mutations.updateScreenRoleGroup);
         editDone(e => {
-            message.success('그룹이 생성되었습니다.')
+            notification('success', "그룹이 생성되었습니다.")
             emit("closePopupEdit", false)
         })
         editError(e => {
-            message.error(e.message)
+            notification('error', e.message)
         })
         const updateScreenRole = (e: any) => {
             var res = e.validationGroup.validate();
@@ -263,4 +260,5 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped src="../style/popupEdit/index.scss">
+
 </style>

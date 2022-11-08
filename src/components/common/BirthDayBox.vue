@@ -13,7 +13,7 @@
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxRequiredRule v-if="required" :message="messageRequired" />
         <DxPatternRule :pattern="pattern" :message="maskMess" />
       </DxValidator>
     </DxTextBox>
@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref ,watch } from "vue";
+import { defineComponent, ref ,watch , getCurrentInstance } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
@@ -41,7 +41,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required!",
+      default: "",
     },
     width: String,
     clearButton: Boolean,
@@ -49,6 +49,10 @@ export default defineComponent({
     valueInput: {
       type: String,
       default: "",
+    },
+    label: {
+      type: String,
+      required: true
     },
     readOnly: Boolean,
   },
@@ -64,8 +68,14 @@ export default defineComponent({
     DxAsyncRule,
   },
   setup(props, { emit }) {
+    const app : any= getCurrentInstance()
+    const messages = app.appContext.config.globalProperties.$messages;
     const mask = ref("0000-00-00");
-    const maskMess = ref("The value must have a correct date format");
+    const maskMess = ref(messages.getCommonMessage('105').message.replaceAll('{object}', props.label));
+    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
+    if(props.messRequired != ""){
+      messageRequired.value = props.messRequired;
+    }
     const value = ref(props.valueInput.replaceAll('-', ''));
     const pattern = ref(/((19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01]))/);
     const updateValue = (value: any) => {
@@ -83,6 +93,7 @@ export default defineComponent({
       value,
       mask,
       maskMess,
+      messageRequired,
       pattern,
     };
   },

@@ -11,9 +11,9 @@
                         <a-col :span="16">
                             <a-form-item label="그룹코드" class="clr">
                                 <div class="dflex">
-                                    <default-text-box class="mr5" v-model:valueInput="dataRes.id"
+                                    <default-text-box label="그룹코드" class="mr5" v-model:valueInput="dataRes.id"
                                         placeholder="영문,숫자 5~10자 (중복불가)" :max-character="10" :min-character="5" required
-                                        mess-required="이항목은 필수 입력사항입니다!" width="250"></default-text-box>
+                                        width="250"></default-text-box>
                                     <button-basic type="default" text="중복체크" @onClick="checkId" mode="contained"
                                         :disabled="isDisable" :height="33"></button-basic>
                                 </div>
@@ -22,7 +22,7 @@
                         <a-col :span="16">
                             <a-form-item label="그룹명" class="clr">
                                 <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" width="250"
-                                    :max-character="20" required mess-required="이항목은 필수 입력사항입니다!" />
+                                    :max-character="20" required label="그룹명" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
@@ -86,7 +86,7 @@ import {
     DxColumn,
     DxPaging,
 } from 'devextreme-vue/data-grid';
-import { message } from 'ant-design-vue';
+import notification from '../../../../../utils/notification';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
@@ -149,9 +149,9 @@ export default defineComponent({
         }, { deep: true })
         watch(resList, (value) => {
             if (value.isScreenRoleGroupRegistableId == true) {
-                message.success(`사용 가능한 그룹코드입니다`)
+                notification('success', "사용 가능한 그룹코드입니다")
             } else {
-                message.error(`이미 존재하는 그룹코드 입니다. 다른 코드를 입력해주세요`)
+                notification('error', `이미 존재하는 그룹코드 입니다. 다른 코드를 입력해주세요`)
             }
             spinningAdd.value = false
         });
@@ -162,11 +162,11 @@ export default defineComponent({
             onError: creactError
         } = useMutation(mutations.createScreenRoleGroup);
         creactDone(e => {
-            message.success('그룹이 생성되었습니다.')
+            notification('success', "그룹이 생성되었습니다.")
             emit("closePopupAdd", false)
         })
         creactError(e => {
-            message.error(e.message)
+            notification('error', e.message)
         })
         const createScrenRole = (e: any) => {
             var res = e.validationGroup.validate();
@@ -246,4 +246,5 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped src="../style/popupAdd/index.scss">
+
 </style>

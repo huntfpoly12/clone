@@ -13,7 +13,7 @@
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxRequiredRule v-if="required" :message="messageRequired" />
         <DxEmailRule message="이메일 형식이 정확하지 않습니다" />
       </DxValidator>
     </DxTextBox>
@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref ,watch } from "vue";
+import { defineComponent, ref ,watch,getCurrentInstance } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
@@ -36,7 +36,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required!",
+      default: "",
     },
     width: String,
     clearButton: Boolean,
@@ -44,6 +44,10 @@ export default defineComponent({
     valueInput: {
       type: String,
       default: "",
+    },
+    label: {
+      type: String,
+      required: true
     },
     placeholder: String,
     readOnly: Boolean,
@@ -55,7 +59,13 @@ export default defineComponent({
     DxEmailRule
   },
   setup(props, { emit }) {
+    const app : any= getCurrentInstance()
+    const messages = app.appContext.config.globalProperties.$messages;
     const value = ref(props.valueInput);
+    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
+    if(props.messRequired != ""){
+      messageRequired.value = props.messRequired;
+    }
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -70,6 +80,7 @@ export default defineComponent({
     return {
       updateValue,
       value,
+      messageRequired
     };
   },
 });

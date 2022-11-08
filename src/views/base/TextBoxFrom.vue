@@ -15,12 +15,17 @@
                 width="300px"
                 :required="true"
                 placeholder="Default text box"
+                :minCharacter="3"
+                label="Default text box"
               ></default-text-box>
             </div>
           </div>
         </td>
         <td>
           <ul>
+            <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
             <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
@@ -64,6 +69,9 @@
         <td>
           <ul>
             <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
+            <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
             </li>
@@ -101,6 +109,9 @@
         <td>
           <ul>
             <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
+            <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
             </li>
@@ -133,6 +144,9 @@
         </td>
         <td>
           <ul>
+            <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
             <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
@@ -168,6 +182,9 @@
         <td>
           <ul>
             <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
+            <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
             </li>
@@ -202,6 +219,9 @@
         </td>
         <td>
           <ul>
+            <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
             <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)

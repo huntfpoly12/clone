@@ -7,40 +7,44 @@
                         <a-form :model="formState" :label-col="labelCol">
                             <h2 class="title-h2">사업자정보</h2>
                             <a-form-item label="상호">
-                                <a-input v-model:value="formState.name" :disabled="true" style="width: 300px" />
+                                <default-text-box v-model:valueInput="formState.name" :disabled="true" style="width: 300px" ></default-text-box>
                             </a-form-item>
                             <div class="dflex">
                                 <div>
                                     <a-form-item label="사업자유형">
-                                        <a-input v-model:value="formState.bizType" :disabled="true"
-                                            style="width: 120px" />
+                                        <default-text-box v-model:valueInput="formState.bizType" :disabled="true"
+                                            style="width: 120px" >
+                                        </default-text-box>
                                     </a-form-item>
                                 </div>
                                 <div style="margin-left: 200px;">
                                     <a-form-item label="사업자번호">
-                                        <a-input v-model:value="formState.bizNumber" :disabled="true"
-                                            style="width: 176px" />
+                                        <text-number-box v-model:valueInput="formState.bizNumber" :disabled="true"
+                                            style="width: 176px" >
+                                        </text-number-box>
                                     </a-form-item>
                                 </div>
                             </div>
                             <a-form-item label="주소">
-                                <a-input v-model:value="formState.address" :disabled="true" style="width: 647px" />
+                                <default-text-box v-model:valueInput="formState.address" :disabled="true" style="width: 647px" ></default-text-box>
                             </a-form-item>
                             <div class="dflex">
                                 <div class="dflex">
                                     <a-form-item label="대표번호">
-                                        <a-input v-model:value="formState.presidentMobilePhone"
+                                        <text-number-box v-model:valueInput="formState.presidentMobilePhone"
                                             @change="validateNumber('presidentMobilePhone')"
-                                            @keyup="validateNumber('presidentMobilePhone')" style="width: 150px;" />
+                                            @keyup="validateNumber('presidentMobilePhone')" style="width: 150px;" >
+                                        </text-number-box>
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;line-height: 33px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message">‘-’없이 숫자만 입력</p>
                                 </div>
                                 <div style="display: flex">
                                     <a-form-item label="팩스번호">
-                                        <a-input v-model:value="formState.extendInfo.detail.fax" style="width: 150px;"
-                                            @keyup="validateNumber('fax')" @change="validateNumber('fax')" />
+                                        <text-number-box v-model:valueInput="formState.extendInfo.detail.fax" style="width: 150px;"
+                                            @keyup="validateNumber('fax')" @change="validateNumber('fax')" >
+                                        </text-number-box>
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;line-height: 33px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message">‘-’없이 숫자만 입력</p>
                                 </div>
                             </div>
                             <h2 class="title-h2">직인등록</h2>
@@ -57,7 +61,8 @@
                                             <div class="preview-image">
                                                 <a-row>
                                                     <a-col :span="5">
-                                                        <a-button type="primary" @click="stampReview">직인자동생성</a-button>
+                                                        <button-basic :text="'직인자동생성'" :width="130" :type="'default'" :mode="'contained'" @onClick="stampReview"/>
+                                                        <!-- <a-button type="primary" @click="stampReview">직인자동생성</a-button> -->
                                                     </a-col>
                                                     <a-col :span="16">
                                                         <InfoCircleFilled />
@@ -95,32 +100,38 @@
                             <div class="dflex">
                                 <div>
                                     <a-form-item label="대표자명">
-                                        <a-input v-model:value="formState.extendInfo.president.name" :disabled="true"
-                                            style="width: 176px" />
+                                        <default-text-box v-model:valueInput="formState.extendInfo.president.name" :disabled="true"
+                                            style="width: 176px" >
+                                        </default-text-box>
                                     </a-form-item>
                                 </div>
                                 <div style="display: flex; margin-left: 150px;">
                                     <a-form-item label="휴대폰">
-                                        <a-input v-model:value="formState.extendInfo.detail.phone" style="width: 150px;"
-                                            @keyup="validateNumber('phone')" @change="validateNumber('phone')" />
+                                        <text-number-box v-model:valueInput="formState.extendInfo.detail.phone" style="width: 150px;"
+                                            @keyup="validateNumber('phone')" @change="validateNumber('phone')" >
+                                        </text-number-box>
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;line-height: 33px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message">‘-’없이 숫자만 입력</p>
                                 </div>
                             </div>
                             <div class="dflex">
-                                <a-form-item label="생년월일" style="width: 327px;">  
-                                    <a-date-picker v-model:value="formState.extendInfo.president.birthday" value-format="YYYY-MM-DD"
-                                        placeholder="" />
+                                <a-form-item label="생년월일"> 
+                                    <date-time-box
+                                        v-model:valueDate="formState.extendInfo.president.birthday" value-format="YYYY-MM-DD"
+                                        placeholder=""
+                                        dateFormat="YYYY-MM-DD"
+                                    ></date-time-box> 
                                 </a-form-item>
-                                <p class="validate-message" style="line-height: 32px;">
+                                <p class="validate-message">
                                     ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
                                 </p>
                             </div>
                             <div class="dflex">
                                 <a-form-item label="이메일">
-                                    <a-input v-model:value="formState.extendInfo.president.email" style="width: 300px"
+                                    <mail-text-box v-model:valueInput="formState.extendInfo.president.email" style="width: 300px"
                                         @change="validateEmail"
-                                        :style="!statusMailValidate ? { borderColor: 'red' } : ''" />
+                                        :style="!statusMailValidate ? { borderColor: 'red' } : ''" >
+                                    </mail-text-box>
                                 </a-form-item>
                                 <p class="validate-message" v-if="!statusMailValidate">
                                     이메일 형식이 정확하지 않습니다.
@@ -129,7 +140,8 @@
                         </a-form>
                     </div>
                     <a-form-item class="btn-submit">
-                        <a-button type="primary" @click="onSubmit">저장</a-button>
+                        <button-basic :text="'저장'" :type="'default'" :mode="'contained'" @onClick="onSubmit"/>
+                        <!-- <a-button type="primary" @click="onSubmit"></a-button> -->
                     </a-form-item>
                     <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false"
                         :data="fileImage" :previewImageCall="previewImage" @urlSeal="changeSealUrl" />
@@ -200,7 +212,8 @@
                             v-model:page-size="dataGetListUsers.filter.rows" :total="rowTable" show-less-items />
                     </div>
                     <a-form-item class="btn-submit-table">
-                        <a-button type="primary" @click="onSubmit">저장</a-button>
+                        <button-basic :text="'저장'" :type="'default'" :mode="'contained'" @onClick="onSubmit"/>
+                        <!-- <a-button type="primary" @click="onSubmit">저장</a-button> -->
                     </a-form-item>
                 </a-tab-pane>
             </a-tabs>
@@ -360,6 +373,8 @@ export default defineComponent({
             // }
         };
         const stampReview = () => {
+            console.log(1);
+            
             modalStampReviewStatus.value = true;
         };
         const openAddNewModal = () => {
@@ -495,6 +510,24 @@ export default defineComponent({
         const changeDate = (data: any) => {
             formState.value.extendInfo.president.birthday = data
         }
+        const closePopupEdit = () => {
+            modalEditStatus.value = false
+            refetchDataUsers()
+        }
+        const closePopupAdd = () => {
+            modalAddNewStatus.value = false
+            refetchDataUsers()
+        }
+        const changeValueRow = (data: any) => {
+            let stringConvert = ''
+            data.map((e: any, index: any) => {
+                if (index + 1 != data.length)
+                    stringConvert += e.name + ' '
+                else
+                    stringConvert += e.name
+            })
+            return stringConvert
+        }
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -537,29 +570,32 @@ export default defineComponent({
             rowTable,
             changeSealUrl,
             loadingSeal,
-            changeDate
+            changeDate,
+            closePopupEdit,
+            closePopupAdd,
+            changeValueRow,
         };
     },
     methods: {
         // Convert FacilityBizType
-        changeValueRow(data: any) {
-            let stringConvert = ''
-            data.map((e: any, index: any) => {
-                if (index + 1 != data.length)
-                    stringConvert += e.name + ' '
-                else
-                    stringConvert += e.name
-            })
-            return stringConvert
-        },
-        closePopupEdit() {
-            this.modalEditStatus = false
-            this.refetchDataUsers()
-        },
-        closePopupAdd() {
-            this.modalAddNewStatus = false
-            this.refetchDataUsers()
-        },
+        // changeValueRow(data: any) {
+        //     let stringConvert = ''
+        //     data.map((e: any, index: any) => {
+        //         if (index + 1 != data.length)
+        //             stringConvert += e.name + ' '
+        //         else
+        //             stringConvert += e.name
+        //     })
+        //     return stringConvert
+        // },
+        // closePopupEdit() {
+        //     this.modalEditStatus = false
+        //     this.refetchDataUsers()
+        // },
+        // closePopupAdd() {
+        //     this.modalAddNewStatus = false
+        //     this.refetchDataUsers()
+        // },
     },
 });
 </script>

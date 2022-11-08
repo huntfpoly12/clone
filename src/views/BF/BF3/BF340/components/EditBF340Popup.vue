@@ -9,16 +9,16 @@
                             <default-text-box v-model:valueInput="code" width="200px" :disabled="true" />
                         </a-form-item>
                         <a-form-item label="영업자명" class="red" label-align="right" :label-col="labelCol">
-                            <default-text-box v-model:valueInput="formState.name" width="200px"  :disabled="!canChangeCompanyName" :required="true" />
+                            <default-text-box label="영업자명" v-model:valueInput="formState.name" width="200px"  :disabled="!canChangeCompanyName" placeholder="중복불가(2~20자)" :maxCharacter="20" :minCharacter="2" :required="true"/>
                         </a-form-item>
                         <a-form-item label="사업자유형" class="red" label-align="right" :label-col="labelCol">
-                            <biz-type-select-box   v-model:valueInput="formState.bizType" width="200px" :required="true"/> 
+                            <biz-type-select-box label="사업자유형"  v-model:valueInput="formState.bizType" width="200px" :required="true"/> 
                         </a-form-item>
                         <a-form-item label="이메일" class="red" label-align="right" :label-col="labelCol">
-                            <mail-text-box v-model:valueInput="formState.email" width="250px" :required="true"/>
+                            <mail-text-box label="이메일" v-model:valueInput="formState.email" width="250px" :required="true"/>
                         </a-form-item>
                         <a-form-item label="연락처" class="red" label-align="right" :label-col="labelCol">
-                            <tel-text-box v-model:valueInput="formState.phone" width="200px" placeholder="전화번호를 입력" :required="true"/>
+                            <tel-text-box label="연락처" v-model:valueInput="formState.phone" width="200px" placeholder="전화번호를 입력" :required="true"/>
                         </a-form-item>
                         <a-form-item label="팩스" label-align="right" :label-col="labelCol">
                             <text-number-box v-model:valueInput="formState.fax" width="200px"/>
@@ -29,16 +29,16 @@
                             <sale-status-select-box v-model:valueInput="formState.status" width="100px" :confirmStatus="true"/>
                         </a-form-item>
                         <a-form-item label="등급" class="red" label-align="right" :label-col="labelCol">
-                            <sale-grade-select-box v-model:valueInput="formState.grade" width="100px" :required="true" />
+                            <sale-grade-select-box label="등급" v-model:valueInput="formState.grade" width="100px" :required="true" />
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }"  label-align="right" :label-col="labelCol">
-                            <id-card-text-box  v-model:valueInput="formState.residentId" messRequired="이항목은 필수 입력사항입니다!" />
+                            <id-card-text-box  v-model:valueInput="formState.residentId"/>
                         </a-form-item>
                         <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
-                            <company-registration-number-text-box v-model:valueInput="formState.bizNumber"  messRequired="이항목은 필수 입력사항입니다!" />
+                            <company-registration-number-text-box v-model:valueInput="formState.bizNumber"/>
                         </a-form-item>
                         <a-form-item label="휴대폰" class="red" label-align="right" :label-col="labelCol">
-                            <tel-text-box v-model:valueInput="formState.mobilePhone" placeholder="전화번호를 입력" :required="true"/>
+                            <tel-text-box label="휴대폰" v-model:valueInput="formState.mobilePhone" placeholder="전화번호를 입력" :required="true"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -263,6 +263,7 @@ export default defineComponent({
 
         const updateSale = (e : any) => {
             var res =   e.validationGroup.validate(); 
+            console.log(res)
             if(!res.isValid){  
                res.brokenRules[0].validator.focus();  
             }else{
