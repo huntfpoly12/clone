@@ -144,21 +144,10 @@ export default defineComponent({
         modalStatus: Boolean,
     },
     setup(props, { emit }) {
-        const layout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 16 },
-        };
         const visible = ref<boolean>(false);
         const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
-        const validateMessages = {
-            required: true,
-            types: {
-                email: "이메일 형식이 정확하지 않습니다",
-            },
-        };
-    
         const formState = reactive<any>({...initialFormState});
 
       // watch event modal popup
@@ -167,22 +156,17 @@ export default defineComponent({
           (newValue, old) => {
               if (newValue) {
                   Object.assign(formState, initialFormState);
+              }else{
+                Object.assign(formState, initialFormState);
               }
           }
       );
-        const afterPopupClose = () => {
-
-        };
-
-        const onFinish = (values: any) => {
-        };
         // create saler
         const {
             mutate: creactSale,
             loading: loadingUpdate,
             onDone: onDoneAdd,
         } = useMutation(mutations.creactedSale);
-
 
         onDoneAdd((res) => {
             notification('success',`새러운 영업자 추가 완료!`)
@@ -227,12 +211,8 @@ export default defineComponent({
             labelCol,
             wrapperCol,
             formState,
-            layout,
             visible,
             confirm,
-            afterPopupClose,
-            validateMessages,
-            onFinish,
             creactSale,
             funcAddress,
             setModalVisible,
