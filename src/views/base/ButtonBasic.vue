@@ -38,7 +38,7 @@
                     </span>
                 </td>
             </tr>
-            <tr> 
+            <tr>
                 <td>
                     <checkbox-basic v-model:valueCheckbox="valueCheckBox" :disabled="false" :size="'18'" />
                 </td>
@@ -99,7 +99,8 @@
 
                 <td>
                     <span class="mycode">
- <switch-basic v-model:valueSwitch="valueSwitchChange" :textCheck="'포함'" :textUnCheck="'제외'" />
+                        &lt;switch-basic v-model:valueSwitch="valueSwitchChange" :textCheck="'포함'" :textUnCheck="'제외'" /
+                        &gt;
                     </span>
                 </td>
             </tr>
