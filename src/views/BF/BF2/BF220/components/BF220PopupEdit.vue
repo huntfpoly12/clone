@@ -20,7 +20,7 @@
                         <a-col :span="16">
                             <a-form-item label="그룹명" class="clr">
                                 <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" disabled
-                                    width="250" mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
+                                    width="250"></default-text-box>
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
@@ -91,12 +91,10 @@ import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
 import { AdminScreenRole } from '@bankda/jangbuda-common';
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import DefaultTextBox from "../../../../../components/common/DefaultTextBox.vue";
 import notification from '../../../../../utils/notification';
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
-        DefaultTextBox,
         SearchOutlined,
         WarningOutlined,
         DxDataGrid,

@@ -112,7 +112,7 @@
 import { defineComponent, ref, watch } from 'vue';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
-import {dataSearchUtils, buttonSearchUtils} from "./utils";
+import { dataSearchUtils, buttonSearchUtils } from "./utils";
 import {
     DxDataGrid,
     DxColumn,
@@ -288,4 +288,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss">
+
 </style>
