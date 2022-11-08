@@ -13,7 +13,7 @@ export default (typeMessage: string, text: string) => {
             }, 4);
             break;
         case 'error':
-            message.success({
+            message.error({
                 content: () => text,
                 class: 'message-class',
                 style: {
