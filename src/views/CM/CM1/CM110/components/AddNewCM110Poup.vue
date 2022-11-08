@@ -5,24 +5,26 @@
 			<div class="cm-100-popup-add">
 				<a-form :model="formState" :label-col="labelCol">
 					<h2 class="title-h2">이용자정보</h2>
-					<a-row>
+					<a-row :gutter="24">
 						<a-col :span="12">
 							<a-form-item label="이용자ID">
 								<default-text-box 
-									v-model:value="formState.username"
-								 	@change="validateCharacter"
+									:replaceRegex="true"
+									v-model:valueInput="formState.username"
                 					:required="true">
 								</default-text-box>
 							</a-form-item>
 						</a-col>
 						<a-col :span="12">
-							<a-button :type="addTypeButton ? 'primary' : '' " @click="checkUserName">중복체크</a-button>
+							<button-basic v-if="addTypeButton" :text="'중복체크'" :type="'default'" :mode="'contained'" @onClick="checkUserName"/>
+							<button-basic v-else :text="'중복체크'" :type="'default'" :mode="'outlined'" @onClick="checkUserName"/>
+							<!-- <a-button :type="addTypeButton ? 'primary' : '' " @click="checkUserName">중복체크</a-button> -->
 						</a-col>
 					</a-row>
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="성명">
-								<default-text-box  v-model:value="formState.name" :required="true"></default-text-box>
+								<default-text-box  v-model:valueInput="formState.name" :required="true"></default-text-box>
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -38,7 +40,9 @@
 					<a-row>
 						<a-col :span="16">
 							<a-form-item label="원천권한">
-								<a-radio-group v-model:value="formState.withholdingRole" :options="optionsRadio" />
+								<radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="formState.withholdingRole"
+                                            :layoutCustom="'horizontal'" />
+								<!-- <a-radio-group v-model:value="formState.withholdingRole" :options="optionsRadio" /> -->
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -47,7 +51,7 @@
 							<a-row>
 								<a-col :span="15">
 									<a-form-item label="휴대폰">
-										<default-text-box  v-model:value="formState.mobilePhone" @change="validateNumber"  @keyup="validateNumber" :required="true"></default-text-box>
+										<text-number-box v-model:valueInput="formState.mobilePhone" :required="true"></text-number-box>
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
@@ -59,15 +63,15 @@
 					<a-row>
 						<a-col :span="24">
 							<a-row>
-								<a-col :span="15">
+								<a-col :span="14">
 									<a-form-item label="이메일">
-										<default-text-box v-model:value="formState.email" @change="validateEmail"
+										<mail-text-box v-model:valueInput="formState.email"
 											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" 
 											:required="true">
-										</default-text-box>
+										</mail-text-box>
 									</a-form-item>
 								</a-col>
-								<a-col :span="8">
+								<a-col :span="10">
 									<p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
 								</a-col>
 							</a-row>
@@ -76,9 +80,11 @@
 				</a-form>
 			</div>
 			<template #footer>
-				<div style="text-align: center;">
-					<a-button @click="setModalVisible()">그냥 나가기</a-button>
-					<a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button>
+				<div class="text-align-center">
+					<button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
+					<!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
+					<button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="creactUserNew"/>
+					<!-- <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button> -->
 				</div>
 			</template>
 		</a-modal>
@@ -106,8 +112,8 @@ export default defineComponent({
 	},
 	setup(props, { emit }) {
 		const optionsRadio = [
-			{ label: '있음', value: true },
-			{ label: '없음', value: false }
+			{ text: '있음', value: true },
+			{ text: '없음', value: false }
 		];
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(false);
@@ -142,8 +148,8 @@ export default defineComponent({
 		const confirmPopup = () => {
 			visible.value = true;
 		}
-		const validateEmail = (e: any) => {
-			let checkMail = e.target.value.match(
+		watch(() => formState.value.email, (value) => {
+			let checkMail = value.match(
 				/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 			);
 			if (!checkMail) {
@@ -151,7 +157,17 @@ export default defineComponent({
 			} else {
 				statusMailValidate.value = true;
 			}
-		}
+		})
+		// const validateEmail = (e: any) => {
+		// 	let checkMail = e.target.value.match(
+		// 		/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+		// 	);
+		// 	if (!checkMail) {
+		// 		statusMailValidate.value = false;
+		// 	} else {
+		// 		statusMailValidate.value = true;
+		// 	}
+		// }
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
 
@@ -222,23 +238,51 @@ export default defineComponent({
 				message.error(`사용자 이름을 입력헤주세요!`)
 			}
 		}
-		const validateCharacter = (e: any) => {
-			formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+
+		watch(() => formState.value.username, (value) => {
+			formState.value.username = value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
 			dataCallApiCheck.value = {
-				username: formState.value.username
-			}
+					username: formState.value.username
+				}
+			
 			if (formState.value.username.length >= 1) {
 				addTypeButton.value = true
 			} else {
 				addTypeButton.value = false
 			}
-		}
+		})
+
+		watch(() => formState.value.mobilePhone, (value) => {
+			let e = formState.value.mobilePhone
+			formState.value.mobilePhone = value.replace(/\D/g, '');
+		})
+		
+		// const validateCharacter = (e: any) =>
+		// 	formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+		// 	dataCallApiCheck.value = {
+		// 		username: formState.value.username
+		// 	}
+		// 	if (formState.value.username.length >= 1) {
+		// 		addTypeButton.value = true
+		// 	} else {
+		// 		addTypeButton.value = false
+		// 	}
+		// }
 
 		const {
 			mutate: sendEmailUser,
 			onDone: doneSendEmail,
 			onError: errorSendEmail
 		} = useMutation(mutations.sendEmail);
+
+		const setModalVisible = () => {
+			emit('closePopup', false)
+		}
+
+		// const validateNumber = () => {
+		// 	let e = formState.value.mobilePhone
+		// 	formState.value.mobilePhone = e.replace(/\D/g, '');
+		// }
 
 		doneSendEmail(e => {
 			console.log(e);
@@ -253,44 +297,34 @@ export default defineComponent({
 			visible,
 			optionsRadio,
 			confirmPopup,
-			validateEmail,
+			// validateEmail,
 			statusMailValidate,
 			addTypeButton,
 			bizTypeList,
 			creactUserNew,
 			refetchData,
 			checkUserName,
-			validateCharacter,
+			setModalVisible,
+			// validateNumber,
 		};
 	},
 	methods: {
-		setModalVisible() {
-			this.$emit('closePopup', false)
-		},
+		// setModalVisible() {
+		// 	this.$emit('closePopup', false)
+		// },
 
-		validateNumber() {
-			let e = this.formState.mobilePhone
-			this.formState.mobilePhone = e.replace(/\D/g, '');
-		},
+		// validateNumber() {
+		// 	let e = this.formState.mobilePhone
+		// 	this.formState.mobilePhone = e.replace(/\D/g, '');
+		// },
 
 	}
 });
 </script>
-<style scoped>
-.validate-message {
-	margin-left: 2%;
-	color: #c3baba;
-}
-
-.btn-set-password {
-	margin-left: 150px;
-}
+<style lang="scss" scoped src="../style/style.scss">
 
 .confirm-popup /deep/.ant-modal-footer {
 	text-align: center;
 }
 
-.ant-form-item {
-	margin-bottom: 10px;
-}
 </style>
