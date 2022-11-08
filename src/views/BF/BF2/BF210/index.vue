@@ -51,32 +51,32 @@
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col>
+                        <a-col class="dflex">
                             <label class="lable-item">소속코드:</label>
-                            <a-input style="width: 150px" v-model:value="dataSearch.groupCode" />
+                            <default-text-box style="width: 150px" v-model:valueInput="dataSearch.groupCode" />
                         </a-col>
-                        <a-col>
+                        <a-col class="dflex">
                             <label class="lable-item">소속명:</label>
-                            <a-input style="width: 150px" v-model:value="dataSearch.groupName" />
+                            <default-text-box style="width: 150px" v-model:valueInput="dataSearch.groupName" />
                         </a-col>
-                        <a-col>
+                        <a-col class="dflex">
                             <label class="lable-item">회원ID :</label>
-                            <a-input style="width: 150px" v-model:value="dataSearch.username" />
+                            <default-text-box style="width: 150px" v-model:valueInput="dataSearch.username" />
                         </a-col>
-                        <a-col>
+                        <a-col class="dflex">
                             <label class="lable-item">회원명 :</label>
-                            <a-input style="width: 150px" v-model:value="dataSearch.name" />
+                            <default-text-box style="width: 150px" v-model:valueInput="dataSearch.name" />
                         </a-col>
-                        <a-col style="display: flex; align-items: center">
-                            <a-checkbox v-model:checked="checkStatus.checkBox1" value="true">
-                                <a-tag :color="getAbleDisable(true)">이용중</a-tag>
-                            </a-checkbox>
-                            <a-checkbox v-model:checked="checkStatus.checkBox2">
-                                <a-tag :color="getAbleDisable(false)">이용중지</a-tag>
-                            </a-checkbox>
+                        <a-col style="display: flex; align-items: center;" >
+                            <checkbox-basic v-model:value="checkStatus.checkBox1" valueCheckbox=true size="15px" >                                
+                            </checkbox-basic>
+                            <a-tag :color="getAbleDisable(true)" style="margin: 10px">이용중</a-tag>
+                            <checkbox-basic v-model:value="checkStatus.checkBox2" size="15px">                               
+                            </checkbox-basic>
+                            <a-tag :color="getAbleDisable(false)" style="margin: 10px">이용중지</a-tag>
                         </a-col>
                     </a-row>
-                    
+
                 </div>
             </div>
             <div class="page-content">
@@ -182,7 +182,7 @@ import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
-    
+
     components: {
         DxDataGrid,
         DxColumn,
@@ -202,13 +202,14 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        LoginOutlined
+        LoginOutlined,
+        
     },
     data() {
         return {
             popupData: [],
             modalAddNewStatus: false,
-           
+
             modalHistoryStatus: false,
             modalLoginStatus: false,
         };
@@ -224,8 +225,8 @@ export default defineComponent({
         const rowChoose = ref()
         const dataSearch = ref({
             page: 1,
-            rows: 10,
-            type: "m",
+            rows: 20,
+            type: "c",
             groupCode: "",
             groupName: "",
             username: "",
@@ -248,9 +249,9 @@ export default defineComponent({
             }, 500);
         })
         watch(() => modalEditStatus.value,
-            () => {  
-                
-                    refetchData()
+            () => {
+
+                refetchData()
             }
         );
         const searching = () => {
@@ -289,16 +290,16 @@ export default defineComponent({
                     username: dataSearch.value.username,
                     name: dataSearch.value.name,
                 }
-            } 
-            
-            triggersearching.value = true  
-            if(originData){
+            }
+
+            triggersearching.value = true
+            if (originData) {
                 originData.value = dataNew.value
                 refetchData()
             }
-                     
+
         }
-        
+
         return {
             modalEditStatus,
             spinning,
@@ -370,7 +371,7 @@ export default defineComponent({
     },
 });
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .page-content {
     padding: 10px 10px;
 }
@@ -400,18 +401,23 @@ export default defineComponent({
     min-height: 700px;
 }
 
+.dflex {
+    display: flex;
+}
+
 .search-form .col {
     display: flex;
     align-items: center;
 }
 
-.search-form .col {
-    margin-top: 20px;
-}
 
-.search-form .col .lable-item {
-    width: 110px;
-    display: inline-block;
+
+.lable-item {
+    white-space: nowrap;
+    margin-right: 5px;
+    width: auto !important;
+    padding: 5px;
+    
 }
 
 .search-form .col .item:nth-child(2) {
