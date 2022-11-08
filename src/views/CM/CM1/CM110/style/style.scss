@@ -12,6 +12,7 @@
 .validate-message {
     margin-left: 10px;
     color: #c3baba;
+    line-height: 31px;
 }
 
 .btn-upload-image {
@@ -40,4 +41,10 @@
 
 .dflex {
     display: flex;
+}
+.text-align-center {
+    text-align: center;
+}
+.button-form-modal {
+    margin: 0px 5px;
 }
