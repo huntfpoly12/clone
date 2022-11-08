@@ -36,6 +36,16 @@ const listTab: ListTab[] = [
         ID: 6,
         TabName: 'Modal Message',
         layoutName: 'ModalMessage'
+    },
+    {
+        ID: 7,
+        TabName: 'Preview Image',
+        layoutName: 'PreviewImage'
+    },
+    {
+        ID: 8,
+        TabName: 'Button Basic',
+        layoutName: 'ButtonBasic'
     }
 ];
 
