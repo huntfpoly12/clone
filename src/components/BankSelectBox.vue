@@ -14,13 +14,13 @@
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxRequiredRule v-if="required" :message="messageRequired" />
       </DxValidator>
     </DxSelectBox>
   </div>
 </template>
 <script lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch ,getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import { BankType } from "@bankda/jangbuda-common";
@@ -33,7 +33,7 @@ export default {
     },
     messRequired: {
       type: String,
-      default: "Input is required!",
+      default: "",
     },
     width: String,
     clearButton: Boolean,
@@ -41,6 +41,10 @@ export default {
     valueInput: {
       type: [Number, String],
       default: "",
+    },
+    label: {
+      type: String,
+      required: true,
     },
     readOnly: Boolean,
   },
@@ -50,6 +54,12 @@ export default {
     DxRequiredRule,
   },
   setup(props: any, { emit }: any) {
+    const app: any = getCurrentInstance();
+    const messages = app.appContext.config.globalProperties.$messages;
+    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
+    if (props.messRequired != "") {
+      messageRequired.value = props.messRequired;
+    }
     const value = ref(props.valueInput);
     const bankTypeSelect = ref<SelectProps["options"]>([]);
     onMounted(() => {
@@ -66,6 +76,7 @@ export default {
       }
     );
     return {
+      messageRequired,
       bankTypeSelect,
       updateValue,
       value,

@@ -13,13 +13,13 @@
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxRequiredRule v-if="required" :message="messageRequired" />
       </DxValidator>
     </DxSelectBox>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch , computed} from "vue";
+import { defineComponent, ref, watch , computed,getCurrentInstance} from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import {
@@ -35,7 +35,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required!",
+      default: "",
     },
     width: String,
     clearButton: Boolean,
@@ -43,6 +43,10 @@ export default defineComponent({
     valueInput: {
       type: Number,
       default: 0,
+    },
+    label: {
+      type: String,
+      required: true,
     },
     selectAll :{
       type: Boolean,
@@ -68,7 +72,12 @@ export default defineComponent({
       }
       return slGrade;
     }) ;
-
+    const app: any = getCurrentInstance();
+    const messages = app.appContext.config.globalProperties.$messages;
+    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
+    if (props.messRequired != "") {
+      messageRequired.value = props.messRequired;
+    }
     const value = ref(props.valueInput);
 
     const updateValue = (value: any) => {
@@ -84,6 +93,7 @@ export default defineComponent({
       updateValue,
       saleGrade,
       value,
+      messageRequired
     };
   },
 });
