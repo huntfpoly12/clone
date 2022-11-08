@@ -15,6 +15,8 @@
                 width="300px"
                 :required="true"
                 placeholder="Default text box"
+                :minCharacter="3"
+                label="Default text box"
               ></default-text-box>
             </div>
           </div>

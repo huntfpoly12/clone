@@ -136,6 +136,7 @@
               <birth-day-box
                 width="300px"
                 :required="true"
+                label="Birth day box"
               ></birth-day-box>
             </div>
           </div>

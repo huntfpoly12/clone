@@ -13,7 +13,7 @@
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxRequiredRule v-if="required" :message="messageRequired" />
       </DxValidator>
     </DxTextBox>
   </div>
@@ -24,7 +24,7 @@ import {
   DxValidator,
   DxRequiredRule,
 } from "devextreme-vue/validator";
-import { defineComponent, ref ,watch } from "vue";
+import { defineComponent, ref ,watch,getCurrentInstance } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -34,7 +34,7 @@ export default defineComponent({
     },
     messRequired: {
       type: String,
-      default: "Input is required!",
+      default: "",
     },
     width: String,
     clearButton: Boolean,
@@ -42,6 +42,10 @@ export default defineComponent({
     valueInput: {
       type: String,
       default: "",
+    },
+    label: {
+      type: String,
+      required: true
     },
     readOnly: Boolean,
   },
@@ -51,10 +55,15 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
+    const app : any= getCurrentInstance()
+    const messages = app.appContext.config.globalProperties.$messages;
     const mask = ref("000-00-00000");
-    const maskMess = ref("입력한 정보가 충분하지 않습니다!");
+    const maskMess = ref(messages.getCommonMessage(props.label,'105').message);
+    const messageRequired = ref(messages.getCommonMessage(props.label,'102').message);
+    if(props.messRequired != ""){
+      messageRequired.value = props.messRequired;
+    }
     const value = ref(props.valueInput);
-  
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
@@ -68,6 +77,7 @@ export default defineComponent({
 
     return {
       updateValue,
+      messageRequired,
       value,
       mask,
       maskMess,
