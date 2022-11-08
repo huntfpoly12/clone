@@ -11,6 +11,7 @@
       :readOnly="readOnly"
       @input="updateValue(value)"
       :height="$config_styles.HeightInput"
+      @value-changed="valueChanged"
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -43,6 +44,10 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    replaceRegex: {
+      type: Boolean,
+      default: false,
+    },
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
@@ -74,13 +79,20 @@ export default defineComponent({
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
-    watch(
-        () => props.valueInput,
-        (newValue) => {
-          value.value = newValue;
+    watch(() => props.valueInput, (newValue) => {
+            value.value = newValue;
         }
     );
+
+    const valueChanged = () => {
+      if (props.replaceRegex) {
+        setTimeout(() => {
+          value.value= value.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+        }, 100);
+      }
+    }
     return {
+      valueChanged,
       messageString,
       messageRequired,
       updateValue,

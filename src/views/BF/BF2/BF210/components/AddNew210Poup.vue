@@ -16,19 +16,21 @@
                 </dx-button>
               </div>
             </a-form-item>
-            <a-form-item label="회원명" class="red">             
+            <a-form-item label="회원명" class="red">
               <default-text-box v-model:valueInput="formState.name" :required="true" width="190px"
                 messRequired="이항목은 필수 입력사항입니다!" />
             </a-form-item>
             <a-form-item label="소속" class="red">
-              
-              <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택" :data-source="selectSearch"
-                @value-changed="handleChange" display-expr="label" value-expr="value" :height="$config_styles.HeightInput"></DxSelectBox>
+              <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택"
+                :data-source="selectSearch" @value-changed="handleChange" display-expr="label" value-expr="value"
+                :height="$config_styles.HeightInput"> 
+              </DxSelectBox>
+
 
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="상태" class="red">
+            <a-form-item label="상태">
               <a-switch v-model:checked="formState.active" checked-children="이용중" un-checked-children="이용중지"
                 style="width: 100px" />
             </a-form-item>
@@ -61,10 +63,10 @@
                   style="width: 190px; margin-right: 8px" :required="true" messRequired="이항목은 필수 입력사항입니다!" />
               </div>
             </a-form-item>
-            <a-form-item :name="['user', 'email']" label="이메일" :rules="[{ type: 'email' }]" class="red">
-              <mail-text-box v-model:value="formState.email" style="width: 270px" @change="validateEmail"
-                :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
-              <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
+            <a-form-item label="이메일" class="red">
+              <mail-text-box v-model:valueInput="formState.email" style="width: 270px" :required="true"
+                messRequired="이항목은 필수 입력사항입니다!" />
+              <!-- <p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p> -->
               <!-- <a-button html-type="submit" class="btn_submitemail" danger @click="showModal">비밀번호
                 변경
               </a-button> -->
@@ -89,35 +91,34 @@
         </a-row>
 
 
-      <div class="page-content">
-        <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
+        <div class="page-content">
+          <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
 
-        <div style="position: relative">
-          <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
-            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll"
-            @selection-changed="onSelectionChanged">
-            <DxPaging :page-size="0" />
-            <DxSelection data-field="active" mode="multiple" />
+          <div style="position: relative">
+            <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
+              :allow-column-resizing="true" :column-auto-width="true" class="table-scroll"
+              @selection-changed="onSelectionChanged">
+              <DxPaging :page-size="0" />
+              <DxSelection data-field="active" mode="multiple" />
 
-            <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
+              <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
 
-            <DxColumn data-field="name" caption="권한그룹명" />
+              <DxColumn data-field="name" caption="권한그룹명" />
 
-            <DxColumn data-field="memo" caption="권한그룹설명" />
-          </DxDataGrid>
+              <DxColumn data-field="memo" caption="권한그룹설명" />
+            </DxDataGrid>
+          </div>
         </div>
-      </div>
 
-      <a-row>
+        <a-row>
           <a-col :offset="8" style="text-align: center">
-            <DxButton :width="120" text="취소" type="default" styling-mode="outlined"
-              @click="setModalVisible" style="margin-right: 10px;" />
-            <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default"/>
+            <DxButton :width="120" text="취소" type="default" styling-mode="outlined" @click="setModalVisible"
+              style="margin-right: 10px;" />
+            <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default" />
           </a-col>
         </a-row>
-    </form>
-    <template #footer>
-       
+      </form>
+      <template #footer>
       </template>
     </a-modal>
   </div>
@@ -128,7 +129,7 @@ import { ref, defineComponent, reactive, watch } from "vue";
 
 import { message } from 'ant-design-vue';
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
-
+import { initialFormState } from '../utils';
 import {
   DxDataGrid,
   DxColumn,
@@ -136,7 +137,13 @@ import {
   DxExport,
   DxSelection,
   DxSearchPanel,
+
+
 } from "devextreme-vue/data-grid";
+import {
+  DxValidator,
+  DxRequiredRule,
+} from "devextreme-vue/validator";
 import {
   SearchOutlined,
   WarningOutlined,
@@ -163,8 +170,9 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
     DxSelectBox,
-    DxButton
-
+    DxButton,
+    DxRequiredRule,
+    DxValidator,
   },
 
 
@@ -236,7 +244,8 @@ export default defineComponent({
         let dataCall: any = {
           type: value
         }
-        originData.value.types = value
+        originData.value.types = value 
+        
         if (dataCall) {
           reqGroup(dataCall)
         }
@@ -245,60 +254,59 @@ export default defineComponent({
       }, 100);
 
     }
+    let formState = reactive<any>({ ...initialFormState });
 
-    const formState = ref({
-      id: 1,
-      type: "r",
-      username: "",
-      name: "",
-      mobilePhone: "",
-      email: "",
-      president: true,
-      managerGrade: 1,
-      accountingRole: true,
-      withholdingRole: true,
-      createdAt: 1,
-      createdBy: "",
-      updatedAt: 1,
-      updatedBy: "",
-      ip: "",
-      active: true,
-      groupId: "",
-      groupCode: "",
-      groupName: "",
-      facilityBusinesses: [],
-      screenRoleGroups: {
-        id: "",
-        name: "",
-        type: "",
-        readAdminScreenRoles: [],
-        writeAdminScreenRoles: [],
-        readWorkScreenRoles: [],
-        writeWorkScreenRoles: [],
-        lock: true,
-        memo: "",
-        createdAt: "",
-        createdBy: "",
-        updatedAt: "",
-        updatedBy: "",
-        ip: "",
-        active: true
-      }
-    });
+    // const formState = ref({
+    //   id: 1,
+    //   type: "r",
+    //   username: "",
+    //   name: "",
+    //   mobilePhone: "",
+    //   email: "",
+    //   president: true,
+    //   managerGrade: 1,
+    //   accountingRole: true,
+    //   withholdingRole: true,
+    //   createdAt: 1,
+    //   createdBy: "",
+    //   updatedAt: 1,
+    //   updatedBy: "",
+    //   ip: "",
+    //   active: true,
+    //   groupId: "",
+    //   groupCode: "",
+    //   groupName: "",
+    //   facilityBusinesses: [],
+    //   screenRoleGroups: {
+    //     id: "",
+    //     name: "",
+    //     type: "",
+    //     readAdminScreenRoles: [],
+    //     writeAdminScreenRoles: [],
+    //     readWorkScreenRoles: [],
+    //     writeWorkScreenRoles: [],
+    //     lock: true,
+    //     memo: "",
+    //     createdAt: "",
+    //     createdBy: "",
+    //     updatedAt: "",
+    //     updatedBy: "",
+    //     ip: "",
+    //     active: true
+    //   }
+    // });
 
-    const statusMailValidate = ref<boolean>(true);
-    const validateEmail = (e: any) => {
-      let checkMail = e.target.value.match(
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-      if (!checkMail) {
-        statusMailValidate.value = false;
-      } else {
-        statusMailValidate.value = true;
-      }
-    }
-
-
+    // const statusMailValidate = ref<boolean>(true);
+    // const validateEmail = (e: any) => {
+    //   let checkMail = e.target.value.match(
+    //     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    //   );
+    //   if (!checkMail) {
+    //     statusMailValidate.value = false;
+    //   } else {
+    //     statusMailValidate.value = true;
+    //   }
+    // };
     const createUser = reactive({
       type: "",
       username: "",
@@ -313,7 +321,6 @@ export default defineComponent({
       types: ["r"],
     });
     const dataQuery = ref();
-
     let trigger = ref<boolean>(false);
     let triggerDuplication = ref<boolean>(false);
     let triggerGroup = ref<boolean>(false);
@@ -322,19 +329,25 @@ export default defineComponent({
       () => props.modalStatus,
       (newValue, old) => {
         if (newValue) {
+
           visible.value = newValue;
           dataQuery.value = {};
-
           triggerGroup.value = true
           trigger.value = true;
-          reqGroup()
+          reqGroup();
           reqRoleGroup();
+          Object.assign(formState, initialFormState);
         } else {
           visible.value = newValue;
           trigger.value = false;
         }
       }
     );
+    const afterPopupClose = () => {
+    };
+    const onFinish = (values: any) => {
+    };
+
     // querie searchScreenRoleGroups
     const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
       queries.searchScreenRoleGroups, originData,
@@ -343,17 +356,16 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       })
     );
-
     const arrData = ref()
     watch(resRoleGroup, (value: any) => {
       if (value && value.searchScreenRoleGroups) {
         arrData.value = value.searchScreenRoleGroups.datas
       }
     });
-
     let dataCallGroup = ref({
       type: "r"
     })
+
     //query find group
     const { onResult: resGroup, refetch: reqGroup } = useQuery(
       queries.findGroups, dataCallGroup,
@@ -363,7 +375,6 @@ export default defineComponent({
       })
     );
     resGroup(e => {
-
       let option: any = []
       e.data.findGroups.map((val: any) => {
         option.push({
@@ -371,6 +382,11 @@ export default defineComponent({
           value: val.groupId
         })
       })
+      // formState.groupCode 
+      if(e.data.findGroups){
+        formState.groupCode = e.data.findGroups[0].groupId
+      }
+      
       selectSearch.value = option
     })
     watch(resGroup, (value: any) => {
@@ -386,7 +402,7 @@ export default defineComponent({
 
     const checkDuplicateUsername = () => {
       disabledBtn.value = true;
-      if (formState.value.username !== '') {
+      if (formState.username !== '') {
         triggerDuplication.value = true
         refetchUserName()
       } else {
@@ -402,21 +418,21 @@ export default defineComponent({
         }
     })
     const changeValueID = () => {
-      if (formState.value.username !== '') {
+      if (formState.username !== '') {
         disabledBtn.value = false
         dataCallCheck.value = {
-          username: formState.value.username
+          username: formState.username
         }
       }
       else {
         disabledBtn.value = true;
       }
     }
-    watch(() => formState.value.username, (value: any) => {
+    watch(() => formState.username, (value: any) => {
       if (value !== '') {
         disabledBtn.value = false
         dataCallCheck.value = {
-          username: formState.value.username
+          username: formState.username
         }
       }
       else {
@@ -439,37 +455,35 @@ export default defineComponent({
       emit("closePopup", false)
       message.success("신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!")
     })
-
     var idRoleGroup: any = [];
     const onSelectionChanged = (selectedRows: any) => {
       idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
     };
-
     const creactUserNew = () => {
-
       var RoleGroup = idRoleGroup.map((row: any) => {
         return row.id;
       })
-      if (statusMailValidate.value == true) {
-        let dataCallApiCreate = {
-          input: {
-            type: (formState.value.type == '2' || formState.value.type == '3') ? 'm' : formState.value.type,
-            name: formState.value.name,
-            username: formState.value.username,
-            screenRoleGroupIds: RoleGroup,
-            mobilePhone: formState.value.mobilePhone,
-            email: formState.value.email,
-            groupId: formState.value.groupCode,
-            managerGrade: (formState.value.type == '2' || formState.value.type == '3') ? parseInt(formState.value.type) : null,
-          }
+
+      let dataCallApiCreate = {
+        input: {
+          type: (formState.type == '2' || formState.type == '3') ? 'm' : formState.type,
+          name: formState.name,
+          username: formState.username,
+          screenRoleGroupIds: RoleGroup,
+          mobilePhone: formState.mobilePhone,
+          email: formState.email,
+          groupId: formState.groupCode,
+          managerGrade: (formState.type == '2' || formState.type == '3') ? parseInt(formState.type) : null,
         }
-        creactUser(dataCallApiCreate)
-      } else {
-        message.error(`이메일형식이 정확하지 않습니다.`)
-        var Url = document.getElementById("email") as HTMLInputElement;
-        Url.select()
       }
+      creactUser(dataCallApiCreate)
     }
+    // } else {
+    //   message.error(`이메일형식이 정확하지 않습니다.`)
+    //   var Url = document.getElementById("email") as HTMLInputElement;
+    //   Url.select()
+    // }
+
 
     return {
       changeValueID,
@@ -493,11 +507,13 @@ export default defineComponent({
       ScreenRoleGroup,
       changeValueType,
       checkDuplicateUsername,
-      statusMailValidate,
-      validateEmail,
+      // statusMailValidate,
+      // validateEmail,
       creactUserNew,
       onSelectionChanged,
-      disabledBtn
+      disabledBtn,
+      afterPopupClose,
+      onFinish
     };
   },
 
@@ -534,6 +550,17 @@ export default defineComponent({
   label {
     color: red;
   }
+}
+
+::v-deep .element.style {
+  max-width: none;
+  width: 200px;
+  height: auto;
+  left: 0px;
+  top: 0px;
+  transform: none;
+  z-index: 1504;
+  transition: all 0s ease 0s;
 }
 
 ::v-deep .ant-modal-footer {
@@ -658,6 +685,14 @@ export default defineComponent({
 .ant-popover-arrow {
   display: none;
 }
+
+// ::v-deep .dx-invalid-message.dx-overlay-wrapper {
+//   width: 100% !important;
+// }
+
+// ::v-deep .dx-invalid-message>.dx-overlay-content {
+//   transform: unset!important;
+// }
 </style>
 
 

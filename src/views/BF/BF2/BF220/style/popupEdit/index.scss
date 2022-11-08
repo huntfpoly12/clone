@@ -63,10 +63,7 @@
 .anticon {
   cursor: pointer;
 }
-
-.custom-action {
-  text-align: center;
-}
+ 
 
 .search-form {
   margin-bottom: 10px;
@@ -198,8 +195,12 @@
   top: 6px;
 }
 
+::v-deep .ant-form-item-label {
+  width: 150px;
+}
+
 .footer {
-  width: 100%; 
+  width: 100%;
   padding: 10px 0 0 10px;
   display: flex;
   justify-content: flex-end;

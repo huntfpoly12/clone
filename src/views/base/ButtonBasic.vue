@@ -9,17 +9,18 @@
             </tr>
             <tr>
                 <td>
-                    <button-basic :text="'단추'" :type="'success'" :mode="'contained'" @onClick="clickButton" /> -
-                    <button-basic :text="'단추'" :type="'success'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'success'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'contained'"
+                        @onClick="clickButton" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'text'" />
 
-                    <button-basic :text="'단추'" :type="'default'" :mode="'contained'" /> -
-                    <button-basic :text="'단추'" :type="'default'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'default'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'contained'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'text'" />
 
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'contained'" /> -
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
-                    <button-basic :text="'단추'" :type="'danger'" :mode="'text'" />
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'contained'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
+                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'text'" />
                 </td>
 
                 <td>
