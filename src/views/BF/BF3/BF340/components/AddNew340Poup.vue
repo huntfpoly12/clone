@@ -123,20 +123,8 @@
                 </a-row>
                 <a-row style="margin-top: 20px;">
                     <a-col :span="16" :offset="8">
-                        <DxButton
-                            :width="70"
-                            text="취소"
-                            type="default"
-                            styling-mode="outlined"
-                            @click="setModalVisible"
-                            style="margin-right: 10px;"
-                            />
-                        <DxButton
-                            id="button"
-                            text="저장하고 나가기"
-                            type="default"
-                            @click="createSale($event)"
-                        />
+                        <button-basic text="취소" :type="'default'" mode="outlined" @onClick="setModalVisible()" :width="70" style="margin-right: 10px;" />
+                        <button-basic text="저장하고 나가기" :type="'default'" mode="'contained'" @onClick="createSale($event)" :width="150" />
                     </a-col>
                 </a-row>
             </form>
@@ -146,21 +134,14 @@
 
 <script lang="ts">
 import { ref, defineComponent, watch ,reactive} from 'vue'
-import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import { useMutation } from "@vue/apollo-composable";
-import DxButton from 'devextreme-vue/button';
-import { message } from "ant-design-vue";
+import notification from '../../../../../utils/notification';
 import { initialFormState } from '../utils';
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 
 export default defineComponent({
     props: {
         modalStatus: Boolean,
-    },
-    components: {
-        SearchOutlined,
-        WarningOutlined,
-        DxButton
     },
     setup(props, { emit }) {
         const layout = {
@@ -204,7 +185,7 @@ export default defineComponent({
 
 
         onDoneAdd((res) => {
-            message.success(`새러운 영업자 추가 완료!`, 5);
+            notification('success',`새러운 영업자 추가 완료!`)
             emit("closePopup", false);
         })
 
@@ -230,15 +211,16 @@ export default defineComponent({
 
         const createSale = (e:any) => { 
             var res =   e.validationGroup.validate(); 
+            console.log(res);
             if(!res.isValid){  
                res.brokenRules[0].validator.focus();  
             }else{
-                let dataNew = {
-                            input: {
-                                ...formState
-                            }
-                        }
-                creactSale(dataNew)
+                // let dataNew = {
+                //             input: {
+                //                 ...formState
+                //             }
+                //         }
+                // creactSale(dataNew)
             }
         }
         return {

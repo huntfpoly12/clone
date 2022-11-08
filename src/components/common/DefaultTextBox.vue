@@ -65,7 +65,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const value = ref(props.valueInput);
-    const messageString = ref('Input must have at least ' +props.minCharacter+ ' symbols');
+    const messageString = ref('이 덱스트를 ' +props.minCharacter+ '자 이상으로 늘리세요!');
 
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
