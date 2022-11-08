@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<a-modal :visible="modalStatus" :mask-closable="false" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-			@cancel="setModalVisible()" width="700px">
+			@cancel="setModalVisible()" width="700px" footer="">
 			<div class="cm-100-popup-add">
 				<a-form :model="formState" :label-col="labelCol">
 					<h2 class="title-h2">이용자정보</h2>
@@ -79,14 +79,12 @@
 					</a-row>
 				</a-form>
 			</div>
-			<template #footer>
-				<div class="text-align-center">
-					<button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
-					<!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
-					<button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="creactUserNew"/>
-					<!-- <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button> -->
-				</div>
-			</template>
+			<div class="text-align-center mt-15">
+				<button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
+				<!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
+				<button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="creactUserNew"/>
+				<!-- <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button> -->
+			</div>
 		</a-modal>
 	</div>
 </template>

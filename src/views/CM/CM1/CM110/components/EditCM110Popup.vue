@@ -8,6 +8,7 @@
       cancelText="그냥 나가기"
       @cancel="setModalVisible()"
       width="700px"
+      footer=""
     >
       <div class="cm-100-popup-edit">
         <a-form :model="formState" :label-col="labelCol">
@@ -18,7 +19,8 @@
                 <default-text-box
                   v-model:valueInput="formState.username"
                   :disabled="true"
-                ></default-text-box>
+                >
+                </default-text-box>
               </a-form-item>
             </a-col>
             <a-col :span="6">
@@ -125,30 +127,28 @@
           </a-row>
         </a-form>
       </div>
-      <template #footer>
-        <div class="text-align-center">
-          <!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
-          <button-basic
-            class="button-form-modal"
-            :text="'그냥 나가기'"
-            :type="'default'"
-            :mode="'outlined'"
-            @onClick="setModalVisible()"
-          />
-          <button-basic
-            class="button-form-modal"
-            :text="'저장하고 나가기'"
-            :width="140"
-            :type="'default'"
-            :mode="'contained'"
-            @onClick="confirmUpdate()"
-          />
-          <!-- <a-button type="primary" @click="confirmUpdate()">저장하고 나가기</a-button> -->
-        </div>
-      </template>
+      <div class="text-align-center mt-15">
+        <!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
+        <button-basic
+          class="button-form-modal"
+          :text="'그냥 나가기'"
+          :type="'default'"
+          :mode="'outlined'"
+          @onClick="setModalVisible()"
+        />
+        <button-basic
+          class="button-form-modal"
+          :text="'저장하고 나가기'"
+          :width="140"
+          :type="'default'"
+          :mode="'contained'"
+          @onClick="confirmUpdate()"
+        />
+        <!-- <a-button type="primary" @click="confirmUpdate()">저장하고 나가기</a-button> -->
+      </div>
     </a-modal>
     <div class="confirm-popup">
-      <a-modal v-model:visible="visible" :mask-closable="false">
+      <a-modal v-model:visible="visible" :mask-closable="false" footer="">
         <a-row>
           <a-col :span="4">
             <mail-outlined :style="{ fontSize: '70px' }" />
@@ -159,25 +159,23 @@
             <p>계속 진행하시겠습니까?</p>
           </a-col>
         </a-row>
-        <template #footer>
-          <!-- <a-button @click="closePopupEmail">아니오</a-button> -->
-          <button-basic
-            class="button-form-modal"
-            :text="'아니오'"
-            :type="'default'"
-            :mode="'outlined'"
-            @onClick="closePopupEmail"
-          />
-          <button-basic
-            class="button-form-modal"
-            :text="'네. 발송합니다'"
-            :width="140"
-            :type="'default'"
-            :mode="'contained'"
-            @onClick="sendMessToGmail"
-          />
-          <!-- <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button> -->
-        </template>
+        <!-- <a-button @click="closePopupEmail">아니오</a-button> -->
+        <button-basic
+          class="button-form-modal"
+          :text="'아니오'"
+          :type="'default'"
+          :mode="'outlined'"
+          @onClick="closePopupEmail"
+        />
+        <button-basic
+          class="button-form-modal"
+          :text="'네. 발송합니다'"
+          :width="140"
+          :type="'default'"
+          :mode="'contained'"
+          @onClick="sendMessToGmail"
+        />
+        <!-- <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button> -->
       </a-modal>
     </div>
   </div>
@@ -204,8 +202,8 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const optionsRadio = [
-      { text: "있음", value: true, id: 1 },
-      { text: "없음", value: false, id: 2 },
+      { text: "있음", id: 1 },
+      { text: "없음", id: 0 },
     ];
     const visible = ref<boolean>(false);
     const statusMailValidate = ref<boolean>(true);
@@ -215,7 +213,7 @@ export default defineComponent({
     let trigger = ref<boolean>(false);
     let dataCall = ref();
     let dataUser = ref();
-    let returnRadio = ref(optionsRadio[0]);
+    let returnRadio = ref();
     for (let i = 10; i < 36; i++) {
       const value = i.toString(36) + i;
       options?.value?.push({
@@ -290,7 +288,11 @@ export default defineComponent({
       });
       valueFacilyti.value = newFaci;
       formState.value = res.data.getMyCompanyUser;
-
+      if (formState.value.withholdingRole == true) {
+        returnRadio.value = 1;
+      } else {
+        returnRadio.value = 0;
+      }
       let checkMail = res.data.getMyCompanyUser.email.match(
         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       );
@@ -339,7 +341,7 @@ export default defineComponent({
             name: formState.value.name,
             accountingRole: false,
             facilityBusinessIds: valueFacilyti.value,
-            withholdingRole: returnRadio.value.value,
+            withholdingRole: returnRadio.value.id,
             mobilePhone: formState.value.mobilePhone,
             email: formState.value.email,
             active: formState.value.active,
