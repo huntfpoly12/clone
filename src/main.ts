@@ -46,6 +46,7 @@ Object.entries(requireComponent).forEach((fileComponent) => {
   // Register component globally
   app.component(componentName,defineAsyncComponent(componentImport))
 })
+
 app.config.globalProperties.$messages = Message;
 app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$config_styles = styles;
