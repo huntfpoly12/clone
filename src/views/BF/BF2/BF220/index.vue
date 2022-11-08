@@ -110,6 +110,8 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver-es';
 import {dataSearchUtils, buttonSearchUtils} from "./utils";
 import {
     DxDataGrid,
@@ -124,8 +126,7 @@ import {
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF220PopupAddNew from "./components/BF220PopupAddNew.vue";
 import DxButton from "devextreme-vue/button";
-import { Workbook } from 'exceljs';
-import { saveAs } from 'file-saver-es';
+
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF2/BF220/index";
