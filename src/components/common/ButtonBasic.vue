@@ -1,5 +1,5 @@
 <template>
-    <DxButton :text="text" :type="type" @click="onClick" :styling-mode="mode"
+    <DxButton :text="text" :type="type" @click="onClick($event)" :styling-mode="mode"
         :style="{ color: color, backgroundColor: backGround, border: border }" />
 </template>
 <script lang="ts">
@@ -29,8 +29,8 @@ export default defineComponent({
     setup(props, { emit }) {
         const app: any = getCurrentInstance()
         const styleButton = app.appContext.config.globalProperties.$config_styles
-        const onClick = () => {
-            emit('onClick', true)
+        const onClick = (e: any) => {
+            emit('onClick', e)
         }
 
         const color = ref()

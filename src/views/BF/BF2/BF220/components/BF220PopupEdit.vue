@@ -1,7 +1,7 @@
 <template>
     <div id="components-modal-demo-position">
         <a-modal :mask-closable="false" footer="" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
-            @cancel="setModalVisible()">
+            @cancel="setModalVisible">
 
             <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
@@ -69,11 +69,7 @@
                     </a-col>
 
                 </a-row>
-                <a-row class="footer">
-                    <!-- <a-button @click="setModalVisible">그냥 나가기</a-button>
-                    <a-button key="submit" type="primary" @click="updateScreenRole">
-                        저장하고 나가기</a-button> -->
-
+                <a-row class="footer">  
                     <button-basic :text="'그냥 나가기'" :type="'success'" :mode="'contained'" @onClick="setModalVisible" />
                     <button-basic :text="'저장하고 나가기'" :type="'success'" :mode="'contained'"
                         @onClick="updateScreenRole" />
@@ -174,18 +170,20 @@ export default defineComponent({
         editError(e => {
             message.error(e.message)
         })
-        const updateScreenRole = () => {
-            let dataCall = {
-                input: {
-                    id: dataRes.value.id,
-                    name: dataRes.value.name,
-                    type: dataRes.value.type,
-                    readAdminScreenRoles: readAdminScreenRoles.value,
-                    writeAdminScreenRoles: writeAdminScreenRoles.value,
-                    memo: dataRes.value.memo
-                }
-            }
-            editScreenRole(dataCall)
+        const updateScreenRole = (e:any) => {
+            console.log(e);
+            
+            // let dataCall = {
+            //     input: {
+            //         id: dataRes.value.id,
+            //         name: dataRes.value.name,
+            //         type: dataRes.value.type,
+            //         readAdminScreenRoles: readAdminScreenRoles.value,
+            //         writeAdminScreenRoles: writeAdminScreenRoles.value,
+            //         memo: dataRes.value.memo
+            //     }
+            // }
+            // editScreenRole(dataCall)
         }
         const { refetch: refetchDataEdit, result: resDataDetail } = useQuery(queries.getScreenRoleGroup, dataCallApiDetail, () => ({
             enabled: triggersGetData.value,
