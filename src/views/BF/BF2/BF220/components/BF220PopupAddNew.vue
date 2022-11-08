@@ -1,14 +1,9 @@
 <template>
-    <a-spin :spinning="spinning" size="large">
-        <div id="components-modal-demo-position">
-            <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
-                @cancel="setModalVisible()">
-                <template #footer>
-                    <a-button @click="setModalVisible">그냥 나가기</a-button>
-                    <a-button key="submit" type="primary" @click="createScrenRole">
-                        저장하고 나가기</a-button>
-                </template>
-                <a-form v-bind="layout" name="nest-messages">
+    <div id="components-modal-demo-position">
+        <a-modal :mask-closable="false" footer="" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
+            @cancel="setModalVisible()">
+            <form action="your-action">
+                <a-spin :spinning="spinningAdd" size="large">
                     <a-row :gutter="24">
                         <a-col :span="24" class="title-modal">
                             <span>권한그룹 기본정보</span>
@@ -18,14 +13,15 @@
                                 <div class="dflex">
                                     <default-text-box class="mr5" v-model:valueInput="dataRes.id"
                                         placeholder="영문,숫자 5~10자 (중복불가)" :max-character="10" :min-character="5" required
-                                        mess-required="이항목은 필수 입력사항입니다!" style="width: 350px"></default-text-box>
-                                    <a-button type="primary" @click="checkId" :disabled="isDisable">중복체크</a-button>
+                                        mess-required="이항목은 필수 입력사항입니다!" width="250"></default-text-box>
+                                    <button-basic type="default" text="중복체크" @onClick="checkId" mode="contained"
+                                        :disabled="isDisable" :height="33"></button-basic>
                                 </div>
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
                             <a-form-item label="그룹명" class="clr">
-                                <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자"
+                                <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" width="250"
                                     :max-character="20" required mess-required="이항목은 필수 입력사항입니다!" />
                             </a-form-item>
                         </a-col>
@@ -45,7 +41,7 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
-                            <a-form-item label="메모" style="align-items: flex-start;">  
+                            <a-form-item label="메모" style="align-items: flex-start;">
                                 <text-area-box placeholder="최대 30자" v-model:valueInput="dataRes.memo"></text-area-box>
                             </a-form-item>
                         </a-col>
@@ -53,36 +49,34 @@
                             <span>권한그룹메뉴별 권한</span>
                         </a-col>
                         <a-col :span="24">
-                            <a-spin :spinning="spinning" size="large">
-                                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="enumKey"
-                                    class="table-sevice">
-                                    <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
-                                    <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
-                                    <template #col1="{ data }" class="custom-action">
-                                        <div class="custom-action">
-                                            <div class="custom-action"
-                                                @click="changeValRoles(data.data.enumKey, 'read')">
-                                                <DxCheckBox />
-                                            </div>
-                                        </div>
-                                    </template>
-                                    <DxColumn caption="쓰기" cell-template="col2" alignment="center" :width="100" />
-                                    <template #col2="{ data }" class="custom-action">
-                                        <div class="custom-action">
-                                            <div class="custom-action"
-                                                @click="changeValRoles(data.data.enumKey, 'write')">
-                                                <DxCheckBox />
-                                            </div>
-                                        </div>
-                                    </template>
-                                </DxDataGrid>
-                            </a-spin>
+                            <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="enumKey"
+                                class="table-sevice">
+                                <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
+                                <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
+                                <template #col1="{ data }" class="custom-action">
+                                    <div class="custom-action" @click="changeValRoles(data.data.enumKey, 'read')">
+                                        <DxCheckBox />
+                                    </div>
+                                </template>
+                                <DxColumn caption="쓰기" cell-template="col2" alignment="center" :width="100" />
+                                <template #col2="{ data }" class="custom-action">
+                                    <div class="custom-action" @click="changeValRoles(data.data.enumKey, 'write')">
+                                        <DxCheckBox />
+                                    </div>
+                                </template>
+                            </DxDataGrid>
                         </a-col>
                     </a-row>
-                </a-form>
-            </a-modal>
-        </div>
-    </a-spin>
+                    <a-row class="footer">
+                        <button-basic :text="'그냥 나가기'" :type="'info'" :mode="'outlined'" @onClick="setModalVisible"
+                            style="margin-right: 10px;" />
+                        <button-basic :text="'저장하고 나가기'" :type="'success'" :mode="'contained'"
+                            @onClick="createScrenRole" />
+                    </a-row>
+                </a-spin>
+            </form>
+        </a-modal>
+    </div>
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch } from 'vue'
@@ -110,7 +104,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const dataSource = ref(AdminScreenRole.all())
-        const spinning = ref<boolean>(false);
+        const spinningAdd = ref<boolean>(false);
         const layout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
@@ -118,7 +112,6 @@ export default defineComponent({
         const visible = ref<boolean>(false);
         const triggers = ref(false)
         let isDisable = ref<boolean>(true);
-        const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
         const checkIDName = ref()
         const dataRes: any = ref({
@@ -130,14 +123,8 @@ export default defineComponent({
         });
         let readAdminScreenRoles: any = ref([])
         let writeAdminScreenRoles: any = ref([])
-        const changeID = (e: any) => {
-            checkIDName.value = {
-                id: dataRes.value.id
-            }
-            dataRes.value.id = e.target.value.replace(/[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
-        }
         const checkId = () => {
-            spinning.value = true
+            spinningAdd.value = true
             if (dataRes.value.id != '') {
                 triggers.value = true
                 refetchData
@@ -166,7 +153,7 @@ export default defineComponent({
             } else {
                 message.error(`이미 존재하는 그룹코드 입니다. 다른 코드를 입력해주세요`)
             }
-            spinning.value = false
+            spinningAdd.value = false
         });
         //Creat new group roll
         const {
@@ -181,18 +168,23 @@ export default defineComponent({
         creactError(e => {
             message.error(e.message)
         })
-        const createScrenRole = () => {
-            let dataCall = {
-                input: {
-                    id: dataRes.value.id,
-                    name: dataRes.value.name,
-                    type: dataRes.value.type,
-                    readAdminScreenRoles: readAdminScreenRoles.value,
-                    writeAdminScreenRoles: writeAdminScreenRoles.value,
-                    memo: dataRes.value.memo
+        const createScrenRole = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                let dataCall = {
+                    input: {
+                        id: dataRes.value.id,
+                        name: dataRes.value.name,
+                        type: dataRes.value.type,
+                        readAdminScreenRoles: readAdminScreenRoles.value,
+                        writeAdminScreenRoles: writeAdminScreenRoles.value,
+                        memo: dataRes.value.memo
+                    }
                 }
+                createScreenRole(dataCall)
             }
-            createScreenRole(dataCall)
         }
         const setModalVisible = () => {
             emit('closePopupAdd', false)
@@ -216,7 +208,6 @@ export default defineComponent({
                     }
                 }
                 console.log(readAdminScreenRoles.value);
-                
             }
             if (type == 'write') {
                 if (writeAdminScreenRoles.value.length == 0) {
@@ -239,11 +230,9 @@ export default defineComponent({
         return {
             changeValRoles,
             createScrenRole,
-            spinning,
+            spinningAdd,
             dataSource,
-            changeID,
             checkId,
-            labelCol,
             wrapperCol,
             dataRes,
             layout,
@@ -257,5 +246,4 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped src="../style/popupAdd/index.scss">
-
 </style>
