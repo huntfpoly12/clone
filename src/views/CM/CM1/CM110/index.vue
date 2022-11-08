@@ -33,14 +33,14 @@
                                             @change="validateNumber('presidentMobilePhone')"
                                             @keyup="validateNumber('presidentMobilePhone')" style="width: 150px;" />
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;line-height: 29px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message" style="width: 121px;line-height: 33px;">‘-’없이 숫자만 입력</p>
                                 </div>
                                 <div style="display: flex">
                                     <a-form-item label="팩스번호">
                                         <a-input v-model:value="formState.extendInfo.detail.fax" style="width: 150px;"
                                             @keyup="validateNumber('fax')" @change="validateNumber('fax')" />
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;line-height: 29px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message" style="width: 121px;line-height: 33px;">‘-’없이 숫자만 입력</p>
                                 </div>
                             </div>
                             <h2 class="title-h2">직인등록</h2>
@@ -104,7 +104,7 @@
                                         <a-input v-model:value="formState.extendInfo.detail.phone" style="width: 150px;"
                                             @keyup="validateNumber('phone')" @change="validateNumber('phone')" />
                                     </a-form-item>
-                                    <p class="validate-message" style="width: 121px;line-height: 29px;">‘-’없이 숫자만 입력</p>
+                                    <p class="validate-message" style="width: 121px;line-height: 33px;">‘-’없이 숫자만 입력</p>
                                 </div>
                             </div>
                             <div class="dflex">
@@ -112,7 +112,7 @@
                                     <a-date-picker v-model:value="formState.extendInfo.president.birthday" value-format="YYYY-MM-DD"
                                         placeholder="" />
                                 </a-form-item>
-                                <p class="validate-message">
+                                <p class="validate-message" style="line-height: 32px;">
                                     ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
                                 </p>
                             </div>
@@ -155,7 +155,7 @@
                         <DxColumn caption="상태" data-field="active" cell-template="tag-status" css-class="cell-center"
                             :width="150" />
                         <template #tag-status="{ data }">
-                            <a-tag :color="getColorTag(data.value)">
+                            <a-tag :color="getColorTag(data.value)" style="width:65px">
                                 {{ data.value == true ? "이용중" : "이용중지" }}
                             </a-tag>
                         </template>
@@ -563,6 +563,6 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped src="./style.scss">
+<style lang="scss" scoped src="./style/style.scss">
 
 </style>
