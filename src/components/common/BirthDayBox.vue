@@ -71,8 +71,8 @@ export default defineComponent({
     const app : any= getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
     const mask = ref("0000-00-00");
-    const maskMess = ref(messages.getCommonMessage(props.label,'105').message);
-    const messageRequired = ref(messages.getCommonMessage(props.label,'102').message);
+    const maskMess = ref(messages.getCommonMessage('105').message.replaceAll('{object}', props.label));
+    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
     if(props.messRequired != ""){
       messageRequired.value = props.messRequired;
     }

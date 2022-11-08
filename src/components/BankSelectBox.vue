@@ -56,9 +56,7 @@ export default {
   setup(props: any, { emit }: any) {
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
-    const messageRequired = ref(
-      messages.getCommonMessage(props.label, "102").message
-    );
+    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }

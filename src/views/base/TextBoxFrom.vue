@@ -24,6 +24,9 @@
         <td>
           <ul>
             <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
+            <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
             </li>
@@ -66,6 +69,9 @@
         <td>
           <ul>
             <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
+            <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
             </li>
@@ -103,6 +109,9 @@
         <td>
           <ul>
             <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
+            <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
             </li>
@@ -135,6 +144,9 @@
         </td>
         <td>
           <ul>
+            <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
             <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
@@ -170,6 +182,9 @@
         <td>
           <ul>
             <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
+            <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
             </li>
@@ -204,6 +219,9 @@
         </td>
         <td>
           <ul>
+            <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
             <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)

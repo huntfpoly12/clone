@@ -68,14 +68,10 @@ export class Message extends BaseType {
      * @param codeMess message code
      * @returns String message
      */
-    public static getCommonMessage(obj: string , codeMess : string, minCount? : string) {
+    public static getCommonMessage(codeMess : string) {
         const items = Message.COMMON;
         let item : any = items.name;
         let resMess : any  = item[codeMess];
-        resMess.message = resMess.message.replaceAll('{object}', obj);
-        if(codeMess == '103'){
-            resMess.message = resMess.message.replaceAll('{minCount}', minCount);
-        }
         return item[codeMess] ? resMess : '';
     }
 

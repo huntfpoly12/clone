@@ -12,9 +12,8 @@
             <div class="dx-field-label">Rank date time box</div>
             <div class="dx-field-value">
               <rank-date-time-box>
-                width="300px"
-                dateFormat="YYYY-MM-DD"
-              ></rank-date-time-box>
+                width="300px" dateFormat="YYYY-MM-DD" ></rank-date-time-box
+              >
             </div>
           </div>
         </td>
@@ -27,7 +26,9 @@
             <li>
               <strong>width:</strong> {default: "100%", type: String, } (option)
             </li>
-            <li><strong>valueDate:</strong> { type: String, default: nowDate,}</li>
+            <li>
+              <strong>valueDate:</strong> { type: String, default: nowDate,}
+            </li>
             <li><strong>id:</strong> { type: String, default: "",}</li>
             <li><strong>className:</strong>{type: String,} (option)</li>
           </ul>
@@ -60,7 +61,9 @@
             <li>
               <strong>width:</strong> {default: "100%", type: String, } (option)
             </li>
-            <li><strong>valueDate:</strong> { type: String, default: nowDate,}</li>
+            <li>
+              <strong>valueDate:</strong> { type: String, default: nowDate,}
+            </li>
             <li><strong>id:</strong> { type: String, default: "",}</li>
             <li><strong>className:</strong>{type: String,} (option)</li>
           </ul>
@@ -77,9 +80,7 @@
           <div class="dx-field">
             <div class="dx-field-label">Month picker box</div>
             <div class="dx-field-value">
-              <month-picker-box
-                width="300px"
-              ></month-picker-box>
+              <month-picker-box width="300px"></month-picker-box>
             </div>
           </div>
         </td>
@@ -88,8 +89,10 @@
             <li>
               <strong>width:</strong> {default: "100%", type: String, } (option)
             </li>
-            <li><strong>valueDate:</strong> { type: String, default: nowDate,}</li>
-            <li><strong>id:</strong> { type: String, default: "",} </li>
+            <li>
+              <strong>valueDate:</strong> { type: String, default: nowDate,}
+            </li>
+            <li><strong>id:</strong> { type: String, default: "",}</li>
             <li><strong>className:</strong>{type: String,} (option)</li>
           </ul>
         </td>
@@ -105,19 +108,19 @@
           <div class="dx-field">
             <div class="dx-field-label">Year picker box</div>
             <div class="dx-field-value">
-              <year-picker-box
-                width="300px"
-              ></year-picker-box>
+              <year-picker-box width="300px"></year-picker-box>
             </div>
           </div>
         </td>
         <td>
-            <ul>
+          <ul>
             <li>
               <strong>width:</strong> {default: "100%", type: String, } (option)
             </li>
-            <li><strong>valueDate:</strong> { type: String, default: nowDate,}</li>
-            <li><strong>id:</strong> { type: String, default: "",} </li>
+            <li>
+              <strong>valueDate:</strong> { type: String, default: nowDate,}
+            </li>
+            <li><strong>id:</strong> { type: String, default: "",}</li>
             <li><strong>className:</strong>{type: String,} (option)</li>
           </ul>
         </td>
@@ -142,7 +145,11 @@
           </div>
         </td>
         <td>
-            <ul>
+          <ul>
+            <li>
+              <strong>label:</strong> label: {type: String,required: true}
+              (required)
+            </li>
             <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)
@@ -185,8 +192,7 @@ import DxButton from "devextreme-vue/button";
 
 export default defineComponent({
   components: {
-    DxButton
-
+    DxButton,
   },
   data() {
     return {
@@ -201,9 +207,7 @@ export default defineComponent({
     function submit() {
       this.$refs["formTest"].onsubmit = onFormSubmit();
     }
-    function onFormSubmit(e) {
-  
-    }
+    function onFormSubmit(e) {}
 
     return {
       text1,

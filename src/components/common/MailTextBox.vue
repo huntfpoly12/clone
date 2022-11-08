@@ -13,7 +13,7 @@
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
-        <DxRequiredRule v-if="required" :message="messRequired" />
+        <DxRequiredRule v-if="required" :message="messageRequired" />
         <DxEmailRule message="이메일 형식이 정확하지 않습니다" />
       </DxValidator>
     </DxTextBox>
@@ -62,7 +62,7 @@ export default defineComponent({
     const app : any= getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
     const value = ref(props.valueInput);
-    const messageRequired = ref(messages.getCommonMessage(props.label,'102').message);
+    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
     if(props.messRequired != ""){
       messageRequired.value = props.messRequired;
     }
@@ -80,6 +80,7 @@ export default defineComponent({
     return {
       updateValue,
       value,
+      messageRequired
     };
   },
 });
