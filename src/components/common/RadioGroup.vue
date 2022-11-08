@@ -30,8 +30,8 @@ export default defineComponent({
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
 
         const changeValueRadioGroup = (e: any) => {
-            emit("update:valueRadioCheck", e.value);
-
+                emit("update:valueRadioCheck", e.value);
+        
         }
         return {
             changeValueRadioGroup,
@@ -44,9 +44,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 ::v-deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
     background: v-bind("styleCheckBox.ColorCheckBox");
+    margin-top: -13px;
+    margin-left: 3px;
 }
 
 ::v-deep .dx-radiobutton-icon::before {
-    border: 1px solid v-bind("styleCheckBox.ColorCheckBox")
+    border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
+    width: 14px;
+    height: 14px;
 }
 </style>
