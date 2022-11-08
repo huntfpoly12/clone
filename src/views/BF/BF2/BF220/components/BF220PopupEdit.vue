@@ -1,13 +1,9 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :mask-closable="false" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
+        <a-modal :mask-closable="false" footer="" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
             @cancel="setModalVisible()">
-            <template #footer>
-                <a-button @click="setModalVisible">그냥 나가기</a-button>
-                <a-button key="submit" type="primary" @click="updateScreenRole">
-                    저장하고 나가기</a-button>
-            </template>
-            <a-form v-bind="layout" name="nest-messages" >
+
+            <a-form v-bind="layout" name="nest-messages">
                 <a-row :gutter="24">
                     <a-col :span="24" class="title-modal">
                         <span>권한그룹 기본정보</span>
@@ -15,28 +11,17 @@
                     <a-col :span="16">
                         <a-form-item label="그룹코드" name="id" class="clr">
                             <div class="dflex">
-                              <default-text-box
-                                v-model:valueInput="dataRes.id"
-                                class="mr5"
-                                placeholder="영문,숫자 5~10자 (중복불가)"
-                                disabled
-                                :max-character="10"
-                                :min-character="5"
-                                required
-                                style="width: 350px"
-                              ></default-text-box>
+                                <default-text-box v-model:valueInput="dataRes.id" class="mr5"
+                                    placeholder="영문,숫자 5~10자 (중복불가)" disabled :max-character="10" :min-character="5"
+                                    required style="width: 350px"></default-text-box>
                                 <a-button type="button" disabled>중복체크</a-button>
                             </div>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="그룹명" class="clr">
-                          <default-text-box
-                              v-model:valueInput="dataRes.name"
-                              placeholder="최대 20자"
-                              required
-                              mess-required="이항목은 필수 입력사항입니다!"
-                          ></default-text-box>
+                            <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" required
+                                mess-required="이항목은 필수 입력사항입니다!"></default-text-box>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
@@ -49,14 +34,14 @@
                                     <a-tag color="gray" style="border: 1px solid black;">영업자</a-tag>
                                 </a-radio>
                                 <a-radio value="p">
-                                    <a-tag class="ant-tag-yellow"  >파트너</a-tag>
+                                    <a-tag class="ant-tag-yellow">파트너</a-tag>
                                 </a-radio>
                             </a-radio-group>
                         </a-form-item>
                     </a-col>
                     <a-col :span="16">
                         <a-form-item label="메모" style="align-items: flex-start;">
-                            <a-textarea placeholder="최대 30자" v-model:value="dataRes.memo" />
+                            <text-area-box placeholder="최대 30자" v-model:valueInput="dataRes.memo"></text-area-box>
                         </a-form-item>
                     </a-col>
                     <a-col :span="24" class="title-modal" style="margin-top: 10px;">
@@ -82,13 +67,27 @@
                             </DxDataGrid>
                         </a-spin>
                     </a-col>
+
+                </a-row>
+                <a-row class="footer">
+                    <!-- <a-button @click="setModalVisible">그냥 나가기</a-button>
+                    <a-button key="submit" type="primary" @click="updateScreenRole">
+                        저장하고 나가기</a-button> -->
+
+                    <button-basic :text="'그냥 나가기'" :type="'success'" :mode="'contained'" @onClick="setModalVisible" />
+                    <button-basic :text="'저장하고 나가기'" :type="'success'" :mode="'contained'"
+                        @onClick="updateScreenRole" />
+
+
+
                 </a-row>
             </a-form>
+
         </a-modal>
     </div>
 </template>
 <script lang="ts">
-import {ref, defineComponent, watch, reactive} from 'vue'
+import { ref, defineComponent, watch, reactive } from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import {
     DxDataGrid,
@@ -106,7 +105,7 @@ import DefaultTextBox from "../../../../../components/common/DefaultTextBox.vue"
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
-      DefaultTextBox,
+        DefaultTextBox,
         SearchOutlined,
         WarningOutlined,
         DxDataGrid,
@@ -125,7 +124,6 @@ export default defineComponent({
 
         const visible = ref<boolean>(false);
         const triggersGetData = ref(false)
-        const labelCol = { style: { width: "300px" } };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
         const checkIDName = ref()
@@ -152,15 +150,15 @@ export default defineComponent({
         }
         const keyChecked = ref([])
         watch(() => props.modalStatus, (value) => {
-            if(value == true) {
-              dataCallApiDetail.value = {
-                id: props.idRowIndex
-              }
-              spinning.value = true
-              triggersGetData.value = true
-              if (dataCallApiDetail) {
-                refetchDataEdit()
-              }
+            if (value == true) {
+                dataCallApiDetail.value = {
+                    id: props.idRowIndex
+                }
+                spinning.value = true
+                triggersGetData.value = true
+                if (dataCallApiDetail) {
+                    refetchDataEdit()
+                }
             }
         })
         //Creat new group roll
@@ -189,19 +187,19 @@ export default defineComponent({
             }
             editScreenRole(dataCall)
         }
-        const { refetch: refetchDataEdit, result: resDataDetail} = useQuery(queries.getScreenRoleGroup, dataCallApiDetail, () => ({
+        const { refetch: refetchDataEdit, result: resDataDetail } = useQuery(queries.getScreenRoleGroup, dataCallApiDetail, () => ({
             enabled: triggersGetData.value,
             fetchPolicy: "no-cache",
         }))
 
         watch(resDataDetail, (value) => {
-            if(value) {
-              dataRes.value = value.getScreenRoleGroup
-              readAdminScreenRoles.value = value.getScreenRoleGroup.readAdminScreenRoles
-              writeAdminScreenRoles.value = value.getScreenRoleGroup.writeAdminScreenRoles
-              spinning.value = false
+            if (value) {
+                dataRes.value = value.getScreenRoleGroup
+                readAdminScreenRoles.value = value.getScreenRoleGroup.readAdminScreenRoles
+                writeAdminScreenRoles.value = value.getScreenRoleGroup.writeAdminScreenRoles
+                spinning.value = false
             }
-        }, {deep: true});
+        }, { deep: true });
         const setReadWrite = (data: any, type: string) => {
             let count = 0
             if (type == 'read') {
@@ -254,24 +252,15 @@ export default defineComponent({
         }
 
         const setModalVisible = () => {
-          emit("closePopupEdit", false)
+            emit("closePopupEdit", false)
         }
-        const getColorTag = (data: string) => {
-          if (data === "정상") {
-            return "#108ee9";
-          } else if (data === "해지") {
-            return "#cd201f";
-          } else if (data === "전체") {
-            return "grey";
-          }
-        }
+
         return {
             changeValRoles,
             updateScreenRole,
             spinning,
             dataSource,
             changeID,
-            labelCol,
             wrapperCol,
             dataRes,
             layout,

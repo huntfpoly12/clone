@@ -1,5 +1,5 @@
 <template>
-    <DxButton :width="120" :text="text" :type="type" @click="onClick" :styling-mode="mode"
+    <DxButton :text="text" :type="type" @click="onClick" :styling-mode="mode"
         :style="{ color: color, backgroundColor: backGround, border: border }" />
 </template>
 <script lang="ts">

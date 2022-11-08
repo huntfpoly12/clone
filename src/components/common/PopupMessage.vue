@@ -91,6 +91,16 @@ export default defineComponent({
                                 emit("closePopup", false)
                             },
                         });
+                    else if (props.typeModal == "confirm")
+                        Modal.confirm({
+                            title: props.title,
+                            content: props.content,
+                            okText: props.okText,
+                            cancelText: '取消',
+                            onOk() {
+                                emit("closePopup", false)
+                            },
+                        });
                     else if (props.typeModal == "acceptInput") {
                         visibleConfirm.value = true
                     }

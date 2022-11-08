@@ -1,4 +1,4 @@
-<template> 
+<template>
     <DxCheckBox v-model:value="valueCheck" :disabled="disabled" :icon-size="size" />
 </template>
 <script lang="ts">
@@ -31,8 +31,15 @@ export default defineComponent({
 
         watch(
             () => valueCheck.value,
-            (newValue) => { 
+            (newValue) => {
                 emit("update:valueCheckbox", newValue);
+            }
+        );
+
+        watch(
+            () => props.valueCheckbox,
+            (newValue) => {
+                valueCheck.value = newValue
             }
         );
         return {
@@ -50,7 +57,5 @@ export default defineComponent({
 }
 
 ::v-deep .dx-checkbox-icon:hover,
-.dx-checkbox-container {
-   
-}
+.dx-checkbox-container {}
 </style>

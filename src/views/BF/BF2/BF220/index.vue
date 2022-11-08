@@ -34,17 +34,17 @@
             <div class="search-form">
                 <div id="components-grid-demo-flex">
                     <a-row justify="start" :gutter="[16, 8]">
-                        <a-col>
+                        <a-col class="search">
                             <label class="lable-item">대상회원 :</label>
-                            <a-checkbox v-model:checked="buttonSearch.typeSevice1">
-                                <a-tag color="black">매니저</a-tag>
-                            </a-checkbox>
-                            <a-checkbox v-model:checked="buttonSearch.typeSevice2">
-                                <a-tag color="gray">영업자</a-tag>
-                            </a-checkbox>
-                            <a-checkbox v-model:checked="buttonSearch.typeSevice3">
-                                <a-tag class="ant-tag-yellow" >파트너</a-tag>
-                            </a-checkbox>
+                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
+                            <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저
+                            </a-tag>
+                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
+                            <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
+                            </a-tag>
+                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
+                            <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
+                            </a-tag>
                         </a-col>
                     </a-row>
                 </div>
@@ -110,7 +110,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
-import {dataSearchUtils, buttonSearchUtils} from "./utils";
+import { dataSearchUtils, buttonSearchUtils } from "./utils";
 import {
     DxDataGrid,
     DxColumn,
@@ -174,7 +174,7 @@ export default defineComponent({
         const spinning = ref<boolean>(true);
         const popupData = ref()
         const buttonSearch = ref({
-              ...buttonSearchUtils
+            ...buttonSearchUtils
         })
         const modalAddNewStatus = ref(false)
         const modalEditStatus = ref(false)
@@ -193,7 +193,7 @@ export default defineComponent({
                 arrayStatus.push('p')
             }
             if (buttonSearch.value.typeSevice1 != true && buttonSearch.value.typeSevice2 != true && buttonSearch.value.typeSevice3 != true) {
-                message.error('Vui lòng chọn trạng thái để tìm kiếm')
+                message.error('대상회원을 선택해야합니다!')
             } else {
                 dataSearch.value.types = arrayStatus
                 spinning.value = true
@@ -220,41 +220,50 @@ export default defineComponent({
             refetchData()
         }
         const onExporting = (e: any) => {
-          const workbook = new Workbook();
-          const worksheet = workbook.addWorksheet('employees');
-          exportDataGrid({
-            component: e.component,
-            worksheet,
-            autoFilterEnabled: true,
-          }).then(() => {
-            workbook.xlsx.writeBuffer().then((buffer) => {
-              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '권한그룹관리.xlsx');
+            const workbook = new Workbook();
+            const worksheet = workbook.addWorksheet('employees');
+            exportDataGrid({
+                component: e.component,
+                worksheet,
+                autoFilterEnabled: true,
+            }).then(() => {
+                workbook.xlsx.writeBuffer().then((buffer) => {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '권한그룹관리.xlsx');
+                });
             });
-          });
-          e.cancel = true;
+            e.cancel = true;
         }
         const modalHistory = (data: any) => {
-          IDRow.value = data.data.id
-          modalHistoryStatus.value = true;
-          popupData.value = data;
+            IDRow.value = data.data.id
+            modalHistoryStatus.value = true;
+            popupData.value = data;
         }
         const openAddNewModal = () => {
-          modalAddNewStatus.value = true;
+            modalAddNewStatus.value = true;
         }
         const openEditModal = (data: any) => {
-          IDRow.value = data.data.id
-          modalEditStatus.value = true;
+            IDRow.value = data.data.id
+            modalEditStatus.value = true;
         }
         const getColorTag = (data: string) => {
-          if (data === "m") {
-            return "black";
-          } else if (data === "p") {
-            return "yellow";
-          } else if (data === "r") {
-            return "gray";
-          }
+            if (data === "m") {
+                return "black";
+            } else if (data === "p") {
+                return "yellow";
+            } else if (data === "r") {
+                return "gray";
+            }
+        }
+        const changeValSearch = (key: any) => {
+            if (key == '1')
+                buttonSearch.value.typeSevice1 = !buttonSearch.value.typeSevice1
+            else if (key == '2')
+                buttonSearch.value.typeSevice2 = !buttonSearch.value.typeSevice2
+            else if (key == '3')
+                buttonSearch.value.typeSevice3 = !buttonSearch.value.typeSevice3
         }
         return {
+            changeValSearch,
             modalAddNewStatus,
             modalHistoryStatus,
             closePopupAdd,
