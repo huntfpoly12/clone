@@ -149,7 +149,7 @@ import { ref, defineComponent, watch ,reactive} from 'vue'
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import { useMutation } from "@vue/apollo-composable";
 import DxButton from 'devextreme-vue/button';
-import { message } from "ant-design-vue";
+import notification from '../../../../../utils/notification';
 import { initialFormState } from '../utils';
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 
@@ -204,7 +204,7 @@ export default defineComponent({
 
 
         onDoneAdd((res) => {
-            message.success(`새러운 영업자 추가 완료!`, 5);
+            notification('success',`새러운 영업자 추가 완료!`)
             emit("closePopup", false);
         })
 
