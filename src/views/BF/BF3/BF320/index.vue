@@ -34,7 +34,7 @@
         <div id="bf-320">
             <div class="search-form">
                 <div id="components-grid-demo-flex">
-                    <a-row justify="start" :gutter="[16,8]">
+                    <a-row justify="start" :gutter="[16, 8]">
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">
@@ -68,14 +68,14 @@
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
-                            <label >메니저명 :</label>
-                            <list-manager-dropdown/>
-                        </div>
+                                <label>메니저명 :</label>
+                                <list-manager-dropdown />
+                            </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
-                            <label >영업자명 :</label>
-                            <list-sales-dropdown />
+                                <label>영업자명 :</label>
+                                <list-sales-dropdown />
                             </div>
                         </a-col>
                     </a-row>
@@ -85,7 +85,7 @@
             <div class="page-content">
                 <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
-                    :column-auto-width="true">                    
+                    :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
@@ -275,71 +275,71 @@ export default defineComponent({
 
         const pageSize = ref(5)
         const handleClosePopup = () => {
-          modalStatus.value = false
-          refetchData()
+            modalStatus.value = false
+            refetchData()
         }
         const onExporting = (e: any) => {
-          const workbook = new Workbook();
-          const worksheet = workbook.addWorksheet('employees');
-          exportDataGrid({
-            component: e.component,
-            worksheet,
-            autoFilterEnabled: true,
-          }).then(() => {
-            workbook.xlsx.writeBuffer().then((buffer) => {
-              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
+            const workbook = new Workbook();
+            const worksheet = workbook.addWorksheet('employees');
+            exportDataGrid({
+                component: e.component,
+                worksheet,
+                autoFilterEnabled: true,
+            }).then(() => {
+                workbook.xlsx.writeBuffer().then((buffer) => {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
+                });
             });
-          });
-          e.cancel = true;
+            e.cancel = true;
         }
         const setModalVisible = (data: any) => {
-          idRowEdit.value = data.data.id;
-          modalStatus.value = true;
-          popupData.value = data;
+            idRowEdit.value = data.data.id;
+            modalStatus.value = true;
+            popupData.value = data;
         }
         const modalHistory = (data: any) => {
-          idRowEdit.value = data.data.id;
-          modalHistoryStatus.value = true;
-          popupData.value = data;
+            idRowEdit.value = data.data.id;
+            modalHistoryStatus.value = true;
+            popupData.value = data;
         }
         const changePage = () => {
-          let dataNew = {
-            page: dataSearchDef.page,
-            rows: dataSearchDef.rows,
-            code: dataSearchDef.code,
-            name: dataSearchDef.name,
-            presidentName: dataSearchDef.presidentName,
-            address: dataSearchDef.address,
-            manageUserId: dataSearchDef.manageUserId,
-            salesRepresentativeId: dataSearchDef.salesRepresentativeId,
-            excludeCancel: dataSearchDef.excludeCancel
-          }
-          refetchData(dataNew)
+            let dataNew = {
+                page: dataSearchDef.page,
+                rows: dataSearchDef.rows,
+                code: dataSearchDef.code,
+                name: dataSearchDef.name,
+                presidentName: dataSearchDef.presidentName,
+                address: dataSearchDef.address,
+                manageUserId: dataSearchDef.manageUserId,
+                salesRepresentativeId: dataSearchDef.salesRepresentativeId,
+                excludeCancel: dataSearchDef.excludeCancel
+            }
+            refetchData(dataNew)
 
-          spinning.value = !spinning.value;
-          setTimeout(() => {
             spinning.value = !spinning.value;
-          }, 1000);
+            setTimeout(() => {
+                spinning.value = !spinning.value;
+            }, 1000);
         }
         return {
-              idRowEdit,
-              spinning,
-              modalHistoryStatus,
-              responApiSearchCompanies,
-              dataSearchDef,
-              searching,
-              originData,
-              refetchData,
-              onExporting,
-              handleClosePopup,
-              modalStatus,
-              rowTable,
-              pageSize,
-              popupData,
-              setModalVisible,
-              modalHistory,
-              changePage,
-          }
+            idRowEdit,
+            spinning,
+            modalHistoryStatus,
+            responApiSearchCompanies,
+            dataSearchDef,
+            searching,
+            originData,
+            refetchData,
+            onExporting,
+            handleClosePopup,
+            modalStatus,
+            rowTable,
+            pageSize,
+            popupData,
+            setModalVisible,
+            modalHistory,
+            changePage,
+        }
     },
 
     methods: {
