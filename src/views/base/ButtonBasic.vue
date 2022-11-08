@@ -38,7 +38,7 @@
                     </span>
                 </td>
             </tr>
-            <tr> 
+            <tr>
                 <td>
                     <checkbox-basic v-model:valueCheckbox="valueCheckBox" :disabled="false" :size="'18'" />
                 </td>
@@ -88,7 +88,9 @@
                 </td>
 
                 <td>
-                    <b>v-model:valueSwitch</b> : Data default ( true / false)
+                    <b>v-model:valueSwitch</b> : Data default ( true / false)<br>
+                    <b>textCheck</b> : text when checked<br>
+                    <b>v-textUnCheck</b> : text when un-checked
                 </td>
 
                 <td>
@@ -97,7 +99,8 @@
 
                 <td>
                     <span class="mycode">
-
+                        &lt;switch-basic v-model:valueSwitch="valueSwitchChange" :textCheck="'포함'" :textUnCheck="'제외'" /
+                        &gt;
                     </span>
                 </td>
             </tr>
