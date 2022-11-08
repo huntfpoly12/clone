@@ -8,17 +8,21 @@
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="이용자ID">
-								<a-input v-model:value="formState.username" @change="validateCharacter" />
+								<default-text-box 
+									v-model:value="formState.username"
+								 	@change="validateCharacter"
+                					:required="true">
+								</default-text-box>
 							</a-form-item>
 						</a-col>
 						<a-col :span="12">
-							<a-button @click="checkUserName">중복체크</a-button>
+							<a-button :type="addTypeButton ? 'primary' : '' " @click="checkUserName">중복체크</a-button>
 						</a-col>
 					</a-row>
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="성명">
-								<a-input v-model:value="formState.name" />
+								<default-text-box  v-model:value="formState.name" :required="true"></default-text-box>
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -43,7 +47,7 @@
 							<a-row>
 								<a-col :span="15">
 									<a-form-item label="휴대폰">
-										<a-input v-model:value="formState.mobilePhone" @change="validateNumber"  @keyup="validateNumber" />
+										<default-text-box  v-model:value="formState.mobilePhone" @change="validateNumber"  @keyup="validateNumber" :required="true"></default-text-box>
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
@@ -57,8 +61,10 @@
 							<a-row>
 								<a-col :span="15">
 									<a-form-item label="이메일">
-										<a-input v-model:value="formState.email" @change="validateEmail"
-											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" />
+										<default-text-box v-model:value="formState.email" @change="validateEmail"
+											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" 
+											:required="true">
+										</default-text-box>
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
@@ -105,6 +111,7 @@ export default defineComponent({
 		];
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(false);
+		const addTypeButton = ref<boolean>(false);
 		const options = ref<SelectProps['options']>([]);
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
@@ -220,6 +227,11 @@ export default defineComponent({
 			dataCallApiCheck.value = {
 				username: formState.value.username
 			}
+			if (formState.value.username.length >= 1) {
+				addTypeButton.value = true
+			} else {
+				addTypeButton.value = false
+			}
 		}
 
 		const {
@@ -243,6 +255,7 @@ export default defineComponent({
 			confirmPopup,
 			validateEmail,
 			statusMailValidate,
+			addTypeButton,
 			bizTypeList,
 			creactUserNew,
 			refetchData,
