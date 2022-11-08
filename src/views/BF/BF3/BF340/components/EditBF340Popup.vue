@@ -123,20 +123,8 @@
                 </a-row>
                 <a-row style="margin-top: 20px;">
                     <a-col :span="16" :offset="8">
-                        <DxButton
-                            :width="70"
-                            text="취소"
-                            type="default"
-                            styling-mode="outlined"
-                            @click="setModalVisible"
-                            style="margin-right: 10px;"
-                            />
-                        <DxButton
-                            id="button"
-                            text="저장하고 나가기"
-                            type="default"
-                            @click="updateSale($event)"
-                        />
+                        <button-basic text="취소" :type="'default'" mode="outlined" @onClick="setModalVisible()" :width="70" style="margin-right: 10px;" />
+                        <button-basic text="저장하고 나가기" :type="'default'" mode="'contained'" @onClick="updateSale($event)" :width="150" />
                     </a-col>
                 </a-row>
             </form>
@@ -145,9 +133,7 @@
 </template>
 
 <script lang="ts">
-import DxButton from 'devextreme-vue/button';
 import { ref, defineComponent, reactive, watch } from 'vue';
-import { SearchOutlined } from '@ant-design/icons-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from 'dayjs';
 import notification from '../../../../../utils/notification';
@@ -158,11 +144,6 @@ import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
-    components: {
-        SearchOutlined,
-        DxButton
-    },
-
     setup(props, { emit }) {
         const code = ref();
         const id = ref();
