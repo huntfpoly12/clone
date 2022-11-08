@@ -86,7 +86,7 @@ import {
     DxColumn,
     DxPaging,
 } from 'devextreme-vue/data-grid';
-import { message } from 'ant-design-vue';
+import notification from '../../../../../utils/notification';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
@@ -149,9 +149,9 @@ export default defineComponent({
         }, { deep: true })
         watch(resList, (value) => {
             if (value.isScreenRoleGroupRegistableId == true) {
-                message.success(`사용 가능한 그룹코드입니다`)
+                notification('success', "사용 가능한 그룹코드입니다")
             } else {
-                message.error(`이미 존재하는 그룹코드 입니다. 다른 코드를 입력해주세요`)
+                notification('error', `이미 존재하는 그룹코드 입니다. 다른 코드를 입력해주세요`)
             }
             spinningAdd.value = false
         });
@@ -162,11 +162,11 @@ export default defineComponent({
             onError: creactError
         } = useMutation(mutations.createScreenRoleGroup);
         creactDone(e => {
-            message.success('그룹이 생성되었습니다.')
+            notification('success', "그룹이 생성되었습니다.")
             emit("closePopupAdd", false)
         })
         creactError(e => {
-            message.error(e.message)
+            notification('error', e.message)
         })
         const createScrenRole = (e: any) => {
             var res = e.validationGroup.validate();
@@ -246,4 +246,5 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped src="../style/popupAdd/index.scss">
+
 </style>

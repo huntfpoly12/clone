@@ -18,6 +18,8 @@ export default (typeMessage: string, text: string) => {
                 class: 'message-class',
                 style: {
                     marginTop: '20vh',
+                    color: 'red',
+                    borderColor: 'red'
                 },
             }, 4);
             break;
