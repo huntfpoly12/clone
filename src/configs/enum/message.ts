@@ -17,7 +17,10 @@ export class Message extends BaseType {
         '104': {"저장실패! {object}가 정해진 글자수를 초과하였습니다.", "iconError"}, // {object} exceeds the maximum number of characters.
         '105': {"저장실패! {object}가 올바른 형식이 아닙니다.", "iconError"}, // {object} has incorrect format.
       // SEARCH Button Click
-        '201': {"조회되었습니다.", "iconInfo"}, // Search successful!
+        '201': {"조회가 완료되었습니다. 결과를 확인하세요.", "iconInfo"}, // Search successful!
+      // CANCEL Button Click
+        '301': {"변경사항을 저장하지 않은채 종료하시겠습니까?", "iconWarning"}, //"Are you sure you want to exit without saving changes?
+        '302': {"취소되었습니다.", "iconInfo"}, // Canceled!
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
