@@ -11,9 +11,9 @@
                         <a-col :span="16">
                             <a-form-item label="그룹코드" class="clr">
                                 <div class="dflex">
-                                    <default-text-box class="mr5" v-model:valueInput="dataRes.id"
+                                    <default-text-box label="그룹코드" class="mr5" v-model:valueInput="dataRes.id"
                                         placeholder="영문,숫자 5~10자 (중복불가)" :max-character="10" :min-character="5" required
-                                        mess-required="이항목은 필수 입력사항입니다!" width="250"></default-text-box>
+                                        width="250"></default-text-box>
                                     <button-basic type="default" text="중복체크" @onClick="checkId" mode="contained"
                                         :disabled="isDisable" :height="33"></button-basic>
                                 </div>
@@ -22,7 +22,7 @@
                         <a-col :span="16">
                             <a-form-item label="그룹명" class="clr">
                                 <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" width="250"
-                                    :max-character="20" required mess-required="이항목은 필수 입력사항입니다!" />
+                                    :max-character="20" required label="그룹명" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
