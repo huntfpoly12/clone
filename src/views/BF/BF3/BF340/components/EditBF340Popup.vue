@@ -150,7 +150,7 @@ import { ref, defineComponent, reactive, watch } from 'vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from 'dayjs';
-import { message } from "ant-design-vue";
+import notification from '../../../../../utils/notification';
 import { initialFormState } from '../utils';
 import queries from "../../../../../graphql/queries/BF/BF3/BF340/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
@@ -220,14 +220,8 @@ export default defineComponent({
         );
 
         onError((error) => {
-            message.error({
-                content: () => error.message,
-                class: 'custom-class',
-                style: {
-                marginTop: '20vh',
-                },
-            }, 4);
-        });
+            notification('error',error.message);
+        })
 
         watch(result, (value) => {
             if (value && value.getSalesRepresentative) {
@@ -283,13 +277,7 @@ export default defineComponent({
         } = useMutation(mutations.updateSalesRepresentative);
 
         onUpdateError((error) => {
-            message.error({
-                content: () => error.message,
-                class: 'custom-class',
-                style: {
-                marginTop: '20vh',
-                },
-            }, 4);
+            notification('error',error.message);
         });
 
         const updateSale = (e : any) => {
@@ -306,13 +294,7 @@ export default defineComponent({
         }
 
         updateDone((res) => {
-            message.success({
-                content: () => `업데이트가 완료되었습니다!`,
-                class: 'custom-class',
-                style: {
-                marginTop: '20vh',
-                },
-            }, 4);
+            notification('success',`업데이트가 완료되었습니다!`);
             setModalVisible();
         });
 

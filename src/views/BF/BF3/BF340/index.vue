@@ -207,7 +207,7 @@ import { useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
-import { message } from "ant-design-vue";
+import notification from "../../../../utils/notification";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import {
   DxDataGrid,
@@ -293,13 +293,7 @@ export default defineComponent({
     }));
 
     onError((error) => {
-      message.error({
-        content: () => error.message,
-        class: 'custom-class',
-        style: {
-          marginTop: '20vh',
-        },
-      }, 4);
+      notification('error',error.message);
     });
 
     watch(result, (value) => {
