@@ -26,6 +26,7 @@
                     <b> text</b> : Text button <br />
                     <b> type </b>: Choose type button : success / default / danger <br />
                     <b> mode </b>: Choose styling mode button : contained / outlined / text
+                    <b> width </b>: Set width button
                 </td>
 
                 <td>
