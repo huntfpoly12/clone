@@ -82,12 +82,12 @@
                 <ToggleButton v-on:change="triggerToggleEvent" />
               </div>
             </a-form-item>
-            <a-form-item label="이메일" :span="8" class="red">
-              <mail-text-box v-if="formState.type !== 'c'" v-model:valueInput="formState.email" />
-              <mail-text-box v-else disabled v-model:valueInput="formState.email" />
+            <a-form-item label="이메일" :span="8" class="red" >
+              <mail-text-box v-if="formState.type !== 'c'" v-model:valueInput="formState.email" style="width: 237px" />
+              <mail-text-box v-else disabled v-model:valueInput="formState.email" style="width: 237px"/>
 
               <DxButton v-if="formState.type !== 'c'" html-type="submit" danger class="btn_sendemail"
-                @click="showModal">
+                @click="showModal" :disabled="disabledBtn">
                 비밀번호 변경</DxButton>
               <DxButton v-if="formState.type == 'c'" disabled=true html-type="submit" danger class="btn_sendemail">비밀번호
                 변경
@@ -313,13 +313,15 @@ export default defineComponent({
     }
     const dataQuery = ref();
     let trigger = ref<boolean>(false);
+
     watch(() => props.modalStatus,
       (newValue, old) => {
         if (newValue) {
           trigger.value = true;
           if (dataQuery) {
             dataQuery.value = { id: props.idRowEdit };
-            refetch()
+            refetch();
+           
           }
         }
       }
@@ -395,10 +397,22 @@ export default defineComponent({
       }
     });
     
-    watch(() => formState.value.email, (value: any) => {
-      if (value == true) {
-        disabledBtn.value = false
+    watch(() => formState.value.email, (newValue, old) => {
+      if (newValue) {
+        console.log(newValue);
+        
+        let checkMail = newValue.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );console.log(checkMail);
+
+      if (!checkMail) {
+        statusMailValidate.value = false;
+        disabledBtn.value = true;
+      } else {
+        statusMailValidate.value = true;
+        disabledBtn.value = false;
       }
+      }  
       else {
         disabledBtn.value = true;
       }
