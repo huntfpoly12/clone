@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="spinning" size="large">
+    <a-spin :spinning="spinning || loading" size="large">
         <div class="top-content">
             <a-typography-title :level="3"> 계약정보관리&심사
             </a-typography-title>
@@ -40,50 +40,48 @@
                                 <label class="lable-item">
                                     사업자코드 :
                                 </label>
-                                <a-input v-model:value="originData.code" style="width: 130px;" />
+                                <default-text-box v-model:valueInput="originData.code" width="130px" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">상호:</label>
-                                <a-input v-model:value="originData.name" style="width: 130px;" />
+                                <default-text-box v-model:valueInput="originData.name" width="130px" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">대표자:</label>
-                                <a-input v-model:value="originData.presidentName" style="width: 130px;" />
+                                <default-text-box v-model:valueInput="originData.presidentName" width="130px" />
                             </div>
                         </a-col>
                         <a-col>
                             <label class="lable-item">해지:</label>
-                            <a-switch v-model:checked="originData.excludeCancel" checked-children="포함"
-                                un-checked-children="제외" />
+                            <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'포함'"
+                                :textUnCheck="'제외'" />
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">주소 :</label>
-                                <a-input v-model:value="originData.address" style="width: 130px;" />
+                                <default-text-box v-model:valueInput="originData.address" width="130px" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label>메니저명 :</label>
-                                <list-manager-dropdown />
+                                <list-manager-dropdown width="150px" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label>영업자명 :</label>
-                                <list-sales-dropdown />
-
-                                {{ trigger }}
+                                <list-sales-dropdown width="150px" />
                             </div>
                         </a-col>
                     </a-row>
                 </div>
-            </div> 
-            
+            </div>
+
             <div class="page-content">
                 <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
@@ -118,7 +116,7 @@
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                        :total="rowTable" show-less-items @change="changePage" />
+                        :total="rowTable" show-less-items @change="searching" />
                 </div>
 
                 <BF320Popup :modalStatus="modalStatus" @closePopup="handleClosePopup" :idRowEdit="idRowEdit"
@@ -201,7 +199,7 @@ export default defineComponent({
         const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
         let modalStatus = ref<boolean>(false)
-        const trigger = ref(true)
+        const trigger = ref<boolean>(true)
         var responApiSearchCompanies = ref([])
 
         const originData = ref({
@@ -216,30 +214,23 @@ export default defineComponent({
             excludeCancel: true
         })
 
-        const { refetch: refetchData, onResult, result } = useQuery(queries.searchCompanies, originData, ({
+        const { refetch: refetchData, result, loading } = useQuery(queries.searchCompanies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
 
-        watch(
-            result,
-            (newValue, old) => {
-                console.log(newValue, 'hhhhhhh');
+
+        watch(result, (value) => {
+            if (value) {
+                rowTable.value = value.searchCompanies.totalCount
+                responApiSearchCompanies.value = value.searchCompanies.datas
                 trigger.value = false
-
+                spinning.value = false;
             }
-        );
-
-        onResult((res) => {
-            rowTable.value = res.data.searchCompanies.totalCount
-            responApiSearchCompanies.value = res.data.searchCompanies.datas
-
-
-
-            spinning.value = false;
-        })
+        });
 
         const searching = () => {
+            trigger.value = true;
             spinning.value = true;
             refetchData()
         }
@@ -273,15 +264,13 @@ export default defineComponent({
             modalHistoryStatus.value = true;
             popupData.value = data;
         }
-        const changePage = () => {
-            refetchData()
-            spinning.value = true;
-        }
+      
 
         return {
             trigger,
             idRowEdit,
             spinning,
+            loading,
             modalHistoryStatus,
             responApiSearchCompanies,
             originData,
@@ -294,8 +283,7 @@ export default defineComponent({
             pageSize,
             popupData,
             setModalVisible,
-            modalHistory,
-            changePage,
+            modalHistory, 
         }
     },
 });

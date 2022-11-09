@@ -1,12 +1,7 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :mask-closable="false" v-model:visible="visible" title="사업자관리 " width="1000px"
+        <a-modal :mask-closable="false" footer="" v-model:visible="visible" title="사업자관리 " width="1000px"
             @cancel="setModalVisible()">
-            <template #footer>
-                <a-button @click="setModalVisible">그냥 나가기</a-button>
-                <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateCompany">
-                    저장하고 나가기</a-button>
-            </template>
             <a-spin tip="Loading..." :spinning="loading">
                 <a-collapse v-model:activeKey="activeKey" accordion>
                     <a-collapse-panel key="1" header="사업자정보">
@@ -14,26 +9,20 @@
                             <a-row>
                                 <a-col :span="18">
                                     <a-form-item label="상 호" class="clr">
-                                      <default-text-box
-                                        v-model:inputValue="formState.extendInfoDetailName"
-                                        required
-                                        mess-required="이항목은 필수 입력사항입니다!"
-                                      ></default-text-box>
+                                        <default-text-box v-model:valueInput="formState.name" required label="상 호">
+                                        </default-text-box>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="6"></a-col>
 
                                 <a-col :span="8">
                                     <a-form-item label="사업자등록번호" class="clr">
-                                      <default-text-box
-                                          v-model:inputValue="formState.bizNumber"
-                                          required
-                                          mess-required="이항목은 필수 입력사항입니다!"
-                                      ></default-text-box>
+                                        <default-text-box v-model:valueInput="formState.bizNumber" required
+                                            label="사업자등록번호"></default-text-box>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
-                                <a-col :span="12">
+                                <a-col :span="14">
                                     <a-form-item label="사업자유형" class="clr">
                                         <a-radio-group v-model:value="formState.bizType">
                                             <a-radio :value="1" class="clb">법인사업자</a-radio>
@@ -41,154 +30,121 @@
                                         </a-radio-group>
                                     </a-form-item>
                                 </a-col>
-
-                                <a-col :span="12">
+                                <a-col :span="10">
                                     <a-form-item :label="changeTypeCompany(formState.bizType)">
-                                        <a-input placeholder="800123-1234567" style="width: 300px"
-                                            v-model:value="formState.presidentMobilePhone" />
+                                        <id-card-text-box v-model:valueInput="formState.presidentMobilePhone"
+                                            :required="true" label="사업자등록번호">
+                                        </id-card-text-box>
                                     </a-form-item>
                                 </a-col>
-                                <a-form-item label="주소" class="custom-flex clr">
-                                    <a-row :gutter="[0, 4]">
-                                        <a-col :span="24">
-                                            <a-row>
-                                                <a-col :span="12">
-                                                    <a-input style="width: 100%"
-                                                        v-model:value="formState.extendInfoDetailZipcode" disabled placeholder="우편번호"/>
-                                                </a-col>
-                                                <a-col :span="12">
-                                                    <div style="margin-left: 5px">
-                                                        <a-button type="primary" ghost>
-                                                            <post-code-button @dataAddress="funcAddress" />
-                                                        </a-button>
-                                                    </div>
-                                                </a-col>
-                                            </a-row>
-                                        </a-col>
-                                        <a-col :span="24">
-                                            <a-row>
-                                                <a-input v-model:value="formState.extendInfoDetailRoadAddress"
-                                                    disabled />
-                                            </a-row>
-                                        </a-col>
-                                        <a-col :span="24">
-                                            <a-row>
-                                                <a-input v-model:value="formState.extendInfoDetailAddressExtend" placeholder="상세주소 (입력)"/>
-                                            </a-row>
-                                        </a-col>
-                                    </a-row>
-                                </a-form-item>
+                                <a-col :span="24">
+                                    <a-form-item label="주소" class="custom-flex clr">
+                                        <a-row>
+                                            <a-col :span="17" style="display: flex; margin-bottom: 5px;">
+                                                <default-text-box style="width: 100%;"
+                                                    v-model:valueInput="formState.extendInfoDetailZipcode"
+                                                    autocomplete="off" :required="true" :disabled="true">
+                                                </default-text-box>
+                                                <post-code-button @dataAddress="funcAddress" />
+                                            </a-col>
+
+                                            <a-col :span="24" style="margin-bottom: 5px">
+                                                <default-text-box
+                                                    v-model:valueInput="formState.extendInfoDetailRoadAddress"
+                                                    autocomplete="off" width="100%" :required="true" :disabled="true">
+                                                </default-text-box>
+                                            </a-col>
+
+                                            <a-col :span="24">
+                                                <default-text-box
+                                                    v-model:valueInput="formState.extendInfoDetailAddressExtend"
+                                                    autocomplete="off" width="100%">
+                                                </default-text-box>
+                                            </a-col>
+                                        </a-row>
+
+                                    </a-form-item>
+                                </a-col>
+
                                 <a-col :span="8">
                                     <a-form-item label="연락처" class="clr">
-<!--                                        <a-input v-model:value="formState.extendInfoDetailPhone" />-->
-                                      <default-text-box
-                                          v-model:inputValue="formState.extendInfoDetailPhone"
-                                          required
-                                          placeholder="‘-’없이 숫자만 입력"
-                                          mess-required="이항목은 필수 입력사항입니다!"
-                                      ></default-text-box>
+                                        <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
+                                            :required="true" label="연락처" placeholder="‘-’없이 숫자만 입력">
+                                        </default-text-box>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
 
                                 <a-col :span="8">
                                     <a-form-item label="팩 스">
-                                        <a-input v-model:value="formState.extendInfoDetailFax" placeholder="‘-’없이 숫자만 입력"/>
+                                        <default-text-box v-model:valueInput="formState.extendInfoDetailFax"
+                                            autocomplete="off" width="100%" placeholder="‘-’없이 숫자만 입력">
+                                        </default-text-box>
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="16"></a-col>
-                                <div style="display: flex">
-                                    <div>
-                                        <imgUpload :title="titleModal" @update-img="getImgUrl"
-                                            style="margin-top: 10px" />
-                                    </div>
+                                <a-col :span="24">
+                                    <div style="display: flex">
+                                        <div>
+                                            <imgUpload :title="titleModal" @update-img="getImgUrl"
+                                                style="margin-top: 10px" />
+                                        </div>
 
-                                    <a-col :span="7">
-                                        <div v-if="imageValue" class="img-preview">
-                                            <a-image :src="imageValue" />
+                                        <div>
+                                            <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
                                         </div>
-                                        <div v-else class="img-preview">
-                                            <img src="../../../../../assets/images/imgdefault.jpg" />
-                                        </div>
-                                        <div v-if="fileName">
-                                            <span style="padding-right: 10px">{{ fileName }}</span>
-                                            <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
-                                        </div>
-                                    </a-col>
-                                </div>
-                                <!-- <imgUpload :title="titleModal" @update-img="getImgUrl" :marginTop="marginTopModal" /> -->
+                                    </div>
+                                </a-col>
                             </a-row>
                         </a-form>
                     </a-collapse-panel>
                     <a-collapse-panel key="2" header="대표자정보">
                         <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                             <a-form-item has-feedback label="대표자명" class="clr">
-                                <default-text-box
-                                  v-model:inputValue="formState.extendInfoPresidentName"
-                                  style="width: 200px"
-                                  autocomplete="off"
-                                  required
-                                  mess-required="이항목은 필수 입력사항입니다!"
-                                ></default-text-box>
+                                <default-text-box v-model:valueInput="formState.extendInfoPresidentName"
+                                    style="width: 200px" autocomplete="off" required label="대표자명">
+                                </default-text-box>
                             </a-form-item>
                             <a-form-item has-feedback label="생년월일" class="clr">
-                              <default-text-box
-                                  v-model:inputValue="formState.extendInfoPresidentBirthday"
-                                  style="width: 200px"
-                                  autocomplete="off"
-                                  required
-                                  mess-required="이항목은 필수 입력사항입니다!"
-                              ></default-text-box>
+                                <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
+                                    style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
+                                </date-time-box>
+
+                                <!-- <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday" width="300px" dateFormat="YYYY-MM-DD" /> -->
                             </a-form-item>
                             <a-form-item has-feedback label="휴대폰번호" class="clr">
-<!--                                <a-input-number placeholder="‘-’없이 숫자만 입력" style="width: 200px"-->
-<!--                                    v-model:value="formState.extendInfoPresidentMobilePhone" />-->
-                                <tel-tex-box
-                                  v-model:valyeInput="formState.extendInfoPresidentMobilePhone"
-                                  placeholder="‘-’없이 숫자만 입력"
-                                  style="width: 200px"
-                                  required
-                                  mess-required="이항목은 필수 입력사항입니다!"
-                                ></tel-tex-box>
+                                <tel-text-box label="휴대폰번호" width="200px"
+                                    v-model:valueInput="formState.extendInfoPresidentMobilePhone"
+                                    placeholder="‘-’없이 숫자만 입력" :required="true" />
                             </a-form-item>
                             <a-form-item has-feedback label="이메일" class="clr">
-                                <mail-text-box
-                                  style="width: 400px"
-                                  v-model:inputValue="formState.extendInfoPresidentEmail"
-                                  required
-                                ></mail-text-box>
+                                <mail-text-box style="width: 400px"
+                                    v-model:valueInput="formState.extendInfoPresidentEmail" :required="true">
+                                </mail-text-box>
                             </a-form-item>
                         </a-form>
                     </a-collapse-panel>
                     <a-collapse-panel key="3" header="CMS (자동이체출금) 계좌 정보 입력">
                         <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
                             <a-form-item label="출금은행" class="clr">
-                                <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType" width="150px" />
+                                <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType"
+                                    width="250px" />
                             </a-form-item>
                             <a-form-item label="출금계좌번호" class="clr">
-                                <default-text-box
-                                  v-model:inputValue="formState.extendInfoCmsBankAccountNumber"
-                                  placeholder="‘-’없이 숫자만 입력"
-                                  style="width: 300px"
-                                  required
-                                  mess-required="이항목은 필수 입력사항입니다!"
-                                ></default-text-box>
+                                <text-number-box text-number-box
+                                    v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
+                                    placeholder="‘-’없이 숫자만 입력" width="250px" required label="출금계좌번호">
+                                </text-number-box>
                             </a-form-item>
                             <a-form-item label="예금주명" class="clr">
-                                <default-text-box
-                                  style="width: 300px"
-                                  v-model:valueInput="formState.extendInfoCmsBankOwnerName"
-                                  required
-                                  mess-required="이항목은 필수 입력사항입니다!"
-                                ></default-text-box>
+                                <default-text-box width="250px"
+                                    v-model:valueInput="formState.extendInfoCmsBankOwnerName" required label="예금주명">
+                                </default-text-box>
                             </a-form-item>
                             <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
-                                <default-text-box
-                                    style="width: 250px"
-                                    v-model:value="formState.extendInfoCmsBankOwnerBizNumber"
-                                    required
-                                    mess-required="이항목은 필수 입력사항입니다!"
-                                ></default-text-box>
+                                <default-text-box width="250px"
+                                    v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" required
+                                    label="사업자(주민)등록번호:"></default-text-box>
                                 <div class="warring-bank">
                                     <InfoCircleFilled />
                                     <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>
@@ -212,18 +168,19 @@
                             <template #bodyCell="{ text, index }">
                                 <div>
                                     <div class="title-note">
-                                        <div>{{text.ownerName}} 수정 {{formarDate(text.updatedAt)}} 게시
-                                            {{formarDate(text.createdAt)}}</div>
+                                        <div>{{ text.ownerName }} 수정 {{ formarDate(text.updatedAt) }} 게시
+                                            {{ formarDate(text.createdAt) }}</div>
                                         <div v-if="index == 0">
                                             <PlusSquareOutlined :style="{ fontSize: '25px' }" @click="handleAdd" />
                                         </div>
                                     </div>
                                     <div>
-                                        <a-textarea placeholder="전달사항입력" allow-clear v-model:value="text.memo" />
+                                        <text-area-box placeholder="전달사항입력" allow-clear v-model:valueInput="text.memo">
+                                        </text-area-box>
                                     </div>
                                     <a-space :size="8" style="margin-top: 7px">
                                         <save-outlined :style="{ fontSize: '20px' }"
-                                            @click="handleAddMemo(text.memo,text.memoId)" />
+                                            @click="handleAddMemo(text.memo, text.memoId)" />
                                         <DeleteOutlined :style="{ fontSize: '20px' }"
                                             @click="handleDeleteMemo(text.memoId)" />
                                     </a-space>
@@ -232,6 +189,11 @@
                         </a-table>
                     </a-collapse-panel>
                 </a-collapse>
+                <div class="custom-footer-modal">
+                    <a-button @click="setModalVisible">그냥 나가기</a-button>
+                    <a-button key="submit" type="primary" :loading="loading || loadingUpdate" @click="updateCompany">
+                        저장하고 나가기</a-button>
+                </div>
             </a-spin>
         </a-modal>
     </div>
@@ -243,8 +205,7 @@ import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF320/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF320/index";
-
-import { message } from "ant-design-vue";
+import notification from '../../../../../utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -306,10 +267,8 @@ export default defineComponent({
         let visible = ref(false);
         const dataQuery = ref();
         const dataQueryMemos = ref();
-        const dataQueryCheckPer = ref({});
         let trigger = ref<boolean>(false);
-        let triggerCheckPer = ref<boolean>(false);
-            const imageValue = ref("");
+        const imageValue = ref("");
         const fileName = ref("");
         const previewTitle = ref("");
         const fileList = ref<UploadProps["fileList"]>([]);
@@ -367,6 +326,8 @@ export default defineComponent({
             canceledAt: null,
             unpaidMonths: 0
         });
+
+        let dataImg = ref()
         const formStateMomes = ref([
             {
                 memoId: null,
@@ -391,18 +352,18 @@ export default defineComponent({
         });
         const titleModal = "사업자등록증";
         const removeImg = () => {
-            imageValue.value = "";
-            fileName.value = "";
+            dataImg.value = ''
+            formState.extendInfoDetailLicenseFileStorageId = ''
         };
 
         watch(
             () => props.modalStatus,
             (newValue, old) => {
+                trigger.value = true;
                 if (newValue) {
                     visible.value = newValue;
                     dataQuery.value = { id: props.idRowEdit };
                     dataQueryMemos.value = { companyId: props.idRowEdit };
-                    trigger.value = true;
                     refetchMemo();
                     refetch();
                 } else {
@@ -435,7 +396,6 @@ export default defineComponent({
             })
         );
 
-        
         // get list memo of company
         const { result: resultMemo, refetch: refetchMemo } = useQuery(
             queries.getCompanyManageMemos,
@@ -452,36 +412,52 @@ export default defineComponent({
         });
 
         // mutation create memo 
-
         const {
             mutate: actionCreateMemo,
-            onError: onErrorMemo,
+            onError: creactMemoErr,
             onDone: onCreatedMemo
         } = useMutation(mutations.createCompanyManageMemo);
 
         onCreatedMemo((res) => {
+            notification('success', "메모 추가 완료!")
             refetchMemo();
-            message.success('메모 추가 완료!', 4);
+        });
+
+        creactMemoErr((res) => {
+            notification('error', res.message)
+            refetchMemo();
         });
 
         // mutation update memo 
         const {
             mutate: actionUpdateMemo,
-            onDone: onUpdatedMemo
+            onDone: onUpdatedMemo,
+            onError: updateMemoErr
         } = useMutation(mutations.updateCompanyManageMemo);
 
         onUpdatedMemo(() => {
+            notification('success', "메모 추가 완료!")
             refetchMemo();
         });
 
+        updateMemoErr((e) => {
+            notification('error', e.message)
+            refetchMemo();
+        });
 
         // mutation delete memo 
         const {
             mutate: actionDeleteMemo,
-            onDone: onDeleteMemo
+            onDone: onDeleteMemo,
+            onError: deleteMemoErr
         } = useMutation(mutations.deleteCompanyManageMemo);
 
         onDeleteMemo(() => {
+            notification('success', "메모 추가 완료!")
+            refetchMemo();
+        });
+        deleteMemoErr((e) => {
+            notification('error', e.message)
             refetchMemo();
         });
 
@@ -510,7 +486,6 @@ export default defineComponent({
         }
 
         const handleAddMemo = (note: any, mmId: any = null) => {
-
             if (note !== '' && mmId == null) {
                 actionCreateMemo({ companyId: formState.id, memo: note });
             } else {
@@ -530,8 +505,9 @@ export default defineComponent({
                 formState.presidentName = value.getCompany.presidentName;
                 formState.presidentMobilePhone = value.getCompany.presidentMobilePhone;
 
-                formState.extendInfoDetailName = value.getCompany.extendInfo.detail.name;
-                formState.extendInfoDetailZipcode = value.getCompany.extendInfo.detail.name;
+                formState.extendInfoDetailName = value.getCompany.name;
+
+                formState.extendInfoDetailZipcode = value.getCompany.extendInfo.detail.zipcode;
                 formState.extendInfoDetailRoadAddress = value.getCompany.extendInfo.detail.roadAddress;
                 formState.extendInfoDetailJibunAddress = value.getCompany.extendInfo.detail.jibunAddress;
                 formState.extendInfoDetailAddressExtend = value.getCompany.extendInfo.detail.addressExtend;
@@ -609,7 +585,7 @@ export default defineComponent({
         const updateCompany = () => {
 
             let extendInfoDetail = {
-                name: formState.extendInfoDetailName,
+                name: formState.name,
                 zipcode: formState.extendInfoDetailZipcode,
                 roadAddress: formState.extendInfoDetailRoadAddress,
                 jibunAddress: formState.extendInfoDetailJibunAddress,
@@ -656,9 +632,10 @@ export default defineComponent({
         }
 
         updateDone((res) => {
-            message.success(`업데이트 완료!`, 4);
+            notification('success', "업데이트 완료!")
             setModalVisible();
         });
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -666,7 +643,19 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false);
         }
+
+        const getImgUrl = (img: any) => {
+            let resImg = {
+                ...img,
+                name: img.fileName
+            }
+            dataImg.value = resImg
+            formState.extendInfoDetailLicenseFileStorageId = resImg.id
+        }
+
         return {
+            removeImg,
+            setModalVisible,
             fileList,
             loading,
             previewTitle,
@@ -687,36 +676,13 @@ export default defineComponent({
             loadingUpdate,
             updateCompany,
             fileName,
-            removeImg,
             imageValue,
+            dataImg,
+            getImgUrl
         };
-    },
-    methods: {
-        getImgUrl(img: any) {
-            this.imageValue = img.url;
-            this.fileName = img.fileName;
-        },
-        setModalVisible() {
-            this.$emit("closePopup", false);
-        },
-        setModalVisibleHis() {
-            this.$emit("closePopupHis", false);
-        },
-        getColorTag(data: string) {
-            if (data === "신청") {
-                return "red";
-            } else if (data === "심사중") {
-                return "blue";
-            } else if (data === "승인") {
-                return "green";
-            } else if (data === "반려") {
-                return "grey";
-            }
-        },
-
-
     },
 });
 </script>
 <style lang="scss" scoped src="../style/popup/index.scss">
+
 </style> 

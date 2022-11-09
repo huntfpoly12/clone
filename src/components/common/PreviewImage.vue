@@ -9,9 +9,9 @@
             <img src="../../../src/assets/images/imgdefault.jpg" :style="{ width: width, height: height }" />
         </div>
     </a-col>
-    <div v-if="dataImage">
-        <span>{{ dataImage.name }}</span>
-        <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
+        <div v-if="dataImage">
+            <span>{{ dataImage.name  }}</span>
+            <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
     </div>
 </template>
 <script lang="ts">

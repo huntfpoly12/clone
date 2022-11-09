@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <a-switch v-model:checked="dataDef" :checked-children="textCheck" :un-checked-children="textUnCheck" />
-    </div>
+    <a-switch v-model:checked="dataDef" :checked-children="textCheck" :un-checked-children="textUnCheck" />
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, ref, watch } from "vue";

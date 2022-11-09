@@ -20,10 +20,12 @@
     padding: 0px;
   }
 }
+
 ::v-deep img-preview {
   position: relative;
   width: 100%;
 }
+
 ::v-deep img {
   position: relative;
   width: 100%;
@@ -31,6 +33,7 @@
   margin-top: 20px;
 
 }
+
 .anticon {
   cursor: pointer;
 }
@@ -98,4 +101,20 @@
 
 .custom-lineHeight {
   line-height: 3px;
+}
+
+::v-deep.modal-note th {
+  display: none;
+}
+
+::v-deep .ant-collapse-content>.ant-collapse-content-box {
+  max-height: 470px;
+  overflow: scroll;
+}
+
+.custom-footer-modal {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
 }
