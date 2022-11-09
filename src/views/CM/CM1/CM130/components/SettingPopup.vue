@@ -10,29 +10,36 @@
 				주소 또는 소재지 ‘읍.면.동’ 이름을 입력하세요
 			</div>
 			<div style="text-align: center; margin-top: 10px">
-				<a-input-search v-model:value="search" enter-button="검색" style="width: 400px" @search="onSearch" />
+				<default-text-box
+					style="width: 350px; display: inline-block; margin-right: 10px;"
+					v-model:valueInput="search"
+					label="Default text box">
+				</default-text-box>
+				<button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'" @onClick="onSearch"/>
 			</div>
-			<div style="margin: 48px 0">
-				<DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="bcode"
-					:allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
-					<DxColumn data-field="" :width="30" cell-template="grid-cell" />
-					<template #grid-cell="{ data }">
-						<a-radio-group v-model:value="modalParam.checkBox">
-							<a-radio :value="data.data.bcode" @click="changeOption(data)"
-								:id="'data-' + data.data.bcode">
-							</a-radio>
-						</a-radio-group>
-					</template>
-					<DxColumn :width="150" data-field="taxOfficeName" caption="관할세무서" />
-					<DxColumn :width="200" data-field="localIncomeTaxArea" caption="지방소득세납세지" />
-					<DxColumn caption="주소" cell-template="address-cell" />
-					<template #address-cell="{ data }">
-						{{ data.data.address1 + " " + data.data.address2 + " " + data.data.address3 }}
-					</template>
-				</DxDataGrid>
-			</div>
+			<a-spin tip="Loading..." :spinning="loading">
+				<div style="margin: 48px 0">
+					<DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="bcode"
+						:allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+						<DxColumn data-field="" :width="30" cell-template="grid-cell" />
+						<template #grid-cell="{ data }">
+							<a-radio-group v-model:value="modalParam.checkBox">
+								<a-radio :value="data.data.bcode" @click="changeOption(data)"
+									:id="'data-' + data.data.bcode">
+								</a-radio>
+							</a-radio-group>
+						</template>
+						<DxColumn :width="150" data-field="taxOfficeName" caption="관할세무서" />
+						<DxColumn :width="200" data-field="localIncomeTaxArea" caption="지방소득세납세지" />
+						<DxColumn caption="주소" cell-template="address-cell" />
+						<template #address-cell="{ data }">
+							{{ data.data.address1 + " " + data.data.address2 + " " + data.data.address3 }}
+						</template>
+					</DxDataGrid>
+				</div>
+			</a-spin>
 			<div class="btn_submit">
-				<a-button type="primary" :disabled="!showEmployeeInfo" @click="onSubmit">확인</a-button>
+				<button-basic class="button-form-modal" :disabled="!showEmployeeInfo" :text="'확인'" :type="'default'" :mode="'contained'" @onClick="onSubmit"/>
 			</div>
 		</a-modal>
 	</div>
@@ -95,8 +102,8 @@ export default defineComponent({
 		const visible = ref<boolean>(false);
 		const search = ref<string>("");
 		let dataEmit = ref()
-		const onSearch = (searchValue: string) => {
-			dataQuery.value = { keyword: searchValue };
+		const onSearch = () => {
+			dataQuery.value = { keyword: search.value };
 			trigger.value = true;
 			refetchSearch();
 		};
@@ -142,6 +149,7 @@ export default defineComponent({
 			data,
 			visible,
 			search,
+			loading,
 			onSearch,
 			setModalVisible,
 			showEmployeeInfo,
