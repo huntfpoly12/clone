@@ -9,7 +9,7 @@
                         <a-form-item label="회원ID" class="red" compact>
                             <div class="dflex">
                                 <default-text-box v-model:valueInput="formState.username"
-                                    style="width: 190px; margin-right: 10px" required mess-required="이항목은 필수 입력사항입니다!">
+                                    style="width: 190px; margin-right: 10px" required>
                                 </default-text-box>
                                 <dx-button type="default" style="border: 1px solid" :disabled="disabledBtn"
                                     @click="checkDuplicateUsername">중복체크
@@ -57,12 +57,12 @@
                             <div style="display: flex; align-items: flex-end">
                                 <tel-text-box @keypress="onlyNumber" type="text"
                                     v-model:valueInput="formState.mobilePhone" style="width: 190px; margin-right: 8px"
-                                    :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                    :required="true" />
                             </div>
                         </a-form-item>
                         <a-form-item label="이메일" class="red">
-                            <mail-text-box v-model:valueInput="formState.email" style="width: 270px" :required="true"
-                                messRequired="이항목은 필수 입력사항입니다!" /> 
+                            <mail-text-box label="이메일" v-model:valueInput="formState.email" style="width: 270px" :required="true"
+             /> 
                         </a-form-item>
                         <a-form-item>
                             <a-modal class="container_email" v-model:visible="isShow" @ok="handleSuccsess">
