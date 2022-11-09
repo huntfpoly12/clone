@@ -1,22 +1,8 @@
 <template>
-    <div>
-      <Datepicker
-      v-model="date"
-      :class="classNameProps"
-      textInput
-      language="ko"
-      autoApply
-      :format="format"
-      @focus="focusDatetime"
-      v-on:blur="alertDate"
-      @keyup="getdata"
-      @update:modelValue="closeDateTime"
-      :format-locale="ko"
-      :style="{height: $config_styles.HeightInput, width: width }"
-    >
-    </Datepicker>
-    </div>
-
+  <Datepicker v-model="date" :class="classNameProps" textInput language="ko" autoApply :format="format"
+    @focus="focusDatetime" v-on:blur="alertDate" @keyup="getdata" @update:modelValue="closeDateTime" :format-locale="ko"
+    :style="{ height: $config_styles.HeightInput, width: width }">
+  </Datepicker>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
@@ -143,3 +129,10 @@ export default defineComponent({
   },
 });
 </script> 
+
+
+<style lang="scss">
+input.dp__input.dp__input_icon_pad {
+  height: 34px;
+}
+</style>

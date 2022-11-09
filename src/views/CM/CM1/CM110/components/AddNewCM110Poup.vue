@@ -18,7 +18,6 @@
 						<a-col :span="12">
 							<button-basic v-if="addTypeButton" :text="'중복체크'" :type="'default'" :mode="'contained'" @onClick="checkUserName"/>
 							<button-basic v-else :text="'중복체크'" :type="'default'" :mode="'outlined'" @onClick="checkUserName"/>
-							<!-- <a-button :type="addTypeButton ? 'primary' : '' " @click="checkUserName">중복체크</a-button> -->
 						</a-col>
 					</a-row>
 					<a-row>
@@ -31,9 +30,7 @@
 					<a-row>
 						<a-col :span="24">
 							<a-form-item label="회계권한(담당사업)">
-								<a-select v-model:value="formState.facilityBusinessIds" :options="bizTypeList"
-									mode="tags" placeholder="선택하십시오" max-tag-count="responsive">
-								</a-select>
+								<tag-select-box placeholder="선택하십시오" :arrayValue="bizTypeList" v-model:valueTagSelect="formState.facilityBusinessIds"/>
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -42,7 +39,6 @@
 							<a-form-item label="원천권한">
 								<radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="returnRadio"
                                             :layoutCustom="'horizontal'" />
-								<!-- <a-radio-group v-model:value="formState.withholdingRole" :options="optionsRadio" /> -->
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -81,9 +77,7 @@
 			</div>
 			<div class="text-align-center mt-20">
 				<button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
-				<!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
 				<button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="creactUserNew"/>
-				<!-- <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button> -->
 			</div>
 		</a-modal>
 	</div>
@@ -94,7 +88,7 @@ import { MailOutlined } from '@ant-design/icons-vue';
 import type { SelectProps } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
-import { message } from 'ant-design-vue';
+import notification from "../../../../../utils/notification";
 import queries from "../../../../../graphql/queries/CM/CM110/index"
 
 export default defineComponent({
@@ -157,16 +151,6 @@ export default defineComponent({
 				statusMailValidate.value = true;
 			}
 		})
-		// const validateEmail = (e: any) => {
-		// 	let checkMail = e.target.value.match(
-		// 		/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-		// 	);
-		// 	if (!checkMail) {
-		// 		statusMailValidate.value = false;
-		// 	} else {
-		// 		statusMailValidate.value = true;
-		// 	}
-		// }
 		let bizTypeList = ref([])
 		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
 
@@ -177,8 +161,8 @@ export default defineComponent({
 			let dataRes: any = []
 			e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
 				dataRes.push({
-					label: val.name,
-					value: val.facilityBusinessId
+					name: val.name,
+					id: val.facilityBusinessId
 				})
 			})
 			bizTypeList.value = dataRes
@@ -186,9 +170,9 @@ export default defineComponent({
 		onResultUsername(e => {
 			if (e.data)
 				if (e.data.isUserRegistableUsername == true) {
-					message.success(`사용 가능한 아이디입니다`)
+					notification('success', `사용 가능한 아이디입니다`)
 				} else {
-					message.error(`이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
+					notification('error', `이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요`)
 				}
 		})
 		//Creact user in company
@@ -200,11 +184,11 @@ export default defineComponent({
 
 
 		creactError(e => {
-			message.error(e.message, 2)
+			notification('error', e.message)
 		})
 		creactDone(e => {
 			emit("closePopup", false)
-			message.success("신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!")
+			notification('success', `신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!`)
 		})
 		const creactUserNew = () => {
 			if (statusMailValidate.value == true) {
@@ -222,7 +206,7 @@ export default defineComponent({
 				}
 				creactUser(dataCallApiCreate)
 			} else {
-				message.error(`이메일형식이 정확하지 않습니다.`)
+				notification('error', `이메일형식이 정확하지 않습니다.`)
 				var Url = document.getElementById("email") as HTMLInputElement;
 				Url.select()
 			}
@@ -234,7 +218,7 @@ export default defineComponent({
 				triggersUserName.value = true
 				refetchUserName()
 			} else {
-				message.error(`사용자 이름을 입력헤주세요!`)
+				notification('error', `사용자 이름을 입력헤주세요!`)
 			}
 		}
 
@@ -263,17 +247,6 @@ export default defineComponent({
                 }
             }
         );
-		// const validateCharacter = (e: any) =>
-		// 	formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
-		// 	dataCallApiCheck.value = {
-		// 		username: formState.value.username
-		// 	}
-		// 	if (formState.value.username.length >= 1) {
-		// 		addTypeButton.value = true
-		// 	} else {
-		// 		addTypeButton.value = false
-		// 	}
-		// }
 
 		const {
 			mutate: sendEmailUser,
@@ -284,11 +257,6 @@ export default defineComponent({
 		const setModalVisible = () => {
 			emit('closePopup', false)
 		}
-
-		// const validateNumber = () => {
-		// 	let e = formState.value.mobilePhone
-		// 	formState.value.mobilePhone = e.replace(/\D/g, '');
-		// }
 
 		doneSendEmail(e => {
 			console.log(e);
@@ -303,7 +271,6 @@ export default defineComponent({
 			visible,
 			optionsRadio,
 			confirmPopup,
-			// validateEmail,
 			statusMailValidate,
 			addTypeButton,
 			bizTypeList,
@@ -312,20 +279,8 @@ export default defineComponent({
 			checkUserName,
 			setModalVisible,
 			returnRadio,
-			// validateNumber,
 		};
 	},
-	methods: {
-		// setModalVisible() {
-		// 	this.$emit('closePopup', false)
-		// },
-
-		// validateNumber() {
-		// 	let e = this.formState.mobilePhone
-		// 	this.formState.mobilePhone = e.replace(/\D/g, '');
-		// },
-
-	}
 });
 </script>
 <style lang="scss" scoped src="../style/style.scss">
