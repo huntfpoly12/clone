@@ -13,16 +13,12 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="6">
-                            <a-button disabled>중복체크</a-button>
+                            <button-basic :disabled="true" :text="'중복체크'" :type="'default'" :mode="'outlined'"/>
                         </a-col>
                         <a-col :span="6">
                             <a-form-item label="상태" :label-col="{ span: 8 }">
                                 <switch-basic v-model:valueSwitch="formState.active" :textCheck="'이용중'"
                                     :textUnCheck="'이용중지'" />
-                                <!-- <a-switch v-model:checked="formState.active" style="width: 80px">
-                                    <template #checkedChildren>이용중</template>
-                                    <template #unCheckedChildren>이용중지</template>
-                                </a-switch> -->
                             </a-form-item>
                         </a-col>
                     </a-row>
@@ -36,9 +32,10 @@
                     <a-row>
                         <a-col :span="24">
                             <a-form-item label="회계권한(담당사업)">
-                                <a-select v-model:value="valueFacilyti" :options="bizTypeList" mode="tags"
+                                <!-- <a-select v-model:value="valueFacilyti" :options="bizTypeList" mode="tags"
                                     placeholder="선택하십시오" max-tag-count="responsive">
-                                </a-select>
+                                </a-select> -->
+                                <tag-select-box placeholder="선택하십시오" :arrayValue="bizTypeList" v-model:valueTagSelect="valueFacilyti"/>
                             </a-form-item>
                         </a-col>
                     </a-row>
@@ -47,7 +44,6 @@
                             <a-form-item label="원천권한">
                                 <radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="returnRadio"
                                     :layoutCustom="'horizontal'" />
-                                <!-- <a-radio-group v-model:value="formState.withholdingRole" :options="optionsRadio" /> -->
                             </a-form-item>
                         </a-col>
                     </a-row>
@@ -110,12 +106,10 @@
                         <p>계속 진행하시겠습니까?</p>
                     </a-col>
                 </a-row>
-                <!-- <a-button @click="closePopupEmail">아니오</a-button> -->
                 <button-basic class="button-form-modal" :text="'아니오'" :type="'default'" :mode="'outlined'"
                     @onClick="closePopupEmail" />
                 <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="sendMessToGmail" />
-                <!-- <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button> -->
             </a-modal>
         </div>
     </div>
@@ -127,7 +121,7 @@ import type { SelectProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/CM/CM110/index";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
-import { message } from "ant-design-vue";
+import notification from "../../../../../utils/notification";
 import { log } from "console";
 
 export default defineComponent({
@@ -185,15 +179,15 @@ export default defineComponent({
             onError: errorSendGmail,
         } = useMutation(mutations.sendEmail);
         onDoneUpdate((e) => {
-            message.success(`업데이트 완료되었습니다!`);
+            notification('success', `업데이트 완료되었습니다!`)
             emit("closePopup", false);
         });
         onErrorUpdate((e) => {
-            message.error(e.message);
+            notification('error', e.message)
         });
 
         errorSendGmail((e) => {
-            message.error(e.message);
+            notification('error', e.message)
         });
         const confirmPopup = () => {
             visible.value = true;
@@ -218,16 +212,7 @@ export default defineComponent({
                 
             }
         );
-        // const validateEmail = (e: any) => {
-        //     let checkMail = e.target.value.match(
-        //         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        //     );
-        //     if (!checkMail) {
-        //         statusMailValidate.value = false;
-        //     } else {
-        //         statusMailValidate.value = true;
-        //     }
-        // }
+
         onResult((res) => {
             let newFaci: any = [];
             res.data.getMyCompanyUser.facilityBusinesses.map((e: any) => {
@@ -260,8 +245,8 @@ export default defineComponent({
             let dataRes: any = [];
             e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
                 dataRes.push({
-                    label: val.name,
-                    value: val.facilityBusinessId,
+                    name: val.name,
+                    id: val.facilityBusinessId,
                 });
             });
             bizTypeList.value = dataRes;
@@ -297,15 +282,14 @@ export default defineComponent({
                 };
                 updateUser(dataUpdate);
             } else {
-                message.error(`이메일형식이 정확하지 않습니다.`);
+                notification('error', `이메일형식이 정확하지 않습니다.`)
                 var Url = document.getElementById("email") as HTMLInputElement;
                 Url.select();
             }
         };
         doneSendGmail((e) => {
-            message.success(`비밀번호 설정을 위한 이메일을 확인해주세요.`);
+            notification('success', `비밀번호 설정을 위한 이메일을 확인해주세요.`)
             visible.value = false;
-            // emit("closePopup", false)
         });
 
         const sendMessToGmail = () => {
@@ -327,10 +311,6 @@ export default defineComponent({
                 formState.value.mobilePhone = value.replace(/\D/g, "");
             }
         );
-        // const validateNumber = () => {
-        //     let e = formState.value.mobilePhone
-        //     formState.value.mobilePhone = e.replace(/\D/g, '');
-        // }
 
         const closePopupEmail = () => {
             visible.value = false;
@@ -344,7 +324,6 @@ export default defineComponent({
             visible,
             optionsRadio,
             confirmPopup,
-            // validateEmail,
             statusMailValidate,
             valueFacilyti,
             confirmUpdate,
@@ -353,21 +332,8 @@ export default defineComponent({
             bizTypeList,
             refetchFacility,
             setModalVisible,
-            // validateNumber,
             closePopupEmail,
         };
-    },
-    methods: {
-        // setModalVisible() {
-        //     this.$emit('closePopup', false)
-        // },
-        // validateNumber() {
-        //     let e = this.formState.mobilePhone
-        //     this.formState.mobilePhone = e.replace(/\D/g, '');
-        // },
-        // closePopupEmail(){
-        //     this.visible=false
-        // }
     },
 });
 </script>
