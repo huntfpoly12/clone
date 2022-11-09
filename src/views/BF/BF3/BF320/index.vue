@@ -40,30 +40,30 @@
                                 <label class="lable-item">
                                     사업자코드 :
                                 </label>
-                                <a-input v-model:value="dataSearchDef.code" style="width: 130px;" />
+                                <a-input v-model:value="originData.code" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">상호:</label>
-                                <a-input v-model:value="dataSearchDef.name" style="width: 130px;" />
+                                <a-input v-model:value="originData.name" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">대표자:</label>
-                                <a-input v-model:value="dataSearchDef.presidentName" style="width: 130px;" />
+                                <a-input v-model:value="originData.presidentName" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
                             <label class="lable-item">해지:</label>
-                            <a-switch v-model:checked="dataSearchDef.excludeCancel" checked-children="포함"
+                            <a-switch v-model:checked="originData.excludeCancel" checked-children="포함"
                                 un-checked-children="제외" />
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label class="lable-item">주소 :</label>
-                                <a-input v-model:value="dataSearchDef.address" style="width: 130px;" />
+                                <a-input v-model:value="originData.address" style="width: 130px;" />
                             </div>
                         </a-col>
                         <a-col>
@@ -76,12 +76,14 @@
                             <div class="dflex custom-flex">
                                 <label>영업자명 :</label>
                                 <list-sales-dropdown />
+
+                                {{ trigger }}
                             </div>
                         </a-col>
                     </a-row>
                 </div>
-            </div>
-
+            </div> 
+            
             <div class="page-content">
                 <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
@@ -129,7 +131,7 @@
 </template> 
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, reactive } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import {
     DxDataGrid,
     DxColumn,
@@ -189,9 +191,6 @@ export default defineComponent({
     data() {
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
-            // popupData: [],
-            // modalStatus: false,
-            // modalHistoryStatus: false,
         };
     },
 
@@ -202,18 +201,7 @@ export default defineComponent({
         const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
         let modalStatus = ref<boolean>(false)
-        var dataSearchDef = ref<any>({
-            page: 1,
-            rows: 10,
-            code: "",
-            name: "",
-            presidentName: "",
-            address: "",
-            manageUserId: null,
-            salesRepresentativeId: null,
-            excludeCancel: true
-        })
-
+        const trigger = ref(true)
         var responApiSearchCompanies = ref([])
 
         const originData = ref({
@@ -228,50 +216,33 @@ export default defineComponent({
             excludeCancel: true
         })
 
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchCompanies, originData)
+        const { refetch: refetchData, onResult, result } = useQuery(queries.searchCompanies, originData, ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }))
+
+        watch(
+            result,
+            (newValue, old) => {
+                console.log(newValue, 'hhhhhhh');
+                trigger.value = false
+
+            }
+        );
 
         onResult((res) => {
             rowTable.value = res.data.searchCompanies.totalCount
             responApiSearchCompanies.value = res.data.searchCompanies.datas
+
+
+
+            spinning.value = false;
         })
 
-        setTimeout(() => {
-            spinning.value = !spinning.value;
-        }, 1000);
-
         const searching = () => {
-            spinning.value = !spinning.value;
-
-            originData.value = {
-                page: 1,
-                rows: 10,
-                code: "",
-                name: "",
-                presidentName: "",
-                address: "",
-                manageUserId: null,
-                salesRepresentativeId: null,
-                excludeCancel: true
-            }
-
-            let dataNew = {
-                page: 1,
-                rows: dataSearchDef.value.rows,
-                code: dataSearchDef.value.code,
-                name: dataSearchDef.value.name,
-                presidentName: dataSearchDef.value.presidentName,
-                address: dataSearchDef.value.address,
-                manageUserId: dataSearchDef.value.manageUserId,
-                salesRepresentativeId: dataSearchDef.value.salesRepresentativeId,
-                excludeCancel: dataSearchDef.value.excludeCancel
-            }
-
-            refetchData(dataNew)
-            setTimeout(() => {
-                spinning.value = !spinning.value;
-            }, 1000);
+            spinning.value = true;
+            refetchData()
         }
-
 
         const pageSize = ref(5)
         const handleClosePopup = () => {
@@ -303,32 +274,18 @@ export default defineComponent({
             popupData.value = data;
         }
         const changePage = () => {
-            let dataNew = {
-                page: dataSearchDef.page,
-                rows: dataSearchDef.rows,
-                code: dataSearchDef.code,
-                name: dataSearchDef.name,
-                presidentName: dataSearchDef.presidentName,
-                address: dataSearchDef.address,
-                manageUserId: dataSearchDef.manageUserId,
-                salesRepresentativeId: dataSearchDef.salesRepresentativeId,
-                excludeCancel: dataSearchDef.excludeCancel
-            }
-            refetchData(dataNew)
-
-            spinning.value = !spinning.value;
-            setTimeout(() => {
-                spinning.value = !spinning.value;
-            }, 1000);
+            refetchData()
+            spinning.value = true;
         }
+
         return {
+            trigger,
             idRowEdit,
             spinning,
             modalHistoryStatus,
             responApiSearchCompanies,
-            dataSearchDef,
-            searching,
             originData,
+            searching,
             refetchData,
             onExporting,
             handleClosePopup,
@@ -341,54 +298,6 @@ export default defineComponent({
             changePage,
         }
     },
-
-    methods: {
-        // onExporting(e: any) {
-        //     const workbook = new Workbook();
-        //     const worksheet = workbook.addWorksheet('employees');
-        //     exportDataGrid({
-        //         component: e.component,
-        //         worksheet,
-        //         autoFilterEnabled: true,
-        //     }).then(() => {
-        //         workbook.xlsx.writeBuffer().then((buffer) => {
-        //             saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
-        //         });
-        //     });
-        //     e.cancel = true;
-        // },
-        // setModalVisible(data: any) {
-        //     this.idRowEdit = data.data.id;
-        //     this.modalStatus = true;
-        //     this.popupData = data;
-        // },
-        // modalHistory(data: any) {
-        //     this.idRowEdit = data.data.id;
-        //     this.modalHistoryStatus = true;
-        //     this.popupData = data;
-        // },
-
-        changePage() {
-            let dataNew = {
-                page: this.dataSearchDef.page,
-                rows: this.dataSearchDef.rows,
-                code: this.dataSearchDef.code,
-                name: this.dataSearchDef.name,
-                presidentName: this.dataSearchDef.presidentName,
-                address: this.dataSearchDef.address,
-                manageUserId: this.dataSearchDef.manageUserId,
-                salesRepresentativeId: this.dataSearchDef.salesRepresentativeId,
-                excludeCancel: this.dataSearchDef.excludeCancel
-            }
-            this.refetchData(dataNew)
-
-            this.spinning = !this.spinning;
-            setTimeout(() => {
-                this.spinning = !this.spinning;
-            }, 1000);
-        },
-    },
-
 });
 </script>
 
