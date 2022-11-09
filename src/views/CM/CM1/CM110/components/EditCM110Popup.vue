@@ -91,7 +91,7 @@
                     </a-row>
                 </a-form>
             </div>
-            <div class="text-align-center mt-15">
+            <div class="text-align-center mt-20">
                 <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible()" />
                 <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
@@ -235,6 +235,7 @@ export default defineComponent({
             });
             valueFacilyti.value = newFaci;
             formState.value = res.data.getMyCompanyUser;
+            
             if (formState.value.withholdingRole == true) {
                 returnRadio.value = 0;
             } else {
@@ -288,7 +289,7 @@ export default defineComponent({
                         name: formState.value.name,
                         accountingRole: false,
                         facilityBusinessIds: valueFacilyti.value,
-                        withholdingRole: returnRadio.value.id,
+                        withholdingRole: formState.value.withholdingRole,
                         mobilePhone: formState.value.mobilePhone,
                         email: formState.value.email,
                         active: formState.value.active,

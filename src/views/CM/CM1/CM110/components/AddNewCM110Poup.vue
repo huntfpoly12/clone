@@ -79,7 +79,7 @@
 					</a-row>
 				</a-form>
 			</div>
-			<div class="text-align-center mt-15">
+			<div class="text-align-center mt-20">
 				<button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
 				<!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
 				<button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="creactUserNew"/>
