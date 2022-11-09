@@ -1,7 +1,8 @@
 <template>
     <div>
-        <DxRadioGroup :items="arrayValue" v-model:value="data" @valueChanged="changeValueRadioGroup"
-            :layout="layoutCustom" />
+        <DxRadioGroup :items="arrayValue" value-expr="id" display-expr="text" :value="data"
+            :layout="layoutCustom"
+            @valueChanged="changeValueRadioGroup" />
     </div>
 </template>
 <script lang="ts">
@@ -19,7 +20,7 @@ export default defineComponent({
         },
         layoutCustom: {
             type: String
-        }
+        },
     },
     components: {
         DxRadioGroup
@@ -30,21 +31,21 @@ export default defineComponent({
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
         const data = ref(props.valueRadioCheck);
         const changeValueRadioGroup = (e: any) => {
-                emit("update:valueRadioCheck", e.value);
-        
+            emit("update:valueRadioCheck", e.value);
+
         }
 
         watch(
             () => props.valueRadioCheck,
             (value) => {
                 data.value = value
-                
+
             }
         );
         return {
             changeValueRadioGroup,
             styleCheckBox,
-            data
+            data,
         }
     },
 });
@@ -63,11 +64,11 @@ export default defineComponent({
     height: 14px;
 }
 
-::v-deep .dx-radio-value-container{
+::v-deep .dx-radio-value-container {
     padding-right: 0px
 }
 
-::v-deep .dx-radiobutton{
+::v-deep .dx-radiobutton {
     line-height: 18px;
 }
 </style>
