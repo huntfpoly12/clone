@@ -32,10 +32,10 @@
                             <sale-grade-select-box label="등급" v-model:valueInput="formState.grade" width="100px" :required="true"/>
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right" :label-col="labelCol">
-                            <id-card-text-box v-model:valueInput="formState.residentId" />
+                            <id-number-text-box v-model:valueInput="formState.residentId" />
                         </a-form-item>
                         <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
-                            <company-registration-number-text-box v-model:valueInput="formState.bizNumber" />
+                            <biz-number-text-box v-model:valueInput="formState.bizNumber" />
                         </a-form-item>
                         <a-form-item label="휴대폰"  class="red" label-align="right" :label-col="labelCol">
                             <tel-text-box label="휴대폰" v-model:valueInput="formState.mobilePhone" placeholder="전화번호를 입력" :required="true"/>

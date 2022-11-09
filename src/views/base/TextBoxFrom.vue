@@ -136,9 +136,9 @@
       <tr>
         <td>
           <div class="dx-field">
-            <div class="dx-field-label">Id Card text box</div>
+            <div class="dx-field-label">Id Number text box</div>
             <div class="dx-field-value">
-              <id-card-text-box :required="true" />
+              <id-number-text-box :required="true" />
             </div>
           </div>
         </td>
@@ -164,7 +164,7 @@
         </td>
         <td>
           <pre class="mycode">
-            &lt; id-card-text-box width="300px" :required="true" &gt;&lt;/ id-card-text-box &gt;
+            &lt; id-number-text-box width="300px" :required="true" &gt;&lt;/ id-number-text-box &gt;
           </pre>
         </td>
       </tr>
@@ -210,10 +210,10 @@
         <td>
           <div class="dx-field">
             <div class="dx-field-label">
-              Company registration number text box
+              Biz number text box
             </div>
             <div class="dx-field-value">
-              <company-registration-number-text-box :required="true" />
+              <biz-number-text-box :required="true" />
             </div>
           </div>
         </td>
@@ -239,7 +239,7 @@
         </td>
         <td>
           <pre class="mycode">
-            &lt; company-registration-number-text-box width="300px" :required="true" /&gt;
+            &lt; biz-number-text-box width="300px" :required="true" /&gt;
           </pre>
         </td>
       </tr>
