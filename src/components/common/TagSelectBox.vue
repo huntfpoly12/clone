@@ -1,27 +1,15 @@
 <template>
   <div>
-    <DxTextBox
-      :width="width"
-      value-change-event="input"
-      :show-clear-button="clearButton"
-      v-model:value="value"
-      :disabled="disabled"
-      :readOnly="readOnly"
-      @input="updateValue(value)"
-      :mask="mask"
-      :mask-invalid-message="maskMess"
-      :height="$config_styles.HeightInput"
-    >
+    <DxTagBox :items="simpleProducts" :search-enabled="true">
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messageRequired" />
-        <DxPatternRule :pattern="pattern" :message="maskMess" />
       </DxValidator>
-    </DxTextBox>
+    </DxTagBox>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref ,watch , getCurrentInstance } from "vue";
+import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import {
   DxValidator,
   DxRequiredRule,
@@ -32,9 +20,10 @@ import {
   DxRangeRule,
   DxAsyncRule,
 } from "devextreme-vue/validator";
-import DxTextBox from "devextreme-vue/text-box";
+import DxTagBox from "devextreme-vue/tag-box";
 export default defineComponent({
   props: {
+    dataInit: {},
     required: {
       type: Boolean,
       default: false,
@@ -50,10 +39,14 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    label: {
+      type: String,
+      required: true,
+    },
     readOnly: Boolean,
   },
   components: {
-    DxTextBox,
+    DxTagBox,
     DxValidator,
     DxRequiredRule,
     DxCompareRule,
@@ -64,33 +57,48 @@ export default defineComponent({
     DxAsyncRule,
   },
   setup(props, { emit }) {
-    const app : any= getCurrentInstance()
+    const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
-    const mask = ref("0000-00-00");
-    const maskMess = ref(messages.getCommonMessage('105').message);
-    const messageRequired = ref(messages.getCommonMessage('102').message);
-    if(props.messRequired != ""){
+    const messageRequired = ref(
+      messages
+        .getCommonMessage("102")
+        .message.replaceAll("{object}", props.label)
+    );
+    if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
-    const value = ref(props.valueInput.replaceAll('-', ''));
-    const pattern = ref(/((19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01]))/);
+    const value = ref(props.valueInput.replaceAll("-", ""));
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
 
+    const simpleProducts = [
+      "HD Video Player",
+      "SuperHD Video Player",
+      "SuperPlasma 50",
+      "SuperLED 50",
+      "SuperLED 42",
+      "SuperLCD 55",
+      "SuperLCD 42",
+      "SuperPlasma 65",
+      "SuperLCD 70",
+      "Projector Plus",
+      "Projector PlusHT",
+      "ExcelRemote IR",
+      "ExcelRemote Bluetooth",
+      "ExcelRemote IP",
+    ];
     watch(
       () => props.valueInput,
       (newValue) => {
-        value.value = newValue.replaceAll('-', '');
+        value.value = newValue.replaceAll("-", "");
       }
     );
     return {
       updateValue,
       value,
-      mask,
-      maskMess,
       messageRequired,
-      pattern,
+      simpleProducts,
     };
   },
 });

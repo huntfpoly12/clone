@@ -43,10 +43,6 @@ export default defineComponent({
       type: String,
       default: "",
     },
-    label: {
-      type: String,
-      required: true
-    },
     readOnly: Boolean,
   },
   components: {
@@ -58,8 +54,8 @@ export default defineComponent({
     const app : any= getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
     const mask = ref("000-00-00000");
-    const maskMess = ref(messages.getCommonMessage('105').message.replaceAll('{object}', props.label));
-    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
+    const maskMess = ref(messages.getCommonMessage('105').message);
+    const messageRequired = ref(messages.getCommonMessage('102').message);
     if(props.messRequired != ""){
       messageRequired.value = props.messRequired;
     }
