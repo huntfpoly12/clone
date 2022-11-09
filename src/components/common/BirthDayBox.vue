@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ value }} {{ dateInput }}
     <DxTextBox
       :width="width"
       value-change-event="input"
