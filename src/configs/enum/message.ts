@@ -11,11 +11,12 @@ export class Message extends BaseType {
     */
     private static COMMON = new Message({
       // SAVE Button Click 
-        '101': { "message" : "저장되었습니다.", "icon": "iconInfo"}, // Save successful!
-        '102': { "message" : "저장실패! {object}는 필수입력 사항입니다.", "icon": "iconError"}, // {object} is required field.
-        '103': { "message" : "저장실패! {object}는 최소 {minCount}자 이상입니다.", "icon": "iconError"}, // {object} more then {minCount} characters.
-        '104': { "message" : "저장실패! {object}가 정해진 글자수를 초과하였습니다.", "icon": "iconError"}, // {object} exceeds the maximum number of characters.
-        '105': { "message" : "저장실패! {object}가 올바른 형식이 아닙니다.", "icon": "iconError"}, // {object} has incorrect format.
+        '101': { "message" : "저장되었습니다.", "icon": "iconInfo"}, // [Pop-message] Save successful!
+        '102': { "message" : "이 항목은 필수입력 사항입니다."}, // {object} : This is Required field.
+        '103': { "message" : "최소 글자수를 확인하세요."}, // {object} : Check minimum number of characters.
+        '104': { "message" : "최대 글자수를 초과하였습니다."}, // {object} : exceeds the maximum number of characters.
+        '105': { "message" : "올바른 형식이 아닙니다."}, // {object} : Incorrect format. example : email, BusinessID, PersonalID, Birthday, etc
+        '109': { "message" : "저장이 실패하였습니다. Err : {errorCode}", "icon": "iconError"}, // [Pop-message] Save failure!
       // SEARCH Button Click
         '201': { "message" : "조회가 완료되었습니다. 결과를 확인하세요.", "icon": "iconInfo"}, // Search successful!
       // CANCEL Button Click
