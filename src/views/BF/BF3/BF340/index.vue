@@ -285,6 +285,7 @@ export default defineComponent({
     const originData = reactive({ ...origindata });
     const rowTable = ref(0);
     const dataSource = ref([]);
+    const trigger = ref<boolean>(true);
 
     const {
       refetch: refetchData,
@@ -292,8 +293,9 @@ export default defineComponent({
       onError,
       result,
     } = useQuery(queries.getDataSale, originData, () => ({
-      fetchPolicy: "no-cache",
-    }));
+                enabled: trigger.value,
+                fetchPolicy: "no-cache",
+            }));
 
     onError((error) => {
       notification('error',error.message);
@@ -303,6 +305,7 @@ export default defineComponent({
       if (value) {
         rowTable.value = value.searchSalesRepresentatives.totalCount;
         dataSource.value = value.searchSalesRepresentatives.datas;
+        trigger.value = false;
       }
     });
 
@@ -363,6 +366,7 @@ export default defineComponent({
     const searching = () => {
       originData.grade = saleGrade.value == 0 ? null : saleGrade.value;
       originData.statuses = [saleStatus.value];
+      trigger.value = true;
       refetchData();
     };
 

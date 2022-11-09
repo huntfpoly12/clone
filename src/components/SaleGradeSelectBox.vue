@@ -44,10 +44,6 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
-    label: {
-      type: String,
-      required: true,
-    },
     selectAll :{
       type: Boolean,
       default: false,
@@ -74,7 +70,7 @@ export default defineComponent({
     }) ;
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
-    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
+    const messageRequired = ref(messages.getCommonMessage('102').message);
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
