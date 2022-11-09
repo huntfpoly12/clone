@@ -79,6 +79,7 @@ export default defineComponent({
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
+    
     watch(() => props.valueInput, (newValue) => {
             value.value = newValue;
         }
