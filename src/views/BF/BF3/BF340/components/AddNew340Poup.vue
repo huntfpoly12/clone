@@ -166,12 +166,17 @@ export default defineComponent({
             mutate: creactSale,
             loading: loadingUpdate,
             onDone: onDoneAdd,
+            onError
         } = useMutation(mutations.creactedSale);
 
         onDoneAdd((res) => {
             notification('success',`새러운 영업자 추가 완료!`)
             emit("closePopup", false);
         })
+
+        onError((error) => {
+            notification('error',error.message)
+        });
 
         const setModalVisible = ()=>{
             emit('closePopup', false)
