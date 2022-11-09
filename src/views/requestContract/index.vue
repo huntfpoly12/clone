@@ -69,7 +69,7 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자등록번호 :</label>
-                                <company-registration-number-text-box v-model:valueInput="contractCreacted.bizNumber"
+                                <biz-number-text-box v-model:valueInput="contractCreacted.bizNumber"
                                     :required="true" />
                             </div>
                             <div class="form-item">
@@ -80,7 +80,7 @@
                                 </a-radio-group>
                                 <div class="group-label">
                                     <p>{{ textIDNo }}:</p>
-                                    <id-card-text-box :required="true"
+                                    <id-number-text-box :required="true"
                                         v-model:valueInput="contractCreacted.residentId" />
                                 </div>
                             </div>

@@ -92,7 +92,7 @@
                                         :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                                 </a-form-item>
                                 <a-form-item label="사업자등록번호" class="clr">
-                                    <company-registration-number-text-box :disabled="!canChangeableBizNumber"
+                                    <biz-number-text-box :disabled="!canChangeableBizNumber"
                                         v-model:valueInput="formState.companyBizNumber" width="300px" :required="true"
                                         messRequired="이항목은 필수 입력사항입니다!" />
                                 </a-form-item>
@@ -107,7 +107,7 @@
                                     </a-col>
                                     <a-col :span="12">
                                         <a-form-item :label="changeTypeCompany(formState.companyBizType)">
-                                            <id-card-text-box :required="true"
+                                            <id-number-text-box :required="true"
                                                 v-model:valueInput="formState.companyResidentId" width="224px"
                                                 messRequired="이항목은 필수 입력사항입니다!" />
                                         </a-form-item>

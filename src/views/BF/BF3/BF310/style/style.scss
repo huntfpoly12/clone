@@ -1,0 +1,149 @@
+.page-content {
+    padding-top: 10px;
+}
+
+.pagination-table {
+    margin-top: 10px;
+}
+
+.dx-button-has-text .dx-button-content {
+    padding: 0px 15px !important;
+}
+
+::v-deep .dx-toolbar-after {
+    display: flex;
+
+    .dx-toolbar-item {
+        &:first-child {
+            order: 2;
+            margin-left: 15px;
+        }
+    }
+}
+
+.search-form {
+    background: #f1f3f4;
+    padding: 10px 24px;
+
+    >div {
+        justify-content: flex-start !important;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    label {
+        margin-right: 10px;
+    }
+}
+
+.ant-select {
+    width: 145px;
+}
+
+::v-deep .dx-button-text {
+    line-height: 0.5;
+}
+
+#data-grid-demo {
+    min-height: 700px;
+}
+
+.dx-select-checkbox {
+    display: inline-block !important;
+}
+
+.search-form .col {
+    display: flex;
+    align-items: center;
+}
+
+.search-form .col {
+    margin-top: 20px;
+}
+
+.search-form .col .lable-item {
+    width: 110px;
+    display: inline-block;
+}
+
+.search-form .col .item:nth-child(2) {
+    margin-left: 30px;
+}
+
+.noteText p {
+    margin-bottom: 1px;
+}
+
+.noteImage {
+    font-size: 11px;
+    width: 100%;
+    padding-top: 2px;
+}
+
+.ant-card-head-title {
+    padding: 0px;
+}
+
+.ant-form-item {
+    margin-bottom: 4px;
+}
+
+.title-number-modal {
+    margin-top: 7px;
+}
+
+.ant-collapse {
+    .ant-collapse-item {
+        .ant-collapse-header {
+            padding: 7px;
+        }
+    }
+}
+
+.ant-form-item-label {
+    text-align: left;
+}
+
+.ant-card-extra {
+    padding: 0px;
+}
+
+.ant-card-head {
+    min-height: 30px;
+}
+
+.ant-table-thead {
+    tr {
+        th {
+            padding: 7px;
+        }
+    }
+}
+
+.ant-table-tbody {
+    tr {
+        td {
+            padding: 7px;
+        }
+    }
+}
+
+::v-deep .cell-center {
+    text-align: center !important
+}
+
+::v-deep .ant-pagination-options {
+    display: none;
+}
+
+.dflex {
+    display: flex;
+}
+
+.custom-flex {
+    align-items: flex-start;
+    align-items: center;
+}
+label {
+    margin-right: 10px;
+  }
