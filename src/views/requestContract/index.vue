@@ -2,7 +2,7 @@
     <a-spin :spinning="spinning || signinLoading" size="large">
         <div class="contract-container">
             <h2>서비스가입신청</h2>
-            <a-steps :current="step" type="navigation" :style="stepStyle">
+            <a-steps :current="step" type="navigation">
                 <a-step :status="step === 0 ? 'process' : 'finish'" title="약관동의" @click="changeStep(1)" />
                 <a-step :status="checkStepTwo" title="사업자대표자정보" @click="changeStep(2)" />
                 <a-step :status="checkStepThree" title="서비스신청CMS정보" @click="changeStep(3)" />
@@ -89,7 +89,7 @@
                                 <div class="group-label">
                                     <a-input class="width-auto" placeholder="우편번호"
                                         v-model:value="contractCreacted.zipcode" disabled />
-                                        <post-code-button @dataAddress="funcAddress" />
+                                    <post-code-button @dataAddress="funcAddress" />
                                 </div>
                             </div>
                             <div class="form-item">
@@ -128,14 +128,14 @@
                                         style="margin-top: 10px" />
                                 </div>
                                 <a-col :span="7">
-                                    <div v-if="this.imageValue" class="img-preview">
-                                        <a-image :src="this.imageValue" @click="handlePreview" />
+                                    <div v-if="imageValue" class="img-preview">
+                                        <a-image :src="imageValue" />
                                     </div>
                                     <div v-else class="img-preview">
                                         <img src="../../assets/images/imgdefault.jpg" />
                                     </div>
-                                    <div v-if="this.fileName">
-                                        <span style="padding-right: 10px">{{ this.fileName }}</span>
+                                    <div v-if="fileName">
+                                        <span style="padding-right: 10px">{{ fileName }}</span>
                                         <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
                                     </div>
                                 </a-col>
@@ -204,9 +204,9 @@
                             <div style="position: relative;">
                                 <div class="overlay" v-if="disableFormVal2 == true"></div>
                                 <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
-                                    :show-borders="true" :selected-row-keys="selectedItemKeys"
-                                    :allow-column-reordering="true" :allow-column-resizing="true"
-                                    :column-auto-width="true" :repaint-changes-only="true">
+                                    :show-borders="true" :allow-column-reordering="true" :allow-column-resizing="true"
+                                    :selected-row-keys="selectedItemKeys" :column-auto-width="true"
+                                    :repaint-changes-only="true">
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                         :allow-deleting="true" template="button-template" mode="cell">
                                         <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -254,14 +254,14 @@
                                         @update-step="getImgUrlAccounting" style="margin-top: 10px; " />
                                 </div>
                                 <a-col :span="7">
-                                    <div v-if="this.imagestep" class="img-preview">
-                                        <a-image :src="this.imagestep" @click="handlePreview" />
+                                    <div v-if="imagestep" class="img-preview">
+                                        <a-image :src="imagestep" />
                                     </div>
                                     <div v-else class="img-preview">
                                         <img src="../../assets/images/imgdefault.jpg" />
                                     </div>
-                                    <div v-if="this.fileNamestep">
-                                        <span style="padding-right: 10px">{{ this.fileNamestep }}</span>
+                                    <div v-if="fileNamestep">
+                                        <span style="padding-right: 10px">{{ fileNamestep }}</span>
                                         <delete-outlined @click="removeImgStep" style="color: red; cursor: pointer" />
                                     </div>
                                 </a-col>
@@ -396,7 +396,7 @@
         </div>
     </a-spin>
 </template>
-<script >
+<script lang="ts">
 import { reactive, ref, watch, computed } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
@@ -405,7 +405,6 @@ import {
     DeleteOutlined,
     InfoCircleFilled
 } from "@ant-design/icons-vue";
-import moment from "moment";
 import { notification } from "ant-design-vue";
 import bizTypeList from "../../constants/facilityBizType";
 import {
@@ -455,7 +454,6 @@ export default {
         DxTexts,
         DxButton,
         imgUpload,
-        moment,
         DxRequiredRule,
         DxCompareRule,
         DxValidator,
@@ -481,10 +479,10 @@ export default {
                     value: 2
                 }
             ],
-            imageId: null
         };
     },
     setup() {
+        const imageId = ref()
         const spinning = ref(false);
         const textIDNo = ref("법인등록번호")
         const step = ref(0);
@@ -535,6 +533,7 @@ export default {
             salesRepresentativeId: 1,
             comment: "",
             ownerName: "",
+            registrationCardFileStorageId: null
         };
         const contractCreacted = reactive({
             ...initialFormState
@@ -544,12 +543,15 @@ export default {
             applicationService: 1,
         })
         var visibleModal = ref(false);
-        const listDataConvert = ref(Array());
-        const valueFacilityBusinesses = ref([]);
+        const listDataConvert = ref();
+        const valueFacilityBusinesses = ref();
         const imagestep = ref("");
         const imageValue = ref("");
         const fileName = ref("");
         const fileNamestep = ref("");
+        const selectedItemKeys = ref(0)
+
+
         const removeImg = () => {
             imageValue.value = "";
             fileName.value = "";
@@ -588,7 +590,7 @@ export default {
                 range: "${label} must be between ${min} and ${max}",
             },
         };
-        const onFinish = (values) => {
+        const onFinish = () => {
         };
         const layout = {
             labelCol: { span: 8 },
@@ -617,8 +619,8 @@ export default {
         );
         const optionSale = ref()
         watch(resultConfig, (value) => {
-            let dataOption = []
-            value.getSalesRepresentativesForPublicScreen.map((e) => {
+            let dataOption: any = []
+            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
                 dataOption.push({
                     label: e.name,
                     value: e.id
@@ -626,8 +628,7 @@ export default {
             })
             optionSale.value = dataOption
         });
-        watch(valueFacilityBusinesses, (value) => {
-        });
+
         const statusMailValidate = ref(false)
         const validateEmail = () => {
             var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -669,84 +670,85 @@ export default {
                 //dataSearch.nameCompany = data.value;
             }
         });
-        const changeStep = (val) => {
-            if (val == 1) {
-                step.value = 0
-            }
-            if (val == 2
-                && contractCreacted.terms == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true) {
-                step.value = 1
-                window.scrollTo(0, 0);
-            }
-            if (val == 3
-                && contractCreacted.terms == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true
-                && contractCreacted.nameCompany != ""
-                && contractCreacted.bizNumber != ""
-                && contractCreacted.zipcode != ""
-                && contractCreacted.namePresident != ""
-                && contractCreacted.birthday != ""
-                && contractCreacted.mobilePhone != ""
-                && contractCreacted.email != ""
-                && contractCreacted.phone != ""
-                && contractCreacted.bizNumber.length == 10
-                && statusMailValidate.value == false
-            ) {
-                step.value = 2
-                window.scrollTo(0, 0);
-            }
-            if (val == 4
-                && contractCreacted.terms == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true
-                && contractCreacted.nameCompany != ""
-                && contractCreacted.bizNumber != ""
-                && contractCreacted.zipcode != ""
-                && contractCreacted.namePresident != ""
-                && contractCreacted.birthday != ""
-                && contractCreacted.mobilePhone != ""
-                && contractCreacted.email != ""
-                && contractCreacted.phone != ""
-                && contractCreacted.bizNumber.length == 10
-                && statusMailValidate.value == false
-            ) {
-                if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                } else {
-                    let count = 0
-                    if (dataInputCallApi.dossier == 1) {
-                        if (valueFacilityBusinesses.length == 0
-                            || contractCreacted.longTermCareInstitutionNumber == ''
-                        ) {
-                            count++
-                        }
-                    }
-                    if (dataInputCallApi.applicationService == 1) {
-                        if (contractCreacted.bankType == ''
-                            || contractCreacted.accountNumber == ''
-                            || contractCreacted.ownerName == ''
-                            || contractCreacted.ownerBizNumber == ''
-                        ) {
-                            count++
-                        }
-                    }
-                    if (count == 0) {
-                        step.value = 3
-                        window.scrollTo(0, 0);
-                    }
-                }
-            }
+        const changeStep = (val: number) => {
+            step.value = val - 1
+
+            // if (val == 1) {
+            //     step.value = 0
+            // }
+            // if (val == 2
+            //     && contractCreacted.terms == true
+            //     && contractCreacted.personalInfo == true
+            //     && contractCreacted.accountingService == true
+            //     && contractCreacted.withholdingService == true) {
+            //     step.value = 1
+            //     window.scrollTo(0, 0);
+            // }
+            // if (val == 3
+            //     && contractCreacted.terms == true
+            //     && contractCreacted.personalInfo == true
+            //     && contractCreacted.accountingService == true
+            //     && contractCreacted.withholdingService == true
+            //     && contractCreacted.nameCompany != ""
+            //     && contractCreacted.bizNumber != ""
+            //     && contractCreacted.zipcode != ""
+            //     && contractCreacted.namePresident != ""
+            //     && contractCreacted.birthday != ""
+            //     && contractCreacted.mobilePhone != ""
+            //     && contractCreacted.email != ""
+            //     && contractCreacted.phone != ""
+            //     && contractCreacted.bizNumber.length == 10
+            //     && statusMailValidate.value == false
+            // ) {
+            //     step.value = 2
+            //     window.scrollTo(0, 0);
+            // }
+            // if (val == 4
+            //     && contractCreacted.terms == true
+            //     && contractCreacted.personalInfo == true
+            //     && contractCreacted.accountingService == true
+            //     && contractCreacted.withholdingService == true
+            //     && contractCreacted.nameCompany != ""
+            //     && contractCreacted.bizNumber != ""
+            //     && contractCreacted.zipcode != ""
+            //     && contractCreacted.namePresident != ""
+            //     && contractCreacted.birthday != ""
+            //     && contractCreacted.mobilePhone != ""
+            //     && contractCreacted.email != ""
+            //     && contractCreacted.phone != ""
+            //     && contractCreacted.bizNumber.length == 10
+            //     && statusMailValidate.value == false
+            // ) {
+            //     if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
+            //     } else {
+            //         let count = 0
+            //         if (dataInputCallApi.dossier == 1) {
+            //             if (valueFacilityBusinesses.value.length == 0
+            //                 || contractCreacted.longTermCareInstitutionNumber == ''
+            //             ) {
+            //                 count++
+            //             }
+            //         }
+            //         if (dataInputCallApi.applicationService == 1) {
+            //             if (contractCreacted.bankType == ''
+            //                 || contractCreacted.accountNumber == ''
+            //                 || contractCreacted.ownerName == ''
+            //                 || contractCreacted.ownerBizNumber == ''
+            //             ) {
+            //                 count++
+            //             }
+            //         }
+            //         if (count == 0) {
+            //             step.value = 3
+            //             window.scrollTo(0, 0);
+            //         }
+            //     }
+            // }
         }
-        const pagePass = reactive(0)
-        const changeTypeCompany = (number) => {
-            if (number == 1) {
+        const changeTypeCompany = (val: number) => {
+            if (val == 1) {
                 textIDNo.value = "법인등록번호";
-            } else if (number == 2) {
+            } else if (val == 2) {
                 textIDNo.value = "주민등록번호";
             }
         }
@@ -792,6 +794,194 @@ export default {
             }
         });
 
+        watch(() => contractCreacted.withholdingService, (value) => {
+            if (contractCreacted.withholdingService == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true) {
+                checkAll.value = true
+            } else {
+                checkAll.value = false
+            }
+        });
+
+        watch(valueFacilityBusinesses, (newVal) => {
+            listDataConvert.value = [];
+            newVal.forEach((item: any) => {
+                listDataConvert.value.push({
+                    longTermCareInstitutionNumber: contractCreacted.longTermCareInstitutionNumber,
+                    facilityBizType: item?.facilityBizType,
+                    name: item?.name,
+                    startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
+                    capacity: parseInt(item?.capacity),
+                    registrationCardFileStorageId: contractCreacted.registrationCardFileStorageId,
+                });
+            });
+            var result = Object.values(newVal.reduce((c: any, v: any) => {
+                let k = v.name;
+                c[k] = c[k] || [];
+                c[k].push(v);
+                return c;
+            }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
+
+            if (result) {
+                message.error("중복되었습니다!")
+            }
+
+        });
+
+        watch(() => contractCreacted.longTermCareInstitutionNumber, (newVal) => {
+            if (listDataConvert.value.length > 0) {
+                listDataConvert.value.forEach((item: any) => {
+                    item.longTermCareInstitutionNumber = newVal;
+                });
+            }
+        })
+
+        watch(() => contractCreacted.registrationCardFileStorageId, (newVal) => {
+            if (listDataConvert.value.length > 0) {
+                listDataConvert.value.forEach((item: any) => {
+                    item.registrationCardFileStorageId = newVal;
+                });
+            }
+        })
+
+
+        const changeValueDate = (data: any) => {
+            contractCreacted.birthday = data;
+        }
+        const changeValueDateHoding = (data: any) => {
+            contractCreacted.startYearMonthHolding = data;
+        }
+        const funcAddress = (data: any) => {
+            contractCreacted.zipcode = data.zonecode;
+            contractCreacted.roadAddress = data.roadAddress;
+            contractCreacted.jibunAddress = data.jibunAddress;
+            contractCreacted.bcode = data.bcode;
+            contractCreacted.bname = data.bname;
+            contractCreacted.buildingCode = data.buildingCode;
+            contractCreacted.buildingName = data.buildingName;
+            contractCreacted.roadname = data.roadname;
+            contractCreacted.roadnameCode = data.roadnameCode;
+            contractCreacted.sido = data.sido;
+            contractCreacted.sigungu = data.sigungu;
+            contractCreacted.sigunguCode = data.sigunguCode;
+            contractCreacted.zonecode = data.zonecode;
+        }
+        const prevStep = () => {
+            step.value--;
+        }
+        const nextStep = () => {
+            if (step.value == 0) {
+                if (contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true) {
+                    step.value++;
+                    window.scrollTo(0, 0);
+                } else {
+                    message.error("계속하려면 모든 조건을 수락하십시오!")
+                }
+            } else if (step.value == 1) {
+                if (contractCreacted.nameCompany != ""
+                    && contractCreacted.bizNumber != ""
+                    && contractCreacted.zipcode != ""
+                    && contractCreacted.namePresident != ""
+                    && contractCreacted.birthday != ""
+                    && contractCreacted.mobilePhone != ""
+                    && contractCreacted.email != ""
+                    && contractCreacted.phone != ""
+                    && contractCreacted.bizNumber.length == 10
+                    && statusMailValidate.value == false
+                ) {
+                    step.value++;
+                    window.scrollTo(0, 0);
+                } else {
+                    message.error("계속하려면 모든 조건을 수락하십시오")
+                }
+            } else if (step.value == 2) {
+                if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
+                    message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
+                } else {
+                    let count = 0
+                    if (dataInputCallApi.dossier == 1) {
+                        if (valueFacilityBusinesses.value.length == 0
+                            || contractCreacted.longTermCareInstitutionNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+                    if (dataInputCallApi.applicationService == 1) {
+                        if (contractCreacted.bankType == ''
+                            || contractCreacted.accountNumber == ''
+                            || contractCreacted.ownerName == ''
+                            || contractCreacted.ownerBizNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+                    if (count > 0) {
+                        message.error('계속하려면 모든 조건을 수락하십시오!')
+                    } else {
+                        step.value++;
+                        window.scrollTo(0, 0);
+                    }
+                }
+            }
+        }
+        const openPopup = () => {
+            let countNull = 0;
+            if (countNull > 0) {
+                notification["error"]({
+                    message: "필수 항목을 입력하십시오",
+                });
+            } else {
+                Creat();
+            }
+        }
+        const handleOk = () => {
+            visibleModal.value = false;
+            // $router.push("/login");
+        }
+        const getImgUrl = (img: any) => {
+            contractCreacted.licenseFileStorageId = img;
+            imageValue.value = img.url;
+            fileName.value = img.fileName;
+        }
+        const getImgUrlAccounting = (img: any) => {
+            imagestep.value = img.url;
+            fileNamestep.value = img.fileNamestep;
+            contractCreacted.registrationCardFileStorageId = img.id;
+        }
+        const validateNumber = (key: any) => {
+            if (key == 'longTermCareInstitutionNumber') {
+                let e = contractCreacted.longTermCareInstitutionNumber
+                contractCreacted.longTermCareInstitutionNumber = e.replace(/\D/g, '');
+            }
+            if (key == 'accountNumber') {
+                let e = contractCreacted.accountNumber
+                contractCreacted.accountNumber = e.replace(/\D/g, '');
+            }
+            if (key == 'accountNumber') {
+                let e = contractCreacted.ownerBizNumber
+                contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
+            }
+            if (key == 'phone') {
+                let e = contractCreacted.phone
+                contractCreacted.phone = e.replace(/\D/g, '');
+            }
+            if (key == 'fax') {
+                let e = contractCreacted.fax
+                contractCreacted.fax = e.replace(/\D/g, '');
+            }
+            if (key == 'mobilePhone') {
+                let e = contractCreacted.mobilePhone
+                contractCreacted.mobilePhone = e.replace(/\D/g, '');
+            }
+            if (key == 'ownerBizNumber') {
+                let e = contractCreacted.ownerBizNumber
+                contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
+            }
+        }
+
+
         const checkAll = ref(false)
         const checkAllFunc = () => {
             if (checkAll.value == true) {
@@ -806,14 +996,25 @@ export default {
                 contractCreacted.withholdingService = false
             }
         }
+
         return {
+            imageId,
+            validateNumber,
+            changeValueDate,
+            changeValueDateHoding,
+            funcAddress,
+            prevStep,
+            nextStep,
+            openPopup,
+            handleOk,
+            getImgUrl,
+            getImgUrlAccounting,
             checkAll,
             checkAllFunc,
             signinLoading,
             spinning,
             textIDNo,
             changeTypeCompany,
-            pagePass,
             changeStep,
             statusMailValidate,
             validateEmail,
@@ -844,200 +1045,16 @@ export default {
             checkStepTwo,
             checkStepThree,
             checkStepFour,
-            changeValueInputEmit
+            changeValueInputEmit,
+            selectedItemKeys
         };
     },
     watch: {
-        "contractCreacted.longTermCareInstitutionNumber"(newVal) {
-            if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item) => {
-                    item.longTermCareInstitutionNumber = newVal;
-                });
-            }
-        },
-        "contractCreacted.registrationCardFileStorageId"(newVal) {
-            if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item) => {
-                    item.registrationCardFileStorageId = newVal;
-                });
-            }
-        },
-        registrationCardFileStorageId(newVal) {
-            if (this.listDataConvert.length > 0) {
-                this.listDataConvert.forEach((item) => {
-                    item.registrationCardFileStorageId = newVal;
-                });
-            }
-        },
-        valueFacilityBusinesses: {
-            handler(newVal) {
-                this.listDataConvert = [];
-                newVal.forEach((item) => {
-                    this.listDataConvert.push({
-                        longTermCareInstitutionNumber:
-                            this.contractCreacted.longTermCareInstitutionNumber,
-                        facilityBizType: item?.facilityBizType,
-                        name: item?.name,
-                        startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
-                        capacity: parseInt(item?.capacity),
-                        registrationCardFileStorageId:
-                            this.contractCreacted.registrationCardFileStorageId,
-                    });
-                });
-                var result = Object.values(newVal.reduce((c, v) => {
-                    let k = v.name;
-                    c[k] = c[k] || [];
-                    c[k].push(v);
-                    return c;
-                }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
-                if (result.length > 0) {
-                    message.error("중복되었습니다!")
-                }
-            },
-            deep: true,
-        },
+
+
     },
     methods: {
-        changeValueDate(data) {
-            this.contractCreacted.birthday = data;
-        },
-        changeValueDateHoding(data) {
-            this.contractCreacted.startYearMonthHolding = data;
-        },
-        funcAddress(data) {
-            this.contractCreacted.zipcode = data.zonecode;
-            this.contractCreacted.roadAddress = data.roadAddress;
-            this.contractCreacted.jibunAddress = data.jibunAddress;
-            this.contractCreacted.bcode = data.bcode;
-            this.contractCreacted.bname = data.bname;
-            this.contractCreacted.buildingCode = data.buildingCode;
-            this.contractCreacted.buildingName = data.buildingName;
-            this.contractCreacted.roadname = data.roadname;
-            this.contractCreacted.roadnameCode = data.roadnameCode;
-            this.contractCreacted.sido = data.sido;
-            this.contractCreacted.sigungu = data.sigungu;
-            this.contractCreacted.sigunguCode = data.sigunguCode;
-            this.contractCreacted.zonecode = data.zonecode;
-        },
-        prevStep() {
-            this.step--;
-        },
-        nextStep() {
-            if (this.step == 0) {
-                if (this.contractCreacted.terms == true && this.contractCreacted.personalInfo == true && this.contractCreacted.accountingService == true && this.contractCreacted.withholdingService == true) {
-                    this.step++;
-                    window.scrollTo(0, 0);
-                } else {
-                    message.error("계속하려면 모든 조건을 수락하십시오!")
-                }
-            } else if (this.step == 1) {
-                if (this.contractCreacted.nameCompany != ""
-                    && this.contractCreacted.bizNumber != ""
-                    && this.contractCreacted.zipcode != ""
-                    && this.contractCreacted.namePresident != ""
-                    && this.contractCreacted.birthday != ""
-                    && this.contractCreacted.mobilePhone != ""
-                    && this.contractCreacted.email != ""
-                    && this.contractCreacted.phone != ""
-                    && this.contractCreacted.bizNumber.length == 10
-                    && this.statusMailValidate == false
-                ) {
-                    this.step++;
-                    window.scrollTo(0, 0);
-                } else {
-                    message.error("계속하려면 모든 조건을 수락하십시오")
-                }
-            } else if (this.step == 2) {
-                if (this.dataInputCallApi.dossier == 2 && this.dataInputCallApi.applicationService == 2) {
-                    message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
-                } else {
-                    let count = 0
-                    if (this.dataInputCallApi.dossier == 1) {
-                        if (this.valueFacilityBusinesses.length == 0
-                            || this.contractCreacted.longTermCareInstitutionNumber == ''
-                        ) {
-                            count++
-                        }
-                    }
-                    if (this.dataInputCallApi.applicationService == 1) {
-                        if (this.contractCreacted.bankType == ''
-                            || this.contractCreacted.accountNumber == ''
-                            || this.contractCreacted.ownerName == ''
-                            || this.contractCreacted.ownerBizNumber == ''
-                        ) {
-                            count++
-                        }
-                    }
-                    if (count > 0) {
-                        message.error('계속하려면 모든 조건을 수락하십시오!')
-                    } else {
-                        this.step++;
-                        window.scrollTo(0, 0);
-                    }
-                }
-            }
-        },
-        openPopup() {
-            let countNull = 0;
-            if (countNull > 0) {
-                notification["error"]({
-                    message: "필수 항목을 입력하십시오",
-                });
-            } else {
-                this.Creat();
-            }
-        },
-        handleOk() {
-            this.visibleModal = false;
-            this.$router.push("/login");
-        },
-        getImgUrl(img) {
-            this.contractCreacted.licenseFileStorageId = img;
-            this.imageValue = img.url;
-            this.fileName = img.fileName;
-        },
-        getImgUrlAccounting(img) {
-            this.imagestep = img.url;
-            this.fileNamestep = img.fileNamestep;
-            this.contractCreacted.registrationCardFileStorageId = img.id;
-        },
-        getIDBank(data) {
-            console.log(data);
-            this.contractCreacted.bankType = data;
-        },
-        passwordComparison() {
-            return this.password;
-        },
-        validateNumber(key) {
-            if (key == 'longTermCareInstitutionNumber') {
-                let e = this.contractCreacted.longTermCareInstitutionNumber
-                this.contractCreacted.longTermCareInstitutionNumber = e.replace(/\D/g, '');
-            }
-            if (key == 'accountNumber') {
-                let e = this.contractCreacted.accountNumber
-                this.contractCreacted.accountNumber = e.replace(/\D/g, '');
-            }
-            if (key == 'accountNumber') {
-                let e = this.contractCreacted.ownerBizNumber
-                this.contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
-            }
-            if (key == 'phone') {
-                let e = this.contractCreacted.phone
-                this.contractCreacted.phone = e.replace(/\D/g, '');
-            }
-            if (key == 'fax') {
-                let e = this.contractCreacted.fax
-                this.contractCreacted.fax = e.replace(/\D/g, '');
-            }
-            if (key == 'mobilePhone') {
-                let e = this.contractCreacted.mobilePhone
-                this.contractCreacted.mobilePhone = e.replace(/\D/g, '');
-            }
-            if (key == 'ownerBizNumber') {
-                let e = this.contractCreacted.ownerBizNumber
-                this.contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
-            }
-        },
+
     },
 };
 </script>
