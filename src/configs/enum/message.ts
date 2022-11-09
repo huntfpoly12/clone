@@ -11,15 +11,18 @@ export class Message extends BaseType {
     */
     private static COMMON = new Message({
       // SAVE Button Click 
-        '101': { "message" : "저장되었습니다.", "icon": "iconInfo"}, // Save successful!
-        '102': { "message" : "저장실패! {object}는 필수입력 사항입니다.", "icon": "iconError"}, // {object} is required field.
-        '103': { "message" : "저장실패! {object}는 최소 {minCount}자 이상입니다.", "icon": "iconError"}, // {object} more then {minCount} characters.
-        '104': { "message" : "저장실패! {object}가 정해진 글자수를 초과하였습니다.", "icon": "iconError"}, // {object} exceeds the maximum number of characters.
-        '105': { "message" : "저장실패! {object}가 올바른 형식이 아닙니다.", "icon": "iconError"}, // {object} has incorrect format.
+        '101': { "message" : "저장되었습니다.", "icon": "iconInfo"}, // [Pop-message] Save successful!
+        '102': { "message" : "이 항목은 필수입력 사항입니다."}, // {object} : This is Required field.
+        '103': { "message" : "최소 글자수를 확인하세요."}, // {object} : Check minimum number of characters.
+        '104': { "message" : "최대 글자수를 초과하였습니다."}, // {object} : exceeds the maximum number of characters.
+        '105': { "message" : "올바른 형식이 아닙니다."}, // {object} : Incorrect format. example : email, BusinessID, PersonalID, Birthday, etc
+        '109': { "message" : "저장이 실패하였습니다. Err : {errorCode}", "icon": "iconError"}, // [Pop-message] Save failure!
       // SEARCH Button Click
-        '201': { "message" : "조회가 완료되었습니다. 결과를 확인하세요.", "icon": "iconInfo"}, // Search successful!
+        '201': { "message" : "조회가 완료되었습니다. 결과를 확인하세요.", "icon": "iconInfo"}, // [Pop-message] Search successful! Please check results.
+        '202': { "message" : "조회결과가 없습니다. 검색조건을 확인하세요.", "icon": " iconInfo"}, // [Pop-message] No result! Please check your search conditions.
+        '203': { "message" : "조회중 에러발생. 잠시후 다시 시도하세요. Err : {errorCode}", "icon": "iconError"}, // [Pop-message] Search error. Please try again later.
       // CANCEL Button Click
-        '301': { "message" : "변경사항을 저장하지 않은채 종료하시겠습니까?", "icon": "iconWarning"}, //"Are you sure you want to exit without saving changes?
+        '301': { "message" : "변경사항을 저장하지 않은채 종료하시겠습니까?", "icon": "iconWarning"}, // [Modal-confirm] "Are you sure you want to exit without saving changes?
         '302': { "message" : "취소되었습니다.", "icon":"iconInfo"}, // Canceled!
     });
 
