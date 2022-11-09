@@ -1,11 +1,12 @@
 <template>
     <div>
-        <DxRadioGroup :items="arrayValue" :value="valueChecked" @valueChanged="changeValueRadioGroup"
-            :layout="layoutCustom" />
+        <DxRadioGroup :items="arrayValue" value-expr="id" display-expr="text" :value="data"
+            :layout="layoutCustom"
+            @valueChanged="changeValueRadioGroup" />
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, getCurrentInstance, reactive, ref } from "vue";
+import { defineComponent, getCurrentInstance, watch, ref } from "vue";
 import DxRadioGroup from 'devextreme-vue/radio-group';
 
 export default defineComponent({
@@ -15,11 +16,11 @@ export default defineComponent({
             required: true
         },
         valueRadioCheck: {
-            type: String || Number
+            type: Object
         },
         layoutCustom: {
             type: String
-        }
+        },
     },
     components: {
         DxRadioGroup
@@ -28,21 +29,23 @@ export default defineComponent({
     setup(props, { emit }) {
         const app: any = getCurrentInstance()
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
-        const valueChecked = ref()
-
-        props.arrayValue.map((e: any, index: any) => {
-            if (props.valueRadioCheck == e.id) {
-                valueChecked.value = props.arrayValue[index]
-            }
-        })
-
+        const data = ref(props.valueRadioCheck);
         const changeValueRadioGroup = (e: any) => {
-            emit("update:valueRadioCheck", e.value.id);
+            emit("update:valueRadioCheck", e.value);
+
         }
+
+        watch(
+            () => props.valueRadioCheck,
+            (value) => {
+                data.value = value
+
+            }
+        );
         return {
             changeValueRadioGroup,
             styleCheckBox,
-            valueChecked
+            data,
         }
     },
 });

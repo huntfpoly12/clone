@@ -47,10 +47,6 @@ export default defineComponent({
       type: Number,
       default: "",
     },
-    label: {
-      type: String,
-      required: true,
-    },
     readOnly: Boolean,
   },
   components: {
@@ -61,7 +57,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
-    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
+    const messageRequired = ref(messages.getCommonMessage('102').message);
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
