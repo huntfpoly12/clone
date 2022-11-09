@@ -137,7 +137,7 @@ export default defineComponent({
         { id: 3, text: 'High' }])
 
         const valueCheckBox = ref(false)
-        const valueRadioBox = ref(3)
+        const valueRadioBox = ref(arrayRadioCheck.value[2])
         const valueSwitchChange = ref(true)
 
         return {

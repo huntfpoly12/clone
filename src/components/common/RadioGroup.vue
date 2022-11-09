@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <DxRadioGroup :items="arrayValue" :value="valueChecked" @valueChanged="changeValueRadioGroup"
+    <div> 
+        <DxRadioGroup :items="arrayValue" :value="valueRadioCheck" @valueChanged="changeValueRadioGroup"
             :layout="layoutCustom" />
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, getCurrentInstance, reactive, ref } from "vue";
+import { defineComponent, getCurrentInstance } from "vue";
 import DxRadioGroup from 'devextreme-vue/radio-group';
 
 export default defineComponent({
@@ -15,7 +15,7 @@ export default defineComponent({
             required: true
         },
         valueRadioCheck: {
-            type: String || Number
+            type: Object
         },
         layoutCustom: {
             type: String
@@ -28,21 +28,14 @@ export default defineComponent({
     setup(props, { emit }) {
         const app: any = getCurrentInstance()
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
-        const valueChecked = ref()
-
-        props.arrayValue.map((e: any, index: any) => {
-            if (props.valueRadioCheck == e.id) {
-                valueChecked.value = props.arrayValue[index]
-            }
-        })
 
         const changeValueRadioGroup = (e: any) => {
-            emit("update:valueRadioCheck", e.value.id);
+                emit("update:valueRadioCheck", e.value);
+        
         }
         return {
             changeValueRadioGroup,
-            styleCheckBox,
-            valueChecked
+            styleCheckBox
         }
     },
 });
@@ -61,11 +54,11 @@ export default defineComponent({
     height: 14px;
 }
 
-::v-deep .dx-radio-value-container {
+::v-deep .dx-radio-value-container{
     padding-right: 0px
 }
 
-::v-deep .dx-radiobutton {
+::v-deep .dx-radiobutton{
     line-height: 18px;
 }
 </style>
