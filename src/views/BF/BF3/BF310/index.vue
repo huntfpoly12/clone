@@ -43,7 +43,7 @@
                         <div class="dflex custom-flex">
                             <label class="lable-item">심사상태/결과 :</label>
                             <subs-req-status-select-box
-                            v-model:valueInput="originData.statuses"
+                            v-model:valueInput="statuses"
                             width="120px"
                             placeholder="전체"
                             :selectAll="true"
@@ -58,7 +58,7 @@
                     </a-col>
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
-                        <a-range-picker v-model:value="dateSearch" width="50%" :placeholder="['Start', 'End']" />
+                        <a-range-picker v-model:value="rangeDate" width="50%" :placeholder="['Start', 'End']" />
                     </a-col>
                 </a-row>
             </div>
@@ -154,9 +154,6 @@ import {
     DeleteOutlined,
     SaveOutlined,
 } from '@ant-design/icons-vue';
-
-import BF310Popup from "./components/BF310Popup.vue";
-import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
 import {
     DxDataGrid,
     DxColumn,
@@ -166,6 +163,9 @@ import {
     DxSearchPanel,
     DxPager,
 } from "devextreme-vue/data-grid";
+import BF310Popup from "./components/BF310Popup.vue";
+import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
+
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -188,30 +188,13 @@ export default defineComponent({
         DeleteOutlined,
         SaveOutlined
     },
-    data() {
-        return {
-            dateSearch: [dayjs().subtract(1, 'year'), dayjs()],
-            startDate: '',
-            finishDate: '',
-            displayMode: 'full',
-            showPageSizeSelector: true,
-            showNavButtons: true,
-        };
-    },
     setup() {
+        const rangeDate =  ref([dayjs().subtract(1, 'year'), dayjs()]);
         const dataSource = ref([]);
         const modalStatus = ref(false);
         const idSubRequest = ref();
         const statuses: any = ref([]);
         const trigger = ref<boolean>(true);
-        const requestDataSale = ref({
-            page: 1,
-            rows: 1000,
-            statuses: [1, 2, 3],
-            grade: 1,
-            name: "",
-            code: ""
-        })
         const rowTable = ref(10)
         const originData = reactive({
             page: 1,
@@ -230,27 +213,19 @@ export default defineComponent({
         }
         const pageSize = ref(20)
 
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests,{filter : originData} , () => ({
+        const { refetch: refetchData, loading, error, result } = useQuery(queries.searchSubscriptionRequests,{filter : originData} , () => ({
                 enabled: trigger.value,
                 fetchPolicy: "no-cache",
             }));
 
         watch(result, (value) => {
-      if (value) {
-        rowTable.value = value.searchSalesRepresentatives.totalCount;
-        dataSource.value = value.searchSalesRepresentatives.datas;
-        trigger.value = false;
-      }
-    });
-
-        onResult((res) => {
-            if (res.loading) {
-            } else {
-                rowTable.value = res.data.searchSubscriptionRequests.totalCount
-                dataSource.value = res.data.searchSubscriptionRequests.datas
+            if (value) {
+                rowTable.value = value.searchSubscriptionRequests.totalCount
+                dataSource.value = value.searchSubscriptionRequests.datas
+                trigger.value = false;
             }
-        })
-       
+            });
+
         const onExporting = (e: { component: any; cancel: boolean; })=>{
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
@@ -269,9 +244,6 @@ export default defineComponent({
             e.cancel = true;
         }
 
-        const customClass = (cellInfo: { value: any; })=>{
-            return cellInfo.value;
-        }
         const getColorTag  = (data: any)=>{
             if (data == 10) {
                 return { "name": "red", "tag_name": "신청" };
@@ -287,39 +259,30 @@ export default defineComponent({
             return dayjs(date).format('YYYY/MM/DD')
         }
         const searching  = ()=>{
-            if (!originData.startDate && !originData.finishDate) {
-                originData.finishDate = formarDate(new Date())
-                var date = formarDate(dayjs().subtract(1, 'year'))
-                originData.startDate = date
-            }
-          
-            let arrayNew = {
-                ...originData,
-                page: 1,
-                statuses: statuses.length > 0 ? statuses : [10, 20, 30, 99]
-            }
-            refetchData(arrayNew)
-           
+            originData.startDate = formarDate(rangeDate.value[0]);
+            originData.finishDate = formarDate(rangeDate.value[1]);
+            originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : [statuses.value]
+            trigger.value = true;
+            refetchData()
         }
         const changePage  =  ()=> {
-            
+            searching()
         }
     
         return {
             loading,
+            rangeDate,
             idSubRequest,
             dataSource,
             modalStatus,
             rowTable,
             setModalVisible,
             originData,
-            requestDataSale,
             refetchData,
             pageSize,
             statuses,
             searching,
             getColorTag,
-            customClass,
             onExporting,
             changePage
         }
