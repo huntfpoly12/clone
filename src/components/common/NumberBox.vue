@@ -1,6 +1,7 @@
 <template>
   <div>
     <DxNumberBox
+      @valueChanged="updateValue(value)"
       :width="width"
       value-change-event="input"
       :show-clear-button="clearButton"
