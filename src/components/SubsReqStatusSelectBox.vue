@@ -1,38 +1,32 @@
 <template>
   <div>
-    <DxTextBox
+    <DxSelectBox
       :width="width"
-      value-change-event="input"
+      :data-source="subReqStatus"
+      :placeholder="placeholder"
       :show-clear-button="clearButton"
       v-model:value="value"
-      :disabled="disabled"
-      :readOnly="readOnly"
-      @input="updateValue(value)"
-      :mask="mask"
-      :mask-invalid-message="maskMess"
+      :read-only="readOnly"
+      display-expr="label"
+      value-expr="value"
+      @value-changed="updateValue(value)"
       :height="$config_styles.HeightInput"
     >
       <DxValidator>
         <DxRequiredRule v-if="required" :message="messageRequired" />
-        <DxCustomRule :reevaluate="true"
-                :message="maskMess"
-                :validation-callback="validateDate"
-            />
       </DxValidator>
-    </DxTextBox>
+    </DxSelectBox>
   </div>
 </template>
-
 <script lang="ts">
-import { defineComponent, ref, watch, getCurrentInstance } from "vue";
-import dayjs, { Dayjs } from 'dayjs';
+import { defineComponent, ref, watch, computed, getCurrentInstance } from "vue";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import DxSelectBox from "devextreme-vue/select-box";
 import {
-  DxValidator,
-  DxRequiredRule,
-  DxPatternRule,
-  DxCustomRule
-} from "devextreme-vue/validator";
-import DxTextBox from "devextreme-vue/text-box";
+    SubscriptionRequestStatus,
+  enum2Entries,
+} from "@bankda/jangbuda-common";
+
 export default defineComponent({
   props: {
     required: {
@@ -47,55 +41,52 @@ export default defineComponent({
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: String,
-      default: "",
+      type: Number,
+      default: 0,
     },
+    placeholder: String,
     readOnly: Boolean,
   },
   components: {
-    DxTextBox,
+    DxSelectBox,
     DxValidator,
     DxRequiredRule,
-    DxPatternRule,
-    DxCustomRule
   },
   setup(props, { emit }) {
+    var subReqStatus: any = computed(() => {
+      let slGrade: any = enum2Entries(SubscriptionRequestStatus).map(
+        (value) => ({
+          value: value[1],
+          label: value[0],
+        })
+      );
+      slGrade.push({ value: 0, label: "전체" });
+      return slGrade;
+    });
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
-    const mask = ref("0000-00-00");
-    const dateInput = ref("");
-    const maskMess = ref(messages.getCommonMessage("105").message);
     const messageRequired = ref(messages.getCommonMessage("102").message);
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
-    const value = ref(props.valueInput.replaceAll("-", ""));
+    const value = ref(props.valueInput);
+
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
-
     watch(
       () => props.valueInput,
       (newValue) => {
-        value.value = newValue.replaceAll("-", "");
+        value.value = newValue;
       }
     );
-
-    const validateDate = (e:any)=>{
-      let date = e.value;
-      let dtFormat = date.slice(0, 4) + "-" + date.slice(4, 6) + "-" + date.slice(6, 8);
-      return dayjs(dtFormat, 'YYYY-MM-DD', true).isValid();
-    }
-
     return {
       updateValue,
+      subReqStatus,
       value,
-      mask,
-      maskMess,
       messageRequired,
-      dateInput,
-      validateDate
     };
   },
 });
 </script>
+<style scoped></style>

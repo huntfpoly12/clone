@@ -69,7 +69,7 @@
 
                 <td>
                     <b>arrayValue</b> : Array data <br>
-                    <b>v-model:valueRadioCheck</b> : Id default <br>
+                    <b>v-model:valueRadioCheck</b> : Object emit or default <br>
                     <b>layoutCustom</b> : Layout horizontal and vertical ( horizontal / '' )
                 </td>
 
