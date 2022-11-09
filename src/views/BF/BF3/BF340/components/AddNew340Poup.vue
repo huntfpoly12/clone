@@ -212,6 +212,8 @@ export default defineComponent({
                 creactSale(dataNew)
             }
         }
+      
+
         return {
             labelCol,
             wrapperCol,

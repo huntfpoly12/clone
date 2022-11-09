@@ -154,7 +154,8 @@
         <a-col :offset="8" style="text-align: center; margin-top: 20px;">
           <DxButton :width="120" text="취소" type="default" styling-mode="outlined" @click="setModalVisible"
             style="margin-right: 10px;" />
-          <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default" @click="confirmUpdate" />
+          <DxButton id="button" v-if="formState.type !== 'c'"  :use-submit-behavior="true" text="저장하고 나가기" type="default" @click="confirmUpdate" />
+          <DxButton id="button" v-else disabled=true :use-submit-behavior="true" text="저장하고 나가기" type="default" @click="confirmUpdate" />
         </a-col>
       </a-row>
     </a-modal>

@@ -3,7 +3,7 @@
         <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
             width="50%" :mask-closable="false">
             <h2 class="title_modal">회원정보</h2>
-            <form action="" @submit.prevent="creactUserNew">
+            <form action="">
                 <a-row :gutter="24">
                     <a-col :span="12">
                         <a-form-item label="회원ID" class="red" compact>
@@ -17,8 +17,7 @@
                             </div>
                         </a-form-item>
                         <a-form-item label="회원명" class="red">
-                            <default-text-box v-model:valueInput="formState.name" :required="true" width="190px"
-                                messRequired="이항목은 필수 입력사항입니다!" />
+                            <default-text-box v-model:valueInput="formState.name" :required="true" width="190px" />
                         </a-form-item>
                         <a-form-item label="소속" class="red">
                             <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택"
@@ -32,7 +31,8 @@
                             <a-switch v-model:checked="formState.active" checked-children="이용중"
                                 un-checked-children="이용중지" style="width: 100px" />
                         </a-form-item>
-                        <a-form-item label="회원종류" class="red">
+
+                        <!-- <a-form-item label="회원종류" class="red">
                             <a-select style="width: 10px" v-model:value="formState.type" option-label-prop="children"
                                 class="select_disable" @change="changeValueType">
                                 <a-select-option value="2" label="중간매니저">
@@ -48,6 +48,26 @@
                                     <a-tag style="color: black" :color="getColorTag('파트너')">파트너</a-tag>
                                 </a-select-option>
                             </a-select>
+                        </a-form-item> -->
+
+
+                        <a-form-item label="회원종류2" class="red">
+                            <DxSelectBox id="custom-templates" :data-source="dataSelectType"
+                                v-model:value="formState.type" display-expr="name" value-expr="id" item-template="item"
+                                :height="$config_styles.HeightInput" style="width:130px" field-template="field"
+                                @value-changed="changeValueType">
+                                <template #field="{ data }"> 
+                                    <Field :fieldData="data"/>
+                                </template>
+                                <template #item="{ data }">
+                                    <div style="width: 100%; padding: 3px;font-size:85%;">
+                                        <div
+                                            :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
+                                            {{ data.name }}
+                                        </div>
+                                    </div>
+                                </template>
+                            </DxSelectBox>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -61,8 +81,8 @@
                             </div>
                         </a-form-item>
                         <a-form-item label="이메일" class="red">
-                            <mail-text-box label="이메일" v-model:valueInput="formState.email" style="width: 270px" :required="true"
-             /> 
+                            <mail-text-box label="이메일" v-model:valueInput="formState.email" style="width: 270px"
+                                :required="true" />
                         </a-form-item>
                         <a-form-item>
                             <a-modal class="container_email" v-model:visible="isShow" @ok="handleSuccsess">
@@ -100,7 +120,8 @@
                     <a-col :offset="8" style="text-align: center">
                         <DxButton :width="120" text="취소" type="default" styling-mode="outlined" @click="setModalVisible"
                             style="margin-right: 10px;" />
-                        <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default" />
+                        <DxButton id="button" @click="creactUserNew" :use-submit-behavior="true" text="저장하고 나가기"
+                            type="default" />
                     </a-col>
                 </a-row>
             </form>
@@ -135,7 +156,9 @@ import {
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DxSelectBox from 'devextreme-vue/select-box';
-import DxButton from 'devextreme-vue/button';
+import notification from '../../../../../utils/notification';
+import DxButton from 'devextreme-vue/button'; 
+import Field from './Field.vue';
 export default defineComponent({
     props: ["modalStatus", "data"],
     components: {
@@ -153,6 +176,7 @@ export default defineComponent({
         DxButton,
         DxRequiredRule,
         DxValidator,
+        Field
     },
     setup(props, { emit }) {
         const selectSearch = ref([{}]);
@@ -200,6 +224,44 @@ export default defineComponent({
             rows: 20,
             types: ["r"],
         });
+        let dataSelectType = ref([
+            {
+                id: 1,
+                color: 'white',
+                name: "중간메니저",
+                type: "m",
+                grade: "2",
+                background: 'black',
+                border: "1px solid black"
+            },
+            {
+                id: 2,
+                color: 'white',
+                name: "당당메니저",
+                type: "m",
+                grade: "3",
+                background: 'black',
+                border: "1px solid black"
+            },
+            {
+                id: 3,
+                color: 'white',
+                name: "영업자회원",
+                type: "r",
+                grade: "",
+                background: 'grey',
+                border: "1px solid grey"
+            },
+            {
+                id: 4,
+                color: 'black',
+                name: "파트너회원",
+                type: "p",
+                grade: "",
+                background: 'goldenrod',
+                border: "1px solid goldenrod"
+            }
+        ])
         let trigger = ref<boolean>(false);
         let triggerDuplication = ref<boolean>(false);
         let triggerGroup = ref<boolean>(false);
@@ -277,6 +339,7 @@ export default defineComponent({
             }
         }
         onResultUsername(e => {
+            createUser
             if (e.data)
                 if (e.data.isUserRegistableUsername == true) {
                     message.success(`사용 가능한 아이디입니다`)
@@ -302,33 +365,39 @@ export default defineComponent({
             onError: creactError
         } = useMutation(mutations.createUser);
         creactError(e => {
-            message.error(e.message, 2)
+            notification('error', e.message)
         })
         creactDone(e => {
+            notification('success', `신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!`)
             emit("closePopup", false)
-            message.success("신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!")
         })
         var idRoleGroup: any = [];
         const onSelectionChanged = (selectedRows: any) => {
             idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
         };
-        const creactUserNew = () => {
+        const creactUserNew = (e: any) => {
             var RoleGroup = idRoleGroup.map((row: any) => {
                 return row.id;
             })
-            let dataCallApiCreate = {
-                input: {
-                    type: (formState.type == '2' || formState.type == '3') ? 'm' : formState.type,
-                    name: formState.name,
-                    username: formState.username,
-                    screenRoleGroupIds: RoleGroup,
-                    mobilePhone: formState.mobilePhone,
-                    email: formState.email,
-                    groupId: formState.groupCode,
-                    managerGrade: (formState.type == '2' || formState.type == '3') ? parseInt(formState.type) : null,
+            var res = e.validationGroup.validate();
+            console.log(res);
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                let dataCallApiCreate = {
+                    input: {
+                        type: (formState.type == '2' || formState.type == '3') ? 'm' : formState.type,
+                        name: formState.name,
+                        username: formState.username,
+                        screenRoleGroupIds: RoleGroup,
+                        mobilePhone: formState.mobilePhone,
+                        email: formState.email,
+                        groupId: formState.groupCode,
+                        managerGrade: (formState.type == '2' || formState.type == '3') ? parseInt(formState.type) : null,
+                    }
                 }
+                creactUser(dataCallApiCreate)
             }
-            creactUser(dataCallApiCreate)
         }
         return {
             arrData,
@@ -345,6 +414,7 @@ export default defineComponent({
             creactUserNew,
             onSelectionChanged,
             disabledBtn,
+            dataSelectType
         };
     },
     methods: {
