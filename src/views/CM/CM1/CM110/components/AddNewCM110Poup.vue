@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<a-modal :visible="modalStatus" :mask-closable="false" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-			@cancel="setModalVisible()" width="700px">
+			@cancel="setModalVisible()" width="700px" footer="">
 			<div class="cm-100-popup-add">
 				<a-form :model="formState" :label-col="labelCol">
 					<h2 class="title-h2">이용자정보</h2>
@@ -40,7 +40,7 @@
 					<a-row>
 						<a-col :span="16">
 							<a-form-item label="원천권한">
-								<radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="formState.withholdingRole"
+								<radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="returnRadio"
                                             :layoutCustom="'horizontal'" />
 								<!-- <a-radio-group v-model:value="formState.withholdingRole" :options="optionsRadio" /> -->
 							</a-form-item>
@@ -79,14 +79,12 @@
 					</a-row>
 				</a-form>
 			</div>
-			<template #footer>
-				<div class="text-align-center">
-					<button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
-					<!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
-					<button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="creactUserNew"/>
-					<!-- <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button> -->
-				</div>
-			</template>
+			<div class="text-align-center mt-20">
+				<button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
+				<!-- <a-button @click="setModalVisible()">그냥 나가기</a-button> -->
+				<button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="creactUserNew"/>
+				<!-- <a-button type="primary" @click="creactUserNew">저장하고 나가기</a-button> -->
+			</div>
 		</a-modal>
 	</div>
 </template>
@@ -112,8 +110,8 @@ export default defineComponent({
 	},
 	setup(props, { emit }) {
 		const optionsRadio = [
-			{ text: '있음', value: true },
-			{ text: '없음', value: false }
+			{ id: 0, text: "있음" },
+            { id: 1, text: "없음" },
 		];
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(false);
@@ -122,6 +120,7 @@ export default defineComponent({
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
 		let dataQuery = ref()
+		let returnRadio = ref(0);
 		watch(() => props.modalStatus, (value) => {
 			if (props.data.companyId) {
 				triggers.value = true;
@@ -256,7 +255,14 @@ export default defineComponent({
 			let e = formState.value.mobilePhone
 			formState.value.mobilePhone = value.replace(/\D/g, '');
 		})
-		
+		watch(() => returnRadio.value, (value) => {
+                if (value == 0) {
+                    formState.value.withholdingRole = true;
+                } else {
+                    formState.value.withholdingRole = false;
+                }
+            }
+        );
 		// const validateCharacter = (e: any) =>
 		// 	formState.value.username = e.target.value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
 		// 	dataCallApiCheck.value = {
@@ -305,6 +311,7 @@ export default defineComponent({
 			refetchData,
 			checkUserName,
 			setModalVisible,
+			returnRadio,
 			// validateNumber,
 		};
 	},
