@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <a-switch v-model:checked="dataDef" :checked-children="textCheck" :un-checked-children="textUnCheck" />
-    </div>
+    <a-switch v-model:checked="dataDef" :checked-children="textCheck" :un-checked-children="textUnCheck" />
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, ref, watch } from "vue";
@@ -22,8 +20,13 @@ export default defineComponent({
     setup(props, { emit }) {
         const app: any = getCurrentInstance()
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
-        const dataDef = ref(props.valueSwitch)
-
+        const dataDef = ref()
+        watch(
+            () => props.valueSwitch,
+            (newValue) => {
+                dataDef.value = newValue
+            }
+        );
         watch(
             () => dataDef.value,
             (newValue) => {
