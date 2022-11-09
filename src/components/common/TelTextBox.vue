@@ -29,10 +29,6 @@ export default defineComponent({
       type: String,
       default: "",
     },
-    label: {
-      type: String,
-      required: true
-    },
     placeholder: String,
     readOnly: Boolean,
   },
@@ -44,8 +40,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
-    const messageRequired = ref(messages.getCommonMessage('102').message.replaceAll('{object}', props.label));
-    if (props.messRequired != "") {
+    const messageRequired = ref(messages.getCommonMessage('102').message);
+    if(props.messRequired != ""){
       messageRequired.value = props.messRequired;
     }
     const value = ref(props.valueInput);

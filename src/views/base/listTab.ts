@@ -46,6 +46,11 @@ const listTab: ListTab[] = [
         ID: 8,
         TabName: 'Button Basic',
         layoutName: 'ButtonBasic'
+    },
+    {
+        ID: 9,
+        TabName: 'Select Box',
+        layoutName: 'SelectBox'
     }
 ];
 

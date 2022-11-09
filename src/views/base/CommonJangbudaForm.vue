@@ -11,6 +11,7 @@
           <div class="dx-field">
             <div class="dx-field-label">Bank select box</div>
             <div class="dx-field-value">
+              <tag-select-box></tag-select-box>
               <bank-select-box width="300px" :required="true"></bank-select-box>
             </div>
           </div>

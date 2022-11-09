@@ -62,6 +62,10 @@ const ButtonBasic = defineAsyncComponent(() =>
   import("../base/ButtonBasic.vue")
 );
 
+const SelectBox = defineAsyncComponent(() =>
+  import("../base/SelectBox.vue")
+);
+
 const allListTab = service.getListTab();
 export default defineComponent({
   components: {
@@ -75,7 +79,8 @@ export default defineComponent({
     DxValidationSummary,
     ModalMessage,
     PreviewImage,
-    ButtonBasic
+    ButtonBasic,
+    SelectBox
   },
   setup() {
     const allTab = ref(allListTab);
