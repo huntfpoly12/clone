@@ -1,23 +1,11 @@
 <template>
-  <div>
-    <DxTextBox
-      :ref="numberTextBox"
-      :width="width"
-      value-change-event="input"
-      :show-clear-button="clearButton"
-      :placeholder="placeholder"
-      v-model:value="value"
-      mode="text"
-      :disabled="disabled"
-      :readOnly="readOnly"
-      :on-input="onInputValue"
-      :height="$config_styles.HeightInput"
-    >
-      <DxValidator>
-        <DxRequiredRule v-if="required" :message="messageRequired" />
-      </DxValidator>
-    </DxTextBox>
-  </div>
+  <DxTextBox :ref="numberTextBox" :width="width" value-change-event="input" :show-clear-button="clearButton"
+    :placeholder="placeholder" v-model:value="value" mode="text" :disabled="disabled" :readOnly="readOnly"
+    :on-input="onInputValue" :height="$config_styles.HeightInput">
+    <DxValidator>
+      <DxRequiredRule v-if="required" :message="messageRequired" />
+    </DxValidator>
+  </DxTextBox>
 </template>
 
 <script lang="ts">

@@ -1,0 +1,19 @@
+.mt-20 {
+    margin-top: 20px;
+}
+.text-align-right {
+    text-align: right;
+}
+.text-align-center {
+    text-align: center;
+}
+.button-form-modal {
+    margin: 0px 5px;
+}
+::v-deep .ant-form-item-label>label {
+    width: 110px;
+}
+
+::v-deep .ant-form-item {
+    margin-bottom: 10px;
+}
