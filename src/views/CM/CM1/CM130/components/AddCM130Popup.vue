@@ -106,7 +106,7 @@ export default defineComponent({
             formula: 0,
         };
         const formState = reactive({ ...initialState });
-        const value = ref<string[]>([]);
+        // const value = ref<string[]>([]);
         // Create With holding Config Pay Item
         const {
             mutate: creactConfigPayItem,
@@ -152,7 +152,7 @@ export default defineComponent({
             error,
             onSubmit,
             loading,
-            value,
+            // value,
             setModalVisible,
         };
     },
