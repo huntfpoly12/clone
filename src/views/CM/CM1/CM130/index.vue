@@ -47,24 +47,14 @@
                                     <a-row>
                                         <a-col :span="12">
                                             <a-form-item label="급여신고주기">
-                                                <a-space direction="vertical">
-                                                    <a-radio-group v-model:value="formState.reportType">
-                                                        <a-radio :value="1">매월</a-radio>
-                                                        <a-radio :value="6">반기</a-radio>
-                                                    </a-radio-group>
-                                                </a-space>
+                                                <radio-group :arrayValue="optionsRadioReportType" v-model:valueRadioCheck="formState.reportType" :layoutCustom="'horizontal'" />
                                             </a-form-item>
                                         </a-col>
                                     </a-row>
                                     <a-row>
                                         <a-col :span="12">
                                             <a-form-item label="급여지급형태">
-                                                <a-space direction="vertical">
-                                                    <a-radio-group v-model:value="formState.paymentType">
-                                                        <a-radio :value="1">당월지급</a-radio>
-                                                        <a-radio :value="2">익월지급</a-radio>
-                                                    </a-radio-group>
-                                                </a-space>
+                                                <radio-group :arrayValue="optionsRadioPaymentType" v-model:valueRadioCheck="formState.paymentType" :layoutCustom="'horizontal'" />
                                             </a-form-item>
                                         </a-col>
                                     </a-row>
@@ -72,8 +62,15 @@
                                         <a-col :span="16">
                                             <a-form-item label="급여지급일자">
                                                 <div style="display: flex; align-items: center">
-                                                    <DxNumberBox v-model:value="formState.paymentDay" :min="0" :max="30"
-                                                        :show-spin-buttons="true" :width="150" />
+                                                    <number-box
+                                                        :width="150"
+                                                        :required="true"
+                                                        placeholder="Number box"
+                                                        :min="0" 
+                                                        :max="30"
+                                                        v-model:valueInput="formState.paymentDay"
+                                                        :spinButtons="true">
+                                                    </number-box>
                                                     <span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
                                                 </div>
                                                 <div style=" display: flex; margin-top: 10px; align-items: center; ">
@@ -91,9 +88,8 @@
                                             <a-form-item>
                                                 <div style="margin-left: 50px">
                                                     <span>두루누리 적용 여부 (사업자):</span>
-                                                    <a-switch v-model:checked="formState.insuranceSupport"
-                                                        checked-children="적용" un-checked-children="미적용"
-                                                        style="width: 80px; margin-left: 8px" />
+                                                    <switch-basic style="width: 80px; margin-left: 8px" v-model:valueSwitch="formState.insuranceSupport" :textCheck="'적용'"
+                                                        :textUnCheck="'미적용'" />
                                                 </div>
                                                 <div style="margin-left: 150px; margin-top: 10px">
                                                     <info-circle-outlined />
@@ -111,13 +107,16 @@
                                     <a-row :gutter="24">
                                         <a-col>
                                             <a-form-item label="사업장주소">
-                                                <a-input disabled style="width: 574px; margin-right: 10px"
-                                                    v-model:value="formState.companyAddressInfoAddress" />
-                                                <a-button @click="showModal" type="primary">자동선택
-                                                </a-button>
+                                                <default-text-box
+                                                    style="width: 574px; margin-right: 10px; float: left;"
+                                                    :disabled="true"
+                                                    v-model:valueInput="formState.companyAddressInfoAddress"
+                                                    label="Default text box">
+                                                </default-text-box>
+                                                <button-basic class="button-form-modal" :text="'자동선택'" :type="'default'" :mode="'contained'" @onClick="showModal"/>
                                                 <a-modal class="container_email" v-model:visible="isShow"
                                                     okText="네. 적용합니다" cancelText="아니오" @ok="handleSuccsess"
-                                                    :mask-closable="false">
+                                                    :mask-closable="false" footer="">
                                                     <div id="modal">
                                                         <div style="display: flex">
                                                             <question-circle-outlined
@@ -135,6 +134,10 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="text-align-right mt-20">
+                                                        <button-basic class="button-form-modal" :text="'아니오'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
+                                                        <button-basic class="button-form-modal" :text="'네. 적용합니다'" :width="140" :type="'default'" :mode="'contained'" @onClick="handleSuccsess"/>
+                                                    </div>
                                                 </a-modal>
                                             </a-form-item>
                                         </a-col>
@@ -144,18 +147,27 @@
                                             <a-row :gutter="24">
                                                 <a-col>
                                                     <a-form-item label="관할세무서">
-                                                        <a-input disabled style="width: 200px"
-                                                            v-model:value="formState.competentTaxOfficeCode" />
+                                                        <default-text-box
+                                                            style="width: 200px;"
+                                                            :disabled="true"
+                                                            v-model:valueInput="formState.competentTaxOfficeCode"
+                                                            label="Default text box">
+                                                        </default-text-box>
                                                     </a-form-item>
                                                 </a-col>
                                                 <a-col>
                                                     <a-form-item label="지방소득세 납세지 ">
-                                                        <a-input disabled style="width: 200px"
-                                                            v-model:value="formState.localIncomeTaxArea" />
+                                                        <default-text-box
+                                                            style="width: 200px;"
+                                                            :disabled="true"
+                                                            v-model:valueInput="formState.localIncomeTaxArea"
+                                                            label="Default text box">
+                                                        </default-text-box>
                                                     </a-form-item>
                                                 </a-col>
-                                                <a-button type="primary" ghost @click="modalSetting">수동선택
-                                                </a-button>
+                                                <a-form-item>
+                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'contained'" @onClick="modalSetting"/>
+                                                </a-form-item>
                                             </a-row>
                                         </a-col>
                                     </a-row>
@@ -314,7 +326,18 @@ export default defineComponent({
             bcode: "",
             taxOfficeName: ""
         });
+        const setModalVisible = () => {
+			isShow.value = false;
+		}
         const dataSource = ref([]);
+        const optionsRadioReportType = [
+			{ id: 1, text: "매월" },
+            { id: 6, text: "반기" },
+		];
+        const optionsRadioPaymentType = [
+            { id: 1, text: "당월지급" },
+            { id: 2, text: "익월지급" },
+        ]
         const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
         //================================================= FUNCTION============================================
         const showModal = () => {
@@ -473,6 +496,8 @@ export default defineComponent({
         return {
             changeValueAddress,
             idRowEdit,
+            optionsRadioReportType,
+            optionsRadioPaymentType,
             labelCol: { style: { width: "150px" } },
             formState,
             activeKey: ref("1"),
@@ -481,6 +506,7 @@ export default defineComponent({
             SwitchButton,
             isSwitch,
             isShow,
+            setModalVisible,
             showModal,
             handleSuccsess,
             dataSource,
@@ -504,7 +530,7 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped>
+<style lang="scss" scoped src="./style/style.scss">
 .btn-action>button {
     margin-left: 5px;
 }

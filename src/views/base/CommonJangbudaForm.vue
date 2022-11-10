@@ -11,7 +11,6 @@
           <div class="dx-field">
             <div class="dx-field-label">Bank select box</div>
             <div class="dx-field-value">
-              <tag-select-box></tag-select-box>
               <bank-select-box width="300px" :required="true"></bank-select-box>
             </div>
           </div>
@@ -269,6 +268,45 @@
         <td>
           <pre class="mycode">
                 &lt; list-partner width="300px" :required="true" / &gt;
+              </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">Service subscription application status</div>
+            <div class="dx-field-value">
+              <subs-req-status-select-box
+                width="300px"
+                :required="true"
+              ></subs-req-status-select-box>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li>
+              <strong>label:</strong> label: {type: String,required: true} (required)
+            </li>
+            <li>
+              <strong>required:</strong> {type: Boolean,default: false,}
+              (option)
+            </li>
+            <li>
+              <strong>messRequired:</strong> { type: String, default: "Input is
+              required!",} (option)
+            </li>
+            <li><strong>width:</strong> String (option)</li>
+            <li><strong>clearButton:</strong> Boolean (option)</li>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
+            <li><strong>readOnly:</strong> Boolean (option)</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; subs-req-status-select-box width="300px" :required="true" / &gt;
               </pre
           >
         </td>
