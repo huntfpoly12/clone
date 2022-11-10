@@ -35,7 +35,8 @@
                         <a-col :span="24">
                             <a-form-item label="과세구분/유형 ">
                                 <div style="width: 320px">
-                                    <TaxPay v-model:selectedValue="formState.taxPayCode"></TaxPay>
+                                    {{formState.taxPayCode}}
+                                    <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode"></TaxPay>
                                 </div>
                             </a-form-item>
                         </a-col>
@@ -60,7 +61,7 @@ import TaxPay from "../../../../../components/TaxPay.vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM130/index";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import { message } from "ant-design-vue";
+import notification from "../../../../../utils/notification";
 import { DxNumberBox } from "devextreme-vue/number-box";
 import {
     DxDataGrid,
@@ -102,7 +103,7 @@ export default defineComponent({
             itemCode: 0,
             taxPayCode: Array(),
             name: "",
-            use: false,
+            use: true,
             formula: 0,
         };
         const formState = reactive({ ...initialState });
@@ -117,10 +118,10 @@ export default defineComponent({
         } = useMutation(mutations.createWithholdingConfigPayItem);
 
         errorPayItem((error) => {
-            message.error(error.message, 5);
+            notification('error', error.message)
         });
         onDoneAdd((res) => {
-            message.success(`원천항목 새로 추가되었습니다!`, 5);
+            notification('success', `원천항목 새로 추가되었습니다!`)
             setModalVisible();
         });
 
@@ -140,6 +141,8 @@ export default defineComponent({
                         formState.taxPayCode[0] === "과세" ? formState.taxPayCode[1] : null,
                 },
             };
+            console.log(variables.input);
+            
             creactConfigPayItem(variables);
         };
         const setModalVisible = () => {
@@ -159,14 +162,6 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../style/style.scss">
-::v-deep .ant-form-item-label>label {
-    width: 110px;
-}
-
-::v-deep .ant-form-item {
-    margin-bottom: 10px;
-}
-
 ::v-deep ul.ant-cascader-menu {
     height: auto;
     max-height: 180px;

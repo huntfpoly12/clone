@@ -49,3 +49,9 @@ export default defineComponent ({
     },
 });
 </script>
+<style scoped>
+::v-deep .dx-tag-content {
+    margin: 3px 0 0 4px;
+    padding: 2px 25px 4px 6px;
+}
+</style>
