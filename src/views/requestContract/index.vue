@@ -58,18 +58,19 @@
                         <div class="info-box">
                             <div class="form-item">
                                 <label class="red">상 호 :</label>
-                                <div>
-                                    <a-form :model="contractCreacted" :validate-messages="validateMessages"
+                                <default-text-box width="400px" :required="true" label="상 호"
+                                    v-model:valueInput="contractCreacted.nameCompany" />
+
+                                <!-- <a-form :model="contractCreacted" :validate-messages="validateMessages"
                                         @finish="onFinish">
                                         <a-form-item :name="['nameCompany']" :rules="[{ required: true }]">
                                             <a-input v-model:value="contractCreacted.nameCompany" class="width-400" />
                                         </a-form-item>
-                                    </a-form>
-                                </div>
+                                    </a-form> -->
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자등록번호 :</label>
-                                <company-registration-number-text-box v-model:valueInput="contractCreacted.bizNumber"
+                                <biz-number-text-box v-model:valueInput="contractCreacted.bizNumber"
                                     :required="true" />
                             </div>
                             <div class="form-item">
@@ -80,7 +81,7 @@
                                 </a-radio-group>
                                 <div class="group-label">
                                     <p>{{ textIDNo }}:</p>
-                                    <id-card-text-box :required="true"
+                                    <id-number-text-box :required="true"
                                         v-model:valueInput="contractCreacted.residentId" />
                                 </div>
                             </div>
@@ -210,7 +211,7 @@
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                         :allow-deleting="true" template="button-template" mode="cell">
                                         <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                        <DxTexts addRow="추 가" />
+                                        <DxTexts addRow="추 가" @click="addNewRowTable" />
                                     </DxEditing>
                                     <template #button-template>
                                         <DxButton icon="plus" />
@@ -544,7 +545,7 @@ export default {
         })
         var visibleModal = ref(false);
         const listDataConvert = ref();
-        const valueFacilityBusinesses = ref();
+        const valueFacilityBusinesses = ref([]);
         const imagestep = ref("");
         const imageValue = ref("");
         const fileName = ref("");
@@ -670,6 +671,10 @@ export default {
                 //dataSearch.nameCompany = data.value;
             }
         });
+
+        const addNewRowTable = () => {
+
+        }
         const changeStep = (val: number) => {
             step.value = val - 1
 
@@ -998,6 +1003,7 @@ export default {
         }
 
         return {
+            addNewRowTable,
             imageId,
             validateNumber,
             changeValueDate,

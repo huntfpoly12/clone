@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <a-spin :spinning="spinning" size="large">
+    <a-spin :spinning="loading" size="large">
         <div class="top-content">
             <a-typography-title :level="3"> 계약정보관리&심사
             </a-typography-title>
@@ -36,29 +36,29 @@
                 <a-row :gutter="[8, 8]">
                     <a-col>
                         <label class="lable-item">서비스종류 :</label>
-                        <a-checkbox v-model:checked="originData.accounting">회계</a-checkbox>
-                        <a-checkbox v-model:checked="originData.withholding">원천</a-checkbox>
+                        <checkbox-basic v-model:valueCheckbox="originData.accounting" :disabled="false" :size="'20'" label="회계" style="margin-right: 10px;"/>
+                        <checkbox-basic v-model:valueCheckbox="originData.withholding" :disabled="false" :size="'20'" label="원천"/>
                     </a-col>
                     <a-col>
-                        <label class="lable-item">심사상태/결과 :</label>
-                        <a-select mode="tags" ref="select" style="width: auto; min-width: 135px;"
-                            v-model:value="statuses" placeholder="전체">
-                            <a-select-option @click="chooseAll" value="전체">전체</a-select-option>
-                            <a-select-option :value="10">신청</a-select-option>
-                            <a-select-option :value="20">심사중</a-select-option>
-                            <a-select-option :value="30">승인</a-select-option>
-                            <a-select-option :value="99">반려</a-select-option>
-                        </a-select>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">심사상태/결과 :</label>
+                            <subs-req-status-select-box
+                            v-model:valueInput="statuses"
+                            width="120px"
+                            placeholder="전체"
+                            :selectAll="true"
+                            />
+                        </div>
                     </a-col>
                     <a-col>
-                        <div style="display: flex;">
+                        <div class="dflex custom-flex">
                             <label class="lable-item">영업자 :</label>
                             <list-sales-dropdown  v-model:selected="originData.salesRepresentativeId" />
                         </div>
                     </a-col>
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
-                        <a-range-picker v-model:value="dateSearch" width="50%" :placeholder="['Start', 'End']" />
+                        <a-range-picker v-model:value="rangeDate" width="50%" :placeholder="['Start', 'End']" />
                     </a-col>
                 </a-row>
             </div>
@@ -127,7 +127,7 @@
                     </template>
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > 20">
-                    <a-pagination v-model:current="originDataCall.page" v-model:page-size="pageSize" :total="rowTable"
+                    <a-pagination v-model:current="originData.page" v-model:page-size="pageSize" :total="rowTable"
                         show-less-items @change="changePage" />
                 </div>
                 <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
@@ -136,6 +136,14 @@
     </a-spin>
 </template>
 <script lang="ts">
+import { ref, defineComponent ,reactive,watch } from 'vue';
+import { useQuery } from "@vue/apollo-composable";
+import { Workbook } from "exceljs";
+import { saveAs } from "file-saver-es";
+import { exportDataGrid } from "devextreme/excel_exporter";
+import dayjs, { Dayjs } from 'dayjs';
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
 import {
     SearchOutlined,
     EditOutlined,
@@ -146,13 +154,6 @@ import {
     DeleteOutlined,
     SaveOutlined,
 } from '@ant-design/icons-vue';
-import DxDateBox from 'devextreme-vue/date-box';
-import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
-import { ref, defineComponent } from 'vue';
-import BF310Popup from "./components/BF310Popup.vue";
-import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
-import { useQuery } from "@vue/apollo-composable";
-import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
     DxColumn,
@@ -162,26 +163,21 @@ import {
     DxSearchPanel,
     DxPager,
 } from "devextreme-vue/data-grid";
-import { Workbook } from "exceljs";
-import { saveAs } from "file-saver-es";
-import { exportDataGrid } from "devextreme/excel_exporter";
-import dayjs, { Dayjs } from 'dayjs';
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
+import BF310Popup from "./components/BF310Popup.vue";
+import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
+
+
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn,
-        DxButton,
         DxPaging,
         DxSelection,
         DxExport,
         DxSearchPanel,
         BF310Popup,
-        locale,
-        DxDateBox,
         SearchOutlined,
         EditOutlined,
         DxPager,
@@ -192,33 +188,15 @@ export default defineComponent({
         DeleteOutlined,
         SaveOutlined
     },
-    data() {
-        return {
-            dateSearch: [dayjs().subtract(1, 'year'), dayjs()],
-            startDate: '',
-            finishDate: '',
-            displayMode: 'full',
-            showPageSizeSelector: true,
-            showNavButtons: true,
-        };
-    },
     setup() {
+        const rangeDate =  ref([dayjs().subtract(1, 'year'), dayjs()]);
         const dataSource = ref([]);
         const modalStatus = ref(false);
         const idSubRequest = ref();
-        const spinning = ref<boolean>(true);
-        const arraySale = ref([])
-        const statuses: any = ref([])
-        const requestDataSale = ref({
-            page: 1,
-            rows: 1000,
-            statuses: [1, 2, 3],
-            grade: 1,
-            name: "",
-            code: ""
-        })
+        const statuses: any = ref([]);
+        const trigger = ref<boolean>(true);
         const rowTable = ref(10)
-        const originData = ref({
+        const originData = reactive({
             page: 1,
             rows: 20,
             salesRepresentativeId: 0,
@@ -228,75 +206,27 @@ export default defineComponent({
             withholding: true,
             statuses: [10, 20, 30, 99]
         })
-        const originDataCall = ref({
-            page: 1,
-            rows: 20,
-            salesRepresentativeId: 0,
-            startDate: '',
-            finishDate: '',
-            accounting: true,
-            withholding: true,
-            statuses: [10, 20, 30, 99]
-        })
+     
         const setModalVisible = (data: any,) => {
             idSubRequest.value = data.data.id;
             modalStatus.value = true;
         }
         const pageSize = ref(20)
-        const { onResult: resultSale } = useQuery(queries.getSale, requestDataSale)
-        resultSale((res) => {
-            var dataRes = res.data.searchSalesRepresentatives.datas
-            let arrayAdd: any = []
-            if (dataRes && dataRes.length > 0) {
-                dataRes.map((x: any, index: any) => {
-                    arrayAdd.push({
-                        value: x.id,
-                        label: x.name,
-                    })
-                })
+
+        const { refetch: refetchData, loading, error, result } = useQuery(queries.searchSubscriptionRequests,{filter : originData} , () => ({
+                enabled: trigger.value,
+                fetchPolicy: "no-cache",
+            }));
+
+        watch(result, (value) => {
+            if (value) {
+                rowTable.value = value.searchSubscriptionRequests.totalCount
+                dataSource.value = value.searchSubscriptionRequests.datas
+                trigger.value = false;
             }
-            arraySale.value = arrayAdd
-        })
-        const { refetch: refetchData, loading, error, onResult } = useQuery(queries.searchSubscriptionRequests, originDataCall.value)
-        onResult((res) => {
-            if (res.loading) {
-            } else {
-                rowTable.value = res.data.searchSubscriptionRequests.totalCount
-                dataSource.value = res.data.searchSubscriptionRequests.datas
-            }
-        })
-        setTimeout(() => {
-            spinning.value = !spinning.value;
-        }, 1000);
-        return {
-            idSubRequest,
-            dataSource,
-            modalStatus,
-            rowTable,
-            setModalVisible,
-            spinning,
-            arraySale,
-            originData,
-            requestDataSale,
-            refetchData,
-            pageSize,
-            originDataCall,
-            statuses
-        }
-    },
-    watch: {
-        'dateSearch'(newVal) {
-            if (newVal != null) {
-                this.originData.startDate = this.formarDate(newVal[0].$d)
-                this.originData.finishDate = this.formarDate(newVal[1].$d)
-            }
-        },
-        modalStatus() {
-            this.searching()
-        }
-    },
-    methods: {
-        onExporting(e: { component: any; cancel: boolean; }) {
+            });
+
+        const onExporting = (e: { component: any; cancel: boolean; })=>{
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
             exportDataGrid({
@@ -312,11 +242,9 @@ export default defineComponent({
                 });
             });
             e.cancel = true;
-        },
-        customClass(cellInfo: { value: any; }) {
-            return cellInfo.value;
-        },
-        getColorTag(data: any) {
+        }
+
+        const getColorTag  = (data: any)=>{
             if (data == 10) {
                 return { "name": "red", "tag_name": "신청" };
             } else if (data == 20) {
@@ -326,175 +254,41 @@ export default defineComponent({
             } else if (data == 99) {
                 return { "name": "grey", "tag_name": "반려" };
             }
-        },
-        formarDate(date: any) {
+        }
+        const formarDate  = (date: any)=>{
             return dayjs(date).format('YYYY/MM/DD')
-        },
-        searching() {
-            if (!this.originData.startDate && !this.originData.finishDate) {
-                this.originData.finishDate = this.formarDate(new Date())
-                var date = this.formarDate(dayjs().subtract(1, 'year'))
-                this.originData.startDate = date
-            }
-            this.spinning = true
-            let arrayNew = {
-                ...this.originData,
-                page: 1,
-                statuses: this.statuses.length > 0 ? this.statuses : [10, 20, 30, 99]
-            }
-            this.refetchData(arrayNew)
-            setTimeout(() => {
-                this.spinning = false
-            }, 1000);
-        },
-        changePage() {
-            this.spinning = !this.spinning;
-            setTimeout(() => {
-                this.spinning = !this.spinning;
-            }, 1000);
-        },
-        chooseAll() {
-            this.statuses = [10, 20, 30, 99]
+        }
+        const searching  = ()=>{
+            originData.startDate = formarDate(rangeDate.value[0]);
+            originData.finishDate = formarDate(rangeDate.value[1]);
+            originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : [statuses.value]
+            trigger.value = true;
+            refetchData()
+        }
+        const changePage  =  ()=> {
+            searching()
+        }
+    
+        return {
+            loading,
+            rangeDate,
+            idSubRequest,
+            dataSource,
+            modalStatus,
+            rowTable,
+            setModalVisible,
+            originData,
+            refetchData,
+            pageSize,
+            statuses,
+            searching,
+            getColorTag,
+            onExporting,
+            changePage
         }
     },
+   
 });
 </script>
-<style lang="scss" scoped>
-.page-content {
-    padding-top: 10px;
-}
-
-.pagination-table {
-    margin-top: 10px;
-}
-
-.dx-button-has-text .dx-button-content {
-    padding: 0px 15px !important;
-}
-
-::v-deep .dx-toolbar-after {
-    display: flex;
-
-    .dx-toolbar-item {
-        &:first-child {
-            order: 2;
-            margin-left: 15px;
-        }
-    }
-}
-
-.search-form {
-    background: #f1f3f4;
-    padding: 10px 24px;
-
-    >div {
-        justify-content: flex-start !important;
-        align-items: center;
-        margin-right: 15px;
-    }
-
-    label {
-        margin-right: 10px;
-    }
-}
-
-.ant-select {
-    width: 145px;
-}
-
-::v-deep .dx-button-text {
-    line-height: 0.5;
-}
-
-#data-grid-demo {
-    min-height: 700px;
-}
-
-.dx-select-checkbox {
-    display: inline-block !important;
-}
-
-.search-form .col {
-    display: flex;
-    align-items: center;
-}
-
-.search-form .col {
-    margin-top: 20px;
-}
-
-.search-form .col .lable-item {
-    width: 110px;
-    display: inline-block;
-}
-
-.search-form .col .item:nth-child(2) {
-    margin-left: 30px;
-}
-
-.noteText p {
-    margin-bottom: 1px;
-}
-
-.noteImage {
-    font-size: 11px;
-    width: 100%;
-    padding-top: 2px;
-}
-
-.ant-card-head-title {
-    padding: 0px;
-}
-
-.ant-form-item {
-    margin-bottom: 4px;
-}
-
-.title-number-modal {
-    margin-top: 7px;
-}
-
-.ant-collapse {
-    .ant-collapse-item {
-        .ant-collapse-header {
-            padding: 7px;
-        }
-    }
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
-
-.ant-card-extra {
-    padding: 0px;
-}
-
-.ant-card-head {
-    min-height: 30px;
-}
-
-.ant-table-thead {
-    tr {
-        th {
-            padding: 7px;
-        }
-    }
-}
-
-.ant-table-tbody {
-    tr {
-        td {
-            padding: 7px;
-        }
-    }
-}
-
-::v-deep .cell-center {
-    text-align: center !important
-}
-
-::v-deep .ant-pagination-options {
-    display: none;
-}
+<style lang="scss" scoped  src="./style/style.scss">
 </style>
