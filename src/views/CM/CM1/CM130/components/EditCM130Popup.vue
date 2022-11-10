@@ -34,7 +34,7 @@
                         <a-col :span="24">
                             <a-form-item label="과세구분/유형 ">
                                 <div style="width: 320px;">
-                                    <TaxPay v-model:selectedValue="formState.taxPayCode" :disabled="true"></TaxPay>
+                                    <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode" :disabled="true"></TaxPay>
                                 </div>
                             </a-form-item>
                         </a-col>
@@ -57,7 +57,7 @@ import { companyId } from "../../../../../helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import { message } from "ant-design-vue";
+import notification from "../../../../../utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -151,10 +151,10 @@ export default defineComponent({
         );
 
         errorPayItem((error) => {
-            message.error(error.message, 5);
+            notification('error', error.message)
         })
         onDoneUpdated(() => {
-            message.success(`업데이트 성공되었습니다!`, 4);
+            notification('success', `업데이트 성공되었습니다!`)
             refetchConfigPayItem();
             setModalVisible();
         });
@@ -190,11 +190,4 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../style/style.scss">
-::v-deep .ant-form-item-label>label {
-    width: 110px;
-}
-
-::v-deep .ant-form-item {
-    margin-bottom: 10px;
-}
 </style>

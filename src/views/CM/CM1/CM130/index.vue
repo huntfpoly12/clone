@@ -200,7 +200,7 @@
                         <template #use="{ data }">
                             <a-tag :color="getAbleDisable(data.value)">이용중지</a-tag>
                         </template>
-                        <DxColumn data-field="taxPayItemName" caption="과세구분" />
+                        <DxColumn data-field="printName" caption="과세구분"/>
                         <DxColumn data-field="name" caption="항목명" />
                         <DxColumn data-field="taxfreePayItemCode" caption="비과세코드" css-class="cell-center" />
                         <DxColumn data-field="taxFreeIncludeSubmission" caption="제출여부" css-class="cell-center"
@@ -208,7 +208,7 @@
                         <template #taxExemption="{ data }">
                             {{data.value == true ? 'O' : (data.value == false ? 'X' : '')}}
                         </template>
-                        <DxColumn data-field="유형" />
+                        <DxColumn data-field="printCode" caption="유형"/>
                         <DxColumn data-field="formula" caption="산출방법" />
                         <DxColumn cell-template="pupop" css-class="cell-center" :width="100" />
                         <template #pupop="{ data }" class="custom-action">
@@ -267,7 +267,7 @@ import {
     DxPaging,
     DxItem,
 } from "devextreme-vue/data-grid";
-import { message } from "ant-design-vue";
+import notification from "../../../../utils/notification";
 import EditCM130Popup from "../CM130/components/EditCM130Popup.vue";
 import SettingPopup from "./components/SettingPopup.vue";
 import { Workbook } from "exceljs";
@@ -278,6 +278,7 @@ import AddCM130Popup from "./components/AddCM130Popup.vue";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
@@ -379,10 +380,10 @@ export default defineComponent({
             mutations.updateWithholdingConfig
         );
         errorEditConfig((error) => {
-            message.error(error.message, 5);
+            notification('error', error.message)
         })
         onDoneUpdated(() => {
-            message.success(`Update was successful`, 4);
+            notification('success', `업데이트 성공되었습니다!`)
             refetchConfig();
         });
         const onSubmitConfig = () => {
@@ -411,20 +412,42 @@ export default defineComponent({
             })
         );
         watch(resultWithholdingConfig, (value) => {
-            dataSource.value = value.getWithholdingConfigPayItems;
+            
+            dataSource.value = value.getWithholdingConfigPayItems; 
+            dataSource.value.map((e: any) =>{
+                if(e.taxPayItemCode != null) {
+                    taxPayItem.map((eData: any) => {
+                        if (eData.value == e.taxPayItemCode) {
+                            e.printCode = eData.label
+                        }
+                    })
+                    e.printName = "과세"
+                }else{
+                    taxFreePayItem.map((eData: any) => {
+                        if (eData.value == e.taxfreePayItemCode) {
+                            e.printCode = eData.label
+                        }
+                    })
+                    e.printName = "비과세"
+                }
+            })
+            
+            
         });
         // delete withholding config pay item
         const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
             mutations.deleteWithholdingConfigPayItem
         );
         onDoneDelete(() => {
-            message.success(`Update was successful`, 4);
+            notification('success', `업데이트 성공되었습니다!`)
             refetchWithholdingConfig()
         });
         const deleteConfig = (data: any) => {
             Modal.confirm({
-                title: 'Do you want to delete this item?',
+                title: '삭제하겠습니까?',
                 icon: createVNode(ExclamationCircleOutlined),
+                okText: '네',
+                cancelText: '아니요',
                 //content: createVNode('div', { style: 'color:red;' }, 'Some descriptions'),
                 onOk() {
                     let variables = {
@@ -461,7 +484,7 @@ export default defineComponent({
             if (dataSource.value.length <= 20) {
                 modalAddNewStatus.value = true;
             } else {
-                message.error(`이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
+                notification('error', `이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
             }
         }
         const onCloseAddNewModal = () => {
@@ -493,6 +516,17 @@ export default defineComponent({
             formState.competentTaxOfficeCode = data.taxOfficeName
             formState.localIncomeTaxArea = data.localIncomeTaxArea
         }
+
+        const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
+            value: TaxPayItem.all()[index].enumOrdinal,
+            label: TaxPayItem.all()[index].name,
+        }));
+        
+        
+        const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
+            value: TaxFreePayItem.all()[index].enumKey,
+            label: TaxFreePayItem.all()[index].name,
+        }));
         return {
             changeValueAddress,
             idRowEdit,
@@ -525,7 +559,9 @@ export default defineComponent({
             onCloseEditModal,
             modalHistory,
             getAbleDisable,
-            onExporting
+            onExporting,
+            taxPayItem,
+            taxFreePayItem,
         };
     },
 });
