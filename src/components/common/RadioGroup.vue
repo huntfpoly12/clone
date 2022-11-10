@@ -1,9 +1,5 @@
 <template>
-    <div>
-        <DxRadioGroup :items="arrayValue" value-expr="id" display-expr="text" :value="data"
-            :layout="layoutCustom"
-            @valueChanged="changeValueRadioGroup" />
-    </div>
+    <DxRadioGroup :items="arrayValue" :value="data" :layout="layoutCustom" @valueChanged="changeValueRadioGroup" />
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, watch, ref } from "vue";

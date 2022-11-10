@@ -1,14 +1,12 @@
 <template>
-  <div>
-    <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" :placeholder="placeholder"
-      v-model="value" :disabled="disabled" :maxLength="maxCharacter" :readOnly="readOnly" @input="updateValue(value)"
-      :height="$config_styles.HeightInput" @value-changed="valueChanged">
-      <DxValidator>
-        <DxRequiredRule v-if="required" :message="messageRequired" />
-        <DxStringLengthRule v-if="minCharacter > 0" :min="minCharacter" :message="messageString" />
-      </DxValidator>
-    </DxTextBox>
-  </div>
+  <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" :placeholder="placeholder"
+    v-model="value" :disabled="disabled" :maxLength="maxCharacter" :readOnly="readOnly" @input="updateValue(value)"
+    :height="$config_styles.HeightInput" @value-changed="valueChanged">
+    <DxValidator>
+      <DxRequiredRule v-if="required" :message="messageRequired" />
+      <DxStringLengthRule v-if="minCharacter > 0" :min="minCharacter" :message="messageString" />
+    </DxValidator>
+  </DxTextBox>
 </template>
 
 <script lang="ts">
@@ -85,3 +83,8 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+.dx-placeholder::before {
+  padding: 6px 9px 8px;
+}
+</style>
