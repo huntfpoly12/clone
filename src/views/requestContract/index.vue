@@ -223,7 +223,8 @@
                             </div>
                             <div class="form-item">
                                 <label>직 원 수:</label>
-                                <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding" :disabled="disableFormVal" :min="0" :spinButtons="true" />
+                                <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding"
+                                    :disabled="disableFormVal" :min="0" :spinButtons="true" />
                             </div>
                             <div class=" form-item">
                                 <label>부가서비스 :</label>
@@ -235,7 +236,8 @@
                             <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                             <div class="form-item">
                                 <label class="red">출금은행:</label>
-                                <bank-select-box v-model:valueInput="contractCreacted.bankType" :width="'178px'"  :required="true" />
+                                <bank-select-box v-model:valueInput="contractCreacted.bankType" :width="'178px'"
+                                    :required="true" />
                             </div>
                             <div class="form-item">
                                 <label class="red">출금계좌번호 :</label>
@@ -340,6 +342,7 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { message } from 'ant-design-vue';
 import DxTextBox from "devextreme-vue/text-box";
+import { useRouter } from "vue-router";
 import {
     DxValidator,
     DxCompareRule,
@@ -371,15 +374,12 @@ export default {
         InfoCircleFilled,
         DxAsyncRule
     },
-    data() {
-        return {
-        };
-    },
     setup() {
         const states = ref(bizTypeList)
         const titleModal = ref("사업자등록증")
         const titleModal2 = ref("장기요양기관등록증")
         const radioGroup = ref()
+        const router = useRouter();
         const plainOptions = ref([
             {
                 text: "신청합니다",
@@ -397,6 +397,8 @@ export default {
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
         const checkAll = ref(false)
+        const optionSale = ref()
+        const statusMailValidate = ref(false)
         const initialFormState = {
             terms: false,
             personalInfo: false,
@@ -458,6 +460,22 @@ export default {
         const fileName = ref("");
         const fileNamestep = ref("");
         const selectedItemKeys = ref(0)
+        const arrayRadioCheck = ref([
+            { id: 1, text: '법인사업자' },
+            { id: 2, text: '개인사업자' },
+        ])
+        const arrayRadioWithdrawDay = ref([
+            { id: '매월 5일', text: '매월 5일' },
+            { id: '매월 12일', text: '매월 12s일' },
+            { id: '매월 19일', text: '매월 19일' },
+        ])
+        const valueRadioBox = ref(arrayRadioCheck.value[0])
+        const valueAccountingService = ref(plainOptions.value[0])
+        const valueSourceService = ref(plainOptions.value[0])
+        let dataImg = ref()
+        let dataImgStep3 = ref()
+        let valueRadioWithdrawDay = ref(arrayRadioWithdrawDay.value[0])
+        // function=======================================================================================================================================
         const {
             mutate: Creat,
             loading: signinLoading,
@@ -490,10 +508,6 @@ export default {
         };
         const onFinish = () => {
         };
-        const layout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 16 },
-        };
         const disableForm1 = () => {
             if (dataInputCallApi.dossier == 2) {
                 disableFormVal2.value = true
@@ -515,18 +529,6 @@ export default {
                 fetchPolicy: "no-cache",
             })
         );
-        const optionSale = ref()
-        watch(resultConfig, (value) => {
-            let dataOption: any = []
-            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
-                dataOption.push({
-                    label: e.name,
-                    value: e.id
-                })
-            })
-            optionSale.value = dataOption
-        });
-        const statusMailValidate = ref(false)
         const validateEmail = () => {
             var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
             if (reg.test(contractCreacted.email) == false)
@@ -562,13 +564,7 @@ export default {
                 return "finish";
             }
         });
-        const changeValueInputEmit = computed((data) => {
-            if (data.name == "nameCompany") {
-                //dataSearch.nameCompany = data.value;
-            }
-        });
         const changeStep = (val: number) => {
-            // step.value = val - 1
             if (val == 1) {
                 step.value = 0
             }
@@ -648,30 +644,6 @@ export default {
                 textIDNo.value = "주민등록번호";
             }
         }
-        watch([() => contractCreacted.terms, () => contractCreacted.personalInfo, () => contractCreacted.accountingService, () => contractCreacted.withholdingService], (value) => {
-            if (contractCreacted.terms == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true) {
-                checkAll.value = true
-            } else {
-                checkAll.value = false
-            }
-        });
-        watch(() => contractCreacted.longTermCareInstitutionNumber, (newVal) => {
-            if (listDataConvert.value.length > 0) {
-                listDataConvert.value.forEach((item: any) => {
-                    item.longTermCareInstitutionNumber = newVal;
-                });
-            }
-        })
-        watch(() => contractCreacted.registrationCardFileStorageId, (newVal) => {
-            if (listDataConvert.value && listDataConvert.value.length > 0) {
-                listDataConvert.value.forEach((item: any) => {
-                    item.registrationCardFileStorageId = newVal;
-                });
-            }
-        })
         const changeValueDate = (data: any) => {
             contractCreacted.birthday = data;
         }
@@ -839,18 +811,7 @@ export default {
                 contractCreacted.withholdingService = false
             }
         }
-        const arrayRadioCheck = ref([
-            { id: 1, text: '법인사업자' },
-            { id: 2, text: '개인사업자' },
-        ])
-        const arrayRadioWithdrawDay = ref([
-            { id: '매월 5일', text: '매월 5일' },
-            { id: '매월 12일', text: '매월 12s일' },
-            { id: '매월 19일', text: '매월 19일' },
-        ])
-        const valueRadioBox = ref(arrayRadioCheck.value[0])
-        const valueAccountingService = ref(plainOptions.value[0])
-        const valueSourceService = ref(plainOptions.value[0])
+        // watch=====================================================================================================================================
         watch(() => valueRadioBox.value, (newVal) => {
             contractCreacted.bizType = newVal.id
             changeTypeCompany(newVal.id)
@@ -863,12 +824,43 @@ export default {
             dataInputCallApi.applicationService = newVal.id
             disableForm2()
         })
-        let dataImg = ref()
-        let dataImgStep3 = ref()
-        let valueRadioWithdrawDay = ref(arrayRadioWithdrawDay.value[0])
         watch(() => valueRadioWithdrawDay.value, (newVal) => {
             contractCreacted.withdrawDay = newVal.id
         })
+        watch([() => contractCreacted.terms, () => contractCreacted.personalInfo, () => contractCreacted.accountingService, () => contractCreacted.withholdingService], (value) => {
+            if (contractCreacted.terms == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true) {
+                checkAll.value = true
+            } else {
+                checkAll.value = false
+            }
+        });
+        watch(() => contractCreacted.longTermCareInstitutionNumber, (newVal) => {
+            if (listDataConvert.value.length > 0) {
+                listDataConvert.value.forEach((item: any) => {
+                    item.longTermCareInstitutionNumber = newVal;
+                });
+            }
+        })
+        watch(() => contractCreacted.registrationCardFileStorageId, (newVal) => {
+            if (listDataConvert.value && listDataConvert.value.length > 0) {
+                listDataConvert.value.forEach((item: any) => {
+                    item.registrationCardFileStorageId = newVal;
+                });
+            }
+        })
+        watch(resultConfig, (value) => {
+            let dataOption: any = []
+            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
+                dataOption.push({
+                    label: e.name,
+                    value: e.id
+                })
+            })
+            optionSale.value = dataOption
+        });
         return {
             arrayRadioWithdrawDay,
             valueRadioWithdrawDay,
@@ -912,7 +904,6 @@ export default {
             visibleModal,
             validateMessages,
             onFinish,
-            layout,
             listDataConvert,
             step,
             imagestep,
@@ -925,7 +916,6 @@ export default {
             checkStepTwo,
             checkStepThree,
             checkStepFour,
-            changeValueInputEmit,
             selectedItemKeys,
             states,
             titleModal,
@@ -938,7 +928,7 @@ export default {
         valueFacilityBusinesses: {
             handler(newVal) {
                 this.listDataConvert = [];
-                newVal.forEach((item) => {
+                newVal.forEach((item: any) => {
                     this.listDataConvert.push({
                         longTermCareInstitutionNumber:
                             this.contractCreacted.longTermCareInstitutionNumber,
@@ -950,13 +940,13 @@ export default {
                             this.contractCreacted.registrationCardFileStorageId,
                     });
                 });
-                var result = Object.values(newVal.reduce((c, v) => {
+                var result = Object.values(newVal.reduce((c: any, v: any) => {
                     let k = v.name;
                     c[k] = c[k] || [];
                     c[k].push(v);
                     return c;
-                }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
-                if (result.length > 0) {
+                }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
+                if (result) {
                     message.error("중복되었습니다!")
                 }
             },
