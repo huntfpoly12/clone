@@ -10,8 +10,7 @@
 							<a-form-item label="이용자ID">
 								<default-text-box 
 									:replaceRegex="true"
-									v-model:valueInput="formState.username"
-                					:required="true">
+									v-model:valueInput="formState.username">
 								</default-text-box>
 							</a-form-item>
 						</a-col>
@@ -23,7 +22,7 @@
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="성명">
-								<default-text-box  v-model:valueInput="formState.name" :required="true"></default-text-box>
+								<default-text-box  v-model:valueInput="formState.name"></default-text-box>
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -47,7 +46,7 @@
 							<a-row>
 								<a-col :span="15">
 									<a-form-item label="휴대폰">
-										<text-number-box v-model:valueInput="formState.mobilePhone" :required="true"></text-number-box>
+										<text-number-box v-model:valueInput="formState.mobilePhone"></text-number-box>
 									</a-form-item>
 								</a-col>
 								<a-col :span="8">
@@ -62,8 +61,7 @@
 								<a-col :span="14">
 									<a-form-item label="이메일">
 										<mail-text-box v-model:valueInput="formState.email"
-											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email" 
-											:required="true">
+											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email">
 										</mail-text-box>
 									</a-form-item>
 								</a-col>
@@ -83,7 +81,7 @@
 	</div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch } from "vue";
+import { ref, defineComponent, reactive, watch } from "vue";
 import { MailOutlined } from '@ant-design/icons-vue';
 import type { SelectProps } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -129,7 +127,7 @@ export default defineComponent({
 				value,
 			});
 		}
-		const formState = ref({
+		const initialState = {
 			username: "",
 			name: "",
 			accountingRole: true,
@@ -137,11 +135,12 @@ export default defineComponent({
 			withholdingRole: true,
 			mobilePhone: "",
 			email: "",
-		});
+		};
+		const formState = reactive({ ...initialState });
 		const confirmPopup = () => {
 			visible.value = true;
 		}
-		watch(() => formState.value.email, (value) => {
+		watch(() => formState.email, (value) => {
 			let checkMail = value.match(
 				/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 			);
@@ -188,6 +187,7 @@ export default defineComponent({
 		})
 		creactDone(e => {
 			emit("closePopup", false)
+			Object.assign(formState, initialState);
 			notification('success', `신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!`)
 		})
 		const creactUserNew = () => {
@@ -195,13 +195,13 @@ export default defineComponent({
 				let dataCallApiCreate = {
 					companyId: props.data.companyId,
 					input: {
-						username: formState.value.username,
-						name: formState.value.name,
+						username: formState.username,
+						name: formState.name,
 						accountingRole: false,
-						facilityBusinessIds: formState.value.facilityBusinessIds,
-						withholdingRole: formState.value.withholdingRole,
-						mobilePhone: formState.value.mobilePhone,
-						email: formState.value.email,
+						facilityBusinessIds: formState.facilityBusinessIds,
+						withholdingRole: formState.withholdingRole,
+						mobilePhone: formState.mobilePhone,
+						email: formState.email,
 					}
 				}
 				creactUser(dataCallApiCreate)
@@ -214,7 +214,7 @@ export default defineComponent({
 
 
 		const checkUserName = () => {
-			if (formState.value.username !== '') {
+			if (formState.username !== '') {
 				triggersUserName.value = true
 				refetchUserName()
 			} else {
@@ -222,28 +222,29 @@ export default defineComponent({
 			}
 		}
 
-		watch(() => formState.value.username, (value) => {
-			formState.value.username = value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+		watch(() => formState.username, (value) => {
+			formState.username = value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
+			triggersUserName.value = false
 			dataCallApiCheck.value = {
-					username: formState.value.username
+					username: formState.username
 				}
 			
-			if (formState.value.username.length >= 1) {
+			if (formState.username.length >= 1) {
 				addTypeButton.value = true
 			} else {
 				addTypeButton.value = false
 			}
 		})
 
-		watch(() => formState.value.mobilePhone, (value) => {
-			let e = formState.value.mobilePhone
-			formState.value.mobilePhone = value.replace(/\D/g, '');
+		watch(() => formState.mobilePhone, (value) => {
+			let e = formState.mobilePhone
+			formState.mobilePhone = value.replace(/\D/g, '');
 		})
 		watch(() => returnRadio.value, (value) => {
                 if (value == 0) {
-                    formState.value.withholdingRole = true;
+                    formState.withholdingRole = true;
                 } else {
-                    formState.value.withholdingRole = false;
+                    formState.withholdingRole = false;
                 }
             }
         );
