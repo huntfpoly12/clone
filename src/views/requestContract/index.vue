@@ -211,7 +211,7 @@
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                         :allow-deleting="true" template="button-template" mode="cell">
                                         <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                        <DxTexts addRow="추 가" @click="addNewRowTabke" />
+                                        <DxTexts addRow="추 가" @click="addNewRowTable" />
                                     </DxEditing>
                                     <template #button-template>
                                         <DxButton icon="plus" />
@@ -672,7 +672,7 @@ export default {
             }
         });
 
-        const addNewRowTabke = () => {
+        const addNewRowTable = () => {
 
         }
         const changeStep = (val: number) => {
@@ -1003,7 +1003,7 @@ export default {
         }
 
         return {
-            addNewRowTabke,
+            addNewRowTable,
             imageId,
             validateNumber,
             changeValueDate,

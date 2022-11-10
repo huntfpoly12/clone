@@ -11,28 +11,20 @@
                         <a-row :gutter="24">
                             <a-col :span="12">
                                 <a-form-item label="코드">
-                                    <number-box
-                                        :width="150"
-                                        placeholder="Number box"
-                                        :min="0" 
-                                        :max="30"
-                                        :disabled="true"
-                                        v-model:valueInput="formState.itemCode"
-                                        :spinButtons="true">
+                                    <number-box :width="150" placeholder="Number box" :min="0" :max="30"
+                                        :disabled="true" v-model:valueInput="formState.itemCode" :spinButtons="true">
                                     </number-box>
                                 </a-form-item>
                             </a-col>
                             <a-col :span="12">
-                                <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :textCheck="'이용중'"
-                                    :textUnCheck="'이용중지'" />
+                                <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use"
+                                    :textCheck="'이용중'" :textUnCheck="'이용중지'" />
                             </a-col>
                         </a-row>
 
                         <a-form-item label="항목명">
-                            <default-text-box
-                                style="width: 150px; margin-right: 10px"
-                                v-model:valueInput="formState.name"
-                                label="Default text box">
+                            <default-text-box style="width: 150px; margin-right: 10px"
+                                v-model:valueInput="formState.name" label="Default text box">
                             </default-text-box>
                         </a-form-item>
                         <a-form-item label="과세구분/유형 ">
@@ -44,8 +36,10 @@
                 </a-row>
             </a-spin>
             <div class="text-align-right mt-20">
-                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
-                <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="onSubmit"/>
+                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                    @onClick="setModalVisible()" />
+                <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140"
+                    :type="'default'" :mode="'contained'" @onClick="onSubmit" />
             </div>
         </a-modal>
     </div>
@@ -105,10 +99,10 @@ export default defineComponent({
         watch(
             () => props.modalStatus,
             (newValue) => {
+                trigger.value = true;
                 if (newValue) {
                     dataQuery.value = { companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')), itemCode: props.idRowEdit };
                     refetchConfigPayItem();
-                    trigger.value = true;
                 } else {
                     Object.assign(formState, initialState);
                     trigger.value = false;
