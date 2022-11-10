@@ -12,7 +12,7 @@
             <div class="dx-field-label">Default text box</div>
             <div class="dx-field-value">
               <default-text-box
-                width="300px"
+                width="150px"
                 :required="true"
                 placeholder="Default text box"
                 :minCharacter="3"
@@ -49,7 +49,7 @@
         </td>
         <td>
           <pre class="mycode">
-            &lt; default-text-box width="300px" :required="true" &gt;&lt;/ default-text-box &gt;
+            &lt; default-text-box width="150px" :required="true" &gt;&lt;/ default-text-box &gt;
           </pre>
         </td>
       </tr>
@@ -59,7 +59,7 @@
             <div class="dx-field-label">Text number box</div>
             <div class="dx-field-value">
               <text-number-box
-                width="300px"
+                width="150px"
                 :required="true"
                 placeholder="Text number box"
               ></text-number-box>
@@ -89,7 +89,7 @@
         </td>
         <td>
           <pre class="mycode">
-            &lt; text-number-box width="300px" :required="true" &gt;&lt;/ text-number-box &gt;
+            &lt; text-number-box width="150px" :required="true" &gt;&lt;/ text-number-box &gt;
           </pre>
         </td>
       </tr>
@@ -99,7 +99,7 @@
             <div class="dx-field-label">Mail text box</div>
             <div class="dx-field-value">
               <mail-text-box
-                width="300px"
+                width="150px"
                 :required="true"
                 placeholder="Mail text box"
               ></mail-text-box>
@@ -129,7 +129,7 @@
         </td>
         <td>
           <pre class="mycode">
-            &lt; mail-text-box width="300px" :required="true" &gt;&lt;/ mail-text-box &gt;
+            &lt; mail-text-box width="150px" :required="true" &gt;&lt;/ mail-text-box &gt;
           </pre>
         </td>
       </tr>
@@ -164,7 +164,7 @@
         </td>
         <td>
           <pre class="mycode">
-            &lt; id-number-text-box width="300px" :required="true" &gt;&lt;/ id-number-text-box &gt;
+            &lt; id-number-text-box width="150px" :required="true" &gt;&lt;/ id-number-text-box &gt;
           </pre>
         </td>
       </tr>
@@ -202,7 +202,7 @@
         </td>
         <td>
           <pre class="mycode">
-            &lt; tel-text-box width="300px" :required="true" /&gt;
+            &lt; tel-text-box width="150px" :required="true" /&gt;
           </pre>
         </td>
       </tr>
@@ -239,7 +239,7 @@
         </td>
         <td>
           <pre class="mycode">
-            &lt; biz-number-text-box width="300px" :required="true" /&gt;
+            &lt; biz-number-text-box width="150px" :required="true" /&gt;
           </pre>
         </td>
       </tr>

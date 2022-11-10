@@ -1,5 +1,6 @@
 <template>
-    <DxRadioGroup :items="arrayValue" :value="data" :layout="layoutCustom" @valueChanged="changeValueRadioGroup" />
+    <DxRadioGroup :items="arrayValue" :value="data" :layout="layoutCustom" @valueChanged="changeValueRadioGroup"  value-expr="id"
+              display-expr="text"/>
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, watch, ref } from "vue";
@@ -28,7 +29,6 @@ export default defineComponent({
         const data = ref(props.valueRadioCheck);
         const changeValueRadioGroup = (e: any) => {
             emit("update:valueRadioCheck", e.value);
-
         }
 
         watch(
