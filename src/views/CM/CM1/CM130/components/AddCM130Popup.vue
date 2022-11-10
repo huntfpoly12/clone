@@ -10,13 +10,8 @@
                     <a-row :gutter="24">
                         <a-col :span="12">
                             <a-form-item label="코드">
-                                <number-box
-                                    :width="150"
-                                    placeholder="Number box"
-                                    :min="0" 
-                                    :max="30"
-                                    v-model:valueInput="formState.itemCode"
-                                    :spinButtons="true">
+                                <number-box :width="150" placeholder="Number box" :min="0" :max="30"
+                                    v-model:valueInput="formState.itemCode" :spinButtons="true">
                                 </number-box>
                             </a-form-item>
                         </a-col>
@@ -26,14 +21,12 @@
                                 :textUnCheck="'이용중지'" />
                         </a-col>
                     </a-row>
-                    
+
                     <a-row>
                         <a-col :span="12">
                             <a-form-item label="항목명">
-                                <default-text-box
-                                    style="width: 150px; margin-right: 10px"
-                                    v-model:valueInput="formState.name"
-                                    label="Default text box">
+                                <default-text-box style="width: 150px; margin-right: 10px"
+                                    v-model:valueInput="formState.name" label="Default text box">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>
@@ -50,10 +43,12 @@
                 </a-form>
             </a-spin>
             <div class="text-align-center mt-20">
-                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
-                <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="onSubmit"/>
+                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                    @onClick="setModalVisible()" />
+                <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140"
+                    :type="'default'" :mode="'contained'" @onClick="onSubmit" />
             </div>
-            
+
         </a-modal>
     </div>
 </template>
@@ -170,5 +165,10 @@ export default defineComponent({
 
 ::v-deep .ant-form-item {
     margin-bottom: 10px;
+}
+
+::v-deep ul.ant-cascader-menu {
+    height: auto;
+    max-height: 180px;
 }
 </style>

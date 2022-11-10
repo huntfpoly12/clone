@@ -9,164 +9,147 @@
                 <a-step :status="checkStepFour" title="신청완료!" @click="changeStep(4)" />
             </a-steps>
             <div class="step-content">
-                <template v-if="step === 0">
-                    <div class="form-group">
-                        <div class="custom-checkbox-step-1">
-                            <label>1. 서비스약관 동의</label>
-                            <div>
-                                <checkbox-basic :label="'전체 동의'" v-model:valueCheckbox="checkAll" @change="checkAllFunc"
-                                    :disabled="false" :size="'16'" />
+                <form action="your-action">
+                    <template v-if="step === 0">
+                        <div class="mt-3">
+                            <div class="custom-checkbox-step-1">
+                                <label>1. 서비스약관 동의</label>
+                                <div>
+                                    <checkbox-basic :label="'전체 동의'" v-model:valueCheckbox="checkAll"
+                                        @change="checkAllFunc" :disabled="false" :size="'16'" />
+                                </div>
                             </div>
-                        </div>
-                        <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
-
-                        <div class="radio-group">
-                            <a-radio-group v-model:value="radioGroup">
+                            <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+                            <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.terms" :label="'동의함'"
                                     :disabled="false" :size="'16'" />
-                            </a-radio-group>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>2. 개인정보제공 및 활용동의</label>
-                        <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
-                        <div class="radio-group">
-                            <a-radio-group v-model:value="radioGroup">
+                        <div>
+                            <label>2. 개인정보제공 및 활용동의</label>
+                            <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+                            <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.personalInfo" :label="'동의함'"
                                     :disabled="false" :size="'16'" />
-                            </a-radio-group>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>3. 회계서비스약관 동의</label>
-                        <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
-                        <div class="radio-group">
-                            <a-radio-group v-model:value="radioGroup">
+                        <div>
+                            <label>3. 회계서비스약관 동의</label>
+                            <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+                            <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingService"
                                     :label="'동의함'" :disabled="false" :size="'16'" />
-
-                            </a-radio-group>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>4. 원천서비스약관 동의</label>
-                        <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
-                        <div class="radio-group">
-                            <a-radio-group v-model:value="radioGroup">
+                        <div>
+                            <label>4. 원천서비스약관 동의</label>
+                            <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+                            <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingService"
                                     :label="'동의함'" :disabled="false" :size="'16'" />
-                            </a-radio-group>
+                            </div>
                         </div>
-                    </div>
-                </template>
-                <template v-if="step === 1">
-                    <div class="form-group">
-                        <label>1. 사업자정보</label>
-                        <div class="info-box">
-                            <div class="form-item">
-                                <label class="red">상 호 :</label>
-                                <default-text-box width="400px" :required="true" :label="'상 호'"
-                                    v-model:valueInput="contractCreacted.nameCompany" />
-                            </div>
-                            <div class="form-item">
-                                <label class="red">사업자등록번호 :</label>
-                                <biz-number-text-box v-model:valueInput="contractCreacted.bizNumber" :required="true" />
-                            </div>
-                            <div class="form-item">
-                                <a-row style="width: 100%;">
-                                    <a-col :span="12" class="d-flex">
-                                        <label class="red">사업자유형 :</label>
-                                        <radio-group :arrayValue="arrayRadioCheck"
-                                            v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
-
-                                    </a-col>
-                                    <a-col :span="12" class="d-flex">
-                                        <div style="margin-right: 10px;">{{ textIDNo }} :</div>
-                                        <id-number-text-box :required="true"
-                                            v-model:valueInput="contractCreacted.residentId" />
-                                    </a-col>
-                                </a-row>
-                            </div>
-                            <div class="form-item">
-                                <label class="red">주 소 :</label>
-                                <div class="group-label">
-                                    <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                        placeholder="우편번호" :disabled="true" />
-                                    <post-code-button @dataAddress="funcAddress" />
+                    </template>
+                    <template v-if="step === 1">
+                        <div class="form-group">
+                            <label>1. 사업자정보</label>
+                            <div class="info-box">
+                                <div class="form-item">
+                                    <label class="red">상 호 :</label>
+                                    <default-text-box width="400px" :required="true"
+                                        v-model:valueInput="contractCreacted.nameCompany" />
                                 </div>
-                            </div>
-                            <div class="form-item">
-                                <label></label>
-                                <default-text-box v-model:valueInput="contractCreacted.roadAddress" :required="true"
-                                    placeholder="주소" :disabled="true" width="100%" />
-                            </div>
-                            <div class="form-item">
-                                <label></label>
-                                <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
-                                    placeholder="상세주소(입력)" width="100%" />
-                            </div>
-                            <div class="form-item">
-                                <label class="red">연락처 :</label>
-                                <tel-text-box width="100%" placeholder="‘-’ 없이 슷자입력"
-                                    v-model:value="contractCreacted.phone" :required="true" />
-                            </div>
-                            <div class="form-item">
-                                <label>팩 스 :</label>
-                                <tel-text-box width="180px" placeholder="‘-’ 없이 슷자입력"
-                                    v-model:value="contractCreacted.fax" />
-                            </div>
-
-                            <div class="d-flex">
-                                <div style="display: flex">
-                                    <div>
-                                        <imgUpload :title="titleModal" @update-img="getImgUrl"
-                                            style="margin-top: 10px" />
+                                <div class="form-item">
+                                    <label class="red">사업자등록번호 :</label>
+                                    <biz-number-text-box v-model:valueInput="contractCreacted.bizNumber"
+                                        :required="true" />
+                                </div>
+                                <div class="form-item">
+                                    <a-row style="width: 100%;">
+                                        <a-col :span="12" class="d-flex">
+                                            <label class="red">사업자유형 :</label>
+                                            <radio-group :arrayValue="arrayRadioCheck"
+                                                v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
+                                        </a-col>
+                                        <a-col :span="12" class="d-flex">
+                                            <div style="margin-right: 10px;">{{ textIDNo }} :</div>
+                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" />
+                                        </a-col>
+                                    </a-row>
+                                </div>
+                                <div class="form-item">
+                                    <label class="red">주 소 :</label>
+                                    <div class="group-label">
+                                        <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
+                                            placeholder="우편번호" :disabled="true" />
+                                        <post-code-button @dataAddress="funcAddress" />
                                     </div>
-                                    <div>
-                                        <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
+                                </div>
+                                <div class="form-item">
+                                    <label></label>
+                                    <default-text-box v-model:valueInput="contractCreacted.roadAddress" :required="true"
+                                        placeholder="주소" :disabled="true" width="100%" />
+                                </div>
+                                <div class="form-item">
+                                    <label></label>
+                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend"
+                                        :required="true" placeholder="상세주소(입력)" width="100%" />
+                                </div>
+                                <div class="form-item">
+                                    <label class="red">연락처 :</label>
+                                    <tel-text-box width="100%" placeholder="‘-’ 없이 슷자입력"
+                                        v-model:value="contractCreacted.phone" :required="true" />
+                                </div>
+                                <div class="form-item">
+                                    <label>팩 스 :</label>
+                                    <tel-text-box width="180px" placeholder="‘-’ 없이 슷자입력"
+                                        v-model:value="contractCreacted.fax" />
+                                </div>
+                                <div class="d-flex">
+                                    <div style="display: flex">
+                                        <div>
+                                            <imgUpload :title="titleModal" @update-img="getImgUrl"
+                                                style="margin-top: 10px" />
+                                        </div>
+                                        <div>
+                                            <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>2. 대표자정보</label>
-                        <div class="info-box">
-                            <div class="form-item">
-                                <label class="red">대표자명:</label>
-                                <default-text-box v-model:valueInput="contractCreacted.namePresident" :required="true"
-                                    width="200px" />
-                            </div>
-                            <div class="form-item">
-                                <label class="red">생년월일 :</label>
-                                <date-time-box width="200px" v-model:valueDate="contractCreacted.birthday"
-                                    dateFormat="YYYY-MM-DD" :required="true" />
-                            </div>
-                            <div class="form-item">
-                                <label class="red">휴대폰번호:</label>
-                                <tel-text-box width="200px" placeholder="‘-’ 없이 슷자입력"
-                                    v-model:value="contractCreacted.mobilePhone" />
-                            </div>
-                            <div class="form-item">
-                                <label class="red">이메일 :</label>
-                                <mail-text-box width="350px" v-model:valueInput="contractCreacted.email"
-                                    :required="true" />
+                        <div class="form-group">
+                            <label>2. 대표자정보</label>
+                            <div class="info-box">
+                                <div class="form-item">
+                                    <label class="red">대표자명:</label>
+                                    <default-text-box v-model:valueInput="contractCreacted.namePresident"
+                                        :required="true" width="200px" />
+                                </div>
+                                <div class="form-item">
+                                    <label class="red">생년월일 :</label>
+                                    <date-time-box width="200px" v-model:valueDate="contractCreacted.birthday"
+                                        dateFormat="YYYY-MM-DD" :required="true" />
+                                </div>
+                                <div class="form-item">
+                                    <label class="red">휴대폰번호:</label>
+                                    <tel-text-box width="200px" placeholder="‘-’ 없이 슷자입력" :required="true"
+                                        v-model:value="contractCreacted.mobilePhone" />
+                                </div>
+                                <div class="form-item">
+                                    <label class="red">이메일 :</label>
+                                    <mail-text-box width="350px" v-model:valueInput="contractCreacted.email"
+                                        :required="true" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </template>
-
-                <template v-if="step === 2">
-                    <a-form disabled>
+                    </template>
+                    <template v-if="step === 2">
                         <div class="form-group">
                             <label>1. 회계서비스 신청</label>
                             <div class="list-checkbox">
-                                <!-- <a-radio-group v-model:value="dataInputCallApi.dossier" :options="plainOptions"
-                                    @change="disableForm1" /> -->
-
-                                <radio-gorup :arrayValue="plainOptions" v-model:valueRadioCheck="valueAccountingService"
+                                <radio-group :arrayValue="plainOptions" v-model:valueRadioCheck="valueAccountingService"
                                     :layoutCustom="'horizontal'" />
-
                             </div>
                             <div class="group-title">
                                 <p class="red">⁙ 운영사업</p>
@@ -207,161 +190,117 @@
                             </div>
                             <div class="form-item">
                                 <label class="red">장기요양기관등록번호 :</label>
-                                <a-form :model="contractCreacted" name="nest-messages"
-                                    :validate-messages="validateMessages" @finish="onFinish" style="width: 100%;">
-                                    <a-form-item :name="['longTermCareInstitutionNumber']"
-                                        :rules="[{ required: true }]">
-                                        <a-input :disabled="disableFormVal2" placeholder="‘-’ 없이 슷자입력"
-                                            @change="validateNumber('longTermCareInstitutionNumber')"
-                                            @keyup="validateNumber('longTermCareInstitutionNumber')"
-                                            v-model:value="contractCreacted.longTermCareInstitutionNumber" />
-                                    </a-form-item>
-                                </a-form>
+                                <text-number-box width="100%" :required="true" :disabled="disableFormVal2"
+                                    v-model:valueInput="contractCreacted.longTermCareInstitutionNumber" />
                             </div>
                             <div style="display: flex">
                                 <div>
-                                    <imgUpload :disabledImg="disableFormVal2" :title="titleModal2"
-                                        @update-step="getImgUrlAccounting" style="margin-top: 10px; " />
+                                    <imgUpload :title="titleModal2" @update-img="getImgUrlAccounting"
+                                        style="margin-top: 10px" />
                                 </div>
-                                <a-col :span="7">
-                                    <div v-if="imagestep" class="img-preview">
-                                        <a-image :src="imagestep" />
-                                    </div>
-                                    <div v-else class="img-preview">
-                                        <img src="../../assets/images/imgdefault.jpg" />
-                                    </div>
-                                    <div v-if="fileNamestep">
-                                        <span style="padding-right: 10px">{{ fileNamestep }}</span>
-                                        <delete-outlined @click="removeImgStep" style="color: red; cursor: pointer" />
-                                    </div>
-                                </a-col>
+                                <div>
+                                    <preview-image :dataImage="dataImgStep3" @deleteImg="removeImgStep" />
+                                </div>
                             </div>
                             <div class="form-item">
                                 <div class="custom-checkbox-location">
                                     <label>부가서비스:</label>
-                                    <a-checkbox :disabled="disableFormVal2"
-                                        v-model:checked="contractCreacted.accountingServiceTypes">회계입력대행서비스</a-checkbox>
+                                    <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
+                                        :label="'회계입력대행서비스'" :size="'16'" />
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>2. 원천서비스 신청</label>
                             <div class="list-checkbox">
-                                <a-radio-group v-model:value="dataInputCallApi.applicationService"
-                                    :options="plainOptions" @change="disableForm2" />
+                                <radio-group :arrayValue="plainOptions" v-model:valueRadioCheck="valueSourceService"
+                                    :layoutCustom="'horizontal'" />
                             </div>
-                            <div class="form-item">
+                            <div class="form-item" style="margin-bottom:10px">
                                 <label>서비스 시작년월 :</label>
-                                <a-date-picker :disabled="disableFormVal" style="width: 170px"
-                                    v-model:value="contractCreacted.startYearMonthHolding" :format="monthFormat"
-                                    placeholder="" picker="month" />
+                                <month-picker-box width="170px" :disabled="disableFormVal"
+                                    v-model:valueDate="contractCreacted.startYearMonthHolding" />
                             </div>
                             <div class="form-item">
                                 <label>직 원 수:</label>
-                                <a-input-number :disabled="disableFormVal" style="width: 170px" min="0"
-                                    v-model:value="contractCreacted.capacityHolding"
-                                    @change="validateNumber('capacityHolding')"
-                                    @keyup="validateNumber('capacityHolding')" />
+                                <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding" :disabled="disableFormVal" :min="0" :spinButtons="true" />
                             </div>
-                            <div class="form-item">
+                            <div class=" form-item">
                                 <label>부가서비스 :</label>
-                                <a-checkbox :disabled="disableFormVal"
-                                    v-model:checked="contractCreacted.withholdingServiceTypes">4대보험신고서비스
-                                </a-checkbox>
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingServiceTypes"
+                                    :label="'4대보험신고서비스'" :disabled="disableFormVal" :size="'16'" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                             <div class="form-item">
                                 <label class="red">출금은행:</label>
-                                <bank-select-box v-model:valueInput="contractCreacted.bankType" :width="'178px'" />
+                                <bank-select-box v-model:valueInput="contractCreacted.bankType" :width="'178px'"  :required="true" />
                             </div>
                             <div class="form-item">
                                 <label class="red">출금계좌번호 :</label>
-                                <a-form :model="contractCreacted" :validate-messages="validateMessages"
-                                    style="width: 100%;">
-                                    <a-form-item :name="['accountNumber']" :rules="[{ required: true }]">
-                                        <a-input :disabled="disableFormVal"
-                                            v-model:value="contractCreacted.accountNumber"
-                                            @change="validateNumber('accountNumber')"
-                                            @keyup="validateNumber('accountNumber')" />
-                                    </a-form-item>
-                                </a-form>
+                                <text-number-box v-model:value="contractCreacted.accountNumber" width="100%"
+                                    :required="true" />
                             </div>
                             <div class="form-item">
                                 <label class="red">예금주명 :</label>
-                                <a-form :model="contractCreacted" :validate-messages="validateMessages"
-                                    style="width: 100%;">
-                                    <a-form-item :name="['ownerName']" :rules="[{ required: true }]">
-                                        <a-input :disabled="disableFormVal"
-                                            v-model:value="contractCreacted.ownerName" />
-                                    </a-form-item>
-                                </a-form>
+                                <default-text-box width="100%" :required="true"
+                                    v-model:valueInput="contractCreacted.ownerName" />
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자(주민)등록번호:</label>
-                                <a-form :model="contractCreacted" :validate-messages="validateMessages">
-                                    <a-form-item :name="['ownerBizNumber']" :rules="[{ required: true }]">
-                                        <a-input class="width-auto" placeholder="예금주의 사업자등록번호 또는 주민등록번호입니다"
-                                            v-model:value="contractCreacted.ownerBizNumber" :disabled="disableFormVal"
-                                            @change="validateNumber('ownerBizNumber')"
-                                            @keyup="validateNumber('ownerBizNumber')" />
-                                    </a-form-item>
-                                </a-form>
+                                <default-text-box width="170px" :required="true"
+                                    v-model:valueInput="contractCreacted.ownerBizNumber" />
                                 <p>
                                     <InfoCircleFilled /> : 예금주의 사업자등록번호 또는 주민등록번호입니다
                                 </p>
                             </div>
                             <div class="form-item">
                                 <label class="red">자동이체출금일자 :</label>
-                                <a-radio-group v-model:value="contractCreacted.withdrawDay" :disabled="disableFormVal">
-                                    <a-radio value="매월 5일">매월 5일</a-radio>
-                                    <a-radio value="매월 12일">매월 12일</a-radio>
-                                    <a-radio value="매월 19일">매월 19일</a-radio>
-                                </a-radio-group>
+                                <radio-group :arrayValue="arrayRadioWithdrawDay"
+                                    v-model:valueRadioCheck="valueRadioWithdrawDay" :layoutCustom="'horizontal'" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label>4. 기타</label>
                             <div class="form-item">
                                 <label>영업관리담당 :</label>
-                                <a-select v-model:value="contractCreacted.salesRepresentativeId" placeholder="영업자선택"
-                                    :disabled="disableFormVal" :options="optionSale">
-                                </a-select>
+                                <select-box-common :arrSelect="optionSale" :required="true"
+                                    v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" />
                             </div>
                             <div class="form-item">
                                 <label>전달사항 :</label>
-                                <a-textarea v-model:value="contractCreacted.comment" :disabled="disableFormVal"
-                                    placeholder="전달사항입력" allow-clear />
+                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment"
+                                    placeholder="전달사항입력" />
                             </div>
                         </div>
-                    </a-form>
-                </template>
-                <template v-if="step === 3">
-                    <p class="mt-3">
-                        ⁙ 귀하의 신청내용을 확인하신 후 아래 신청 버튼을 누르시면 신청이
-                        완료됩니다.<br />
-                        ( 만약, 수정할 사항이 있는 경우 이전 버튼을 누르셔서 수정하시기
-                        바랍니다. )
-                    </p>
-                </template>
-                <a-modal class="confirm-modal" v-model:visible="visibleModal" :mask-closable="false" ok-text="확인"
-                    cancel-text="" footer="">
-                    <a-result status="success" title="서비스 가입신청이 완료되었습니다! "
-                        sub-title="가입심사가 진행중입니다. 신청일로부터 최대 3일 이내에 승인여부를 알려드릴 예정입니다. ">
-                        <template #extra>
-                            <a-button key="console" type="primary" @click="handleOk">확인</a-button>
-                        </template>
-                    </a-result>
-                </a-modal>
-                <div class="group-button">
-                    <a-button v-if="step > 0" type="secondary" @click="prevStep">이 전
-                    </a-button>
-                    <a-button v-if="step < 3" type="primary" @click="nextStep">다음
-                    </a-button>
-                    <a-button v-if="step === 3" type="primary" @click="openPopup()">신 청
-                    </a-button>
-                </div>
+                    </template>
+                    <template v-if="step === 3">
+                        <p class="mt-3">
+                            ⁙ 귀하의 신청내용을 확인하신 후 아래 신청 버튼을 누르시면 신청이
+                            완료됩니다.<br />
+                            ( 만약, 수정할 사항이 있는 경우 이전 버튼을 누르셔서 수정하시기
+                            바랍니다. )
+                        </p>
+                    </template>
+                    <a-modal class="confirm-modal" v-model:visible="visibleModal" :mask-closable="false" ok-text="확인"
+                        cancel-text="" footer="">
+                        <a-result status="success" title="서비스 가입신청이 완료되었습니다! "
+                            sub-title="가입심사가 진행중입니다. 신청일로부터 최대 3일 이내에 승인여부를 알려드릴 예정입니다. ">
+                            <template #extra>
+                                <button-basic :text="'확인'" :type="'success'" :mode="'contained'" @onClick="handleOk" />
+                            </template>
+                        </a-result>
+                    </a-modal>
+                    <div class="group-button">
+                        <button-basic v-if="step > 0" :text="'이 전'" :type="'info'" :mode="'contained'"
+                            @onClick="prevStep" style="margin-right:10px" />
+                        <button-basic v-if="step < 3" :text="'다음'" :type="'success'" :mode="'contained'"
+                            @onClick="nextStep" />
+                        <button-basic v-if="step === 3" :text="'신 청'" :type="'success'" :mode="'contained'"
+                            @onClick="openPopup" />
+                    </div>
+                </form>
             </div>
         </div>
     </a-spin>
@@ -392,7 +331,6 @@ import {
 } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
-
 import mutations from "../../graphql/mutations/RqContract/index";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -408,7 +346,6 @@ import {
     DxPatternRule,
     DxStringLengthRule,
 } from "devextreme-vue/validator";
-
 export default {
     components: {
         CheckOutlined,
@@ -436,7 +373,6 @@ export default {
     },
     data() {
         return {
-
         };
     },
     setup() {
@@ -453,7 +389,6 @@ export default {
                 id: 2
             }
         ])
-
         const imageId = ref()
         const spinning = ref(false)
         const textIDNo = ref("법인등록번호")
@@ -484,7 +419,7 @@ export default {
             zonecode: "",
             phone: "",
             fax: "",
-            licenseFileStorageId: 10,
+            licenseFileStorageId: 0,
             bizNumber: "",
             bizType: 1,
             residentId: "",
@@ -503,10 +438,10 @@ export default {
             accountNumber: "",
             ownerBizNumber: "",
             withdrawDay: "매월 5일",
-            salesRepresentativeId: 1,
+            salesRepresentativeId: parseInt(''),
             comment: "",
             ownerName: "",
-            registrationCardFileStorageId: null
+            registrationCardFileStorageId: 0
         };
         const contractCreacted = reactive({
             ...initialFormState
@@ -523,12 +458,6 @@ export default {
         const fileName = ref("");
         const fileNamestep = ref("");
         const selectedItemKeys = ref(0)
-
-
-        const removeImgStep = () => {
-            imagestep.value = "";
-            fileNamestep.value = "";
-        };
         const {
             mutate: Creat,
             loading: signinLoading,
@@ -597,7 +526,6 @@ export default {
             })
             optionSale.value = dataOption
         });
-
         const statusMailValidate = ref(false)
         const validateEmail = () => {
             var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -639,82 +567,79 @@ export default {
                 //dataSearch.nameCompany = data.value;
             }
         });
-
-
         const changeStep = (val: number) => {
-            step.value = val - 1
-
-            // if (val == 1) {
-            //     step.value = 0
-            // }
-            // if (val == 2
-            //     && contractCreacted.terms == true
-            //     && contractCreacted.personalInfo == true
-            //     && contractCreacted.accountingService == true
-            //     && contractCreacted.withholdingService == true) {
-            //     step.value = 1
-            //     window.scrollTo(0, 0);
-            // }
-            // if (val == 3
-            //     && contractCreacted.terms == true
-            //     && contractCreacted.personalInfo == true
-            //     && contractCreacted.accountingService == true
-            //     && contractCreacted.withholdingService == true
-            //     && contractCreacted.nameCompany != ""
-            //     && contractCreacted.bizNumber != ""
-            //     && contractCreacted.zipcode != ""
-            //     && contractCreacted.namePresident != ""
-            //     && contractCreacted.birthday != ""
-            //     && contractCreacted.mobilePhone != ""
-            //     && contractCreacted.email != ""
-            //     && contractCreacted.phone != ""
-            //     && contractCreacted.bizNumber.length == 10
-            //     && statusMailValidate.value == false
-            // ) {
-            //     step.value = 2
-            //     window.scrollTo(0, 0);
-            // }
-            // if (val == 4
-            //     && contractCreacted.terms == true
-            //     && contractCreacted.personalInfo == true
-            //     && contractCreacted.accountingService == true
-            //     && contractCreacted.withholdingService == true
-            //     && contractCreacted.nameCompany != ""
-            //     && contractCreacted.bizNumber != ""
-            //     && contractCreacted.zipcode != ""
-            //     && contractCreacted.namePresident != ""
-            //     && contractCreacted.birthday != ""
-            //     && contractCreacted.mobilePhone != ""
-            //     && contractCreacted.email != ""
-            //     && contractCreacted.phone != ""
-            //     && contractCreacted.bizNumber.length == 10
-            //     && statusMailValidate.value == false
-            // ) {
-            //     if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-            //     } else {
-            //         let count = 0
-            //         if (dataInputCallApi.dossier == 1) {
-            //             if (valueFacilityBusinesses.value.length == 0
-            //                 || contractCreacted.longTermCareInstitutionNumber == ''
-            //             ) {
-            //                 count++
-            //             }
-            //         }
-            //         if (dataInputCallApi.applicationService == 1) {
-            //             if (contractCreacted.bankType == ''
-            //                 || contractCreacted.accountNumber == ''
-            //                 || contractCreacted.ownerName == ''
-            //                 || contractCreacted.ownerBizNumber == ''
-            //             ) {
-            //                 count++
-            //             }
-            //         }
-            //         if (count == 0) {
-            //             step.value = 3
-            //             window.scrollTo(0, 0);
-            //         }
-            //     }
-            // }
+            // step.value = val - 1
+            if (val == 1) {
+                step.value = 0
+            }
+            if (val == 2
+                && contractCreacted.terms == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true) {
+                step.value = 1
+                window.scrollTo(0, 0);
+            }
+            if (val == 3
+                && contractCreacted.terms == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true
+                && contractCreacted.nameCompany != ""
+                && contractCreacted.bizNumber != ""
+                && contractCreacted.zipcode != ""
+                && contractCreacted.namePresident != ""
+                && contractCreacted.birthday != ""
+                && contractCreacted.mobilePhone != ""
+                && contractCreacted.email != ""
+                && contractCreacted.phone != ""
+                && contractCreacted.bizNumber.length == 10
+                && statusMailValidate.value == false
+            ) {
+                step.value = 2
+                window.scrollTo(0, 0);
+            }
+            if (val == 4
+                && contractCreacted.terms == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true
+                && contractCreacted.nameCompany != ""
+                && contractCreacted.bizNumber != ""
+                && contractCreacted.zipcode != ""
+                && contractCreacted.namePresident != ""
+                && contractCreacted.birthday != ""
+                && contractCreacted.mobilePhone != ""
+                && contractCreacted.email != ""
+                && contractCreacted.phone != ""
+                && contractCreacted.bizNumber.length == 10
+                && statusMailValidate.value == false
+            ) {
+                if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
+                } else {
+                    let count = 0
+                    if (dataInputCallApi.dossier == 1) {
+                        if (valueFacilityBusinesses.value.length == 0
+                            || contractCreacted.longTermCareInstitutionNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+                    if (dataInputCallApi.applicationService == 1) {
+                        if (contractCreacted.bankType == ''
+                            || contractCreacted.accountNumber == ''
+                            || contractCreacted.ownerName == ''
+                            || contractCreacted.ownerBizNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+                    if (count == 0) {
+                        step.value = 3
+                        window.scrollTo(0, 0);
+                    }
+                }
+            }
         }
         const changeTypeCompany = (val: number) => {
             if (val == 1) {
@@ -723,8 +648,7 @@ export default {
                 textIDNo.value = "주민등록번호";
             }
         }
-
-        watch(() => contractCreacted.terms, (value) => {
+        watch([() => contractCreacted.terms, () => contractCreacted.personalInfo, () => contractCreacted.accountingService, () => contractCreacted.withholdingService], (value) => {
             if (contractCreacted.terms == true
                 && contractCreacted.personalInfo == true
                 && contractCreacted.accountingService == true
@@ -734,73 +658,6 @@ export default {
                 checkAll.value = false
             }
         });
-        watch(() => contractCreacted.personalInfo, (value) => {
-            if (contractCreacted.personalInfo == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true) {
-                checkAll.value = true
-            } else {
-                checkAll.value = false
-            }
-        });
-        watch(() => contractCreacted.accountingService, (value) => {
-            if (contractCreacted.accountingService == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true) {
-                checkAll.value = true
-            } else {
-                checkAll.value = false
-            }
-        });
-        watch(() => contractCreacted.withholdingService, (value) => {
-            if (contractCreacted.withholdingService == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true) {
-                checkAll.value = true
-            } else {
-                checkAll.value = false
-            }
-        });
-
-        watch(() => contractCreacted.withholdingService, (value) => {
-            if (contractCreacted.withholdingService == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true) {
-                checkAll.value = true
-            } else {
-                checkAll.value = false
-            }
-        });
-
-        watch(valueFacilityBusinesses, (newVal) => {
-            listDataConvert.value = [];
-            newVal.forEach((item: any) => {
-                listDataConvert.value.push({
-                    longTermCareInstitutionNumber: contractCreacted.longTermCareInstitutionNumber,
-                    facilityBizType: item?.facilityBizType,
-                    name: item?.name,
-                    startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
-                    capacity: parseInt(item?.capacity),
-                    registrationCardFileStorageId: contractCreacted.registrationCardFileStorageId,
-                });
-            });
-            var result = Object.values(newVal.reduce((c: any, v: any) => {
-                let k = v.name;
-                c[k] = c[k] || [];
-                c[k].push(v);
-                return c;
-            }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
-
-            if (result) {
-                message.error("중복되었습니다!")
-            }
-
-        });
-
         watch(() => contractCreacted.longTermCareInstitutionNumber, (newVal) => {
             if (listDataConvert.value.length > 0) {
                 listDataConvert.value.forEach((item: any) => {
@@ -808,16 +665,13 @@ export default {
                 });
             }
         })
-
         watch(() => contractCreacted.registrationCardFileStorageId, (newVal) => {
-            if (listDataConvert.value.length > 0) {
+            if (listDataConvert.value && listDataConvert.value.length > 0) {
                 listDataConvert.value.forEach((item: any) => {
                     item.registrationCardFileStorageId = newVal;
                 });
             }
         })
-
-
         const changeValueDate = (data: any) => {
             contractCreacted.birthday = data;
         }
@@ -842,57 +696,63 @@ export default {
         const prevStep = () => {
             step.value--;
         }
-        const nextStep = () => {
-            if (step.value == 0) {
-                if (contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true) {
-                    step.value++;
-                    window.scrollTo(0, 0);
-                } else {
-                    message.error("계속하려면 모든 조건을 수락하십시오!")
-                }
-            } else if (step.value == 1) {
-                if (contractCreacted.nameCompany != ""
-                    && contractCreacted.bizNumber != ""
-                    && contractCreacted.zipcode != ""
-                    && contractCreacted.namePresident != ""
-                    && contractCreacted.birthday != ""
-                    && contractCreacted.mobilePhone != ""
-                    && contractCreacted.email != ""
-                    && contractCreacted.phone != ""
-                    && contractCreacted.bizNumber.length == 10
-                    && statusMailValidate.value == false
-                ) {
-                    step.value++;
-                    window.scrollTo(0, 0);
-                } else {
-                    message.error("계속하려면 모든 조건을 수락하십시오")
-                }
-            } else if (step.value == 2) {
-                if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                    message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
-                } else {
-                    let count = 0
-                    if (dataInputCallApi.dossier == 1) {
-                        if (valueFacilityBusinesses.value.length == 0
-                            || contractCreacted.longTermCareInstitutionNumber == ''
-                        ) {
-                            count++
-                        }
-                    }
-                    if (dataInputCallApi.applicationService == 1) {
-                        if (contractCreacted.bankType == ''
-                            || contractCreacted.accountNumber == ''
-                            || contractCreacted.ownerName == ''
-                            || contractCreacted.ownerBizNumber == ''
-                        ) {
-                            count++
-                        }
-                    }
-                    if (count > 0) {
-                        message.error('계속하려면 모든 조건을 수락하십시오!')
-                    } else {
+        const nextStep = (e: any) => {
+            console.log(e.validationGroup.validate().isValid);
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                if (step.value == 0) {
+                    if (contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true) {
                         step.value++;
                         window.scrollTo(0, 0);
+                    } else {
+                        message.error("계속하려면 모든 조건을 수락하십시오!")
+                    }
+                } else if (step.value == 1) {
+                    if (contractCreacted.nameCompany != ""
+                        && contractCreacted.bizNumber != ""
+                        && contractCreacted.zipcode != ""
+                        && contractCreacted.namePresident != ""
+                        && contractCreacted.birthday != ""
+                        && contractCreacted.mobilePhone != ""
+                        && contractCreacted.email != ""
+                        && contractCreacted.phone != ""
+                        && contractCreacted.bizNumber.length == 10
+                        && statusMailValidate.value == false
+                    ) {
+                        step.value++;
+                        window.scrollTo(0, 0);
+                    } else {
+                        message.error("계속하려면 모든 조건을 수락하십시오")
+                    }
+                } else if (step.value == 2) {
+                    if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
+                        message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
+                    } else {
+                        let count = 0
+                        if (dataInputCallApi.dossier == 1) {
+                            if (valueFacilityBusinesses.value.length == 0
+                                || contractCreacted.longTermCareInstitutionNumber == ''
+                            ) {
+                                count++
+                            }
+                        }
+                        if (dataInputCallApi.applicationService == 1) {
+                            if (contractCreacted.bankType == ''
+                                || contractCreacted.accountNumber == ''
+                                || contractCreacted.ownerName == ''
+                                || contractCreacted.ownerBizNumber == ''
+                            ) {
+                                count++
+                            }
+                        }
+                        if (count > 0) {
+                            message.error('계속하려면 모든 조건을 수락하십시오!')
+                        } else {
+                            step.value++;
+                            window.scrollTo(0, 0);
+                        }
                     }
                 }
             }
@@ -909,13 +769,9 @@ export default {
         }
         const handleOk = () => {
             visibleModal.value = false;
-            // $router.push("/login");
+            router.push("/login");
         }
         const getImgUrl = (img: any) => {
-            // contractCreacted.licenseFileStorageId = img;
-            // imageValue.value = img.url;
-            // fileName.value = img.fileName;
-
             let resImg = {
                 ...img,
                 name: img.fileName
@@ -923,21 +779,22 @@ export default {
             dataImg.value = resImg
             contractCreacted.licenseFileStorageId = resImg.id
         }
-
         const removeImg = () => {
-            // imageValue.value = "";
-            // fileName.value = "";
-
             dataImg.value = ''
             contractCreacted.licenseFileStorageId = parseInt('')
         };
-
+        const removeImgStep = () => {
+            dataImgStep3.value = ''
+            contractCreacted.registrationCardFileStorageId = parseInt('')
+        };
         const getImgUrlAccounting = (img: any) => {
-            imagestep.value = img.url;
-            fileNamestep.value = img.fileNamestep;
-            contractCreacted.registrationCardFileStorageId = img.id;
+            let resImg = {
+                ...img,
+                name: img.fileName
+            }
+            dataImgStep3.value = resImg
+            contractCreacted.registrationCardFileStorageId = img.id
         }
-
         const validateNumber = (key: any) => {
             if (key == 'longTermCareInstitutionNumber') {
                 let e = contractCreacted.longTermCareInstitutionNumber
@@ -968,9 +825,6 @@ export default {
                 contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
             }
         }
-
-
-
         const checkAllFunc = (val: any) => {
             checkAll.value = val
             if (val == true) {
@@ -985,15 +839,18 @@ export default {
                 contractCreacted.withholdingService = false
             }
         }
-
-
         const arrayRadioCheck = ref([
             { id: 1, text: '법인사업자' },
             { id: 2, text: '개인사업자' },
         ])
+        const arrayRadioWithdrawDay = ref([
+            { id: '매월 5일', text: '매월 5일' },
+            { id: '매월 12일', text: '매월 12s일' },
+            { id: '매월 19일', text: '매월 19일' },
+        ])
         const valueRadioBox = ref(arrayRadioCheck.value[0])
         const valueAccountingService = ref(plainOptions.value[0])
-
+        const valueSourceService = ref(plainOptions.value[0])
         watch(() => valueRadioBox.value, (newVal) => {
             contractCreacted.bizType = newVal.id
             changeTypeCompany(newVal.id)
@@ -1002,12 +859,23 @@ export default {
             dataInputCallApi.dossier = newVal.id
             disableForm1()
         })
-
+        watch(() => valueSourceService.value, (newVal) => {
+            dataInputCallApi.applicationService = newVal.id
+            disableForm2()
+        })
         let dataImg = ref()
-
+        let dataImgStep3 = ref()
+        let valueRadioWithdrawDay = ref(arrayRadioWithdrawDay.value[0])
+        watch(() => valueRadioWithdrawDay.value, (newVal) => {
+            contractCreacted.withdrawDay = newVal.id
+        })
         return {
+            arrayRadioWithdrawDay,
+            valueRadioWithdrawDay,
+            valueSourceService,
             valueAccountingService,
             dataImg,
+            dataImgStep3,
             valueRadioBox,
             arrayRadioCheck,
             imageId,
@@ -1067,14 +935,35 @@ export default {
         };
     },
     watch: {
-
-
-    },
-    methods: {
-
+        valueFacilityBusinesses: {
+            handler(newVal) {
+                this.listDataConvert = [];
+                newVal.forEach((item) => {
+                    this.listDataConvert.push({
+                        longTermCareInstitutionNumber:
+                            this.contractCreacted.longTermCareInstitutionNumber,
+                        facilityBizType: item?.facilityBizType,
+                        name: item?.name,
+                        startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
+                        capacity: parseInt(item?.capacity),
+                        registrationCardFileStorageId:
+                            this.contractCreacted.registrationCardFileStorageId,
+                    });
+                });
+                var result = Object.values(newVal.reduce((c, v) => {
+                    let k = v.name;
+                    c[k] = c[k] || [];
+                    c[k].push(v);
+                    return c;
+                }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
+                if (result.length > 0) {
+                    message.error("중복되었습니다!")
+                }
+            },
+            deep: true,
+        },
     },
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
-
 </style>

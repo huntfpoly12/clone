@@ -5,4 +5,6 @@ FacilityBizType.all().map(item => states.push({
     ID: item.enumOrdinal,
     Name:item.name
 }))
+console.log(states);
+
 export default states
