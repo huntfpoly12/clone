@@ -11,43 +11,50 @@
             <div class="step-content">
                 <template v-if="step === 0">
                     <div class="form-group">
-                        <div style="display: flex;justify-content: space-between;">
+                        <div class="custom-checkbox-step-1">
                             <label>1. 서비스약관 동의</label>
                             <div>
-                                <a-checkbox @change="checkAllFunc" v-model:checked="checkAll">전체 동의</a-checkbox>
+                                <checkbox-basic :label="'전체 동의'" v-model:valueCheckbox="checkAll" @change="checkAllFunc"
+                                    :disabled="false" :size="'16'" />
                             </div>
                         </div>
-                        <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                        <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+
                         <div class="radio-group">
-                            <a-radio-group v-model:value="radio">
-                                <a-checkbox v-model:checked="contractCreacted.terms">동의함</a-checkbox>
+                            <a-radio-group v-model:value="radioGroup">
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.terms" :label="'동의함'"
+                                    :disabled="false" :size="'16'" />
                             </a-radio-group>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>2. 개인정보제공 및 활용동의</label>
-                        <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                        <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
                         <div class="radio-group">
-                            <a-radio-group v-model:value="radio">
-                                <a-checkbox v-model:checked="contractCreacted.personalInfo">동의함</a-checkbox>
+                            <a-radio-group v-model:value="radioGroup">
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.personalInfo" :label="'동의함'"
+                                    :disabled="false" :size="'16'" />
                             </a-radio-group>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>3. 회계서비스약관 동의</label>
-                        <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                        <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
                         <div class="radio-group">
-                            <a-radio-group v-model:value="radio">
-                                <a-checkbox v-model:checked="contractCreacted.accountingService">동의함</a-checkbox>
+                            <a-radio-group v-model:value="radioGroup">
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingService"
+                                    :label="'동의함'" :disabled="false" :size="'16'" />
+
                             </a-radio-group>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>4. 원천서비스약관 동의</label>
-                        <a-textarea disabled placeholder="// 주석처리 ( 추후 내용제공 )" allow-clear />
+                        <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
                         <div class="radio-group">
-                            <a-radio-group v-model:value="radio">
-                                <a-checkbox v-model:checked="contractCreacted.withholdingService">동의함</a-checkbox>
+                            <a-radio-group v-model:value="radioGroup">
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingService"
+                                    :label="'동의함'" :disabled="false" :size="'16'" />
                             </a-radio-group>
                         </div>
                     </div>
@@ -58,88 +65,67 @@
                         <div class="info-box">
                             <div class="form-item">
                                 <label class="red">상 호 :</label>
-                                <default-text-box width="400px" :required="true" label="상 호"
+                                <default-text-box width="400px" :required="true" :label="'상 호'"
                                     v-model:valueInput="contractCreacted.nameCompany" />
-
-                                <!-- <a-form :model="contractCreacted" :validate-messages="validateMessages"
-                                        @finish="onFinish">
-                                        <a-form-item :name="['nameCompany']" :rules="[{ required: true }]">
-                                            <a-input v-model:value="contractCreacted.nameCompany" class="width-400" />
-                                        </a-form-item>
-                                    </a-form> -->
                             </div>
                             <div class="form-item">
                                 <label class="red">사업자등록번호 :</label>
-                                <biz-number-text-box v-model:valueInput="contractCreacted.bizNumber"
-                                    :required="true" />
+                                <biz-number-text-box v-model:valueInput="contractCreacted.bizNumber" :required="true" />
                             </div>
                             <div class="form-item">
-                                <label class="red">사업자유형 :</label>
-                                <a-radio-group v-model:value="contractCreacted.bizType">
-                                    <a-radio :value="1" @click="changeTypeCompany(1)">법인사업자</a-radio>
-                                    <a-radio :value="2" @click="changeTypeCompany(2)">개인사업자</a-radio>
-                                </a-radio-group>
-                                <div class="group-label">
-                                    <p>{{ textIDNo }}:</p>
-                                    <id-number-text-box :required="true"
-                                        v-model:valueInput="contractCreacted.residentId" />
-                                </div>
+                                <a-row style="width: 100%;">
+                                    <a-col :span="12" class="d-flex">
+                                        <label class="red">사업자유형 :</label>
+                                        <radio-group :arrayValue="arrayRadioCheck"
+                                            v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
+
+                                    </a-col>
+                                    <a-col :span="12" class="d-flex">
+                                        <div style="margin-right: 10px;">{{ textIDNo }} :</div>
+                                        <id-number-text-box :required="true"
+                                            v-model:valueInput="contractCreacted.residentId" />
+                                    </a-col>
+                                </a-row>
                             </div>
                             <div class="form-item">
                                 <label class="red">주 소 :</label>
                                 <div class="group-label">
-                                    <a-input class="width-auto" placeholder="우편번호"
-                                        v-model:value="contractCreacted.zipcode" disabled />
+                                    <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
+                                        placeholder="우편번호" :disabled="true" />
                                     <post-code-button @dataAddress="funcAddress" />
                                 </div>
                             </div>
                             <div class="form-item">
                                 <label></label>
-                                <a-input placeholder="주소" v-model:value="contractCreacted.roadAddress" disabled />
+                                <default-text-box v-model:valueInput="contractCreacted.roadAddress" :required="true"
+                                    placeholder="주소" :disabled="true" width="100%" />
                             </div>
                             <div class="form-item">
                                 <label></label>
-                                <a-form :model="contractCreacted" style="width: 100%;" name="nest-messages"
-                                    :validate-messages="validateMessages" @finish="onFinish">
-                                    <a-form-item :name="['addressExtend']" :rules="[{ required: true }]">
-                                        <a-input placeholder="상세주소(입력)"
-                                            v-model:value="contractCreacted.addressExtend" />
-                                    </a-form-item>
-                                </a-form>
+                                <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
+                                    placeholder="상세주소(입력)" width="100%" />
                             </div>
                             <div class="form-item">
                                 <label class="red">연락처 :</label>
-                                <a-form :model="contractCreacted" name="nest-messages"
-                                    :validate-messages="validateMessages" @finish="onFinish">
-                                    <a-form-item :name="['phone']" :rules="[{ required: true }]">
-                                        <a-input placeholder="‘-’ 없이 슷자입력" @change="validateNumber('phone')"
-                                            v-model:value="contractCreacted.phone" style="width: 180px" />
-                                    </a-form-item>
-                                </a-form>
+                                <tel-text-box width="100%" placeholder="‘-’ 없이 슷자입력"
+                                    v-model:value="contractCreacted.phone" :required="true" />
                             </div>
                             <div class="form-item">
                                 <label>팩 스 :</label>
-                                <a-input placeholder="‘-’ 없이 슷자입력" v-model:value="contractCreacted.fax"
-                                    @change="validateNumber('fax')" @keyup="validateNumber('fax')"
-                                    style="width: 180px;" />
+                                <tel-text-box width="180px" placeholder="‘-’ 없이 슷자입력"
+                                    v-model:value="contractCreacted.fax" />
                             </div>
-                            <div style="display: flex">
-                                <div>
-                                    <imgUpload :title="titleModal" v-model:imageId="imageId" @update-img="getImgUrl"
-                                        style="margin-top: 10px" />
+
+                            <div class="d-flex">
+                                <div style="display: flex">
+                                    <div>
+                                        <imgUpload :title="titleModal" @update-img="getImgUrl"
+                                            style="margin-top: 10px" />
+                                    </div>
+                                    <div>
+                                        <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
+                                    </div>
                                 </div>
-                                <a-col :span="7">
-                                    <div v-if="imageValue" class="img-preview">
-                                        <a-image :src="imageValue" />
-                                    </div>
-                                    <div v-else class="img-preview">
-                                        <img src="../../assets/images/imgdefault.jpg" />
-                                    </div>
-                                    <div v-if="fileName">
-                                        <span style="padding-right: 10px">{{ fileName }}</span>
-                                        <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
-                                    </div>
-                                </a-col>
                             </div>
                         </div>
                     </div>
@@ -148,56 +134,39 @@
                         <div class="info-box">
                             <div class="form-item">
                                 <label class="red">대표자명:</label>
-                                <a-form :model="contractCreacted" name="nest-messages"
-                                    :validate-messages="validateMessages">
-                                    <a-form-item :name="['namePresident']" :rules="[{ required: true }]">
-                                        <a-input v-model:value="contractCreacted.namePresident" class="width-150" />
-                                    </a-form-item>
-                                </a-form>
+                                <default-text-box v-model:valueInput="contractCreacted.namePresident" :required="true"
+                                    width="200px" />
                             </div>
                             <div class="form-item">
                                 <label class="red">생년월일 :</label>
-                                <div style="width: 150px">
-                                    <a-form :model="contractCreacted" name="nest-messages"
-                                        :validate-messages="validateMessages" @finish="onFinish">
-                                        <a-form-item :name="['birthday']" :rules="[{ required: true }]">
-                                            <a-date-picker v-model:value="contractCreacted.birthday"
-                                                value-format="YYYY-MM-DD" placeholder="" />
-                                        </a-form-item>
-                                    </a-form>
-                                </div>
+                                <date-time-box width="200px" v-model:valueDate="contractCreacted.birthday"
+                                    dateFormat="YYYY-MM-DD" :required="true" />
                             </div>
                             <div class="form-item">
                                 <label class="red">휴대폰번호:</label>
-                                <a-form :model="contractCreacted" name="nest-messages"
-                                    :validate-messages="validateMessages" @finish="onFinish">
-                                    <a-form-item :name="['mobilePhone']" :rules="[{ required: true }]">
-                                        <a-input v-model:value="contractCreacted.mobilePhone" placeholder="‘-’ 없이 슷자입력"
-                                            @keyup="validateNumber('mobilePhone')"
-                                            @change="validateNumber('mobilePhone')" style="width: 150px" />
-                                    </a-form-item>
-                                </a-form>
+                                <tel-text-box width="200px" placeholder="‘-’ 없이 슷자입력"
+                                    v-model:value="contractCreacted.mobilePhone" />
                             </div>
                             <div class="form-item">
                                 <label class="red">이메일 :</label>
-                                <a-form :model="contractCreacted" name="nest-messages"
-                                    :validate-messages="validateMessages" @finish="onFinish">
-                                    <a-form-item :name="['email']" :rules="[{ type: 'email', required: true }]">
-                                        <a-input v-model:value="contractCreacted.email" class="width-350"
-                                            @keyup="validateEmail" />
-                                    </a-form-item>
-                                </a-form>
+                                <mail-text-box width="350px" v-model:valueInput="contractCreacted.email"
+                                    :required="true" />
                             </div>
                         </div>
                     </div>
                 </template>
+
                 <template v-if="step === 2">
                     <a-form disabled>
                         <div class="form-group">
                             <label>1. 회계서비스 신청</label>
                             <div class="list-checkbox">
-                                <a-radio-group v-model:value="dataInputCallApi.dossier" :options="plainOptions"
-                                    @change="disableForm1" />
+                                <!-- <a-radio-group v-model:value="dataInputCallApi.dossier" :options="plainOptions"
+                                    @change="disableForm1" /> -->
+
+                                <radio-gorup :arrayValue="plainOptions" v-model:valueRadioCheck="valueAccountingService"
+                                    :layoutCustom="'horizontal'" />
+
                             </div>
                             <div class="group-title">
                                 <p class="red">⁙ 운영사업</p>
@@ -211,7 +180,7 @@
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                         :allow-deleting="true" template="button-template" mode="cell">
                                         <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                        <DxTexts addRow="추 가" @click="addNewRowTable" />
+                                        <DxTexts addRow="추 가" />
                                     </DxEditing>
                                     <template #button-template>
                                         <DxButton icon="plus" />
@@ -467,29 +436,32 @@ export default {
     },
     data() {
         return {
-            radio: "",
-            states: bizTypeList,
-            titleModal: "사업자등록증",
-            titleModal2: "장기요양기관등록증",
-            plainOptions: [
-                {
-                    label: "신청합니다",
-                    value: 1
-                }, {
-                    label: "신청하지않습니다",
-                    value: 2
-                }
-            ],
+
         };
     },
     setup() {
+        const states = ref(bizTypeList)
+        const titleModal = ref("사업자등록증")
+        const titleModal2 = ref("장기요양기관등록증")
+        const radioGroup = ref()
+        const plainOptions = ref([
+            {
+                text: "신청합니다",
+                id: 1
+            }, {
+                text: "신청하지않습니다",
+                id: 2
+            }
+        ])
+
         const imageId = ref()
-        const spinning = ref(false);
+        const spinning = ref(false)
         const textIDNo = ref("법인등록번호")
-        const step = ref(0);
+        const step = ref(0)
         const monthFormat = 'YYYY-MM';
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
+        const checkAll = ref(false)
         const initialFormState = {
             terms: false,
             personalInfo: false,
@@ -553,10 +525,6 @@ export default {
         const selectedItemKeys = ref(0)
 
 
-        const removeImg = () => {
-            imageValue.value = "";
-            fileName.value = "";
-        };
         const removeImgStep = () => {
             imagestep.value = "";
             fileNamestep.value = "";
@@ -672,9 +640,7 @@ export default {
             }
         });
 
-        const addNewRowTable = () => {
 
-        }
         const changeStep = (val: number) => {
             step.value = val - 1
 
@@ -946,15 +912,32 @@ export default {
             // $router.push("/login");
         }
         const getImgUrl = (img: any) => {
-            contractCreacted.licenseFileStorageId = img;
-            imageValue.value = img.url;
-            fileName.value = img.fileName;
+            // contractCreacted.licenseFileStorageId = img;
+            // imageValue.value = img.url;
+            // fileName.value = img.fileName;
+
+            let resImg = {
+                ...img,
+                name: img.fileName
+            }
+            dataImg.value = resImg
+            contractCreacted.licenseFileStorageId = resImg.id
         }
+
+        const removeImg = () => {
+            // imageValue.value = "";
+            // fileName.value = "";
+
+            dataImg.value = ''
+            contractCreacted.licenseFileStorageId = parseInt('')
+        };
+
         const getImgUrlAccounting = (img: any) => {
             imagestep.value = img.url;
             fileNamestep.value = img.fileNamestep;
             contractCreacted.registrationCardFileStorageId = img.id;
         }
+
         const validateNumber = (key: any) => {
             if (key == 'longTermCareInstitutionNumber') {
                 let e = contractCreacted.longTermCareInstitutionNumber
@@ -987,9 +970,10 @@ export default {
         }
 
 
-        const checkAll = ref(false)
-        const checkAllFunc = () => {
-            if (checkAll.value == true) {
+
+        const checkAllFunc = (val: any) => {
+            checkAll.value = val
+            if (val == true) {
                 contractCreacted.terms = true
                 contractCreacted.personalInfo = true
                 contractCreacted.accountingService = true
@@ -1002,8 +986,30 @@ export default {
             }
         }
 
+
+        const arrayRadioCheck = ref([
+            { id: 1, text: '법인사업자' },
+            { id: 2, text: '개인사업자' },
+        ])
+        const valueRadioBox = ref(arrayRadioCheck.value[0])
+        const valueAccountingService = ref(plainOptions.value[0])
+
+        watch(() => valueRadioBox.value, (newVal) => {
+            contractCreacted.bizType = newVal.id
+            changeTypeCompany(newVal.id)
+        })
+        watch(() => valueAccountingService.value, (newVal) => {
+            dataInputCallApi.dossier = newVal.id
+            disableForm1()
+        })
+
+        let dataImg = ref()
+
         return {
-            addNewRowTable,
+            valueAccountingService,
+            dataImg,
+            valueRadioBox,
+            arrayRadioCheck,
             imageId,
             validateNumber,
             changeValueDate,
@@ -1052,7 +1058,12 @@ export default {
             checkStepThree,
             checkStepFour,
             changeValueInputEmit,
-            selectedItemKeys
+            selectedItemKeys,
+            states,
+            titleModal,
+            titleModal2,
+            plainOptions,
+            radioGroup
         };
     },
     watch: {
