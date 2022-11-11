@@ -148,11 +148,7 @@ export default defineComponent({
     props: {
         modalStatus: Boolean,
     },
-    mounted(){
-        console.log(this.$refs,'fghfh');
-    },
     setup(props, { emit }) {
-    
         const visible = ref<boolean>(false);
         const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
