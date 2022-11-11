@@ -526,7 +526,7 @@ export default defineComponent({
         const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
             value: TaxFreePayItem.all()[index].enumKey,
             label: TaxFreePayItem.all()[index].name,
-            submission: TaxFreePayItem.all()[index].submission,
+            submission: JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission,
         }));
         return {
             changeValueAddress,
