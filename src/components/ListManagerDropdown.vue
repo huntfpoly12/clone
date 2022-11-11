@@ -1,26 +1,17 @@
 <template>
   <div>
-      <DxSelectBox
-        :search-enabled="true"
-        :width="width"
-        :data-source="result?.findManagerUsers?.length > 0 ? result?.findManagerUsers : []"
-        :show-clear-button="clearButton"
-        v-model:value="value"
-        :read-only="readOnly"
-        display-expr="name"
-        value-expr="id"
-        :disabled="disabled"
-        @value-changed="updateValue(value)"
-        :height="$config_styles.HeightInput"
-      >
-        <DxValidator>
-          <DxRequiredRule v-if="required" :message="messageRequired" />
-        </DxValidator>
-      </DxSelectBox>
+    <DxSelectBox :search-enabled="true" :width="width"
+      :data-source="result?.findManagerUsers?.length > 0 ? result?.findManagerUsers : []"
+      :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
+      :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택">
+      <DxValidator>
+        <DxRequiredRule v-if="required" :message="messageRequired" />
+      </DxValidator>
+    </DxSelectBox>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch,getCurrentInstance } from "vue";
+import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import queries from "../graphql/queries/common/index";
