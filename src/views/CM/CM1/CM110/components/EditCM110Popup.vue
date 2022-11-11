@@ -8,7 +8,7 @@
                     <a-row :gutter="24">
                         <a-col :span="12">
                             <a-form-item label="이용자ID">
-                                <default-text-box v-model:valueInput="formState.username" :disabled="true">
+                                <default-text-box :width="150" v-model:valueInput="formState.username" :disabled="true">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>
@@ -25,16 +25,13 @@
                     <a-row>
                         <a-col :span="12">
                             <a-form-item label="성명">
-                                <default-text-box v-model:valueInput="formState.name"></default-text-box>
+                                <default-text-box :width="150" v-model:valueInput="formState.name"></default-text-box>
                             </a-form-item>
                         </a-col>
                     </a-row>
                     <a-row>
                         <a-col :span="24">
                             <a-form-item label="회계권한(담당사업)">
-                                <!-- <a-select v-model:value="valueFacilyti" :options="bizTypeList" mode="tags"
-                                    placeholder="선택하십시오" max-tag-count="responsive">
-                                </a-select> -->
                                 <tag-select-box placeholder="선택하십시오" :arrayValue="bizTypeList" v-model:valueTagSelect="valueFacilyti"/>
                             </a-form-item>
                         </a-col>
@@ -48,14 +45,14 @@
                         </a-col>
                     </a-row>
                     <a-row>
-                        <a-col :span="16">
+                        <a-col :span="24">
                             <a-row>
-                                <a-col :span="15">
+                                <a-col :span="11">
                                     <a-form-item label="휴대폰">
-                                        <text-number-box v-model:valueInput="formState.mobilePhone"></text-number-box>
+                                        <text-number-box :width="150" v-model:valueInput="formState.mobilePhone"></text-number-box>
                                     </a-form-item>
                                 </a-col>
-                                <a-col :span="8">
+                                <a-col>
                                     <p class="validate-message">‘-’없이 숫자만 입력</p>
                                 </a-col>
                             </a-row>
@@ -64,14 +61,14 @@
                     <a-row>
                         <a-col :span="24">
                             <a-row>
-                                <a-col :span="15">
+                                <a-col :span="14">
                                     <a-form-item label="이메일">
                                         <mail-text-box v-model:valueInput="formState.email"
                                             :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email">
                                         </mail-text-box>
                                     </a-form-item>
                                 </a-col>
-                                <a-col :span="8">
+                                <a-col :span="10">
                                     <p class="validate-message" v-if="!statusMailValidate">
                                         이메일 형식이 정확하지 않습니다.
                                     </p>
@@ -81,7 +78,7 @@
                     </a-row>
                     <a-row>
                         <a-col>
-                            <button-basic class="btn-set-password" :width="140" :text="'비밀번호 설정'" :type="'danger'"
+                            <button-basic :disabled="!statusMailValidate" class="btn-set-password" :width="140" :text="'비밀번호 설정'" :type="'danger'"
                                 :mode="'outlined'" @onClick="confirmPopup" />
                         </a-col>
                     </a-row>

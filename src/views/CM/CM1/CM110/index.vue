@@ -209,9 +209,6 @@
                         <a-pagination v-model:current="dataGetListUsers.filter.page"
                             v-model:page-size="dataGetListUsers.filter.rows" :total="rowTable" show-less-items />
                     </div>
-                    <a-form-item class="btn-submit-table">
-                        <button-basic :text="'저장'" :type="'default'" :mode="'contained'" @onClick="onSubmit"/>
-                    </a-form-item>
                 </a-tab-pane>
             </a-tabs>
             <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" @closePopup="closePopupAdd" />
