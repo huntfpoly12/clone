@@ -12,7 +12,7 @@
               <div class="dx-field-label">Number box</div>
               <div class="dx-field-value">
                 <number-box
-                  width="300px"
+                  width="150px"
                   :required="true"
                   placeholder="Number box"
                   :min="5"
@@ -55,7 +55,7 @@
           </td>
           <td>
             <pre class="mycode">
-              &lt; number-box width="300px" width="300px"
+              &lt; number-box width="150px" width="150px"
                   :required="true"
                   placeholder="Number box"
                   :min="5"
