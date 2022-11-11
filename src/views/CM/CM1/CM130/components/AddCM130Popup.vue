@@ -26,7 +26,7 @@
                         <a-col :span="12">
                             <a-form-item label="항목명">
                                 <default-text-box style="width: 150px; margin-right: 10px"
-                                    v-model:valueInput="formState.name" label="Default text box">
+                                    v-model:valueInput="formState.name">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>
@@ -35,7 +35,6 @@
                         <a-col :span="24">
                             <a-form-item label="과세구분/유형 ">
                                 <div style="width: 320px">
-                                    {{formState.taxPayCode}}
                                     <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode"></TaxPay>
                                 </div>
                             </a-form-item>

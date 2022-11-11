@@ -9,20 +9,20 @@
 						<a-col :span="12">
 							<a-form-item label="이용자ID">
 								<default-text-box 
+									:width="150"
 									:replaceRegex="true"
 									v-model:valueInput="formState.username">
 								</default-text-box>
 							</a-form-item>
 						</a-col>
 						<a-col :span="12">
-							<button-basic v-if="addTypeButton" :text="'중복체크'" :type="'default'" :mode="'contained'" @onClick="checkUserName"/>
-							<button-basic v-else :text="'중복체크'" :type="'default'" :mode="'outlined'" @onClick="checkUserName"/>
+							<button-basic :disabled="!disabledCheckUserName" :text="'중복체크'" :type="'default'" :mode="'contained'" @onClick="checkUserName"/>
 						</a-col>
 					</a-row>
 					<a-row>
 						<a-col :span="12">
 							<a-form-item label="성명">
-								<default-text-box  v-model:valueInput="formState.name"></default-text-box>
+								<default-text-box :width="150"  v-model:valueInput="formState.name"></default-text-box>
 							</a-form-item>
 						</a-col>
 					</a-row>
@@ -42,14 +42,14 @@
 						</a-col>
 					</a-row>
 					<a-row>
-						<a-col :span="16">
+						<a-col :span="24">
 							<a-row>
-								<a-col :span="15">
+								<a-col :span="11">
 									<a-form-item label="휴대폰">
-										<text-number-box v-model:valueInput="formState.mobilePhone"></text-number-box>
+										<text-number-box :width="150" v-model:valueInput="formState.mobilePhone"></text-number-box>
 									</a-form-item>
 								</a-col>
-								<a-col :span="8">
+								<a-col>
 									<p class="validate-message">‘-’없이 숫자만 입력</p>
 								</a-col>
 							</a-row>
@@ -107,7 +107,7 @@ export default defineComponent({
 		];
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(false);
-		const addTypeButton = ref<boolean>(false);
+		const disabledCheckUserName = ref<boolean>(false);
 		const options = ref<SelectProps['options']>([]);
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
@@ -119,6 +119,7 @@ export default defineComponent({
 				dataQuery.value = { companyId: props.data.companyId };
 				refetchData()
 			}
+			Object.assign(formState, initialState);
 		})
 		for (let i = 10; i < 36; i++) {
 			const value = i.toString(36) + i;
@@ -187,7 +188,6 @@ export default defineComponent({
 		})
 		creactDone(e => {
 			emit("closePopup", false)
-			Object.assign(formState, initialState);
 			notification('success', `신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!`)
 		})
 		const creactUserNew = () => {
@@ -230,9 +230,9 @@ export default defineComponent({
 				}
 			
 			if (formState.username.length >= 1) {
-				addTypeButton.value = true
+				disabledCheckUserName.value = true
 			} else {
-				addTypeButton.value = false
+				disabledCheckUserName.value = false
 			}
 		})
 
@@ -273,7 +273,7 @@ export default defineComponent({
 			optionsRadio,
 			confirmPopup,
 			statusMailValidate,
-			addTypeButton,
+			disabledCheckUserName,
 			bizTypeList,
 			creactUserNew,
 			refetchData,
