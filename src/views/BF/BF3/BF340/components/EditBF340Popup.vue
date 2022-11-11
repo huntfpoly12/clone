@@ -57,7 +57,7 @@
                 <a-row>
                     <a-col :span="15" :md="13" :lg="12">
                         <a-form-item class="result-address" :wrapper-col="{ span: 24 }" label-align="right" :label-col="labelCol">
-                            <default-text-box v-model:valueInput="formState.roadAddress"  width="100%" :disabled="true" :required="true"/>
+                            <default-text-box v-model:valueInput="formState.roadAddress"  width="100%" :disabled="true" :required="true" placeholder="주소"/>
                         </a-form-item>
                     </a-col>
                     <a-col :span="8" :md="13" :lg="11">

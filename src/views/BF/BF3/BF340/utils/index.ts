@@ -25,7 +25,7 @@ export const initialFormState = {
         sigunguCode: "",
         zonecode: "",
     },
-    taxInvoice: true,
+    taxInvoice: false,
     emailTaxInvoice: "",
     bankType: "39",
     accountNumber: "",

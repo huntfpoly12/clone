@@ -46,7 +46,7 @@
                     <a-col :lg="15">
                         <a-form-item label="주소" label-align="right" :label-col="{span: 3}" :wrapper-col="{ span: 21 }" class="post-code red">
                           <div style="display:flex">
-                            <default-text-box label="주소" v-model:valueInput="formState.zipcode"  width="200px" :disabled="true" :required="true"/>
+                            <default-text-box  v-model:valueInput="formState.zipcode"  width="200px" :disabled="true" :required="true" />
                              <div style="margin-left: 5px">                
                                 <post-code-button @dataAddress="funcAddress"/>
                             </div>
@@ -69,8 +69,8 @@
                 <a-row>
                     <a-col :span="12">
                         <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }"  label-align="right" >
-                            <a-switch v-model:checked="formState.taxInvoice" checked-children="발행"
-                                un-checked-children="미발행" style="width: 80px" />
+                            <switch-basic v-model:valueSwitch="formState.taxInvoice" textCheck="발행"
+                            textUnCheck="미발행" style="width: 80px" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="12">
@@ -138,8 +138,10 @@ import { useMutation } from "@vue/apollo-composable";
 import notification from '../../../../../utils/notification';
 import { initialFormState } from '../utils';
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
+import SwitchBasic from '../../../../../components/common/SwitchBasic.vue';
 
 export default defineComponent({
+  components: { SwitchBasic },
     props: {
         modalStatus: Boolean,
     },
