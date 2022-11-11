@@ -9,7 +9,6 @@
                         <template #title>조회</template>
                         <a-button @click="searching">
                             <SearchOutlined />
-                            <!-- <SearchOutlined @click="searching" /> -->
                         </a-button>
                     </a-tooltip>
                     <a-tooltip>
@@ -37,39 +36,34 @@
                     <a-row justify="start" :gutter="[16, 8]">
                         <a-col>
                             <label class="lable-item"> 사업자코드 : </label>
-                            <a-input style="width: 120px" v-model:value="originData.filter.code" />
+                            <default-text-box width="120px" v-model:valueInput="originData.filter.code" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">상호:</label>
-                            <a-input style="width: 120px" v-model:value="originData.filter.name" />
+                            <default-text-box width="120px" v-model:valueInput="originData.filter.name" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">대표자:</label>
-                            <a-input style="width: 120px" v-model:value="originData.filter.presidentName" />
+                            <default-text-box width="120px" v-model:valueInput="originData.filter.presidentName" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">해지:</label>
-                            <a-switch v-model:checked="originData.filter.excludeCancel" checked-children="포함"
-                                un-checked-children="제외" />
+                            <switch-basic v-model:valueSwitch="originData.filter.excludeCancel" :textCheck="'포함'"
+                                :textUnCheck="'제외'" />
                         </a-col>
 
                         <a-col>
                             <label class="lable-item">주소 :</label>
-                            <a-input style="width: 120px" v-model:value="originData.filter.address" />
+                            <default-text-box width="120px" v-model:valueInput="originData.filter.address" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">매니저명 :</label>
-                            <list-manager-dropdown v-model:selected="originData.filter.manageUserId" />
+                            <list-manager-dropdown v-model:valueInput="originData.filter.manageUserId" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">영업자명 :</label>
-                            <list-sales-dropdown v-model:selected="originData.filter.salesRepresentativeId" />
+                            <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" />
                         </a-col>
-                        <!-- <a-col>
-                            <label class="lable-item"></label>
-                            <a-checkbox v-model:checked="dataSearch.typeSevice1">회계</a-checkbox>
-                            <a-checkbox v-model:checked="dataSearch.typeSevice2">원천</a-checkbox>
-                        </a-col> -->
                     </a-row>
                 </div>
             </div>
@@ -166,7 +160,7 @@ export default defineComponent({
         return {
             amountFormat: { currency: 'VND', useGrouping: true },
             popupData: [],
-            
+
             modalHistoryStatus: false,
         };
     },
