@@ -1,155 +1,169 @@
 <template>
-  <div id="edit-popup-130">
-    <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-      @cancel="setModalVisible()" :mask-closable="false" width="650px">
-      <template #footer>
-        <a-button @click="setModalVisible">그냥 나가기</a-button>
-        <a-button key="submit" type="primary" :loading="loading" @click="onSubmit">
-          저장하고 나가기</a-button>
-      </template>
-      <a-spin tip="Loading..." :spinning="loading">
-        <h2 style="font-weight: 600; color: gray" class="title_modal">
-          급여상세항목
-        </h2>
-        <a-row :gutter="24">
-          <a-col :span="24">
-            <a-row :gutter="24">
-              <a-col :span="12">
-                <a-form-item label="코드">
-                  <DxNumberBox v-model:value="formState.itemCode" :min="0" :max="30" :show-spin-buttons="true"
-                    :width="150" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-switch v-model:checked="formState.use" checked-children="이용중" un-checked-children="이용중지"
-                  style="width: 80px; margin-right: 8px" />
-              </a-col>
-            </a-row>
+    <div id="edit-popup-130">
+        <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
+            @cancel="setModalVisible()" :mask-closable="false" width="650px" footer="">
+            <a-spin tip="Loading..." :spinning="loading">
+                <a-form :model="formState" :label-col="labelCol">
+                    <h2 style="font-weight: 600; color: gray" class="title_modal">
+                        급여상세항목
+                    </h2>
+                    <a-row :gutter="24">
+                        <a-col :span="12">
+                            <a-form-item label="코드">
+                                <number-box :width="150" placeholder="Number box" :min="0" :max="30"
+                                    v-model:valueInput="formState.itemCode" :spinButtons="true">
+                                </number-box>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="3"></a-col>
+                        <a-col :span="9">
+                            <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :textCheck="'이용중'"
+                                :textUnCheck="'이용중지'" />
+                        </a-col>
+                    </a-row>
 
-            <a-form-item label="항목명">
-              <a-input style="width: 150px; margin-right: 10px" v-model:value="formState.name" />
-            </a-form-item>
-            <a-form-item label="과세구분/유형 ">
-              <div style="width: 320px;">
-                <TaxPay v-model:selectedValue="formState.taxPayCode"></TaxPay>
-              </div>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-spin>
-    </a-modal>
-  </div>
+                    <a-row>
+                        <a-col :span="12">
+                            <a-form-item label="항목명">
+                                <default-text-box style="width: 150px; margin-right: 10px"
+                                    v-model:valueInput="formState.name" label="Default text box">
+                                </default-text-box>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row>
+                        <a-col :span="24">
+                            <a-form-item label="과세구분/유형 ">
+                                <div style="width: 320px">
+                                    {{formState.taxPayCode}}
+                                    <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode"></TaxPay>
+                                </div>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                </a-form>
+            </a-spin>
+            <div class="text-align-center mt-20">
+                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                    @onClick="setModalVisible()" />
+                <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140"
+                    :type="'default'" :mode="'contained'" @onClick="onSubmit" />
+            </div>
+
+        </a-modal>
+    </div>
 </template>
 
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
 import { companyId } from "../../../../../helpers/commonFunction";
-import TaxPay from "../../../../../components/TaxPay.vue"
+import TaxPay from "../../../../../components/TaxPay.vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM130/index";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import { message } from "ant-design-vue";
+import notification from "../../../../../utils/notification";
 import { DxNumberBox } from "devextreme-vue/number-box";
 import {
-  DxDataGrid,
-  DxColumn,
-  DxPaging,
-  DxExport,
-  DxSelection,
-  DxSearchPanel,
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxExport,
+    DxSelection,
+    DxSearchPanel,
 } from "devextreme-vue/data-grid";
 import {
-  SearchOutlined,
-  WarningOutlined,
-  MailOutlined,
-  MenuOutlined,
+    SearchOutlined,
+    WarningOutlined,
+    MailOutlined,
+    MenuOutlined,
 } from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
 
 export default defineComponent({
-  props: ["modalStatus", "data", "msg", "title"],
+    props: ["modalStatus", "data", "msg", "title"],
 
-  components: {
-    MenuOutlined,
-    SearchOutlined,
-    WarningOutlined,
-    MailOutlined,
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxSelection,
-    DxExport,
-    DxSearchPanel,
-    DxSelectBox,
-    DxNumberBox,
-    TaxPay
-  },
+    components: {
+        MenuOutlined,
+        SearchOutlined,
+        WarningOutlined,
+        MailOutlined,
+        DxDataGrid,
+        DxColumn,
+        DxPaging,
+        DxSelection,
+        DxExport,
+        DxSearchPanel,
+        DxSelectBox,
+        DxNumberBox,
+        TaxPay,
+    },
 
-  setup(props, { emit }) {
-    const initialState = {
-      itemCode: 0,
-      taxPayCode: Array(),
-      name: '',
-      use: false,
-      formula: 0,
-    };
-    const formState = reactive({ ...initialState });
-    const value = ref<string[]>([]);
-    // Create With holding Config Pay Item
-    const {
-      mutate: creactConfigPayItem,
-      loading: loading,
-      onDone: onDoneAdd,
-      onError: errorPayItem,
-      error
-    } = useMutation(mutations.createWithholdingConfigPayItem);
+    setup(props, { emit }) {
+        const initialState = {
+            itemCode: 0,
+            taxPayCode: Array(),
+            name: "",
+            use: true,
+            formula: 0,
+        };
+        const formState = reactive({ ...initialState });
+        // const value = ref<string[]>([]);
+        // Create With holding Config Pay Item
+        const {
+            mutate: creactConfigPayItem,
+            loading: loading,
+            onDone: onDoneAdd,
+            onError: errorPayItem,
+            error,
+        } = useMutation(mutations.createWithholdingConfigPayItem);
 
-    errorPayItem((error) => {
-      message.error(error.message, 5);
-    })
-    onDoneAdd((res) => {
-      message.success(`원천항목 새로 추가되었습니다!`, 5);
-      setModalVisible();
-    })
+        errorPayItem((error) => {
+            notification('error', error.message)
+        });
+        onDoneAdd((res) => {
+            notification('success', `원천항목 새로 추가되었습니다!`)
+            setModalVisible();
+        });
 
-    const onSubmit = () => {
-      let variables = {
-        companyId: companyId,
-        imputedYear: parseInt(dayjs().format('YYYY')),
-        input: {
-          itemCode: formState.itemCode,
-          name: formState.name,
-          use: formState.use,
-          sort: formState.formula,
-          tax: true,
-          taxfreePayItemCode: formState.taxPayCode[0] === '비과세' ? formState.taxPayCode[1] : null,
-          taxPayItemCode: formState.taxPayCode[0] === '과세' ? formState.taxPayCode[1] : null,
-        }
-      }
-      creactConfigPayItem(variables);
-    }
-    const setModalVisible = () => {
-      Object.assign(formState, initialState);
-      emit("closePopup", false);
-    }
-    return {
-      formState,
-      error,
-      onSubmit,
-      loading,
-      value,
-      setModalVisible
-    };
-  }
-
+        const onSubmit = () => {
+            let variables = {
+                companyId: companyId,
+                imputedYear: parseInt(dayjs().format("YYYY")),
+                input: {
+                    itemCode: formState.itemCode,
+                    name: formState.name,
+                    use: formState.use,
+                    sort: formState.formula,
+                    tax: true,
+                    taxfreePayItemCode:
+                        formState.taxPayCode[0] === "비과세" ? formState.taxPayCode[1] : null,
+                    taxPayItemCode:
+                        formState.taxPayCode[0] === "과세" ? formState.taxPayCode[1] : null,
+                },
+            };
+            console.log(variables.input);
+            
+            creactConfigPayItem(variables);
+        };
+        const setModalVisible = () => {
+            Object.assign(formState, initialState);
+            emit("closePopup", false);
+        };
+        return {
+            formState,
+            labelCol: { style: { width: "150px" } },
+            error,
+            onSubmit,
+            loading,
+            // value,
+            setModalVisible,
+        };
+    },
 });
 </script>
-<style lang="scss" scoped>
-::v-deep .ant-form-item-label>label {
-  width: 110px;
-}
-
-::v-deep .ant-form-item {
-  margin-bottom: 10px;
+<style lang="scss" scoped src="../style/style.scss">
+::v-deep ul.ant-cascader-menu {
+    height: auto;
+    max-height: 180px;
 }
 </style>

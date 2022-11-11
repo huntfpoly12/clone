@@ -34,6 +34,7 @@ export default defineComponent({
             () => valueCheck.value,
             (newValue) => {
                 emit("update:valueCheckbox", newValue);
+                emit("change", newValue);
             }
         );
 
