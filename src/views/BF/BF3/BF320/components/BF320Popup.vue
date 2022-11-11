@@ -10,7 +10,7 @@
                                 <a-row>
                                     <a-col :span="18">
                                         <a-form-item label="상 호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.name" required label="상 호">
+                                            <default-text-box v-model:valueInput="formState.name" required>
                                             </default-text-box>
                                         </a-form-item>
                                     </a-col>
@@ -18,8 +18,8 @@
 
                                     <a-col :span="8">
                                         <a-form-item label="사업자등록번호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.bizNumber" required
-                                                label="사업자등록번호"></default-text-box>
+                                            <default-text-box v-model:valueInput="formState.bizNumber" required>
+                                            </default-text-box>
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="16"></a-col>
@@ -34,7 +34,7 @@
                                     <a-col :span="10">
                                         <a-form-item :label="changeTypeCompany(formState.bizType)">
                                             <id-card-text-box v-model:valueInput="formState.presidentMobilePhone"
-                                                :required="true" label="사업자등록번호">
+                                                :required="true">
                                             </id-card-text-box>
                                         </a-form-item>
                                     </a-col>
@@ -71,7 +71,7 @@
                                     <a-col :span="8">
                                         <a-form-item label="연락처" class="clr">
                                             <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
-                                                :required="true" label="연락처" placeholder="‘-’없이 숫자만 입력">
+                                                :required="true" placeholder="‘-’없이 숫자만 입력">
                                             </default-text-box>
                                         </a-form-item>
                                     </a-col>
@@ -104,18 +104,16 @@
                             <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                                 <a-form-item has-feedback label="대표자명" class="clr">
                                     <default-text-box v-model:valueInput="formState.extendInfoPresidentName"
-                                        style="width: 200px" autocomplete="off" required label="대표자명">
+                                        style="width: 200px" autocomplete="off" required>
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item has-feedback label="생년월일" class="clr">
                                     <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
                                         style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
-                                    </date-time-box>
-
-                                    <!-- <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday" width="300px" dateFormat="YYYY-MM-DD" /> -->
+                                    </date-time-box> 
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr">
-                                    <tel-text-box label="휴대폰번호" width="200px"
+                                    <tel-text-box width="200px"
                                         v-model:valueInput="formState.extendInfoPresidentMobilePhone"
                                         placeholder="‘-’없이 숫자만 입력" :required="true" />
                                 </a-form-item>
@@ -135,18 +133,18 @@
                                 <a-form-item label="출금계좌번호" class="clr">
                                     <text-number-box text-number-box
                                         v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
-                                        placeholder="‘-’없이 숫자만 입력" width="250px" required label="출금계좌번호">
+                                        placeholder="‘-’없이 숫자만 입력" width="250px" required>
                                     </text-number-box>
                                 </a-form-item>
                                 <a-form-item label="예금주명" class="clr">
                                     <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" required label="예금주명">
+                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" required>
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
                                     <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" required
-                                        label="사업자(주민)등록번호:"></default-text-box>
+                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" required>
+                                    </default-text-box>
                                     <div class="warring-bank">
                                         <InfoCircleFilled />
                                         <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>

@@ -76,7 +76,7 @@
                             </a-checkbox>
                         </a-col>
                     </a-row>
-                    
+
                 </div>
             </div>
             <div class="page-content">
@@ -182,7 +182,7 @@ import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
-    
+
     components: {
         DxDataGrid,
         DxColumn,
@@ -208,7 +208,7 @@ export default defineComponent({
         return {
             popupData: [],
             modalAddNewStatus: false,
-           
+
             modalHistoryStatus: false,
             modalLoginStatus: false,
         };
@@ -248,9 +248,9 @@ export default defineComponent({
             }, 500);
         })
         watch(() => modalEditStatus.value,
-            () => {  
-                
-                    refetchData()
+            () => {
+
+                refetchData()
             }
         );
         const searching = () => {
@@ -289,16 +289,16 @@ export default defineComponent({
                     username: dataSearch.value.username,
                     name: dataSearch.value.name,
                 }
-            } 
-            
-            triggersearching.value = true  
-            if(originData){
+            }
+
+            triggersearching.value = true
+            if (originData) {
                 originData.value = dataNew.value
                 refetchData()
             }
-                     
+
         }
-        
+
         return {
             modalEditStatus,
             spinning,
@@ -370,7 +370,7 @@ export default defineComponent({
     },
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
 .page-content {
     padding: 10px 10px;
 }
