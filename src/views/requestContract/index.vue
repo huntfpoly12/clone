@@ -178,7 +178,8 @@
                                         <DxRequiredRule />
                                     </DxColumn>
                                     <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
-                                        <DxLookup :data-source="facilityBizTypeCommon" value-expr="v" display-expr="n" />
+                                        <DxLookup :data-source="facilityBizTypeCommon" value-expr="v"
+                                            display-expr="n" />
                                     </DxColumn>
                                     <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
                                         :format="'yyyy-MM-dd'" />
@@ -316,7 +317,7 @@ import {
     DeleteOutlined,
     InfoCircleFilled
 } from "@ant-design/icons-vue";
-import { notification } from "ant-design-vue"; 
+import { notification } from "ant-design-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import {
     DxDataGrid,
@@ -374,7 +375,7 @@ export default {
         InfoCircleFilled,
         DxAsyncRule
     },
-    setup() { 
+    setup() {
         const titleModal = ref("사업자등록증")
         const titleModal2 = ref("장기요양기관등록증")
         const radioGroup = ref()
@@ -469,12 +470,12 @@ export default {
             { id: '매월 12일', text: '매월 12s일' },
             { id: '매월 19일', text: '매월 19일' },
         ])
-        const valueRadioBox = ref(arrayRadioCheck.value[0])
-        const valueAccountingService = ref(plainOptions.value[0])
-        const valueSourceService = ref(plainOptions.value[0])
+        const valueRadioBox = ref(1)
+        const valueAccountingService = ref(1)
+        const valueSourceService = ref(1)
         let dataImg = ref()
         let dataImgStep3 = ref()
-        let valueRadioWithdrawDay = ref(arrayRadioWithdrawDay.value[0])
+        let valueRadioWithdrawDay = ref('매월 5일')
         // function=======================================================================================================================================
         const {
             mutate: Creat,
@@ -494,18 +495,6 @@ export default {
             spinning.value = false
             message.error(res.message)
         });
-        const validateMessages = {
-            required: "이항목은 필수 입력사항입니다!",
-            types: {
-                email: "이메일 형식이 정확하지 않습니다",
-                mobilePhone: "이메일 형식이 정확하지 않습니다",
-                nameCompany: "이메일 형식이 정확하지 않습니다",
-                number: "Numeric only!",
-            },
-            number: {
-                range: "${label} must be between ${min} and ${max}",
-            },
-        };
         const onFinish = () => {
         };
         const disableForm1 = () => {
@@ -782,19 +771,19 @@ export default {
         }
         // watch=====================================================================================================================================
         watch(() => valueRadioBox.value, (newVal) => {
-            contractCreacted.bizType = newVal.id
-            changeTypeCompany(newVal.id)
+            contractCreacted.bizType = newVal
+            changeTypeCompany(newVal)
         })
         watch(() => valueAccountingService.value, (newVal) => {
-            dataInputCallApi.dossier = newVal.id
+            dataInputCallApi.dossier = newVal
             disableForm1()
         })
         watch(() => valueSourceService.value, (newVal) => {
-            dataInputCallApi.applicationService = newVal.id
+            dataInputCallApi.applicationService = newVal
             disableForm2()
         })
         watch(() => valueRadioWithdrawDay.value, (newVal) => {
-            contractCreacted.withdrawDay = newVal.id
+            contractCreacted.withdrawDay = newVal
         })
         watch([() => contractCreacted.terms, () => contractCreacted.personalInfo, () => contractCreacted.accountingService, () => contractCreacted.withholdingService], (value) => {
             if (contractCreacted.terms == true
@@ -895,7 +884,6 @@ export default {
             signinDone,
             onError,
             visibleModal,
-            validateMessages,
             onFinish,
             listDataConvert,
             step,
@@ -909,22 +897,14 @@ export default {
             checkStepTwo,
             checkStepThree,
             checkStepFour,
-            selectedItemKeys, 
+            selectedItemKeys,
             titleModal,
             titleModal2,
             plainOptions,
             radioGroup
         };
     },
-    // watch: {
-    //     valueFacilityBusinesses: {
-    //         handler(newVal: any) {
-    //         },
-    //         deep: true,
-    //     },
-    // },
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
-
 </style>
