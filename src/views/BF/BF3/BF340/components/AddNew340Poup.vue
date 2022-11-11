@@ -79,7 +79,7 @@
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
                             <a-col :span="16" :md="16" :lg="17">
-                                <mail-text-box v-model:valueInput="formState.emailTaxInvoice" width="100%"/>
+                                <mail-text-box v-model:valueInput="formState.emailTaxInvoice" width="100%" :required="receiptOrNot"/>
                             </a-col>
                         </a-row>
                     </a-col>
@@ -151,7 +151,7 @@ export default defineComponent({
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
         const formState = reactive<any>({...initialFormState});
-
+        const receiptOrNot = ref<boolean>(false);
       // watch event modal popup
       watch(
           () => props.modalStatus,
@@ -213,6 +213,10 @@ export default defineComponent({
                 creactSale(dataNew)
             }
         }
+        // if taxvoice = true then 전자세금계산서 수신이메일 require
+        watch(()=> formState.taxInvoice,(newValue)=>{
+            receiptOrNot.value = newValue;
+        });
         return {
             labelCol,
             wrapperCol,
@@ -222,7 +226,8 @@ export default defineComponent({
             creactSale,
             funcAddress,
             setModalVisible,
-            createSale
+            createSale,
+            receiptOrNot
         }
     }, methods: {
       
