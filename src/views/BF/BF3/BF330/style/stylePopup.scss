@@ -26,6 +26,10 @@
     text-align: left;
 }
 
+::v-deep .text-area-box-custom .dx-texteditor-input {
+    text-align: left !important;
+}
+
 .ant-form-item {
     margin-bottom: 3px;
 }
@@ -138,4 +142,22 @@
 ::v-deep .dx-checkbox-icon {
     width: 18px;
     height: 18px;
+}
+
+.custom-service {
+    display: flex;
+    padding-left: 120px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.footer {
+    width: 100%;
+    display: flex;
+    margin-top: 10px;
+    justify-content: flex-end;
+
+    >div {
+        margin-left: 10px;
+    }
 }
