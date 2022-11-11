@@ -1,8 +1,8 @@
 <template>
   <div>
     <a-select :style="{ width: width, height: $config_styles.HeightInput }" v-model:value="data" :disabled="disabled"
-      option-label-prop="children" @select="selectedValue(data)" :placeholder="placeholder">
-      <a-select-option v-for="saleStatus in saleGrade" :key="saleStatus.value" :label="saleStatus.label"
+      option-label-prop="children" @select="selectedValue(data)" :placeholder="placeholder" class="sale-status">
+      <a-select-option v-for="saleStatus in saleListStatus" :key="saleStatus.value" :label="saleStatus.label"
         :style="{ width: width }">
         <a-tag :color="getColorTag(saleStatus.label)">{{ saleStatus.label }}</a-tag>
       </a-select-option>
@@ -36,7 +36,7 @@ import {
   enum2Entries,
 } from "@bankda/jangbuda-common";
 
-const saleGrade = enum2Entries(SalesRepresentativeStatus).map((value) => ({
+const saleListStatus = enum2Entries(SalesRepresentativeStatus).map((value) => ({
   value: value[1],
   label: value[0],
 }));
@@ -114,7 +114,7 @@ export default defineComponent({
     };
     return {
       selectedValue,
-      saleGrade,
+      saleListStatus,
       visibleConfirm,
       confirm,
       okButton,
@@ -133,6 +133,15 @@ export default defineComponent({
    width: 100%; 
    margin-left: 100px;
    display: flex;
+}
+::v-deep .sale-status .ant-select-selector {
+  width: 100px;
+}
+::v-deep .sale-status .ant-select-dropdown{
+  min-width: 100px; width: 100px; left: 965px; top: 200px;
+}
+:deep(.ant-select-arrow){
+  right:46px;
 }
 </style>
   

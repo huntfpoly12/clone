@@ -32,13 +32,13 @@
                             <sale-grade-select-box  v-model:valueInput="formState.grade" width="100px" :required="true"/>
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right" :label-col="labelCol">
-                            <id-number-text-box v-model:valueInput="formState.residentId" />
+                            <id-number-text-box v-model:valueInput="formState.residentId" width="150px"/>
                         </a-form-item>
                         <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
-                            <biz-number-text-box v-model:valueInput="formState.bizNumber" />
+                            <biz-number-text-box v-model:valueInput="formState.bizNumber" width="150px"/>
                         </a-form-item>
                         <a-form-item label="휴대폰"  class="red" label-align="right" :label-col="labelCol">
-                            <tel-text-box  v-model:valueInput="formState.mobilePhone" placeholder="전화번호를 입력" :required="true"/>
+                            <tel-text-box  v-model:valueInput="formState.mobilePhone" placeholder="전화번호를 입력" :required="true" width="150px"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -62,19 +62,20 @@
                     </a-col>
                     <a-col :span="8" :md="13" :lg="11">
                         <a-form-item :wrapper-col="{ span: 24}" class="detail-address" label-align="right" :label-col="labelCol">
-                            <default-text-box v-model:valueInput="formState.addressExtend"  placeholder="상세주소"/>
+                            <default-text-box v-model:valueInput="formState.addressExtend"  placeholder="상세주소" width="438px"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row>
-                    <a-col :span="12">
+                    <a-col :span="10">
                         <a-form-item label="세금계산서발행여부" :label-col="{ span: 8 }"  label-align="right" >
                             <switch-basic v-model:valueSwitch="formState.taxInvoice" textCheck="발행"
                             textUnCheck="미발행" style="width: 80px" />
                         </a-form-item>
                     </a-col>
-                    <a-col :span="12">
-                        <a-row>
+                    <a-col :span="14">
+                        <div style="margin-left: 30px;">
+                            <a-row>
                             <a-col :span="6" :md="6" :lg="5">
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
@@ -82,6 +83,8 @@
                                 <mail-text-box v-model:valueInput="formState.emailTaxInvoice" width="100%" :required="receiptOrNot"/>
                             </a-col>
                         </a-row>
+                        </div>
+                 
                     </a-col>
                 </a-row>
                 <a-row>
@@ -104,7 +107,7 @@
                     </a-col>
                     <a-col :span="12" :md="13" :lg="14">
                         <a-form-item label="예금주" label-align="right" :label-col="labelCol">
-                            <default-text-box v-model:valueInput="formState.accountOwner" />
+                            <default-text-box v-model:valueInput="formState.accountOwner" width="383px"/>
                         </a-form-item>
                         <a-form-item label="해지일자" label-align="right" :label-col="labelCol">
                             <div style="width: 150px">
@@ -117,7 +120,7 @@
                     <a-col :span="24" :md="24" :lg="24">
                         <a-form-item label="비고" :label-col="{ span: 2 }" :wrapper-col="{ span: 22 }"
                             class="textarea_340">
-                            <text-area-box v-model:valueInput="formState.remark" placeholder="500자 이내"/>
+                            <text-area-box v-model:valueInput="formState.remark" placeholder="500자 이내" width="835px"/>
                         </a-form-item>
                     </a-col>
                 </a-row>
