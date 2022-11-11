@@ -314,7 +314,7 @@
       <tr>
         <td>
           <div class="dx-field">
-            <div class="dx-field-label">Service subscription application status process bar</div>
+            <div class="dx-field-label">StatusProgress Control</div>
             <div class="dx-field-value">
               Value return : {{saleStatus}}
              <subs-req-status-process-bar v-model:valueInput="saleStatus"></subs-req-status-process-bar>
