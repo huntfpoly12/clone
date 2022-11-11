@@ -178,7 +178,7 @@
                                         <DxRequiredRule />
                                     </DxColumn>
                                     <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
-                                        <DxLookup :data-source="states" value-expr="ID" display-expr="Name" />
+                                        <DxLookup :data-source="facilityBizTypeCommon" value-expr="v" display-expr="n" />
                                     </DxColumn>
                                     <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
                                         :format="'yyyy-MM-dd'" />
@@ -316,8 +316,8 @@ import {
     DeleteOutlined,
     InfoCircleFilled
 } from "@ant-design/icons-vue";
-import { notification } from "ant-design-vue";
-import bizTypeList from "../../constants/facilityBizType";
+import { notification } from "ant-design-vue"; 
+import { FacilityBizType } from "@bankda/jangbuda-common";
 import {
     DxDataGrid,
     DxColumn,
@@ -374,12 +374,12 @@ export default {
         InfoCircleFilled,
         DxAsyncRule
     },
-    setup() {
-        const states = ref(bizTypeList)
+    setup() { 
         const titleModal = ref("사업자등록증")
         const titleModal2 = ref("장기요양기관등록증")
         const radioGroup = ref()
         const router = useRouter();
+        const facilityBizTypeCommon = FacilityBizType.all();
         const plainOptions = ref([
             {
                 text: "신청합니다",
@@ -564,7 +564,7 @@ export default {
                 return "finish";
             }
         });
-        const changeStep = (val: number) => { 
+        const changeStep = (val: number) => {
             if (val == 1) {
                 step.value = 0
             }
@@ -855,6 +855,7 @@ export default {
             }
         }, { deep: true, });
         return {
+            facilityBizTypeCommon,
             arrayRadioWithdrawDay,
             valueRadioWithdrawDay,
             valueSourceService,
@@ -908,8 +909,7 @@ export default {
             checkStepTwo,
             checkStepThree,
             checkStepFour,
-            selectedItemKeys,
-            states,
+            selectedItemKeys, 
             titleModal,
             titleModal2,
             plainOptions,
@@ -926,4 +926,5 @@ export default {
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
+
 </style>
