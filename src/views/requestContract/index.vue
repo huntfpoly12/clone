@@ -564,79 +564,78 @@ export default {
                 return "finish";
             }
         });
-        const changeStep = (val: number) => {
-            step.value = val - 1
-            // if (val == 1) {
-            //     step.value = 0
-            // }
-            // if (val == 2
-            //     && contractCreacted.terms == true
-            //     && contractCreacted.personalInfo == true
-            //     && contractCreacted.accountingService == true
-            //     && contractCreacted.withholdingService == true) {
-            //     step.value = 1
-            //     window.scrollTo(0, 0);
-            // }
-            // if (val == 3
-            //     && contractCreacted.terms == true
-            //     && contractCreacted.personalInfo == true
-            //     && contractCreacted.accountingService == true
-            //     && contractCreacted.withholdingService == true
-            //     && contractCreacted.nameCompany != ""
-            //     && contractCreacted.bizNumber != ""
-            //     && contractCreacted.zipcode != ""
-            //     && contractCreacted.namePresident != ""
-            //     && contractCreacted.birthday != ""
-            //     && contractCreacted.mobilePhone != ""
-            //     && contractCreacted.email != ""
-            //     && contractCreacted.phone != ""
-            //     && contractCreacted.bizNumber.length == 10
-            //     && statusMailValidate.value == false
-            // ) {
-            //     step.value = 2
-            //     window.scrollTo(0, 0);
-            // }
-            // if (val == 4
-            //     && contractCreacted.terms == true
-            //     && contractCreacted.personalInfo == true
-            //     && contractCreacted.accountingService == true
-            //     && contractCreacted.withholdingService == true
-            //     && contractCreacted.nameCompany != ""
-            //     && contractCreacted.bizNumber != ""
-            //     && contractCreacted.zipcode != ""
-            //     && contractCreacted.namePresident != ""
-            //     && contractCreacted.birthday != ""
-            //     && contractCreacted.mobilePhone != ""
-            //     && contractCreacted.email != ""
-            //     && contractCreacted.phone != ""
-            //     && contractCreacted.bizNumber.length == 10
-            //     && statusMailValidate.value == false
-            // ) {
-            //     if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-            //     } else {
-            //         let count = 0
-            //         if (dataInputCallApi.dossier == 1) {
-            //             if (valueFacilityBusinesses.value.length == 0
-            //                 || contractCreacted.longTermCareInstitutionNumber == ''
-            //             ) {
-            //                 count++
-            //             }
-            //         }
-            //         if (dataInputCallApi.applicationService == 1) {
-            //             if (contractCreacted.bankType == ''
-            //                 || contractCreacted.accountNumber == ''
-            //                 || contractCreacted.ownerName == ''
-            //                 || contractCreacted.ownerBizNumber == ''
-            //             ) {
-            //                 count++
-            //             }
-            //         }
-            //         if (count == 0) {
-            //             step.value = 3
-            //             window.scrollTo(0, 0);
-            //         }
-            //     }
-            // }
+        const changeStep = (val: number) => { 
+            if (val == 1) {
+                step.value = 0
+            }
+            if (val == 2
+                && contractCreacted.terms == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true) {
+                step.value = 1
+                window.scrollTo(0, 0);
+            }
+            if (val == 3
+                && contractCreacted.terms == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true
+                && contractCreacted.nameCompany != ""
+                && contractCreacted.bizNumber != ""
+                && contractCreacted.zipcode != ""
+                && contractCreacted.namePresident != ""
+                && contractCreacted.birthday != ""
+                && contractCreacted.mobilePhone != ""
+                && contractCreacted.email != ""
+                && contractCreacted.phone != ""
+                && contractCreacted.bizNumber.length == 10
+                && statusMailValidate.value == false
+            ) {
+                step.value = 2
+                window.scrollTo(0, 0);
+            }
+            if (val == 4
+                && contractCreacted.terms == true
+                && contractCreacted.personalInfo == true
+                && contractCreacted.accountingService == true
+                && contractCreacted.withholdingService == true
+                && contractCreacted.nameCompany != ""
+                && contractCreacted.bizNumber != ""
+                && contractCreacted.zipcode != ""
+                && contractCreacted.namePresident != ""
+                && contractCreacted.birthday != ""
+                && contractCreacted.mobilePhone != ""
+                && contractCreacted.email != ""
+                && contractCreacted.phone != ""
+                && contractCreacted.bizNumber.length == 10
+                && statusMailValidate.value == false
+            ) {
+                if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
+                } else {
+                    let count = 0
+                    if (dataInputCallApi.dossier == 1) {
+                        if (valueFacilityBusinesses.value.length == 0
+                            || contractCreacted.longTermCareInstitutionNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+                    if (dataInputCallApi.applicationService == 1) {
+                        if (contractCreacted.bankType == ''
+                            || contractCreacted.accountNumber == ''
+                            || contractCreacted.ownerName == ''
+                            || contractCreacted.ownerBizNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+                    if (count == 0) {
+                        step.value = 3
+                        window.scrollTo(0, 0);
+                    }
+                }
+            }
         }
         const changeTypeCompany = (val: number) => {
             if (val == 1) {
@@ -767,7 +766,6 @@ export default {
             dataImgStep3.value = resImg
             contractCreacted.registrationCardFileStorageId = img.id
         }
-
         const checkAllFunc = (val: any) => {
             checkAll.value = val
             if (val == true) {
@@ -832,7 +830,6 @@ export default {
             })
             optionSale.value = dataOption
         });
-
         watch(() => valueFacilityBusinesses, (newVal: any) => {
             listDataConvert.value = [];
             newVal.value.forEach((item: any) => {
@@ -856,9 +853,7 @@ export default {
             if (!result) {
                 message.error("중복되었습니다!")
             }
-
         }, { deep: true, });
-
         return {
             arrayRadioWithdrawDay,
             valueRadioWithdrawDay,
@@ -924,7 +919,6 @@ export default {
     // watch: {
     //     valueFacilityBusinesses: {
     //         handler(newVal: any) {
-
     //         },
     //         deep: true,
     //     },
@@ -932,5 +926,4 @@ export default {
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
-
 </style>
