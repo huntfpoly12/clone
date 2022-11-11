@@ -88,7 +88,7 @@
                                             <a-form-item>
                                                 <div style="margin-left: 50px">
                                                     <span>두루누리 적용 여부 (사업자):</span>
-                                                    <switch-basic style="width: 80px; margin-left: 8px" v-model:valueSwitch="formState.insuranceSupport" :textCheck="'적용'"
+                                                    <switch-basic style="width: 80px; margin-left: 8px;" v-model:valueSwitch="formState.insuranceSupport" :textCheck="'적용'"
                                                         :textUnCheck="'미적용'" />
                                                 </div>
                                                 <div style="margin-left: 150px; margin-top: 10px">
@@ -154,13 +154,14 @@
                                                     </a-form-item>
                                                 </a-col>
                                                 <a-col>
-                                                    <a-form-item label="지방소득세 납세지 ">
-                                                        <default-text-box
-                                                            style="width: 200px;"
+                                                    <div style="margin-left: 22px;">
+                                                        <span>지방소득세 납세지:</span>
+                                                        <default-text-box 
+                                                            style="width: 200px; display: inline-block; margin-left: 8px;"
                                                             :disabled="true"
                                                             v-model:valueInput="formState.localIncomeTaxArea">
                                                         </default-text-box>
-                                                    </a-form-item>
+                                                    </div>
                                                 </a-col>
                                                 <a-form-item>
                                                     <button-basic :text="'수동선택'" :type="'default'" :mode="'contained'" @onClick="modalSetting"/>
@@ -269,6 +270,7 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
 import dayjs, { Dayjs } from "dayjs";
+import { optionsRadioReportType, optionsRadioPaymentType  } from "./data";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
@@ -324,14 +326,6 @@ export default defineComponent({
 			isShow.value = false;
 		}
         const dataSource = ref([]);
-        const optionsRadioReportType = [
-			{ id: 1, text: "매월" },
-            { id: 6, text: "반기" },
-		];
-        const optionsRadioPaymentType = [
-            { id: 1, text: "당월지급" },
-            { id: 2, text: "익월지급" },
-        ]
         const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
         //================================================= FUNCTION============================================
         const showModal = () => {
