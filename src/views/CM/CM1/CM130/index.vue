@@ -110,8 +110,7 @@
                                                 <default-text-box
                                                     style="width: 574px; margin-right: 10px; float: left;"
                                                     :disabled="true"
-                                                    v-model:valueInput="formState.companyAddressInfoAddress"
-                                                    label="Default text box">
+                                                    v-model:valueInput="formState.companyAddressInfoAddress">
                                                 </default-text-box>
                                                 <button-basic class="button-form-modal" :text="'자동선택'" :type="'default'" :mode="'contained'" @onClick="showModal"/>
                                                 <a-modal class="container_email" v-model:visible="isShow"
@@ -150,8 +149,7 @@
                                                         <default-text-box
                                                             style="width: 200px;"
                                                             :disabled="true"
-                                                            v-model:valueInput="formState.competentTaxOfficeCode"
-                                                            label="Default text box">
+                                                            v-model:valueInput="formState.competentTaxOfficeCode">
                                                         </default-text-box>
                                                     </a-form-item>
                                                 </a-col>
@@ -160,8 +158,7 @@
                                                         <default-text-box
                                                             style="width: 200px;"
                                                             :disabled="true"
-                                                            v-model:valueInput="formState.localIncomeTaxArea"
-                                                            label="Default text box">
+                                                            v-model:valueInput="formState.localIncomeTaxArea">
                                                         </default-text-box>
                                                     </a-form-item>
                                                 </a-col>
@@ -203,11 +200,7 @@
                         <DxColumn data-field="printName" caption="과세구분"/>
                         <DxColumn data-field="name" caption="항목명" />
                         <DxColumn data-field="taxfreePayItemCode" caption="비과세코드" css-class="cell-center" />
-                        <DxColumn data-field="taxFreeIncludeSubmission" caption="제출여부" css-class="cell-center"
-                            cell-template="taxExemption" :width="100" />
-                        <template #taxExemption="{ data }">
-                            {{data.value == true ? 'O' : (data.value == false ? 'X' : '')}}
-                        </template>
+                        <DxColumn data-field="printTaxFreeIncludeSubmission" caption="제출여부" />
                         <DxColumn data-field="printCode" caption="유형"/>
                         <DxColumn data-field="formula" caption="산출방법" />
                         <DxColumn cell-template="pupop" css-class="cell-center" :width="100" />
@@ -425,12 +418,19 @@ export default defineComponent({
                 }else{
                     taxFreePayItem.map((eData: any) => {
                         if (eData.value == e.taxfreePayItemCode) {
-                            e.printCode = eData.label
+                            e.printCode = eData.Label
+                            if (eData.submission) {
+                                e.printTaxFreeIncludeSubmission = 'O'
+                            } else {
+                                e.printTaxFreeIncludeSubmission = 'X'
+                            }
                         }
                     })
                     e.printName = "비과세"
                 }
             })
+            console.log(dataSource.value);
+            
             
             
         });
@@ -526,6 +526,7 @@ export default defineComponent({
         const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
             value: TaxFreePayItem.all()[index].enumKey,
             label: TaxFreePayItem.all()[index].name,
+            submission: TaxFreePayItem.all()[index].submission,
         }));
         return {
             changeValueAddress,

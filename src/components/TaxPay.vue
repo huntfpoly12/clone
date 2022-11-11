@@ -20,7 +20,7 @@ const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
 
 const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
   value: TaxFreePayItem.all()[index].enumKey,
-  label: TaxFreePayItem.all()[index].name,
+  label: TaxFreePayItem.all()[index].submission ? TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ',  제출O' : TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ',  제출X' ,
 }));
 const options: CascaderProps["options"] = [
   {
