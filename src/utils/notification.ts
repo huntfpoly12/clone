@@ -6,7 +6,7 @@ export default (typeMessage: string, text: string) => {
         case 'success':
             message.success({
                 content: () => text,
-                class: 'message-class',
+                class: 'ant-message',
                 style: {
                     marginTop: '20vh',
                 },
