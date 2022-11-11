@@ -1,6 +1,6 @@
 <template>
     <DxButton :text="text" :type="type" @click="onClick($event)" :styling-mode="mode"
-        :style="{ color: color, backgroundColor: backGround, border: border }" />
+        :style="{ color: color, backgroundColor: backGround, border: border }"  :height="$config_styles.HeightInput"/>
 </template>
 <script lang="ts">
 import { defineComponent, ref, getCurrentInstance } from "vue";

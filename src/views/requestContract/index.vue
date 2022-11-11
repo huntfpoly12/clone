@@ -467,7 +467,7 @@ export default {
         ])
         const arrayRadioWithdrawDay = ref([
             { id: '매월 5일', text: '매월 5일' },
-            { id: '매월 12일', text: '매월 12s일' },
+            { id: '매월 12일', text: '매월 12일' },
             { id: '매월 19일', text: '매월 19일' },
         ])
         const valueRadioBox = ref(1)

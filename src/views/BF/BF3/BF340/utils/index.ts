@@ -27,7 +27,7 @@ export const initialFormState = {
     },
     taxInvoice: false,
     emailTaxInvoice: "",
-    bankType: "39",
+    bankType: "13",
     accountNumber: "",
     accountOwner: "",
     registerDate: new Date(),

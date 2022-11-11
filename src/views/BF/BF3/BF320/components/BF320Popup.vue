@@ -10,7 +10,7 @@
                                 <a-row>
                                     <a-col :span="18">
                                         <a-form-item label="상 호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.name" required>
+                                            <default-text-box v-model:valueInput="formState.name" :required="true">
                                             </default-text-box>
                                         </a-form-item>
                                     </a-col>
@@ -18,7 +18,7 @@
 
                                     <a-col :span="8">
                                         <a-form-item label="사업자등록번호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.bizNumber" required>
+                                            <default-text-box v-model:valueInput="formState.bizNumber" :required="true">
                                             </default-text-box>
                                         </a-form-item>
                                     </a-col>
@@ -33,9 +33,9 @@
                                     </a-col>
                                     <a-col :span="10">
                                         <a-form-item :label="changeTypeCompany(formState.bizType)">
-                                            <id-card-text-box v-model:valueInput="formState.presidentMobilePhone"
-                                                :required="true">
-                                            </id-card-text-box>
+                                            <id-number-text-box v-model:valueInput="formState.decryptedResidentId"
+                                                :required="true" label="사업자등록번호">
+                                            </id-number-text-box>
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="24">
@@ -50,18 +50,21 @@
                                                 </a-col>
 
                                                 <a-col :span="24" style="margin-bottom: 5px">
-                                                    <default-text-box
-                                                        v-model:valueInput="formState.extendInfoDetailRoadAddress"
-                                                        autocomplete="off" width="100%" :required="true"
-                                                        :disabled="true">
-                                                    </default-text-box>
-                                                </a-col>
-
-                                                <a-col :span="24">
-                                                    <default-text-box
-                                                        v-model:valueInput="formState.extendInfoDetailAddressExtend"
-                                                        autocomplete="off" width="100%">
-                                                    </default-text-box>
+                                                    <a-row>
+                                                        <a-col :span="12" style="padding-right: 5px;">
+                                                            <default-text-box
+                                                                v-model:valueInput="formState.extendInfoDetailRoadAddress"
+                                                                autocomplete="off" width="100%" :required="true"
+                                                                :disabled="true">
+                                                            </default-text-box>
+                                                        </a-col>
+                                                        <a-col :span="12">
+                                                            <default-text-box
+                                                                v-model:valueInput="formState.extendInfoDetailAddressExtend"
+                                                                autocomplete="off" width="100%">
+                                                            </default-text-box>
+                                                        </a-col>
+                                                    </a-row>
                                                 </a-col>
                                             </a-row>
 
@@ -110,7 +113,9 @@
                                 <a-form-item has-feedback label="생년월일" class="clr">
                                     <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
                                         style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
-                                    </date-time-box> 
+                                    </date-time-box>
+
+                                    <!-- <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday" width="300px" dateFormat="YYYY-MM-DD" /> -->
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr">
                                     <tel-text-box width="200px"
@@ -133,17 +138,17 @@
                                 <a-form-item label="출금계좌번호" class="clr">
                                     <text-number-box text-number-box
                                         v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
-                                        placeholder="‘-’없이 숫자만 입력" width="250px" required>
+                                        placeholder="‘-’없이 숫자만 입력" width="250px" :required="true">
                                     </text-number-box>
                                 </a-form-item>
                                 <a-form-item label="예금주명" class="clr">
                                     <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" required>
+                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" :required="true">
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
                                     <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" required>
+                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" :required="true">
                                     </default-text-box>
                                     <div class="warring-bank">
                                         <InfoCircleFilled />
@@ -151,18 +156,8 @@
                                     </div>
                                 </a-form-item>
                                 <a-form-item label="자동이체출금일자" class="clr custom-flex">
-                                    <a-radio-group v-model:value="formState.extendInfoCmsBankWithdrawDay"
-                                        class="custom-lineHeight">
-                                        <a-radio class="clb" :style="radioStyle" value="매월 5일" style="height: 22px;">매월
-                                            5일
-                                        </a-radio>
-                                        <a-radio class="clb" :style="radioStyle" value="매월 12일" style="height: 22px;">매월
-                                            12일
-                                        </a-radio>
-                                        <a-radio class="clb" :style="radioStyle" value="매월 19일" style="height: 22px;">매월
-                                            19일
-                                        </a-radio>
-                                    </a-radio-group>
+                                    <radio-group :arrayValue="arrayRadioWithdrawDay"
+                                        v-model:valueRadioCheck="formState.extendInfoCmsBankWithdrawDay" />
                                 </a-form-item>
                             </a-form>
                         </a-collapse-panel>
@@ -270,6 +265,11 @@ export default defineComponent({
         };
     },
     setup(props, { emit }) {
+        const arrayRadioWithdrawDay = reactive([
+            { id: '매월 5일', text: '매월 5일' },
+            { id: '매월 12일', text: '매월 12일' },
+            { id: '매월 19일', text: '매월 19일' },
+        ])
         let visible = ref(false);
         const dataQuery = ref();
         const dataQueryMemos = ref();
@@ -287,6 +287,7 @@ export default defineComponent({
             bizType: 1,
             address: "",
             phone: "",
+            decryptedResidentId: '',
             presidentName: "",
             presidentMobilePhone: "",
             extendInfoDetailName: "",
@@ -502,6 +503,7 @@ export default defineComponent({
         watch(result, (value) => {
             if (value && value.getCompany) {
                 formState.id = value.getCompany.id;
+                formState.decryptedResidentId = value.getCompany.decryptedResidentId;
                 formState.code = value.getCompany.code;
                 formState.name = value.getCompany.name;
                 formState.bizNumber = value.getCompany.bizNumber;
@@ -532,6 +534,10 @@ export default defineComponent({
                 formState.extendInfoDetailPhone = value.getCompany.extendInfo.detail.phone;
                 formState.extendInfoDetailFax = value.getCompany.extendInfo.detail.fax;
                 formState.extendInfoDetailLicenseFileStorageId = value.getCompany.extendInfo.detail.licenseFileStorageId;
+                dataImg.value = {
+                    name: value.getCompany.extendInfo.detail.license.name,
+                    url: value.getCompany.extendInfo.detail.license.url,
+                }
 
                 formState.extendInfoPresidentName = value.getCompany.extendInfo.president.name;
                 formState.extendInfoPresidentBirthday = value.getCompany.extendInfo.president.birthday;
@@ -545,6 +551,7 @@ export default defineComponent({
                 formState.extendInfoCmsBankWithdrawDay = value.getCompany.extendInfo.cmsBank.withdrawDay;
 
                 formState.sealFileStorageId = value.getCompany.sealFileStorageId;
+
                 formState.createdAt = value.getCompany.createdAt;
                 formState.createdBy = value.getCompany.createdBy;
                 formState.updatedAt = value.getCompany.updatedAt;
@@ -591,6 +598,7 @@ export default defineComponent({
         const updateCompany = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
+                notification('error', "Vui lòng nhập đủ thông tin bắt buộc")
                 res.brokenRules[0].validator.focus();
             }
             else {
@@ -665,6 +673,7 @@ export default defineComponent({
         }
 
         return {
+            arrayRadioWithdrawDay,
             removeImg,
             setModalVisible,
             fileList,
