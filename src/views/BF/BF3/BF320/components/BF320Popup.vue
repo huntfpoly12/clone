@@ -113,9 +113,7 @@
                                 <a-form-item has-feedback label="생년월일" class="clr">
                                     <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
                                         style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
-                                    </date-time-box>
-
-                                    <!-- <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday" width="300px" dateFormat="YYYY-MM-DD" /> -->
+                                    </date-time-box> 
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr">
                                     <tel-text-box width="200px"
@@ -598,7 +596,7 @@ export default defineComponent({
         const updateCompany = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
-                notification('error', "Vui lòng nhập đủ thông tin bắt buộc")
+                notification('error', "필수 항목 다 입력해주세요")
                 res.brokenRules[0].validator.focus();
             }
             else {
