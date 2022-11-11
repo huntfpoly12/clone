@@ -49,7 +49,6 @@
               <div class="dflex custom-flex">
                 <label class="lable-item">영업자명:</label>
                 <default-text-box
-                  label="영업자명"
                   v-model:valueInput="originData.name"
                   width="120px"
                 ></default-text-box>
@@ -59,7 +58,6 @@
               <div class="dflex custom-flex">
                 <label class="lable-item">영업자코드:</label>
                 <default-text-box
-                  label="영업자코드"
                   v-model:valueInput="originData.code"
                   width="120px"
                 ></default-text-box>
@@ -69,7 +67,6 @@
               <div class="dflex custom-flex">
                 <label class="lable-item">상태 :</label>
                 <sale-status-select-box
-                  label="상태"
                   v-model:valueInput="saleStatus"
                   placeholder="전체"
                 />
