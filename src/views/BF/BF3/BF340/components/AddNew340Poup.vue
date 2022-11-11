@@ -9,7 +9,7 @@
                             <default-text-box  width="200px" :disabled="true"/>
                         </a-form-item>
                         <a-form-item label="영업자명" class="red" label-align="right" :label-col="labelCol">
-                            <default-text-box  v-model:valueInput="formState.name" width="200px" placeholder="중복불가(2~20자)" :maxCharacter="20" :minCharacter="2" :required="true"/>
+                            <default-text-box  v-model:valueInput="formState.name" width="200px" placeholder="중복불가(2~20자)" :maxCharacter="20" :minCharacter="2" :required="true" />
                         </a-form-item>
                         <a-form-item label="사업자유형" class="red" label-align="right" :label-col="labelCol">
                             <biz-type-select-box   v-model:valueInput="formState.bizType" width="200px" :required="true" /> 
@@ -136,7 +136,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch ,reactive} from 'vue'
+import { ref, defineComponent, watch ,reactive,onMounted } from 'vue'
 import { useMutation } from "@vue/apollo-composable";
 import notification from '../../../../../utils/notification';
 import { initialFormState } from '../utils';
@@ -148,7 +148,11 @@ export default defineComponent({
     props: {
         modalStatus: Boolean,
     },
+    mounted(){
+        console.log(this.$refs,'fghfh');
+    },
     setup(props, { emit }) {
+    
         const visible = ref<boolean>(false);
         const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
