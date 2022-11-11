@@ -11,7 +11,7 @@
           <div class="dx-field">
             <div class="dx-field-label">Bank select box</div>
             <div class="dx-field-value">
-              <bank-select-box width="300px" :required="true"></bank-select-box>
+              <bank-select-box width="150px" :required="true"></bank-select-box>
             </div>
           </div>
         </td>
@@ -39,7 +39,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; bank-select-box width="300px" :required="true" / &gt;
+                &lt; bank-select-box width="150px" :required="true" / &gt;
               </pre
           >
         </td>
@@ -50,7 +50,7 @@
             <div class="dx-field-label">Biz type select box</div>
             <div class="dx-field-value">
               <biz-type-select-box
-                width="300px"
+                width="150px"
                 :required="true"
               ></biz-type-select-box>
             </div>
@@ -80,7 +80,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; biz-type-select-box width="300px" :required="true" / &gt;
+                &lt; biz-type-select-box width="150px" :required="true" / &gt;
               </pre
           >
         </td>
@@ -91,7 +91,7 @@
             <div class="dx-field-label">Sale grade select box</div>
             <div class="dx-field-value">
               <sale-grade-select-box
-                width="300px"
+                width="150px"
                 :required="true"
               ></sale-grade-select-box>
             </div>
@@ -119,7 +119,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; sale-grade-select-box width="300px" :required="true" / &gt;
+                &lt; sale-grade-select-box width="150px" :required="true" / &gt;
               </pre
           >
         </td>
@@ -130,7 +130,7 @@
             <div class="dx-field-label">Sale status select box</div>
             <div class="dx-field-value">
               <sale-status-select-box
-                width="300px"
+                width="150px"
                 :confirmStatus="true"
               ></sale-status-select-box>
             </div>
@@ -150,7 +150,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; sale-status-select-box width="300px" :confirmStatus="true" / &gt;
+                &lt; sale-status-select-box width="150px" :confirmStatus="true" / &gt;
               </pre
           >
         </td>
@@ -161,7 +161,7 @@
             <div class="dx-field-label">List sale select box</div>
             <div class="dx-field-value">
               <list-sales-dropdown
-                width="300px"
+                width="150px"
                 :required="true"
               ></list-sales-dropdown>
             </div>
@@ -189,7 +189,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; list-sales-dropdown width="300px" :required="true" / &gt;
+                &lt; list-sales-dropdown width="150px" :required="true" / &gt;
               </pre
           >
         </td>
@@ -200,7 +200,7 @@
             <div class="dx-field-label">List manager select box</div>
             <div class="dx-field-value">
               <list-manager-dropdown
-                width="300px"
+                width="150px"
                 :required="true"
               ></list-manager-dropdown>
             </div>
@@ -228,7 +228,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; list-manager-dropdown width="300px" :required="true" / &gt;
+                &lt; list-manager-dropdown width="150px" :required="true" / &gt;
               </pre
           >
         </td>
@@ -239,7 +239,7 @@
             <div class="dx-field-label">List partner select box</div>
             <div class="dx-field-value">
               <list-partner
-                width="300px"
+                width="150px"
                 :required="true"
               ></list-partner>
             </div>
@@ -267,7 +267,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; list-partner width="300px" :required="true" / &gt;
+                &lt; list-partner width="150px" :required="true" / &gt;
               </pre
           >
         </td>
@@ -278,7 +278,7 @@
             <div class="dx-field-label">Service subscription application status</div>
             <div class="dx-field-value">
               <subs-req-status-select-box
-                width="300px"
+                width="150px"
                 :required="true"
               ></subs-req-status-select-box>
             </div>
@@ -306,7 +306,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; subs-req-status-select-box width="300px" :required="true" / &gt;
+                &lt; subs-req-status-select-box width="150px" :required="true" / &gt;
               </pre
           >
         </td>

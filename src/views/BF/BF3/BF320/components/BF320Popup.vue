@@ -590,7 +590,7 @@ export default defineComponent({
             onDone: updateDone,
         } = useMutation(mutations.updateCompany);
 
-        const updateCompany = (e: any) => { 
+        const updateCompany = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();

@@ -3,49 +3,49 @@
         <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="700px" :mask-closable="false" footer="">
             <a-spin tip="Loading..." :spinning="loading">
-                <h2 style="font-weight: 600; color: gray" class="title_modal">
-                    급여상세항목
-                </h2>
-                <a-row :gutter="24">
-                    <a-col :span="24">
-                        <a-row :gutter="24">
-                            <a-col :span="12">
-                                <a-form-item label="코드">
-                                    <number-box
-                                        :width="150"
-                                        placeholder="Number box"
-                                        :min="0" 
-                                        :max="30"
-                                        :disabled="true"
-                                        v-model:valueInput="formState.itemCode"
-                                        :spinButtons="true">
-                                    </number-box>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="12">
-                                <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :textCheck="'이용중'"
-                                    :textUnCheck="'이용중지'" />
-                            </a-col>
-                        </a-row>
-
-                        <a-form-item label="항목명">
-                            <default-text-box
-                                style="width: 150px; margin-right: 10px"
-                                v-model:valueInput="formState.name"
-                                label="Default text box">
-                            </default-text-box>
-                        </a-form-item>
-                        <a-form-item label="과세구분/유형 ">
-                            <div style="width: 320px;">
-                                <TaxPay v-model:selectedValue="formState.taxPayCode" :disabled="true"></TaxPay>
-                            </div>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
+                <a-form :model="formState" :label-col="labelCol">
+                    <h2 style="font-weight: 600; color: gray" class="title_modal">
+                        급여상세항목
+                    </h2>
+                    <a-row :gutter="24">
+                        <a-col :span="12">
+                            <a-form-item label="코드">
+                                <number-box :width="150" placeholder="Number box" :min="0" :max="30" :disabled="true"
+                                    v-model:valueInput="formState.itemCode" :spinButtons="true">
+                                </number-box>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="3"></a-col>
+                        <a-col :span="9">
+                            <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :textCheck="'이용중'"
+                                :textUnCheck="'이용중지'" />
+                        </a-col>
+                    </a-row>
+                    <a-row>
+                        <a-col :span="12">
+                            <a-form-item label="항목명">
+                                <default-text-box style="width: 150px; margin-right: 10px"
+                                    v-model:valueInput="formState.name" label="Default text box">
+                                </default-text-box>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row>
+                        <a-col :span="24">
+                            <a-form-item label="과세구분/유형 ">
+                                <div style="width: 320px;">
+                                    <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode" :disabled="true"></TaxPay>
+                                </div>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                </a-form>
             </a-spin>
-            <div class="text-align-right mt-20">
-                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
-                <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="onSubmit"/>
+            <div class="text-align-center mt-20">
+                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                    @onClick="setModalVisible()" />
+                <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140"
+                    :type="'default'" :mode="'contained'" @onClick="onSubmit" />
             </div>
         </a-modal>
     </div>
@@ -57,7 +57,7 @@ import { companyId } from "../../../../../helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch } from "vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import { message } from "ant-design-vue";
+import notification from "../../../../../utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -105,10 +105,10 @@ export default defineComponent({
         watch(
             () => props.modalStatus,
             (newValue) => {
+                trigger.value = true;
                 if (newValue) {
                     dataQuery.value = { companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')), itemCode: props.idRowEdit };
                     refetchConfigPayItem();
-                    trigger.value = true;
                 } else {
                     Object.assign(formState, initialState);
                     trigger.value = false;
@@ -151,10 +151,10 @@ export default defineComponent({
         );
 
         errorPayItem((error) => {
-            message.error(error.message, 5);
+            notification('error', error.message)
         })
         onDoneUpdated(() => {
-            message.success(`업데이트 성공되었습니다!`, 4);
+            notification('success', `업데이트 성공되었습니다!`)
             refetchConfigPayItem();
             setModalVisible();
         });
@@ -176,6 +176,7 @@ export default defineComponent({
             emit("closePopup", false);
         }
         return {
+            labelCol: { style: { width: "150px" } },
             formState,
             loading,
             onSubmit,
@@ -189,11 +190,4 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../style/style.scss">
-::v-deep .ant-form-item-label>label {
-    width: 110px;
-}
-
-::v-deep .ant-form-item {
-    margin-bottom: 10px;
-}
 </style>
