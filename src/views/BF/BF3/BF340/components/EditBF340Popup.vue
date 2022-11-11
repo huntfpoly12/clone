@@ -26,7 +26,7 @@
                     </a-col>
                     <a-col :span="15" :md="11" :lg="14">
                         <a-form-item label="상태" label-align="right" :label-col="labelCol">
-                            <sale-status-select-box v-model:valueInput="formState.status" width="100px" :confirmStatus="true"/>
+                            <sale-status-select-box v-model:valueInput="formState.status" width="100px" :confirmStatus="true" :disabled="code == 'S0001'"/>
                         </a-form-item>
                         <a-form-item label="등급" class="red" label-align="right" :label-col="labelCol">
                             <sale-grade-select-box  v-model:valueInput="formState.grade" width="100px" :required="true" />
@@ -79,7 +79,7 @@
                                 <label class="lable-item"> 전자세금계산서<br>수신이메일 : </label>
                             </a-col>
                             <a-col :span="16" :md="16" :lg="17">
-                                <mail-text-box v-model:valueInput="formState.emailTaxInvoice" width="100%"/>
+                                <mail-text-box v-model:valueInput="formState.emailTaxInvoice" width="100%" :required="receiptOrNot"/>
                             </a-col>
                         </a-row>
                     </a-col>
@@ -153,7 +153,7 @@ export default defineComponent({
         const dataQueryCheckPer = ref({});
         let canChangeCompanyName =  ref<boolean>(false);
         const visible = ref<boolean>(false);
-        //const labelCol = { style: { width: "150px" } };
+        const receiptOrNot = ref<boolean>(false);
         const labelCol = { span: 6 };
 
         // watch event modal popup
@@ -306,11 +306,17 @@ export default defineComponent({
                 formState.cancelDate = dayjs().format('YYYY-MM-DD') ;
             }    
         });
+
+        // if taxvoice = true then 전자세금계산서 수신이메일 require
+        watch(()=> formState.taxInvoice,(newValue)=>{
+            receiptOrNot.value = newValue;
+        });
         return {
             code,
             labelCol,
             formState,
             visible,
+            receiptOrNot,
             funcAddress,
             loading,
             updateSale,
