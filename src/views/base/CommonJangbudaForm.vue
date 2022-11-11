@@ -329,7 +329,7 @@
         </td>
         <td>
           <pre class="mycode">
-                &lt; subs-req-status-select-box width="150px" :required="true" / &gt;
+                &lt; subs-req-status-process-bar / &gt;
               </pre
           >
         </td>
