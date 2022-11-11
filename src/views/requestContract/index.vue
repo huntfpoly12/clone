@@ -564,7 +564,7 @@ export default {
                 return "finish";
             }
         });
-        const changeStep = (val: number) => {
+        const changeStep = (val: number) => { 
             if (val == 1) {
                 step.value = 0
             }
@@ -669,7 +669,6 @@ export default {
             step.value--;
         }
         const nextStep = (e: any) => {
-            console.log(e.validationGroup.validate().isValid);
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -767,36 +766,6 @@ export default {
             dataImgStep3.value = resImg
             contractCreacted.registrationCardFileStorageId = img.id
         }
-        const validateNumber = (key: any) => {
-            if (key == 'longTermCareInstitutionNumber') {
-                let e = contractCreacted.longTermCareInstitutionNumber
-                contractCreacted.longTermCareInstitutionNumber = e.replace(/\D/g, '');
-            }
-            if (key == 'accountNumber') {
-                let e = contractCreacted.accountNumber
-                contractCreacted.accountNumber = e.replace(/\D/g, '');
-            }
-            if (key == 'accountNumber') {
-                let e = contractCreacted.ownerBizNumber
-                contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
-            }
-            if (key == 'phone') {
-                let e = contractCreacted.phone
-                contractCreacted.phone = e.replace(/\D/g, '');
-            }
-            if (key == 'fax') {
-                let e = contractCreacted.fax
-                contractCreacted.fax = e.replace(/\D/g, '');
-            }
-            if (key == 'mobilePhone') {
-                let e = contractCreacted.mobilePhone
-                contractCreacted.mobilePhone = e.replace(/\D/g, '');
-            }
-            if (key == 'ownerBizNumber') {
-                let e = contractCreacted.ownerBizNumber
-                contractCreacted.ownerBizNumber = e.replace(/\D/g, '');
-            }
-        }
         const checkAllFunc = (val: any) => {
             checkAll.value = val
             if (val == true) {
@@ -861,6 +830,30 @@ export default {
             })
             optionSale.value = dataOption
         });
+        watch(() => valueFacilityBusinesses, (newVal: any) => {
+            listDataConvert.value = [];
+            newVal.value.forEach((item: any) => {
+                listDataConvert.value.push({
+                    longTermCareInstitutionNumber:
+                        contractCreacted.longTermCareInstitutionNumber ? contractCreacted.longTermCareInstitutionNumber : '',
+                    facilityBizType: item?.facilityBizType,
+                    name: item?.name,
+                    startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
+                    capacity: parseInt(item?.capacity),
+                    registrationCardFileStorageId:
+                        contractCreacted.registrationCardFileStorageId ? contractCreacted.registrationCardFileStorageId : '',
+                });
+            });
+            var result = Object.values(newVal.value.reduce((c: any, v: any) => {
+                let k = v.name;
+                c[k] = c[k] || [];
+                c[k].push(v);
+                return c;
+            }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
+            if (!result) {
+                message.error("중복되었습니다!")
+            }
+        }, { deep: true, });
         return {
             arrayRadioWithdrawDay,
             valueRadioWithdrawDay,
@@ -871,7 +864,6 @@ export default {
             valueRadioBox,
             arrayRadioCheck,
             imageId,
-            validateNumber,
             changeValueDate,
             changeValueDateHoding,
             funcAddress,
@@ -924,35 +916,13 @@ export default {
             radioGroup
         };
     },
-    watch: {
-        valueFacilityBusinesses: {
-            handler(newVal) {
-                this.listDataConvert = [];
-                newVal.forEach((item: any) => {
-                    this.listDataConvert.push({
-                        longTermCareInstitutionNumber:
-                            this.contractCreacted.longTermCareInstitutionNumber,
-                        facilityBizType: item?.facilityBizType,
-                        name: item?.name,
-                        startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
-                        capacity: parseInt(item?.capacity),
-                        registrationCardFileStorageId:
-                            this.contractCreacted.registrationCardFileStorageId,
-                    });
-                });
-                var result = Object.values(newVal.reduce((c: any, v: any) => {
-                    let k = v.name;
-                    c[k] = c[k] || [];
-                    c[k].push(v);
-                    return c;
-                }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
-                if (result) {
-                    message.error("중복되었습니다!")
-                }
-            },
-            deep: true,
-        },
-    },
+    // watch: {
+    //     valueFacilityBusinesses: {
+    //         handler(newVal: any) {
+    //         },
+    //         deep: true,
+    //     },
+    // },
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
