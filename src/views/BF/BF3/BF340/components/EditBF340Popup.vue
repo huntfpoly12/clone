@@ -265,10 +265,10 @@ export default defineComponent({
 
         const updateSale = (e : any) => {
             var res =   e.validationGroup.validate(); 
-            console.log(res)
             if(!res.isValid){  
                res.brokenRules[0].validator.focus();  
-            }else{
+            }
+            else{
                 let variables = {
                     id: id.value,
                     input: formState

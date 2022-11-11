@@ -207,6 +207,9 @@ export default defineComponent({
             var res =   e.validationGroup.validate(); 
             if(!res.isValid){  
                res.brokenRules[0].validator.focus();  
+            }else if(formState.zipcode == '' || formState.roadAddress == ''){
+                notification('error','주소를 선택하지 않았습니다');
+                return;
             }else{
                 let dataNew = {
                             input: {
