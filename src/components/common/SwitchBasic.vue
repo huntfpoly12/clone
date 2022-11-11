@@ -20,7 +20,7 @@ export default defineComponent({
     setup(props, { emit }) {       
         const app: any = getCurrentInstance()
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
-        const dataDef = ref(true)
+        const dataDef = ref(props.valueSwitch)
         watch(
             () => props.valueSwitch,
             (newValue) => {
