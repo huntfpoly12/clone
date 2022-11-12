@@ -1,21 +1,12 @@
 <template>
-    <DxSelectBox
-      :search-enabled="true"
-      :width="width"
-      :data-source="result?.findSalesRepresentatives?.length > 0 ? result.findSalesRepresentatives : []"
-      :show-clear-button="clearButton"
-      v-model:value="value"
-      :read-only="readOnly"
-      display-expr="name"
-      value-expr="id"
-      :disabled="disabled"
-      @value-changed="updateValue(value)"
-      :height="$config_styles.HeightInput"
-    >
-      <DxValidator>
-        <DxRequiredRule v-if="required" :message="messageRequired" />
-      </DxValidator>
-    </DxSelectBox>
+  <DxSelectBox :search-enabled="true" :width="width"
+    :data-source="result?.findSalesRepresentatives?.length > 0 ? result.findSalesRepresentatives : []"
+    :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
+    :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택">
+    <DxValidator>
+      <DxRequiredRule v-if="required" :message="messageRequired" />
+    </DxValidator>
+  </DxSelectBox>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";

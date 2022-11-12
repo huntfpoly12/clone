@@ -1,19 +1,18 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible()"
+        <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible"
             width="50%" :mask-closable="false">
             <h2 class="title_modal">회원정보</h2>
             <form action="" @submit.prevent="creactUserNew">
                 <a-row :gutter="24">
                     <a-col :span="12">
-                        <a-form-item label="회원ID" class="red" compact>
+                        <a-form-item label="회원ID" class="red dflex">
                             <div class="dflex">
                                 <default-text-box v-model:valueInput="formState.username"
                                     style="width: 190px; margin-right: 10px" required mess-required="이항목은 필수 입력사항입니다!">
                                 </default-text-box>
-                                <dx-button type="default" style="border: 1px solid" :disabled="disabledBtn"
-                                    @click="checkDuplicateUsername">중복체크
-                                </dx-button>
+                                <button-basic :text="'중복체크'" :type="'default'" :mode="'contained'"
+                                    @onClick="checkDuplicateUsername" :disabled="disabledBtn" />
                             </div>
                         </a-form-item>
                         <a-form-item label="회원명" class="red">
@@ -29,56 +28,38 @@
                     </a-col>
                     <a-col :span="12">
                         <a-form-item label="상태">
-                            <a-switch v-model:checked="formState.active" checked-children="이용중"
-                                un-checked-children="이용중지" style="width: 100px" />
+                            <switch-basic v-model:valueSwitch="formState.active" :textCheck="'이용중'"
+                                :textUnCheck="'이용중지'" />
                         </a-form-item>
-                        <a-form-item label="회원종류" class="red">
-                            <a-select style="width: 10px" v-model:value="formState.type" option-label-prop="children"
-                                class="select_disable" @change="changeValueType">
-                                <a-select-option value="2" label="중간매니저">
-                                    <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
-                                </a-select-option>
-                                <a-select-option value="3" label="담당매니저">
-                                    <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
-                                </a-select-option>
-                                <a-select-option value="r" label="영업자">
-                                    <a-tag :color="getColorTag('영업자')">영업자</a-tag>
-                                </a-select-option>
-                                <a-select-option value="p" label="파트너">
-                                    <a-tag style="color: black" :color="getColorTag('파트너')">파트너</a-tag>
-                                </a-select-option>
-                            </a-select>
+                        <a-form-item label="회원종류2" class="red">
+                            <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
+                                value-expr="id" item-template="item" :height="$config_styles.HeightInput"
+                                style="width:170px" field-template="field" @value-changed="changeValueType">
+                                <template #field="{ data }">
+                                    <Field :fieldData="data" />
+                                </template>
+                                <template #item="{ data }">
+                                    <div style="width: 100%; padding: 3px;">
+                                        <div
+                                            :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
+                                            {{ data.name }}
+                                        </div>
+                                    </div>
+                                </template>
+                            </DxSelectBox>
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row :gutter="24">
                     <a-col :span="12">
-                        <a-form-item type="number" :name="['user', 'number']" label="휴대폰" class="red">
-                            <div style="display: flex; align-items: flex-end">
-                                <tel-text-box @keypress="onlyNumber" type="text"
-                                    v-model:valueInput="formState.mobilePhone" style="width: 190px; margin-right: 8px"
-                                    :required="true" messRequired="이항목은 필수 입력사항입니다!" />
-                            </div>
+                        <a-form-item label="휴대폰" class="red">
+                            <tel-text-box @keypress="onlyNumber" type="text" v-model:valueInput="formState.mobilePhone"
+                                style="width: 190px; margin-right: 8px" :required="true"
+                                messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                         <a-form-item label="이메일" class="red">
                             <mail-text-box v-model:valueInput="formState.email" style="width: 270px" :required="true"
-                                messRequired="이항목은 필수 입력사항입니다!" /> 
-                        </a-form-item>
-                        <a-form-item>
-                            <a-modal class="container_email" v-model:visible="isShow" @ok="handleSuccsess">
-                                <div id="modal_email" class="modal_email">
-                                    <mail-outlined style="padding-right: 10px" />
-                                    <div>
-                                        <p style="margin-bottom: 2px; font-weight: 600">
-                                            비밀번호 설정 이메일
-                                        </p>
-                                        <p style="margin-bottom: 0">
-                                            비밀번호 설정 링크가 이메일로 발송됩니다. 계속
-                                            진행하시겠습니까?
-                                        </p>
-                                    </div>
-                                </div>
-                            </a-modal>
+                                messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -136,6 +117,7 @@ import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DxSelectBox from 'devextreme-vue/select-box';
 import DxButton from 'devextreme-vue/button';
+import Field from './Field.vue';
 export default defineComponent({
     props: ["modalStatus", "data"],
     components: {
@@ -153,6 +135,7 @@ export default defineComponent({
         DxButton,
         DxRequiredRule,
         DxValidator,
+        Field,
     },
     setup(props, { emit }) {
         const selectSearch = ref([{}]);
@@ -172,18 +155,18 @@ export default defineComponent({
             triggerGroup.value = true;
             trigger.value = true
             setTimeout(() => {
-                let value = data
-                if (data == 1 || data == 2 || data == 3) {
+                let value = data.value
+                if (data.value == 1 || data.value == 2)
                     value = 'm'
-                }
+                else if (data.value == 3)
+                    value = 'r'
+                else if (data.value == 4)
+                    value = 'p'
                 let dataCall: any = {
-                    type: value
+                    type: value.toString()
                 }
-                originData.value.types = value
-                if (dataCall) {
-                    reqGroup(dataCall)
-                }
-                reqRoleGroup()
+                originData.value.types = [value.toString()]
+                dataCallGroup.value = dataCall
             }, 100);
         }
         const formState = reactive<any>({ ...initialFormState });
@@ -219,7 +202,6 @@ export default defineComponent({
                 }
             }
         );
-        // querie searchScreenRoleGroups
         const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
             queries.searchScreenRoleGroups, originData,
             () => ({
@@ -236,7 +218,6 @@ export default defineComponent({
         let dataCallGroup = ref({
             type: "r"
         })
-        //query find group
         const { onResult: resGroup, refetch: reqGroup } = useQuery(
             queries.findGroups, dataCallGroup,
             () => ({
@@ -252,7 +233,6 @@ export default defineComponent({
                     value: val.groupId
                 })
             })
-            // formState.groupCode 
             if (e.data.findGroups) {
                 formState.groupCode = e.data.findGroups[0].groupId
             }
@@ -263,7 +243,6 @@ export default defineComponent({
                 arrData.value = value.findGroups.datas
             }
         });
-        //querie checkDuplicateUsername 
         let dataCallCheck = ref({})
         const { refetch: refetchUserName, onResult: onResultUsername } =
             useQuery(queries.isUserRegistableUsername, dataCallCheck, () => ({ enabled: triggerDuplication.value, fetchPolicy: "no-cache", }))
@@ -277,6 +256,7 @@ export default defineComponent({
             }
         }
         onResultUsername(e => {
+            triggerDuplication.value = false
             if (e.data)
                 if (e.data.isUserRegistableUsername == true) {
                     message.success(`사용 가능한 아이디입니다`)
@@ -295,7 +275,6 @@ export default defineComponent({
                 disabledBtn.value = true;
             }
         });
-        //Creact user 
         const {
             mutate: creactUser,
             onDone: creactDone,
@@ -305,8 +284,8 @@ export default defineComponent({
             message.error(e.message, 2)
         })
         creactDone(e => {
-            emit("closePopup", false)
             message.success("신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!")
+            emit("closePopup", false)
         })
         var idRoleGroup: any = [];
         const onSelectionChanged = (selectedRows: any) => {
@@ -330,7 +309,73 @@ export default defineComponent({
             }
             creactUser(dataCallApiCreate)
         }
+        const onlyNumber = (e: any) => {
+            let keyCode = e.keyCode ? e.keyCode : e.which;
+            if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
+                e.preventDefault();
+            }
+        }
+        const setModalVisible = () => {
+            emit("closePopup", false);
+        }
+        const getColorTag = (data: string) => {
+            if (data === "중간매니저") {
+                return "#4a4848";
+            } else if (data === "담당매니저") {
+                return "#4a4848";
+            } else if (data === "영업자") {
+                return "grey";
+            } else if (data === "파트너") {
+                return "#efe70b";
+            }
+        }
+        const closeModal = () => {
+            isShow.value = false;
+        }
+        let products = ref([
+            {
+                id: 1,
+                color: 'white',
+                name: "중간메니저",
+                type: "m",
+                grade: "2",
+                background: 'black',
+                border: "1px solid black",
+            },
+            {
+                id: 2,
+                color: 'white',
+                name: "당당메니저",
+                type: "m",
+                grade: "3",
+                background: 'black',
+                border: "1px solid black",
+            },
+            {
+                id: 3,
+                color: 'white',
+                name: "영업자회원",
+                type: "r",
+                grade: "",
+                background: 'grey',
+                border: "1px solid grey",
+            },
+            {
+                id: 4,
+                color: 'white',
+                name: "파트너회원",
+                type: "p",
+                grade: "",
+                background: 'goldenrod',
+                border: "1px solid goldenrod",
+            }
+        ])
         return {
+            products,
+            onlyNumber,
+            setModalVisible,
+            getColorTag,
+            closeModal,
             arrData,
             confirm,
             formState,
@@ -348,29 +393,6 @@ export default defineComponent({
         };
     },
     methods: {
-        onlyNumber(e: any) {
-            let keyCode = e.keyCode ? e.keyCode : e.which;
-            if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-                e.preventDefault();
-            }
-        },
-        setModalVisible() {
-            this.$emit("closePopup", false);
-        },
-        getColorTag(data: string) {
-            if (data === "중간매니저") {
-                return "#4a4848";
-            } else if (data === "담당매니저") {
-                return "#4a4848";
-            } else if (data === "영업자") {
-                return "grey";
-            } else if (data === "파트너") {
-                return "#efe70b";
-            }
-        },
-        closeModal() {
-            this.isShow = false;
-        },
     },
 });
 </script>
@@ -380,7 +402,6 @@ export default defineComponent({
         color: red;
     }
 }
-
 ::v-deep .element.style {
     max-width: none;
     width: 200px;
@@ -391,40 +412,32 @@ export default defineComponent({
     z-index: 1504;
     transition: all 0s ease 0s;
 }
-
 ::v-deep .ant-modal-footer {
     padding-top: 0;
     border: node;
 }
-
 ::v-deep .ant-form-item-control {
     display: flex;
     flex-direction: row;
 }
-
 ::v-deep .ant-modal-content {
     height: 900px
 }
-
 ::v-deep .ant-form-item-label>label {
     width: 110px;
 }
-
 .select-search ::v-deep .ant-select-arrow .anticon>svg {
     width: 16px;
     height: 16px;
 }
-
 ::v-deep .ant-form-item-explain-error {
     width: 400px;
     margin-left: 5px;
     padding-top: 5px;
 }
-
 .dflex {
     display: flex;
 }
-
 .overlay {
     position: absolute;
     top: 0;
@@ -434,21 +447,17 @@ export default defineComponent({
     z-index: 10;
     background-color: rgba(0, 0, 0, 0.3);
 }
-
 .action-menu {
     text-align: center;
 }
-
 .title_modal {
     font-weight: 700;
     color: gray;
 }
-
 .modal_email ::v-deep .anticon svg {
     width: 50px;
     height: 50px;
 }
-
 .modal {
     width: 300px;
     padding: 30px;
@@ -457,63 +466,50 @@ export default defineComponent({
     font-size: 20px;
     text-align: center;
 }
-
 .modal_email {
     display: flex;
 }
-
 .btn_submitemail {
     margin-top: 10px;
 }
-
 .confirm-button {
     margin-left: 100px;
 }
-
 .confirm-modal p {
     white-space: normal;
     font-size: 13px;
     line-height: 16px;
 }
-
 .email-input .ant-form-item-label {
     white-space: normal;
     display: inline-block;
     text-align: center;
     line-height: 16px;
 }
-
 .detail-address {
     margin-left: 7px;
 }
-
 .result-address {
     margin-left: 110px;
 }
-
 .ant-form-item {
     margin-bottom: 10px;
 }
-
 .warring-modal {
     font-size: 13px;
     line-height: 5px;
 }
-
 .table-scroll {
     height: 300px;
     overflow-y: auto;
     padding: 5px;
 }
-
 .ant-form-item-label {
     text-align: left;
 }
-
 .ant-popover-arrow {
     display: none;
 }
-
 // ::v-deep .dx-invalid-message.dx-overlay-wrapper {
 //   width: 100% !important;
 // }
