@@ -25,17 +25,14 @@
                                     <a-col :span="16"></a-col>
                                     <a-col :span="14">
                                         <a-form-item label="사업자유형" class="clr">
-                                            <a-radio-group v-model:value="formState.bizType">
-                                                <a-radio :value="1" class="clb">법인사업자</a-radio>
-                                                <a-radio :value="2" class="clb">개인사업자</a-radio>
-                                            </a-radio-group>
+                                            <radio-group :arrayValue="arrRadioType" :disabled="true"
+                                                v-model:valueRadioCheck="formState.bizType"
+                                                :layoutCustom="'horizontal'" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="10">
                                         <a-form-item :label="changeTypeCompany(formState.bizType)">
-                                            <id-number-text-box v-model:valueInput="formState.decryptedResidentId"
-                                                :required="true" label="사업자등록번호">
-                                            </id-number-text-box>
+                                            <id-number-text-box v-model:valueInput="formState.decryptedResidentId" :disabled="true"/>
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="24">
@@ -113,7 +110,7 @@
                                 <a-form-item has-feedback label="생년월일" class="clr">
                                     <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
                                         style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
-                                    </date-time-box> 
+                                    </date-time-box>
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr">
                                     <tel-text-box width="200px"
@@ -263,6 +260,11 @@ export default defineComponent({
         };
     },
     setup(props, { emit }) {
+        const arrRadioType = reactive([
+            { id: 1, text: '법인사업자' },
+            { id: 2, text: '개인사업자' }
+        ])
+
         const arrayRadioWithdrawDay = reactive([
             { id: '매월 5일', text: '매월 5일' },
             { id: '매월 12일', text: '매월 12일' },
@@ -696,7 +698,8 @@ export default defineComponent({
             fileName,
             imageValue,
             dataImg,
-            getImgUrl
+            getImgUrl,
+            arrRadioType
         };
     },
 });

@@ -5,7 +5,7 @@
     </div>
 </template>
 <script script lang ="ts">
-import { ref, defineComponent, watch } from "vue";
+import { reactive, defineComponent, watch } from "vue";
 import DxTextBox from 'devextreme-vue/text-box';
 export default defineComponent({
     props: ['fieldData'],
@@ -13,7 +13,7 @@ export default defineComponent({
         DxTextBox,
     },
     setup(props) {
-        let stydefault = ref({
+        let stydefault = reactive({
             id: 3,
             color: 'white',
             name: "영업자회원",
@@ -24,7 +24,7 @@ export default defineComponent({
         })
 
         if (props.fieldData)
-            stydefault.value = props.fieldData
+            stydefault = props.fieldData
 
 
         return {

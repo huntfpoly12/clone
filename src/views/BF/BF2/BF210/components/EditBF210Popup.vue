@@ -1,7 +1,7 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :visible="modalStatus" footer="" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-            @cancel="setModalVisible()" width="50%" :mask-closable="false">
+        <a-modal :visible="modalStatus" footer="" :title="title" centered @cancel="setModalVisible()" width="992px"
+            :mask-closable="false">
             <h2 class="title_modal">회원정보</h2>
             <a-form v-bind="layout" name="nest-messages" v-model:value="formState" @finish="onFinish">
                 <a-row :gutter="24">
@@ -32,27 +32,21 @@
                                 :textCheck="'이용중'" :textUnCheck="'이용중지'" />
                         </a-form-item>
                         <a-form-item label="회원종류" class="red">
-                            <a-select style="width: 150px" v-model:value="formState.type" option-label-prop="children"
-                                class="select_disable" disabled>
-                                <a-select-option value="c" label="고객사">
-                                    <a-tag style="color: black" :color="getColorTag('고객사')">고객사</a-tag>
-                                </a-select-option>
-                                <a-select-option :value="1" label="최고매니저">
-                                    <a-tag :color="getColorTag('최고매니저')">최고매니저</a-tag>
-                                </a-select-option>
-                                <a-select-option :value="2" label="중간매니저">
-                                    <a-tag :color="getColorTag('중간매니저')">중간매니저</a-tag>
-                                </a-select-option>
-                                <a-select-option :value="3" label="담당매니저">
-                                    <a-tag :color="getColorTag('중간매니저')">담당매니저</a-tag>
-                                </a-select-option>
-                                <a-select-option value="r" label="영업자">
-                                    <a-tag :color="getColorTag('영업자')">영업자</a-tag>
-                                </a-select-option>
-                                <a-select-option value="p" label="파트너">
-                                    <a-tag style="color: black" :color="getColorTag('파트너')">파트너</a-tag>
-                                </a-select-option>
-                            </a-select>
+                            <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
+                                value-expr="id" item-template="item" :height="$config_styles.HeightInput"
+                                style="width:170px" field-template="field" :disabled="true" :value="typeSelect">
+                                <template #field="{ data }">
+                                    <Field :fieldData="data" />
+                                </template>
+                                <template #item="{ data }">
+                                    <div style="width: 100%; padding: 3px;">
+                                        <div
+                                            :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
+                                            {{ data.name }}
+                                        </div>
+                                    </div>
+                                </template>
+                            </DxSelectBox>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -75,17 +69,15 @@
                             <mail-text-box v-if="formState.type !== 'c'" v-model:valueInput="formState.email"
                                 style="width: 237px" />
                             <mail-text-box v-else disabled v-model:valueInput="formState.email" style="width: 237px" />
-
-                            <DxButton v-if="formState.type !== 'c'" html-type="submit" danger class="btn_sendemail"
-                                @click="showModal" :disabled="disabledBtn">
-                                비밀번호 변경</DxButton>
-                            <DxButton v-if="formState.type == 'c'" disabled=true html-type="submit" danger
-                                class="btn_sendemail">비밀번호
-                                변경
-                            </DxButton>
+                            <div style="margin-top: 3px;">
+                                <button-basic :text="'비밀번호 변경'" v-if="formState.type !== 'c'" :type="'danger'"
+                                    :mode="'outlined'" @onClick="showModal" :disabled="disabledBtn" />
+                                <button-basic :text="'비밀번호 변경'" v-else :type="'danger'" :mode="'outlined'"
+                                    :disabled="true" />
+                            </div>
                         </a-form-item>
                         <div class="confirm-popup">
-                            <a-modal v-model:visible="visible" :mask-closable="false">
+                            <a-modal footer="" v-model:visible="visible" :mask-closable="false">
                                 <a-row>
                                     <a-col :span="4">
                                         <mail-outlined :style="{ fontSize: '70px' }" />
@@ -95,11 +87,16 @@
                                         <p>비밀번호 설정 링크가 이메일로 발송됩니다.</p>
                                         <p>계속 진행하시겠습니까?</p>
                                     </a-col>
+                                    <a-col :span="4"></a-col>
+                                    <a-col :span="20">
+                                        <div class="custom-button-modal">
+                                            <button-basic :width="120" text="아니오" :type="'default'" :mode="'outlined'"
+                                                @onClick="closePopupEmail" style="margin-right: 10px;" />
+                                            <button-basic text="네. 발송합니다" :type="'default'" :mode="'contained'"
+                                                @onClick="sendMessToGmail" />
+                                        </div>
+                                    </a-col>
                                 </a-row>
-                                <template #footer>
-                                    <a-button @click="closePopupEmail">아니오</a-button>
-                                    <a-button type="primary" @click="sendMessToGmail">네. 발송합니다</a-button>
-                                </template>
                             </a-modal>
                         </div>
                     </a-col>
@@ -121,10 +118,9 @@
             </div>
             <a-row>
                 <a-col :offset="8" style="text-align: center; margin-top: 20px;">
-                    <DxButton :width="120" text="취소" type="default" styling-mode="outlined" @click="setModalVisible"
+                    <button-basic text="취소" :type="'default'" :mode="'outlined'" @onClick="setModalVisible"
                         style="margin-right: 10px;" />
-                    <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default"
-                        @click="confirmUpdate" />
+                    <button-basic text="저장하고 나가기" :type="'default'" :mode="'contained'" @onClick="confirmUpdate" />
                 </a-col>
             </a-row>
         </a-modal>
@@ -137,15 +133,11 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 import { message } from 'ant-design-vue';
-import { DxCheckBox } from 'devextreme-vue/check-box';
-import DxButton from 'devextreme-vue/button';
+import Field from '../components/Field.vue';
 import {
     DxDataGrid,
     DxColumn,
-    DxPaging,
-    DxExport,
     DxSelection,
-    DxSearchPanel,
 } from "devextreme-vue/data-grid";
 import {
     SearchOutlined,
@@ -153,7 +145,6 @@ import {
     MailOutlined,
     MenuOutlined,
 } from "@ant-design/icons-vue";
-
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
     components: {
@@ -163,23 +154,24 @@ export default defineComponent({
         MailOutlined,
         DxDataGrid,
         DxColumn,
-        DxPaging,
         DxSelection,
-        DxExport,
-        DxSearchPanel,
         DxSelectBox,
-        DxCheckBox,
-        DxButton
-    },
-    data() {
-        return {
-            toggleActive: false,
-        };
+        Field,
     },
     setup(props, { emit }) {
+        const toggleActive = ref(false)
         const visible = ref<boolean>(false);
         const statusMailValidate = ref<boolean>(true);
         const checkedNames = ref([])
+        const triggerSearchRoleGroup = ref<boolean>(false);
+        const originData = ref({
+            page: 1,
+            rows: 20,
+            types: ["m"],
+        });
+        const arrData = ref()
+        const dataQuery = ref();
+        let trigger = ref<boolean>(false);
         const formState = ref({
             id: 1,
             type: "",
@@ -220,6 +212,46 @@ export default defineComponent({
             }]
             ,
         });
+        let products = ref([
+            {
+                id: 1,
+                color: 'white',
+                name: "중간메니저",
+                type: "m",
+                grade: "2",
+                background: 'black',
+                border: "1px solid black",
+            },
+            {
+                id: 2,
+                color: 'white',
+                name: "당당메니저",
+                type: "m",
+                grade: "3",
+                background: 'black',
+                border: "1px solid black",
+            },
+            {
+                id: 3,
+                color: 'white',
+                name: "영업자회원",
+                type: "r",
+                grade: "",
+                background: 'grey',
+                border: "1px solid grey",
+            },
+            {
+                id: 4,
+                color: 'white',
+                name: "파트너회원",
+                type: "p",
+                grade: "",
+                background: 'goldenrod',
+                border: "1px solid goldenrod",
+            }
+        ])
+        const typeSelect = ref()
+        // ===================FUNCTION==================================
         const showModal = () => {
             visible.value = true;
         };
@@ -227,10 +259,7 @@ export default defineComponent({
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         };
-        const labelCol = { style: { width: "300px" } };
-        const wrapperCol = { span: 14 };
         let disabledBtn = ref(true);
-        //Update info user
         const {
             mutate: updateUser,
             onDone: onDoneUpdate,
@@ -262,7 +291,6 @@ export default defineComponent({
                 Url.select()
             }
         }
-        //Send mail 
         const {
             mutate: sendGmail,
             onDone: doneSendGmail,
@@ -281,33 +309,6 @@ export default defineComponent({
             }
             sendGmail(dataCallSendEmail);
         }
-        const dataQuery = ref();
-        let trigger = ref<boolean>(false);
-
-        watch(() => props.modalStatus,
-            (newValue, old) => {
-                if (newValue) {
-                    trigger.value = true;
-                    if (dataQuery) {
-                        dataQuery.value = { id: props.idRowEdit };
-                        refetch();
-
-                    }
-                }
-            }
-        );
-        // const validateEmail = (e: any) => {
-        //   let checkMail = e.target.value.match(
-        //     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        //   );
-        //   if (!checkMail) {
-        //     statusMailValidate.value = false;
-        //     disabledBtn.value = true;
-        //   } else {
-        //     statusMailValidate.value = true;
-        //     disabledBtn.value = false;
-        //   }
-        // }
         const { result, refetch } = useQuery(
             queries.getUser,
             dataQuery,
@@ -315,6 +316,62 @@ export default defineComponent({
                 enabled: trigger.value,
                 fetchPolicy: "no-cache",
             })
+        );
+        const onFinish = (values: any) => {
+        };
+        const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
+            queries.searchScreenRoleGroups, originData,
+            () => ({
+                enabled: triggerSearchRoleGroup.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        const onSelectionChanged = (e: any) => {
+            checkedNames.value = e.selectedRowKeys
+        }
+        const onlyNumber = (e: any) => {
+            let keyCode = e.keyCode ? e.keyCode : e.which;
+            if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
+                e.preventDefault();
+            }
+        }
+        const setModalVisible = () => {
+            emit("closePopup", false);
+        }
+        const getColorTag = (data: string) => {
+            if (data === "고객사") {
+                return "blue";
+            } else if (data === "최고매니저") {
+                return "#4a4848";
+            } else if (data === "중간매니저") {
+                return "#4a4848";
+            } else if (data === "담당매니저") {
+                return "#4a4848";
+            } else if (data === "영업자") {
+                return "grey";
+            } else if (data === "파트너") {
+                return "#efe70b";
+            }
+        }
+        const closePopupEmail = () => {
+            visible.value = false
+        }
+        const triggerToggleEvent = (value: any) => {
+            toggleActive.value = value;
+        }
+        const changeValueType = (data: any) => {
+        }
+        // ===================WATCH==================================
+        watch(() => props.modalStatus,
+            (newValue, old) => {
+                if (newValue) {
+                    trigger.value = true;
+                    if (dataQuery) {
+                        dataQuery.value = { id: props.idRowEdit };
+                        refetch();
+                    }
+                }
+            }
         );
         watch(result, (value) => {
             if (value && value.getUser) {
@@ -337,6 +394,7 @@ export default defineComponent({
                 formState.value.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
                 originData.value.types = [value.getUser.type]
                 triggerSearchRoleGroup.value = true
+                typeSelect.value = value.getUser.type == 'm' ? 1 : (value.getUser.type == 'r' ? 3 : (value.getUser.type == 'p' ? 4 : 2))
                 let arrSelect: any = []
                 formState.value.screenRoleGroups.map((e) => {
                     arrSelect.push(e.id)
@@ -344,37 +402,17 @@ export default defineComponent({
                 checkedNames.value = arrSelect
             }
         });
-        const onFinish = (values: any) => {
-        };
-        const triggerSearchRoleGroup = ref<boolean>(false);
-        const originData = ref({
-            page: 1,
-            rows: 20,
-            types: ["m"],
-        });
-        // querie searchScreenRoleGroups
-        const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
-            queries.searchScreenRoleGroups, originData,
-            () => ({
-                enabled: triggerSearchRoleGroup.value,
-                fetchPolicy: "no-cache",
-            })
-        );
-        const arrData = ref()
         watch(resRoleGroup, (value: any) => {
             if (value && value.searchScreenRoleGroups) {
                 arrData.value = value.searchScreenRoleGroups.datas
             }
         });
-
         watch(() => formState.value.email, (newValue, old) => {
             if (newValue) {
                 console.log(newValue);
-
                 let checkMail = newValue.match(
                     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 ); console.log(checkMail);
-
                 if (!checkMail) {
                     statusMailValidate.value = false;
                     disabledBtn.value = true;
@@ -388,13 +426,20 @@ export default defineComponent({
             }
         });
         return {
+            typeSelect,
+            changeValueType,
+            products,
+            toggleActive,
+            onSelectionChanged,
+            onlyNumber,
+            setModalVisible,
+            triggerToggleEvent,
+            getColorTag,
+            closePopupEmail,
             checkedNames,
-            labelCol,
-            wrapperCol,
             layout,
             formState,
             onFinish,
-            // validateEmail,
             showModal,
             visible,
             sendGmail,
@@ -405,44 +450,6 @@ export default defineComponent({
             disabledBtn
         };
     },
-    methods: {
-        onSelectionChanged(e: any) {
-            console.log(e.selectedRowKeys);
-            this.checkedNames = e.selectedRowKeys
-            // e.component.refresh(true);
-        },
-        onlyNumber(e: any) {
-            let keyCode = e.keyCode ? e.keyCode : e.which;
-            if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-                // 46 is dot
-                e.preventDefault();
-            }
-        },
-        setModalVisible() {
-            this.$emit("closePopup", false);
-        },
-        getColorTag(data: string) {
-            if (data === "고객사") {
-                return "blue";
-            } else if (data === "최고매니저") {
-                return "#4a4848";
-            } else if (data === "중간매니저") {
-                return "#4a4848";
-            } else if (data === "담당매니저") {
-                return "#4a4848";
-            } else if (data === "영업자") {
-                return "grey";
-            } else if (data === "파트너") {
-                return "#efe70b";
-            }
-        },
-        closePopupEmail() {
-            this.visible = false
-        },
-        triggerToggleEvent(value: any) {
-            this.toggleActive = value;
-        },
-    },
 });
 </script>
 <style lang="scss" scoped>
@@ -450,27 +457,22 @@ export default defineComponent({
     display: flex;
     flex-direction: row;
 }
-
 ::v-deep .red {
     label {
         color: red;
     }
 }
-
 ::v-deep .ant-form-item-explain-error {
     width: 400px;
     margin-left: 5px;
     padding-top: 5px;
 }
-
 ::v-deep .ant-form-item-label>label {
     width: 110px;
 }
-
 .dflex {
     display: flex;
 }
-
 .overlay {
     position: absolute;
     top: 0;
@@ -480,31 +482,25 @@ export default defineComponent({
     z-index: 10;
     background-color: rgba(0, 0, 0, 0.3);
 }
-
 .container_email .ant-modal-body {
     padding: 0 24px;
     padding-top: 16px;
 }
-
 .action-menu {
     text-align: center;
 }
-
 .title_modal {
     font-weight: 700;
     color: gray;
 }
-
 .modal_email ::v-deep .anticon svg {
     width: 50px;
     height: 50px;
 }
-
 .select-search ::v-deep .ant-select-arrow .anticon>svg {
     width: 16px;
     height: 16px;
 }
-
 .modal {
     width: 300px;
     padding: 30px;
@@ -513,67 +509,54 @@ export default defineComponent({
     font-size: 20px;
     text-align: center;
 }
-
 .modal_email {
     display: flex;
     align-items: center;
 }
-
 .btn_sendemail {
     margin-top: 10px;
     padding: 7px;
     color: red;
     border: 1px solid red
 }
-
 .confirm-button {
     margin-left: 100px;
 }
-
 .confirm-modal p {
     white-space: normal;
     font-size: 13px;
     line-height: 16px;
 }
-
 .email-input .ant-form-item-label {
     white-space: normal;
     display: inline-block;
     text-align: center;
     line-height: 16px;
 }
-
 .detail-address {
     margin-left: 7px;
 }
-
 .result-address {
     margin-left: 110px;
 }
-
 .ant-form-item {
-    margin-bottom: 10px;
+    margin-bottom: 3px;
 }
-
 .warring-modal {
     font-size: 13px;
     line-height: 5px;
 }
-
 .ant-form-item-label {
     text-align: left;
 }
-
 .ant-popover-arrow {
     display: none;
 }
-
 .table-scroll {
     height: 300px;
     overflow-y: auto;
     padding: 5px;
 }
-
 ::v-deep .dx-datagrid.dx-gridbase-container {
     border: 1px solid #ddd
 }

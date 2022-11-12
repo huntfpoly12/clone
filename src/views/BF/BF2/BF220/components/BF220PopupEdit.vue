@@ -65,11 +65,10 @@
                             </DxDataGrid>
                         </a-col>
                     </a-row>
-                    <a-row class="footer">
-                        <button-basic :text="'그냥 나가기'" :type="'info'" :mode="'outlined'" @onClick="setModalVisible"
+                    <a-row class="footer"> 
+                        <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible"
                             style="margin-right: 10px;" />
-                        <button-basic :text="'저장하고 나가기'" :type="'success'" :mode="'contained'"
-                            @onClick="updateScreenRole" />
+                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="updateScreenRole" />
                     </a-row>
                 </a-spin>
             </form>
