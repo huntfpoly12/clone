@@ -1,8 +1,8 @@
 <template>
   <div>
     <a-select :style="{ width: width, height: $config_styles.HeightInput }" v-model:value="data" :disabled="disabled"
-      option-label-prop="children" @select="selectedValue(data)" :placeholder="placeholder">
-      <a-select-option v-for="saleStatus in saleGrade" :key="saleStatus.value" :label="saleStatus.label"
+      option-label-prop="children" @select="selectedValue(data)" :placeholder="placeholder" class="sale-status">
+      <a-select-option v-for="saleStatus in saleListStatus" :key="saleStatus.value" :label="saleStatus.label"
         :style="{ width: width }">
         <a-tag :color="getColorTag(saleStatus.label)">{{ saleStatus.label }}</a-tag>
       </a-select-option>
@@ -18,9 +18,10 @@
           해지(또는 숨김)하려면 “확인”을 입력한 후 완료를
           누르세요</p>
         </a-col>
-        <div style="text-align: center; width: 100%; margin-left: 100px">
-          <a-input v-model:value="confirm" placeholder="확인" style="width: 200px" />
-          <a-button type="primary" @click="handleOkConfirm(data)" style="margin-left: 100px">완료</a-button>
+        <div class="confirm-input">
+          <default-text-box v-model:valueInput="confirm" placeholder="확인" width="200px" />
+          <button-basic @onClick="confirmClose(data)" style="margin-left: 10px" mode="outlined" type="default" text="취소"/>
+          <button-basic @onClick="handleOkConfirm(data)" style="margin-left: 5px" mode="contained" type="default" text="완료" :disabled="okButton"/>
         </div>
       </a-row>
     </a-modal>
@@ -35,7 +36,7 @@ import {
   enum2Entries,
 } from "@bankda/jangbuda-common";
 
-const saleGrade = enum2Entries(SalesRepresentativeStatus).map((value) => ({
+const saleListStatus = enum2Entries(SalesRepresentativeStatus).map((value) => ({
   value: value[1],
   label: value[0],
 }));
@@ -61,7 +62,7 @@ export default defineComponent({
   setup(props, { emit }) {
     let data = ref(props.valueInput);
     let oldData  = ref(props.valueInput);
-    let flag = ref<boolean>(false);
+    const okButton = ref<boolean>(true);
     const visibleConfirm = ref<boolean>(false);
     let confirm = ref<string>("");
     const selectedValue = (val: any) => {
@@ -98,6 +99,10 @@ export default defineComponent({
       data.value = oldData.value;
     };
 
+    watch(()=> confirm.value,(newValue)=>{
+      okButton.value = newValue == "확인" ? false : true;
+    });
+    
     const getColorTag = (data: string) => {
       if (data === "정상") {
         return "#108ee9";
@@ -109,9 +114,10 @@ export default defineComponent({
     };
     return {
       selectedValue,
-      saleGrade,
+      saleListStatus,
       visibleConfirm,
       confirm,
+      okButton,
       getColorTag,
       handleOkConfirm,
       confirmClose,
@@ -122,6 +128,20 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-
+.confirm-input{
+  text-align: center;
+   width: 100%; 
+   margin-left: 100px;
+   display: flex;
+}
+::v-deep .sale-status .ant-select-selector {
+  width: 100px;
+}
+::v-deep .sale-status .ant-select-dropdown{
+  min-width: 100px; width: 100px; left: 965px; top: 200px;
+}
+:deep(.ant-select-arrow){
+  right:46px;
+}
 </style>
   
