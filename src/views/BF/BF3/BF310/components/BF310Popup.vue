@@ -10,7 +10,7 @@
                                 <a-form-item label="승인상태" label-align="right" :label-col="labelCol"
                                     :wrapper-col="wrapperCol">
                                     <a-dropdown :trigger="['hover']">
-                                        <button class="custom-button">
+                                        <a-button class="custom-button">
                                             <div style="display: flex; width: 100%">
                                                 <div style="padding-right: 6px; margin-right: 0px">
                                                     <span>
@@ -23,7 +23,7 @@
                                                     {{ $filters.formatDate(dataSelectStatus.date) }}
                                                 </span>
                                             </div>
-                                        </button>
+                                        </a-button>
                                         <template #overlay>
                                             <a-table :columns="[
                                                 { name: 'Name', dataIndex: 'name', key: 'name' },
@@ -101,16 +101,16 @@
                                             <a-form-item label="사업자유형" class="clr" label-align="right"
                                                 :label-col="labelCol" :wrapper-col="wrapperCol">
                                                 <radio-group :arrayValue="bizTypeItems"
-                                                    v-model:valueRadioCheck="formState.companyBizType"
+                                                    v-model:valueRadioCheck="formState.content.company.bizType"
                                                     layoutCustom="horizontal"></radio-group>
                                             </a-form-item>
                                         </a-col>
                                         <a-col :span="12">
-                                            <a-form-item :label="changeTypeCompany(formState.companyBizType)"
+                                            <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                                 label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
                                                 <id-number-text-box :required="true"
-                                                    v-model:valueInput="formState.companyResidentId" width="224px"
-                                                    messRequired="이항목은 필수 입력사항입니다!" />
+                                                    v-model:valueInput="formState.content.company.residentId"
+                                                    width="224px" messRequired="이항목은 필수 입력사항입니다!" />
                                             </a-form-item>
                                         </a-col>
                                     </a-row>
@@ -120,7 +120,8 @@
                                             <a-col :span="24">
                                                 <a-row>
                                                     <a-col :span="12">
-                                                        <default-text-box v-model:valueInput="formState.companyZipcode"
+                                                        <default-text-box
+                                                            v-model:valueInput="formState.content.company.zipcode"
                                                             width="100%" :disabled="true" />
                                                     </a-col>
                                                     <a-col :span="12">
@@ -131,29 +132,32 @@
                                                 </a-row>
                                             </a-col>
                                             <a-col :span="24">
-                                                <default-text-box v-model:valueInput="formState.companyRoadAddress"
+                                                <default-text-box
+                                                    v-model:valueInput="formState.content.company.roadAddress"
                                                     width="100%" :disabled="true" />
                                             </a-col>
                                             <a-col :span="24">
-                                                <default-text-box v-model:valueInput="formState.companyAddressExtend"
+                                                <default-text-box
+                                                    v-model:valueInput="formState.content.company.addressExtend"
                                                     width="100%" placeholder="상세 주소 입력" />
                                             </a-col>
                                         </a-row>
                                         <a-row> </a-row>
                                     </a-form-item>
-
                                     <div style="display: flex">
                                         <div>
                                             <a-row :gutter="[16, 16]">
                                                 <a-col :span="15">
                                                     <a-form-item label="연락처" class="clr" label-align="right"
                                                         :label-col="labelCol" :wrapper-col="wrapperCol">
-                                                        <text-number-box v-model:valueInput="formState.companyPhone"
+                                                        <text-number-box
+                                                            v-model:valueInput="formState.content.company.phone"
                                                             :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                                                     </a-form-item>
                                                     <a-form-item label="팩 스" label-align="right" :label-col="labelCol"
                                                         :wrapper-col="wrapperCol">
-                                                        <text-number-box v-model:valueInput="formState.companyFax" />
+                                                        <text-number-box
+                                                            v-model:valueInput="formState.content.company.fax" />
                                                     </a-form-item>
                                                 </a-col>
                                             </a-row>
@@ -170,8 +174,8 @@
                             <a-collapse-panel key="3" header="대표자정보">
                                 <a-form-item has-feedback label="대표자명" class="clr" label-align="right"
                                     :label-col="labelCol" :wrapper-col="wrapperCol">
-                                    <default-text-box v-model:valueInput="formState.presidentContentName" width="300px"
-                                        :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                    <default-text-box v-model:valueInput="formState.content.president.name"
+                                        width="300px" :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                                 </a-form-item>
                                 <a-form-item has-feedback label="생년월일" class="clr" label-align="right"
                                     :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -179,35 +183,37 @@
                                   width="300px" messRequired="이항목은 필수 입력사항입니다!" /> -->
                                     <a-form :model="formState" name="nest-messages"
                                         :validate-messages="validateMessages">
-                                        <a-form-item :name="['presidentBirthday']" :rules="[{ required: true }]"
-                                            label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                            <a-date-picker v-model:value="formState.presidentBirthday"
+                                        <a-form-item :name="['content.president.birthday']"
+                                            :rules="[{ required: true }]" label-align="right" :label-col="labelCol"
+                                            :wrapper-col="wrapperCol">
+                                            <a-date-picker v-model:value="formState.content.president.birthday"
                                                 value-format="YYYY-MM-DD" placeholder="" class="custom-width-date" />
                                         </a-form-item>
                                     </a-form>
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr" label-align="right"
                                     :label-col="labelCol" :wrapper-col="wrapperCol">
-                                    <text-number-box v-model:valueInput="formState.presidentPhone" :required="true"
-                                        width="200px" placeholder="‘-’ 없이 슷자입력" messRequired="이항목은 필수 입력사항입니다!" />
+                                    <text-number-box v-model:valueInput="formState.content.president.mobilePhone"
+                                        :required="true" width="200px" placeholder="‘-’ 없이 슷자입력"
+                                        messRequired="이항목은 필수 입력사항입니다!" />
                                 </a-form-item>
                                 <a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
                                     :rules="[{ type: 'email' }]" label-align="right" :label-col="labelCol"
                                     :wrapper-col="wrapperCol">
-                                    <mail-text-box v-model:valueInput="formState.presidentEmail" width="200px"
+                                    <mail-text-box v-model:valueInput="formState.content.president.email" width="200px"
                                         :required="true" messRequired="이항목은 필수 입력사항입니다!" />
                                 </a-form-item>
                             </a-collapse-panel>
                             <a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
                                 <div style="height: 350px; overflow-y: scroll">
-                                    <a-checkbox v-model:checked="checkedSevice">회계서비스 신청합니다.</a-checkbox>
+                                    <a-checkbox v-model:checked="checkedService">회계서비스 신청합니다.</a-checkbox>
                                     <div>
                                         <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                         <div id="data-grid-demo">
                                             <DxDataGrid id="gridContainer"
-                                                :data-source="formState.accountingfacilityBusinesses"
+                                                :data-source="formState.content.accounting.facilityBusinesses"
                                                 :show-borders="true" :selected-row-keys="selectedItemKeys">
                                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                                     :allow-deleting="true" template="button-template" mode="cell">
@@ -222,7 +228,6 @@
                                                 <template #indexCell="{ data }">
                                                     <div>{{ data.rowIndex + 1 }}</div>
                                                 </template>
-
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
                                                 <DxColumn data-field="facilityBizType" caption="사업분류">
                                                     <DxLookup :data-source="facilityBizType" value-expr="v"
@@ -231,7 +236,6 @@
                                                 <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                                                     :format="'yyyy-MM-dd'" />
                                                 <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
-
                                                 <DxToolbar>
                                                     <DxItem name="addRowButton" />
                                                 </DxToolbar>
@@ -239,9 +243,7 @@
                                         </div>
                                         <a-form-item label="장기요양기관등록번호" class="clr">
                                             <!-- <a-input placeholder="1234567898" style="width: 250px" v-model:value="formState.accountinglongTermCareInstitutionNumber" /> -->
-
-                                            <default-text-box
-                                                v-model:valueInput="formState.accountinglongTermCareInstitutionNumber"
+                                            <default-text-box v-model:valueInput="formState.institutionNumber"
                                                 :required="true" width="250px" messRequired="이항목은 필수 입력사항입니다!" />
                                         </a-form-item>
                                         <div style="display: flex">
@@ -255,7 +257,7 @@
                                                         </a-col>
                                                         <a-col :span="12">
                                                             <a-checkbox
-                                                                v-model:checked="formState.accountingServiceTypes[0]">
+                                                                v-model:checked="formState.content.accounting.accountingServiceTypes[0]">
                                                                 회계입력대행서비스</a-checkbox>
                                                         </a-col>
                                                     </a-row>
@@ -282,24 +284,26 @@
                             </a-collapse-panel>
                             <a-collapse-panel key="5" header="원천서비스신청">
                                 <div>
-                                    <a-checkbox v-model:checked="checkedSevice">회계서비스 신청합니다.</a-checkbox>
+                                    <a-checkbox v-model:checked="checkedService">회계서비스 신청합니다.</a-checkbox>
                                     <div style="margin-top: 20px">
                                         <a-form-item label="서비스 시작년월" class="clr" label-align="right"
                                             :label-col="labelCol" :wrapper-col="wrapperCol">
                                             <div style="width: 200px">
-                                                <month-picker-box v-model:value="formState.withholdingYearMonth"
+                                                <month-picker-box
+                                                    v-model:value="formState.content.withholding.startYearMonth"
                                                     className="0" />
                                             </div>
                                         </a-form-item>
                                         <a-form-item label="직 원 수" class="clr" label-align="right" :label-col="labelCol"
                                             :wrapper-col="wrapperCol">
                                             <number-box :required="true" width="100px" :min="0" :spinButtons="true"
-                                                v-model:valueInput="formState.withholdingCapacity"
+                                                v-model:valueInput="formState.content.withholding.capacity"
                                                 messRequired="이항목은 필수 입력사항입니다!" />
                                         </a-form-item>
                                         <a-form-item label="부가서비스" label-align="right" :label-col="labelCol"
                                             :wrapper-col="wrapperCol">
-                                            <a-checkbox v-model:checked="formState.withholdingServiceTypes[0]">
+                                            <a-checkbox
+                                                v-model:checked="formState.content.withholding.withholdingServiceTypes[0]">
                                                 4대보험신고서비스</a-checkbox>
                                         </a-form-item>
                                     </div>
@@ -308,19 +312,22 @@
                             <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
                                 <a-form-item label="출금은행" class="clr" label-align="right" :label-col="labelCol"
                                     :wrapper-col="wrapperCol">
-                                    <bank-select-box v-model:valueInput="formState.cmsBankType" width="150px" />
+                                    <bank-select-box v-model:valueInput="formState.content.cmsBank.bankType"
+                                        width="150px" />
                                 </a-form-item>
                                 <a-form-item label="출금계좌번호" class="clr" label-align="right" :label-col="labelCol"
                                     :wrapper-col="wrapperCol">
-                                    <a-input v-model:value="formState.accountNumber" style="width: 250px" />
+                                    <a-input v-model:value="formState.content.cmsBank.accountNumber"
+                                        style="width: 250px" />
                                 </a-form-item>
                                 <a-form-item label="예금주명" class="clr" label-align="right" :label-col="labelCol"
                                     :wrapper-col="wrapperCol">
-                                    <a-input v-model:value="formState.ownerName" style="width: 250px" />
+                                    <a-input v-model:value="formState.content.cmsBank.ownerName" style="width: 250px" />
                                 </a-form-item>
                                 <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr"
                                     label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                    <a-input v-model:value="formState.ownerBizNumber" style="width: 250px" />
+                                    <a-input v-model:value="formState.content.cmsBank.ownerBizNumber"
+                                        style="width: 250px" />
                                     <div class="noteImage">
                                         <a-row>
                                             <a-col :span="1">
@@ -338,7 +345,7 @@
                                 </a-form-item>
                                 <a-form-item label="자동이체출금일자" class="clr" label-align="right" :label-col="labelCol"
                                     :wrapper-col="wrapperCol">
-                                    <a-radio-group v-model:value="formState.withdrawDay">
+                                    <a-radio-group v-model:value="formState.content.cmsBank.withdrawDay">
                                         <a-radio class="clb" :style="radioStyle" value="매월 5일">매월 5일</a-radio>
                                         <a-radio class="clb" :style="radioStyle" value="매월 12일">매월 12일</a-radio>
                                         <a-radio class="clb" :style="radioStyle" value="매월 19일">매월 19일</a-radio>
@@ -348,16 +355,17 @@
                             <a-collapse-panel key="7" header="기타">
                                 <a-form-item label="영업관리담당" label-align="right" :label-col="labelCol"
                                     :wrapper-col="wrapperCol">
-                                    <list-sales-dropdown v-model:selected="formState.extraSalesRepresentativeId"
+                                    <list-sales-dropdown
+                                        v-model:selected="formState.content.extra.salesRepresentativeId"
                                         width="200px" />
                                 </a-form-item>
                                 <a-form-item label="전달사항" label-align="right" :label-col="labelCol"
                                     :wrapper-col="wrapperCol">
-                                    <text-area-box v-model:valueInput="formState.extraComment" placeholder="전달사항입력" />
+                                    <text-area-box v-model:valueInput="formState.content.extra.comment"
+                                        placeholder="전달사항입력" />
                                 </a-form-item>
                             </a-collapse-panel>
                         </a-collapse>
-
                     </div>
                     <a-row style="margin-top: 20px;">
                         <a-col :span="16" :offset="8">
@@ -397,11 +405,11 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import { bizTypeItems } from "../utils";
+import { initialFormState, initialDataStatus } from "../utils/index"
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import BankSelectBox from "../../../../../components/BankSelectBox.vue";
-
 export default defineComponent({
     props: {
         modalStatus: {
@@ -409,11 +417,6 @@ export default defineComponent({
             type: Boolean,
         },
         data: {},
-    },
-    data() {
-        return {
-
-        };
     },
     components: {
         DxDropDownBox,
@@ -438,11 +441,9 @@ export default defineComponent({
         const labelCol = { style: { width: "150px" } };
         const wrapperCol = { span: 16 };
         const facilityBizType = FacilityBizType.all();
-
         const imageRegCardFile = ref("");
         const regCardFileName = ref("");
         const regCardFileId = ref("");
-
         const imageLicenseFile = ref("");
         const licenseFileName = ref("");
         let visible = ref(false);
@@ -452,123 +453,28 @@ export default defineComponent({
         let trigger = ref<boolean>(false);
         let triggerCheckPer = ref<boolean>(false);
         let canChangeableBizNumber = ref<boolean>(false);
-        const layout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 16 },
-        };
-        const checkedSevice = ref(true)
-        const radioStyle = ref({
+        const checkedService = ref(true)
+        const radioStyle = reactive({
             display: "flex",
             height: "20px",
             lineHeight: "20px",
             checked: false,
         })
-        const selectedItemKeys = ref([])
+        const selectedItemKeys = reactive([])
         const titleModal = ref("사업자등록증")
-
-        /** Application (신청) - 10 */
-        /** Under examination (심사중) - 20 */
-        /** Approval (승인) - 30 */
-        /** Application rejected (반려) - 99 */
-        const dataStatus = reactive([
-            { name: "승인", date: "2022-08-25", color: "green", value: 30 },
-            { name: "신청", date: "2022-08-25", color: "red", value: 10 },
-            { name: "심사중", date: "2022-08-25", color: "blue", value: 20 },
-            { name: "반려", date: "2022-08-25", color: "grey", value: 99 },
-        ]);
-
+        var dataStatus = reactive({ ...initialDataStatus });
         let dataSelectStatus = reactive({
             name: "승인",
             date: "2022-08-25",
             color: "green",
         });
-
-        const initialFormState = {
-            id: null,
-            status: 10,
-            code: "",
-            companyName: "",
-            companyBizNumber: "",
-            companyAddress: "",
-            presidentName: "",
-            simpleAccountingInfos: [],
-            simpleWithholdingInfoName: "",
-            simpleWithholdingInfoYearMonth: "",
-            processedAt: "",
-            approvedAt: "",
-            rejectedAt: "",
-
-            agreementsTerms: true,
-            agreementsPersonalInfo: true,
-            agreementsAccountingService: true,
-            agreementsWithholdingService: true,
-
-            companyZipcode: "",
-            companyRoadAddress: "",
-            companyJibunAddress: "",
-
-            companyAddressExtend: "",
-            companyAddressDetailBcode: "",
-            companyAddressDetailBname: "",
-            companyAddressDetailBuildingCode: "",
-            companyAddressDetailBuildingName: "",
-            companyAddressDetailRoadname: "",
-            companyAddressDetailRoadnameCode: "",
-            companyAddressDetailSido: "",
-            companyAddressDetailSigungu: "",
-            companyAddressDetailSigunguCode: "",
-            companyAddressDetailZonecode: "",
-
-            companyPhone: "",
-            companyFax: "",
-            companyLicenseFileStorageId: "",
-            companyBizType: 0,
-            companyResidentId: "",
-            companyLicense: "",
-
-            presidentContentName: "",
-            presidentBirthday: "",
-            presidentPhone: "",
-            presidentEmail: "",
-            accountingfacilityBusinesses: [],
-            accountinglongTermCareInstitutionNumber: "",
-            accountingServiceTypes: [],
-
-            withholdingYearMonth: "",
-            withholdingCapacity: 1234,
-            withholdingServiceTypes: [],
-
-            cmsBankType: "",
-            accountNumber: "",
-            ownerName: "",
-            ownerBizNumber: "",
-            withdrawDay: "",
-
-            compactSalesRepresentativeID: "",
-            compactSalesRepresentativeCode: "",
-            compactSalesRepresentativeName: "",
-            compactSalesRepresentativeActive: "",
-
-            memo: "",
-            createdAt: "",
-            createdBy: "",
-            updatedBy: "",
-            ip: "",
-            active: "",
-
-            extraSalesRepresentativeId: 1,
-            extraComment: "",
-        };
-        
-        const formState = reactive({ ...initialFormState });
-
+        var formState = ref({ ...initialFormState });
         // event close popup
         const setModalVisible = () => {
             triggerCheckPer.value = false;
             trigger.value = false;
             emit("closePopup", false);
         };
-
         const validateMessages = {
             required: "이항목은 필수 입력사항입니다!",
             types: {
@@ -579,7 +485,6 @@ export default defineComponent({
                 range: "${label} must be between ${min} and ${max}",
             },
         };
-
         // watch event modal popup
         watch(
             () => props.modalStatus,
@@ -599,9 +504,7 @@ export default defineComponent({
                     imageLicenseFile.value = "";
                     licenseFileName.value = "";
                     visible.value = newValue;
-
                     trigger.value = false;
-
                     activeKey.value = 1;
                 }
             }
@@ -614,7 +517,6 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-
         // query check if can be change business registration number
         const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
             queries.isSubscriptionRequestChangeableBizNumber,
@@ -624,13 +526,11 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-
         // watch result resCheckPerEdit
         watch(resCheckPerEdit, (value) => {
             canChangeableBizNumber.value =
                 value.isSubscriptionRequestChangeableBizNumber;
         });
-
         watch(result, (value) => {
             if (value && value.getSubscriptionRequest) {
                 // set value license
@@ -638,11 +538,10 @@ export default defineComponent({
                     value.getSubscriptionRequest.content.company.license.url;
                 licenseFileName.value =
                     value.getSubscriptionRequest.content.company.license.name;
-
                 // set value Term Care Institution
                 let faBusinesses =
                     value.getSubscriptionRequest.content.accounting.facilityBusinesses;
-                console.log(faBusinesses);
+                // console.log(faBusinesses);
                 if (
                     faBusinesses.length > 0 &&
                     faBusinesses[0].registrationCard != null
@@ -650,135 +549,14 @@ export default defineComponent({
                     imageRegCardFile.value = faBusinesses[0].registrationCard.url;
                     regCardFileName.value = faBusinesses[0].registrationCard.name;
                 }
-
-                formState.id = value.getSubscriptionRequest.id;
-                formState.status = value.getSubscriptionRequest.status;
-                formState.code = value.getSubscriptionRequest.code;
-                formState.companyName = value.getSubscriptionRequest.companyName;
-                formState.companyBizNumber =
-                    value.getSubscriptionRequest.companyBizNumber;
-                formState.companyAddress = value.getSubscriptionRequest.companyAddress;
-                formState.presidentName = value.getSubscriptionRequest.presidentName;
-
-                formState.simpleWithholdingInfoName =
-                    value.getSubscriptionRequest.simpleAccountingInfos.name;
-                formState.simpleWithholdingInfoYearMonth =
-                    value.getSubscriptionRequest.simpleAccountingInfos.startYearMonth;
-
-                formState.processedAt = value.getSubscriptionRequest.processedAt;
-                formState.approvedAt = value.getSubscriptionRequest.approvedAt;
-                formState.rejectedAt = value.getSubscriptionRequest.rejectedAt;
-
-                formState.agreementsTerms =
-                    value.getSubscriptionRequest.content.agreements.terms;
-                formState.agreementsPersonalInfo =
-                    value.getSubscriptionRequest.content.agreements.personalInfo;
-                formState.agreementsAccountingService =
-                    value.getSubscriptionRequest.content.agreements.accountingService;
-                formState.agreementsWithholdingService =
-                    value.getSubscriptionRequest.content.agreements.withholdingService;
-
-                formState.companyZipcode =
-                    value.getSubscriptionRequest.content.company.zipcode;
-                formState.companyRoadAddress =
-                    value.getSubscriptionRequest.content.company.roadAddress;
-                formState.companyJibunAddress =
-                    value.getSubscriptionRequest.content.company.jibunAddress;
-
-                formState.companyAddressExtend =
-                    value.getSubscriptionRequest.content.company.addressExtend;
-                formState.companyAddressDetailBcode =
-                    value.getSubscriptionRequest.content.company.addressDetail.bcode;
-                formState.companyAddressDetailBname =
-                    value.getSubscriptionRequest.content.company.addressDetail.bname;
-                formState.companyAddressDetailBuildingCode =
-                    value.getSubscriptionRequest.content.company.addressDetail.buildingCode;
-                formState.companyAddressDetailBuildingName =
-                    value.getSubscriptionRequest.content.company.addressDetail.buildingName;
-                formState.companyAddressDetailRoadname =
-                    value.getSubscriptionRequest.content.company.addressDetail.roadname;
-                formState.companyAddressDetailRoadnameCode =
-                    value.getSubscriptionRequest.content.company.addressDetail.roadnameCode;
-                formState.companyAddressDetailSido =
-                    value.getSubscriptionRequest.content.company.addressDetail.sido;
-                formState.companyAddressDetailSigungu =
-                    value.getSubscriptionRequest.content.company.addressDetail.sigungu;
-                formState.companyAddressDetailSigunguCode =
-                    value.getSubscriptionRequest.content.company.addressDetail.sigunguCode;
-                formState.companyAddressDetailZonecode =
-                    value.getSubscriptionRequest.content.company.addressDetail.zonecode;
-
-                formState.companyPhone =
-                    value.getSubscriptionRequest.content.company.phone;
-                formState.companyFax = value.getSubscriptionRequest.content.company.fax;
-                formState.companyLicenseFileStorageId =
-                    value.getSubscriptionRequest.content.company.licenseFileStorageId;
-                formState.companyBizType =
-                    value.getSubscriptionRequest.content.company.bizType;
-                formState.companyResidentId =
-                    value.getSubscriptionRequest.content.company.residentId;
-                formState.companyLicense =
-                    value.getSubscriptionRequest.content.company.license;
-
-                formState.presidentContentName =
-                    value.getSubscriptionRequest.content.president.name;
-                formState.presidentBirthday =
-                    value.getSubscriptionRequest.content.president.birthday;
-                formState.presidentPhone =
-                    value.getSubscriptionRequest.content.president.mobilePhone;
-                formState.presidentEmail =
-                    value.getSubscriptionRequest.content.president.email;
-
-                formState.accountingfacilityBusinesses =
-                    value.getSubscriptionRequest.content.accounting.facilityBusinesses;
-                formState.accountingServiceTypes =
-                    value.getSubscriptionRequest.content.accounting.accountingServiceTypes;
-                formState.accountinglongTermCareInstitutionNumber =
+                delete value.getSubscriptionRequest.content.company.license
+                formState.value = value.getSubscriptionRequest;
+                formState.value.institutionNumber =
                     value.getSubscriptionRequest.content.accounting.facilityBusinesses
                         .length > 0
                         ? value.getSubscriptionRequest.content.accounting
                             .facilityBusinesses[0].longTermCareInstitutionNumber
                         : "";
-
-                formState.withholdingYearMonth =
-                    value.getSubscriptionRequest.content.withholding.startYearMonth;
-                formState.withholdingCapacity =
-                    value.getSubscriptionRequest.content.withholding.capacity;
-                formState.withholdingServiceTypes =
-                    value.getSubscriptionRequest.content.withholding.withholdingServiceTypes;
-
-                formState.cmsBankType =
-                    value.getSubscriptionRequest.content.cmsBank.bankType;
-                formState.accountNumber =
-                    value.getSubscriptionRequest.content.cmsBank.accountNumber;
-                formState.ownerName =
-                    value.getSubscriptionRequest.content.cmsBank.ownerName;
-                formState.ownerBizNumber =
-                    value.getSubscriptionRequest.content.cmsBank.ownerBizNumber;
-                formState.withdrawDay =
-                    value.getSubscriptionRequest.content.cmsBank.withdrawDay;
-
-                formState.extraSalesRepresentativeId =
-                    value.getSubscriptionRequest.content.extra.salesRepresentativeId;
-                formState.extraComment =
-                    value.getSubscriptionRequest.content.extra.comment;
-
-                formState.compactSalesRepresentativeID =
-                    value.getSubscriptionRequest.compactSalesRepresentative.id;
-                formState.compactSalesRepresentativeCode =
-                    value.getSubscriptionRequest.compactSalesRepresentative.code;
-                formState.compactSalesRepresentativeName =
-                    value.getSubscriptionRequest.compactSalesRepresentative.name;
-                formState.compactSalesRepresentativeActive =
-                    value.getSubscriptionRequest.compactSalesRepresentative.active;
-
-                formState.memo = value.getSubscriptionRequest.memo;
-                formState.createdAt = value.getSubscriptionRequest.createdAt;
-                formState.createdBy = value.getSubscriptionRequest.createdBy;
-                formState.updatedBy = value.getSubscriptionRequest.updatedBy;
-                formState.ip = value.getSubscriptionRequest.ip;
-                formState.active = value.getSubscriptionRequest.active;
-
                 // set date list status value
                 dataStatus[0].date = value.getSubscriptionRequest.createdAt;
                 dataStatus[1].date = value.getSubscriptionRequest.createdAt;
@@ -829,7 +607,6 @@ export default defineComponent({
                 return "법인등록번호";
             }
         };
-
         const customRow = (record: any) => {
             return {
                 onClick: (event: any) => {
@@ -837,26 +614,25 @@ export default defineComponent({
                     dataSelectStatus.color = record.color;
                     dataSelectStatus.date = record.date;
                     // set status subcription
-                    formState.status = record.value;
+                    formState.value.status = record.value;
                 },
             };
         };
         const funcAddress = (data: any) => {
-            formState.companyZipcode = data.zonecode;
-            formState.companyRoadAddress = data.roadAddress;
-            formState.companyJibunAddress = data.jibunAddress;
-            formState.companyAddressDetailBcode = data.bcode;
-            formState.companyAddressDetailBname = data.bname;
-            formState.companyAddressDetailBuildingCode = data.buildingCode;
-            formState.companyAddressDetailBuildingName = data.buildingName;
-            formState.companyAddressDetailRoadname = data.roadname;
-            formState.companyAddressDetailRoadnameCode = data.roadnameCode;
-            formState.companyAddressDetailSido = data.sido;
-            formState.companyAddressDetailSigungu = data.sigungu;
-            formState.companyAddressDetailSigunguCode = data.sigunguCode;
-            formState.companyAddressDetailZonecode = data.zonecode;
+            formState.value.content.company.zipcode = data.zonecode;
+            formState.value.content.company.roadAddress = data.roadAddress;
+            formState.value.content.company.jibunAddress = data.jibunAddress;
+            formState.value.content.company.addressDetail.bcode = data.bcode;
+            formState.value.content.company.addressDetail.bname = data.bname;
+            formState.value.content.company.addressDetail.buildingCode = data.buildingCode;
+            formState.value.content.company.addressDetail.buildingName = data.buildingName;
+            formState.value.content.company.addressDetail.roadname = data.roadname;
+            formState.value.content.company.addressDetail.roadnameCode = data.roadnameCode;
+            formState.value.content.company.addressDetail.sido = data.sido;
+            formState.value.content.company.addressDetail.sigungu = data.sigungu;
+            formState.value.content.company.addressDetail.sigunguCode = data.sigunguCode;
+            formState.value.content.company.addressDetail.zonecode = data.zonecode;
         };
-
         // update subscription request
         const {
             mutate: actionUpdate,
@@ -864,12 +640,10 @@ export default defineComponent({
             loading: loadingUpdate,
             onDone: updateDone,
         } = useMutation(mutations.updateSubscriptionRequest);
-
         // query create company by subscription
         const { mutate: actionCreateCompany } = useMutation(
             mutations.createCompanyBySubscriptionRequest
         );
-
         updateDone((res) => {
             if (res.data.updateSubscriptionRequest.status == 30) {
                 actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
@@ -877,19 +651,18 @@ export default defineComponent({
             message.success(`업데이트 완료!`, 4);
             setModalVisible();
         });
-
         onError((error) => {
             message.error(error.message, 4);
         });
-
         const updateSubscriptionRequest = (e: any) => {
+            console.log(formState.value.content.accounting.facilityBusinesses);
             let customAccountingfacilityBusinesses: any = [];
-            if (formState.accountingfacilityBusinesses) {
+            if (formState.value.content.accounting.facilityBusinesses) {
                 customAccountingfacilityBusinesses =
-                    formState.accountingfacilityBusinesses.map(
+                    formState.value.content.accounting.facilityBusinesses.map(
                         (facilityBusinesses: any) => ({
                             longTermCareInstitutionNumber:
-                                formState.accountinglongTermCareInstitutionNumber,
+                                formState.value.institutionNumber,
                             capacity: facilityBusinesses.capacity,
                             facilityBizType: facilityBusinesses.facilityBizType,
                             name: facilityBusinesses.name,
@@ -902,69 +675,9 @@ export default defineComponent({
                         })
                     );
             }
-
             // process data befor handle update
-            let contentData = {
-                agreements: {
-                    terms: formState.agreementsTerms,
-                    personalInfo: formState.agreementsPersonalInfo,
-                    accountingService: formState.agreementsAccountingService,
-                    withholdingService: formState.agreementsWithholdingService,
-                },
-
-                company: {
-                    name: formState.companyName,
-                    zipcode: formState.companyZipcode,
-                    roadAddress: formState.companyRoadAddress,
-                    jibunAddress: formState.companyJibunAddress,
-                    addressExtend: formState.companyAddressExtend,
-                    addressDetail: {
-                        bcode: formState.companyAddressDetailBcode,
-                        bname: formState.companyAddressDetailBname,
-                        buildingCode: formState.companyAddressDetailBuildingCode,
-                        buildingName: formState.companyAddressDetailBuildingName,
-                        roadname: formState.companyAddressDetailRoadname,
-                        roadnameCode: formState.companyAddressDetailRoadnameCode,
-                        sido: formState.companyAddressDetailSido,
-                        sigungu: formState.companyAddressDetailSigungu,
-                        sigunguCode: formState.companyAddressDetailSigunguCode,
-                        zonecode: formState.companyAddressDetailZonecode,
-                    },
-                    phone: formState.companyPhone,
-                    fax: formState.companyFax,
-                    licenseFileStorageId: formState.companyLicenseFileStorageId,
-                    bizNumber: formState.companyBizNumber,
-                    bizType: formState.companyBizType,
-                    residentId: formState.companyResidentId,
-                },
-                president: {
-                    name: formState.presidentContentName,
-                    birthday: formState.presidentBirthday,
-                    mobilePhone: formState.presidentPhone,
-                    email: formState.presidentEmail,
-                },
-                accounting: {
-                    facilityBusinesses: customAccountingfacilityBusinesses,
-                    accountingServiceTypes: formState.accountingServiceTypes,
-                },
-                withholding: {
-                    startYearMonth: formState.withholdingYearMonth,
-                    capacity: formState.withholdingCapacity,
-                    withholdingServiceTypes: formState.withholdingServiceTypes,
-                },
-                cmsBank: {
-                    bankType: formState.cmsBankType,
-                    accountNumber: formState.accountNumber,
-                    ownerBizNumber: formState.ownerBizNumber,
-                    ownerName: formState.ownerName,
-                    withdrawDay: formState.withdrawDay,
-                },
-                extra: {
-                    salesRepresentativeId: formState.extraSalesRepresentativeId,
-                    comment: formState.extraComment,
-                },
-            };
-
+            let contentData = formState.value.content;
+            contentData.accounting.facilityBusinesses = customAccountingfacilityBusinesses;
             const cleanData = JSON.parse(
                 JSON.stringify(contentData, (name, val) => {
                     if (val == null) {
@@ -983,53 +696,44 @@ export default defineComponent({
                 })
             );
             let variables = {
-                id: formState.id,
-                status: formState.status,
-                memo: formState.memo,
+                id: formState.value.id,
+                status: formState.value.status,
+                memo: formState.value.memo,
                 content: cleanData,
             };
             actionUpdate(variables);
         };
-
         // handle License File upload
         const getUrlLicenseFile = (img: any) => {
-            formState.companyLicenseFileStorageId = img.id;
+            formState.value.content.company.licenseFileStorageId = img.id;
             imageLicenseFile.value = img.url;
             licenseFileName.value = img.fileName;
         };
-
         const removeLicenseFile = () => {
             imageLicenseFile.value = "";
             licenseFileName.value = "";
         };
-
         // handle registration CardFile Storage upload
         const getregCardFile = (img: any) => {
             regCardFileId.value = img.id;
             imageRegCardFile.value = img.url;
             regCardFileName.value = img.fileName;
         };
-
         const removeRegCardFile = () => {
             regCardFileId.value = "";
             imageRegCardFile.value = "";
             regCardFileName.value = "";
         };
-
-
-
-
         return {
-            checkedSevice,
-            radioStyle,
-            selectedItemKeys,
             titleModal,
+            selectedItemKeys,
+            radioStyle,
+            checkedService,
             labelCol,
             wrapperCol,
             bizTypeItems,
             visible,
             formState,
-            layout,
             validateMessages,
             setModalVisible,
             changeTypeCompany,
@@ -1057,7 +761,6 @@ export default defineComponent({
     },
 });
 </script> 
-
 <style lang="scss" scoped>
 @import "../style/popupStyle.scss";
 </style>
