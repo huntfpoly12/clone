@@ -5,334 +5,366 @@
             <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
                 <form class="ant-form ant-form-horizontal">
                     <div class="collapse-content">
-                    <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
-                        <a-collapse-panel key="1" header="심사정보">
-                            <a-form-item label="승인상태" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-dropdown :trigger="['hover']">
-                                    <button class="custom-button">
-                                        <div style="display: flex; width: 100%">
-                                            <div style="padding-right: 6px; margin-right: 0px">
-                                                <span>
-                                                    <a-tag v-model:color="dataSelectStatus.color">
-                                                        {{ dataSelectStatus.name }}
-                                                    </a-tag>
+                        <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
+                            <a-collapse-panel key="1" header="심사정보">
+                                <a-form-item label="승인상태" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <a-dropdown :trigger="['hover']">
+                                        <button class="custom-button">
+                                            <div style="display: flex; width: 100%">
+                                                <div style="padding-right: 6px; margin-right: 0px">
+                                                    <span>
+                                                        <a-tag v-model:color="dataSelectStatus.color">
+                                                            {{ dataSelectStatus.name }}
+                                                        </a-tag>
+                                                    </span>
+                                                </div>
+                                                <span class="custiom-date">
+                                                    {{ $filters.formatDate(dataSelectStatus.date) }}
                                                 </span>
                                             </div>
-                                            <span class="custiom-date">
-                                                {{ $filters.formatDate(dataSelectStatus.date) }}
-                                            </span>
-                                        </div>
-                                    </button>
-                                    <template #overlay>
-                                        <a-table :columns="[
-                                            { name: 'Name', dataIndex: 'name', key: 'name' },
-                                            { title: 'date', dataIndex: 'date', key: 'date' },
-                                        ]" :data-source="dataStatus" :pagination="false" :showHeader="false"
-                                            :customRow="customRow">
-                                            <template #bodyCell="{ column, record }">
-                                                <div :style="{ cursor: 'pointer' }">
-                                                    <template v-if="column.key === 'name'">
-                                                        <a-tag :color="record.color"
-                                                            :style="{ width: '50px', textAlign: 'center' }">{{
-                                                                    record.name
-                                                            }}</a-tag>
-                                                    </template>
-                                                    <template v-if="column.key === 'date'">
-                                                        {{ $filters.formatDate(record.date) }}
-                                                    </template>
-                                                </div>
-                                            </template>
-                                        </a-table>
-                                    </template>
-                                </a-dropdown>
-                            </a-form-item>
-                            <a-form-item label="사업자코드" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-typography-title :level="5">
-                                    {{ formState.companyBizNumber }}
-                                </a-typography-title>
-                            </a-form-item>
-                            <a-row>
-                                <a-col :span="12">
-                                    <a-form-item label="신청코드" label-align="right" :label-col="labelCol">
-                                        <a-typography-title :level="5">{{ formState.code }}
-                                        </a-typography-title>
-                                    </a-form-item>
-                                </a-col>
-                                <a-col :span="12">
-                                    <a-form-item label="신청일자" label-align="right" :label-col="labelCol">
-                                        <a-typography-title :level="5">
-                                            {{ $filters.formatDate(formState.createdAt) }}
-                                        </a-typography-title>
-                                    </a-form-item>
-                                </a-col>
-                            </a-row>
-                            <a-form-item label="심사메모" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <default-text-box v-model:inputValue="formState.memo" />
-                            </a-form-item>
-                            <a-form-item label="약관동의" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-button type="link" style="padding: 0px">서비스약관</a-button>
-                                |
-                                <a-button type="link" style="padding: 0px">개인정보제공활용동의</a-button>
-                                |
-                                <a-button type="link" style="padding: 0px">회계서비스약관동의</a-button>
-                                |
-                                <a-button type="link" style="padding: 0px">원천서비스약관동의</a-button>
-                            </a-form-item>
-                        </a-collapse-panel>
-                        <a-collapse-panel key="2" header="사업자정보">
-                            <div style="height: 350px; overflow-y: scroll">
-                                <a-form-item label="상 호" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                    <default-text-box v-model:valueInput="formState.companyName" width="100%"
-                                        :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                        </button>
+                                        <template #overlay>
+                                            <a-table :columns="[
+                                                { name: 'Name', dataIndex: 'name', key: 'name' },
+                                                { title: 'date', dataIndex: 'date', key: 'date' },
+                                            ]" :data-source="dataStatus" :pagination="false" :showHeader="false"
+                                                :customRow="customRow">
+                                                <template #bodyCell="{ column, record }">
+                                                    <div :style="{ cursor: 'pointer' }">
+                                                        <template v-if="column.key === 'name'">
+                                                            <a-tag :color="record.color"
+                                                                :style="{ width: '50px', textAlign: 'center' }">{{
+                                                                        record.name
+                                                                }}</a-tag>
+                                                        </template>
+                                                        <template v-if="column.key === 'date'">
+                                                            {{ $filters.formatDate(record.date) }}
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </a-table>
+                                        </template>
+                                    </a-dropdown>
                                 </a-form-item>
-                                <a-form-item label="사업자등록번호" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                    <biz-number-text-box :disabled="!canChangeableBizNumber"
-                                        v-model:valueInput="formState.companyBizNumber" width="300px" :required="true"
-                                        messRequired="이항목은 필수 입력사항입니다!" />
+                                <a-form-item label="사업자코드" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <a-typography-title :level="5">
+                                        {{ formState.companyBizNumber }}
+                                    </a-typography-title>
                                 </a-form-item>
                                 <a-row>
                                     <a-col :span="12">
-                                        <a-form-item label="사업자유형" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                            <radio-group :arrayValue="bizTypeItems" v-model:valueRadioCheck="formState.companyBizType" layoutCustom="horizontal"></radio-group>
+                                        <a-form-item label="신청코드" label-align="right" :label-col="labelCol">
+                                            <a-typography-title :level="5">{{ formState.code }}
+                                            </a-typography-title>
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="12">
-                                        <a-form-item :label="changeTypeCompany(formState.companyBizType)" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                            <id-number-text-box :required="true"
-                                                v-model:valueInput="formState.companyResidentId" width="224px"
-                                                messRequired="이항목은 필수 입력사항입니다!" />
+                                        <a-form-item label="신청일자" label-align="right" :label-col="labelCol">
+                                            <a-typography-title :level="5">
+                                                {{ $filters.formatDate(formState.createdAt) }}
+                                            </a-typography-title>
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
-                                <a-form-item label="주소" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                    <a-row :gutter="[0, 4]">
-                                        <a-col :span="24">
-                                            <a-row>
-                                                <a-col :span="12">
-                                                    <default-text-box v-model:valueInput="formState.companyZipcode"
-                                                        width="100%" :disabled="true" />
-                                                </a-col>
-                                                <a-col :span="12">
-                                                    <div style="margin-left: 5px">
-                                                        <post-code-button @dataAddress="funcAddress" />  
-                                                    </div>
-                                                </a-col>
-                                            </a-row>
+                                <a-form-item label="심사메모" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <default-text-box v-model:inputValue="formState.memo" />
+                                </a-form-item>
+                                <a-form-item label="약관동의" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <a-button type="link" style="padding: 0px">서비스약관</a-button>
+                                    |
+                                    <a-button type="link" style="padding: 0px">개인정보제공활용동의</a-button>
+                                    |
+                                    <a-button type="link" style="padding: 0px">회계서비스약관동의</a-button>
+                                    |
+                                    <a-button type="link" style="padding: 0px">원천서비스약관동의</a-button>
+                                </a-form-item>
+                            </a-collapse-panel>
+                            <a-collapse-panel key="2" header="사업자정보">
+                                <div style="height: 350px; overflow-y: scroll">
+                                    <a-form-item label="상 호" class="clr" label-align="right" :label-col="labelCol"
+                                        :wrapper-col="wrapperCol">
+                                        <default-text-box v-model:valueInput="formState.companyName" width="100%"
+                                            :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                    </a-form-item>
+                                    <a-form-item label="사업자등록번호" class="clr" label-align="right" :label-col="labelCol"
+                                        :wrapper-col="wrapperCol">
+                                        <biz-number-text-box :disabled="!canChangeableBizNumber"
+                                            v-model:valueInput="formState.companyBizNumber" width="300px"
+                                            :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                    </a-form-item>
+                                    <a-row>
+                                        <a-col :span="12">
+                                            <a-form-item label="사업자유형" class="clr" label-align="right"
+                                                :label-col="labelCol" :wrapper-col="wrapperCol">
+                                                <radio-group :arrayValue="bizTypeItems"
+                                                    v-model:valueRadioCheck="formState.companyBizType"
+                                                    layoutCustom="horizontal"></radio-group>
+                                            </a-form-item>
                                         </a-col>
-                                        <a-col :span="24">
-                                            <default-text-box v-model:valueInput="formState.companyRoadAddress"
-                                                width="100%" :disabled="true" />
-                                        </a-col>
-                                        <a-col :span="24">
-                                            <default-text-box v-model:valueInput="formState.companyAddressExtend"
-                                                width="100%" placeholder="상세 주소 입력" />
+                                        <a-col :span="12">
+                                            <a-form-item :label="changeTypeCompany(formState.companyBizType)"
+                                                label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
+                                                <id-number-text-box :required="true"
+                                                    v-model:valueInput="formState.companyResidentId" width="224px"
+                                                    messRequired="이항목은 필수 입력사항입니다!" />
+                                            </a-form-item>
                                         </a-col>
                                     </a-row>
-                                    <a-row> </a-row>
-                                </a-form-item>
-
-                              <div style="display: flex">
-                                  <div>
-                                      <a-row :gutter="[16, 16]">
-                                          <a-col :span="15">
-                                              <a-form-item label="연락처" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                                  <text-number-box v-model:valueInput="formState.companyPhone"
-                                                      :required="true" messRequired="이항목은 필수 입력사항입니다!" />
-                                              </a-form-item>
-                                              <a-form-item label="팩 스" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                                  <text-number-box v-model:valueInput="formState.companyFax" />
-                                              </a-form-item>
-                                          </a-col>
-                                      </a-row>
-                                      <img-upload :title="titleModal" @update-img="getUrlLicenseFile"
-                                          style="margin-top: 10px" />
-                                  </div>
-                                  <a-col :span="7">
-                                        <preview-image :dataImage="{url:imageLicenseFile,name:licenseFileName}" @deleteImg="removeLicenseFile"/>
-                                  </a-col>
-                              </div>
-                          </div>
-                      </a-collapse-panel>
-                      <a-collapse-panel key="3" header="대표자정보">
-                          <a-form-item has-feedback label="대표자명" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                              <default-text-box v-model:valueInput="formState.presidentContentName" width="300px"
-                                  :required="true" messRequired="이항목은 필수 입력사항입니다!" />
-                          </a-form-item>
-                          <a-form-item has-feedback label="생년월일" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                              <!-- <birth-day-box v-model:valueInput="formState.presidentBirthday" :required="true"
-                                  width="300px" messRequired="이항목은 필수 입력사항입니다!" /> -->
-                                <a-form :model="formState" name="nest-messages" :validate-messages="validateMessages">
-                                    <a-form-item :name="['presidentBirthday']" :rules="[{ required: true }]" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                        <a-date-picker v-model:value="formState.presidentBirthday"
-                                            value-format="YYYY-MM-DD" placeholder="" class="custom-width-date" />
-                                    </a-form-item>
-                                </a-form>
-                            </a-form-item>
-                            <a-form-item has-feedback label="휴대폰번호" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <text-number-box v-model:valueInput="formState.presidentPhone" :required="true"
-                                    width="200px" placeholder="‘-’ 없이 슷자입력" messRequired="이항목은 필수 입력사항입니다!" />
-                            </a-form-item>
-                            <a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
-                                :rules="[{ type: 'email' }]" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <mail-text-box v-model:valueInput="formState.presidentEmail" width="200px"
-                                    :required="true" messRequired="이항목은 필수 입력사항입니다!" />
-                            </a-form-item>
-                        </a-collapse-panel>
-                        <a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
-                            <div style="height: 350px; overflow-y: scroll">
-                                <a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
-                                <div>
-                                    <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
-                                        :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
-                                    </a-card>
-                                    <div id="data-grid-demo">
-                                        <DxDataGrid id="gridContainer"
-                                            :data-source="formState.accountingfacilityBusinesses" :show-borders="true"
-                                            :selected-row-keys="selectedItemKeys">
-                                            <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                                :allow-deleting="true" template="button-template" mode="cell">
-                                                <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                            </DxEditing>
-                                            <template #button-template>
-                                                <DxButton icon="plus" />
-                                            </template>
-                                            <DxPaging :enabled="false" />
-                                            <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
-                                                cell-template="indexCell" />
-                                            <template #indexCell="{ data }">
-                                                <div>{{ data.rowIndex + 1 }}</div>
-                                            </template>
-
-                                            <DxColumn data-field="name" caption="사업명 (중복불가)" />
-                                            <DxColumn data-field="facilityBizType" caption="사업분류">
-                                                <DxLookup :data-source="facilityBizType" value-expr="v"
-                                                    display-expr="n" />
-                                            </DxColumn>
-                                            <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
-                                                :format="'yyyy-MM-dd'" />
-                                            <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
-
-                                            <DxToolbar>
-                                                <DxItem name="addRowButton" />
-                                            </DxToolbar>
-                                        </DxDataGrid>
-                                    </div>
-                                    <a-form-item label="장기요양기관등록번호" class="clr">
-                                        <!-- <a-input placeholder="1234567898" style="width: 250px" v-model:value="formState.accountinglongTermCareInstitutionNumber" /> -->
-
-                                        <default-text-box
-                                            v-model:valueInput="formState.accountinglongTermCareInstitutionNumber"
-                                            :required="true" width="250px" messRequired="이항목은 필수 입력사항입니다!" />
-                                    </a-form-item>
-                                    <div style="display: flex">
-                                        <div>
-                                            <imgUpload :title="titleModal" @update-img="getregCardFile"
-                                                style="margin-top: 10px" />
-                                            <div>
+                                    <a-form-item label="주소" class="clr" label-align="right" :label-col="labelCol"
+                                        :wrapper-col="wrapperCol">
+                                        <a-row :gutter="[0, 4]">
+                                            <a-col :span="24">
                                                 <a-row>
                                                     <a-col :span="12">
-                                                        <p>부가서비스</p>
+                                                        <default-text-box v-model:valueInput="formState.companyZipcode"
+                                                            width="100%" :disabled="true" />
                                                     </a-col>
                                                     <a-col :span="12">
-                                                        <a-checkbox
-                                                            v-model:checked="formState.accountingServiceTypes[0]">
-                                                            회계입력대행서비스</a-checkbox>
+                                                        <div style="margin-left: 5px">
+                                                            <post-code-button @dataAddress="funcAddress" />
+                                                        </div>
                                                     </a-col>
                                                 </a-row>
-                                            </div>
+                                            </a-col>
+                                            <a-col :span="24">
+                                                <default-text-box v-model:valueInput="formState.companyRoadAddress"
+                                                    width="100%" :disabled="true" />
+                                            </a-col>
+                                            <a-col :span="24">
+                                                <default-text-box v-model:valueInput="formState.companyAddressExtend"
+                                                    width="100%" placeholder="상세 주소 입력" />
+                                            </a-col>
+                                        </a-row>
+                                        <a-row> </a-row>
+                                    </a-form-item>
+
+                                    <div style="display: flex">
+                                        <div>
+                                            <a-row :gutter="[16, 16]">
+                                                <a-col :span="15">
+                                                    <a-form-item label="연락처" class="clr" label-align="right"
+                                                        :label-col="labelCol" :wrapper-col="wrapperCol">
+                                                        <text-number-box v-model:valueInput="formState.companyPhone"
+                                                            :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                                    </a-form-item>
+                                                    <a-form-item label="팩 스" label-align="right" :label-col="labelCol"
+                                                        :wrapper-col="wrapperCol">
+                                                        <text-number-box v-model:valueInput="formState.companyFax" />
+                                                    </a-form-item>
+                                                </a-col>
+                                            </a-row>
+                                            <img-upload :title="titleModal" @update-img="getUrlLicenseFile"
+                                                style="margin-top: 10px" />
                                         </div>
                                         <a-col :span="7">
-                                            <div v-if="imageRegCardFile" class="img-preview">
-                                                <a-image :src="imageRegCardFile" />
-                                            </div>
-                                            <div v-else class="img-preview">
-                                                <img src="../../../../../assets/images/imgdefault.jpg" />
-                                            </div>
-                                            <div v-if="regCardFileName">
-                                                <span style="padding-right: 10px">{{
-                                                        regCardFileName
-                                                }}</span>
-                                                <delete-outlined @click="removeRegCardFile"
-                                                    style="color: red; cursor: pointer" />
-                                            </div>
+                                            <preview-image :dataImage="{ url: imageLicenseFile, name: licenseFileName }"
+                                                @deleteImg="removeLicenseFile" />
                                         </a-col>
                                     </div>
                                 </div>
-                            </div>
-                        </a-collapse-panel>
-                        <a-collapse-panel key="5" header="원천서비스신청">
-                            <div>
-                                <a-checkbox v-model:checked="checked">회계서비스 신청합니다.</a-checkbox>
-                                <div style="margin-top: 20px">
-                                    <a-form-item label="서비스 시작년월" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                        <div style="width: 200px">
-                                            <month-picker-box v-model:value="formState.withholdingYearMonth"
-                                                className="0" />
+                            </a-collapse-panel>
+                            <a-collapse-panel key="3" header="대표자정보">
+                                <a-form-item has-feedback label="대표자명" class="clr" label-align="right"
+                                    :label-col="labelCol" :wrapper-col="wrapperCol">
+                                    <default-text-box v-model:valueInput="formState.presidentContentName" width="300px"
+                                        :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                </a-form-item>
+                                <a-form-item has-feedback label="생년월일" class="clr" label-align="right"
+                                    :label-col="labelCol" :wrapper-col="wrapperCol">
+                                    <!-- <birth-day-box v-model:valueInput="formState.presidentBirthday" :required="true"
+                                  width="300px" messRequired="이항목은 필수 입력사항입니다!" /> -->
+                                    <a-form :model="formState" name="nest-messages"
+                                        :validate-messages="validateMessages">
+                                        <a-form-item :name="['presidentBirthday']" :rules="[{ required: true }]"
+                                            label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
+                                            <a-date-picker v-model:value="formState.presidentBirthday"
+                                                value-format="YYYY-MM-DD" placeholder="" class="custom-width-date" />
+                                        </a-form-item>
+                                    </a-form>
+                                </a-form-item>
+                                <a-form-item has-feedback label="휴대폰번호" class="clr" label-align="right"
+                                    :label-col="labelCol" :wrapper-col="wrapperCol">
+                                    <text-number-box v-model:valueInput="formState.presidentPhone" :required="true"
+                                        width="200px" placeholder="‘-’ 없이 슷자입력" messRequired="이항목은 필수 입력사항입니다!" />
+                                </a-form-item>
+                                <a-form-item has-feedback label="이메일" class="clr" :name="['user', 'email']"
+                                    :rules="[{ type: 'email' }]" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <mail-text-box v-model:valueInput="formState.presidentEmail" width="200px"
+                                        :required="true" messRequired="이항목은 필수 입력사항입니다!" />
+                                </a-form-item>
+                            </a-collapse-panel>
+                            <a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
+                                <div style="height: 350px; overflow-y: scroll">
+                                    <a-checkbox v-model:checked="checkedSevice">회계서비스 신청합니다.</a-checkbox>
+                                    <div>
+                                        <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
+                                            :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
+                                        </a-card>
+                                        <div id="data-grid-demo">
+                                            <DxDataGrid id="gridContainer"
+                                                :data-source="formState.accountingfacilityBusinesses"
+                                                :show-borders="true" :selected-row-keys="selectedItemKeys">
+                                                <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+                                                    :allow-deleting="true" template="button-template" mode="cell">
+                                                    <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                                </DxEditing>
+                                                <template #button-template>
+                                                    <DxButton icon="plus" />
+                                                </template>
+                                                <DxPaging :enabled="false" />
+                                                <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                                                    cell-template="indexCell" />
+                                                <template #indexCell="{ data }">
+                                                    <div>{{ data.rowIndex + 1 }}</div>
+                                                </template>
+
+                                                <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                                                <DxColumn data-field="facilityBizType" caption="사업분류">
+                                                    <DxLookup :data-source="facilityBizType" value-expr="v"
+                                                        display-expr="n" />
+                                                </DxColumn>
+                                                <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
+                                                    :format="'yyyy-MM-dd'" />
+                                                <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
+
+                                                <DxToolbar>
+                                                    <DxItem name="addRowButton" />
+                                                </DxToolbar>
+                                            </DxDataGrid>
                                         </div>
-                                    </a-form-item>
-                                    <a-form-item label="직 원 수" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                        <number-box :required="true" width="100px" :min="0" :spinButtons="true"
-                                            v-model:valueInput="formState.withholdingCapacity"
-                                            messRequired="이항목은 필수 입력사항입니다!" />
-                                    </a-form-item>
-                                    <a-form-item label="부가서비스" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                        <a-checkbox v-model:checked="formState.withholdingServiceTypes[0]">
-                                            4대보험신고서비스</a-checkbox>
-                                    </a-form-item>
-                                </div>
-                            </div>
-                        </a-collapse-panel>
-                        <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
-                            <a-form-item label="출금은행" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <bank-select-box v-model:valueInput="formState.cmsBankType" width="150px" />
-                            </a-form-item>
-                            <a-form-item label="출금계좌번호" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-input v-model:value="formState.accountNumber" style="width: 250px" />
-                            </a-form-item>
-                            <a-form-item label="예금주명" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-input v-model:value="formState.ownerName" style="width: 250px" />
-                            </a-form-item>
-                            <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-input v-model:value="formState.ownerBizNumber" style="width: 250px" />
-                                <div class="noteImage">
-                                    <a-row>
-                                        <a-col :span="1">
+                                        <a-form-item label="장기요양기관등록번호" class="clr">
+                                            <!-- <a-input placeholder="1234567898" style="width: 250px" v-model:value="formState.accountinglongTermCareInstitutionNumber" /> -->
+
+                                            <default-text-box
+                                                v-model:valueInput="formState.accountinglongTermCareInstitutionNumber"
+                                                :required="true" width="250px" messRequired="이항목은 필수 입력사항입니다!" />
+                                        </a-form-item>
+                                        <div style="display: flex">
                                             <div>
-                                                <InfoCircleFilled />
+                                                <imgUpload :title="titleModal" @update-img="getregCardFile"
+                                                    style="margin-top: 10px" />
+                                                <div>
+                                                    <a-row>
+                                                        <a-col :span="12">
+                                                            <p>부가서비스</p>
+                                                        </a-col>
+                                                        <a-col :span="12">
+                                                            <a-checkbox
+                                                                v-model:checked="formState.accountingServiceTypes[0]">
+                                                                회계입력대행서비스</a-checkbox>
+                                                        </a-col>
+                                                    </a-row>
+                                                </div>
                                             </div>
-                                        </a-col>
-                                        <a-col :span="22">
-                                            <div class="noteText">
-                                                <p>예금주의 사업자등록번호 또는 주민등록번호입니다.</p>
-                                            </div>
-                                        </a-col>
-                                    </a-row>
+                                            <a-col :span="7">
+                                                <div v-if="imageRegCardFile" class="img-preview">
+                                                    <a-image :src="imageRegCardFile" />
+                                                </div>
+                                                <div v-else class="img-preview">
+                                                    <img src="../../../../../assets/images/imgdefault.jpg" />
+                                                </div>
+                                                <div v-if="regCardFileName">
+                                                    <span style="padding-right: 10px">{{
+                                                            regCardFileName
+                                                    }}</span>
+                                                    <delete-outlined @click="removeRegCardFile"
+                                                        style="color: red; cursor: pointer" />
+                                                </div>
+                                            </a-col>
+                                        </div>
+                                    </div>
                                 </div>
-                            </a-form-item>
-                            <a-form-item label="자동이체출금일자" class="clr" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-radio-group v-model:value="formState.withdrawDay">
-                                    <a-radio class="clb" :style="radioStyle" value="매월 5일">매월 5일</a-radio>
-                                    <a-radio class="clb" :style="radioStyle" value="매월 12일">매월 12일</a-radio>
-                                    <a-radio class="clb" :style="radioStyle" value="매월 19일">매월 19일</a-radio>
-                                </a-radio-group>
-                            </a-form-item>
-                        </a-collapse-panel>
-                        <a-collapse-panel key="7" header="기타">
-                            <a-form-item label="영업관리담당" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <list-sales-dropdown v-model:selected="formState.extraSalesRepresentativeId"
-                                    width="200px" />
-                            </a-form-item>
-                            <a-form-item label="전달사항" label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <text-area-box v-model:valueInput="formState.extraComment" placeholder="전달사항입력" />
-                            </a-form-item>
-                        </a-collapse-panel>
-                    </a-collapse>
-                                            
-                </div>
+                            </a-collapse-panel>
+                            <a-collapse-panel key="5" header="원천서비스신청">
+                                <div>
+                                    <a-checkbox v-model:checked="checkedSevice">회계서비스 신청합니다.</a-checkbox>
+                                    <div style="margin-top: 20px">
+                                        <a-form-item label="서비스 시작년월" class="clr" label-align="right"
+                                            :label-col="labelCol" :wrapper-col="wrapperCol">
+                                            <div style="width: 200px">
+                                                <month-picker-box v-model:value="formState.withholdingYearMonth"
+                                                    className="0" />
+                                            </div>
+                                        </a-form-item>
+                                        <a-form-item label="직 원 수" class="clr" label-align="right" :label-col="labelCol"
+                                            :wrapper-col="wrapperCol">
+                                            <number-box :required="true" width="100px" :min="0" :spinButtons="true"
+                                                v-model:valueInput="formState.withholdingCapacity"
+                                                messRequired="이항목은 필수 입력사항입니다!" />
+                                        </a-form-item>
+                                        <a-form-item label="부가서비스" label-align="right" :label-col="labelCol"
+                                            :wrapper-col="wrapperCol">
+                                            <a-checkbox v-model:checked="formState.withholdingServiceTypes[0]">
+                                                4대보험신고서비스</a-checkbox>
+                                        </a-form-item>
+                                    </div>
+                                </div>
+                            </a-collapse-panel>
+                            <a-collapse-panel key="6" header="CMS (자동이체출금) 계좌 정보 입력">
+                                <a-form-item label="출금은행" class="clr" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <bank-select-box v-model:valueInput="formState.cmsBankType" width="150px" />
+                                </a-form-item>
+                                <a-form-item label="출금계좌번호" class="clr" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <a-input v-model:value="formState.accountNumber" style="width: 250px" />
+                                </a-form-item>
+                                <a-form-item label="예금주명" class="clr" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <a-input v-model:value="formState.ownerName" style="width: 250px" />
+                                </a-form-item>
+                                <a-form-item label="사업자(주민)등록번호:" class="d-flex align-items-start clr"
+                                    label-align="right" :label-col="labelCol" :wrapper-col="wrapperCol">
+                                    <a-input v-model:value="formState.ownerBizNumber" style="width: 250px" />
+                                    <div class="noteImage">
+                                        <a-row>
+                                            <a-col :span="1">
+                                                <div>
+                                                    <InfoCircleFilled />
+                                                </div>
+                                            </a-col>
+                                            <a-col :span="22">
+                                                <div class="noteText">
+                                                    <p>예금주의 사업자등록번호 또는 주민등록번호입니다.</p>
+                                                </div>
+                                            </a-col>
+                                        </a-row>
+                                    </div>
+                                </a-form-item>
+                                <a-form-item label="자동이체출금일자" class="clr" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <a-radio-group v-model:value="formState.withdrawDay">
+                                        <a-radio class="clb" :style="radioStyle" value="매월 5일">매월 5일</a-radio>
+                                        <a-radio class="clb" :style="radioStyle" value="매월 12일">매월 12일</a-radio>
+                                        <a-radio class="clb" :style="radioStyle" value="매월 19일">매월 19일</a-radio>
+                                    </a-radio-group>
+                                </a-form-item>
+                            </a-collapse-panel>
+                            <a-collapse-panel key="7" header="기타">
+                                <a-form-item label="영업관리담당" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <list-sales-dropdown v-model:selected="formState.extraSalesRepresentativeId"
+                                        width="200px" />
+                                </a-form-item>
+                                <a-form-item label="전달사항" label-align="right" :label-col="labelCol"
+                                    :wrapper-col="wrapperCol">
+                                    <text-area-box v-model:valueInput="formState.extraComment" placeholder="전달사항입력" />
+                                </a-form-item>
+                            </a-collapse-panel>
+                        </a-collapse>
+
+                    </div>
                     <a-row style="margin-top: 20px;">
                         <a-col :span="16" :offset="8">
-                            <button-basic text="그냥 나가기" :type="'default'" mode="outlined" @onClick="setModalVisible()" :width="120" style="margin-right: 10px;" />
-                            <button-basic text="저장하고 나가기" :type="'default'" mode="'contained'" @onClick="updateSubscriptionRequest($event)" :width="150" />
+                            <button-basic text="그냥 나가기" :type="'default'" mode="outlined" @onClick="setModalVisible()"
+                                :width="120" style="margin-right: 10px;" />
+                            <button-basic text="저장하고 나가기" :type="'default'" mode="'contained'"
+                                @onClick="updateSubscriptionRequest($event)" :width="150" />
                         </a-col>
                     </a-row>
                 </form>
@@ -380,18 +412,7 @@ export default defineComponent({
     },
     data() {
         return {
-            checked: true,
-            wrapperCol: { span: 18 },
-            radioStyle: {
-                display: "flex",
-                height: "20px",
-                lineHeight: "20px",
-                checked: false,
-            },
-            selectedItemKeys: [],
-            value: ref<number>(1),
-            titleModal: "사업자등록증",
-            titleModal2: "장기요양기관등록증",
+
         };
     },
     components: {
@@ -414,7 +435,7 @@ export default defineComponent({
         BankSelectBox
     },
     setup(props, { emit }) {
-        const labelCol = { style: {width: "150px"} };
+        const labelCol = { style: { width: "150px" } };
         const wrapperCol = { span: 16 };
         const facilityBizType = FacilityBizType.all();
 
@@ -435,6 +456,15 @@ export default defineComponent({
             labelCol: { span: 8 },
             wrapperCol: { span: 16 },
         };
+        const checkedSevice = ref(true)
+        const radioStyle = ref({
+            display: "flex",
+            height: "20px",
+            lineHeight: "20px",
+            checked: false,
+        })
+        const selectedItemKeys = ref([])
+        const titleModal = ref("사업자등록증")
 
         /** Application (신청) - 10 */
         /** Under examination (심사중) - 20 */
@@ -529,6 +559,7 @@ export default defineComponent({
             extraSalesRepresentativeId: 1,
             extraComment: "",
         };
+        
         const formState = reactive({ ...initialFormState });
 
         // event close popup
@@ -985,7 +1016,14 @@ export default defineComponent({
             regCardFileName.value = "";
         };
 
+
+
+
         return {
+            checkedSevice,
+            radioStyle,
+            selectedItemKeys,
+            titleModal,
             labelCol,
             wrapperCol,
             bizTypeItems,

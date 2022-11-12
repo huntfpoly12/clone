@@ -33,11 +33,11 @@
         </div>
         <div id="bf-310">
             <div class="search-form">
-                <a-row :gutter="[8, 8]">
+                <a-row :gutter="[24, 8]">
                     <a-col>
                         <label class="lable-item">서비스종류 :</label>
-                        <checkbox-basic v-model:valueCheckbox="originData.accounting" :disabled="false" :size="'20'" label="회계" style="margin-right: 10px;"/>
-                        <checkbox-basic v-model:valueCheckbox="originData.withholding" :disabled="false" :size="'20'" label="원천"/>
+                        <checkbox-basic v-model:valueCheckbox="originData.accounting" :disabled="false" :size="'14'" label="회계" style="margin-right: 10px;"/>
+                        <checkbox-basic v-model:valueCheckbox="originData.withholding" :disabled="false" :size="'14'" label="원천"/>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
