@@ -34,22 +34,23 @@
             <div class="search-form">
                 <div id="components-grid-demo-flex">
                     <a-row justify="start" :gutter="[16, 8]">
-                        <a-col>
+                        <a-col class="custom-flex">
                             <label class="lable-item">회원종류 :</label>
-                            <a-select style="width: 10px" v-model:value="dataSearch.type" option-label-prop="children">
-                                <a-select-option value="c" label="고객사">
-                                    <a-tag :color="getColorTag('c')">고객사</a-tag>
-                                </a-select-option>
-                                <a-select-option value="m" label="매니저">
-                                    <a-tag :color="getColorTag('m')">매니저</a-tag>
-                                </a-select-option>
-                                <a-select-option value="r" label="영업자">
-                                    <a-tag :color="getColorTag('r')">영업자</a-tag>
-                                </a-select-option>
-                                <a-select-option value="p" label="파트너">
-                                    <a-tag :color="getColorTag('p')">파트너</a-tag>
-                                </a-select-option>
-                            </a-select>
+                            <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
+                                value-expr="id" item-template="item" :height="$config_styles.HeightInput"
+                                style="width:170px" field-template="field" @value-changed="changeValueType">
+                                <template #field="{ data }">
+                                    <Field :fieldData="data" />
+                                </template>
+                                <template #item="{ data }">
+                                    <div style="width: 100%; padding: 3px;">
+                                        <div
+                                            :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
+                                            {{ data.name }}
+                                        </div>
+                                    </div>
+                                </template>
+                            </DxSelectBox> 
                         </a-col>
                         <a-col class="custom-flex">
                             <label class="lable-item">소속코드:</label>
@@ -172,11 +173,13 @@ import {
     SaveOutlined,
     LoginOutlined
 } from "@ant-design/icons-vue";
+import DxSelectBox from 'devextreme-vue/select-box';
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
+import Field from './components/Field.vue';
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
@@ -199,7 +202,9 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        LoginOutlined
+        DxSelectBox,
+        LoginOutlined,
+        Field,
     },
     setup() {
         const popupData = ref([])
@@ -225,7 +230,36 @@ export default defineComponent({
         })
         var idRowEdit = ref<number>(0)
         const originData = ref()
-
+        let products = ref([
+            {
+                id: "c",
+                color: '#096dd9',
+                name: "고객사",
+                background: '#e6f7ff',
+                border: "1px solid #91d5ff",
+            },
+            {
+                id: "m",
+                color: 'white',
+                name: "매니저",
+                background: 'black',
+                border: "1px solid black",
+            },
+            {
+                id: "r",
+                color: 'white',
+                name: "영업자",
+                background: 'grey',
+                border: "1px solid grey",
+            },
+            {
+                id: "p",
+                color: 'white',
+                name: "파트너",
+                background: 'goldenrod',
+                border: "1px solid goldenrod",
+            }
+        ])
         const dataSource = ref([])
         const { refetch: refetchData, onResult } = useQuery(queries.searchUsers, originData, () => ({
             enabled: triggerSearching.value,
@@ -237,7 +271,6 @@ export default defineComponent({
                 spinning.value = false;
             }, 500);
         })
-
         const searching = () => {
             spinning.value = !spinning.value;
             let dataNew = ref()
@@ -323,13 +356,13 @@ export default defineComponent({
         }
         const getColorTag = (data: any) => {
             if (data === "c") {
-                return "blue";
+                return "#91d5ff";
             } else if (data === "m") {
                 return "black";
             } else if (data === "r") {
                 return "grey";
             } else if (data === "p") {
-                return "#cdc71c";
+                return "goldenrod";
             }
         }
         const getAbleDisable = (data: any) => {
@@ -344,7 +377,11 @@ export default defineComponent({
                 refetchData()
             }
         );
+        const changeValueType = (e: any) => {
+            dataSearch.value.type = e.value
+        }
         return {
+            changeValueType,
             onExporting,
             openAddNewModal,
             setModalEditVisible,
@@ -366,10 +403,10 @@ export default defineComponent({
             searching,
             dataSearch,
             rowChoose,
-            checkStatus
+            checkStatus,
+            products
         }
     },
-
 });
 </script>
 <style scoped lang="scss" src="./style/style.scss">

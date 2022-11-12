@@ -48,7 +48,6 @@
                                 </template>
                             </DxSelectBox>
                         </a-form-item>
-
                     </a-col>
                 </a-row>
                 <a-row :gutter="24">
@@ -333,7 +332,6 @@ export default defineComponent({
         const closeModal = () => {
             isShow.value = false;
         }
-
         let products = ref([
             {
                 id: 1,
@@ -343,7 +341,6 @@ export default defineComponent({
                 grade: "2",
                 background: 'black',
                 border: "1px solid black",
-
             },
             {
                 id: 2,
@@ -353,7 +350,6 @@ export default defineComponent({
                 grade: "3",
                 background: 'black',
                 border: "1px solid black",
-
             },
             {
                 id: 3,
@@ -363,7 +359,6 @@ export default defineComponent({
                 grade: "",
                 background: 'grey',
                 border: "1px solid grey",
-
             },
             {
                 id: 4,
@@ -373,10 +368,8 @@ export default defineComponent({
                 grade: "",
                 background: 'goldenrod',
                 border: "1px solid goldenrod",
-
             }
         ])
-
         return {
             products,
             onlyNumber,
@@ -400,7 +393,6 @@ export default defineComponent({
         };
     },
     methods: {
-
     },
 });
 </script>
@@ -410,7 +402,6 @@ export default defineComponent({
         color: red;
     }
 }
-
 ::v-deep .element.style {
     max-width: none;
     width: 200px;
@@ -421,40 +412,32 @@ export default defineComponent({
     z-index: 1504;
     transition: all 0s ease 0s;
 }
-
 ::v-deep .ant-modal-footer {
     padding-top: 0;
     border: node;
 }
-
 ::v-deep .ant-form-item-control {
     display: flex;
     flex-direction: row;
 }
-
 ::v-deep .ant-modal-content {
     height: 900px
 }
-
 ::v-deep .ant-form-item-label>label {
     width: 110px;
 }
-
 .select-search ::v-deep .ant-select-arrow .anticon>svg {
     width: 16px;
     height: 16px;
 }
-
 ::v-deep .ant-form-item-explain-error {
     width: 400px;
     margin-left: 5px;
     padding-top: 5px;
 }
-
 .dflex {
     display: flex;
 }
-
 .overlay {
     position: absolute;
     top: 0;
@@ -464,21 +447,17 @@ export default defineComponent({
     z-index: 10;
     background-color: rgba(0, 0, 0, 0.3);
 }
-
 .action-menu {
     text-align: center;
 }
-
 .title_modal {
     font-weight: 700;
     color: gray;
 }
-
 .modal_email ::v-deep .anticon svg {
     width: 50px;
     height: 50px;
 }
-
 .modal {
     width: 300px;
     padding: 30px;
@@ -487,63 +466,50 @@ export default defineComponent({
     font-size: 20px;
     text-align: center;
 }
-
 .modal_email {
     display: flex;
 }
-
 .btn_submitemail {
     margin-top: 10px;
 }
-
 .confirm-button {
     margin-left: 100px;
 }
-
 .confirm-modal p {
     white-space: normal;
     font-size: 13px;
     line-height: 16px;
 }
-
 .email-input .ant-form-item-label {
     white-space: normal;
     display: inline-block;
     text-align: center;
     line-height: 16px;
 }
-
 .detail-address {
     margin-left: 7px;
 }
-
 .result-address {
     margin-left: 110px;
 }
-
 .ant-form-item {
     margin-bottom: 10px;
 }
-
 .warring-modal {
     font-size: 13px;
     line-height: 5px;
 }
-
 .table-scroll {
     height: 300px;
     overflow-y: auto;
     padding: 5px;
 }
-
 .ant-form-item-label {
     text-align: left;
 }
-
 .ant-popover-arrow {
     display: none;
 }
-
 // ::v-deep .dx-invalid-message.dx-overlay-wrapper {
 //   width: 100% !important;
 // }
