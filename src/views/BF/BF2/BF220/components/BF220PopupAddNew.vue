@@ -11,7 +11,7 @@
                         <a-col :span="16">
                             <a-form-item label="그룹코드" class="clr">
                                 <div class="dflex">
-                                    <default-text-box label="그룹코드" class="mr5" v-model:valueInput="dataRes.id"
+                                    <default-text-box class="mr5" v-model:valueInput="dataRes.id"
                                         placeholder="영문,숫자 5~10자 (중복불가)" :max-character="10" :min-character="5" required
                                         width="250"></default-text-box>
                                     <button-basic type="default" text="중복체크" @onClick="checkId" mode="contained"
@@ -22,7 +22,7 @@
                         <a-col :span="16">
                             <a-form-item label="그룹명" class="clr">
                                 <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" width="250"
-                                    :max-character="20" required label="그룹명" />
+                                    :max-character="20" required />
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
@@ -68,10 +68,9 @@
                         </a-col>
                     </a-row>
                     <a-row class="footer">
-                        <button-basic :text="'그냥 나가기'" :type="'info'" :mode="'outlined'" @onClick="setModalVisible"
+                        <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible"
                             style="margin-right: 10px;" />
-                        <button-basic :text="'저장하고 나가기'" :type="'success'" :mode="'contained'"
-                            @onClick="createScrenRole" />
+                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="createScrenRole" />
                     </a-row>
                 </a-spin>
             </form>
