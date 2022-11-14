@@ -32,7 +32,8 @@
                                     </a-col>
                                     <a-col :span="10">
                                         <a-form-item :label="changeTypeCompany(formState.bizType)">
-                                            <id-number-text-box v-model:valueInput="formState.decryptedResidentId" :disabled="true"/>
+                                            <id-number-text-box v-model:valueInput="formState.decryptedResidentId"
+                                                :disabled="true" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="24">
