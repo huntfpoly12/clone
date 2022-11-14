@@ -146,7 +146,7 @@
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="이용자">
                     <DxDataGrid :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true"
-                        key-expr="id" :allow-column-reordering="true" :allow-column-resizing="true"
+                        key-expr="id" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" style="width: 100%;">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -239,7 +239,8 @@ import AddNewCM110Poup from "./components/AddNewCM110Poup.vue";
 import EditCM110Popup from "./components/EditCM110Popup.vue"
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import inputFormat from '../../../../components/inputBoxFormat.vue';
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
+import { useStore } from 'vuex';
 import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import ReviewStampImage from "./components/ReviewStampImage.vue";
 import ListLoginPopup from "../../../../components/ListLoginPopup.vue";
@@ -287,6 +288,12 @@ export default defineComponent({
         companyId
     },
     setup() {
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const spinning = ref<boolean>(true);
         let modalAddNewStatus = ref(false);
         let modalEditStatus = ref(false);
@@ -466,7 +473,7 @@ export default defineComponent({
             companyId: companyId,
             filter: {
                 page: 1,
-                rows: 20
+                rows: per_page
             }
         })
         const rowTable = ref(0)
@@ -518,6 +525,8 @@ export default defineComponent({
         return {
             labelCol: { style: { width: "150px" } },
             formState,
+            move_column,
+            colomn_resize,
             onSubmit,
             activeKey: ref("1"),
             fileList,

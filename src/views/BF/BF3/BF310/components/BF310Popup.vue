@@ -204,6 +204,7 @@
                                         <div id="data-grid-demo">
                                             <DxDataGrid id="gridContainer"
                                                 :data-source="formState.content.accounting.facilityBusinesses"
+                                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                                 :show-borders="true" :selected-row-keys="selectedItemKeys">
                                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                                     :allow-deleting="true" template="button-template" mode="cell">
@@ -353,7 +354,8 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch } from "vue";
+import { ref, defineComponent, reactive, watch, computed } from "vue";
+import { useStore } from 'vuex';
 import {
     DxDataGrid,
     DxColumn,
@@ -410,6 +412,11 @@ export default defineComponent({
         BankSelectBox
     },
     setup(props, { emit }) {
+        // config grid
+        const store = useStore();
+        
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const labelCol = { style: { width: "150px" } };
         const wrapperCol = { span: 16 };
         const facilityBizType = FacilityBizType.all();
@@ -706,6 +713,8 @@ export default defineComponent({
         return {
             titleModal,
             selectedItemKeys,
+            move_column,
+            colomn_resize,
             radioStyle,
             checkedService,
             labelCol,

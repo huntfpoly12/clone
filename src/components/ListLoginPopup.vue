@@ -4,7 +4,7 @@
             width="50%">
             <a-spin tip="Loading..." :spinning="loadingCM110">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="index"
-                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxColumn data-field="createdAt" caption="기록일시" cell-template="creactedAt" data-type="text"/>
                     <template #creactedAt="{ data }"> 
                         {{ formarDate(data.value) }}
@@ -30,7 +30,8 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch } from 'vue'
+import { ref, defineComponent, watch, computed } from 'vue'
+import { useStore } from "vuex";
 import {
     DxDataGrid,
     DxColumn,
@@ -58,6 +59,13 @@ export default defineComponent({
         const dataTableShow = ref([]);
         const dataQuery = ref()
 
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
         watch(() => props.modalStatus, (newValue, old) => {
             if (props.data && props.data.companyId && props.data.userId) {
                 dataQuery.value = {
@@ -65,7 +73,7 @@ export default defineComponent({
                     userId: props.data.userId,
                     filter: {
                         page: 1,
-                        rows: 100
+                        rows: per_page
                     }
                 }
                 refetchCM110();
@@ -105,6 +113,8 @@ export default defineComponent({
         return {
             dataTableShow,
             loadingCM110,
+            move_column,
+            colomn_resize,
             formarDate
         }
     },
