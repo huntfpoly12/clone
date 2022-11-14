@@ -36,26 +36,38 @@
                 <a-row :gutter="[24, 8]">
                     <a-col>
                         <label class="lable-item">서비스종류 :</label>
-                        <checkbox-basic v-model:valueCheckbox="originData.accounting" :disabled="false" :size="'14'" label="회계" style="margin-right: 10px;"/>
-                        <checkbox-basic v-model:valueCheckbox="originData.withholding" :disabled="false" :size="'14'" label="원천"/>
+                        <checkbox-basic v-model:valueCheckbox="originData.accounting" :disabled="false" :size="'14'"
+                            label="회계" style="margin-right: 10px;" />
+                        <checkbox-basic v-model:valueCheckbox="originData.withholding" :disabled="false" :size="'14'"
+                            label="원천" />
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">심사상태/결과 :</label>
-                            <subs-req-status-select-box
-                            v-model:valueInput="statuses"
-                            width="120px"
-                            placeholder="전체"
-                            :selectAll="true"
-                            />
+                            <subs-req-status-select-box v-model:valueInput="statuses" placeholder="전체" />
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">영업자 :</label>
-                            <list-sales-dropdown  v-model:selected="originData.salesRepresentativeId" />
+                            <list-sales-dropdown v-model:selected="originData.salesRepresentativeId" />
                         </div>
                     </a-col>
+
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">상호 :</label>
+                            <default-text-box width="150px" v-model:valueInput="originData.companyName" />
+                        </div>
+                    </a-col>
+
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">대표자 :</label>
+                            <default-text-box width="150px" v-model:valueInput="originData.presidentName" />
+                        </div>
+                    </a-col>
+
                     <a-col>
                         <label class="lable-item">신청기간 :</label>
                         <a-range-picker v-model:value="rangeDate" width="50%" :placeholder="['Start', 'End']" />
@@ -64,7 +76,7 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">                    
+                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
                     <DxPaging :page-size="rowTable" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -136,7 +148,7 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { ref, defineComponent ,reactive,watch } from 'vue';
+import { ref, defineComponent, reactive, watch } from 'vue';
 import { useQuery } from "@vue/apollo-composable";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
@@ -189,7 +201,7 @@ export default defineComponent({
         SaveOutlined
     },
     setup() {
-        const rangeDate =  ref([dayjs().subtract(1, 'year'), dayjs()]);
+        const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
         const dataSource = ref([]);
         const modalStatus = ref(false);
         const idSubRequest = ref();
@@ -204,19 +216,21 @@ export default defineComponent({
             finishDate: '',
             accounting: true,
             withholding: true,
+            companyName: "",
+            presidentName: "",
             statuses: [10, 20, 30, 99]
         })
-     
+
         const setModalVisible = (data: any,) => {
             idSubRequest.value = data.data.id;
             modalStatus.value = true;
         }
         const pageSize = ref(20)
 
-        const { refetch: refetchData, loading, error, result } = useQuery(queries.searchSubscriptionRequests,{filter : originData} , () => ({
-                enabled: trigger.value,
-                fetchPolicy: "no-cache",
-            }));
+        const { refetch: refetchData, loading, error, result } = useQuery(queries.searchSubscriptionRequests, { filter: originData }, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }));
 
         watch(result, (value) => {
             if (value) {
@@ -224,9 +238,9 @@ export default defineComponent({
                 dataSource.value = value.searchSubscriptionRequests.datas
                 trigger.value = false;
             }
-            });
+        });
 
-        const onExporting = (e: { component: any; cancel: boolean; })=>{
+        const onExporting = (e: { component: any; cancel: boolean; }) => {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
             exportDataGrid({
@@ -244,7 +258,7 @@ export default defineComponent({
             e.cancel = true;
         }
 
-        const getColorTag  = (data: any)=>{
+        const getColorTag = (data: any) => {
             if (data == 10) {
                 return { "name": "red", "tag_name": "신청" };
             } else if (data == 20) {
@@ -255,20 +269,20 @@ export default defineComponent({
                 return { "name": "grey", "tag_name": "반려" };
             }
         }
-        const formarDate  = (date: any)=>{
+        const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         }
-        const searching  = ()=>{
+        const searching = () => {
             originData.startDate = formarDate(rangeDate.value[0]);
             originData.finishDate = formarDate(rangeDate.value[1]);
-            originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : [statuses.value]
+            originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             refetchData()
         }
-        const changePage  =  ()=> {
+        const changePage = () => {
             searching()
         }
-    
+
         return {
             loading,
             rangeDate,
@@ -287,8 +301,9 @@ export default defineComponent({
             changePage
         }
     },
-   
+
 });
 </script>
 <style lang="scss" scoped  src="./style/style.scss">
+
 </style>

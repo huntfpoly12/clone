@@ -19,7 +19,9 @@ export const initialFormState = {
     processedAt: "",
     approvedAt: "",
     rejectedAt: "",
-
+    processedBy: "", 
+    rejectedBy: "",
+    approvedBy:"",
     content: {
         agreements: {
             terms: true,
