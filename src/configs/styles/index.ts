@@ -61,3 +61,18 @@ export const styles: Styles = {
     BorderButtonDanger: "1px solid #d9534f",
 }
 
+interface GridConfig {
+    per_page: Number,
+    sort : boolean,
+    move_column : boolean,
+    colomn_resize : boolean,
+    row_resize : boolean,
+}
+
+export const grid_config : GridConfig = {
+    per_page: 30,
+    sort : true,
+    move_column : false,
+    colomn_resize : true,
+    row_resize : true,
+}
