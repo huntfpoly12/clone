@@ -63,7 +63,7 @@ export class Message extends BaseType {
     //사원등록
     public static PA120 = new Message({
         '001': { "message" : "선택된 사원의 해당 원천년도에 급여등록 / 중간정산 / 퇴직소득 내역들이 있기에 삭제 불가합니다. 해당 내역들을 먼저 삭제하신 후 사원을 삭제하시기 바랍니다.", "icon": "iconError"}, // Cannot delete.
-        '002': { "message" : "선택된 사원의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니", "icon": "iconWarning"}, //Do you really want to delele this data?
+        '002': { "message" : "선택된 사원의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?", "icon": "iconWarning"}, //Do you really want to delele this data?
         '003': { "message" : "삭제되었습니다.", "icon": "iconInfo"}, // Deleted!
     });
    
