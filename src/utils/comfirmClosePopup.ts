@@ -7,17 +7,20 @@ import { Message } from "../configs/enum";
 export default (callback: Function) => {
     let status = false
     const message = Message.getCommonMessage('301').message;
-   Modal.confirm({
+    Modal.confirm({
         title: message,
         icon: createVNode(ExclamationCircleOutlined),
         onOk() {
             callback();
         },
         onCancel() { status = false },
-        style:{
-            background:'red'
-        }
+        cancelText: "취소",
+        okText: "네",
+        style: `.ant-modal-confirm-body svg {
+            font-size: 50px;
+          }`
+
     });
 
-   return status;
+    return status;
 }

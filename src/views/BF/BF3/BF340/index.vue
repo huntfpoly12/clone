@@ -271,6 +271,7 @@ export default defineComponent({
     SaveOutlined,
   },
   setup() {
+    // config grid
     const store = useStore();
     
     const per_page = computed(() => store.state.settings.per_page);

@@ -69,7 +69,7 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-resizing="true">
+                    @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="code" caption="사업자코드" />
@@ -115,7 +115,8 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, computed } from "vue";
+import { useStore } from 'vuex';
 import {
     DxDataGrid,
     DxColumn,
@@ -165,6 +166,12 @@ export default defineComponent({
         };
     },
     setup() {
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const idRowEdit = ref(0)
         const idSubRequest = ref();
         let trigger = ref(true);
@@ -174,7 +181,7 @@ export default defineComponent({
         const originData = ref({
             filter: {
                 page: 1,
-                rows: 20,
+                rows: per_page,
                 code: "",
                 name: "",
                 presidentName: "",
@@ -212,6 +219,8 @@ export default defineComponent({
         return {
             closePopup,
             modalStatus,
+            move_column,
+            colomn_resize,
             idRowEdit,
             listServiceContract,
             loading,

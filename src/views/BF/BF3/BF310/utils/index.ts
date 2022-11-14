@@ -13,9 +13,6 @@ export const initialFormState = {
         name: "",
         startYearMonth: "",
     },
-    // simpleAccountingInfos: [],
-    // simpleWithholdingInfoName: "",
-    // simpleWithholdingInfoYearMonth: "",
     processedAt: "",
     approvedAt: "",
     rejectedAt: "",
@@ -84,57 +81,7 @@ export const initialFormState = {
         name: "",
         active: "",
     },
-    // agreementsTerms: true,
-    // agreementsPersonalInfo: true,
-    // agreementsAccountingService: true,
-    // agreementsWithholdingService: true,
-
-    // companyZipcode: "",
-    // companyRoadAddress: "",
-    // companyJibunAddress: "",
-
-    // companyAddressExtend: "",
-    // companyAddressDetailBcode: "",
-    // companyAddressDetailBname: "",
-    // companyAddressDetailBuildingCode: "",
-    // companyAddressDetailBuildingName: "",
-    // companyAddressDetailRoadname: "",
-    // companyAddressDetailRoadnameCode: "",
-    // companyAddressDetailSido: "",
-    // companyAddressDetailSigungu: "",
-    // companyAddressDetailSigunguCode: "",
-    // companyAddressDetailZonecode: "",
-
-    // companyPhone: "",
-    // companyFax: "",
-    // companyLicenseFileStorageId: "",
-    // companyBizType: 0,
-    // companyResidentId: "",
-    // companyLicense: "",
-
-    // presidentContentName: "",
-    // presidentBirthday: "",
-    // presidentPhone: "",
-    // presidentEmail: "",
-    // accountingfacilityBusinesses: [],
-    // accountinglongTermCareInstitutionNumber: "",
     institutionNumber: "",
-    // accountingServiceTypes: [],
-
-    // withholdingYearMonth: "",
-    // withholdingCapacity: 1234,
-    // withholdingServiceTypes: [],
-
-    // cmsBankType: "",
-    // accountNumber: "",
-    // ownerName: "",
-    // ownerBizNumber: "",
-    // withdrawDay: "",
-
-    // compactSalesRepresentativeID: "",
-    // compactSalesRepresentativeCode: "",
-    // compactSalesRepresentativeName: "",
-    // compactSalesRepresentativeActive: "",
 
     memo: "",
     createdAt: "",
@@ -142,9 +89,6 @@ export const initialFormState = {
     updatedBy: "",
     ip: "",
     active: "",
-
-    // extraSalesRepresentativeId: 1,
-    // extraComment: "",
 };
 
 /** Application (신청) - 10 */

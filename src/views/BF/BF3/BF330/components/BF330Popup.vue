@@ -50,8 +50,8 @@
                                     </div>
                                     <DxDataGrid id="grid-container" :show-borders="true"
                                         :data-source="formState.accountingfacilityBusinesses"
-                                        key-expr="facilityBusinessId" :allow-column-reordering="true"
-                                        :allow-column-resizing="true" :column-auto-width="true">
+                                        key-expr="facilityBusinessId" :allow-column-reordering="move_column"
+                                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
                                         <DxEditing :allow-updating="true" :allow-adding="true" :allow-deleting="true"
                                             mode="cell" />
                                         <DxSelection mode="single" />
@@ -258,6 +258,7 @@ import {
 } from "@bankda/jangbuda-common";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
+import { useStore } from 'vuex';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
@@ -320,6 +321,12 @@ export default defineComponent({
     watch: {
     },
     setup(props, { emit }) {
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const facilityBizType = FacilityBizType.all();
         const titleModal = "사업자등록증";
         const labelCol = ref({ style: { width: "150px" } });
@@ -907,6 +914,8 @@ export default defineComponent({
         );
         return {
             handleInputTexService,
+            move_column,
+            colomn_resize,
             changeValueLongterm,
             checkValueLongTerm,
             getImgUrl,

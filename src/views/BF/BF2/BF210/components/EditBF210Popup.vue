@@ -107,7 +107,7 @@
                 <div style="position: relative">
                     <div class="overlay" v-if="formState.type == 'c'"></div>
                     <DxDataGrid :data-source="arrData" :show-bordes="true" :selected-row-keys="checkedNames"
-                        :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true"
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         class="table-scroll" key-expr="id" @selection-changed="onSelectionChanged">
                         <DxSelection mode="multiple" />
                         <DxColumn data-field="id" caption="코드" :width="200" />
@@ -127,7 +127,8 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch } from "vue";
+import { ref, defineComponent, watch, computed } from "vue";
+import { useStore } from 'vuex';
 import { DxSelectBox } from "devextreme-vue/select-box";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
@@ -159,6 +160,12 @@ export default defineComponent({
         Field,
     },
     setup(props, { emit }) {
+            // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const toggleActive = ref(false)
         const visible = ref<boolean>(false);
         const statusMailValidate = ref<boolean>(true);
@@ -166,7 +173,7 @@ export default defineComponent({
         const triggerSearchRoleGroup = ref<boolean>(false);
         const originData = ref({
             page: 1,
-            rows: 20,
+            rows: per_page,
             types: ["m"],
         });
         const arrData = ref()
@@ -428,6 +435,8 @@ export default defineComponent({
         return {
             typeSelect,
             changeValueType,
+            move_column,
+            colomn_resize,
             products,
             toggleActive,
             onSelectionChanged,
