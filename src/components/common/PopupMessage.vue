@@ -63,6 +63,7 @@ export default defineComponent({
                             onOk() {
                                 emit("closePopup", false)
                             },
+
                         });
                     else if (props.typeModal == "warning")
                         Modal.warning({
@@ -72,6 +73,7 @@ export default defineComponent({
                             onOk() {
                                 emit("closePopup", false)
                             },
+
                         });
                     else if (props.typeModal == "success")
                         Modal.success({
@@ -81,6 +83,7 @@ export default defineComponent({
                             onOk() {
                                 emit("closePopup", false)
                             },
+
                         });
                     else if (props.typeModal == "info")
                         Modal.info({
@@ -100,6 +103,7 @@ export default defineComponent({
                             onOk() {
                                 emit("closePopup", false)
                             },
+
                         });
                     else if (props.typeModal == "acceptInput") {
                         visibleConfirm.value = true
@@ -131,3 +135,9 @@ export default defineComponent({
     },
 })
 </script>
+
+<style lang="scss">
+.ant-modal-confirm-body svg {
+    font-size: 50px;
+}
+</style>
