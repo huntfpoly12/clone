@@ -66,8 +66,8 @@
                 <div class="page-content">
                     <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
                     <div style="position: relative">
-                        <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="true"
-                            :allow-column-resizing="true" :column-auto-width="true" class="table-scroll"
+                        <DxDataGrid :data-source="arrData" :show-borders="true"
+                        :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
                             @selection-changed="onSelectionChanged">
                             <DxPaging :page-size="0" />
                             <DxSelection data-field="active" mode="multiple" />
@@ -91,7 +91,8 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch } from "vue";
+import { ref, defineComponent, reactive, watch, computed } from "vue";
+import { useStore } from 'vuex';
 import { message } from 'ant-design-vue';
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
 import { initialFormState } from '../utils';
@@ -151,6 +152,13 @@ export default defineComponent({
         };
         let disabledBtn = ref(true);
         let confirm = ref<string>("");
+
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const changeValueType = (data: any) => {
             triggerGroup.value = true;
             trigger.value = true
@@ -180,7 +188,7 @@ export default defineComponent({
         });
         const originData = ref({
             page: 1,
-            rows: 20,
+            rows: per_page,
             types: ["r"],
         });
         let trigger = ref<boolean>(false);
@@ -372,6 +380,8 @@ export default defineComponent({
         ])
         return {
             products,
+            move_column,
+            colomn_resize,
             onlyNumber,
             setModalVisible,
             getColorTag,

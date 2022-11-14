@@ -3,6 +3,7 @@
     v-model="date"
     autoApply
     monthPicker
+    locale="ko"
     :format-locale="ko"
     :style="{height: $config_styles.HeightInput, width: width }"
     :format="format"

@@ -48,7 +48,7 @@
                         </a-col>
                         <a-col :span="24">
                             <DxDataGrid :data-source="dataSource" :selected-row-keys="keyChecked" :show-borders="true"
-                                key-expr="enumKey" class="table-sevice">
+                                key-expr="enumKey" class="table-sevice" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{ data }">
@@ -76,7 +76,8 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch } from 'vue'
+import { ref, defineComponent, watch, computed } from 'vue'
+import { useStore } from 'vuex';
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import {
     DxDataGrid,
@@ -104,6 +105,11 @@ export default defineComponent({
         DxButton
     },
     setup(props, { emit }) {
+        // config grid
+        const store = useStore();
+        
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const dataSource = ref(AdminScreenRole.all())
         const spinning = ref<boolean>(false);
         const layout = {
@@ -240,6 +246,8 @@ export default defineComponent({
         }
         return {
             changeValRoles,
+            move_column,
+            colomn_resize,
             updateScreenRole,
             spinning,
             dataSource,

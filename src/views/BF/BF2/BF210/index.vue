@@ -82,7 +82,7 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxPaging :page-size="20" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -146,7 +146,8 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, computed } from "vue";
+import { useStore } from "vuex";
 import {
     DxDataGrid,
     DxColumn,
@@ -219,9 +220,16 @@ export default defineComponent({
             checkBox2: false
         })
         const rowChoose = ref()
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
         const dataSearch = ref({
             page: 1,
-            rows: 10,
+            rows: per_page,
             type: "m",
             groupCode: "",
             groupName: "",
@@ -277,7 +285,7 @@ export default defineComponent({
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
                 dataNew.value = {
                     page: 1,
-                    rows: 10,
+                    rows: per_page,
                     type: dataSearch.value.type,
                     groupCode: dataSearch.value.groupCode,
                     groupName: dataSearch.value.groupName,
@@ -288,7 +296,7 @@ export default defineComponent({
             } else if (checkStatus.value.checkBox2 == true && checkStatus.value.checkBox1 == false) {
                 dataNew.value = {
                     page: 1,
-                    rows: 10,
+                    rows: per_page,
                     type: dataSearch.value.type,
                     groupCode: dataSearch.value.groupCode,
                     groupName: dataSearch.value.groupName,
@@ -299,7 +307,7 @@ export default defineComponent({
             } else {
                 dataNew.value = {
                     page: 1,
-                    rows: 10,
+                    rows: per_page,
                     type: dataSearch.value.type,
                     groupCode: dataSearch.value.groupCode,
                     groupName: dataSearch.value.groupName,
@@ -383,6 +391,8 @@ export default defineComponent({
         return {
             changeValueType,
             onExporting,
+            move_column,
+            colomn_resize,
             openAddNewModal,
             setModalEditVisible,
             getAbleDisable,

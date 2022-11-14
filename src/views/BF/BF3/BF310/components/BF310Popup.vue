@@ -54,8 +54,8 @@
                                     </a-col>
 
                                     <a-form-item label="상 호" label-align="left" :label-col="labelCol">
-                                        <default-text-box v-model:valueInput="formState.name" width="410px"
-                                            :disabled="true" />
+                                        <!-- <default-text-box v-model:valueInput="formState.name" width="410px"
+                                            :disabled="true" /> -->
                                     </a-form-item>
 
                                     <a-col :span="24" style="display: flex;">
@@ -209,6 +209,7 @@
                                         <div id="data-grid-demo">
                                             <DxDataGrid id="gridContainer"
                                                 :data-source="formState.content.accounting.facilityBusinesses"
+                                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                                 :show-borders="true" :selected-row-keys="selectedItemKeys">
                                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                                     :allow-deleting="true" template="button-template" mode="cell">
@@ -358,7 +359,8 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch } from "vue";
+import { ref, defineComponent, reactive, watch, computed } from "vue";
+import { useStore } from 'vuex';
 import {
     DxDataGrid,
     DxColumn,
@@ -415,6 +417,11 @@ export default defineComponent({
         BankSelectBox
     },
     setup(props, { emit }) {
+        // config grid
+        const store = useStore();
+        
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const labelCol = { style: { width: "150px" } };
         const facilityBizType = FacilityBizType.all();
         const imageRegCardFile = ref("");
@@ -656,7 +663,7 @@ export default defineComponent({
         };
         return {
             titleModal,
-            selectedItemKeys,
+            selectedItemKeys, 
             checkedService,
             labelCol,
             bizTypeItems,
