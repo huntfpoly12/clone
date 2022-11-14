@@ -1,5 +1,5 @@
 <template>
-  <Datepicker v-model="date" :class="classNameProps" textInput language="ko" autoApply :format="format"
+  <Datepicker v-model="date" :class="classNameProps" textInput locale="ko" autoApply :format="format"
     @focus="focusDatetime" v-on:blur="alertDate" @keyup="getdata" @update:modelValue="closeDateTime" :format-locale="ko"
     :style="{ height: $config_styles.HeightInput, width: width }">
   </Datepicker>
@@ -7,7 +7,6 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import DxDateBox from "devextreme-vue/date-box";
-
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { ko } from "date-fns/locale";
