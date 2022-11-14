@@ -60,7 +60,7 @@ export default defineComponent({
           label: value[0],
         })
       );
-      slGrade.push({ value: 0, label: "전체" });
+      slGrade.unshift({ value: null, label: "전체" });
       return slGrade;
     });
     const app: any = getCurrentInstance();

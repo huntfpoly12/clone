@@ -64,7 +64,7 @@ export default defineComponent({
         label: value[0],
       }));
       if(props.selectAll){
-        slGrade.push({ value: 0 , label: '전체'});
+        slGrade.unshift({ value: 0 , label: '전체'});
       }
       return slGrade;
     }) ;
