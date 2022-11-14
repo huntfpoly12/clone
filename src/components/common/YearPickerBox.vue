@@ -5,6 +5,7 @@
     :class="classNameProps"
     textInput
     autoApply
+    locale="ko"
     @focus="focusDatetime"
     v-on:blur="alertDate"
     @keyup="getdata"
