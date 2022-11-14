@@ -49,6 +49,7 @@
                     <b>v-model:valueCheckbox</b> : Value input : true / false <br>
                     <b>disabled</b> : true / false <br>
                     <b>size</b> : Number size box <br>
+                    <b>label</b> : Label checkbox <br>
                 </td>
 
                 <td>
