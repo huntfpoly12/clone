@@ -139,6 +139,7 @@
 import { ref, defineComponent, watch ,reactive,onMounted } from 'vue'
 import { useMutation } from "@vue/apollo-composable";
 import notification from '../../../../../utils/notification';
+import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 import { initialFormState } from '../utils';
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
 import SwitchBasic from '../../../../../components/common/SwitchBasic.vue';
@@ -184,6 +185,8 @@ export default defineComponent({
         });
 
         const setModalVisible = ()=>{
+            // console.log(comfirmClosePopup())
+            
             emit('closePopup', false)
         }
   
