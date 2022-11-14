@@ -84,7 +84,7 @@
 
             <div class="page-content">
                 <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-reordering="true" :allow-column-resizing="true"
+                    @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -129,7 +129,8 @@
 </template> 
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, computed } from 'vue';
+import { useStore } from 'vuex';
 import {
     DxDataGrid,
     DxColumn,
@@ -193,6 +194,12 @@ export default defineComponent({
     },
 
     setup() {
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(10)
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
@@ -204,7 +211,7 @@ export default defineComponent({
 
         const originData = ref({
             page: 1,
-            rows: 20,
+            rows: per_page,
             code: "",
             name: "",
             presidentName: "",
@@ -268,6 +275,8 @@ export default defineComponent({
 
         return {
             trigger,
+            move_column,
+            colomn_resize,
             idRowEdit,
             spinning,
             loading,

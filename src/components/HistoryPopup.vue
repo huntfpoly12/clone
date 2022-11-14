@@ -5,7 +5,7 @@
             <a-spin tip="로딩 중..."
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220">
                 <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts"
-                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxColumn caption="기록일시" data-field="loggedAt" data-type="text" />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
@@ -39,7 +39,8 @@
 
 <script lang="ts">
 import { companyId } from "../../src/helpers/commonFunction";
-import { ref, defineComponent, watch } from 'vue';
+import { ref, defineComponent, watch, computed } from 'vue';
+import { useStore } from "vuex";
 import queries from "../../src/graphql/queries/common/index";
 import {
     DxDataGrid,
@@ -74,6 +75,13 @@ export default defineComponent({
         let trigger110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
         const dataTableShow = ref([]);
+
+        // config grid
+        const store = useStore();
+        
+        // const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
         watch(
             () => props.modalStatus,
@@ -256,6 +264,8 @@ export default defineComponent({
         return {
             setModalVisible,
             dataTableShow,
+            move_column,
+            colomn_resize,
             visible,
             loadingBf320,
             loadingBf330,
