@@ -64,7 +64,7 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">                    
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">                    
                     <DxPaging :page-size="rowTable" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -136,7 +136,8 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { ref, defineComponent ,reactive,watch } from 'vue';
+import { ref, defineComponent ,reactive,watch, computed } from 'vue';
+import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
@@ -189,6 +190,12 @@ export default defineComponent({
         SaveOutlined
     },
     setup() {
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rangeDate =  ref([dayjs().subtract(1, 'year'), dayjs()]);
         const dataSource = ref([]);
         const modalStatus = ref(false);
@@ -198,7 +205,7 @@ export default defineComponent({
         const rowTable = ref(10)
         const originData = reactive({
             page: 1,
-            rows: 20,
+            rows: per_page,
             salesRepresentativeId: 0,
             startDate: '',
             finishDate: '',
@@ -271,6 +278,8 @@ export default defineComponent({
     
         return {
             loading,
+            move_column,
+            colomn_resize,
             rangeDate,
             idSubRequest,
             dataSource,
