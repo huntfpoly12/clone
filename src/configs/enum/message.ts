@@ -67,6 +67,11 @@ export class Message extends BaseType {
         '003': { "message" : "삭제되었습니다.", "icon": "iconInfo"}, // Deleted!
     });
    
+      //기초정보설정
+    public static CM110 = new Message({
+        '001': { "message" : "비밀번호 설정 이메일",}, // subject modal : Send email to my company user
+        '002': { "message" : "비밀번호 설정 링크가 이메일로 발송됩니다. 계속 진행하시겠습니까?", "icon": "iconWarning"}, //Contents modal : Send email to my company user
+    });
 
     private static _ = Message.closeEnum();
 
