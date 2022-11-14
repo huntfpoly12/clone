@@ -14,8 +14,8 @@ export default (callback: Function) => {
             callback();
         },
         onCancel() { status = false },
-        cancelText: "Tắt",
-        okText: "ok",
+        cancelText: "취소",
+        okText: "네",
         style: `.ant-modal-confirm-body svg {
             font-size: 50px;
           }`
