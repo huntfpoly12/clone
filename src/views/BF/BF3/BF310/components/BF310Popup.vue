@@ -380,7 +380,7 @@ import {
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
-import { bizTypeItems } from "../utils";
+import { bizTypeItems, inputInCollapse } from "../utils";
 import { initialFormState, initialDataStatus } from "../utils/index"
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
@@ -575,12 +575,15 @@ export default defineComponent({
         });
         const updateSubscriptionRequest = (e: any) => {
             var res = e.validationGroup.validate();
-            console.log(res.brokenRules[0]);
-            console.log(res.brokenRules[0].validator);
-            console.log(res.brokenRules[0].validator._validationInfo.result.name);
-            
             if (!res.isValid) {
+                // open collapse 
                 res.brokenRules[0].validator.focus();
+                inputInCollapse.map((value: any)=>{
+                    if(value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1){
+                        activeKey.value = value.key;
+                    }
+                })
+                
             } else {
                 let customAccountingfacilityBusinesses: any = [];
                 if (formState.value.content.accounting.facilityBusinesses) {
