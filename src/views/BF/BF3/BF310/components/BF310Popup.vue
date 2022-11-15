@@ -236,8 +236,10 @@
                                                     <DxItem name="addRowButton" />
                                                 </DxToolbar>
 
-                                                <DxMasterDetail data-field="registrationCard" :enabled="true" template="registrationCard" />
+                                                <DxMasterDetail  :enabled="true" template="registrationCard" />
                                                 <template #registrationCard="{ data }">
+
+                                                    {{data.data}}
                                                     <a-form-item label="장기요양기관등록번호" class="clr">
                                                         <default-text-box
                                                             v-model:valueInput="formState.institutionNumber"
@@ -251,20 +253,8 @@
 
                                                         </div>
                                                         <a-col :span="7">
-                                                            <div v-if="imageRegCardFile" class="img-preview">
-                                                                <a-image :src="imageRegCardFile" />
-                                                            </div>
-                                                            <div v-else class="img-preview">
-                                                                <img
-                                                                    src="../../../../../assets/images/imgdefault.jpg" />
-                                                            </div>
-                                                            <div v-if="regCardFileName">
-                                                                <span style="padding-right: 10px">{{
-                                                                        regCardFileName
-                                                                }}</span>
-                                                                <delete-outlined @click="removeRegCardFile"
-                                                                    style="color: red; cursor: pointer" />
-                                                            </div>
+                                                            <preview-image :activePreview="true" :dataImage="{url:data.data.registrationCard.url , name: data.data.registrationCard.name}" @deleteImg="removeRegCardFile"/>
+                                                    
                                                         </a-col>
                                                     </div>
                                                 </template>
@@ -399,7 +389,6 @@ import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import BankSelectBox from "../../../../../components/BankSelectBox.vue";
-import console, { log } from "console";
 export default defineComponent({
     props: {
         modalStatus: {
