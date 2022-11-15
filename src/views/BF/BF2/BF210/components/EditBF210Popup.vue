@@ -107,8 +107,9 @@
                 <div style="position: relative">
                     <div class="overlay" v-if="formState.type == 'c'"></div>
                     <DxDataGrid :data-source="arrData" :show-bordes="true" :selected-row-keys="checkedNames"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        class="table-scroll" key-expr="id" @selection-changed="onSelectionChanged">
+                        :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                        :column-auto-width="true" class="table-scroll" key-expr="id"
+                        @selection-changed="onSelectionChanged">
                         <DxSelection mode="multiple" />
                         <DxColumn data-field="id" caption="코드" :width="200" />
                         <DxColumn data-field="name" caption="권한그룹명" />
@@ -133,7 +134,7 @@ import { DxSelectBox } from "devextreme-vue/select-box";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
-import { message } from 'ant-design-vue';
+import notification from '../../../../../utils/notification';
 import Field from '../components/Field.vue';
 import {
     DxDataGrid,
@@ -160,9 +161,9 @@ export default defineComponent({
         Field,
     },
     setup(props, { emit }) {
-            // config grid
+        // config grid
         const store = useStore();
-        
+
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -273,11 +274,11 @@ export default defineComponent({
             onError: onErrorUpdate
         } = useMutation(mutations.updateUser);
         onDoneUpdate((e) => {
-            message.success(`업데이트 완료!`);
+            notification('success', `업데이트 완료!`)
             emit("closePopup", false)
         })
         onErrorUpdate(e => {
-            message.error(e.message);
+            notification('error', e.message)
         })
         const confirmUpdate = () => {
             if (statusMailValidate.value == true) {
@@ -293,7 +294,7 @@ export default defineComponent({
                 }
                 updateUser(dataUpdate);
             } else {
-                message.error(`이메일형식이 정확하지 않습니다.`)
+                notification('error', `이메일형식이 정확하지 않습니다.`)
                 var Url = document.getElementById("email") as HTMLInputElement;
                 Url.select()
             }
@@ -304,10 +305,10 @@ export default defineComponent({
             onError: errorSendGmail
         } = useMutation(mutations.sendEmailToResetUserPassword);
         errorSendGmail(e => {
-            message.error(e.message)
+            notification('error', e.message)
         })
         doneSendGmail((e) => {
-            message.success(`비밀번호 재설정을 위한 이메일을 확인해주세요!`);
+            notification('success', `비밀번호 재설정을 위한 이메일을 확인해주세요!`)
             visible.value = false
         })
         const sendMessToGmail = () => {
@@ -466,22 +467,27 @@ export default defineComponent({
     display: flex;
     flex-direction: row;
 }
+
 ::v-deep .red {
     label {
         color: red;
     }
 }
+
 ::v-deep .ant-form-item-explain-error {
     width: 400px;
     margin-left: 5px;
     padding-top: 5px;
 }
+
 ::v-deep .ant-form-item-label>label {
     width: 110px;
 }
+
 .dflex {
     display: flex;
 }
+
 .overlay {
     position: absolute;
     top: 0;
@@ -491,25 +497,31 @@ export default defineComponent({
     z-index: 10;
     background-color: rgba(0, 0, 0, 0.3);
 }
+
 .container_email .ant-modal-body {
     padding: 0 24px;
     padding-top: 16px;
 }
+
 .action-menu {
     text-align: center;
 }
+
 .title_modal {
     font-weight: 700;
     color: gray;
 }
+
 .modal_email ::v-deep .anticon svg {
     width: 50px;
     height: 50px;
 }
+
 .select-search ::v-deep .ant-select-arrow .anticon>svg {
     width: 16px;
     height: 16px;
 }
+
 .modal {
     width: 300px;
     padding: 30px;
@@ -518,54 +530,67 @@ export default defineComponent({
     font-size: 20px;
     text-align: center;
 }
+
 .modal_email {
     display: flex;
     align-items: center;
 }
+
 .btn_sendemail {
     margin-top: 10px;
     padding: 7px;
     color: red;
     border: 1px solid red
 }
+
 .confirm-button {
     margin-left: 100px;
 }
+
 .confirm-modal p {
     white-space: normal;
     font-size: 13px;
     line-height: 16px;
 }
+
 .email-input .ant-form-item-label {
     white-space: normal;
     display: inline-block;
     text-align: center;
     line-height: 16px;
 }
+
 .detail-address {
     margin-left: 7px;
 }
+
 .result-address {
     margin-left: 110px;
 }
+
 .ant-form-item {
     margin-bottom: 3px;
 }
+
 .warring-modal {
     font-size: 13px;
     line-height: 5px;
 }
+
 .ant-form-item-label {
     text-align: left;
 }
+
 .ant-popover-arrow {
     display: none;
 }
+
 .table-scroll {
     height: 300px;
     overflow-y: auto;
     padding: 5px;
 }
+
 ::v-deep .dx-datagrid.dx-gridbase-container {
     border: 1px solid #ddd
 }

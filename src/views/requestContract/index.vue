@@ -157,9 +157,9 @@
                             <div style="position: relative;">
                                 <div class="overlay" v-if="disableFormVal2 == true"></div>
                                 <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
-                                    :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                    :selected-row-keys="selectedItemKeys" :column-auto-width="true"
-                                    :repaint-changes-only="true">
+                                    :show-borders="true" :allow-column-reordering="move_column"
+                                    :allow-column-resizing="colomn_resize" :selected-row-keys="selectedItemKeys"
+                                    :column-auto-width="true" :repaint-changes-only="true">
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                         :allow-deleting="true" template="button-template" mode="cell">
                                         <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -318,7 +318,6 @@ import {
     DeleteOutlined,
     InfoCircleFilled
 } from "@ant-design/icons-vue";
-import { notification } from "ant-design-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import {
     DxDataGrid,
@@ -342,7 +341,7 @@ import localeData from "dayjs/plugin/localeData";
 import queries from "../../graphql/queries/common/index";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-import { message } from 'ant-design-vue';
+import notification from '../../utils/notification';
 import DxTextBox from "devextreme-vue/text-box";
 import { useRouter } from "vue-router";
 import {
@@ -498,7 +497,7 @@ export default {
         });
         onError((res) => {
             spinning.value = false
-            message.error(res.message)
+            notification('error', res.message);
         });
         const onFinish = () => {
         };
@@ -672,7 +671,7 @@ export default {
                         step.value++;
                         window.scrollTo(0, 0);
                     } else {
-                        message.error("계속하려면 모든 조건을 수락하십시오!")
+                        notification('error', '계속하려면 모든 조건을 수락하십시오!')
                     }
                 } else if (step.value == 1) {
                     if (contractCreacted.nameCompany != ""
@@ -689,11 +688,12 @@ export default {
                         step.value++;
                         window.scrollTo(0, 0);
                     } else {
-                        message.error("계속하려면 모든 조건을 수락하십시오")
+                        notification('error', '계속하려면 모든 조건을 수락하십시오!')
                     }
                 } else if (step.value == 2) {
                     if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                        message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
+                        // message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
+                        notification('error', '계속하려면 모든 조건을 수락하십시오!')
                     } else {
                         let count = 0
                         if (dataInputCallApi.dossier == 1) {
@@ -713,7 +713,7 @@ export default {
                             }
                         }
                         if (count > 0) {
-                            message.error('계속하려면 모든 조건을 수락하십시오!')
+                            notification('error', '계속하려면 모든 조건을 수락하십시오!')
                         } else {
                             step.value++;
                             window.scrollTo(0, 0);
@@ -723,14 +723,7 @@ export default {
             }
         }
         const openPopup = () => {
-            let countNull = 0;
-            if (countNull > 0) {
-                notification["error"]({
-                    message: "필수 항목을 입력하십시오",
-                });
-            } else {
-                Creat();
-            }
+            Creat();
         }
         const handleOk = () => {
             visibleModal.value = false;
@@ -845,7 +838,7 @@ export default {
                 return c;
             }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
             if (!result) {
-                message.error("중복되었습니다!")
+                notification('error', '중복되었습니다!'); 
             }
         }, { deep: true, });
         return {
@@ -914,4 +907,5 @@ export default {
 };
 </script>
 <style lang="scss" scoped src="./style.scss">
+
 </style>

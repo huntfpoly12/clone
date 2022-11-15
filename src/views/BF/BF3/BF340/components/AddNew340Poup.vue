@@ -152,7 +152,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, reactive, onMounted } from 'vue'
+import { ref, defineComponent, watch, reactive } from 'vue'
 import { useMutation } from "@vue/apollo-composable";
 import notification from '../../../../../utils/notification';
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';

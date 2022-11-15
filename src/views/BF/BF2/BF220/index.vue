@@ -127,11 +127,10 @@ import {
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF220PopupAddNew from "./components/BF220PopupAddNew.vue";
 import DxButton from "devextreme-vue/button";
-
+import notification from '../../../../utils/notification';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../graphql/queries/BF/BF2/BF220/index";
-import { message } from 'ant-design-vue';
+import queries from "../../../../graphql/queries/BF/BF2/BF220/index"; 
 import {
     EditOutlined,
     HistoryOutlined,
@@ -200,8 +199,8 @@ export default defineComponent({
             if (buttonSearch.value.typeSevice3 == true) {
                 arrayStatus.push('p')
             }
-            if (buttonSearch.value.typeSevice1 != true && buttonSearch.value.typeSevice2 != true && buttonSearch.value.typeSevice3 != true) {
-                message.error('대상회원을 선택해야합니다!')
+            if (buttonSearch.value.typeSevice1 != true && buttonSearch.value.typeSevice2 != true && buttonSearch.value.typeSevice3 != true) { 
+                notification('error', '대상회원을 선택해야합니다!')
             } else {
                 dataSearch.value.types = arrayStatus
                 spinning.value = true
