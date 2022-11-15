@@ -275,6 +275,7 @@ import { optionsRadioReportType, optionsRadioPaymentType  } from "./data";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
+import { initialFormState } from "./data";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
@@ -316,19 +317,7 @@ export default defineComponent({
         const isSwitch = ref<boolean>(false);
         const isShow = ref<boolean>(false);
         const idRowEdit = ref(0);
-        const formState = reactive({
-            reportType: 1,
-            paymentType: 1,
-            paymentDay: 1,
-            insuranceSupport: false,
-            competentTaxOfficeCode: '',
-            localIncomeTaxArea: '',
-            companyAddressInfoAddress: '',
-            collectivePayment: false,
-            taxForEachBusiness: false,
-            bcode: "",
-            taxOfficeName: ""
-        });
+        const formState = reactive({ ...initialFormState });
         const setModalVisible = () => {
 			isShow.value = false;
 		}
@@ -406,7 +395,6 @@ export default defineComponent({
             })
         );
         watch(resultWithholdingConfig, (value) => {
-            
             dataSource.value = value.getWithholdingConfigPayItems; 
             dataSource.value.map((e: any) =>{
                 if(e.taxPayItemCode != null) {
@@ -430,9 +418,6 @@ export default defineComponent({
                     e.printName = "비과세"
                 }
             })
-            
-            
-            
         });
         // delete withholding config pay item
         const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(

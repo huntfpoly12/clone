@@ -61,6 +61,7 @@ import notification from "../../../../../utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
+import { initialState } from "../data"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import queries from "../../../../../graphql/queries/CM/CM130/index";
@@ -115,14 +116,6 @@ export default defineComponent({
                 }
             }
         );
-
-        const initialState = {
-            itemCode: 0,
-            taxPayCode: Array(),
-            name: '',
-            use: false,
-            formula: ''
-        };
         const formState = reactive({ ...initialState });
 
         // get detail withholding config pay item
@@ -156,7 +149,7 @@ export default defineComponent({
         onDoneUpdated(() => {
             notification('success', `업데이트 성공되었습니다!`)
             refetchConfigPayItem();
-            setModalVisible();
+            emit("closePopup", false);
         });
 
         const onSubmit = () => {

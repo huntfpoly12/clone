@@ -62,6 +62,8 @@ import mutations from "../../../../../graphql/mutations/CM/CM130/index";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import notification from "../../../../../utils/notification";
 import { DxNumberBox } from "devextreme-vue/number-box";
+import { initialState } from "../data";
+import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
 import {
     DxDataGrid,
     DxColumn,
@@ -98,15 +100,12 @@ export default defineComponent({
     },
 
     setup(props, { emit }) {
-        const initialState = {
-            itemCode: 0,
-            taxPayCode: Array(),
-            name: "",
-            use: true,
-            formula: 0,
-        };
+        
         const formState = reactive({ ...initialState });
-        // const value = ref<string[]>([]);
+
+        watch(() => props.modalStatus, (value) => {
+			Object.assign(formState, initialState);
+		})
         // Create With holding Config Pay Item
         const {
             mutate: creactConfigPayItem,
@@ -121,7 +120,7 @@ export default defineComponent({
         });
         onDoneAdd((res) => {
             notification('success', `원천항목 새로 추가되었습니다!`)
-            setModalVisible();
+            emit('closePopup', false)
         });
 
         const onSubmit = () => {
@@ -145,8 +144,7 @@ export default defineComponent({
             creactConfigPayItem(variables);
         };
         const setModalVisible = () => {
-            Object.assign(formState, initialState);
-            emit("closePopup", false);
+            comfirmClosePopup(() => emit('closePopup', false))
         };
         return {
             formState,
@@ -154,7 +152,6 @@ export default defineComponent({
             error,
             onSubmit,
             loading,
-            // value,
             setModalVisible,
         };
     },
