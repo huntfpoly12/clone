@@ -15,7 +15,6 @@
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="6"></a-col>
-
                                     <a-col :span="8">
                                         <a-form-item label="사업자등록번호" class="clr">
                                             <default-text-box v-model:valueInput="formState.bizNumber" :required="true">
@@ -46,7 +45,6 @@
                                                     </default-text-box>
                                                     <post-code-button @dataAddress="funcAddress" />
                                                 </a-col>
-
                                                 <a-col :span="24" style="margin-bottom: 5px">
                                                     <a-row>
                                                         <a-col :span="12" style="padding-right: 5px;">
@@ -65,10 +63,8 @@
                                                     </a-row>
                                                 </a-col>
                                             </a-row>
-
                                         </a-form-item>
                                     </a-col>
-
                                     <a-col :span="8">
                                         <a-form-item label="연락처" class="clr">
                                             <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
@@ -77,7 +73,6 @@
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="16"></a-col>
-
                                     <a-col :span="8">
                                         <a-form-item label="팩 스">
                                             <default-text-box v-model:valueInput="formState.extendInfoDetailFax"
@@ -92,7 +87,6 @@
                                                 <imgUpload :title="titleModal" @update-img="getImgUrl"
                                                     style="margin-top: 10px" />
                                             </div>
-
                                             <div>
                                                 <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
                                             </div>
@@ -195,7 +189,6 @@
         </a-modal>
     </div>
 </template>
-
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
@@ -208,14 +201,12 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-
 import {
     DxDataGrid,
     DxColumn,
     DxPaging,
     DxSelection,
 } from "devextreme-vue/data-grid";
-
 import {
     UploadOutlined,
     MinusCircleOutlined,
@@ -226,10 +217,8 @@ import {
     WarningFilled,
     InfoCircleFilled
 } from "@ant-design/icons-vue";
-
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-
 export default defineComponent({
     props: {
         modalStatus: {
@@ -255,17 +244,11 @@ export default defineComponent({
         imgUpload,
         InfoCircleFilled
     },
-    data() {
-        return {
-            marginTopModal: "margin-top : -67px",
-        };
-    },
     setup(props, { emit }) {
         const arrRadioType = reactive([
             { id: 1, text: '법인사업자' },
             { id: 2, text: '개인사업자' }
-        ])
-
+        ]) 
         const arrayRadioWithdrawDay = reactive([
             { id: '매월 5일', text: '매월 5일' },
             { id: '매월 12일', text: '매월 12일' },
@@ -296,7 +279,6 @@ export default defineComponent({
             extendInfoDetailRoadAddress: "",
             extendInfoDetailJibunAddress: "",
             extendInfoDetailAddressExtend: "",
-
             extendInfoDetailAddressDetailBcode: "",
             extendInfoDetailAddressDetailBname: "",
             extendInfoDetailAddressDetailBuildingCode: "",
@@ -307,22 +289,18 @@ export default defineComponent({
             extendInfoDetailAddressDetailSigungu: "",
             extendInfoDetailAddressDetailSigunguCode: "",
             extendInfoDetailAddressDetailZonecode: "",
-
             extendInfoDetailPhone: "",
             extendInfoDetailFax: "",
             extendInfoDetailLicenseFileStorageId: "",
-
             extendInfoPresidentName: "",
             extendInfoPresidentBirthday: "",
             extendInfoPresidentMobilePhone: "",
             extendInfoPresidentEmail: "",
-
             extendInfoCmsBankBankType: "",
             extendInfoCmsBankAccountNumber: "",
             extendInfoCmsBankOwnerBizNumber: "",
             extendInfoCmsBankOwnerName: "",
             extendInfoCmsBankWithdrawDay: "",
-
             sealFileStorageId: null,
             createdAt: 0,
             createdBy: "",
@@ -333,8 +311,7 @@ export default defineComponent({
             seal: null,
             canceledAt: null,
             unpaidMonths: 0
-        });
-
+        }); 
         let dataImg = ref()
         const formStateMomes = ref([
             {
@@ -363,7 +340,6 @@ export default defineComponent({
             dataImg.value = ''
             formState.extendInfoDetailLicenseFileStorageId = ''
         };
-
         watch(
             () => props.modalStatus,
             (newValue, old) => {
@@ -393,7 +369,6 @@ export default defineComponent({
                 }
             }
         );
-
         // get company
         const { result, loading, refetch } = useQuery(
             queries.getCompany,
@@ -403,7 +378,6 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-
         // get list memo of company
         const { result: resultMemo, refetch: refetchMemo } = useQuery(
             queries.getCompanyManageMemos,
@@ -418,48 +392,40 @@ export default defineComponent({
                 formStateMomes.value = value.getCompanyManageMemos;
             }
         });
-
         // mutation create memo 
         const {
             mutate: actionCreateMemo,
             onError: creactMemoErr,
             onDone: onCreatedMemo
         } = useMutation(mutations.createCompanyManageMemo);
-
         onCreatedMemo((res) => {
             notification('success', "메모 추가 완료!")
             refetchMemo();
         });
-
         creactMemoErr((res) => {
             notification('error', res.message)
             refetchMemo();
         });
-
         // mutation update memo 
         const {
             mutate: actionUpdateMemo,
             onDone: onUpdatedMemo,
             onError: updateMemoErr
         } = useMutation(mutations.updateCompanyManageMemo);
-
         onUpdatedMemo(() => {
             notification('success', "메모 추가 완료!")
             refetchMemo();
         });
-
         updateMemoErr((e) => {
             notification('error', e.message)
             refetchMemo();
         });
-
         // mutation delete memo 
         const {
             mutate: actionDeleteMemo,
             onDone: onDeleteMemo,
             onError: deleteMemoErr
         } = useMutation(mutations.deleteCompanyManageMemo);
-
         onDeleteMemo(() => {
             notification('success', "메모 추가 완료!")
             refetchMemo();
@@ -468,13 +434,11 @@ export default defineComponent({
             notification('error', e.message)
             refetchMemo();
         });
-
         const handleDeleteMemo = (key: number) => {
             if (formStateMomes.value.length > 1) {
                 actionDeleteMemo({ companyId: formState.id, memoId: key })
             }
         }
-
         const handleAdd = () => {
             const newMemo: any = {
                 memoId: null,
@@ -490,9 +454,7 @@ export default defineComponent({
                 active: "",
             };
             formStateMomes.value.unshift(newMemo);
-
         }
-
         const handleAddMemo = (note: any, mmId: any = null) => {
             if (note !== '' && mmId == null) {
                 actionCreateMemo({ companyId: formState.id, memo: note });
@@ -500,7 +462,6 @@ export default defineComponent({
                 actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         }
-
         watch(result, (value) => {
             if (value && value.getCompany) {
                 formState.id = value.getCompany.id;
@@ -513,14 +474,11 @@ export default defineComponent({
                 formState.phone = value.getCompany.phone;
                 formState.presidentName = value.getCompany.presidentName;
                 formState.presidentMobilePhone = value.getCompany.presidentMobilePhone;
-
                 formState.extendInfoDetailName = value.getCompany.name;
-
                 formState.extendInfoDetailZipcode = value.getCompany.extendInfo.detail.zipcode;
                 formState.extendInfoDetailRoadAddress = value.getCompany.extendInfo.detail.roadAddress;
                 formState.extendInfoDetailJibunAddress = value.getCompany.extendInfo.detail.jibunAddress;
                 formState.extendInfoDetailAddressExtend = value.getCompany.extendInfo.detail.addressExtend;
-
                 formState.extendInfoDetailAddressDetailBcode = value.getCompany.extendInfo.detail.addressDetail.bcode;
                 formState.extendInfoDetailAddressDetailBname = value.getCompany.extendInfo.detail.addressDetail.bname;
                 formState.extendInfoDetailAddressDetailBuildingCode = value.getCompany.extendInfo.detail.addressDetail.buildingCode;
@@ -531,7 +489,6 @@ export default defineComponent({
                 formState.extendInfoDetailAddressDetailSigungu = value.getCompany.extendInfo.detail.addressDetail.sigungu;
                 formState.extendInfoDetailAddressDetailSigunguCode = value.getCompany.extendInfo.detail.addressDetail.sigunguCode;
                 formState.extendInfoDetailAddressDetailZonecode = value.getCompany.extendInfo.detail.addressDetail.zonecode;
-
                 formState.extendInfoDetailPhone = value.getCompany.extendInfo.detail.phone;
                 formState.extendInfoDetailFax = value.getCompany.extendInfo.detail.fax;
                 formState.extendInfoDetailLicenseFileStorageId = value.getCompany.extendInfo.detail.licenseFileStorageId;
@@ -539,20 +496,16 @@ export default defineComponent({
                     name: value.getCompany.extendInfo.detail.license.name,
                     url: value.getCompany.extendInfo.detail.license.url,
                 }
-
                 formState.extendInfoPresidentName = value.getCompany.extendInfo.president.name;
                 formState.extendInfoPresidentBirthday = value.getCompany.extendInfo.president.birthday;
                 formState.extendInfoPresidentMobilePhone = value.getCompany.extendInfo.president.mobilePhone;
                 formState.extendInfoPresidentEmail = value.getCompany.extendInfo.president.email;
-
                 formState.extendInfoCmsBankBankType = value.getCompany.extendInfo.cmsBank.bankType;
                 formState.extendInfoCmsBankAccountNumber = value.getCompany.extendInfo.cmsBank.accountNumber;
                 formState.extendInfoCmsBankOwnerBizNumber = value.getCompany.extendInfo.cmsBank.ownerBizNumber;
                 formState.extendInfoCmsBankOwnerName = value.getCompany.extendInfo.cmsBank.ownerName;
                 formState.extendInfoCmsBankWithdrawDay = value.getCompany.extendInfo.cmsBank.withdrawDay;
-
                 formState.sealFileStorageId = value.getCompany.sealFileStorageId;
-
                 formState.createdAt = value.getCompany.createdAt;
                 formState.createdBy = value.getCompany.createdBy;
                 formState.updatedAt = value.getCompany.updatedAt;
@@ -563,7 +516,6 @@ export default defineComponent({
                 formState.canceledAt = value.getCompany.canceledAt;
                 formState.unpaidMonths = value.getCompany.unpaidMonths;
             }
-
         });
         const changeTypeCompany = (bizType: number) => {
             if (bizType == 2) {
@@ -572,7 +524,6 @@ export default defineComponent({
                 return "법인등록번호";
             }
         };
-
         const funcAddress = (data: any) => {
             formState.extendInfoDetailZipcode = data.zonecode;
             formState.extendInfoDetailRoadAddress = data.roadAddress;
@@ -588,14 +539,12 @@ export default defineComponent({
             formState.extendInfoDetailAddressDetailSigunguCode = data.sigunguCode;
             formState.extendInfoDetailAddressDetailZonecode = data.zonecode;
         };
-
         // Update Company 
         const {
             mutate: actionUpdate,
             loading: loadingUpdate,
             onDone: updateDone,
         } = useMutation(mutations.updateCompany);
-
         const updateCompany = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -625,14 +574,12 @@ export default defineComponent({
                     fax: formState.extendInfoDetailFax,
                     licenseFileStorageId: formState.extendInfoDetailLicenseFileStorageId
                 };
-
                 let extendInfoPresident = {
                     name: formState.extendInfoPresidentName,
                     birthday: formState.extendInfoPresidentBirthday,
                     mobilePhone: formState.extendInfoPresidentMobilePhone,
                     email: formState.extendInfoPresidentEmail
                 };
-
                 let extendInfoCmsBank = {
                     bankType: formState.extendInfoCmsBankBankType,
                     accountNumber: formState.extendInfoCmsBankAccountNumber,
@@ -640,7 +587,6 @@ export default defineComponent({
                     ownerName: formState.extendInfoCmsBankOwnerName,
                     withdrawDay: formState.extendInfoCmsBankWithdrawDay
                 };
-
                 let variables = {
                     id: formState.id,
                     detail: extendInfoDetail,
@@ -650,20 +596,16 @@ export default defineComponent({
                 actionUpdate(variables);
             }
         }
-
         updateDone((res) => {
             notification('success', "업데이트 완료!")
             setModalVisible();
         });
-
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
-
         const setModalVisible = () => {
             emit("closePopup", false);
         }
-
         const getImgUrl = (img: any) => {
             let resImg = {
                 ...img,
@@ -672,7 +614,6 @@ export default defineComponent({
             dataImg.value = resImg
             formState.extendInfoDetailLicenseFileStorageId = resImg.id
         }
-
         return {
             arrayRadioWithdrawDay,
             removeImg,
@@ -706,5 +647,4 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../style/popup/index.scss">
-
 </style> 
