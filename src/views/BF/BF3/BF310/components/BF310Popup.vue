@@ -54,8 +54,8 @@
                                     </a-col>
 
                                     <a-form-item label="상 호" label-align="left" :label-col="labelCol">
-                                        <!-- <default-text-box v-model:valueInput="formState.name" width="410px"
-                                            :disabled="true" /> -->
+                                        <default-text-box v-model:valueInput="formState.companyName" width="410px"
+                                            :disabled="true" />
                                     </a-form-item>
 
                                     <a-col :span="24" style="display: flex;">
@@ -660,8 +660,10 @@ export default defineComponent({
             regCardFileId.value = "";
             imageRegCardFile.value = "";
             regCardFileName.value = "";
-        };
+        }; 
         return {
+            move_column,
+            colomn_resize,
             titleModal,
             selectedItemKeys, 
             checkedService,
@@ -690,45 +692,5 @@ export default defineComponent({
         };
     },
 });
-</script>  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</script>   
 <style lang="scss" scoped src="../style/popupStyle.scss" />
