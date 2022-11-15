@@ -3,7 +3,7 @@
         <a-modal :visible="modalStatus" centered okText="저장하고 나가기" :mask-closable="false" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="700px" footer="">
             <h2 class="title-h2">이용자정보</h2>
-                <form action="your-action">
+                <standard-form formName="add-cm110" >
                     <a-row :gutter="24" class="cm-100-popup-edit">
                         <a-col :span="12">
                             <a-form-item label="이용자ID" :label-col="labelCol">
@@ -72,7 +72,7 @@
                                 :mode="'outlined'" @onClick="confirmPopup" />
                         </a-col>
                     </div>
-            </form>
+               
             
             <div class="text-align-center mt-20">
                 <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
@@ -80,6 +80,7 @@
                 <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="confirmUpdate($event)" />
             </div>
+        </standard-form>
         </a-modal>
         <div class="confirm-popup">
             <a-modal v-model:visible="visible" :mask-closable="false" footer="">
