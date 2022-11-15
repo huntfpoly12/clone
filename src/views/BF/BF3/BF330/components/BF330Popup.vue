@@ -243,9 +243,9 @@
                     </a-collapse-panel>
                 </a-collapse>
                 <div class="footer">
-                    <button-basic :text="'그냥 나가기'" :type="'info'" :mode="'contained'" @onClick="setModalVisible" />
-                    <button-basic :text="'저장하고 나가기'" :type="'success'" :mode="'contained'"
-                        @onClick="updateServiceContract" />
+                    <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible" />
+                    <button-basic text="저장하고 나가기" type="default" mode="'contained'"
+                        @onClick="updateServiceContract" /> 
                 </div>
             </a-spin>
         </a-modal>
@@ -263,6 +263,7 @@ import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
 import { DxCheckBox } from 'devextreme-vue/check-box';
+import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 import {
     DxDataGrid,
     DxColumn,
@@ -285,7 +286,7 @@ import {
     PlusSquareOutlined,
     WarningFilled,
     PlusOutlined,
-} from "@ant-design/icons-vue"; 
+} from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import queries from "../../../../../graphql/queries/BF/BF3/BF330/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF330/index";
@@ -322,7 +323,6 @@ export default defineComponent({
     setup(props, { emit }) {
         // config grid
         const store = useStore();
-        
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -353,7 +353,7 @@ export default defineComponent({
             },
         ]);
         const setModalVisible = () => {
-            emit("closePopup", false);
+            comfirmClosePopup(() => emit("closePopup", false))
         };
         const activeKey = ref([1]);
         const initialState = {
@@ -576,7 +576,7 @@ export default defineComponent({
         })
         updateDone((res) => {
             notification('success', "업데이트 완료!")
-            setModalVisible();
+            emit("closePopup", false)
         });
         const updateServiceContract = () => {
             let accountingInfor: any = [];
@@ -955,6 +955,4 @@ export default defineComponent({
     },
 });
 </script>
-<style src="../style/stylePopup.scss" scoped >
-
-</style>
+<style src="../style/stylePopup.scss" scoped />
