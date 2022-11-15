@@ -386,7 +386,7 @@ import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import notification from '../../../../../utils/notification';
-
+import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -436,8 +436,7 @@ export default defineComponent({
         const checkedService = ref(true)
         const selectedItemKeys = reactive([])
         const titleModal = ref("사업자등록증")
-        var dataStatus = initialDataStatus
-
+        var dataStatus = initialDataStatus 
         const arrayRadioWithdrawDay = reactive([
             { id: '매월 5일', text: '매월 5일' },
             { id: '매월 12일', text: '매월 12일' },
@@ -446,9 +445,9 @@ export default defineComponent({
         var formState = ref({ ...initialFormState });
         // event close popup
         const setModalVisible = () => {
+            comfirmClosePopup(() =>  emit("closePopup", false))
             triggerCheckPer.value = false;
             trigger.value = false;
-            emit("closePopup", false);
         };
         // watch event modal popup
         watch(
