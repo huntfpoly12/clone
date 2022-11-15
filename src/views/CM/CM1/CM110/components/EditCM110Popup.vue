@@ -252,8 +252,6 @@ export default defineComponent({
             }
         );
         const confirmUpdate = (e: any) => {
-            console.log(1111);
-
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
