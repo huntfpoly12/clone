@@ -105,10 +105,9 @@
                                 </div>
                                 <div style="display: flex; margin-left: 150px;">
                                     <a-form-item label="휴대폰" class="red" :label-col="labelCol">
-                                        <text-number-box v-model:valueInput="formState.extendInfo.detail.phone" style="width: 150px;"
-                                            :required="true"
-                                            @keyup="validateNumber('phone')" @change="validateNumber('phone')" >
-                                        </text-number-box>
+                                        <tel-text-box v-model:valueInput="formState.extendInfo.detail.phone" style="width: 150px;"
+                                            :required="true">
+                                        </tel-text-box>
                                     </a-form-item>
                                     <p class="validate-message">‘-’없이 숫자만 입력</p>
                                 </div>
@@ -247,6 +246,7 @@ import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "
 import ReviewStampImage from "./components/ReviewStampImage.vue";
 import ListLoginPopup from "../../../../components/ListLoginPopup.vue";
 import type { UploadProps } from 'ant-design-vue';
+import { initialFormState } from "./utils/index";
 import notification from "../../../../utils/notification";
 import mutations from "../../../../graphql/mutations/CM/CM110/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -323,36 +323,7 @@ export default defineComponent({
             notification('error', `업데이트 실패되었습니다!`)
         })
         const statusMailValidate = ref<boolean>(true);
-        let formState = ref({
-            name: "",
-            bizType: "",
-            bizNumber: "",
-            address: "",
-            presidentMobilePhone: "",
-            fax: "",
-            직인인감:
-                "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-            extendInfo: {
-                president: {
-                    name: "",
-                    birthday: "",
-                    mobilePhone: "",
-                    email: "",
-                },
-                detail: {
-                    name: "",
-                    zipcode: "",
-                    roadAddress: "",
-                    jibunAddress: "",
-                    addressExtend: "",
-                    addressDetail: {},
-                    phone: "",
-                    fax: "",
-                    licenseFileStorageId: 0
-                }
-            },
-            sealFileStorageId: null
-        });
+        let formState = ref({ ...initialFormState });
         let listDataMyCompanyUser = ref([])
         let previewImage: any = ref("https://jangbuda-frs.bankda.com/uFH4PK0U2Ar9sTYIqp0AV.png");
         let fileImage: any = ref(null);
@@ -370,8 +341,6 @@ export default defineComponent({
             }
         };
         const stampReview = () => {
-            console.log(1);
-            
             modalStampReviewStatus.value = true;
         };
         const openAddNewModal = () => {
@@ -437,20 +406,6 @@ export default defineComponent({
                 return "rgb(16 142 236 / 62%)";
             } else if (data === false) {
                 return "rgb(205 32 31 / 51%)";
-            }
-        }
-        const validateNumber = (name: String) => {
-            if (name == 'presidentMobilePhone' && formState.value.presidentMobilePhone.length > 0) {
-                let e = formState.value.presidentMobilePhone
-                formState.value.presidentMobilePhone = e.replace(/\D/g, '');
-            }
-            if (name == 'fax' && formState.value.extendInfo.detail.fax.length > 0) {
-                let e = formState.value.extendInfo.detail.fax
-                formState.value.extendInfo.detail.fax = e.replace(/\D/g, '');
-            }
-            if (name == 'phone' && formState.value.extendInfo.detail.phone.length > 0) {
-                let e = formState.value.extendInfo.detail.phone.replace(/\D/g, '');
-                formState.value.extendInfo.detail.phone = e
             }
         }
         const validateEmail = (e: any) => {
@@ -560,7 +515,6 @@ export default defineComponent({
             modalLogin,
             popupData,
             getColorTag,
-            validateNumber,
             validateEmail,
             statusMailValidate,
             listDataMyCompanyUser,
