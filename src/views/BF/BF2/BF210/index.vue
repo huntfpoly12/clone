@@ -34,54 +34,55 @@
             <div class="search-form">
                 <div id="components-grid-demo-flex">
                     <a-row justify="start" :gutter="[16, 8]">
-                        <a-col>
+                        <a-col class="custom-flex">
                             <label class="lable-item">회원종류 :</label>
-                            <a-select style="width: 10px" v-model:value="dataSearch.type" option-label-prop="children">
-                                <a-select-option value="c" label="고객사">
-                                    <a-tag :color="getColorTag('c')">고객사</a-tag>
-                                </a-select-option>
-                                <a-select-option value="m" label="매니저">
-                                    <a-tag :color="getColorTag('m')">매니저</a-tag>
-                                </a-select-option>
-                                <a-select-option value="r" label="영업자">
-                                    <a-tag :color="getColorTag('r')">영업자</a-tag>
-                                </a-select-option>
-                                <a-select-option value="p" label="파트너">
-                                    <a-tag :color="getColorTag('p')">파트너</a-tag>
-                                </a-select-option>
-                            </a-select>
+                            <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
+                                value-expr="id" item-template="item" :height="$config_styles.HeightInput"
+                                style="width:170px" field-template="field" @value-changed="changeValueType">
+                                <template #field="{ data }">
+                                    <Field :fieldData="data" />
+                                </template>
+                                <template #item="{ data }">
+                                    <div style="width: 100%; padding: 3px;">
+                                        <div
+                                            :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
+                                            {{ data.name }}
+                                        </div>
+                                    </div>
+                                </template>
+                            </DxSelectBox> 
                         </a-col>
-                        <a-col class="dflex">
+                        <a-col>
                             <label class="lable-item">소속코드:</label>
-                            <default-text-box style="width: 150px" v-model:valueInput="dataSearch.groupCode" />
+                            <a-input style="width: 150px" v-model:value="dataSearch.groupCode" />
                         </a-col>
-                        <a-col class="dflex">
+                        <a-col>
                             <label class="lable-item">소속명:</label>
-                            <default-text-box style="width: 150px" v-model:valueInput="dataSearch.groupName" />
+                            <a-input style="width: 150px" v-model:value="dataSearch.groupName" />
                         </a-col>
-                        <a-col class="dflex">
+                        <a-col>
                             <label class="lable-item">회원ID :</label>
-                            <default-text-box style="width: 150px" v-model:valueInput="dataSearch.username" />
+                            <a-input style="width: 150px" v-model:value="dataSearch.username" />
                         </a-col>
-                        <a-col class="dflex">
+                        <a-col>
                             <label class="lable-item">회원명 :</label>
-                            <default-text-box style="width: 150px" v-model:valueInput="dataSearch.name" />
+                            <a-input style="width: 150px" v-model:value="dataSearch.name" />
                         </a-col>
-                        <a-col style="display: flex; align-items: center;" >
-                            <checkbox-basic v-model:value="checkStatus.checkBox1" valueCheckbox=true size="15px" >                                
-                            </checkbox-basic>
-                            <a-tag :color="getAbleDisable(true)" style="margin: 10px">이용중</a-tag>
-                            <checkbox-basic v-model:value="checkStatus.checkBox2" size="15px">                               
-                            </checkbox-basic>
-                            <a-tag :color="getAbleDisable(false)" style="margin: 10px">이용중지</a-tag>
+                        <a-col style="display: flex; align-items: center">
+                            <a-checkbox v-model:checked="checkStatus.checkBox1" value="true">
+                                <a-tag :color="getAbleDisable(true)">이용중</a-tag>
+                            </a-checkbox>
+                            <a-checkbox v-model:checked="checkStatus.checkBox2">
+                                <a-tag :color="getAbleDisable(false)">이용중지</a-tag>
+                            </a-checkbox>
                         </a-col>
                     </a-row>
-
+                    
                 </div>
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxPaging :page-size="20" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -134,10 +135,8 @@
                     </template>
                 </DxDataGrid>
                 <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-
                 <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
                     :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
-
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
                 <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
@@ -147,7 +146,8 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, computed } from "vue";
+import { useStore } from "vuex";
 import {
     DxDataGrid,
     DxColumn,
@@ -174,15 +174,17 @@ import {
     SaveOutlined,
     LoginOutlined
 } from "@ant-design/icons-vue";
+import DxSelectBox from 'devextreme-vue/select-box';
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
+import Field from './components/Field.vue';
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
-
+    
     components: {
         DxDataGrid,
         DxColumn,
@@ -202,31 +204,37 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        LoginOutlined,
-        
+        LoginOutlined
     },
     data() {
         return {
             popupData: [],
             modalAddNewStatus: false,
-
+           
             modalHistoryStatus: false,
             modalLoginStatus: false,
         };
     },
     setup(props) {
         const modalEditStatus = ref<boolean>(false);
-        let triggersearching = ref<boolean>(false);
-        const spinning = ref<boolean>(true);
+        let triggerSearching = ref<boolean>(false);
+        const spinning = ref<boolean>(false);
         const checkStatus = ref({
             checkBox1: true,
             checkBox2: false
         })
         const rowChoose = ref()
+        // config grid
+        const store = useStore();
+        
+        const per_page = computed(() => store.state.settings.per_page);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
         const dataSearch = ref({
             page: 1,
-            rows: 20,
-            type: "c",
+            rows: 10,
+            type: "m",
             groupCode: "",
             groupName: "",
             username: "",
@@ -234,12 +242,39 @@ export default defineComponent({
         })
         var idRowEdit = ref<number>(0)
         const originData = ref()
-        setTimeout(() => {
-            spinning.value = !spinning.value;
-        }, 1000);
+        let products = ref([
+            {
+                id: "c",
+                color: '#096dd9',
+                name: "고객사",
+                background: '#e6f7ff',
+                border: "1px solid #91d5ff",
+            },
+            {
+                id: "m",
+                color: 'white',
+                name: "매니저",
+                background: 'black',
+                border: "1px solid black",
+            },
+            {
+                id: "r",
+                color: 'white',
+                name: "영업자",
+                background: 'grey',
+                border: "1px solid grey",
+            },
+            {
+                id: "p",
+                color: 'white',
+                name: "파트너",
+                background: 'goldenrod',
+                border: "1px solid goldenrod",
+            }
+        ])
         const dataSource = ref([])
         const { refetch: refetchData, onResult } = useQuery(queries.searchUsers, originData, () => ({
-            enabled: triggersearching.value,
+            enabled: triggerSearching.value,
             fetchPolicy: "no-cache",
         }))
         onResult((res) => {
@@ -249,19 +284,18 @@ export default defineComponent({
             }, 500);
         })
         watch(() => modalEditStatus.value,
-            () => {
-
-                refetchData()
+            () => {  
+                
+                    refetchData()
             }
         );
         const searching = () => {
             spinning.value = !spinning.value;
             let dataNew = ref()
-
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
                 dataNew.value = {
                     page: 1,
-                    rows: 10,
+                    rows: per_page,
                     type: dataSearch.value.type,
                     groupCode: dataSearch.value.groupCode,
                     groupName: dataSearch.value.groupName,
@@ -272,7 +306,7 @@ export default defineComponent({
             } else if (checkStatus.value.checkBox2 == true && checkStatus.value.checkBox1 == false) {
                 dataNew.value = {
                     page: 1,
-                    rows: 10,
+                    rows: per_page,
                     type: dataSearch.value.type,
                     groupCode: dataSearch.value.groupCode,
                     groupName: dataSearch.value.groupName,
@@ -283,23 +317,23 @@ export default defineComponent({
             } else {
                 dataNew.value = {
                     page: 1,
-                    rows: 10,
+                    rows: per_page,
                     type: dataSearch.value.type,
                     groupCode: dataSearch.value.groupCode,
                     groupName: dataSearch.value.groupName,
                     username: dataSearch.value.username,
                     name: dataSearch.value.name,
                 }
-            }
-
-            triggersearching.value = true
-            if (originData) {
+            } 
+            
+            triggersearching.value = true  
+            if(originData){
                 originData.value = dataNew.value
                 refetchData()
             }
-
+                     
         }
-
+        
         return {
             modalEditStatus,
             spinning,
@@ -312,9 +346,7 @@ export default defineComponent({
             rowChoose,
             checkStatus
         }
-    },
-    methods: {
-        onExporting(e: any) {
+        const onExporting = (e: any) => {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
             exportDataGrid({
@@ -330,48 +362,83 @@ export default defineComponent({
                 });
             });
             e.cancel = true;
-        },
-        openAddNewModal() {
-            this.modalAddNewStatus = true;
-        },
-        setModalEditVisible(data: any) {
-            this.idRowEdit = data.data.id
-            this.modalEditStatus = true;
-            this.popupData = data;
-        },
-        modalHistory(data: any) {
-            this.idRowEdit = data.data.id
-            this.modalHistoryStatus = true;
-            this.popupData = data;
-        },
-        modalLogin(data: any) {
-
-            this.rowChoose = data.key
-            this.modalLoginStatus = true;
-            this.popupData = data;
-        },
-        getColorTag(data: any) {
+        }
+        const openAddNewModal = () => {
+            modalAddNewStatus.value = true;
+        }
+        const setModalEditVisible = (data: any) => {
+            idRowEdit.value = data.data.id
+            modalEditStatus.value = true;
+            popupData.value = data;
+        }
+        const modalHistory = (data: any) => {
+            idRowEdit.value = data.data.id
+            modalHistoryStatus.value = true;
+            popupData.value = data;
+        }
+        const modalLogin = (data: any) => {
+            rowChoose.value = data.key
+            modalLoginStatus.value = true;
+            popupData.value = data;
+        }
+        const getColorTag = (data: any) => {
             if (data === "c") {
-                return "blue";
+                return "#91d5ff";
             } else if (data === "m") {
                 return "black";
             } else if (data === "r") {
                 return "grey";
             } else if (data === "p") {
-                return "#cdc71c";
+                return "goldenrod";
             }
-        },
-        getAbleDisable(data: any) {
+        }
+        const getAbleDisable = (data: any) => {
             if (data === true) {
                 return "blue";
             } else if (data === false) {
                 return "#d5a7a7";
             }
-        },
+        }
+        watch(() => modalEditStatus.value,
+            () => {
+                refetchData()
+            }
+        );
+        const changeValueType = (e: any) => {
+            dataSearch.value.type = e.value
+        }
+        return {
+            changeValueType,
+            onExporting,
+            move_column,
+            colomn_resize,
+            openAddNewModal,
+            setModalEditVisible,
+            getAbleDisable,
+            getColorTag,
+            modalHistory,
+            modalLogin,
+            popupData,
+            modalAddNewStatus,
+            modalLoginStatus,
+            modalHistoryStatus,
+            changeValueCheckBox,
+            modalEditStatus,
+            spinning,
+            dataSource,
+            idRowEdit,
+            refetchData,
+            originData,
+            searching,
+            dataSearch,
+            rowChoose,
+            checkStatus,
+            products
+        }
     },
 });
 </script>
-<style lang="scss" scoped>
+<style scoped>
 .page-content {
     padding: 10px 10px;
 }
@@ -401,23 +468,18 @@ export default defineComponent({
     min-height: 700px;
 }
 
-.dflex {
-    display: flex;
-}
-
 .search-form .col {
     display: flex;
     align-items: center;
 }
 
+.search-form .col {
+    margin-top: 20px;
+}
 
-
-.lable-item {
-    white-space: nowrap;
-    margin-right: 5px;
-    width: auto !important;
-    padding: 5px;
-    
+.search-form .col .lable-item {
+    width: 110px;
+    display: inline-block;
 }
 
 .search-form .col .item:nth-child(2) {

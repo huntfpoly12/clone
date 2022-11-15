@@ -25,9 +25,9 @@ export const initialFormState = {
         sigunguCode: "",
         zonecode: "",
     },
-    taxInvoice: true,
+    taxInvoice: false,
     emailTaxInvoice: "",
-    bankType: "39",
+    bankType: "13",
     accountNumber: "",
     accountOwner: "",
     registerDate: new Date(),
@@ -45,7 +45,7 @@ interface Origindata {
 }
 export const origindata : Origindata = {
     page: 1,
-    rows: 20,
+    rows: 10,
     statuses: [1],
     grade: null,
     name: "",

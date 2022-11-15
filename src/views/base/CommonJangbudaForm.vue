@@ -311,6 +311,29 @@
           >
         </td>
       </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">StatusProgress Control</div>
+            <div class="dx-field-value">
+              Value return : {{saleStatus}}
+             <subs-req-status-process-bar v-model:valueInput="saleStatus"></subs-req-status-process-bar>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; subs-req-status-process-bar / &gt;
+              </pre
+          >
+        </td>
+      </tr>
     </table>
     <div class="dx-fieldset">
       <DxButton
@@ -341,6 +364,7 @@ export default defineComponent({
     };
   },
   setup() {
+    const saleStatus = ref(10);
     const bday = ref("");
     const text1 = ref("text example.....");
     function submit() {
@@ -354,6 +378,7 @@ export default defineComponent({
       bday,
       submit,
       onFormSubmit,
+      saleStatus
     };
   },
 });

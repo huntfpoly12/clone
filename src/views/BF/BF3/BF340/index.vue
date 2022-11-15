@@ -49,7 +49,6 @@
               <div class="dflex custom-flex">
                 <label class="lable-item">영업자명:</label>
                 <default-text-box
-                  label="영업자명"
                   v-model:valueInput="originData.name"
                   width="120px"
                 ></default-text-box>
@@ -59,7 +58,6 @@
               <div class="dflex custom-flex">
                 <label class="lable-item">영업자코드:</label>
                 <default-text-box
-                  label="영업자코드"
                   v-model:valueInput="originData.code"
                   width="120px"
                 ></default-text-box>
@@ -69,7 +67,6 @@
               <div class="dflex custom-flex">
                 <label class="lable-item">상태 :</label>
                 <sale-status-select-box
-                  label="상태"
                   v-model:valueInput="saleStatus"
                   placeholder="전체"
                 />
@@ -84,8 +81,8 @@
           :show-borders="true"
           key-expr="id"
           @exporting="onExporting"
-          :allow-column-reordering="true"
-          :allow-column-resizing="true"
+          :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
         >
           <DxScrolling column-rendering-mode="virtual" />
@@ -198,7 +195,8 @@
   </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive } from "vue";
+import { defineComponent, ref, watch, reactive,computed } from "vue";
+import { useStore } from 'vuex';
 import {
   SalesRepresentativeGrade,
   getEnumValue,
@@ -273,6 +271,13 @@ export default defineComponent({
     SaveOutlined,
   },
   setup() {
+    // config grid
+    const store = useStore();
+    
+    const per_page = computed(() => store.state.settings.per_page);
+    const move_column = computed(() => store.state.settings.move_column);
+    const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
     const popupData = ref([]);
     const modalAddNewStatus = ref<boolean>(false);
     const modalEditStatus = ref<boolean>(false);
@@ -282,7 +287,7 @@ export default defineComponent({
     const saleStatus = ref<number>(1);
     var idRowEdit = ref<number>(0);
 
-    const originData = reactive({ ...origindata });
+    const originData = reactive({ ...origindata,rows:per_page.value });
     const rowTable = ref(0);
     const dataSource = ref([]);
     const trigger = ref<boolean>(true);
@@ -376,6 +381,8 @@ export default defineComponent({
 
     return {
       loading,
+      move_column,
+      colomn_resize,
       onExporting,
       searching,
       dataSource,

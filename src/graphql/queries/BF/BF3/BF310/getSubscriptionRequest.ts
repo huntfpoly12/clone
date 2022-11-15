@@ -9,6 +9,7 @@ query getSubscriptionRequest($id: Int!) {
     companyBizNumber
     companyAddress
     presidentName
+    processedBy
     simpleAccountingInfos{
       name
       startYearMonth
@@ -19,7 +20,9 @@ query getSubscriptionRequest($id: Int!) {
     }
     processedAt
     approvedAt
+    approvedBy
     rejectedAt
+    rejectedBy
     content{
     agreements{
       terms
@@ -78,13 +81,7 @@ query getSubscriptionRequest($id: Int!) {
           registrationCardFileStorageId
           registrationCard{
             name
-            url
-            createdAt
-            createdBy
-            updatedAt
-            updatedBy
-            active
-            ip
+            url 
           }
         }
         accountingServiceTypes

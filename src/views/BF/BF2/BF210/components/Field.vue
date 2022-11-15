@@ -1,18 +1,19 @@
 <template>
-    <div class="custom-item">
-        <DxTextBox :value="stydefault.id" :read-only="true" class="product-name" />
+    <div class="custom-item"
+        :style="{ background: stydefault.background, padding: '0px 12px', borderRadius: '5px', border: stydefault.border, height: '25px', margin: '4px 0px 0 4px' }">
+        <DxTextBox :value="stydefault && stydefault.name" :read-only="true" class="product-name" />
     </div>
 </template>
-<script lang="ts">
-import { ref, defineComponent, watch } from "vue";
+<script script lang ="ts">
+import { reactive, defineComponent, watch } from "vue";
 import DxTextBox from 'devextreme-vue/text-box';
 export default defineComponent({
+    props: ['fieldData'],
     components: {
         DxTextBox,
     },
-    props: ['fieldData'],
     setup(props) {
-        let stydefault = ref({
+        let stydefault = reactive({
             id: 3,
             color: 'white',
             name: "영업자회원",
@@ -21,17 +22,9 @@ export default defineComponent({
             background: 'grey',
             border: "1px solid grey"
         })
+
         if (props.fieldData)
-            stydefault.value = props.fieldData
-
-        // watch(
-        //     () => props.fieldData,
-        //     (newValue, old) => { 
-        //         console.log(newValue);
-
-        //         // stydefault.value = newValue
-        //     }
-        // );
+            stydefault = props.fieldData
 
 
         return {
@@ -40,5 +33,15 @@ export default defineComponent({
     }
 
 });
-</script>
-  
+</script> 
+
+<style scoped>
+::v-deep .dx-texteditor-input {
+    padding: 0;
+    color: white;
+}
+
+::v-deep .product-name {
+    margin-top: -5px;
+}
+</style>

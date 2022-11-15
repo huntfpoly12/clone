@@ -1,26 +1,13 @@
 <template>
-  <div>
-    <DxTextBox
-      :width="width"
-      value-change-event="input"
-      :show-clear-button="clearButton"
-      v-model:value="value"
-      :disabled="disabled"
-      :readOnly="readOnly"
-      @input="updateValue(value)"
-      :mask="mask"
-      :mask-invalid-message="maskMess"
-      :height="$config_styles.HeightInput"
-    >
-      <DxValidator>
-        <DxRequiredRule v-if="required" :message="messageRequired" />
-        <DxCustomRule :reevaluate="true"
-                :message="maskMess"
-                :validation-callback="validateDate"
-            />
-      </DxValidator>
-    </DxTextBox>
-  </div>
+  <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" v-model:value="value"
+    :disabled="disabled" :readOnly="readOnly" @input="updateValue(value)" :mask="mask" :mask-invalid-message="maskMess"
+    :height="$config_styles.HeightInput">
+    <DxValidator>
+      <DxRequiredRule v-if="required" :message="messageRequired" />
+      <DxCustomRule :reevaluate="true" :message="maskMess" :validation-callback="validateDate" />
+    </DxValidator>
+  </DxTextBox>
+
 </template>
 
 <script lang="ts">
@@ -81,7 +68,7 @@ export default defineComponent({
       }
     );
 
-    const validateDate = (e:any)=>{
+    const validateDate = (e: any) => {
       let date = e.value;
       let dtFormat = date.slice(0, 4) + "-" + date.slice(4, 6) + "-" + date.slice(6, 8);
       return dayjs(dtFormat, 'YYYY-MM-DD', true).isValid();

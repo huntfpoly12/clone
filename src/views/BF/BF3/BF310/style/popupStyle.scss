@@ -28,6 +28,12 @@
     font-size: 11px;
     width: 100%;
     padding-top: 2px;
+    display: flex;
+    align-items: center;
+
+    >div {
+        padding-left: 5px;
+    }
 }
 
 .ant-card-head-title {
@@ -135,7 +141,7 @@
     padding: 4px 6px;
 }
 
-.custiom-date { 
+.custiom-date {
     padding: 4px;
     border-radius: 5px;
     padding: 1px 5px;
@@ -144,4 +150,18 @@
 
 .collapse-content {
     height: 700px;
+}
+
+.ant-collapse-borderless {
+    border-top: 1px solid #d9d9d9;
+}
+
+.ant-collapse-item.ant-collapse-item-active {
+    background: white;
+    border: 1px solid #d9d9d9;
+    border-top: none;
+}
+
+::v-deep .ant-collapse-arrow {
+    font-size: 14px !important;
 }

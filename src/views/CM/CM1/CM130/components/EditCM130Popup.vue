@@ -25,7 +25,7 @@
                         <a-col :span="12">
                             <a-form-item label="항목명">
                                 <default-text-box style="width: 150px; margin-right: 10px"
-                                    v-model:valueInput="formState.name" label="Default text box">
+                                    v-model:valueInput="formState.name">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>

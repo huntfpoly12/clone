@@ -12,15 +12,14 @@
 			<div style="text-align: center; margin-top: 10px">
 				<default-text-box
 					style="width: 350px; display: inline-block; margin-right: 10px;"
-					v-model:valueInput="search"
-					label="Default text box">
+					v-model:valueInput="search">
 				</default-text-box>
 				<button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'" @onClick="onSearch"/>
 			</div>
 			<a-spin tip="Loading..." :spinning="loading">
 				<div style="margin: 48px 0">
 					<DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="bcode"
-						:allow-column-reordering="true" :allow-column-resizing="true" :column-auto-width="true">
+					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
 						<DxColumn data-field="" :width="30" cell-template="grid-cell" />
 						<template #grid-cell="{ data }">
 							<a-radio-group v-model:value="modalParam.checkBox">
@@ -46,7 +45,8 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch } from "vue";
+import { ref, defineComponent, watch, computed } from "vue";
+import { useStore } from 'vuex';
 import { employees } from "../data.js";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import queries from "../../../../../graphql/queries/common/index";
@@ -92,6 +92,13 @@ export default defineComponent({
 		};
 	},
 	setup(props, { emit }) {
+		// config grid
+		const store = useStore();
+    
+		// const per_page = computed(() => store.state.settings.per_page);
+		const move_column = computed(() => store.state.settings.move_column);
+		const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
 		let showEmployeeInfo = ref(false);
 		let selectedRowNotes = ref('');
 		let selectedRowPicture = ref('');
@@ -148,6 +155,8 @@ export default defineComponent({
 		return {
 			data,
 			visible,
+			move_column,
+      		colomn_resize,
 			search,
 			loading,
 			onSearch,

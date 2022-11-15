@@ -11,7 +11,7 @@
                         <a-col :span="16">
                             <a-form-item label="그룹코드" class="clr">
                                 <div class="dflex">
-                                    <default-text-box label="그룹코드" class="mr5" v-model:valueInput="dataRes.id"
+                                    <default-text-box class="mr5" v-model:valueInput="dataRes.id"
                                         placeholder="영문,숫자 5~10자 (중복불가)" :max-character="10" :min-character="5" required
                                         width="250"></default-text-box>
                                     <button-basic type="default" text="중복체크" @onClick="checkId" mode="contained"
@@ -22,7 +22,7 @@
                         <a-col :span="16">
                             <a-form-item label="그룹명" class="clr">
                                 <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" width="250"
-                                    :max-character="20" required label="그룹명" />
+                                    :max-character="20" required />
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
@@ -50,7 +50,7 @@
                         </a-col>
                         <a-col :span="24">
                             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="enumKey"
-                                class="table-sevice">
+                                class="table-sevice" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{ data }" class="custom-action">
@@ -68,10 +68,9 @@
                         </a-col>
                     </a-row>
                     <a-row class="footer">
-                        <button-basic :text="'그냥 나가기'" :type="'info'" :mode="'outlined'" @onClick="setModalVisible"
+                        <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible"
                             style="margin-right: 10px;" />
-                        <button-basic :text="'저장하고 나가기'" :type="'success'" :mode="'contained'"
-                            @onClick="createScrenRole" />
+                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="createScrenRole" />
                     </a-row>
                 </a-spin>
             </form>
@@ -79,7 +78,8 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch } from 'vue'
+import { ref, defineComponent, watch, computed } from 'vue'
+import { useStore } from 'vuex';
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import {
     DxDataGrid,
@@ -103,6 +103,11 @@ export default defineComponent({
         DxCheckBox
     },
     setup(props, { emit }) {
+        // config grid
+        const store = useStore();
+        
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const dataSource = ref(AdminScreenRole.all())
         const spinningAdd = ref<boolean>(false);
         const layout = {
@@ -229,6 +234,8 @@ export default defineComponent({
         }
         return {
             changeValRoles,
+            move_column,
+            colomn_resize,
             createScrenRole,
             spinningAdd,
             dataSource,

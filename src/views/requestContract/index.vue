@@ -157,7 +157,7 @@
                             <div style="position: relative;">
                                 <div class="overlay" v-if="disableFormVal2 == true"></div>
                                 <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
-                                    :show-borders="true" :allow-column-reordering="true" :allow-column-resizing="true"
+                                    :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                     :selected-row-keys="selectedItemKeys" :column-auto-width="true"
                                     :repaint-changes-only="true">
                                     <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
@@ -310,6 +310,7 @@
 </template>
 <script lang="ts">
 import { reactive, ref, watch, computed } from "vue";
+import { useStore } from 'vuex';
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
     CheckOutlined,
@@ -376,6 +377,10 @@ export default {
         DxAsyncRule
     },
     setup() {
+        // config grid
+        const store = useStore();
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const titleModal = ref("사업자등록증")
         const titleModal2 = ref("장기요양기관등록증")
         const radioGroup = ref()
@@ -467,7 +472,7 @@ export default {
         ])
         const arrayRadioWithdrawDay = ref([
             { id: '매월 5일', text: '매월 5일' },
-            { id: '매월 12일', text: '매월 12s일' },
+            { id: '매월 12일', text: '매월 12일' },
             { id: '매월 19일', text: '매월 19일' },
         ])
         const valueRadioBox = ref(1)
@@ -845,6 +850,8 @@ export default {
         }, { deep: true, });
         return {
             facilityBizTypeCommon,
+            move_column,
+            colomn_resize,
             arrayRadioWithdrawDay,
             valueRadioWithdrawDay,
             valueSourceService,
