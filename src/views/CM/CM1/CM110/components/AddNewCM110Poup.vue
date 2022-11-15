@@ -1,82 +1,74 @@
 <template>
-	<div>
-		<a-modal :visible="modalStatus" :mask-closable="false" centered okText="저장하고 나가기" cancelText="그냥 나가기"
-			@cancel="setModalVisible()" width="700px" footer="">
-			<div class="cm-100-popup-add">
-				<a-form :model="formState" :label-col="labelCol">
-					<h2 class="title-h2">이용자정보</h2>
-					<a-row :gutter="24">
-						<a-col :span="12">
-							<a-form-item label="이용자ID">
-								<default-text-box 
-									:width="150"
-									:replaceRegex="true"
-									v-model:valueInput="formState.username">
-								</default-text-box>
-							</a-form-item>
-						</a-col>
-						<a-col :span="12">
-							<button-basic :disabled="!disabledCheckUserName" :text="'중복체크'" :type="'default'" :mode="'contained'" @onClick="checkUserName"/>
-						</a-col>
-					</a-row>
-					<a-row>
-						<a-col :span="12">
-							<a-form-item label="성명">
-								<default-text-box :width="150"  v-model:valueInput="formState.name"></default-text-box>
-							</a-form-item>
-						</a-col>
-					</a-row>
-					<a-row>
-						<a-col :span="24">
-							<a-form-item label="회계권한(담당사업)">
-								<tag-select-box placeholder="선택하십시오" :arrayValue="bizTypeList" v-model:valueTagSelect="formState.facilityBusinessIds"/>
-							</a-form-item>
-						</a-col>
-					</a-row>
-					<a-row>
-						<a-col :span="16">
-							<a-form-item label="원천권한">
-								<radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="returnRadio"
-                                            :layoutCustom="'horizontal'" />
-							</a-form-item>
-						</a-col>
-					</a-row>
-					<a-row>
-						<a-col :span="24">
-							<a-row>
-								<a-col :span="11">
-									<a-form-item label="휴대폰">
-										<text-number-box :width="150" v-model:valueInput="formState.mobilePhone"></text-number-box>
-									</a-form-item>
-								</a-col>
-								<a-col>
-									<p class="validate-message">‘-’없이 숫자만 입력</p>
-								</a-col>
-							</a-row>
-						</a-col>
-					</a-row>
-					<a-row>
-						<a-col :span="24">
-							<a-row>
-								<a-col :span="14">
-									<a-form-item label="이메일">
-										<mail-text-box v-model:valueInput="formState.email"
-											:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email">
-										</mail-text-box>
-									</a-form-item>
-								</a-col>
-								<a-col :span="10">
-									<p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
-								</a-col>
-							</a-row>
-						</a-col>
-					</a-row>
-				</a-form>
-			</div>
-			<div class="text-align-center mt-20">
-				<button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
-				<button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'" @onClick="creactUserNew"/>
-			</div>
+	<div ref="root">
+		<a-modal :visible="modalStatus" :mask-closable="false" centered cancelText="그냥 나가기" @cancel="setModalVisible()"
+			width="700px" :footer="null">
+			<h2 class="title-h2">이용자정보</h2>
+			<form action="your-action">
+				<a-row :gutter="24" class="cm-100-popup-add">
+					<a-col :span="12">
+						<a-form-item label="이용자ID" :label-col="labelCol" class="red">
+							<default-text-box :width="150" :required="true" :replaceRegex="true"
+								v-model:valueInput="formState.username">
+							</default-text-box>
+						</a-form-item>
+					</a-col>
+					<a-col :span="12">
+						<button-basic :disabled="!disabledCheckUserName" :text="'중복체크'" :type="'default'"
+							:mode="'contained'" @onClick="checkUserName" />
+					</a-col>
+					<a-col :span="12">
+						<a-form-item label="성명" :label-col="labelCol" class="red">
+							<default-text-box :width="150" :required="true" v-model:valueInput="formState.name">
+							</default-text-box>
+						</a-form-item>
+					</a-col>
+					<a-col :span="20">
+						<a-form-item label="회계권한(담당사업)" :label-col="labelCol">
+							<tag-select-box placeholder="선택하십시오" :arrayValue="bizTypeList"
+								v-model:valueTagSelect="formState.facilityBusinessIds" />
+						</a-form-item>
+					</a-col>
+					<a-col :span="12">
+						<a-form-item label="원천권한" :label-col="labelCol">
+							<radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="returnRadio"
+								:layoutCustom="'horizontal'" />
+						</a-form-item>
+					</a-col>
+					<a-col :span="24">
+						<a-row>
+							<a-col>
+								<a-form-item label="휴대폰" class="red" :label-col="labelCol">
+									<tel-text-box :width="150" :required="true"
+										v-model:valueInput="formState.mobilePhone"></tel-text-box>
+								</a-form-item>
+							</a-col>
+							<a-col>
+								<p class="validate-message">‘-’없이 숫자만 입력</p>
+							</a-col>
+						</a-row>
+					</a-col>
+					<a-col :span="24">
+						<a-row>
+							<a-col :span="14">
+								<a-form-item label="이메일" class="red" :label-col="labelCol">
+									<mail-text-box v-model:valueInput="formState.email" :required="true"
+										:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email">
+									</mail-text-box>
+								</a-form-item>
+							</a-col>
+							<a-col>
+								<p class="validate-message" v-if="!statusMailValidate">이메일 형식이 정확하지 않습니다.</p>
+							</a-col>
+						</a-row>
+					</a-col>
+				</a-row>
+				<div class="text-align-center mt-20">
+					<button-basic class="button-form-modal" text="그냥 나가기" :type="'default'" :mode="'outlined'"
+						@onClick="setModalVisible()" />
+					<button-basic class="button-form-modal" text="저장하고 나가기" :width="140" :type="'default'"
+						:mode="'contained'" @onClick="creactUserNew($event)" />
+				</div>
+			</form>
 		</a-modal>
 	</div>
 </template>
@@ -87,6 +79,7 @@ import type { SelectProps } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import notification from "../../../../../utils/notification";
+import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
 import queries from "../../../../../graphql/queries/CM/CM110/index"
 
 export default defineComponent({
@@ -103,7 +96,7 @@ export default defineComponent({
 	setup(props, { emit }) {
 		const optionsRadio = [
 			{ id: 0, text: "있음" },
-            { id: 1, text: "없음" },
+			{ id: 1, text: "없음" },
 		];
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(false);
@@ -190,25 +183,32 @@ export default defineComponent({
 			emit("closePopup", false)
 			notification('success', `신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!`)
 		})
-		const creactUserNew = () => {
-			if (statusMailValidate.value == true) {
-				let dataCallApiCreate = {
-					companyId: props.data.companyId,
-					input: {
-						username: formState.username,
-						name: formState.name,
-						accountingRole: false,
-						facilityBusinessIds: formState.facilityBusinessIds,
-						withholdingRole: formState.withholdingRole,
-						mobilePhone: formState.mobilePhone,
-						email: formState.email,
-					}
-				}
-				creactUser(dataCallApiCreate)
+		const creactUserNew = (e: any) => {
+			var res = e.validationGroup.validate();
+			console.log(e.validationGroup.validate());
+
+			if (!res.isValid) {
+				res.brokenRules[0].validator.focus();
 			} else {
-				notification('error', `이메일형식이 정확하지 않습니다.`)
-				var Url = document.getElementById("email") as HTMLInputElement;
-				Url.select()
+				if (statusMailValidate.value == true) {
+					let dataCallApiCreate = {
+						companyId: props.data.companyId,
+						input: {
+							username: formState.username,
+							name: formState.name,
+							accountingRole: false,
+							facilityBusinessIds: formState.facilityBusinessIds,
+							withholdingRole: formState.withholdingRole,
+							mobilePhone: formState.mobilePhone,
+							email: formState.email,
+						}
+					}
+					creactUser(dataCallApiCreate)
+				} else {
+					notification('error', `이메일형식이 정확하지 않습니다.`)
+					var Url = document.getElementById("email") as HTMLInputElement;
+					Url.select()
+				}
 			}
 		}
 
@@ -226,9 +226,9 @@ export default defineComponent({
 			formState.username = value.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, '')
 			triggersUserName.value = false
 			dataCallApiCheck.value = {
-					username: formState.username
-				}
-			
+				username: formState.username
+			}
+
 			if (formState.username.length >= 1) {
 				disabledCheckUserName.value = true
 			} else {
@@ -241,13 +241,13 @@ export default defineComponent({
 			formState.mobilePhone = value.replace(/\D/g, '');
 		})
 		watch(() => returnRadio.value, (value) => {
-                if (value == 0) {
-                    formState.withholdingRole = true;
-                } else {
-                    formState.withholdingRole = false;
-                }
-            }
-        );
+			if (value == 0) {
+				formState.withholdingRole = true;
+			} else {
+				formState.withholdingRole = false;
+			}
+		}
+		);
 
 		const {
 			mutate: sendEmailUser,
@@ -256,7 +256,7 @@ export default defineComponent({
 		} = useMutation(mutations.sendEmail);
 
 		const setModalVisible = () => {
-			emit('closePopup', false)
+			comfirmClosePopup(() => emit('closePopup', false))
 		}
 
 		doneSendEmail(e => {
@@ -285,9 +285,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../style/style.scss">
-
 .confirm-popup /deep/.ant-modal-footer {
 	text-align: center;
 }
-
 </style>
