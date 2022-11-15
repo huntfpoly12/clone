@@ -202,8 +202,6 @@ export default defineComponent({
 
         const setModalVisible = () => {
             comfirmClosePopup(() => emit('closePopup', false))
-
-
         }
 
         const funcAddress = (data: any) => {
