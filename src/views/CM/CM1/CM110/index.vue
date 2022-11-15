@@ -3,7 +3,7 @@
         <div id="cm-110" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="사업자">
-                    <form action="" name="index-cm-110">
+                    <standard-form formName="index-cm-110">
                         <div class="container">
                             <h2 class="title-h2">사업자정보</h2>
                             <a-form-item label="상호" :label-col="labelCol">
@@ -140,9 +140,9 @@
                             </div>
                         </div>
                         <a-form-item class="btn-submit">
-                            <button-basic :text="'저장'" type="default" :mode="'contained'" @onClick="onSubmit"/>
+                            <button-basic :text="'저장'" type="default" :mode="'contained'" @onClick="onSubmit($event)"/>
                         </a-form-item>
-                    </form>
+                    </standard-form>
                     <ReviewStampImage :modalStatus="modalStampReviewStatus" @closePopup="modalStampReviewStatus = false"
                         :data="fileImage" :previewImageCall="previewImage" @urlSeal="changeSealUrl" />
                 </a-tab-pane>
@@ -408,23 +408,28 @@ export default defineComponent({
             }
         }
         //Submit form detail company
-        const onSubmit = () => {
-            if (statusMailValidate.value == true) {
-                let dataUpdateCompany = {
-                    companyId: companyId,
-                    input: {
-                        phone: formState.value.extendInfo.detail.phone,
-                        fax: formState.value.extendInfo.detail.fax,
-                        sealFileStorageId: formState.value.sealFileStorageId,
-                        presidentMobilePhone: formState.value.presidentMobilePhone,
-                        presidentEmail: formState.value.extendInfo.president.email,
-                        presidentBirthday: formState.value.extendInfo.president.birthday
-                    }
-                }
-                spinning.value = !spinning.value;
-                updateDataCompany(dataUpdateCompany)
+        const onSubmit = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
             } else {
-                notification('error', `이메일형식이 정확하지 않습니다.`)
+                if (statusMailValidate.value == true) {
+                    let dataUpdateCompany = {
+                        companyId: companyId,
+                        input: {
+                            phone: formState.value.extendInfo.detail.phone,
+                            fax: formState.value.extendInfo.detail.fax,
+                            sealFileStorageId: formState.value.sealFileStorageId,
+                            presidentMobilePhone: formState.value.presidentMobilePhone,
+                            presidentEmail: formState.value.extendInfo.president.email,
+                            presidentBirthday: formState.value.extendInfo.president.birthday
+                        }
+                    }
+                    spinning.value = !spinning.value;
+                    updateDataCompany(dataUpdateCompany)
+                } else {
+                    notification('error', `이메일형식이 정확하지 않습니다.`)
+                }
             }
         };
         const getColorTag = (data: boolean) => {
