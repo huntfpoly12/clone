@@ -125,6 +125,9 @@ export default defineComponent({
         },
         customrow: {
             type: Number
+        },
+        name:{
+            type: String
         }
     },
     components: {
@@ -189,9 +192,7 @@ export default defineComponent({
             fileName.value = file.name;
             try {
                 loading.value = true;
-                const data = await uploadRepository.public(formData);
-
-
+                const data = await uploadRepository.public(formData); 
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
                     loading.value = false;
@@ -201,11 +202,13 @@ export default defineComponent({
                         url: imageUrl.value,
                         id: data.data.id,
                         fileName: fileName.value,
+                        name: props.name
                     });
                     emit("update-step", {
                         url: imageUrl.value,
                         id: data.data.id,
                         fileNamestep: fileName.value,
+                        
                     });
                 });
             } catch (error) {
