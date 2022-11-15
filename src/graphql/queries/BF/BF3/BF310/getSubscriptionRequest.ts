@@ -81,13 +81,7 @@ query getSubscriptionRequest($id: Int!) {
           registrationCardFileStorageId
           registrationCard{
             name
-            url
-            createdAt
-            createdBy
-            updatedAt
-            updatedBy
-            active
-            ip
+            url 
           }
         }
         accountingServiceTypes

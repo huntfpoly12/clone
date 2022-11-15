@@ -65,7 +65,6 @@
                                         </a-form-item>
                                     </a-col>
 
-
                                     <a-col :span="24">
                                         <a-form-item label="심사메모" label-align="left" :label-col="labelCol">
                                             <text-area-box v-model:valueInput="formState.memo" width="100%" />
@@ -169,7 +168,7 @@
                                         </div>
                                         <a-col :span="7">
                                             <preview-image :dataImage="{ url: imageLicenseFile, name: licenseFileName }"
-                                                @deleteImg="removeLicenseFile" />
+                                                @deleteImg="removeLicenseFile" :activePreview="true" />
                                         </a-col>
                                     </div>
                                 </div>
@@ -209,8 +208,9 @@
                                         <div id="data-grid-demo">
                                             <DxDataGrid id="gridContainer"
                                                 :data-source="formState.content.accounting.facilityBusinesses"
-                                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                                :show-borders="true" :selected-row-keys="selectedItemKeys">
+                                                :allow-column-reordering="move_column"
+                                                :allow-column-resizing="colomn_resize" :show-borders="true"
+                                                :selected-row-keys="selectedItemKeys">
                                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                                     :allow-deleting="true" template="button-template" mode="cell">
                                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -235,44 +235,53 @@
                                                 <DxToolbar>
                                                     <DxItem name="addRowButton" />
                                                 </DxToolbar>
+
+                                                <DxMasterDetail data-field="registrationCard" :enabled="true" template="registrationCard" />
+                                                <template #registrationCard="{ data }">
+                                                    <a-form-item label="장기요양기관등록번호" class="clr">
+                                                        <default-text-box
+                                                            v-model:valueInput="formState.institutionNumber"
+                                                            :required="true" width="250px"
+                                                            messRequired="이항목은 필수 입력사항입니다!" />
+                                                    </a-form-item>
+                                                    <div style="display: flex">
+                                                        <div>
+                                                            <imgUpload :title="titleModal" @update-img="getregCardFile"
+                                                                style="margin-top: 10px" />
+
+                                                        </div>
+                                                        <a-col :span="7">
+                                                            <div v-if="imageRegCardFile" class="img-preview">
+                                                                <a-image :src="imageRegCardFile" />
+                                                            </div>
+                                                            <div v-else class="img-preview">
+                                                                <img
+                                                                    src="../../../../../assets/images/imgdefault.jpg" />
+                                                            </div>
+                                                            <div v-if="regCardFileName">
+                                                                <span style="padding-right: 10px">{{
+                                                                        regCardFileName
+                                                                }}</span>
+                                                                <delete-outlined @click="removeRegCardFile"
+                                                                    style="color: red; cursor: pointer" />
+                                                            </div>
+                                                        </a-col>
+                                                    </div>
+                                                </template>
                                             </DxDataGrid>
                                         </div>
-                                        <a-form-item label="장기요양기관등록번호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.institutionNumber"
-                                                :required="true" width="250px" messRequired="이항목은 필수 입력사항입니다!" />
-                                        </a-form-item>
-                                        <div style="display: flex">
-                                            <div>
-                                                <imgUpload :title="titleModal" @update-img="getregCardFile"
-                                                    style="margin-top: 10px" />
-                                                <div>
-                                                    <a-row>
-                                                        <a-col :span="12">
-                                                            <p>부가서비스</p>
-                                                        </a-col>
-                                                        <a-col :span="12">
-                                                            <checkbox-basic
-                                                                v-model:valueCheckbox="formState.content.accounting.accountingServiceTypes[0]"
-                                                                :disabled="false" size="15" label="회계서비스 신청합니다." />
-                                                        </a-col>
-                                                    </a-row>
-                                                </div>
-                                            </div>
-                                            <a-col :span="7">
-                                                <div v-if="imageRegCardFile" class="img-preview">
-                                                    <a-image :src="imageRegCardFile" />
-                                                </div>
-                                                <div v-else class="img-preview">
-                                                    <img src="../../../../../assets/images/imgdefault.jpg" />
-                                                </div>
-                                                <div v-if="regCardFileName">
-                                                    <span style="padding-right: 10px">{{
-                                                            regCardFileName
-                                                    }}</span>
-                                                    <delete-outlined @click="removeRegCardFile"
-                                                        style="color: red; cursor: pointer" />
-                                                </div>
-                                            </a-col>
+
+                                        <div>
+                                            <a-row>
+                                                <a-col :span="3">
+                                                    <p>부가서비스</p>
+                                                </a-col>
+                                                <a-col :span="12">
+                                                    <checkbox-basic
+                                                        v-model:valueCheckbox="formState.content.accounting.accountingServiceTypes[0]"
+                                                        :disabled="false" size="15" label="회계서비스 신청합니다." />
+                                                </a-col>
+                                            </a-row>
                                         </div>
                                     </div>
                                 </div>
@@ -371,6 +380,7 @@ import {
     DxToolbar,
     DxItem,
     DxTexts,
+    DxMasterDetail,
 } from "devextreme-vue/data-grid";
 import {
     UploadOutlined,
@@ -389,13 +399,17 @@ import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import imgUpload from "../../../../../components/UploadImage.vue";
 import BankSelectBox from "../../../../../components/BankSelectBox.vue";
+import console, { log } from "console";
 export default defineComponent({
     props: {
         modalStatus: {
             default: false,
             type: Boolean,
         },
-        data: {},
+        data: {
+            type: Number,
+            required: true
+        },
     },
     components: {
         DxDropDownBox,
@@ -414,12 +428,12 @@ export default defineComponent({
         DxToolbar,
         DxItem,
         DxTexts,
+        DxMasterDetail,
         BankSelectBox
     },
     setup(props, { emit }) {
         // config grid
         const store = useStore();
-        
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const labelCol = { style: { width: "150px" } };
@@ -502,10 +516,14 @@ export default defineComponent({
         watch(result, (value) => {
             if (value && value.getSubscriptionRequest) {
                 // set value license
-                imageLicenseFile.value =
-                    value.getSubscriptionRequest.content.company.license.url;
-                licenseFileName.value =
-                    value.getSubscriptionRequest.content.company.license.name;
+
+                if (value.getSubscriptionRequest.content.company.license) {
+                    imageLicenseFile.value =
+                        value.getSubscriptionRequest.content.company.license.url ? value.getSubscriptionRequest.content.company.license.url : '';
+                    licenseFileName.value =
+                        value.getSubscriptionRequest.content.company.license.name;
+                }
+
                 // set value Term Care Institution
                 let faBusinesses =
                     value.getSubscriptionRequest.content.accounting.facilityBusinesses;
@@ -514,7 +532,7 @@ export default defineComponent({
                     faBusinesses.length > 0 &&
                     faBusinesses[0].registrationCard != null
                 ) {
-                    imageRegCardFile.value = faBusinesses[0].registrationCard.url;
+                    imageRegCardFile.value = faBusinesses[0].registrationCard.url ? faBusinesses[0].registrationCard.url : ''
                     regCardFileName.value = faBusinesses[0].registrationCard.name;
                 }
                 delete value.getSubscriptionRequest.content.company.license
@@ -643,7 +661,7 @@ export default defineComponent({
         // handle License File upload
         const getUrlLicenseFile = (img: any) => {
             formState.value.content.company.licenseFileStorageId = img.id;
-            imageLicenseFile.value = img.url;
+            imageLicenseFile.value = img.url ? img.url : "";
             licenseFileName.value = img.fileName;
         };
         const removeLicenseFile = () => {
@@ -653,19 +671,19 @@ export default defineComponent({
         // handle registration CardFile Storage upload
         const getregCardFile = (img: any) => {
             regCardFileId.value = img.id;
-            imageRegCardFile.value = img.url;
+            imageRegCardFile.value = img.url ? img.url : '';
             regCardFileName.value = img.fileName;
         };
         const removeRegCardFile = () => {
             regCardFileId.value = "";
             imageRegCardFile.value = "";
             regCardFileName.value = "";
-        }; 
+        };
         return {
             move_column,
             colomn_resize,
             titleModal,
-            selectedItemKeys, 
+            selectedItemKeys,
             checkedService,
             labelCol,
             bizTypeItems,
@@ -693,4 +711,40 @@ export default defineComponent({
     },
 });
 </script>   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style lang="scss" scoped src="../style/popupStyle.scss" />
