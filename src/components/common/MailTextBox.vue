@@ -1,8 +1,8 @@
 <template>
   <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" mode="mail"
     :placeholder="placeholder" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
-    @input="updateValue(value)" :height="$config_styles.HeightInput">
-    <DxValidator>
+    @input="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
+    <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxEmailRule message="이메일 형식이 정확하지 않습니다" />
     </DxValidator>
@@ -36,6 +36,10 @@ export default defineComponent({
     },
     placeholder: String,
     readOnly: Boolean,
+    nameInput: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     DxTextBox,

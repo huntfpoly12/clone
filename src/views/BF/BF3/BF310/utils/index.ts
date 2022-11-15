@@ -104,3 +104,7 @@ export const initialDataStatus = [
     { name: "심사중", date: "2022-08-25", color: "blue", value: 20 },
     { name: "반려", date: "2022-08-25", color: "grey", value: 99 },
 ];
+
+export const inputIncollapse = [
+    
+]

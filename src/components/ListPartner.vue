@@ -12,8 +12,9 @@
       :disabled="disabled"
       @value-changed="updateValue(value)"
       :height="$config_styles.HeightInput"
+      :name="nameInput"
     >
-      <DxValidator>
+      <DxValidator :name="nameInput">
         <DxRequiredRule v-if="required" :message="messageRequired" />
       </DxValidator>
     </DxSelectBox>
@@ -43,6 +44,10 @@ export default defineComponent({
       default: "",
     },
     readOnly: Boolean,
+    nameInput: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     DxSelectBox,
