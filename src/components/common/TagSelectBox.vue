@@ -1,18 +1,12 @@
 <template>
-    <DxTagBox :data-source="arrayValue"
-            display-expr="name"
-            value-expr="id" 
-            :layout="layoutCustom"
-            @valueChanged="changeValueSelectBox"
-            :value="data"
-            :height="$config_styles.HeightInput"
-            />
+    <DxTagBox :data-source="arrayValue" display-expr="name" value-expr="id" :layout="layoutCustom"
+        @valueChanged="changeValueSelectBox" :value="data" :height="$config_styles.HeightInput" />
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, watch, ref } from "vue";
 import DxTagBox from 'devextreme-vue/tag-box';
 
-export default defineComponent ({
+export default defineComponent({
     props: {
         arrayValue: {
             type: Array,
@@ -31,7 +25,7 @@ export default defineComponent ({
     setup(props, { emit }) {
         const app: any = getCurrentInstance()
         const data = ref(props.valueTagSelect);
-        
+
         const changeValueSelectBox = (e: any) => {
             emit("update:valueTagSelect", e.value);
         }

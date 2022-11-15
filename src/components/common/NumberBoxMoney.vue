@@ -1,15 +1,12 @@
 <template>
-    <div>
-        <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
-            :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-            :show-spin-buttons="spinButtons" @input="updateValue(value)" :rtlEnabled="rtlEnabled" :max="max" :min="min"
-            :mode="mode" :style="{ height: $config_styles.HeightInput }" :format="'#,###'">
-            <DxValidator v-if="required">
-                <DxRequiredRule v-if="required" :message="messageRequired" />
-            </DxValidator>
-        </DxNumberBox>
-
-    </div>
+    <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
+        :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
+        :show-spin-buttons="spinButtons" @input="updateValue(value)" :rtlEnabled="rtlEnabled" :max="max" :min="min"
+        :mode="mode" :style="{ height: $config_styles.HeightInput }" :format="'#,###'">
+        <DxValidator v-if="required">
+            <DxRequiredRule v-if="required" :message="messageRequired" />
+        </DxValidator>
+    </DxNumberBox>
 </template>
 
 <script lang="ts">
