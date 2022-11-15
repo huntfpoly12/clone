@@ -1,14 +1,7 @@
 <template>
   <div style="margin-left: 5px">
-    <DxButton 
-      icon="search"
-      :width="155"
-      text="우편번호 검색"
-      type="default"
-      styling-mode="outlined"
-      @click="isOpen = true"
-      :height="$config_styles.HeightInput"
-    />
+    <DxButton icon="search" :width="155" text="우편번호 검색" type="default" styling-mode="outlined" @click="isOpen = true"
+      :height="$config_styles.HeightInput" />
 
     <a-modal v-model:visible="isOpen" footer="" :mask-closable="false">
       <div>

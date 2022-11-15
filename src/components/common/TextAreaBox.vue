@@ -1,8 +1,8 @@
 <template>
   <DxTextArea :height="height" :width="width" value-change-event="input" :max-length="maxCharacter"
     :placeholder="placeholder" v-model:value="value" :disabled="disabled" :readOnly="readOnly"
-    @input="updateValue(value)">
-    <DxValidator>
+    @input="updateValue(value)"  :name="nameInput">
+    <DxValidator  :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
     </DxValidator>
   </DxTextArea>
@@ -33,6 +33,10 @@ export default defineComponent({
     maxCharacter: Number,
     placeholder: String,
     readOnly: Boolean,
+    nameInput: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     DxTextArea,

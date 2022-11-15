@@ -1,5 +1,5 @@
 
-export const  bizTypeItems = [{ id: 1, text: '법인사업자' },{ id: 2, text: '개인사업자' }];
+export const bizTypeItems = [{ id: 1, text: '법인사업자' }, { id: 2, text: '개인사업자' }];
 export const initialFormState = {
     id: null,
     status: 10,
@@ -16,7 +16,9 @@ export const initialFormState = {
     processedAt: "",
     approvedAt: "",
     rejectedAt: "",
-
+    processedBy: "",
+    rejectedBy: "",
+    approvedBy: "",
     content: {
         agreements: {
             terms: true,
@@ -25,6 +27,7 @@ export const initialFormState = {
             withholdingService: true,
         },
         company: {
+            name: "",
             zipcode: "",
             roadAddress: "",
             jibunAddress: "",
@@ -56,7 +59,7 @@ export const initialFormState = {
         },
         accounting: {
             facilityBusinesses: [],
-            accountingServiceTypes: [],
+            accountingServiceTypes: [], 
         },
         withholding: {
             startYearMonth: "",
@@ -101,3 +104,11 @@ export const initialDataStatus = [
     { name: "심사중", date: "2022-08-25", color: "blue", value: 20 },
     { name: "반려", date: "2022-08-25", color: "grey", value: 99 },
 ];
+
+export const inputInCollapse = [
+    {key: 2, input_name: ['companyName','companyBizNumber','residentId','company-phone']},
+    {key: 3, input_name: ['president-name','president-mobilePhone','president-email']},
+    {key: 4, input_name: ['longTermCareInstitutionNumber']},
+    {key: 5, input_name: ['withholding-capacity']},
+    {key: 6, input_name: ['cmsBank-accountNumber','cmsBank-ownerName','cmsBank-ownerBizNumber']},
+]

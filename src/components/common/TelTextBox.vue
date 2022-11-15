@@ -1,8 +1,8 @@
 <template>
   <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" mode="text"
     :placeholder="placeholder" v-model:value="value" :disabled="disabled" :readOnly="readOnly" :on-input="onInputValue"
-    :height="$config_styles.HeightInput">
-    <DxValidator>
+    :height="$config_styles.HeightInput"  :name="nameInput">
+    <DxValidator  :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
     </DxValidator>
   </DxTextBox>
@@ -31,6 +31,10 @@ export default defineComponent({
     },
     placeholder: String,
     readOnly: Boolean,
+    nameInput: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     DxTextBox,
@@ -41,7 +45,7 @@ export default defineComponent({
     const app: any = getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
-    if(props.messRequired != ""){
+    if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
     const value = ref(props.valueInput);

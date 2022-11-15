@@ -1,27 +1,12 @@
 <template>
-  <div>
-    <DxNumberBox
-      @valueChanged="updateValue(value)"
-      :width="width"
-      value-change-event="input"
-      :show-clear-button="clearButton"
-      v-model:value="value"
-      :disabled="disabled"
-      :placeholder="placeholder"
-      :show-spin-buttons="spinButtons"
-      @input="updateValue(value)"
-      :rtlEnabled="rtlEnabled"
-      :max="max"
-      :min="min"
-      :mode="mode"
-      :style="{ height: $config_styles.HeightInput }"
-    >
-    <DxValidator v-if="required">
+  <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
+    :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
+    :show-spin-buttons="spinButtons" @input="updateValue(value)" :rtlEnabled="rtlEnabled" :max="max" :min="min"
+    :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput">
+    <DxValidator v-if="required" :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
     </DxValidator>
-    </DxNumberBox>
- 
-  </div>
+  </DxNumberBox>
 </template>
 
 <script lang="ts">
@@ -58,6 +43,10 @@ export default defineComponent({
       type: String,
       default: "number",
     },
+    nameInput: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     DxNumberBox,
@@ -65,10 +54,10 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
-    const app : any= getCurrentInstance()
+    const app: any = getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
-    if(props.messRequired != ""){
+    if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
     const value = ref(props.valueInput);

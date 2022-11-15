@@ -30,7 +30,6 @@
                 </a-tooltip>
             </div>
         </div>
-
         <div id="bf-320">
             <div class="search-form">
                 <div id="components-grid-demo-flex">
@@ -81,11 +80,10 @@
                     </a-row>
                 </div>
             </div>
-
             <div class="page-content">
                 <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                    @exporting="onExporting" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
@@ -118,7 +116,6 @@
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items @change="searching" />
                 </div>
-
                 <BF320Popup :modalStatus="modalStatus" @closePopup="handleClosePopup" :idRowEdit="idRowEdit"
                     :data="popupData" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -127,7 +124,6 @@
         </div>
     </a-spin>
 </template> 
-
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
@@ -164,7 +160,6 @@ dayjs.extend(localeData)
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF3/BF320/index"
-
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -187,16 +182,10 @@ export default defineComponent({
         DeleteOutlined,
         SaveOutlined
     },
-    data() {
-        return {
-            amountFormat: { currency: 'VND', useGrouping: true },
-        };
-    },
-
     setup() {
         // config grid
+        const amountFormat = { currency: 'VND', useGrouping: true }
         const store = useStore();
-        
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -208,7 +197,6 @@ export default defineComponent({
         let modalStatus = ref<boolean>(false)
         const trigger = ref<boolean>(true)
         var responApiSearchCompanies = ref([])
-
         const originData = ref({
             page: 1,
             rows: per_page,
@@ -220,13 +208,10 @@ export default defineComponent({
             salesRepresentativeId: null,
             excludeCancel: true
         })
-
         const { refetch: refetchData, result, loading } = useQuery(queries.searchCompanies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
-
-
         watch(result, (value) => {
             if (value) {
                 rowTable.value = value.searchCompanies.totalCount
@@ -235,13 +220,11 @@ export default defineComponent({
                 spinning.value = false;
             }
         });
-
         const searching = () => {
             trigger.value = true;
             spinning.value = true;
             refetchData()
         }
-
         const pageSize = ref(5)
         const handleClosePopup = () => {
             modalStatus.value = false
@@ -271,9 +254,8 @@ export default defineComponent({
             modalHistoryStatus.value = true;
             popupData.value = data;
         }
-      
-
         return {
+            amountFormat,
             trigger,
             move_column,
             colomn_resize,
@@ -292,12 +274,10 @@ export default defineComponent({
             pageSize,
             popupData,
             setModalVisible,
-            modalHistory, 
+            modalHistory,
         }
     },
 });
 </script>
-
 <style lang="scss" scoped src="./style/index.scss">
-
 </style>

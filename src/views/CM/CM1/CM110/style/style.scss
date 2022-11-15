@@ -51,3 +51,8 @@
 .mt-20 {
     margin-top: 20px;
 }
+::v-deep .red {
+    label {
+        color: red;
+    }
+}
