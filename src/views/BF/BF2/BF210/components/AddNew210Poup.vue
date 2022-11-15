@@ -33,8 +33,8 @@
                         </a-form-item>
                         <a-form-item label="회원종류2" class="red">
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
-                                value-expr="id" item-template="item" :height="$config_styles.HeightInput"
-                                style="width:170px" field-template="field" @value-changed="changeValueType">
+                                value-expr="id" item-template="item" :height="$config_styles.HeightInput" width="140px"
+                                field-template="field" @value-changed="changeValueType">
                                 <template #field="{ data }">
                                     <Field :fieldData="data" />
                                 </template>
@@ -85,7 +85,7 @@
                     </a-col>
                 </a-row>
             </form>
-           
+
         </a-modal>
     </div>
 </template>
@@ -118,6 +118,7 @@ import DxSelectBox from 'devextreme-vue/select-box';
 import DxButton from 'devextreme-vue/button';
 import Field from './Field.vue';
 import notification from '../../../../../utils/notification';
+import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 export default defineComponent({
     props: ["modalStatus", "data"],
     components: {
@@ -323,7 +324,7 @@ export default defineComponent({
             }
         }
         const setModalVisible = () => {
-            emit("closePopup", false);
+            comfirmClosePopup(() => emit("closePopup", false))
         }
         const getColorTag = (data: string) => {
             if (data === "중간매니저") {

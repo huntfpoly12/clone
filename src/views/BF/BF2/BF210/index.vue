@@ -38,19 +38,19 @@
                             <label class="lable-item">회원종류 :</label>
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
                                 value-expr="id" item-template="item" :height="$config_styles.HeightInput"
-                                style="width:170px" field-template="field" @value-changed="changeValueType">
+                                style="width:140px" field-template="field" @value-changed="changeValueType">
                                 <template #field="{ data }">
                                     <Field :fieldData="data" />
                                 </template>
                                 <template #item="{ data }">
-                                    <div style="width: 100%; padding: 3px;">
+                                    <div style=" padding: 3px;">
                                         <div
                                             :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
                                             {{ data.name }}
                                         </div>
                                     </div>
                                 </template>
-                            </DxSelectBox> 
+                            </DxSelectBox>
                         </a-col>
                         <a-col class="custom-flex">
                             <label class="lable-item">소속코드:</label>
@@ -82,7 +82,8 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                    :column-auto-width="true">
                     <DxPaging :page-size="20" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -222,7 +223,7 @@ export default defineComponent({
         const rowChoose = ref()
         // config grid
         const store = useStore();
-        
+
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -242,28 +243,28 @@ export default defineComponent({
             {
                 id: "c",
                 color: '#096dd9',
-                name: "고객사",
+                name: "고객사회원",
                 background: '#e6f7ff',
                 border: "1px solid #91d5ff",
             },
             {
                 id: "m",
                 color: 'white',
-                name: "매니저",
+                name: "매니저회원",
                 background: 'black',
                 border: "1px solid black",
             },
             {
                 id: "r",
                 color: 'white',
-                name: "영업자",
+                name: "영업자회원",
                 background: 'grey',
                 border: "1px solid grey",
             },
             {
                 id: "p",
                 color: 'white',
-                name: "파트너",
+                name: "파트너회원",
                 background: 'goldenrod',
                 border: "1px solid goldenrod",
             }
@@ -420,4 +421,5 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss" src="./style/style.scss">
+
 </style>

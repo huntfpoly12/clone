@@ -219,6 +219,7 @@ import {
 } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -248,7 +249,7 @@ export default defineComponent({
         const arrRadioType = reactive([
             { id: 1, text: '법인사업자' },
             { id: 2, text: '개인사업자' }
-        ]) 
+        ])
         const arrayRadioWithdrawDay = reactive([
             { id: '매월 5일', text: '매월 5일' },
             { id: '매월 12일', text: '매월 12일' },
@@ -311,7 +312,7 @@ export default defineComponent({
             seal: null,
             canceledAt: null,
             unpaidMonths: 0
-        }); 
+        });
         let dataImg = ref()
         const formStateMomes = ref([
             {
@@ -598,13 +599,13 @@ export default defineComponent({
         }
         updateDone((res) => {
             notification('success', "업데이트 완료!")
-            setModalVisible();
+            emit("closePopup", false)
         });
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
         const setModalVisible = () => {
-            emit("closePopup", false);
+            comfirmClosePopup(() => emit("closePopup", false))
         }
         const getImgUrl = (img: any) => {
             let resImg = {
@@ -647,4 +648,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../style/popup/index.scss">
+
 </style> 
