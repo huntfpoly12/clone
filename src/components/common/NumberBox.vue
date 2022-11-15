@@ -2,8 +2,8 @@
   <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
     :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
     :show-spin-buttons="spinButtons" @input="updateValue(value)" :rtlEnabled="rtlEnabled" :max="max" :min="min"
-    :mode="mode" :style="{ height: $config_styles.HeightInput }">
-    <DxValidator v-if="required">
+    :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput">
+    <DxValidator v-if="required" :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
     </DxValidator>
   </DxNumberBox>
@@ -42,6 +42,10 @@ export default defineComponent({
     mode: {
       type: String,
       default: "number",
+    },
+    nameInput: {
+      type: String,
+      default: '',
     },
   },
   components: {
