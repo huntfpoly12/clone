@@ -39,8 +39,8 @@
                         <a-row>
                             <a-col>
                                 <a-form-item label="휴대폰" :label-col="labelCol" class="red">
-                                    <text-number-box :width="150" v-model:valueInput="formState.mobilePhone"
-                                        :required="true"></text-number-box>
+                                    <tel-text-box :width="150" v-model:valueInput="formState.mobilePhone"
+                                        :required="true"></tel-text-box>
                                 </a-form-item>
                             </a-col>
                             <a-col>
@@ -102,13 +102,14 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch } from "vue";
+import { ref, defineComponent, watch, reactive } from "vue";
 import { MailOutlined } from "@ant-design/icons-vue";
 import type { SelectProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "../../../../../graphql/queries/CM/CM110/index";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import notification from "../../../../../utils/notification";
+import { initialOptionsRadio } from "../utils/index";
 
 export default defineComponent({
     props: {
@@ -122,10 +123,8 @@ export default defineComponent({
         MailOutlined,
     },
     setup(props, { emit }) {
-        const optionsRadio = [
-            { id: 0, text: "있음" },
-            { id: 1, text: "없음" },
-        ];
+        const optionsRadio = reactive([...initialOptionsRadio]);
+        
         const visible = ref<boolean>(false);
         const statusMailValidate = ref<boolean>(true);
         const options = ref<SelectProps["options"]>([]);

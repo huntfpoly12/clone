@@ -84,6 +84,7 @@ import notification from "../../../../../utils/notification";
 import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
 import queries from "../../../../../graphql/queries/CM/CM110/index"
 import DxValidationGroup from 'devextreme-vue/validation-group';
+import { initialOptionsRadio } from "../utils/index";
 export default defineComponent({
 	props: {
 		modalStatus: {
@@ -99,10 +100,7 @@ export default defineComponent({
 
 	},
 	setup(props, { emit }) {
-		const optionsRadio = [
-			{ id: 0, text: "있음" },
-			{ id: 1, text: "없음" },
-		];
+		const optionsRadio = reactive([...initialOptionsRadio]);
 		const visible = ref<boolean>(false);
 		const statusMailValidate = ref<boolean>(false);
 		const disabledCheckUserName = ref<boolean>(false);

@@ -41,7 +41,7 @@ export default defineComponent({
     const app: any = getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
-    if(props.messRequired != ""){
+    if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
     const value = ref(props.valueInput);

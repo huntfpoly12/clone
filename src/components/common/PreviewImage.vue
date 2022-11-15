@@ -1,5 +1,5 @@
 <template>
-    <a-col>
+    <a-col> 
         <div v-if="dataImage && dataImage.url" class="img-preview">
             <a-image v-if="activePreview || activePreview == true" :src="dataImage.url"
                 :style="{ width: width, height: height }" />
