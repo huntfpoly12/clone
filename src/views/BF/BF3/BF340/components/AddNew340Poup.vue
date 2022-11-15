@@ -236,6 +236,10 @@ export default defineComponent({
                 creactSale(dataNew)
             }
         }
+        // if taxvoice = true then 전자세금계산서 수신이메일 require
+        watch(() => formState.taxInvoice, (newValue) => {
+            receiptOrNot.value = newValue;
+        });
         return {
             labelCol,
             wrapperCol,

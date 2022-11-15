@@ -52,32 +52,32 @@
                                 </template>
                             </DxSelectBox> 
                         </a-col>
-                        <a-col>
+                        <a-col class="custom-flex">
                             <label class="lable-item">소속코드:</label>
-                            <a-input style="width: 150px" v-model:value="dataSearch.groupCode" />
+                            <default-text-box width="150px" v-model:valueInput="dataSearch.groupCode" />
                         </a-col>
-                        <a-col>
+                        <a-col class="custom-flex">
                             <label class="lable-item">소속명:</label>
-                            <a-input style="width: 150px" v-model:value="dataSearch.groupName" />
+                            <default-text-box width="150px" v-model:valueInput="dataSearch.groupName" />
                         </a-col>
-                        <a-col>
+                        <a-col class="custom-flex">
                             <label class="lable-item">회원ID :</label>
-                            <a-input style="width: 150px" v-model:value="dataSearch.username" />
+                            <default-text-box width="150px" v-model:valueInput="dataSearch.username" />
                         </a-col>
-                        <a-col>
+                        <a-col class="custom-flex">
                             <label class="lable-item">회원명 :</label>
-                            <a-input style="width: 150px" v-model:value="dataSearch.name" />
+                            <default-text-box width="150px" v-model:valueInput="dataSearch.name" />
                         </a-col>
-                        <a-col style="display: flex; align-items: center">
-                            <a-checkbox v-model:checked="checkStatus.checkBox1" value="true">
-                                <a-tag :color="getAbleDisable(true)">이용중</a-tag>
-                            </a-checkbox>
-                            <a-checkbox v-model:checked="checkStatus.checkBox2">
-                                <a-tag :color="getAbleDisable(false)">이용중지</a-tag>
-                            </a-checkbox>
+                        <a-col class="custom-flex">
+                            <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox1" :size="'14'" />
+                            <a-tag :color="getAbleDisable(true)" style="cursor: pointer; margin-left: 7px;"
+                                @click="changeValueCheckBox('checkBox1')">이용중</a-tag>
+                            <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox2" :size="'14'" />
+                            <a-tag :color="getAbleDisable(false)" style="cursor: pointer; margin-left: 7px;"
+                                @click="changeValueCheckBox('checkBox2')">이용중지
+                            </a-tag>
                         </a-col>
                     </a-row>
-                    
                 </div>
             </div>
             <div class="page-content">
@@ -184,7 +184,6 @@ import Field from './components/Field.vue';
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
-    
     components: {
         DxDataGrid,
         DxColumn,
@@ -204,18 +203,15 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        LoginOutlined
+        DxSelectBox,
+        LoginOutlined,
+        Field,
     },
-    data() {
-        return {
-            popupData: [],
-            modalAddNewStatus: false,
-           
-            modalHistoryStatus: false,
-            modalLoginStatus: false,
-        };
-    },
-    setup(props) {
+    setup() {
+        const popupData = ref([])
+        const modalAddNewStatus = ref(false)
+        const modalHistoryStatus = ref(false)
+        const modalLoginStatus = ref(false)
         const modalEditStatus = ref<boolean>(false);
         let triggerSearching = ref<boolean>(false);
         const spinning = ref<boolean>(false);
@@ -233,7 +229,7 @@ export default defineComponent({
 
         const dataSearch = ref({
             page: 1,
-            rows: 10,
+            rows: per_page,
             type: "m",
             groupCode: "",
             groupName: "",
@@ -283,12 +279,6 @@ export default defineComponent({
                 spinning.value = false;
             }, 500);
         })
-        watch(() => modalEditStatus.value,
-            () => {  
-                
-                    refetchData()
-            }
-        );
         const searching = () => {
             spinning.value = !spinning.value;
             let dataNew = ref()
@@ -324,27 +314,18 @@ export default defineComponent({
                     username: dataSearch.value.username,
                     name: dataSearch.value.name,
                 }
-            } 
-            
-            triggersearching.value = true  
-            if(originData){
+            }
+            triggerSearching.value = true
+            if (originData) {
                 originData.value = dataNew.value
                 refetchData()
             }
-                     
         }
-        
-        return {
-            modalEditStatus,
-            spinning,
-            dataSource,
-            idRowEdit,
-            refetchData,
-            originData,
-            searching,
-            dataSearch,
-            rowChoose,
-            checkStatus
+        const changeValueCheckBox = (checkbox: any) => {
+            if (checkbox == 'checkBox1')
+                checkStatus.value.checkBox1 = !checkStatus.value.checkBox1
+            else
+                checkStatus.value.checkBox2 = !checkStatus.value.checkBox2
         }
         const onExporting = (e: any) => {
             const workbook = new Workbook();
@@ -438,51 +419,5 @@ export default defineComponent({
     },
 });
 </script>
-<style scoped>
-.page-content {
-    padding: 10px 10px;
-}
-
-.cell-button-add {
-    padding-left: 100px !important;
-}
-
-.cell-center {
-    text-align: center !important
-}
-
-.dx-button-has-text .dx-button-content {
-    padding: 0px 15px !important;
-}
-
-.search-form {
-    background: #f1f3f4;
-    padding: 10px 24px;
-}
-
-.dx-select-checkbox {
-    display: inline-block !important;
-}
-
-#data-grid-demo {
-    min-height: 700px;
-}
-
-.search-form .col {
-    display: flex;
-    align-items: center;
-}
-
-.search-form .col {
-    margin-top: 20px;
-}
-
-.search-form .col .lable-item {
-    width: 110px;
-    display: inline-block;
-}
-
-.search-form .col .item:nth-child(2) {
-    margin-left: 30px;
-}
+<style scoped lang="scss" src="./style/style.scss">
 </style>
