@@ -3,7 +3,7 @@
 		<a-modal :visible="modalStatus" :mask-closable="false" centered cancelText="그냥 나가기" @cancel="setModalVisible()"
 			width="700px" :footer="null">
 			<h2 class="title-h2">이용자정보</h2>
-			<form action="your-action">
+			<standard-form formName="add-cm110" >
 				<a-row :gutter="24" class="cm-100-popup-add">
 					<a-col :span="12">
 						<a-form-item label="이용자ID" :label-col="labelCol" class="red">
@@ -62,18 +62,20 @@
 						</a-row>
 					</a-col>
 				</a-row>
+			
 				<div class="text-align-center mt-20">
 					<button-basic class="button-form-modal" text="그냥 나가기" :type="'default'" :mode="'outlined'"
 						@onClick="setModalVisible()" />
 					<button-basic class="button-form-modal" text="저장하고 나가기" :width="140" :type="'default'"
 						:mode="'contained'" @onClick="creactUserNew($event)" />
 				</div>
-			</form>
+			</standard-form>
 		</a-modal>
 	</div>
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
+import DxButton from 'devextreme-vue/button';
 import { MailOutlined } from '@ant-design/icons-vue';
 import type { SelectProps } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -81,7 +83,7 @@ import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import notification from "../../../../../utils/notification";
 import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
 import queries from "../../../../../graphql/queries/CM/CM110/index"
-
+import DxValidationGroup from 'devextreme-vue/validation-group';
 export default defineComponent({
 	props: {
 		modalStatus: {
@@ -91,7 +93,10 @@ export default defineComponent({
 		data: null,
 	},
 	components: {
-		MailOutlined
+		MailOutlined,
+		DxButton,
+		DxValidationGroup
+
 	},
 	setup(props, { emit }) {
 		const optionsRadio = [
@@ -185,8 +190,6 @@ export default defineComponent({
 		})
 		const creactUserNew = (e: any) => {
 			var res = e.validationGroup.validate();
-			console.log(e.validationGroup.validate());
-
 			if (!res.isValid) {
 				res.brokenRules[0].validator.focus();
 			} else {
