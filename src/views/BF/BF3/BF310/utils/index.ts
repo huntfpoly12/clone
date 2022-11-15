@@ -3,7 +3,7 @@ export const  bizTypeItems = [{ id: 1, text: '법인사업자' },{ id: 2, text: 
 export const initialFormState = {
     id: null,
     status: 10,
-    code: "",
+    code: "", 
     companyName: "",
     companyBizNumber: "",
     companyAddress: "",
@@ -16,7 +16,9 @@ export const initialFormState = {
     processedAt: "",
     approvedAt: "",
     rejectedAt: "",
-
+    processedBy: "", 
+    rejectedBy: "",
+    approvedBy:"",
     content: {
         agreements: {
             terms: true,
@@ -25,6 +27,7 @@ export const initialFormState = {
             withholdingService: true,
         },
         company: {
+            name:"",
             zipcode: "",
             roadAddress: "",
             jibunAddress: "",
