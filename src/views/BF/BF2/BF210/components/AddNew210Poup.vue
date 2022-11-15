@@ -1,7 +1,7 @@
 <template>
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible"
-            width="50%" :mask-closable="false">
+            width="50%" :mask-closable="false" footer="">
             <h2 class="title_modal">회원정보</h2>
             <form action="" @submit.prevent="creactUserNew">
                 <a-row :gutter="24">
@@ -85,8 +85,7 @@
                     </a-col>
                 </a-row>
             </form>
-            <template #footer>
-            </template>
+           
         </a-modal>
     </div>
 </template>
