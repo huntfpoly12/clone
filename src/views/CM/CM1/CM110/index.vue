@@ -3,7 +3,7 @@
         <div id="cm-110" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="사업자">
-                    <form action="">
+                    <form action="" name="index-cm-110">
                         <div class="container">
                             <h2 class="title-h2">사업자정보</h2>
                             <a-form-item label="상호" :label-col="labelCol">
