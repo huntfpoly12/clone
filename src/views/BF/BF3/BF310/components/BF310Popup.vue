@@ -3,7 +3,7 @@
         <a-modal :mask-closable="false" v-model:visible="visible" title="계약정보관리&심사 " centered
             @cancel="setModalVisible()" width="1000px" :bodyStyle="{ height: '800px' }" :footer="null">
             <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
-                <form class="ant-form ant-form-horizontal">
+                <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
                     <div class="collapse-content">
                         <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
                             <a-collapse-panel key="1" header="심사정보">
@@ -350,7 +350,7 @@
                                 @onClick="updateSubscriptionRequest($event)" :width="150" />
                         </a-col>
                     </a-row>
-                </form>
+                </standard-form>
             </a-spin>
         </a-modal>
     </div>
@@ -377,7 +377,6 @@ import {
     PlusOutlined,
     DeleteOutlined,
 } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
@@ -386,7 +385,8 @@ import { initialFormState, initialDataStatus } from "../utils/index"
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import imgUpload from "../../../../../components/UploadImage.vue";
-import BankSelectBox from "../../../../../components/BankSelectBox.vue";
+import notification from '../../../../../utils/notification';
+
 export default defineComponent({
     props: {
         modalStatus: {
@@ -416,7 +416,6 @@ export default defineComponent({
         DxItem,
         DxTexts,
         DxMasterDetail,
-        BankSelectBox
     },
     setup(props, { emit }) {
         // config grid
@@ -569,58 +568,63 @@ export default defineComponent({
             if (res.data.updateSubscriptionRequest.status == 30) {
                 actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
             }
-            message.success(`업데이트 완료!`, 4);
+            notification('success', `업데이트 완료!`)
             setModalVisible();
         });
         onError((error) => {
-            message.error(error.message, 4);
+            notification('error', error.message)
         });
         const updateSubscriptionRequest = (e: any) => {
-            let customAccountingfacilityBusinesses: any = [];
-            if (formState.value.content.accounting.facilityBusinesses) {
-                customAccountingfacilityBusinesses =
-                    formState.value.content.accounting.facilityBusinesses.map(
-                        (val: any) => ({ 
-                            longTermCareInstitutionNumber:
-                            val.longTermCareInstitutionNumber, 
-                            capacity: val.capacity,
-                            facilityBizType: val.facilityBizType,
-                            name: val.name, 
-                            startYearMonth: val.startYearMonth,
-                            registrationCardFileStorageId: val.registrationCardFileStorageId
-                        })
-                    );
-            }
-            // process data befor handle update
-            let contentData = formState.value.content;
-            contentData.accounting.facilityBusinesses = customAccountingfacilityBusinesses;
-            contentData.accounting.accountingServiceTypes.map((item: any) => {
-                item = item == true ? 1 : 0
-            })
-            const cleanData = JSON.parse(
-                JSON.stringify(contentData, (name, val) => {
-                    if (val == null) {
-                        //message.error(`${name} is null`, 4);
-                        return;
-                    }
-                    if (
-                        name === "__typename" ||
-                        name === "registrationCard" ||
-                        name === "__KEY__"
-                    ) {
-                        delete val[name];
-                    } else {
-                        return val;
-                    }
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                let customAccountingfacilityBusinesses: any = [];
+                if (formState.value.content.accounting.facilityBusinesses) {
+                    customAccountingfacilityBusinesses =
+                        formState.value.content.accounting.facilityBusinesses.map(
+                            (val: any) => ({
+                                longTermCareInstitutionNumber:
+                                    val.longTermCareInstitutionNumber,
+                                capacity: val.capacity,
+                                facilityBizType: val.facilityBizType,
+                                name: val.name,
+                                startYearMonth: val.startYearMonth,
+                                registrationCardFileStorageId: val.registrationCardFileStorageId
+                            })
+                        );
+                }
+                // process data befor handle update
+                let contentData = formState.value.content;
+                contentData.accounting.facilityBusinesses = customAccountingfacilityBusinesses;
+                contentData.accounting.accountingServiceTypes.map((item: any) => {
+                    item = item == true ? 1 : 0
                 })
-            );
-            let variables = {
-                id: formState.value.id,
-                status: formState.value.status,
-                memo: formState.value.memo,
-                content: cleanData,
-            }; 
-            actionUpdate(variables);
+                const cleanData = JSON.parse(
+                    JSON.stringify(contentData, (name, val) => {
+                        if (val == null) {
+                            //message.error(`${name} is null`, 4);
+                            return;
+                        }
+                        if (
+                            name === "__typename" ||
+                            name === "registrationCard" ||
+                            name === "__KEY__"
+                        ) {
+                            delete val[name];
+                        } else {
+                            return val;
+                        }
+                    })
+                );
+                let variables = {
+                    id: formState.value.id,
+                    status: formState.value.status,
+                    memo: formState.value.memo,
+                    content: cleanData,
+                };
+                actionUpdate(variables);
+            }
         };
         // handle License File upload
         const getUrlLicenseFile = (img: any) => {
@@ -682,8 +686,6 @@ export default defineComponent({
     },
 });
 </script>   
-
-
 
 
 
