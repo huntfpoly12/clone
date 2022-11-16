@@ -118,3 +118,6 @@
   justify-content: center;
   margin-top: 15px;
 }
+::v-deep .ant-form-item-label {
+  width: 150px;
+}

@@ -3,35 +3,35 @@
         <a-modal :visible="modalStatus" footer="" :title="title" centered @cancel="setModalVisible()" width="992px"
             :mask-closable="false">
             <h2 class="title_modal">회원정보</h2>
-            <a-form v-bind="layout" name="nest-messages" v-model:value="formState" @finish="onFinish">
+            <standard-form formName="edit-bf-210">
                 <a-row :gutter="24">
                     <a-col :span="12">
-                        <a-form-item label="회원ID" class="red">
+                        <a-form-item label="회원ID" class="red" :label-col="labelCol">
                             <div class="dflex">
                                 <default-text-box disabled v-model:valueInput="formState.username"
                                     style="width: 150px; margin-right: 10px" />
                                 <button-basic :text="'중복체크'" :type="'default'" :mode="'contained'" :disabled="true" />
                             </div>
                         </a-form-item>
-                        <a-form-item label="회원명" class="red">
+                        <a-form-item label="회원명" class="red" :label-col="labelCol">
                             <default-text-box v-if="formState.type != 'c'" v-model:valueInput="formState.name"
                                 style="width: 150px; margin-right: 10px" />
                             <default-text-box v-if="formState.type == 'c'" disabled v-model:valueInput="formState.name"
                                 style="width: 150px; margin-right: 10px" />
                         </a-form-item>
-                        <a-form-item label="소속" class="red">
+                        <a-form-item label="소속" class="red" :label-col="labelCol">
                             <default-text-box v-model:valueInput="formState.groupCode"
                                 style="width: 150px; margin-right: 10px" :disabled="true" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="12">
-                        <a-form-item label="상태">
+                        <a-form-item label="상태" :label-col="labelCol">
                             <switch-basic v-if="formState.type == 'c'" v-model:valueSwitch="formState.active"
                                 :textCheck="'이용중'" :textUnCheck="'이용중지'" disabled />
                             <switch-basic v-if="formState.type != 'c'" v-model:valueSwitch="formState.active"
                                 :textCheck="'이용중'" :textUnCheck="'이용중지'" />
                         </a-form-item>
-                        <a-form-item label="회원종류" class="red">
+                        <a-form-item label="회원종류" class="red" :label-col="labelCol">
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
                                 value-expr="id" item-template="item" :height="$config_styles.HeightInput"
                                 style="width:170px" field-template="field" :disabled="true" :value="typeSelect">
@@ -52,7 +52,7 @@
                 </a-row>
                 <a-row :gutter="24">
                     <a-col :span="12">
-                        <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4" class="red">
+                        <a-form-item type="number" :name="['user', 'number']" label="휴대폰" :span="4" class="red" :label-col="labelCol">
                             <div style="display: flex; align-items: flex-end">
                                 <tel-text-box v-if="formState.type !== 'c'" @keypress="onlyNumber" type="text"
                                     v-model:valueInput="formState.mobilePhone"
@@ -65,7 +65,7 @@
                                 <ToggleButton v-on:change="triggerToggleEvent" />
                             </div>
                         </a-form-item>
-                        <a-form-item label="이메일" :span="8" class="red">
+                        <a-form-item label="이메일" :span="8" class="red" :label-col="labelCol">
                             <mail-text-box v-if="formState.type !== 'c'" v-model:valueInput="formState.email"
                                 style="width: 237px" />
                             <mail-text-box v-else disabled v-model:valueInput="formState.email" style="width: 237px" />
@@ -101,7 +101,7 @@
                         </div>
                     </a-col>
                 </a-row>
-            </a-form>
+            </standard-form>
             <div style="margin-top: 50px">
                 <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
                 <div style="position: relative">
@@ -325,8 +325,6 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-        const onFinish = (values: any) => {
-        };
         const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
             queries.searchScreenRoleGroups, originData,
             () => ({
@@ -435,6 +433,7 @@ export default defineComponent({
         });
         return {
             typeSelect,
+            labelCol: { style: { width: "150px" } },
             changeValueType,
             move_column,
             colomn_resize,
@@ -449,7 +448,6 @@ export default defineComponent({
             checkedNames,
             layout,
             formState,
-            onFinish,
             showModal,
             visible,
             sendGmail,
@@ -480,9 +478,9 @@ export default defineComponent({
     padding-top: 5px;
 }
 
-::v-deep .ant-form-item-label>label {
-    width: 110px;
-}
+// ::v-deep .ant-form-item-label>label {
+//     width: 110px;
+// }
 
 .dflex {
     display: flex;
