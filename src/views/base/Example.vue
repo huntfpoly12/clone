@@ -17,7 +17,6 @@
           item-template="itemTemplate"
         >
           <template #title="{ data: employee }">
-
             <div>
               <span>{{ employee.TabName }}</span>
             </div>
@@ -37,7 +36,6 @@ import DxTabPanel from "devextreme-vue/tab-panel";
 import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
 import { defineComponent, ref, defineAsyncComponent } from "vue";
-import notify from "devextreme/ui/notify";
 import service from "./listTab.ts";
 const TextBoxFrom = defineAsyncComponent(() =>
   import("../base/TextBoxFrom.vue")
@@ -48,9 +46,7 @@ const NumberBoxForm = defineAsyncComponent(() =>
 const DateTimeBoxForm = defineAsyncComponent(() =>
   import("../base/DateTimeBoxForm.vue")
 );
-const CommonJangbudaForm = defineAsyncComponent(() =>
-  import("../base/CommonJangbudaForm.vue")
-);
+
 const ModalMessage = defineAsyncComponent(() =>
   import("../base/PopupMessageMain.vue")
 );
