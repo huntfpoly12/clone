@@ -62,6 +62,10 @@ const ButtonBasic = defineAsyncComponent(() =>
   import("../base/ButtonBasic.vue")
 );
 
+const CheckBoxFrom = defineAsyncComponent(() =>
+  import("../base/CheckBoxFrom.vue")
+);
+
 const SelectBox = defineAsyncComponent(() =>
   import("../base/SelectBox.vue")
 );
@@ -80,7 +84,8 @@ export default defineComponent({
     ModalMessage,
     PreviewImage,
     ButtonBasic,
-    SelectBox
+    SelectBox,
+    CheckBoxFrom
   },
   setup() {
     const allTab = ref(allListTab);
