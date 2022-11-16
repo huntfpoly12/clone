@@ -101,6 +101,8 @@ export default defineComponent({
 
         const formState = reactive({ ...initialState });
 
+        let objDataDefault = ref({ ...initialState });
+
         watch(() => props.modalStatus, (value) => {
             Object.assign(formState, initialState);
         })
@@ -137,12 +139,14 @@ export default defineComponent({
                         formState.taxPayCode[0] === "과세" ? formState.taxPayCode[1] : null,
                 },
             };
-            console.log(variables.input);
 
             creactConfigPayItem(variables);
         };
         const setModalVisible = () => {
-            comfirmClosePopup(() => emit('closePopup', false))
+            if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
+                emit("closePopup", false)
+            else
+                comfirmClosePopup(() => emit('closePopup', false))
         };
         return {
             formState,
