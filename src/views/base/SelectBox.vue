@@ -401,8 +401,9 @@ export default defineComponent({
       { id: 3, name: "High" },
     ]);
     const valueTagSelectBox = ref([1, 2]);
-
+    const saleStatus = ref(10);
     return {
+        saleStatus,
       arrayTagSelectBox,
       valueTagSelectBox,
     };
