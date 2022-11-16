@@ -9,6 +9,7 @@
             </tr>
             <tr>
                 <td>
+                    <p style="margin-top: 10px;"><strong>checkbox: </strong></p>
                     <checkbox-basic v-model:valueCheckbox="valueCheckBox" :disabled="false" :size="'18'" />
                 </td>
 
@@ -31,6 +32,7 @@
             </tr>
             <tr>
                 <td>
+                    <p style="margin-top: 10px;"><strong>radio box: </strong></p>
                     <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="valueRadioBox"
                         :layoutCustom="'horizontal'" />
                 </td>
@@ -54,6 +56,7 @@
             </tr>
             <tr>
                 <td>
+                    <p style="margin-top: 10px;"><strong>switch box: </strong></p>
                     <switch-basic v-model:valueSwitch="valueSwitchChange" :textCheck="'포함'" :textUnCheck="'제외'" />
                 </td>
 
