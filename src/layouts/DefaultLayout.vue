@@ -1,7 +1,7 @@
 <template>
 	<a-layout>
 		<a-layout-header class="header">
-			<div class="nav-logo"><img src="../assets/images/logo.png" /></div>
+			<div class="nav-logo"><a :href="'/dashboard/'"><img src="../assets/images/logo.png" /></a></div>
 			<div class="user-info" v-if="username">
 				<a-dropdown>
 					<a class="ant-dropdown-link" @click.prevent>
