@@ -314,6 +314,7 @@ export default defineComponent({
             unpaidMonths: 0
         });
         let dataImg = ref()
+        let objDataDefault = reactive({});
         const formStateMomes = ref([
             {
                 memoId: null,
@@ -516,6 +517,10 @@ export default defineComponent({
                 formState.seal = value.getCompany.seal;
                 formState.canceledAt = value.getCompany.canceledAt;
                 formState.unpaidMonths = value.getCompany.unpaidMonths;
+
+                objDataDefault = {
+                    ...formState
+                }
             }
         });
         const changeTypeCompany = (bizType: number) => {
@@ -605,7 +610,11 @@ export default defineComponent({
             return dayjs(date).format('YYYY/MM/DD')
         };
         const setModalVisible = () => {
-            comfirmClosePopup(() => emit("closePopup", false))
+            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
+                comfirmClosePopup(() => emit("closePopup", false))
+            else
+                emit("closePopup", false)
+
         }
         const getImgUrl = (img: any) => {
             let resImg = {
