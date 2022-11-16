@@ -178,8 +178,6 @@ export default defineComponent({
             (newValue, old) => {
                 if (newValue) {
                     Object.assign(formState, initialFormState);
-                } else {
-                    Object.assign(formState, initialFormState);
                 }
             }
         );
