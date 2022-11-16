@@ -3,22 +3,22 @@
         <a-modal :mask-closable="false" footer="" v-model:visible="visible" title="사업자관리 " width="1000px"
             @cancel="setModalVisible()">
             <a-spin tip="Loading..." :spinning="loading">
-                <form action="your-action">
+                <standard-form action="your-action" name="edit-page-320">
                     <a-collapse v-model:activeKey="activeKey" accordion>
                         <a-collapse-panel key="1" header="사업자정보">
                             <a-form :label-col="labelCol">
                                 <a-row>
                                     <a-col :span="18">
                                         <a-form-item label="상 호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.name" :required="true">
-                                            </default-text-box>
+                                            <default-text-box v-model:valueInput="formState.name" :required="true"
+                                                nameInput="formState-name" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="6"></a-col>
                                     <a-col :span="8">
                                         <a-form-item label="사업자등록번호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.bizNumber" :required="true">
-                                            </default-text-box>
+                                            <default-text-box v-model:valueInput="formState.bizNumber" :required="true"
+                                                nameInput="formState-bizNumber" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="16"></a-col>
@@ -41,7 +41,8 @@
                                                 <a-col :span="17" style="display: flex; margin-bottom: 5px;">
                                                     <default-text-box style="width: 100%;"
                                                         v-model:valueInput="formState.extendInfoDetailZipcode"
-                                                        autocomplete="off" :required="true" :disabled="true">
+                                                        autocomplete="off" :required="true" :disabled="true"
+                                                        nameInput="formState-extendInfoDetailZipcode">
                                                     </default-text-box>
                                                     <post-code-button @dataAddress="funcAddress" />
                                                 </a-col>
@@ -51,6 +52,7 @@
                                                             <default-text-box
                                                                 v-model:valueInput="formState.extendInfoDetailRoadAddress"
                                                                 autocomplete="off" width="100%" :required="true"
+                                                                nameInput="formState-extendInfoDetailRoadAddress"
                                                                 :disabled="true">
                                                             </default-text-box>
                                                         </a-col>
@@ -68,7 +70,8 @@
                                     <a-col :span="8">
                                         <a-form-item label="연락처" class="clr">
                                             <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
-                                                :required="true" placeholder="‘-’없이 숫자만 입력">
+                                                nameInput="formState-extendInfoDetailPhone" :required="true"
+                                                placeholder="‘-’없이 숫자만 입력">
                                             </default-text-box>
                                         </a-form-item>
                                     </a-col>
@@ -91,31 +94,33 @@
                                                 <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
                                             </div>
                                         </div>
-                                    </div>
-                                </a-col>
-                            </a-row>
+                                    </a-col>
+                                </a-row>
+                            </a-form>
                         </a-collapse-panel>
                         <a-collapse-panel key="2" header="대표자정보">
                             <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                                 <a-form-item has-feedback label="대표자명" class="clr">
                                     <default-text-box v-model:valueInput="formState.extendInfoPresidentName"
-                                        style="width: 200px" autocomplete="off" required>
+                                        style="width: 200px" autocomplete="off" :required="true"
+                                        nameInput="formState-extendInfoPresidentName">
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item has-feedback label="생년월일" class="clr">
                                     <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
-                                        style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
-                                    </date-time-box>
+                                        style="width: 200px" :required="true" dateFormat="YYYY-MM-DD"
+                                        nameInput="formState-extendInfoPresidentBirthday" />
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr">
                                     <tel-text-box width="200px"
                                         v-model:valueInput="formState.extendInfoPresidentMobilePhone"
-                                        placeholder="‘-’없이 숫자만 입력" :required="true" />
+                                        placeholder="‘-’없이 숫자만 입력" :required="true"
+                                        nameInput="formState-extendInfoPresidentMobilePhone" />
                                 </a-form-item>
                                 <a-form-item has-feedback label="이메일" class="clr">
                                     <mail-text-box style="width: 400px"
-                                        v-model:valueInput="formState.extendInfoPresidentEmail" :required="true">
-                                    </mail-text-box>
+                                        v-model:valueInput="formState.extendInfoPresidentEmail" :required="true"
+                                        nameInput="formState-extendInfoPresidentEmail" />
                                 </a-form-item>
                             </a-form>
                         </a-collapse-panel>
@@ -128,17 +133,20 @@
                                 <a-form-item label="출금계좌번호" class="clr">
                                     <text-number-box text-number-box
                                         v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
-                                        placeholder="‘-’없이 숫자만 입력" width="250px" :required="true">
+                                        placeholder="‘-’없이 숫자만 입력" width="250px" :required="true"
+                                        nameInput="formState-extendInfoCmsBankAccountNumber">
                                     </text-number-box>
                                 </a-form-item>
                                 <a-form-item label="예금주명" class="clr">
                                     <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" :required="true">
+                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" :required="true"
+                                        nameInput="formState-extendInfoCmsBankOwnerName">
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
                                     <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" :required="true">
+                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" :required="true"
+                                        nameInput="formState-extendInfoCmsBankOwnerBizNumber">
                                     </default-text-box>
                                     <div class="warring-bank">
                                         <InfoCircleFilled />
@@ -184,7 +192,7 @@
                         <button-basic :text="'저장하고 나가기'" :type="'default'" :mode="'contained'"
                             @onClick="updateCompany" />
                     </div>
-                </form>
+                </standard-form>
             </a-spin>
         </a-modal>
     </div>
@@ -523,7 +531,6 @@ export default defineComponent({
                 formState.seal = value.getCompany.seal;
                 formState.canceledAt = value.getCompany.canceledAt;
                 formState.unpaidMonths = value.getCompany.unpaidMonths;
-
                 objDataDefault = {
                     ...formState
                 }
@@ -625,7 +632,6 @@ export default defineComponent({
                 comfirmClosePopup(() => emit("closePopup", false))
             else
                 emit("closePopup", false)
-
         }
         const getImgUrl = (img: any) => {
             let resImg = {
@@ -666,7 +672,5 @@ export default defineComponent({
         };
     },
 });
-</script>
-<style lang="scss" scoped src="../style/popup/index.scss">
-
-</style> 
+</script> 
+<style lang="scss" scoped src="../style/popup/index.scss"/> 

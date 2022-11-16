@@ -203,7 +203,8 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                         <div id="data-grid-demo">
-                                            <DxDataGrid id="gridContainer"
+                                            <DxDataGrid id="gridContainer" @selection-changed="selectionChanged"
+                                                @content-ready="contentReady"
                                                 :data-source="formState.content.accounting.facilityBusinesses"
                                                 :allow-column-reordering="move_column"
                                                 :allow-column-resizing="colomn_resize" :show-borders="true"
@@ -216,11 +217,7 @@
                                                     <DxButton icon="plus" />
                                                 </template>
                                                 <DxPaging :enabled="false" />
-                                                <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
-                                                    cell-template="indexCell" />
-                                                <template #indexCell="{ data }">
-                                                    <div>{{ data.rowIndex + 1 }}</div>
-                                                </template>
+                                                <DxColumn :allow-editing="false" :width="20" />
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
                                                 <DxColumn data-field="facilityBizType" caption="사업분류">
                                                     <DxLookup :data-source="facilityBizType" value-expr="v"
@@ -647,7 +644,18 @@ export default defineComponent({
                 }
             })
         };
+        const contentReady = (e: any) => {
+            if (!e.component.getSelectedRowKeys().length) {
+                e.component.selectRowsByIndexes(0)
+            }
+        }
+        const selectionChanged = (e: any) => {
+            e.component.collapseAll(-1);
+            e.component.expandRow(e.currentSelectedRowKeys[0]);
+        }
         return {
+            selectionChanged,
+            contentReady,
             move_column,
             colomn_resize,
             titleModal,
@@ -677,8 +685,4 @@ export default defineComponent({
     },
 });
 </script>   
-
-
-
-
 <style lang="scss" scoped src="../style/popupStyle.scss" />

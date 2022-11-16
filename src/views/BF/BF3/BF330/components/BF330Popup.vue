@@ -48,12 +48,11 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                     </div>
-                                    <DxDataGrid id="grid-container" :show-borders="true" @content-ready="contentReady"
-                                        @selection-changed="selectionChanged"
+                                    <DxDataGrid id="grid-container" :show-borders="true" @content-ready="contentReady" 
                                         :data-source="formState.accountingfacilityBusinesses"
                                         key-expr="facilityBusinessId" :allow-column-reordering="move_column"
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                                        <DxEditing :use-icons="true" :allow-updating="true"     :allow-adding="true"
+                                        <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                             :allow-deleting="true" mode="cell" />
                                         <DxSelection mode="single" />
                                         <DxPaging :enabled="false" />
@@ -105,7 +104,6 @@
                                                             :value="getPriceOption(data.data.options, 2)"
                                                             :disabled="disableInput(data.data.options, 2)"
                                                             @keyDown="changeValueInput($event.component, 2, data.data)" />
-
                                                     </div>
                                                     <div class="custom-money">
                                                         <DxCheckBox :value="checkOption(data.data.options, 3)"
@@ -115,7 +113,6 @@
                                                             :value="getPriceOption(data.data.options, 3)"
                                                             :disabled="disableInput(data.data.options, 3)"
                                                             @keyDown="changeValueInput($event.component, 3, data.data)" />
-
                                                     </div>
                                                     <!-- ---------------------/OPTION---------------- -->
                                                 </a-col>
@@ -136,7 +133,6 @@
                                                                 @update-img="getImgUrl($event, data)" :customrow="1" />
                                                         </div>
                                                         <a-col>
-
                                                             <preview-image :height="'250px'" :activePreview="true"
                                                                 :dataImage="data.data.registrationCard"
                                                                 :name="data.data.name" @deleteImg="removeImg" />
@@ -156,7 +152,6 @@
                                                 :disabled="false" size="14" label="원천서비스" />
                                         </a-form-item>
                                     </a-col>
-
                                     <a-col :span="14">
                                         <a-form-item label="서비스 시작년월" class="custom-label-select">
                                             <date-time-box width="150px"
@@ -164,7 +159,6 @@
                                                 date-format="MM/DD/YYYY" />
                                         </a-form-item>
                                     </a-col>
-
                                     <a-col :span="14">
                                         <a-form-item label="직 원 수 " class="custom-label-select">
                                             <number-box-money width="150px" :min="0"
@@ -497,7 +491,6 @@ export default defineComponent({
                         }
                     );
                 }
-
                 objDataDefault = {
                     ...formState
                 }
@@ -825,18 +818,11 @@ export default defineComponent({
                 })
             }, 100);
         };
-
-        const contentReady = (e: any) => { 
-            if (!e.component.getSelectedRowKeys().length) {
-                e.component.selectRowsByIndexes(0);
+        const contentReady = (e: any) => {
+            if (!e.component.getSelectedRowKeys().length) { 
+                e.component.expandRow(1)
             }
         }
-        const selectionChanged = (e: any) => {
-            e.component.collapseAll(-1);
-            e.component.expandRow(e.currentSelectedRowKeys[0]);
-
-        }
-
         watch(
             () => props.modalStatus,
             (newValue) => {
@@ -932,8 +918,7 @@ export default defineComponent({
                 }
             }
         );
-        return {
-            selectionChanged,
+        return { 
             contentReady,
             handleInputTexService,
             move_column,
@@ -977,34 +962,4 @@ export default defineComponent({
     },
 });
 </script>  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style src="../style/stylePopup.scss" scoped />
