@@ -72,7 +72,6 @@ export default defineComponent({
     TextBoxFrom,
     NumberBoxForm,
     DateTimeBoxForm,
-    CommonJangbudaForm,
     DxTabPanel,
     DxSortable,
     DxButton,
