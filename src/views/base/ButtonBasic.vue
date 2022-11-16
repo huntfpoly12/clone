@@ -8,19 +8,29 @@
                 <th style="width: 25%">Code Example</th>
             </tr>
             <tr>
-                <td>
-                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'contained'"
-                        @onClick="clickButton" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'outlined'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'text'" />
+                <td> 
+                    <span >
+                        <p style="margin-top: 10px;"><strong>button type success: </strong></p>
+                        <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'contained'"
+                            @onClick="clickButton" /> -
+                        <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'outlined'" /> -
+                        <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'text'" />
+                    </span>
+                   
+                    <span >
+                        <p style="margin-top: 10px;"><strong>button type default: </strong></p>
+                        <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'contained'" /> -
+                        <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'outlined'" /> -
+                        <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'text'" />
+                    </span>
 
-                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'contained'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'outlined'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'text'" />
+                    <span >
+                        <p style="margin-top: 10px;"><strong>button type danger: </strong></p>
+                        <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'contained'" /> -
+                        <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
+                        <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'text'" />
+                    </span>
 
-                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'contained'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'text'" />
                 </td>
 
                 <td>
