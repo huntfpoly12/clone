@@ -84,7 +84,7 @@ import notification from "../../../../../utils/notification";
 import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
 import queries from "../../../../../graphql/queries/CM/CM110/index"
 import DxValidationGroup from 'devextreme-vue/validation-group';
-import { initialOptionsRadio } from "../utils/index";
+import { initialOptionsRadio, initialState } from "../utils/index";
 export default defineComponent({
 	props: {
 		modalStatus: {
@@ -102,7 +102,7 @@ export default defineComponent({
 	setup(props, { emit }) {
 		const optionsRadio = reactive([...initialOptionsRadio]);
 		const visible = ref<boolean>(false);
-		const statusMailValidate = ref<boolean>(false);
+		const statusMailValidate = ref<boolean>(true);
 		const disabledCheckUserName = ref<boolean>(false);
 		const options = ref<SelectProps['options']>([]);
 		let triggers = ref<boolean>(false);
@@ -124,16 +124,9 @@ export default defineComponent({
 				value,
 			});
 		}
-		const initialState = {
-			username: "",
-			name: "",
-			accountingRole: true,
-			facilityBusinessIds: [],
-			withholdingRole: true,
-			mobilePhone: "",
-			email: "",
-		};
+		
 		const formState = reactive({ ...initialState });
+		let objDataDefault = ref({ ...initialState });
 		const confirmPopup = () => {
 			visible.value = true;
 		}
@@ -257,7 +250,10 @@ export default defineComponent({
 		} = useMutation(mutations.sendEmail);
 
 		const setModalVisible = () => {
-			comfirmClosePopup(() => emit('closePopup', false))
+			if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
+                emit("closePopup", false)
+            else
+				comfirmClosePopup(() => emit('closePopup', false))
 		}
 
 		doneSendEmail(e => {

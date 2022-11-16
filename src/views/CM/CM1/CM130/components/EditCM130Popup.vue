@@ -67,6 +67,7 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 import queries from "../../../../../graphql/queries/CM/CM130/index";
 import mutations from "../../../../../graphql/mutations/CM/CM130/index";
+import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
 import {
     DxDataGrid,
     DxColumn,
@@ -119,6 +120,7 @@ export default defineComponent({
         );
         const formState = reactive({ ...initialState });
 
+        let objDataDefault = ref({ ...initialState });
         // get detail withholding config pay item
         const { result: resultConfigPayItem, loading, refetch: refetchConfigPayItem } = useQuery(
             queries.getWithholdingConfigPayItem,
@@ -136,6 +138,7 @@ export default defineComponent({
                 formState.name = value.getWithholdingConfigPayItem.name;
                 formState.use = value.getWithholdingConfigPayItem.use;
                 formState.formula = value.getWithholdingConfigPayItem.formula;
+                objDataDefault.value = { ...formState };
             }
         });
 
@@ -167,7 +170,10 @@ export default defineComponent({
             actionUpdateWithholdingConfigPayItem(variables)
         };
         const setModalVisible = () => {
-            emit("closePopup", false);
+            if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
+                emit("closePopup", false)
+            else
+                comfirmClosePopup(() => emit('closePopup', false))
         }
         return {
             labelCol: { style: { width: "150px" } },
