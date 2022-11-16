@@ -9,8 +9,8 @@ interface ListTab {
 const listTab: ListTab[] = [
     {
         ID: 1,
-        TabName: 'Common Jangbuda',
-        layoutName: 'CommonJangbudaForm'
+        TabName: 'Select Box',
+        layoutName: 'SelectBox'
     },
     {
         ID: 2,
@@ -47,11 +47,6 @@ const listTab: ListTab[] = [
         TabName: 'Button Basic',
         layoutName: 'ButtonBasic'
     },
-    {
-        ID: 9,
-        TabName: 'Select Box',
-        layoutName: 'SelectBox'
-    }
 ];
 
 export default {

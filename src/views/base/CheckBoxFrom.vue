@@ -9,37 +9,72 @@
             </tr>
             <tr>
                 <td>
-                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'contained'"
-                        @onClick="clickButton" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'outlined'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'success'" :mode="'text'" />
-
-                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'contained'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'outlined'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'default'" :mode="'text'" />
-
-                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'contained'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'outlined'" /> -
-                    <button-basic :width="120" :text="'단추'" :type="'danger'" :mode="'text'" />
+                    <checkbox-basic v-model:valueCheckbox="valueCheckBox" :disabled="false" :size="'18'" />
                 </td>
 
                 <td>
-                    <b> text</b> : Text button <br />
-                    <b> type </b>: Choose type button : success / default / danger <br />
-                    <b> mode </b>: Choose styling mode button : contained / outlined / text
-                    <b> width </b>: Set width button
+                    <b>v-model:valueCheckbox</b> : Value input : true / false <br>
+                    <b>disabled</b> : true / false <br>
+                    <b>size</b> : Number size box <br>
+                    <b>label</b> : Label checkbox <br>
                 </td>
 
                 <td>
-                    <b>@onClick</b> : Call the function when emit from child components
+                    Return value checkbox (true / false)
                 </td>
 
                 <td>
                     <span class="mycode">
-                        &lt;button-basic :text="'단추'" :type="'success'" :mode="'contained'" @onClick="clickButton" /&gt;
+                        &lt;checkbox-basic v-model:valueCheckbox="valueCheckBox" :disabled="false" :size="'20'" / &gt;
                     </span>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="valueRadioBox"
+                        :layoutCustom="'horizontal'" />
+                </td>
+
+                <td>
+                    <b>arrayValue</b> : Array data <br>
+                    <b>v-model:valueRadioCheck</b> : Object emit or default <br>
+                    <b>layoutCustom</b> : Layout horizontal and vertical ( horizontal / '' )
+                </td>
+
+                <td>
+                    Return value row select
+                </td>
+
+                <td>
+                    <span class="mycode">
+                        &lt;radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="valueRadioBox"
+                        :layoutCustom="'horizontal'" /&gt;
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <switch-basic v-model:valueSwitch="valueSwitchChange" :textCheck="'포함'" :textUnCheck="'제외'" />
+                </td>
+
+                <td>
+                    <b>v-model:valueSwitch</b> : Data default ( true / false)<br>
+                    <b>textCheck</b> : text when checked<br>
+                    <b>v-textUnCheck</b> : text when un-checked
+                </td>
+
+                <td>
+
+                </td>
+
+                <td>
+                    <span class="mycode">
+                        &lt;switch-basic v-model:valueSwitch="valueSwitchChange" :textCheck="'포함'" :textUnCheck="'제외'" /
+                        &gt;
+                    </span>
+                </td>
+            </tr>
+
         </table>
     </form>
 </template>
