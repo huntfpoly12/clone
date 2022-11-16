@@ -15,18 +15,19 @@ export default (typeMessage: string, text: string) => {
         case 'error':
             message.error({
                 content: () => text,
-                class: 'message-class',
+                class: 'ant-message',
                 style: {
                     marginTop: '20vh',
                     color: 'red',
                     borderColor: 'red'
                 },
+
             }, 4);
             break;
         case 'warning':
             message.warning({
                 content: () => text,
-                class: 'message-class',
+                class: 'ant-message',
                 style: {
                     marginTop: '20vh',
                 },
@@ -36,7 +37,7 @@ export default (typeMessage: string, text: string) => {
         default:
             message.success({
                 content: () => text,
-                class: 'message-class',
+                class: 'ant-message',
                 style: {
                     marginTop: '20vh',
                 },

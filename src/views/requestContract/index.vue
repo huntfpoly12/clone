@@ -691,9 +691,8 @@ export default {
                         notification('error', '계속하려면 모든 조건을 수락하십시오!')
                     }
                 } else if (step.value == 2) {
-                    if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                        // message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
-                        notification('error', '계속하려면 모든 조건을 수락하십시오!')
+                    if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) { 
+                        notification('error', '서비스를 최소 하나 이상 선택해야합니다!')
                     } else {
                         let count = 0
                         if (dataInputCallApi.dossier == 1) {

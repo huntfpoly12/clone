@@ -1,8 +1,8 @@
 <template>
   <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" v-model:value="value"
     :disabled="disabled" :readOnly="readOnly" @input="updateValue(value)" :mask="mask" :mask-invalid-message="maskMess"
-    :height="$config_styles.HeightInput">
-    <DxValidator>
+    :height="$config_styles.HeightInput" :name="nameInput">
+    <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxCustomRule :reevaluate="true" :message="maskMess" :validation-callback="validateDate" />
     </DxValidator>
@@ -38,6 +38,10 @@ export default defineComponent({
       default: "",
     },
     readOnly: Boolean,
+    nameInput: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     DxTextBox,
