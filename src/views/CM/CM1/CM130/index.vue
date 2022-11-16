@@ -40,27 +40,27 @@
                     <a-row>
                         <a-col :span="24">
                             <div class="container">
-                                <a-form :model="formState" :label-col="labelCol">
+                                <standard-form formName="index-cm-310">
                                     <h2 style="font-weight: 600; color: gray" class="title-h2">
                                         급여기본설정
                                     </h2>
                                     <a-row>
                                         <a-col :span="12">
-                                            <a-form-item label="급여신고주기">
+                                            <a-form-item label="급여신고주기" :label-col="labelCol">
                                                 <radio-group :arrayValue="optionsRadioReportType" v-model:valueRadioCheck="formState.reportType" :layoutCustom="'horizontal'" />
                                             </a-form-item>
                                         </a-col>
                                     </a-row>
                                     <a-row>
                                         <a-col :span="12">
-                                            <a-form-item label="급여지급형태">
+                                            <a-form-item label="급여지급형태" :label-col="labelCol">
                                                 <radio-group :arrayValue="optionsRadioPaymentType" v-model:valueRadioCheck="formState.paymentType" :layoutCustom="'horizontal'" />
                                             </a-form-item>
                                         </a-col>
                                     </a-row>
                                     <a-row>
                                         <a-col :span="16">
-                                            <a-form-item label="급여지급일자">
+                                            <a-form-item label="급여지급일자" :label-col="labelCol">
                                                 <div style="display: flex; align-items: center">
                                                     <number-box
                                                         :width="150"
@@ -106,7 +106,7 @@
                                     </h2>
                                     <a-row :gutter="24">
                                         <a-col>
-                                            <a-form-item label="사업장주소">
+                                            <a-form-item label="사업장주소" :label-col="labelCol">
                                                 <default-text-box
                                                     style="width: 574px; margin-right: 10px; float: left;"
                                                     :disabled="true"
@@ -145,7 +145,7 @@
                                         <a-col>
                                             <a-row :gutter="24">
                                                 <a-col>
-                                                    <a-form-item label="관할세무서">
+                                                    <a-form-item label="관할세무서" :label-col="labelCol">
                                                         <default-text-box
                                                             style="width: 200px;"
                                                             :disabled="true"
@@ -157,7 +157,7 @@
                                                     <div style="margin-left: 22px;">
                                                         <span>지방소득세 납세지:</span>
                                                         <default-text-box 
-                                                            style="width: 200px; display: inline-block; margin-left: 8px;"
+                                                            style="width: 200px; display: inline-block; margin-left: 10px;"
                                                             :disabled="true"
                                                             v-model:valueInput="formState.localIncomeTaxArea">
                                                         </default-text-box>
@@ -169,12 +169,12 @@
                                             </a-row>
                                         </a-col>
                                     </a-row>
-                                </a-form>
+                                </standard-form>
                             </div>
                         </a-col>
                     </a-row>
                     <SettingPopup :modalStatus="modalSettingStatus" @closePopup="modalSettingStatus = false"
-                        @dataEmit="changeValueAddress" title="원천설정 [ cm-130 –pop ]" />
+                        @dataEmit="changeValueAddress" title="원천설정" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여항목">
                     <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="itemCode"
