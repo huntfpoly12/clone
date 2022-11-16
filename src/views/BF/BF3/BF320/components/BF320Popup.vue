@@ -3,153 +3,146 @@
         <a-modal :mask-closable="false" footer="" v-model:visible="visible" title="사업자관리 " width="1000px"
             @cancel="setModalVisible()">
             <a-spin tip="Loading..." :spinning="loading">
-                <form action="your-action">
+                <standard-form formName="bf-320">
                     <a-collapse v-model:activeKey="activeKey" accordion>
                         <a-collapse-panel key="1" header="사업자정보">
-                            <a-form :label-col="labelCol">
-                                <a-row>
-                                    <a-col :span="18">
-                                        <a-form-item label="상 호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.name" :required="true">
-                                            </default-text-box>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="6"></a-col>
-                                    <a-col :span="8">
-                                        <a-form-item label="사업자등록번호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.bizNumber" :required="true">
-                                            </default-text-box>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="16"></a-col>
-                                    <a-col :span="14">
-                                        <a-form-item label="사업자유형" class="clr">
-                                            <radio-group :arrayValue="arrRadioType" :disabled="true"
-                                                v-model:valueRadioCheck="formState.bizType"
-                                                :layoutCustom="'horizontal'" />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="10">
-                                        <a-form-item :label="changeTypeCompany(formState.bizType)">
-                                            <id-number-text-box v-model:valueInput="formState.decryptedResidentId"
-                                                :disabled="true" />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="24">
-                                        <a-form-item label="주소" class="custom-flex clr">
-                                            <a-row>
-                                                <a-col :span="17" style="display: flex; margin-bottom: 5px;">
-                                                    <default-text-box style="width: 100%;"
-                                                        v-model:valueInput="formState.extendInfoDetailZipcode"
-                                                        autocomplete="off" :required="true" :disabled="true">
-                                                    </default-text-box>
-                                                    <post-code-button @dataAddress="funcAddress" />
-                                                </a-col>
-                                                <a-col :span="24" style="margin-bottom: 5px">
-                                                    <a-row>
-                                                        <a-col :span="12" style="padding-right: 5px;">
-                                                            <default-text-box
-                                                                v-model:valueInput="formState.extendInfoDetailRoadAddress"
-                                                                autocomplete="off" width="100%" :required="true"
-                                                                :disabled="true">
-                                                            </default-text-box>
-                                                        </a-col>
-                                                        <a-col :span="12">
-                                                            <default-text-box
-                                                                v-model:valueInput="formState.extendInfoDetailAddressExtend"
-                                                                autocomplete="off" width="100%">
-                                                            </default-text-box>
-                                                        </a-col>
-                                                    </a-row>
-                                                </a-col>
-                                            </a-row>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="8">
-                                        <a-form-item label="연락처" class="clr">
-                                            <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
-                                                :required="true" placeholder="‘-’없이 숫자만 입력">
-                                            </default-text-box>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="16"></a-col>
-                                    <a-col :span="8">
-                                        <a-form-item label="팩 스">
-                                            <default-text-box v-model:valueInput="formState.extendInfoDetailFax"
-                                                autocomplete="off" width="100%" placeholder="‘-’없이 숫자만 입력">
-                                            </default-text-box>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="16"></a-col>
-                                    <a-col :span="24">
-                                        <div style="display: flex">
-                                            <div>
-                                                <imgUpload :title="titleModal" @update-img="getImgUrl"
-                                                    style="margin-top: 10px" />
-                                            </div>
-                                            <div>
-                                                <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
-                                            </div>
+                            <a-row>
+                                <a-col :span="18">
+                                    <a-form-item label="상 호" class="clr" :label-col="labelCol">
+                                        <default-text-box v-model:valueInput="formState.name" :required="true">
+                                        </default-text-box>
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="6"></a-col>
+                                <a-col :span="10">
+                                    <a-form-item label="사업자등록번호" class="clr" :label-col="labelCol">
+                                        <default-text-box v-model:valueInput="formState.bizNumber" :required="true">
+                                        </default-text-box>
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="14"></a-col>
+                                <a-col :span="14">
+                                    <a-form-item label="사업자유형" class="clr" :label-col="labelCol">
+                                        <radio-group :arrayValue="arrRadioType" :disabled="true"
+                                            v-model:valueRadioCheck="formState.bizType" :layoutCustom="'horizontal'" />
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="10">
+                                    <a-form-item :label="changeTypeCompany(formState.bizType)" :label-col="labelCol">
+                                        <id-number-text-box v-model:valueInput="formState.decryptedResidentId"
+                                            :disabled="true" />
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="24">
+                                    <a-form-item label="주소" class="custom-flex clr" :label-col="labelCol">
+                                        <a-row>
+                                            <a-col :span="17" style="display: flex; margin-bottom: 5px;">
+                                                <default-text-box style="width: 100%;"
+                                                    v-model:valueInput="formState.extendInfoDetailZipcode"
+                                                    autocomplete="off" :required="true" :disabled="true">
+                                                </default-text-box>
+                                                <post-code-button @dataAddress="funcAddress" />
+                                            </a-col>
+                                            <a-col :span="24" style="margin-bottom: 5px">
+                                                <a-row>
+                                                    <a-col :span="12" style="padding-right: 5px;">
+                                                        <default-text-box
+                                                            v-model:valueInput="formState.extendInfoDetailRoadAddress"
+                                                            autocomplete="off" width="100%" :required="true"
+                                                            :disabled="true">
+                                                        </default-text-box>
+                                                    </a-col>
+                                                    <a-col :span="12">
+                                                        <default-text-box
+                                                            v-model:valueInput="formState.extendInfoDetailAddressExtend"
+                                                            autocomplete="off" width="100%">
+                                                        </default-text-box>
+                                                    </a-col>
+                                                </a-row>
+                                            </a-col>
+                                        </a-row>
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="10">
+                                    <a-form-item label="연락처" class="clr" :label-col="labelCol">
+                                        <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
+                                            :required="true" placeholder="‘-’없이 숫자만 입력">
+                                        </default-text-box>
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="14"></a-col>
+                                <a-col :span="10">
+                                    <a-form-item label="팩 스" :label-col="labelCol">
+                                        <default-text-box v-model:valueInput="formState.extendInfoDetailFax"
+                                            autocomplete="off" width="100%" placeholder="‘-’없이 숫자만 입력">
+                                        </default-text-box>
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="14"></a-col>
+                                <a-col :span="24">
+                                    <div style="display: flex;">
+                                        <div>
+                                            <imgUpload :title="titleModal" @update-img="getImgUrl"
+                                                style="margin-top: 10px;" />
                                         </div>
-                                    </a-col>
-                                </a-row>
-                            </a-form>
+                                        <div>
+                                            <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
+                                        </div>
+                                    </div>
+                                </a-col>
+                            </a-row>
                         </a-collapse-panel>
                         <a-collapse-panel key="2" header="대표자정보">
-                            <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
-                                <a-form-item has-feedback label="대표자명" class="clr">
-                                    <default-text-box v-model:valueInput="formState.extendInfoPresidentName"
-                                        style="width: 200px" autocomplete="off" required>
-                                    </default-text-box>
-                                </a-form-item>
-                                <a-form-item has-feedback label="생년월일" class="clr">
-                                    <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
-                                        style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
-                                    </date-time-box>
-                                </a-form-item>
-                                <a-form-item has-feedback label="휴대폰번호" class="clr">
-                                    <tel-text-box width="200px"
-                                        v-model:valueInput="formState.extendInfoPresidentMobilePhone"
-                                        placeholder="‘-’없이 숫자만 입력" :required="true" />
-                                </a-form-item>
-                                <a-form-item has-feedback label="이메일" class="clr">
-                                    <mail-text-box style="width: 400px"
-                                        v-model:valueInput="formState.extendInfoPresidentEmail" :required="true">
-                                    </mail-text-box>
-                                </a-form-item>
-                            </a-form>
+                            <a-form-item has-feedback label="대표자명" class="clr" :label-col="labelCol">
+                                <default-text-box v-model:valueInput="formState.extendInfoPresidentName"
+                                    style="width: 200px" autocomplete="off" required>
+                                </default-text-box>
+                            </a-form-item>
+                            <a-form-item has-feedback label="생년월일" class="clr" :label-col="labelCol">
+                                <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
+                                    style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
+                                </date-time-box>
+                            </a-form-item>
+                            <a-form-item has-feedback label="휴대폰번호" class="clr" :label-col="labelCol">
+                                <tel-text-box width="200px"
+                                    v-model:valueInput="formState.extendInfoPresidentMobilePhone"
+                                    placeholder="‘-’없이 숫자만 입력" :required="true" />
+                            </a-form-item>
+                            <a-form-item has-feedback label="이메일" class="clr" :label-col="labelCol">
+                                <mail-text-box style="width: 400px"
+                                    v-model:valueInput="formState.extendInfoPresidentEmail" :required="true">
+                                </mail-text-box>
+                            </a-form-item>
                         </a-collapse-panel>
                         <a-collapse-panel key="3" header="CMS (자동이체출금) 계좌 정보 입력">
-                            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                                <a-form-item label="출금은행" class="clr">
-                                    <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType"
-                                        width="250px" />
-                                </a-form-item>
-                                <a-form-item label="출금계좌번호" class="clr">
-                                    <text-number-box text-number-box
-                                        v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
-                                        placeholder="‘-’없이 숫자만 입력" width="250px" :required="true">
-                                    </text-number-box>
-                                </a-form-item>
-                                <a-form-item label="예금주명" class="clr">
-                                    <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" :required="true">
-                                    </default-text-box>
-                                </a-form-item>
-                                <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
-                                    <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" :required="true">
-                                    </default-text-box>
-                                    <div class="warring-bank">
-                                        <InfoCircleFilled />
-                                        <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>
-                                    </div>
-                                </a-form-item>
-                                <a-form-item label="자동이체출금일자" class="clr custom-flex">
-                                    <radio-group :arrayValue="arrayRadioWithdrawDay"
-                                        v-model:valueRadioCheck="formState.extendInfoCmsBankWithdrawDay" />
-                                </a-form-item>
-                            </a-form>
+                            <a-form-item label="출금은행" class="clr" :label-col="labelCol">
+                                <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType"
+                                    width="250px" />
+                            </a-form-item>
+                            <a-form-item label="출금계좌번호" class="clr" :label-col="labelCol">
+                                <text-number-box text-number-box
+                                    v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
+                                    placeholder="‘-’없이 숫자만 입력" width="250px" :required="true">
+                                </text-number-box>
+                            </a-form-item>
+                            <a-form-item label="예금주명" class="clr">
+                                <default-text-box width="250px"
+                                    v-model:valueInput="formState.extendInfoCmsBankOwnerName" :required="true">
+                                </default-text-box>
+                            </a-form-item>
+                            <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr" :label-col="labelCol">
+                                <default-text-box width="250px"
+                                    v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" :required="true">
+                                </default-text-box>
+                                <div class="warring-bank">
+                                    <InfoCircleFilled />
+                                    <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="자동이체출금일자" class="clr custom-flex" :label-col="labelCol">
+                                <radio-group :arrayValue="arrayRadioWithdrawDay"
+                                    v-model:valueRadioCheck="formState.extendInfoCmsBankWithdrawDay" />
+                            </a-form-item>
                         </a-collapse-panel>
                         <a-collapse-panel key="4" header="메모" class="modal-note">
                             <a-table bordered="false" :data-source="formStateMomes" :pagination="false">
@@ -184,7 +177,7 @@
                         <button-basic :text="'저장하고 나가기'" :type="'default'" :mode="'contained'"
                             @onClick="updateCompany" />
                     </div>
-                </form>
+                </standard-form>
             </a-spin>
         </a-modal>
     </div>

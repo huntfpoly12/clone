@@ -3,13 +3,13 @@
         <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기"
             cancelText="그냥 나가기" @cancel="setModalVisible()" width="1200px">
             <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
-                <a-collapse v-model:activeKey="activeKey" accordion>
-                    <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
-                        <a-form :label-col="labelCol" style="height: 500px;overflow-y: scroll;">
-                            <div>
+                <standard-form formName="bf-330">
+                    <a-collapse v-model:activeKey="activeKey" accordion>
+                        <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
+                            <div style="height: 500px;overflow-y: scroll;">
                                 <a-row>
                                     <a-col :span="10">
-                                        <a-form-item label="총이용료" style="font-weight: bold">
+                                        <a-form-item label="총이용료" style="font-weight: bold" :label-col="labelCol">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(totalPrice) }}
                                             </p>
@@ -17,7 +17,7 @@
                                     </a-col>
                                     <a-col :span="8"></a-col>
                                     <a-col :span="10">
-                                        <a-form-item label="회계서비스 이용료" style="padding-left: 50px">
+                                        <a-form-item label="회계서비스 이용료" style="padding-left: 50px" :label-col="labelCol">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(totalPriceAccountingService) }}
                                             </p>
@@ -25,7 +25,7 @@
                                     </a-col>
                                     <a-col :span="14"></a-col>
                                     <a-col :span="10">
-                                        <a-form-item label="원천서비스 이용료" style="padding-left: 50px">
+                                        <a-form-item label="원천서비스 이용료" style="padding-left: 50px" :label-col="labelCol">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(totalWithholdingService) }}
                                             </p>
@@ -36,7 +36,7 @@
                                 <hr />
                                 <a-row>
                                     <a-col :span="12">
-                                        <a-form-item label="회계서비스" style="font-weight: bold">
+                                        <a-form-item label="회계서비스" style="font-weight: bold" :label-col="labelCol">
                                             <checkbox-basic v-model:valueCheckbox="formState.usedAccountingCount"
                                                 :disabled="false" size="14" label="회계서비스 신청" />
                                         </a-form-item>
@@ -144,29 +144,28 @@
                                 <hr />
                                 <a-row>
                                     <a-col>
-                                        <a-form-item label="원천서비스" style="font-weight: bold">
+                                        <a-form-item label="원천서비스" style="font-weight: bold" :label-col="labelCol">
                                             <checkbox-basic v-model:valueCheckbox="formState.usedWithholding"
                                                 :disabled="false" size="14" label="원천서비스" />
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
                                 <div>
-                                    <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                                        <a-form-item label="서비스 시작년월" style="width: 300px">
-                                            <date-time-box v-model:valueDate="formState.withholdingStartYearMonth"
-                                                date-format="MM/DD/YYYY" />
-                                        </a-form-item>
-                                        <a-form-item label="직 원 수 ">
-                                            <number-box-money width="150px" :min="0"
-                                                v-model:valueInput="formState.withholdingCapacity"
-                                                :spinButtons="false" />
-                                        </a-form-item>
-                                        <a-form-item label="원천서비스 이용료:" style="font-weight: bold; width: 565px">
-                                            <p class="input-disble">
-                                                {{ $filters.formatCurrency(totalWithholdingService) }}
-                                            </p>
-                                        </a-form-item>
-                                    </a-form>
+                                    <a-form-item label="서비스 시작년월" :label-col="labelCol">
+                                        <date-time-box style="width: 150px"
+                                            v-model:valueDate="formState.withholdingStartYearMonth"
+                                            date-format="MM/DD/YYYY" />
+                                    </a-form-item>
+                                    <a-form-item label="직 원 수 " :label-col="labelCol">
+                                        <number-box-money width="150px" :min="0"
+                                            v-model:valueInput="formState.withholdingCapacity" :spinButtons="false" />
+                                    </a-form-item>
+                                    <a-form-item label="원천서비스 이용료:" style="font-weight: bold; width: 565px"
+                                        :label-col="labelCol">
+                                        <p class="input-disble">
+                                            {{ $filters.formatCurrency(totalWithholdingService) }}
+                                        </p>
+                                    </a-form-item>
                                 </div>
                                 <a-row>
                                     <a-col span="4"></a-col>
@@ -196,57 +195,55 @@
                                     </a-col>
                                 </a-row>
                             </div>
-                        </a-form>
-                    </a-collapse-panel>
-                    <a-collapse-panel key="2" header="담당매니저/ 영업자">
-                        <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-                            <a-form-item label="담당매니저">
+                        </a-collapse-panel>
+                        <a-collapse-panel key="2" header="담당매니저/ 영업자">
+                            <a-form-item label="담당매니저" :label-col="labelCol">
                                 <div style="width: 200px">
                                     <list-manager-dropdown v-model:selected="formState.manageUserId" />
                                 </div>
                             </a-form-item>
-                            <a-form-item label="영업자">
+                            <a-form-item label="영업자" :label-col="labelCol">
                                 <div style="width: 200px">
                                     <list-sales-dropdown v-model:selected="formState.compactSalesRepresentativeId" />
                                 </div>
                             </a-form-item>
-                        </a-form>
-                    </a-collapse-panel>
-                    <a-collapse-panel key="3" header="메모"
-                        :extra="formStateMomes.length > 0 ? formStateMomes.length : ''"
-                        :style="{ position: 'relative' }">
-                        <a-table bordered="false" :data-source="formStateMomes" :pagination="false">
-                            <template #bodyCell="{ text, index }">
-                                <div>
-                                    <div class="title-note">
-                                        <div>
-                                            {{ text.ownerName }} 수정
-                                            {{ formarDate(text.updatedAt) }} 게시
-                                            {{ formarDate(text.createdAt) }}
+                        </a-collapse-panel>
+                        <a-collapse-panel key="3" header="메모"
+                            :extra="formStateMomes.length > 0 ? formStateMomes.length : ''"
+                            :style="{ position: 'relative' }">
+                            <a-table bordered="false" :data-source="formStateMomes" :pagination="false">
+                                <template #bodyCell="{ text, index }">
+                                    <div>
+                                        <div class="title-note">
+                                            <div>
+                                                {{ text.ownerName }} 수정
+                                                {{ formarDate(text.updatedAt) }} 게시
+                                                {{ formarDate(text.createdAt) }}
+                                            </div>
+                                            <div v-if="index == 0">
+                                                <PlusSquareOutlined :style="{ fontSize: '25px' }" @click="handleAdd" />
+                                            </div>
                                         </div>
-                                        <div v-if="index == 0">
-                                            <PlusSquareOutlined :style="{ fontSize: '25px' }" @click="handleAdd" />
+                                        <div class="text-area-box-custom">
+                                            <text-area-box placeholder="전달사항입력" v-model:valueInput="text.memo" />
                                         </div>
+                                        <a-space :size="8" style="margin-top: 7px">
+                                            <save-outlined :style="{ fontSize: '20px' }"
+                                                @click="handleAddMemo(text.memo, text.memoId)" />
+                                            <DeleteOutlined :style="{ fontSize: '20px' }"
+                                                @click="handleDeleteMemo(text.memoId)" />
+                                        </a-space>
                                     </div>
-                                    <div class="text-area-box-custom">
-                                        <text-area-box placeholder="전달사항입력" v-model:valueInput="text.memo" />
-                                    </div>
-                                    <a-space :size="8" style="margin-top: 7px">
-                                        <save-outlined :style="{ fontSize: '20px' }"
-                                            @click="handleAddMemo(text.memo, text.memoId)" />
-                                        <DeleteOutlined :style="{ fontSize: '20px' }"
-                                            @click="handleDeleteMemo(text.memoId)" />
-                                    </a-space>
-                                </div>
-                            </template>
-                        </a-table>
-                    </a-collapse-panel>
-                </a-collapse>
-                <div class="footer">
-                    <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible" />
-                    <button-basic text="저장하고 나가기" type="default" mode="'contained'"
-                        @onClick="updateServiceContract" /> 
-                </div>
+                                </template>
+                            </a-table>
+                        </a-collapse-panel>
+                    </a-collapse>
+                    <div class="footer">
+                        <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible" />
+                        <button-basic text="저장하고 나가기" type="default" mode="'contained'"
+                            @onClick="updateServiceContract" />
+                    </div>
+                </standard-form>
             </a-spin>
         </a-modal>
     </div>
@@ -955,4 +952,6 @@ export default defineComponent({
     },
 });
 </script>
+
+
 <style src="../style/stylePopup.scss" scoped />
