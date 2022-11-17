@@ -4,7 +4,7 @@
             {{ idEmployee }}
         </div>
         <div>
-            <a-tooltip placement="top" :title="convertBirthDay(birthDay)" color="#E8E8E8" key="black">
+            <a-tooltip placement="top" :title="convertBirthDay(idCardNumber)" color="#E8E8E8" key="black">
                 {{ name }}
             </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
@@ -22,7 +22,7 @@ export default defineComponent({
         idEmployee: {
             type: String,
         },
-        birthDay: {
+        idCardNumber: {
             type: String,
         },
         name: {
