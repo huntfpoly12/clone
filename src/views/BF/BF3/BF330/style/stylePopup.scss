@@ -26,6 +26,10 @@
     text-align: left;
 }
 
+::v-deep .cusstom-label-padding .ant-form-item-control-input-content {
+    padding-left: 50px;
+}
+
 ::v-deep .text-area-box-custom .dx-texteditor-input {
     text-align: left !important;
 }
@@ -102,6 +106,11 @@
     text-align: right;
 }
 
+.cusstom-label-padding .ant-form-item-control-input-content {
+    width: 270px;
+    float: right;
+}
+
 .title-note {
     display: flex;
     justify-content: space-between;
@@ -160,4 +169,15 @@
     >div {
         margin-left: 10px;
     }
+}
+
+::v-deep .custom-label-select label {
+    width: 150px;
+}
+
+::v-deep .dx-datagrid-group-opened::before,
+::v-deep .dx-datagrid-group-closed::before {
+    color: black;
+    font-size: 25px;
+    margin-left: 7px;
 }
