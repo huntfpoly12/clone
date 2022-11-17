@@ -74,8 +74,7 @@
         <td>
           <pre class="mycode">
                 &lt; bank-select-box width="150px" :required="true" / &gt;
-              </pre
-          >
+              </pre>
         </td>
       </tr>
       <tr>
