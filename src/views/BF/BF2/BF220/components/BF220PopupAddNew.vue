@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal :mask-closable="false" footer="" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
             @cancel="setModalVisible()">
-            <form action="your-action">
+            <standard-form action="your-action">
                 <a-spin :spinning="spinningAdd" size="large">
                     <a-row :gutter="24">
                         <a-col :span="24" class="title-modal">
@@ -12,8 +12,8 @@
                             <a-form-item label="그룹코드" class="clr">
                                 <div class="dflex">
                                     <default-text-box class="mr5" v-model:valueInput="dataRes.id"
-                                        placeholder="영문,숫자 5~10자 (중복불가)" :max-character="10" :min-character="5" required
-                                        width="250"></default-text-box>
+                                        placeholder="영문,숫자 5~10자 (중복불가)" :max-character="10" :min-character="5"
+                                        :required="true" width="250"></default-text-box>
                                     <button-basic type="default" text="중복체크" @onClick="checkId" mode="contained"
                                         :disabled="isDisable" :height="33"></button-basic>
                                 </div>
@@ -22,7 +22,7 @@
                         <a-col :span="16">
                             <a-form-item label="그룹명" class="clr">
                                 <default-text-box v-model:valueInput="dataRes.name" placeholder="최대 20자" width="250"
-                                    :max-character="20" required />
+                                    :max-character="20" :required="true" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="16">
@@ -50,7 +50,8 @@
                         </a-col>
                         <a-col :span="24">
                             <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="enumKey"
-                                class="table-sevice" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
+                                class="table-sevice" :allow-column-reordering="move_column"
+                                :allow-column-resizing="colomn_resize">
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{ data }" class="custom-action">
@@ -73,12 +74,12 @@
                         <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="createScrenRole" />
                     </a-row>
                 </a-spin>
-            </form>
+            </standard-form>
         </a-modal>
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from 'vue'
+import { ref, defineComponent, watch, computed, reactive } from 'vue'
 import { useStore } from 'vuex';
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import {
@@ -92,6 +93,7 @@ import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
 import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
 import { AdminScreenRole } from '@bankda/jangbuda-common';
 import { DxCheckBox } from 'devextreme-vue/check-box';
+import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 export default defineComponent({
     props: ['modalStatus'],
     components: {
@@ -105,7 +107,7 @@ export default defineComponent({
     setup(props, { emit }) {
         // config grid
         const store = useStore();
-        
+
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const dataSource = ref(AdminScreenRole.all())
@@ -119,13 +121,15 @@ export default defineComponent({
         let isDisable = ref<boolean>(true);
         const wrapperCol = { span: 14 };
         const checkIDName = ref()
-        const dataRes: any = ref({
+        const dataRes = ref({
             id: '',
             name: "",
             type: "m",
-            screenRoles: "",
             memo: ""
         });
+        let objDataDefault = ref({
+            ...dataRes.value
+        })
         let readAdminScreenRoles: any = ref([])
         let writeAdminScreenRoles: any = ref([])
         const checkId = () => {
@@ -191,8 +195,11 @@ export default defineComponent({
                 createScreenRole(dataCall)
             }
         }
-        const setModalVisible = () => {
-            emit('closePopupAdd', false)
+        const setModalVisible = () => { 
+            if (JSON.stringify(objDataDefault.value) === JSON.stringify(dataRes.value) == true)
+                emit("closePopupAdd", false)
+            else
+                comfirmClosePopup(() => emit("closePopupAdd", false))
         }
         const changeValRoles = (data: any, type: string) => {
             let count = 0
@@ -212,7 +219,6 @@ export default defineComponent({
                         readAdminScreenRoles.value.push(data)
                     }
                 }
-                console.log(readAdminScreenRoles.value);
             }
             if (type == 'write') {
                 if (writeAdminScreenRoles.value.length == 0) {
