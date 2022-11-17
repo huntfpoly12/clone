@@ -75,7 +75,6 @@
 import { ref, defineComponent, reactive, watch } from "vue";
 import DxButton from 'devextreme-vue/button';
 import { MailOutlined } from '@ant-design/icons-vue';
-import type { SelectProps } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM110/index";
 import notification from "../../../../../utils/notification";
