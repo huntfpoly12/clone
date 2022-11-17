@@ -4,7 +4,7 @@
             {{ idEmployee }}
         </div>
         <div>
-            <a-tooltip placement="top" :title="birthDay" color="#E8E8E8" key="black">
+            <a-tooltip placement="top" :title="convertBirthDay(birthDay)" color="#E8E8E8" key="black">
                 {{ name }}
             </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
@@ -14,8 +14,8 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import DxButton from 'devextreme-vue/button';
+import { defineComponent, ref } from "vue";
+import DxButton from 'devextreme-vue/button'; 
 
 export default defineComponent({
     props: {
@@ -40,6 +40,20 @@ export default defineComponent({
     },
     components: {
         DxButton
+    },
+
+    setup() {
+        const convertBirthDay = (birthDay: any) => { 
+            let newBirthDay = birthDay.split("-")[0]
+            let typeYear = birthDay.split("-")[1].charAt(0)
+            if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
+                return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+            else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
+                return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6) 
+        }
+        return {
+            convertBirthDay
+        }
     },
 });
 </script>

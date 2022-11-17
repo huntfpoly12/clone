@@ -9,7 +9,7 @@
             <tr>
                 <td>
                     <p><b> Employee Info</b></p>
-                    <employee-info idEmployee="JBD00001" name="계약정보관리&심사" birthDay="28/01/2000" :status="0"
+                    <employee-info idEmployee="JBD00001" name="계약정보관리&심사" birthDay="800101-1100123" :status="0"
                         :foreigner="true" :checkStatus="false" />
                 </td>
                 <td>
