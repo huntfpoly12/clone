@@ -2,30 +2,30 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기"
             cancelText="그냥 나가기" @cancel="setModalVisible()" width="1200px">
-            <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
-                <standard-form formName="bf-330">
+            <standard-form :label-col="labelCol" :wrapper-col="wrapperCol">
+                <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
                     <a-collapse v-model:activeKey="activeKey" accordion>
                         <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
                             <div style="height: 500px;overflow-y: scroll;">
                                 <a-row>
-                                    <a-col :span="10">
-                                        <a-form-item label="총이용료" style="font-weight: bold" :label-col="labelCol">
+                                    <a-col :span="12">
+                                        <a-form-item label="총이용료" style="font-weight: bold">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(totalPrice) }}
                                             </p>
                                         </a-form-item>
                                     </a-col>
-                                    <a-col :span="8"></a-col>
-                                    <a-col :span="10">
-                                        <a-form-item label="회계서비스 이용료" style="padding-left: 50px" :label-col="labelCol">
+                                    <a-col :span="12"></a-col>
+                                    <a-col :span="12">
+                                        <a-form-item label="회계서비스 이용료" class="cusstom-label-padding">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(totalPriceAccountingService) }}
                                             </p>
                                         </a-form-item>
                                     </a-col>
-                                    <a-col :span="14"></a-col>
-                                    <a-col :span="10">
-                                        <a-form-item label="원천서비스 이용료" style="padding-left: 50px" :label-col="labelCol">
+                                    <a-col :span="12"></a-col>
+                                    <a-col :span="12">
+                                        <a-form-item label="원천서비스 이용료" class="cusstom-label-padding">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(totalWithholdingService) }}
                                             </p>
@@ -36,7 +36,7 @@
                                 <hr />
                                 <a-row>
                                     <a-col :span="12">
-                                        <a-form-item label="회계서비스" style="font-weight: bold" :label-col="labelCol">
+                                        <a-form-item label="회계서비스" style="font-weight: bold">
                                             <checkbox-basic v-model:valueCheckbox="formState.usedAccountingCount"
                                                 :disabled="false" size="14" label="회계서비스 신청" />
                                         </a-form-item>
@@ -48,21 +48,22 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                     </div>
-                                    <DxDataGrid id="grid-container" :show-borders="true"
+                                    <DxDataGrid id="grid-container" :show-borders="true" @content-ready="contentReady" 
                                         :data-source="formState.accountingfacilityBusinesses"
                                         key-expr="facilityBusinessId" :allow-column-reordering="move_column"
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                                        <DxEditing :allow-updating="true" :allow-adding="true" :allow-deleting="true"
-                                            mode="cell" />
+                                        <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+                                            :allow-deleting="true" mode="cell" />
                                         <DxSelection mode="single" />
                                         <DxPaging :enabled="false" />
-                                        <DxColumn data-field="No" :allow-editing="false" caption="#"
-                                            cell-template="indexCell" />
+                                        <DxColumn :width="10" />
                                         <template #indexCell="{ data }">
-                                            <div>{{ data.rowIndex }}</div>
+                                            <div>{{ data.rowIndex + 1 }}</div>
                                         </template>
                                         <DxColumn data-field="name" caption="사업명 (중복불가)" />
-                                        <DxColumn data-field="facilityBizType" caption="사업분류" />
+                                        <DxColumn data-field="facilityBizType" caption="사업분류">
+                                            <DxLookup :data-source="facilityBizType" value-expr="v" display-expr="n" />
+                                        </DxColumn>
                                         <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                                             :format="'yyyy-MM-dd'" />
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
@@ -81,10 +82,9 @@
                                                         </p>
                                                     </a-form-item>
                                                     <div class="custom-money">
-                                                        <checkbox-basic :value="true" :disabled="true" :size="'20'"
+                                                        <checkbox-basic :value="true" :disabled="true" size="16"
                                                             label="기본이용료" />
-                                                        <DxNumberBox :format="'#,###'" :min="0" :value="data.data.price"
-                                                            @keyDown="changeValueInput($event.component, 0, data.data)" />
+                                                        <text-number-box v-model:valueInput="data.data.price" />
                                                     </div>
                                                     <!-- ---------------------OPTION---------------- -->
                                                     <div class="custom-money">
@@ -118,12 +118,14 @@
                                                 </a-col>
                                                 <a-col :span="14">
                                                     <div class="custom-money" style="padding-left: 0px">
-                                                        <div
-                                                            style="width: auto;padding-right: 10px;color:red;font-weight: bold;">
-                                                            장기요양기관등록번호 :</div>
-                                                        <DxNumberBox :format="'#,###'" :min="0"
-                                                            :value="checkValueLongTerm(data.data.longTermCareInstitutionNumber)"
-                                                            @keyDown="changeValueLongterm($event.component, data.data.name)" />
+                                                        <div style="width: auto;padding-right: 10px;color:red">
+                                                            <b>장기요양기관등록번호 :</b>
+                                                        </div>
+                                                        <text-number-box
+                                                            v-model:valueInput="data.data.longTermCareInstitutionNumber"
+                                                            placeholder="‘-’없이 숫자만 입력" width="250px" :required="true"
+                                                            nameInput="formState-extendInfoCmsBankAccountNumber">
+                                                        </text-number-box>
                                                     </div>
                                                     <div style="display: flex">
                                                         <div>
@@ -143,41 +145,42 @@
                                 </div>
                                 <hr />
                                 <a-row>
-                                    <a-col>
-                                        <a-form-item label="원천서비스" style="font-weight: bold" :label-col="labelCol">
+                                    <a-col :span="14">
+                                        <a-form-item label="원천서비스" style="font-weight: bold"
+                                            class="custom-label-select">
                                             <checkbox-basic v-model:valueCheckbox="formState.usedWithholding"
                                                 :disabled="false" size="14" label="원천서비스" />
                                         </a-form-item>
                                     </a-col>
-                                </a-row>
-                                <div>
-                                    <a-form-item label="서비스 시작년월" :label-col="labelCol">
-                                        <date-time-box style="width: 150px"
-                                            v-model:valueDate="formState.withholdingStartYearMonth"
-                                            date-format="MM/DD/YYYY" />
-                                    </a-form-item>
-                                    <a-form-item label="직 원 수 " :label-col="labelCol">
-                                        <number-box-money width="150px" :min="0"
-                                            v-model:valueInput="formState.withholdingCapacity" :spinButtons="false" />
-                                    </a-form-item>
-                                    <a-form-item label="원천서비스 이용료:" style="font-weight: bold; width: 565px"
-                                        :label-col="labelCol">
-                                        <p class="input-disble">
-                                            {{ $filters.formatCurrency(totalWithholdingService) }}
-                                        </p>
-                                    </a-form-item>
-                                </div>
-                                <a-row>
-                                    <a-col span="4"></a-col>
-                                </a-row>
-                                <a-row>
-                                    <a-coll :span="10"></a-coll>
+                                    <a-col :span="14">
+                                        <a-form-item label="서비스 시작년월" class="custom-label-select">
+                                            <date-time-box width="150px"
+                                                v-model:valueDate="formState.withholdingStartYearMonth"
+                                                date-format="MM/DD/YYYY" />
+                                        </a-form-item>
+                                    </a-col>
+                                    <a-col :span="14">
+                                        <a-form-item label="직 원 수 " class="custom-label-select">
+                                            <number-box-money width="150px" :min="0"
+                                                v-model:valueInput="formState.withholdingCapacity"
+                                                :spinButtons="false" />
+                                        </a-form-item>
+                                    </a-col>
+                                    <a-col :span="14">
+                                        <a-form-item label="원천서비스 이용료:" style="font-weight: bold;"
+                                            class="custom-label-select">
+                                            <p class="input-disble" style="width: 328px;">
+                                                {{ $filters.formatCurrency(totalWithholdingService) }}
+                                            </p>
+                                        </a-form-item>
+                                    </a-col>
                                     <a-col :span="14">
                                         <div style="display: flex; padding-left: 120px">
                                             <checkbox-basic style="width: 180px"
                                                 v-model:valueCheckbox="formState.checkBoxBasicFee" size="14"
                                                 label="기본이용료" @change="handleInputTexService" />
-                                            <number-box-money :min="0" width="100%" :disabled="formState.disableNumber5"
+                                            <number-box-money :min="0" width="180px"
+                                                :disabled="formState.disableNumber5"
                                                 v-model:valueInput="formState.usedServiceInfoWithholdingPrice"
                                                 :spinButtons="false" />
                                         </div>
@@ -189,7 +192,7 @@
                                                 v-model:valueCheckbox="formState.checkBoxMajorInsurance" size="14"
                                                 label="4대보험" @change="handleInputTexService" />
                                             <number-box-money :min="0" v-model:valueInput="formState.fourMajorInsurance"
-                                                :disabled="formState.disableNumber6" width="100%"
+                                                :disabled="formState.disableNumber6" width="180px"
                                                 :spinButtons="false" />
                                         </div>
                                     </a-col>
@@ -197,12 +200,12 @@
                             </div>
                         </a-collapse-panel>
                         <a-collapse-panel key="2" header="담당매니저/ 영업자">
-                            <a-form-item label="담당매니저" :label-col="labelCol">
+                            <a-form-item label="담당매니저" class="custom-label-select">
                                 <div style="width: 200px">
                                     <list-manager-dropdown v-model:selected="formState.manageUserId" />
                                 </div>
                             </a-form-item>
-                            <a-form-item label="영업자" :label-col="labelCol">
+                            <a-form-item label="영업자" class="custom-label-select">
                                 <div style="width: 200px">
                                     <list-sales-dropdown v-model:selected="formState.compactSalesRepresentativeId" />
                                 </div>
@@ -240,11 +243,11 @@
                     </a-collapse>
                     <div class="footer">
                         <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible" />
-                        <button-basic text="저장하고 나가기" type="default" mode="'contained'"
+                        <button-basic text="저장하고 나가기" type="default" mode="contained"
                             @onClick="updateServiceContract" />
                     </div>
-                </standard-form>
-            </a-spin>
+                </a-spin>
+            </standard-form>
         </a-modal>
     </div>
 </template>
@@ -334,6 +337,7 @@ export default defineComponent({
         const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
         const fileList = ref<UploadProps["fileList"]>([]);
+        let objDataDefault = reactive({});
         const formStateMomes = ref([
             {
                 memoId: null,
@@ -350,7 +354,10 @@ export default defineComponent({
             },
         ]);
         const setModalVisible = () => {
-            comfirmClosePopup(() => emit("closePopup", false))
+            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
+                comfirmClosePopup(() => emit("closePopup", false))
+            else
+                emit("closePopup", false)
         };
         const activeKey = ref([1]);
         const initialState = {
@@ -484,6 +491,9 @@ export default defineComponent({
                         }
                     );
                 }
+                objDataDefault = {
+                    ...formState
+                }
             }
         });
         // get list memo of company
@@ -575,79 +585,84 @@ export default defineComponent({
             notification('success', "업데이트 완료!")
             emit("closePopup", false)
         });
-        const updateServiceContract = () => {
-            let accountingInfor: any = [];
-            let arrayAccountingOptions: any = [];
-            if (formState.checkBoxAccInput) {
-                arrayAccountingOptions.push({
-                    accountingServiceType:
-                        AccountingAdditionalServiceType.INPUT_AGENT.code,
-                    price: formState.inputAgent,
-                });
+        const updateServiceContract = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                activeKey.value = [1]
+            } else {
+                let accountingInfor: any = [];
+                let arrayAccountingOptions: any = [];
+                if (formState.checkBoxAccInput) {
+                    arrayAccountingOptions.push({
+                        accountingServiceType:
+                            AccountingAdditionalServiceType.INPUT_AGENT.code,
+                        price: formState.inputAgent,
+                    });
+                }
+                if (formState.checkBoxAccConso) {
+                    arrayAccountingOptions.push({
+                        accountingServiceType:
+                            AccountingAdditionalServiceType.ACCOUNT_INTEGRATION.code,
+                        price: formState.accountIntegration,
+                    });
+                }
+                if (formState.checkBoxAcc4wc) {
+                    arrayAccountingOptions.push({
+                        accountingServiceType: AccountingAdditionalServiceType.SSIS.code,
+                        price: formState.sSIS,
+                    });
+                }
+                if (formState.accountingfacilityBusinesses.length > 0) {
+                    formState.accountingfacilityBusinesses.map((e: any) => {
+                        e.options = e.options.map((val: any) => ({
+                            price: val.price,
+                            accountingServiceType: val.accountingServiceType,
+                        }))
+                        accountingInfor.push({
+                            longTermCareInstitutionNumber: e.longTermCareInstitutionNumber.toString(),
+                            facilityBizType: e.facilityBizType,
+                            name: e.name,
+                            startYearMonth: e.startYearMonth,
+                            capacity: e.capacity,
+                            registrationCardFileStorageId: e.registrationCardFileStorageId,
+                            facilityBusinessId: e.facilityBusinessId ? e.facilityBusinessId : 0,
+                            price: parseInt(e.price),
+                            options: e.options,
+                        })
+                    });
+                }
+                let arrayWithholdingOptions: any = [];
+                if (formState.checkBoxMajorInsurance) {
+                    arrayWithholdingOptions.push({
+                        withholdingServiceType:
+                            WithholdingAdditionalServiceType.MAJOR_INSURANCE.code,
+                        price: formState.fourMajorInsurance,
+                    });
+                }
+                let withholdingInfor = {
+                    startYearMonth: formState.withholdingStartYearMonth,
+                    capacity: parseInt(formState.withholdingCapacity),
+                    price: formState.usedServiceInfoWithholdingPrice,
+                    options: arrayWithholdingOptions,
+                };
+                let infoData = {
+                    totalPrice: totalPrice.value,
+                    accountingPrice: totalPriceAccountingService.value,
+                    withholdingPrice: totalWithholdingService.value,
+                    accounting: accountingInfor,
+                    withholding: withholdingInfor,
+                };
+                let extraData = {
+                    salesRepresentativeId: formState.compactSalesRepresentativeId,
+                    manageUserId: formState.manageUserId,
+                };
+                let variables = {
+                    id: formState.id,
+                    info: infoData,
+                    extra: extraData,
+                };
+                actionUpdate(variables);
             }
-            if (formState.checkBoxAccConso) {
-                arrayAccountingOptions.push({
-                    accountingServiceType:
-                        AccountingAdditionalServiceType.ACCOUNT_INTEGRATION.code,
-                    price: formState.accountIntegration,
-                });
-            }
-            if (formState.checkBoxAcc4wc) {
-                arrayAccountingOptions.push({
-                    accountingServiceType: AccountingAdditionalServiceType.SSIS.code,
-                    price: formState.sSIS,
-                });
-            }
-            if (formState.accountingfacilityBusinesses.length > 0) {
-                formState.accountingfacilityBusinesses.map((e: any) => {
-                    e.options = e.options.map((val: any) => ({
-                        price: val.price,
-                        accountingServiceType: val.accountingServiceType,
-                    }))
-                    accountingInfor.push({
-                        longTermCareInstitutionNumber: e.longTermCareInstitutionNumber.toString(),
-                        facilityBizType: e.facilityBizType,
-                        name: e.name,
-                        startYearMonth: e.startYearMonth,
-                        capacity: e.capacity,
-                        registrationCardFileStorageId: e.registrationCardFileStorageId,
-                        facilityBusinessId: e.facilityBusinessId ? e.facilityBusinessId : 0,
-                        price: e.price,
-                        options: e.options,
-                    })
-                });
-            }
-            let arrayWithholdingOptions: any = [];
-            if (formState.checkBoxMajorInsurance) {
-                arrayWithholdingOptions.push({
-                    withholdingServiceType:
-                        WithholdingAdditionalServiceType.MAJOR_INSURANCE.code,
-                    price: formState.fourMajorInsurance,
-                });
-            }
-            let withholdingInfor = {
-                startYearMonth: formState.withholdingStartYearMonth,
-                capacity: parseInt(formState.withholdingCapacity),
-                price: formState.usedServiceInfoWithholdingPrice,
-                options: arrayWithholdingOptions,
-            };
-            let infoData = {
-                totalPrice: totalPrice.value,
-                accountingPrice: totalPriceAccountingService.value,
-                withholdingPrice: totalWithholdingService.value,
-                accounting: accountingInfor,
-                withholding: withholdingInfor,
-            };
-            let extraData = {
-                salesRepresentativeId: formState.compactSalesRepresentativeId,
-                manageUserId: formState.manageUserId,
-            };
-            let variables = {
-                id: formState.id,
-                info: infoData,
-                extra: extraData,
-            };
-            actionUpdate(variables);
         };
         const totalPriceAccountingService = computed(() => {
             let ttPriceAcc = formState.usedServiceInfoAccountingPrice +
@@ -677,9 +692,9 @@ export default defineComponent({
         const getTotalAmount = (data: any) => {
             let totalAmount = 0
             data.data.options.map((e: any) => {
-                totalAmount += e.price
+                totalAmount += parseInt(e.price)
             })
-            totalAmount += data.data.price
+            totalAmount += parseInt(data.data.price)
             return totalAmount
         }
         // Thay đổi giá trị option 
@@ -781,16 +796,6 @@ export default defineComponent({
                 }
             })
         }
-        const changeValueLongterm = (valOJ: any, name: any) => {
-            console.log(valOJ);
-            setTimeout(() => {
-                formState.accountingfacilityBusinesses.map((e: any) => {
-                    if (e.name == name) {
-                        e.longTermCareInstitutionNumber = valOJ._parsedValue
-                    }
-                })
-            }, 100);
-        }
         const checkValueLongTerm = (longTerm: any) => {
             return parseInt(longTerm)
         }
@@ -813,6 +818,11 @@ export default defineComponent({
                 })
             }, 100);
         };
+        const contentReady = (e: any) => {
+            if (!e.component.getSelectedRowKeys().length) { 
+                e.component.expandRow(1)
+            }
+        }
         watch(
             () => props.modalStatus,
             (newValue) => {
@@ -908,11 +918,11 @@ export default defineComponent({
                 }
             }
         );
-        return {
+        return { 
+            contentReady,
             handleInputTexService,
             move_column,
             colomn_resize,
-            changeValueLongterm,
             checkValueLongTerm,
             getImgUrl,
             checkOption,
@@ -951,7 +961,5 @@ export default defineComponent({
         };
     },
 });
-</script>
-
-
+</script>  
 <style src="../style/stylePopup.scss" scoped />
