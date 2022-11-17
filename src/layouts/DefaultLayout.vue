@@ -35,10 +35,11 @@
 						}))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px;" @change="addMenuTab" />
 					</div>  
 				</div>
-
 				<div class="right">
+					
 					<nav class="nav-tabs" v-if="menuTab.length > 0">
 						<ul class="list-menu-tab">
+							
 							<li v-for="(item, index) in menuTab" :class="activeTab.id === item.id ? 'active' : ''"
 								:key="index" @click="changeActiveTab(item)">
 								{{ item.name }}
@@ -73,8 +74,8 @@
 				<a-layout>
 					<a-layout-content :style="{ background: '#fff', margin: 0, minHeight: '280px' }">
 						<div class="main-content">
-							
 							<template v-if="activeTab">
+								
 								<keep-alive>
 									<component v-bind:is="currentComponent" />
 								</keep-alive>
@@ -187,12 +188,19 @@ export default defineComponent({
 		menuData.forEach((item) => {
 			if (this.$route.fullPath.includes(item.id)) {
 				this.activeTab = item;
+				this.menuTab.push(item);
 				return;
 			}else if(this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard'){
 
-				this.activeTab = { name: "example", url: "/dashboard", id: "" };
+				this.activeTab = { name: "dashboard", url: "/dashboard", id: "" };
 			}
 		});
+
+		if(this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard'){
+			this.activeTab = { name: "Dashboard", url: "/dashboard", id: "" };
+				this.menuTab.push({ name: "Dashboard", url: "/dashboard", id: "" });
+		}
+		
 	},
 	watch: {
 		activeTab: {
@@ -326,27 +334,13 @@ export default defineComponent({
 				this.menuTab.push(obj[key]);
 			}
 			this.activeTab = tabAc;
-
-			// if (this.menuTab.length < 20) {
-			// 	this.menuTab.push(item);
-			// }
-			// const obj = {};
-			// for (let i = 0, len = this.menuTab.length; i < len; i++) {
-			// 	obj[this.menuTab[i]["id"]] = this.menuTab[i];
-			// }
-
-			// this.menuTab = new Array();
-			// for (const key in obj) {
-			// 	this.menuTab.push(obj[key]);
-			// }
-			// this.activeTab = item;
 		},
 		removeItemTab(item) {
 			this.menuTab.splice(item, 1);
 			if (this.menuTab.length === 0) {
-				
-				this.$router.push('/dashboard');
 				this.activeTab = { name: "example", url: "/dashboard", id: "" };
+				this.$router.push('/dashboard');
+				
 				
 			}
 		},
