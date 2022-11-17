@@ -51,8 +51,10 @@
                                     <DxDataGrid id="grid-container" :show-borders="true" @content-ready="contentReady" 
                                         :data-source="formState.accountingfacilityBusinesses"
                                         key-expr="facilityBusinessId" :allow-column-reordering="move_column"
-                                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                                        :selected-row-keys="selectedItemKeys">
                                         <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+                                            :new-row-position="'pageBottom'"
                                             :allow-deleting="true" mode="cell" />
                                         <DxSelection mode="single" />
                                         <DxPaging :enabled="false" />
@@ -333,6 +335,7 @@ export default defineComponent({
         const imageValue = ref("");
         const fileName = ref("");
         const dataQuery = ref();
+        const selectedItemKeys = reactive([])
         const dataQueryMemos = ref();
         const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
@@ -921,6 +924,7 @@ export default defineComponent({
         return { 
             contentReady,
             handleInputTexService,
+            selectedItemKeys,
             move_column,
             colomn_resize,
             checkValueLongTerm,
