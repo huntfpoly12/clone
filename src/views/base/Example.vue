@@ -66,6 +66,10 @@ const SelectBox = defineAsyncComponent(() =>
   import("../base/SelectBox.vue")
 );
 
+const TagBox = defineAsyncComponent(() =>
+  import("../base/TagBox.vue")
+);
+
 const allListTab = service.getListTab();
 export default defineComponent({
   components: {
@@ -80,7 +84,8 @@ export default defineComponent({
     PreviewImage,
     ButtonBasic,
     SelectBox,
-    CheckBoxFrom
+    CheckBoxFrom,
+    TagBox
   },
   setup() {
     const allTab = ref(allListTab);
