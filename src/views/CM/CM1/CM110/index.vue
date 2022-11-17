@@ -149,6 +149,7 @@
                     <DxDataGrid :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true"
                         key-expr="id" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" style="width: 100%;">
+                        <DxPager :visible="false"/>
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -227,6 +228,7 @@ import {
     DxColumn,
     DxPaging,
     DxExport,
+    DxPager,
     DxSelection,
     DxSearchPanel,
     DxToolbar,
@@ -273,6 +275,7 @@ export default defineComponent({
         DxColumn,
         DxPaging,
         DxExport,
+        DxPager,
         DxSelection,
         DxSearchPanel,
         DxToolbar,
