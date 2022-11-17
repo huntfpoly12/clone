@@ -210,6 +210,7 @@
                                                 :allow-column-resizing="colomn_resize" :show-borders="true"
                                                 :selected-row-keys="selectedItemKeys">
                                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+                                                    :new-row-position="'pageBottom'"
                                                     :allow-deleting="true" template="button-template" mode="cell">
                                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                                                 </DxEditing>
