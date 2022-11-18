@@ -69,7 +69,7 @@
                                         <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                                             :format="'yyyy-MM-dd'" />
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
-                                        <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
+                                        <DxColumn :allow-editing="false" caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
                                         <template #totalPrice="{ data }">
                                             {{ $filters.formatCurrency(getTotalAmount(data)) }}
                                         </template>
@@ -301,6 +301,7 @@ import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import DxTextBox from 'devextreme-vue/text-box';
+import { initialState } from "../utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -344,54 +345,6 @@ export default defineComponent({
         const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
         const fileList = ref<UploadProps["fileList"]>([]);
-        const initialState = {
-            id: null,
-            totalFee: 0,
-            accountingPrice: 0,
-            withholdingPrice: 0,
-            accountingfacilityBusinesses: [],
-            usedAccountingCount: false,
-            usedServiceInfoAccountingPrice: 0,
-            inputAgent: 0,
-            accountIntegration: 0,
-            sSIS: 0,
-            usedWithholding: false,
-            withholdingStartYearMonth: "",
-            withholdingCapacity: "",
-            usedServiceInfoWithholdingPrice: 0,
-            fourMajorInsurance: 0,
-            compactSalesRepresentativeId: 0,
-            manageUserId: 0,
-            name: "",
-            name2: "",
-            name3: "",
-            delivery: false,
-            type: [],
-            resource: "",
-            desc: "",
-            totalService: 0,
-            accFeeService: 0,
-            accBasicFee: "",
-            accInput: "",
-            accConsolidation: "",
-            acc4wc: "",
-            basicFee: "",
-            majorInsurance: "",
-            taxFeeSevice: 0,
-            checkBox: false,
-            checkBoxAccBasicFee: false,
-            checkBoxAccInput: false,
-            checkBoxAccConso: false,
-            checkBoxAcc4wc: false,
-            checkBoxMajorInsurance: false,
-            checkBoxBasicFee: false,
-            disableNumber1: false,
-            disableNumber2: false,
-            disableNumber3: false,
-            disableNumber4: false,
-            disableNumber5: false,
-            disableNumber6: false,
-        };
         let objDataDefault = reactive({ ...initialState });
         const formStateMomes = ref([
             {
@@ -700,20 +653,19 @@ export default defineComponent({
         };
         const getTotalAmount = (data: any) => {
             let totalAmount = 0
-            data.data.options.map((e: any) => {
-                totalAmount += parseInt(e.price)
-            })
-            totalAmount += parseInt(data.data.price)
-
-
-            formState.usedServiceInfoAccountingPrice = data.data.price
-            let totalValuePrice = 0
-            data.data.options.map((val: any) => {
-                totalValuePrice += val.price
-            })
-            formState.inputAgent = totalValuePrice
-
-
+            if(data.data.options) {
+                data.data.options.map((e: any) => {
+                    totalAmount += parseInt(e.price)
+                })
+                totalAmount += parseInt(data.data.price)
+                formState.usedServiceInfoAccountingPrice = data.data.price
+                let totalValuePrice = 0
+                data.data.options.map((val: any) => {
+                    totalValuePrice += val.price
+                })
+                formState.inputAgent = totalValuePrice
+            }
+            
             return totalAmount
         }
         // Thay đổi giá trị option 
@@ -743,15 +695,20 @@ export default defineComponent({
         // Thay đổi trạng thái ô checkbox của  options
         const changeChecked = (valChange: any, optionChange: number, valOJ: any) => {
             // nếu checked thì thêm dòng mới trong mảng options để lưu giá trị
-            if (valChange == true)
+            if (valChange == true) {
+                console.log(formState.accountingfacilityBusinesses);
                 formState.accountingfacilityBusinesses.map((e: any) => {
                     if (e.name == valOJ.name) {
+                        if(!e.options) {
+                            e.options = [];
+                        }
                         e.options.push({
                             accountingServiceType: optionChange,
                             price: 0
                         })
                     }
                 })
+            }
             // nếu unchecked thì xóa dòng đó trong options
             else {
                 setTimeout(() => {
@@ -772,31 +729,40 @@ export default defineComponent({
         // Lấy số tiền trong option đang thay đổi
         const getPriceOption = (arr: any, value: number) => {
             let price = 0
-            arr.map((e: any) => {
-                if (e.accountingServiceType == value) {
-                    price = e.price
-                }
-            })
+            if(arr) {
+                arr.map((e: any) => {
+                    if (e.accountingServiceType == value) {
+                        price = e.price
+                    }
+                })
+            }
+            
             return price
         }
         // disable input khi unchecked
         const disableInput = (arr: any, value: number) => {
             let checked = ref(true)
-            arr.map((e: any) => {
-                if (e.accountingServiceType == value) {
-                    checked.value = false
-                }
-            })
+            if(arr) {
+                arr.map((e: any) => {
+                    if (e.accountingServiceType == value) {
+                        checked.value = false
+                    }
+                })
+            }
+            
             return checked.value
         }
         // Kiểm tra checked của option ban đầu
         const checkOption = (arr: any, value: number) => {
             let count = 0
-            arr.map((e: any) => {
-                if (e.accountingServiceType == value) {
-                    count = 1
-                }
-            })
+            if (arr) {
+                arr.map((e: any) => {
+                    if (e.accountingServiceType == value) {
+                        count = 1
+                    }
+                })
+            }
+            
             if (count == 0) {
                 return false
             } else {
@@ -993,12 +959,5 @@ export default defineComponent({
     },
 });
 </script>  
-
-
-
-
-
-
-
 
 <style src="../style/stylePopup.scss" scoped />
