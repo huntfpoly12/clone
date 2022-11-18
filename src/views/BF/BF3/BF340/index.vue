@@ -106,11 +106,8 @@ import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import { SalesRepresentativeGrade, getEnumValue } from "@bankda/jangbuda-common";
 import { useQuery } from "@vue/apollo-composable";
-import DxButton from "devextreme-vue/button";
-import { Workbook } from "exceljs";
-import { saveAs } from "file-saver-es";
-import notification from "../../../../utils/notification";
-import { exportDataGrid } from "devextreme/excel_exporter";
+import DxButton from "devextreme-vue/button"; 
+import notification from "../../../../utils/notification"; 
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import EditBF340Popup from "./components/EditBF340Popup.vue";
@@ -118,6 +115,7 @@ import AddNew340Poup from "./components/AddNew340Poup.vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import queries from "../../../../graphql/queries/BF/BF3/BF340/index";
 import { origindata } from "./utils";
+import { onExportingCommon } from "../../../../helpers/commonFunction"
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -163,28 +161,14 @@ export default defineComponent({
         const dataSource = ref([]);
         const trigger = ref<boolean>(true);
         const { refetch: refetchData, loading, onError, result } = useQuery(queries.getDataSale, originData, () => ({
-            enabled: trigger.value,
+            enalbed: trigger.value,
             fetchPolicy: "no-cache",
         }));
         onError((error) => {
             notification('error', error.message);
         });
-        const onExporting = (e: { component: any; cancel: boolean }) => {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet("employees");
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(
-                        new Blob([buffer], { type: "application/octet-stream" }),
-                        "영업자관리.xlsx"
-                    );
-                });
-            });
-            e.cancel = true;
+        const onExporting = (e: any) => {
+            onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const openAddNewModal = () => {
             modalAddNewStatus.value = true;
@@ -256,5 +240,5 @@ export default defineComponent({
         };
     },
 });
-</script>
+</script> 
 <style scoped lang="scss" src="./style/style.scss" />

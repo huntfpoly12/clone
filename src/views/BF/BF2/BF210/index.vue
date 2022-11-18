@@ -1,61 +1,61 @@
 <template>
-    <a-spin :spinning="spinning" size="large">
-        <action-header title="회원관리" @actionSearch="searching"/>  
-        <div id="bf-210">
-            <div class="search-form">
-                <div id="components-grid-demo-flex">
-                    <a-row justify="start" :gutter="[16, 8]">
-                        <a-col class="custom-flex">
-                            <label class="lable-item">회원종류 :</label>
-                            <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
-                                value-expr="id" item-template="item" :height="$config_styles.HeightInput"
-                                style="width:140px" field-template="field" @value-changed="changeValueType">
-                                <template #field="{ data }">
-                                    <Field :fieldData="data" />
-                                </template>
-                                <template #item="{ data }">
-                                    <div style=" padding: 3px;">
-                                        <div
-                                            :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
-                                            {{ data.name }}
-                                        </div>
+    <action-header title="회원관리" @actionSearch="searching" />
+    <div id="bf-210">
+        <div class="search-form">
+            <div id="components-grid-demo-flex">
+                <a-row justify="start" :gutter="[16, 8]">
+                    <a-col class="custom-flex">
+                        <label class="lable-item">회원종류 :</label>
+                        <DxSelectBox id="custom-templates" :data-source="products" display-expr="name" value-expr="id"
+                            item-template="item" :height="$config_styles.HeightInput" style="width:140px"
+                            field-template="field" @value-changed="changeValueType">
+                            <template #field="{ data }">
+                                <Field :fieldData="data" />
+                            </template>
+                            <template #item="{ data }">
+                                <div style=" padding: 3px;">
+                                    <div
+                                        :style="{ color: data.color, background: data.background, padding: '2px 12px', borderRadius: '5px', border: data.border }">
+                                        {{ data.name }}
                                     </div>
-                                </template>
-                            </DxSelectBox>
-                        </a-col>
-                        <a-col class="custom-flex">
-                            <label class="lable-item">소속코드:</label>
-                            <default-text-box width="150px" v-model:valueInput="dataSearch.groupCode" />
-                        </a-col>
-                        <a-col class="custom-flex">
-                            <label class="lable-item">소속명:</label>
-                            <default-text-box width="150px" v-model:valueInput="dataSearch.groupName" />
-                        </a-col>
-                        <a-col class="custom-flex">
-                            <label class="lable-item">회원ID :</label>
-                            <default-text-box width="150px" v-model:valueInput="dataSearch.username" />
-                        </a-col>
-                        <a-col class="custom-flex">
-                            <label class="lable-item">회원명 :</label>
-                            <default-text-box width="150px" v-model:valueInput="dataSearch.name" />
-                        </a-col>
-                        <a-col class="custom-flex">
-                            <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox1" :size="'14'" />
-                            <a-tag :color="getAbleDisable(true)" style="cursor: pointer; margin-left: 7px;"
-                                @click="changeValueCheckBox('checkBox1')">이용중</a-tag>
-                            <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox2" :size="'14'" />
-                            <a-tag :color="getAbleDisable(false)" style="cursor: pointer; margin-left: 7px;"
-                                @click="changeValueCheckBox('checkBox2')">이용중지
-                            </a-tag>
-                        </a-col>
-                    </a-row>
-                </div>
+                                </div>
+                            </template>
+                        </DxSelectBox>
+                    </a-col>
+                    <a-col class="custom-flex">
+                        <label class="lable-item">소속코드:</label>
+                        <default-text-box width="150px" v-model:valueInput="dataSearch.groupCode" />
+                    </a-col>
+                    <a-col class="custom-flex">
+                        <label class="lable-item">소속명:</label>
+                        <default-text-box width="150px" v-model:valueInput="dataSearch.groupName" />
+                    </a-col>
+                    <a-col class="custom-flex">
+                        <label class="lable-item">회원ID :</label>
+                        <default-text-box width="150px" v-model:valueInput="dataSearch.username" />
+                    </a-col>
+                    <a-col class="custom-flex">
+                        <label class="lable-item">회원명 :</label>
+                        <default-text-box width="150px" v-model:valueInput="dataSearch.name" />
+                    </a-col>
+                    <a-col class="custom-flex">
+                        <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox1" :size="'14'" />
+                        <a-tag :color="getAbleDisable(true)" style="cursor: pointer; margin-left: 7px;"
+                            @click="changeValueCheckBox('checkBox1')">이용중</a-tag>
+                        <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox2" :size="'14'" />
+                        <a-tag :color="getAbleDisable(false)" style="cursor: pointer; margin-left: 7px;"
+                            @click="changeValueCheckBox('checkBox2')">이용중지
+                        </a-tag>
+                    </a-col>
+                </a-row>
             </div>
-            <div class="page-content">
+        </div>
+        <div class="page-content">
+            <a-spin :spinning="spinning" size="large">
                 <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
-                    <DxPaging :page-size="20" />
+                    <DxPaging :page-size="dataSearch.rows" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
@@ -106,55 +106,37 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-                <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
-                    :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
-                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
-                <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData"
-                    title="로그인이력" :idRow="rowChoose" />
-            </div>
+                <div class="pagination-table" v-if="rowTable > dataSearch.rows">
+                    <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
+                        :total="rowTable" show-less-items @change="changePage" />
+                </div>
+            </a-spin>
         </div>
-    </a-spin>
+    </div>
+    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+    <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
+        :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+        title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
+    <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData" title="로그인이력"
+        :idRow="rowChoose" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxExport,
-    DxSearchPanel,
-    DxToolbar,
-    DxItem,
-} from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import PopLogin from "./components/PopLogin.vue";
 import DxButton from "devextreme-vue/button";
-import { Workbook } from "exceljs";
-import { saveAs } from "file-saver-es";
-import { exportDataGrid } from "devextreme/excel_exporter";
-import {
-    EditOutlined,
-    HistoryOutlined,
-    SearchOutlined,
-    PrinterOutlined,
-    DeleteOutlined,
-    SaveOutlined,
-    LoginOutlined
-} from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, SearchOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import DxSelectBox from 'devextreme-vue/select-box';
-import dayjs from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
 import Field from './components/Field.vue';
-dayjs.extend(weekday);
-dayjs.extend(localeData);
+import { dataSearchIndex, productsValue } from "./utils/index";
+import { onExportingCommon } from "../../../../helpers/commonFunction"
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -192,67 +174,48 @@ export default defineComponent({
             checkBox2: false
         })
         const rowChoose = ref()
-        // config grid
         const store = useStore();
-
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
         const dataSearch = ref({
-            page: 1,
-            rows: per_page,
-            type: "m",
-            groupCode: "",
-            groupName: "",
-            username: "",
-            name: "",
+            ...dataSearchIndex,
+            rows: per_page.value
         })
+        const rowTable = ref()
         var idRowEdit = ref<number>(0)
         const originData = ref()
-        let products = ref([
-            {
-                id: "c",
-                color: '#096dd9',
-                name: "고객사회원",
-                background: '#e6f7ff',
-                border: "1px solid #91d5ff",
-            },
-            {
-                id: "m",
-                color: 'white',
-                name: "매니저회원",
-                background: 'black',
-                border: "1px solid black",
-            },
-            {
-                id: "r",
-                color: 'white',
-                name: "영업자회원",
-                background: 'grey',
-                border: "1px solid grey",
-            },
-            {
-                id: "p",
-                color: 'white',
-                name: "파트너회원",
-                background: 'goldenrod',
-                border: "1px solid goldenrod",
-            }
-        ])
+        let products = ref([...productsValue])
         const dataSource = ref([])
         const { refetch: refetchData, onResult } = useQuery(queries.searchUsers, originData, () => ({
             enabled: triggerSearching.value,
             fetchPolicy: "no-cache",
         }))
         onResult((res) => {
+            rowTable.value = res.data.searchUsers.totalCount
             dataSource.value = res.data.searchUsers.datas
-            setTimeout(() => {
-                spinning.value = false;
-            }, 500);
+            spinning.value = false;
         })
+        const changePage = () => {
+            spinning.value = true;
+            let dataNew = ref({
+                page: dataSearch.value.page,
+                rows: per_page,
+                type: dataSearch.value.type,
+                groupCode: dataSearch.value.groupCode,
+                groupName: dataSearch.value.groupName,
+                username: dataSearch.value.username,
+                name: dataSearch.value.name,
+                active: true,
+            })
+            triggerSearching.value = true
+            if (originData) {
+                originData.value = dataNew.value
+                refetchData()
+            }
+        }
         const searching = () => {
-            spinning.value = !spinning.value;
+            spinning.value = true;
             let dataNew = ref()
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
                 dataNew.value = {
@@ -300,21 +263,7 @@ export default defineComponent({
                 checkStatus.value.checkBox2 = !checkStatus.value.checkBox2
         }
         const onExporting = (e: any) => {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet("employees");
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(
-                        new Blob([buffer], { type: "application/octet-stream" }),
-                        "DataGrid.xlsx"
-                    );
-                });
-            });
-            e.cancel = true;
+            onExportingCommon(e.component, e.cancel, '회원관리')
         }
         const openAddNewModal = () => {
             modalAddNewStatus.value = true;
@@ -352,15 +301,18 @@ export default defineComponent({
                 return "#d5a7a7";
             }
         }
+        const changeValueType = (e: any) => {
+            dataSearch.value.type = e.value
+        }
+        // Watch
         watch(() => modalEditStatus.value,
             () => {
                 refetchData()
             }
         );
-        const changeValueType = (e: any) => {
-            dataSearch.value.type = e.value
-        }
         return {
+            changePage,
+            rowTable,
             changeValueType,
             onExporting,
             move_column,
@@ -390,7 +342,5 @@ export default defineComponent({
         }
     },
 });
-</script>
-<style scoped lang="scss" src="./style/style.scss">
-
-</style>
+</script> 
+<style scoped lang="scss" src="./style/style.scss"/>
