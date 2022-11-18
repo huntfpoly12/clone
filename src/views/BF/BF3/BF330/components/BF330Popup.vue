@@ -699,9 +699,6 @@ export default defineComponent({
                 console.log(formState.accountingfacilityBusinesses);
                 formState.accountingfacilityBusinesses.map((e: any) => {
                     if (e.name == valOJ.name) {
-                        if(!e.options) {
-                            e.options = [];
-                        }
                         e.options.push({
                             accountingServiceType: optionChange,
                             price: 0
@@ -838,6 +835,17 @@ export default defineComponent({
                     trigger.value = false;
                 }
             }
+        );
+        watch(
+            () => formState.accountingfacilityBusinesses,
+            (newVal) => {
+                newVal.map((value: any) => {
+                    if(!value.options) {
+                        value.options = []
+                        value.facilityBusinessId = newVal.length
+                    }
+                })
+            },{ deep: true }
         );
         watch(
             () => formState.checkBoxAccBasicFee,
