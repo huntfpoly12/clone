@@ -64,6 +64,10 @@
                             <label class="lable-item">영업자명 :</label>
                             <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" />
                         </a-col>
+                        <a-col>
+                            <!-- <checkbox-basic label="회계" v-model:valueCheckbox="originData.filter.usedAccountingCount" :size="'18'" />
+                            <checkbox-basic label="원천" v-model:valueCheckbox="originData.filter.usedWithholding" :size="'18'" /> -->
+                        </a-col>
                     </a-row>
                 </div>
             </div>
@@ -81,10 +85,14 @@
                     <DxColumn data-field="presidentName" caption="대표자" />
                     <DxColumn data-field="address" caption="주소" data-type="date" />
                     <DxColumn data-field="phone" caption="연락처" />
+                    <DxColumn data-field="presidentMobilePhone" caption="휴대폰" />
                     <DxColumn data-field="manageCompactUser.name" caption="매니저" />
                     <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                    <DxColumn data-field="usedWithholding" caption="서비스" />
+                    <DxColumn caption="서비스" cell-template="used-withholding"/>
+                    <template #used-withholding="{ data }" class="custom-action" >
+                        회계 {{ data.data.usedAccountingCount }}{{  data.data.usedWithholding === true ? ', 원천' : '' }}
+                    </template>
                     <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn :width="80" cell-template="pupop" />
@@ -188,7 +196,9 @@ export default defineComponent({
                 address: "",
                 manageUserId: undefined,
                 salesRepresentativeId: undefined,
-                excludeCancel: true
+                excludeCancel: true,
+                // usedAccountingCount: true,
+                // usedWithholding: true,
             }
         })
 
