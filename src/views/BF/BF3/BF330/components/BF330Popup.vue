@@ -48,14 +48,15 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                     </div>
-                                    <DxDataGrid id="grid-container" :show-borders="true" @content-ready="contentReady" 
+                                    <DxDataGrid id="grid-container" :show-borders="true" 
+                                        @selection-changed="selectionChanged"
+                                        @content-ready="contentReady"
                                         :data-source="formState.accountingfacilityBusinesses"
                                         key-expr="facilityBusinessId" :allow-column-reordering="move_column"
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                                         :selected-row-keys="selectedItemKeys">
                                         <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                            :new-row-position="'pageBottom'"
-                                            :allow-deleting="true" mode="cell" />
+                                            :new-row-position="'pageBottom'" :allow-deleting="true" mode="cell" />
                                         <DxSelection mode="single" />
                                         <DxPaging :enabled="false" />
                                         <DxColumn :width="10" />
@@ -69,6 +70,10 @@
                                         <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                                             :format="'yyyy-MM-dd'" />
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
+                                        <DxColumn  caption="회계서비스이용료" cell-template="totalPrice"/>
+                                        <template #totalPrice="{ data }">
+                                            {{ $filters.formatCurrency(getTotalAmount(data)) }}
+                                        </template>
                                         <DxToolbar>
                                             <DxItem name="addRowButton" />
                                         </DxToolbar>
@@ -88,7 +93,7 @@
                                                             label="기본이용료" />
                                                         <text-number-box v-model:valueInput="data.data.price" />
                                                     </div>
-                                                    <!-- ---------------------OPTION---------------- -->
+
                                                     <div class="custom-money">
                                                         <DxCheckBox :value="checkOption(data.data.options, 1)"
                                                             text="입력대행" class="custom-checkbox"
@@ -116,7 +121,7 @@
                                                             :disabled="disableInput(data.data.options, 3)"
                                                             @keyDown="changeValueInput($event.component, 3, data.data)" />
                                                     </div>
-                                                    <!-- ---------------------/OPTION---------------- -->
+                                                    
                                                 </a-col>
                                                 <a-col :span="14">
                                                     <div class="custom-money" style="padding-left: 0px">
@@ -340,29 +345,6 @@ export default defineComponent({
         const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
         const fileList = ref<UploadProps["fileList"]>([]);
-        let objDataDefault = reactive({});
-        const formStateMomes = ref([
-            {
-                memoId: null,
-                ownerUserId: 0,
-                ownerName: "",
-                ownerUsername: "",
-                memo: "",
-                createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                createdBy: "",
-                updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                updatedBy: "",
-                ip: "",
-                active: "",
-            },
-        ]);
-        const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
-                comfirmClosePopup(() => emit("closePopup", false))
-            else
-                emit("closePopup", false)
-        };
-        const activeKey = ref([1]);
         const initialState = {
             id: null,
             totalFee: 0,
@@ -411,6 +393,30 @@ export default defineComponent({
             disableNumber5: false,
             disableNumber6: false,
         };
+        let objDataDefault = reactive({ ...initialState });
+        const formStateMomes = ref([
+            {
+                memoId: null,
+                ownerUserId: 0,
+                ownerName: "",
+                ownerUsername: "",
+                memo: "",
+                createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
+                createdBy: "",
+                updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
+                updatedBy: "",
+                ip: "",
+                active: "",
+            },
+        ]);
+        const setModalVisible = () => {
+            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
+                comfirmClosePopup(() => emit("closePopup", false))
+            else
+                emit("closePopup", false)
+        };
+        const activeKey = ref([1]);
+
         const formState = reactive({ ...initialState });
         // get service contract
         const { result } = useQuery(
@@ -822,9 +828,11 @@ export default defineComponent({
             }, 100);
         };
         const contentReady = (e: any) => {
-            if (!e.component.getSelectedRowKeys().length) { 
-                e.component.expandRow(1)
-            }
+            if (!e.component.getSelectedRowKeys().length) { e.component.selectRowsByIndexes(0); }
+        }
+        const selectionChanged = (e: any) => {
+            e.component.collapseAll(-1);
+            e.component.expandRow(e.currentSelectedRowKeys[0]);
         }
         watch(
             () => props.modalStatus,
@@ -861,8 +869,12 @@ export default defineComponent({
                 if (newVal === false) {
                     formState.usedServiceInfoAccountingPrice = 0;
                     formState.disableNumber1 = true;
+
+                    objDataDefault.usedServiceInfoAccountingPrice = 0;
+                    objDataDefault.disableNumber1 = true;
                 } else {
                     formState.disableNumber1 = false;
+                    objDataDefault.disableNumber1 = false;
                 }
             }
         );
@@ -872,8 +884,12 @@ export default defineComponent({
                 if (newVal === false) {
                     formState.inputAgent = 0;
                     formState.disableNumber2 = true;
+
+                    objDataDefault.inputAgent = 0;
+                    objDataDefault.disableNumber2 = true;
                 } else {
                     formState.disableNumber2 = false;
+                    objDataDefault.disableNumber2 = false;
                 }
             }
         );
@@ -921,8 +937,9 @@ export default defineComponent({
                 }
             }
         );
-        return { 
+        return {
             contentReady,
+            selectionChanged,
             handleInputTexService,
             selectedItemKeys,
             move_column,
@@ -966,4 +983,6 @@ export default defineComponent({
     },
 });
 </script>  
+
+
 <style src="../style/stylePopup.scss" scoped />
