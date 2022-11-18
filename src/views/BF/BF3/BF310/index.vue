@@ -46,12 +46,27 @@
                 </a-row>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
-                    <DxPaging :page-size="rowTable" />
+                <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="id"
+                    @exporting="onExporting" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxPaging :page-size="rowTable" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxToolbar>
+                        <DxItem name="page" template="pagination-table" />
+                        <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" />
+                        <DxItem name="groupPanel" />
+                        <DxItem name="addRowButton" show-text="always" />
+                        <DxItem name="columnChooserButton" />
+                    </DxToolbar>
+                    <template #pagination-table>
+                        <div v-if="rowTable > originData.rows">
+                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                                :total="rowTable" show-less-items @change="searching" />
+                        </div>
+                    </template>
+
                     <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
                     <template #createdat-cell="{ data }">
                         {{ $filters.formatDate(data.value) }}
@@ -110,7 +125,7 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <div class="pagination-table" v-if="rowTable > 20">
+                <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items @change="searching" />
                 </div>
@@ -125,7 +140,7 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from 'dayjs';
 import { SearchOutlined, EditOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxPager, } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxPager, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
@@ -148,7 +163,9 @@ export default defineComponent({
         MailOutlined,
         PrinterOutlined,
         DeleteOutlined,
-        SaveOutlined
+        SaveOutlined,
+        DxToolbar,
+        DxItem
     },
     setup() {
         const store = useStore();
@@ -225,6 +242,22 @@ export default defineComponent({
 
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -52,13 +52,14 @@
         </div>
         <div class="page-content">
             <a-spin :spinning="spinning" size="large">
-                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="id"
+                    @exporting="onExporting" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
+                        <DxItem name="page" template="pagination-table" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" />
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -66,6 +67,12 @@
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" />
                     </DxToolbar>
+                    <template #pagination-table>
+                        <div v-if="rowTable > dataSearch.rows">
+                            <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
+                                :total="rowTable" show-less-items @change="changePage" />
+                        </div>
+                    </template>
                     <template #button-template>
                         <DxButton icon="plus" @click="openAddNewModal" />
                     </template>
@@ -343,4 +350,10 @@ export default defineComponent({
     },
 });
 </script> 
+
+
+
+
+
+
 <style scoped lang="scss" src="./style/style.scss"/>
