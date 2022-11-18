@@ -1,8 +1,9 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-spin :spinning="loading" size="large">
+        <action-header title="계약정보관리&심사"/> 
         <div class="top-content">
-            <a-typography-title :level="3"> 계약정보관리&심사
+            <a-typography-title :level="3">
             </a-typography-title>
             <div class="list-action">
                 <a-tooltip>
