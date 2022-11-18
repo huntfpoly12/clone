@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
+                <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
                     <DxScrolling column-rendering-mode="virtual" />
