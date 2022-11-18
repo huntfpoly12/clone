@@ -15,7 +15,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import DxButton from 'devextreme-vue/button'; 
+import DxButton from 'devextreme-vue/button';
 
 export default defineComponent({
     props: {
@@ -43,13 +43,13 @@ export default defineComponent({
     },
 
     setup() {
-        const convertBirthDay = (birthDay: any) => { 
+        const convertBirthDay = (birthDay: any) => {
             let newBirthDay = birthDay.split("-")[0]
             let typeYear = birthDay.split("-")[1].charAt(0)
             if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
                 return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
             else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
-                return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6) 
+                return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
         }
         return {
             convertBirthDay
@@ -107,8 +107,3 @@ export default defineComponent({
 }
 </style>
 
-<style>
-.ant-tooltip-inner {
-    color: black;
-}
-</style>

@@ -52,6 +52,11 @@ const listTab: ListTab[] = [
         TabName: 'Tag',
         layoutName: 'TagBox'
     },
+    {
+        ID: 10,
+        TabName: 'Action Header',
+        layoutName: 'ActionHeader'
+    },
 ];
 
 export default {
