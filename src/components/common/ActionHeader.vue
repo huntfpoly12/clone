@@ -1,73 +1,57 @@
 <template>
-    <DxButton :text="text" :type="type" @click="onClick($event)" :styling-mode="mode"
-        :style="{ color: color, backgroundColor: backGround, border: border }" :height="$config_styles.HeightInput" />
+    <div class="top-content">
+        <a-typography-title :level="3"> {{ title }}
+        </a-typography-title>
+        <div class="list-action">
+            <a-tooltip>
+                <template #title>조회</template>
+                <a-button @click="actionHeader('Search')">
+                    <SearchOutlined />
+                </a-button>
+            </a-tooltip>
+            <a-tooltip>
+                <template #title>저장</template>
+                <a-button @click="actionHeader('Save')">
+                    <SaveOutlined />
+                </a-button>
+            </a-tooltip>
+            <a-tooltip>
+                <template #title>삭제</template>
+                <a-button @click="actionHeader('Delete')">
+                    <DeleteOutlined />
+                </a-button>
+            </a-tooltip>
+            <a-tooltip>
+                <template #title>출력</template>
+                <a-button @click="actionHeader('Print')">
+                    <PrinterOutlined />
+                </a-button>
+            </a-tooltip>
+        </div>
+    </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, getCurrentInstance } from "vue";
-import DxButton from 'devextreme-vue/button';
-
+import { defineComponent } from "vue";
+import { SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
     props: {
-        text: {
+        title: {
             type: String,
         },
-        type: {
-            type: String,
-            required: true
-
-        },
-        mode: {
-            type: String,
-            required: true
-        },
-
     },
     components: {
-        DxButton
+        SearchOutlined,
+        SaveOutlined,
+        DeleteOutlined,
+        PrinterOutlined
     },
 
     setup(props, { emit }) {
-        const app: any = getCurrentInstance()
-        const styleButton = app.appContext.config.globalProperties.$config_styles
-        const onClick = (e: any) => {
-            emit('onClick', e)
+        const actionHeader = (method: any) => {
+            emit("action" + method, true)
         }
-
-        const color = ref()
-        const backGround = ref()
-        const border = ref()
-
-        if (props.type == 'success' && props.mode == 'contained') {
-            color.value = styleButton.ColorButtonSuccess
-            backGround.value = styleButton.BackgroundButtonSuccess
-        } else if (props.type == 'success' && props.mode == 'outlined') {
-            color.value = styleButton.BackgroundButtonSuccess
-            border.value = styleButton.BorderButtonSuccess
-        } else if (props.type == 'success' && props.mode == 'text') {
-            color.value = styleButton.BackgroundButtonSuccess
-        } else if (props.type == 'default' && props.mode == 'contained') {
-            color.value = styleButton.ColorButtonDefault
-            backGround.value = styleButton.BackgroundButtonDefault
-        } else if (props.type == 'default' && props.mode == 'outlined') {
-            color.value = styleButton.BackgroundButtonDefault
-            border.value = styleButton.BorderButtonDefault
-        } else if (props.type == 'default' && props.mode == 'text') {
-            color.value = styleButton.BackgroundButtonDefault
-        } else if (props.type == 'danger' && props.mode == 'contained') {
-            color.value = styleButton.ColorButtonDanger
-            backGround.value = styleButton.BackgroundButtonDanger
-        } else if (props.type == 'danger' && props.mode == 'outlined') {
-            color.value = styleButton.BackgroundButtonDanger
-            border.value = styleButton.BorderButtonDanger
-        } else if (props.type == 'danger' && props.mode == 'text') {
-            color.value = styleButton.BackgroundButtonDanger
-        }
-
         return {
-            backGround,
-            border,
-            color,
-            onClick
+            actionHeader,
         }
     },
 });
