@@ -1,35 +1,6 @@
 <template>
     <a-spin :spinning="spinning" size="large">
-        <div class="top-content">
-            <a-typography-title :level="3"> 회원관리
-            </a-typography-title>
-            <div class="list-action">
-                <a-tooltip>
-                    <template #title>조회</template>
-                    <a-button @click="searching">
-                        <SearchOutlined />
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>저장</template>
-                    <a-button>
-                        <SaveOutlined />
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>삭제</template>
-                    <a-button>
-                        <DeleteOutlined />
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>출력</template>
-                    <a-button>
-                        <PrinterOutlined />
-                    </a-button>
-                </a-tooltip>
-            </div>
-        </div>
+        <action-header title="회원관리" @actionSearch="searching"/>  
         <div id="bf-210">
             <div class="search-form">
                 <div id="components-grid-demo-flex">

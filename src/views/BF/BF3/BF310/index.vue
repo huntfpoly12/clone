@@ -1,36 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-spin :spinning="loading" size="large">
-        <div class="top-content">
-            <a-typography-title :level="3"> 계약정보관리&심사
-            </a-typography-title>
-            <div class="list-action">
-                <a-tooltip>
-                    <template #title>조회</template>
-                    <a-button @click="searching">
-                        <SearchOutlined />
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>저장</template>
-                    <a-button>
-                        <SaveOutlined />
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>삭제</template>
-                    <a-button>
-                        <DeleteOutlined />
-                    </a-button>
-                </a-tooltip>
-                <a-tooltip>
-                    <template #title>출력</template>
-                    <a-button>
-                        <PrinterOutlined />
-                    </a-button>
-                </a-tooltip>
-            </div>
-        </div>
+        <action-header title="계약정보관리&심사" @actionSearch="searching"/>  
         <div id="bf-310">
             <div class="search-form">
                 <a-row :gutter="[24, 8]">

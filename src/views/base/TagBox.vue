@@ -9,23 +9,23 @@
             <tr>
                 <td>
                     <p><b> Employee Info</b></p>
-                    <employee-info idEmployee="JBD00001" name="계약정보관리&심사" birthDay="28/01/2000" :status="0"
+                    <employee-info idEmployee="JBD00001" name="계약정보관리&심사" idCardNumber="800101-1100123" :status="0"
                         :foreigner="true" :checkStatus="false" />
                 </td>
                 <td>
-                    <b>idEmployee</b> : ID employee <br />
-                    <b>birthDay</b> : Birth Day employee <br />
-                    <b>name</b> : Name employee <br />
-                    <b>status</b> : Birth Day employee <br />
-                    <b>foreigner</b> : Birth Day employee <br />
-                    <b>*checkStatus</b> : Birth Day employee <br />
+                    <b>- idEmployee (String):</b> ID employee <br />
+                    <b>- idCardNumber (String):</b> Card id employee <br />
+                    <b>- name (String):</b> Name employee <br />
+                    <b>- status (Boolean):</b> Box status employee<br />
+                    <b>- foreigner (Boolean):</b> Box foreigner employee <br />
+                    <b>- *checkStatus (Boolean):</b> Box checkStatus employee <br />
                 </td>
 
                 <td>
                     <pre class="mycode"> &lt;employee-info 
     idEmployee="JBD00001" 
     name="계약정보관리&심사" 
-    birthDay="28/01/2000" 
+    idCardNumber="800101-1100123" 
     :status="0"
     :foreigner="true" 
     :checkStatus="false"/&gt;
@@ -48,11 +48,11 @@
                     <four-major-insurance :typeTag="10" :ratio="80" />
                 </td>
                 <td>
-                    <b>typeTag :</b> 1->10 (1: 국, 2: 건, 3:장, 4:고, 5:산, 6:두, 7:두(고), 8:중, 9:중(청), 10:소)
+                    <b>- typeTag (Number):</b> 1->10 (1: 국, 2: 건, 3:장, 4:고, 5:산, 6:두, 7:두(고), 8:중, 9:중(청), 10:소)
                     <br />
-                    <b>typeValue :</b> Apply to typeTag from 1->5 (1: 1 letters, 2: 2 letters)
+                    <b>- typeValue (Number):</b> Apply to typeTag from 1->5 (1: 1 letters, 2: 2 letters)
                     <br />
-                    <b>ratio :</b> Apply to typeTag from 6->10
+                    <b>- ratio (Number):</b> Apply to typeTag from 6->10
                 </td> 
                 <td>
                     <pre class="mycode">&lt;four-major-insurance :typeTag="1" :typeValue="1" /&gt; </pre>

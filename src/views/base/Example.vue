@@ -69,6 +69,9 @@ const SelectBox = defineAsyncComponent(() =>
 const TagBox = defineAsyncComponent(() =>
   import("../base/TagBox.vue")
 );
+const ActionHeader = defineAsyncComponent(() =>
+  import("../base/ActionHeader.vue")
+);
 
 const allListTab = service.getListTab();
 export default defineComponent({
@@ -85,7 +88,8 @@ export default defineComponent({
     ButtonBasic,
     SelectBox,
     CheckBoxFrom,
-    TagBox
+    TagBox,
+    ActionHeader
   },
   setup() {
     const allTab = ref(allListTab);
