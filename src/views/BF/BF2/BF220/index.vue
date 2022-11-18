@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="spinning" size="large">
-        <action-header title="권한그룹관리"/> 
+        <action-header title="권한그룹관리" @actionSearch="searching"/> 
         <div id="bf-220">
             <div class="search-form">
                 <div id="components-grid-demo-flex">
