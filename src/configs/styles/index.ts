@@ -70,7 +70,7 @@ interface GridConfig {
 }
 
 export const grid_config : GridConfig = {
-    per_page: 30,
+    per_page: 10,
     sort : true,
     move_column : false,
     colomn_resize : true,

@@ -1,29 +1,29 @@
 <template>
-    <a-spin :spinning="spinning" size="large">
-        <action-header title="권한그룹관리" @actionSearch="searching" />
-        <div id="bf-220">
-            <div class="search-form">
-                <div id="components-grid-demo-flex">
-                    <a-row justify="start" :gutter="[16, 8]">
-                        <a-col class="search">
-                            <label class="lable-item">대상회원 :</label>
-                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
-                            <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저
-                            </a-tag>
-                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
-                            <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
-                            </a-tag>
-                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
-                            <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
-                            </a-tag>
-                        </a-col>
-                    </a-row>
-                </div>
+    <action-header title="권한그룹관리" @actionSearch="searching" />
+    <div id="bf-220">
+        <div class="search-form">
+            <div id="components-grid-demo-flex">
+                <a-row justify="start" :gutter="[16, 8]">
+                    <a-col class="search">
+                        <label class="lable-item">대상회원 :</label>
+                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
+                        <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저
+                        </a-tag>
+                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
+                        <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
+                        </a-tag>
+                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
+                        <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
+                        </a-tag>
+                    </a-col>
+                </a-row>
             </div>
-            <div class="page-content">
-                <DxDataGrid :data-source="resList ? resList.searchScreenRoleGroups.datas : ''" :show-borders="true"
-                    key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+        </div>
+        <div class="page-content">
+            <a-spin :spinning="spinning" size="large"> 
+                <DxDataGrid :data-source="valueResult" :show-borders="true" key-expr="id" @exporting="onExporting"
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                    :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -67,18 +67,18 @@
                 </DxDataGrid>
                 <div class="pagination-table" v-if="totalRow > dataSearch.rows">
                     <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
-                        :total="totalRow" show-less-items />
+                        :total="totalRow" />
                 </div>
                 <BF220PopupAddNew :modalStatus="modalAddNewStatus" @closePopupAdd="closePopupAdd" />
                 <BF220PopupEdit :modalStatus="modalEditStatus" @closePopupEdit="closePopupEdit" :idRowIndex="IDRow" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="IDRow" typeHistory="cm-220" />
-            </div>
+            </a-spin>
         </div>
-    </a-spin>
+    </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue';
+import { defineComponent, ref, watch, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { dataSearchUtils, buttonSearchUtils } from "./utils";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from 'devextreme-vue/data-grid';
@@ -194,7 +194,9 @@ export default defineComponent({
             else if (key == '3')
                 buttonSearch.value.typeSevice3 = !buttonSearch.value.typeSevice3
         }
+        let valueResult = ref()
         watch(resList, (value) => {
+            valueResult.value = value.searchScreenRoleGroups.datas
             totalRow.value = value.searchScreenRoleGroups.totalCount
             spinning.value = false
         });
@@ -219,9 +221,16 @@ export default defineComponent({
             resList,
             buttonSearch,
             totalRow,
-            IDRow, 
+            IDRow,
+            valueResult
         }
     },
 });
 </script>
+
+
+
+
+
+
 <style lang="scss" scoped src="./style/style.scss"/>
