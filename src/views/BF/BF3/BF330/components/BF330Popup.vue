@@ -48,9 +48,8 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                     </div>
-                                    <DxDataGrid id="grid-container" :show-borders="true" 
-                                        @selection-changed="selectionChanged"
-                                        @content-ready="contentReady"
+                                    <DxDataGrid id="grid-container" :show-borders="true"
+                                        @selection-changed="selectionChanged" @content-ready="contentReady"
                                         :data-source="formState.accountingfacilityBusinesses"
                                         key-expr="facilityBusinessId" :allow-column-reordering="move_column"
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -70,7 +69,7 @@
                                         <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                                             :format="'yyyy-MM-dd'" />
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
-                                        <DxColumn  caption="회계서비스이용료" cell-template="totalPrice"/>
+                                        <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
                                         <template #totalPrice="{ data }">
                                             {{ $filters.formatCurrency(getTotalAmount(data)) }}
                                         </template>
@@ -91,7 +90,8 @@
                                                     <div class="custom-money">
                                                         <checkbox-basic :value="true" :disabled="true" size="16"
                                                             label="기본이용료" />
-                                                        <text-number-box v-model:valueInput="data.data.price" />
+                                                        <number-box-money v-model:valueInput="data.data.price"
+                                                            width="100%" :spinButtons="false" />
                                                     </div>
 
                                                     <div class="custom-money">
@@ -121,7 +121,7 @@
                                                             :disabled="disableInput(data.data.options, 3)"
                                                             @keyDown="changeValueInput($event.component, 3, data.data)" />
                                                     </div>
-                                                    
+
                                                 </a-col>
                                                 <a-col :span="14">
                                                     <div class="custom-money" style="padding-left: 0px">
@@ -156,7 +156,7 @@
                                         <a-form-item label="원천서비스" style="font-weight: bold"
                                             class="custom-label-select">
                                             <checkbox-basic v-model:valueCheckbox="formState.usedWithholding"
-                                                :disabled="false" size="14" label="원천서비스" />
+                                                :disabled="false" size="14" label="원천서비스 신청" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="14">
@@ -330,7 +330,6 @@ export default defineComponent({
     setup(props, { emit }) {
         // config grid
         const store = useStore();
-        const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const facilityBizType = FacilityBizType.all();
@@ -477,6 +476,7 @@ export default defineComponent({
                         }
                     });
                 }
+
                 // process price Company / Withholding information (사업자/원천정보)
                 formState.usedServiceInfoWithholdingPrice =
                     value.getServiceContract.usedServiceInfo.withholding.price;
@@ -704,6 +704,16 @@ export default defineComponent({
                 totalAmount += parseInt(e.price)
             })
             totalAmount += parseInt(data.data.price)
+
+
+            formState.usedServiceInfoAccountingPrice = data.data.price
+            let totalValuePrice = 0
+            data.data.options.map((val: any) => {
+                totalValuePrice += val.price
+            })
+            formState.inputAgent = totalValuePrice
+
+
             return totalAmount
         }
         // Thay đổi giá trị option 
@@ -983,6 +993,12 @@ export default defineComponent({
     },
 });
 </script>  
+
+
+
+
+
+
 
 
 <style src="../style/stylePopup.scss" scoped />
