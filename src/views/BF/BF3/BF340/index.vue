@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="loading" size="large">
-    <action-header title="영업자관리" />
+    <action-header title="영업자관리" @actionSearch="searching"/>
     <div id="bf-340">
       <div class="search-form">
         <div id="components-grid-demo-flex">
