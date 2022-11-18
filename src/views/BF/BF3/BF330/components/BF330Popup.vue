@@ -70,7 +70,7 @@
                                         <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                                             :format="'yyyy-MM-dd'" />
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
-                                        <DxColumn  caption="회계서비스이용료" cell-template="totalPrice"/>
+                                        <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number"/>
                                         <template #totalPrice="{ data }">
                                             {{ $filters.formatCurrency(getTotalAmount(data)) }}
                                         </template>
@@ -156,7 +156,7 @@
                                         <a-form-item label="원천서비스" style="font-weight: bold"
                                             class="custom-label-select">
                                             <checkbox-basic v-model:valueCheckbox="formState.usedWithholding"
-                                                :disabled="false" size="14" label="원천서비스" />
+                                                :disabled="false" size="14" label="원천서비스 신청" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="14">
@@ -330,7 +330,6 @@ export default defineComponent({
     setup(props, { emit }) {
         // config grid
         const store = useStore();
-        const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const facilityBizType = FacilityBizType.all();
