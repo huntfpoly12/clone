@@ -71,6 +71,10 @@ export default defineComponent({
     font-size: 30px;
     color: gray;
 }
+
+.arrow-plus:hover{
+    color:white !important;
+}
 .label-year-header{
     color: yellow;
 }
