@@ -48,14 +48,15 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                     </div>
-                                    <DxDataGrid id="grid-container" :show-borders="true" @content-ready="contentReady" 
+                                    <DxDataGrid id="grid-container" :show-borders="true" 
+                                        @selection-changed="selectionChanged"
+                                        @content-ready="contentReady"
                                         :data-source="formState.accountingfacilityBusinesses"
                                         key-expr="facilityBusinessId" :allow-column-reordering="move_column"
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                                         :selected-row-keys="selectedItemKeys">
                                         <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                            :new-row-position="'pageBottom'"
-                                            :allow-deleting="true" mode="cell" />
+                                            :new-row-position="'pageBottom'" :allow-deleting="true" mode="cell" />
                                         <DxSelection mode="single" />
                                         <DxPaging :enabled="false" />
                                         <DxColumn :width="10" />
@@ -827,9 +828,11 @@ export default defineComponent({
             }, 100);
         };
         const contentReady = (e: any) => {
-            if (!e.component.getSelectedRowKeys().length) { 
-                e.component.expandRow(1)
-            }
+            if (!e.component.getSelectedRowKeys().length) { e.component.selectRowsByIndexes(0); }
+        }
+        const selectionChanged = (e: any) => {
+            e.component.collapseAll(-1);
+            e.component.expandRow(e.currentSelectedRowKeys[0]);
         }
         watch(
             () => props.modalStatus,
@@ -934,7 +937,7 @@ export default defineComponent({
                 }
             }
         );
-        return { 
+        return {
             contentReady,
             selectionChanged,
             handleInputTexService,
@@ -980,4 +983,6 @@ export default defineComponent({
     },
 });
 </script>  
+
+
 <style src="../style/stylePopup.scss" scoped />
