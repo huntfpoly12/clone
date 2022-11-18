@@ -1,36 +1,7 @@
 <template>
     <a-spin :spinning="loading" size="large">
         <div id="bf-330">
-            <div class="top-content">
-                <a-typography-title :level="3"> 서비스관리
-                </a-typography-title>
-                <div class="list-action">
-                    <a-tooltip>
-                        <template #title>조회</template>
-                        <a-button @click="searching">
-                            <SearchOutlined />
-                        </a-button>
-                    </a-tooltip>
-                    <a-tooltip>
-                        <template #title>저장</template>
-                        <a-button>
-                            <SaveOutlined />
-                        </a-button>
-                    </a-tooltip>
-                    <a-tooltip>
-                        <template #title>삭제</template>
-                        <a-button>
-                            <DeleteOutlined />
-                        </a-button>
-                    </a-tooltip>
-                    <a-tooltip>
-                        <template #title>출력</template>
-                        <a-button>
-                            <PrinterOutlined />
-                        </a-button>
-                    </a-tooltip>
-                </div>
-            </div>
+            <action-header title="서비스관리"  @actionSearch="searching"/>
             <div class="search-form">
                 <div class="components-grid-demo-flex">
                     <a-row justify="start" :gutter="[16, 8]">
@@ -65,8 +36,8 @@
                             <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" />
                         </a-col>
                         <a-col>
-                            <!-- <checkbox-basic label="회계" v-model:valueCheckbox="originData.filter.usedAccountingCount" :size="'18'" />
-                            <checkbox-basic label="원천" v-model:valueCheckbox="originData.filter.usedWithholding" :size="'18'" /> -->
+                            <!-- <checkbox-basic label="회계" v-model:valueCheckbox="originData.filter.usedAccountingCount" :size="'18'" /> -->
+                            <!-- <checkbox-basic label="원천" v-model:valueCheckbox="originData.filter.usedWithholding" :size="'18'" /> -->
                         </a-col>
                     </a-row>
                 </div>
