@@ -57,6 +57,22 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxToolbar>
+                        
+                        <DxItem name="searchPanel" />
+                        <DxItem  template="pagination-table"/>
+                        <DxItem name="exportButton" />
+                        
+                        <DxItem name="groupPanel" />
+                        <DxItem name="addRowButton" show-text="always" />
+                        <DxItem name="columnChooserButton" />
+                    </DxToolbar>
+                    <template #pagination-table>
+                        <div v-if="rowTable > originData.rows">
+                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" style="margin-top: 2px;"
+                                :total="rowTable" show-less-items @change="searching" />
+                        </div>
+                    </template>
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
                     <DxColumn data-field="name" caption="상호" />
                     <DxColumn data-field="presidentName" caption="대표자" />
@@ -98,7 +114,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel,DxToolbar,DxItem } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
@@ -110,7 +126,7 @@ import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxSelectBox,
+        DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxSelectBox,DxToolbar,DxItem,
         BF320Popup, HistoryPopup,
         EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined
     },
