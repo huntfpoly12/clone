@@ -1,6 +1,5 @@
 export const dataSearchUtils = {
-    page: 1,
-    rows: 15,
+    page: 1, 
     types: ["m", "r", "p"]
 }
 export const buttonSearchUtils = {

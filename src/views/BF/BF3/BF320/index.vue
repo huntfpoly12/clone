@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="spinning || loading" size="large">
-        <action-header title="사업자관리" @actionSearch="searching"/> 
+        <action-header title="사업자관리" @actionSearch="searching" />
         <div id="bf-320">
             <div class="search-form">
                 <div id="components-grid-demo-flex">
@@ -98,60 +98,21 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxExport,
-    DxSelection,
-    DxSearchPanel,
-} from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
-import { Workbook } from 'exceljs';
-import { saveAs } from 'file-saver-es';
-import { exportDataGrid } from 'devextreme/excel_exporter';
-import {
-    EditOutlined,
-    HistoryOutlined,
-    SearchOutlined,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    MailOutlined,
-    PrinterOutlined,
-    DeleteOutlined,
-    SaveOutlined,
-} from '@ant-design/icons-vue';
-import dayjs from 'dayjs';
-import weekday from "dayjs/plugin/weekday"
-import localeData from "dayjs/plugin/localeData"
-dayjs.extend(weekday)
-dayjs.extend(localeData)
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "../../../../graphql/queries/BF/BF3/BF320/index"
+import { dataSearchIndex } from "./utils/index";
+import { onExportingCommon } from "../../../../helpers/commonFunction"
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        DxButton,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        BF320Popup,
-        HistoryPopup,
-        EditOutlined,
-        HistoryOutlined,
-        DxSelectBox,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined
+        DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxSelectBox,
+        BF320Popup, HistoryPopup,
+        EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined
     },
     setup() {
         // config grid
@@ -160,7 +121,7 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rowTable = ref(10)
+        const rowTable = ref()
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
         const spinning = ref<boolean>(true);
@@ -169,51 +130,24 @@ export default defineComponent({
         const trigger = ref<boolean>(true)
         var responApiSearchCompanies = ref([])
         const originData = ref({
-            page: 1,
+            ...dataSearchIndex,
             rows: per_page,
-            code: "",
-            name: "",
-            presidentName: "",
-            address: "",
-            manageUserId: null,
-            salesRepresentativeId: null,
-            excludeCancel: true
         })
         const { refetch: refetchData, result, loading } = useQuery(queries.searchCompanies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
-        watch(result, (value) => {
-            if (value) {
-                rowTable.value = value.searchCompanies.totalCount
-                responApiSearchCompanies.value = value.searchCompanies.datas
-                trigger.value = false
-                spinning.value = false;
-            }
-        });
         const searching = () => {
             trigger.value = true;
             spinning.value = true;
             refetchData()
         }
-        const pageSize = ref(5)
         const handleClosePopup = () => {
             modalStatus.value = false
             refetchData()
         }
         const onExporting = (e: any) => {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet('employees');
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '사업자관리.xlsx');
-                });
-            });
-            e.cancel = true;
+            onExportingCommon(e.component, e.cancel, '사업자관리')
         }
         const setModalVisible = (data: any) => {
             idRowEdit.value = data.data.id;
@@ -225,6 +159,14 @@ export default defineComponent({
             modalHistoryStatus.value = true;
             popupData.value = data;
         }
+        watch(result, (value) => {
+            if (value) {
+                rowTable.value = value.searchCompanies.totalCount
+                responApiSearchCompanies.value = value.searchCompanies.datas
+                trigger.value = false
+                spinning.value = false;
+            }
+        });
         return {
             amountFormat,
             trigger,
@@ -242,7 +184,6 @@ export default defineComponent({
             handleClosePopup,
             modalStatus,
             rowTable,
-            pageSize,
             popupData,
             setModalVisible,
             modalHistory,
@@ -250,5 +191,4 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped src="./style/index.scss">
-</style>
+<style lang="scss" scoped src="./style/index.scss"/>
