@@ -7,6 +7,7 @@
       drag-direction="horizontal"
     >
       <div>
+
         <DxTabPanel
           v-model:data-source="allTab"
           :defer-rendering="false"
@@ -22,6 +23,7 @@
             </div>
           </template>
           <template #itemTemplate="{ data: employee }">
+          
             <component v-bind:is="employee.layoutName" />
           </template>
         </DxTabPanel>
@@ -37,6 +39,7 @@ import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
 import { defineComponent, ref, defineAsyncComponent } from "vue";
 import service from "./listTab.ts";
+import CountryCodeSelectBox from "../../components/CountryCodeSelectBox.vue";
 const TextBoxFrom = defineAsyncComponent(() =>
   import("../base/TextBoxFrom.vue")
 );
