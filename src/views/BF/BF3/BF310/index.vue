@@ -46,19 +46,16 @@
                 </a-row>
             </div>
             <div class="page-content">
-                <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="id"
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="rowTable" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
-                    <DxToolbar>
-                        <DxItem name="page" template="pagination-table" />
-                        <DxItem name="searchPanel" />
+                    <DxToolbar>                     
                         <DxItem name="exportButton" />
-                        <DxItem name="groupPanel" />
-                        <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" />
+                        <DxItem name="page" template="pagination-table"  location="after"/>
+                        <DxItem name="searchPanel"/>
                     </DxToolbar>
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">

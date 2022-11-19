@@ -4,7 +4,7 @@
             :mask-closable="false">
             <a-spin tip="로딩 중..."
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220">
-                <DxDataGrid :show-row-lines="true" :data-source="dataTableShow" :show-borders="true" key-expr="ts"
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="ts"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxColumn caption="기록일시" data-field="loggedAt" data-type="text" />
                     <DxColumn caption="비고" data-field="remark" />

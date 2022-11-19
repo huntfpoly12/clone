@@ -177,7 +177,7 @@
                         @dataEmit="changeValueAddress" title="원천설정" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여항목">
-                    <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="itemCode"
+                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="itemCode"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
