@@ -24,22 +24,3 @@
 .custom-action {
     text-align: center;
 }
-
-.search-form {
-    margin-bottom: 10px;
-
-    >div {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .lable-item {
-        white-space: nowrap;
-        margin-right: 10px;
-        width: auto !important;
-    }
-
-    .col {
-        align-items: center; 
-    }
-}

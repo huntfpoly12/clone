@@ -50,6 +50,21 @@
                     :show-row-lines="true"  :hoverStateEnabled="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxToolbar>
+                        <DxItem name="searchPanel" />
+                        <DxItem location="after" template="pagination-table"/>
+                        <DxItem name="exportButton" />
+                       
+                        <DxItem name="groupPanel" />
+                        <DxItem name="addRowButton" show-text="always" />
+                        <DxItem name="columnChooserButton" />
+                    </DxToolbar>
+                    <template #pagination-table>
+                        <div  v-if="rowTable > originData.filter.rows">
+                            <a-pagination v-model:current="originData.filter.page" v-model:page-size="originData.filter.rows"
+                                :total="rowTable" show-less-items @change="changePage" />
+                        </div>
+                    </template>
                     <DxColumn data-field="code" caption="사업자코드" />
                     <DxColumn data-field="active" caption="상태" cell-template="active-cell" />
                     <template #active-cell="{ data }" class="custom-action">
@@ -99,14 +114,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxExport,
-    DxSelection,
-    DxSearchPanel,
-} from "devextreme-vue/data-grid";
+import { DxDataGrid,DxColumn,DxPaging,DxExport,DxSelection,DxSearchPanel,DxToolbar,DxItem} from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import DxButton from "devextreme-vue/button";
@@ -129,6 +137,8 @@ export default defineComponent({
         DxPaging,
         DxSelection,
         DxExport,
+        DxToolbar,
+        DxItem,
         DxSearchPanel,
         BF330Popup,
         HistoryPopup,
@@ -252,11 +262,6 @@ export default defineComponent({
     min-height: 700px;
 }
 
-.search-form {
-    background: #f1f3f4;
-    padding: 10px 24px;
-}
-
 .components-grid-demo-flex .ant-col {
     display: flex;
     align-items: center;
@@ -296,22 +301,4 @@ export default defineComponent({
     text-align: center;
 }
 
-.search-form {
-    margin-bottom: 10px;
-
-    >div {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .lable-item {
-        white-space: nowrap;
-        margin-right: 10px;
-        width: auto !important;
-    }
-
-    .col {
-        align-items: center;
-    }
-}
 </style>

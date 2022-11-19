@@ -153,6 +153,7 @@
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
+                            <DxItem location="after" template="pagination-table"/>
                             <DxItem name="searchPanel" />
                             <DxItem name="exportButton" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -162,6 +163,12 @@
                         </DxToolbar>
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
+                        </template>
+                        <template #pagination-table>
+                            <div v-if="rowTable > dataGetListUsers.filter.rows">
+                                <a-pagination v-model:current="dataGetListUsers.filter.page"
+                                    v-model:page-size="dataGetListUsers.filter.rows" :total="rowTable" show-less-items />
+                            </div>
                         </template>
                         <DxColumn caption="이용자ID" data-field="username" :width="200" />
                         <DxColumn caption="상태" data-field="active" cell-template="tag-status" css-class="cell-center"

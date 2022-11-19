@@ -1,29 +1,29 @@
 <template>
     <div class="top-content">
-        <a-typography-title :level="3"> {{ title }}
+        <a-typography-title :level="3" style="margin-bottom: 0;"> {{ title }}
         </a-typography-title>
         <div class="list-action">
             <a-tooltip>
                 <template #title>조회</template>
-                <a-button @click="actionHeader('Search')">
+                <a-button @click="actionHeader('Search')" size="large">
                     <SearchOutlined />
                 </a-button>
             </a-tooltip>
             <a-tooltip>
                 <template #title>저장</template>
-                <a-button @click="actionHeader('Save')">
+                <a-button @click="actionHeader('Save')" size="large">
                     <SaveOutlined />
                 </a-button>
             </a-tooltip>
             <a-tooltip>
                 <template #title>삭제</template>
-                <a-button @click="actionHeader('Delete')">
+                <a-button @click="actionHeader('Delete')" size="large">
                     <DeleteOutlined />
                 </a-button>
             </a-tooltip>
             <a-tooltip>
                 <template #title>출력</template>
-                <a-button @click="actionHeader('Print')">
+                <a-button @click="actionHeader('Print')" size="large">
                     <PrinterOutlined />
                 </a-button>
             </a-tooltip>
