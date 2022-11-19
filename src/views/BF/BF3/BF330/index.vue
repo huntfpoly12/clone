@@ -46,7 +46,8 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
+                    @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                    :show-row-lines="true"  :hoverStateEnabled="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxColumn data-field="code" caption="사업자코드" />
@@ -252,11 +253,6 @@ export default defineComponent({
     min-height: 700px;
 }
 
-.search-form {
-    background: #f1f3f4;
-    padding: 10px 24px;
-}
-
 .components-grid-demo-flex .ant-col {
     display: flex;
     align-items: center;
@@ -296,22 +292,4 @@ export default defineComponent({
     text-align: center;
 }
 
-.search-form {
-    margin-bottom: 10px;
-
-    >div {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .lable-item {
-        white-space: nowrap;
-        margin-right: 10px;
-        width: auto !important;
-    }
-
-    .col {
-        align-items: center;
-    }
-}
 </style>
