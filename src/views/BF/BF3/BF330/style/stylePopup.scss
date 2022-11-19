@@ -65,6 +65,16 @@
     background-color: white;
 }
 
+.ant-collapse-borderless {
+    border-top: 1px solid #d9d9d9;
+}
+
+.ant-collapse-item.ant-collapse-item-active {
+    background: white;
+    border: 1px solid #d9d9d9;
+    border-top: none;
+}
+
 .input-form {
     margin-top: 5px;
 }

@@ -4,7 +4,7 @@
             cancelText="그냥 나가기" @cancel="setModalVisible()" width="1200px">
             <standard-form :label-col="labelCol" :wrapper-col="wrapperCol">
                 <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
-                    <a-collapse v-model:activeKey="activeKey" accordion>
+                    <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
                         <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
                             <div style="height: 500px;overflow-y: scroll;">
                                 <a-row>
@@ -452,11 +452,12 @@ export default defineComponent({
                         }
                     );
                 }
-                objDataDefault = {
-                    ...formState
-                }
             }
+            setTimeout(() => {
+                objDataDefault = {...formState}
+            }, 500);
         });
+        
         // get list memo of company
         const { result: resultMemo, refetch: refetchMemo } = useQuery(
             queries.getServiceContractManageMemos,
