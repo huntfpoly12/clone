@@ -52,7 +52,7 @@
         </div>
         <div class="page-content">
             <a-spin :spinning="spinning" size="large">
-                <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="id"
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxPaging :page-size="dataSearch.rows" />

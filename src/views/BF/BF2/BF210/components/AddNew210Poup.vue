@@ -66,7 +66,7 @@
                     <a-col :span="24">
                         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
                         <div style="position: relative">
-                            <DxDataGrid :show-row-lines="true" :data-source="arrData" :show-borders="true"
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrData" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                 :column-auto-width="true" class="table-scroll" @selection-changed="onSelectionChanged">
                                 <DxPaging :page-size="0" />

@@ -18,7 +18,7 @@
 			</div>
 			<a-spin tip="Loading..." :spinning="loading">
 				<div style="margin: 48px 0">
-					<DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="bcode"
+					<DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="bcode"
 					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
 						<DxColumn data-field="" :width="30" cell-template="grid-cell" />
 						<template #grid-cell="{ data }">
