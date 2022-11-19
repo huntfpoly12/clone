@@ -311,7 +311,6 @@ dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DateTimeBox from "../../../../../components/common/DateTimeBox.vue";
 import notification from '../../../../../utils/notification';
-import { log } from "console";
 export default defineComponent({
     components: {
         DxTextBox, DxDropDownBox, DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxButton, DxToolbar, DxItem, DxNumberBox, DxTexts, DxMasterDetail, DxCheckBox,
@@ -330,8 +329,6 @@ export default defineComponent({
             type: Number,
             default: null,
         },
-    },
-    watch: {
     },
     setup(props, { emit }) {
         // config grid
@@ -441,10 +438,7 @@ export default defineComponent({
                 formState.checkBoxBasicFee = value.getServiceContract.usedServiceInfo.withholding.price == 0 ? false : true;
                 formState.disableNumber5 = value.getServiceContract.usedServiceInfo.withholding.price == 0 ? true : false;
                 formState.disableNumber6 = value.getServiceContract.usedServiceInfo.withholding.options.length == 0 ? true : false
-                if (
-                    value.getServiceContract.usedServiceInfo.withholding.options.length >
-                    0
-                ) {
+                if ( value.getServiceContract.usedServiceInfo.withholding.options.length > 0 ) {
                     value.getServiceContract.usedServiceInfo.withholding.options.map(
                         (val: any) => {
                             switch (val.withholdingServiceType) {
@@ -472,11 +466,6 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-        watch(resultMemo, (value) => {
-            if (value && value.getServiceContractManageMemos.length > 0) {
-                formStateMomes.value = value.getServiceContractManageMemos;
-            }
-        });
         // mutation create memo
         const {
             mutate: actionCreateMemo,
@@ -814,141 +803,115 @@ export default defineComponent({
             e.component.collapseAll(-1);
             e.component.expandRow(e.currentSelectedRowKeys[0]);
         }
-        watch(
-            () => props.modalStatus,
-            (newValue) => {
-                trigger.value = true;
-                if (newValue) {
-                    dataQuery.value = { id: props.idRowEdit };
-                    dataQueryMemos.value = { companyId: props.idRowEdit };
-                    refetchMemo();
-                } else {
-                    formStateMomes.value = [
-                        {
-                            memoId: null,
-                            ownerUserId: 0,
-                            ownerName: "",
-                            ownerUsername: "",
-                            memo: "",
-                            createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                            createdBy: "",
-                            updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                            updatedBy: "",
-                            ip: "",
-                            active: "",
-                        },
-                    ];
-                    Object.assign(formState, initialState);
-                    trigger.value = false;
-                }
+        watch(resultMemo, (value) => {
+            if (value && value.getServiceContractManageMemos.length > 0) {
+                formStateMomes.value = value.getServiceContractManageMemos;
             }
-        );
-        watch(
-            () => formState.accountingfacilityBusinesses,
-            (newVal) => {
-                newVal.map((value: any) => {
-                    if(!value.options) {
-                        value.options = []
-                        value.facilityBusinessId = newVal.length
-                    }
-                })
-            },{ deep: true }
-        );
-        watch(
-            () => formState.checkBoxAccBasicFee,
-            (newVal) => {
-                if (newVal === false) {
-                    formState.usedServiceInfoAccountingPrice = 0;
-                    formState.disableNumber1 = true;
-
-                    objDataDefault.usedServiceInfoAccountingPrice = 0;
-                    objDataDefault.disableNumber1 = true;
-                } else {
-                    formState.disableNumber1 = false;
-                    objDataDefault.disableNumber1 = false;
-                }
+        });
+        watch(() => props.modalStatus, (newValue) => {
+            trigger.value = true;
+            if (newValue) {
+                dataQuery.value = { id: props.idRowEdit };
+                dataQueryMemos.value = { companyId: props.idRowEdit };
+                refetchMemo();
+            } else {
+                formStateMomes.value = [
+                    {
+                        memoId: null,
+                        ownerUserId: 0,
+                        ownerName: "",
+                        ownerUsername: "",
+                        memo: "",
+                        createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
+                        createdBy: "",
+                        updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
+                        updatedBy: "",
+                        ip: "",
+                        active: "",
+                    },
+                ];
+                Object.assign(formState, initialState);
+                trigger.value = false;
             }
-        );
-        watch(
-            () => formState.usedAccounting,
-            (newVal) => {
-                if(!newVal) {
-                    formState.accountingfacilityBusinesses.map((e: any) => {
-                        e.price = 0
-                        e.options.map((value: any) => {
-                            value.price = 0
-                        })
+        });
+        watch(() => formState.accountingfacilityBusinesses, (newVal) => {
+            newVal.map((value: any) => {
+                if(!value.options) {
+                    value.options = []
+                    value.facilityBusinessId = newVal.length
+                }
+            })
+        },{ deep: true });
+        watch(() => formState.checkBoxAccBasicFee, (newVal) => {
+            if (newVal === false) {
+                formState.usedServiceInfoAccountingPrice = 0;
+                formState.disableNumber1 = true;
+                objDataDefault.usedServiceInfoAccountingPrice = 0;
+                objDataDefault.disableNumber1 = true;
+            } else {
+                formState.disableNumber1 = false;
+                objDataDefault.disableNumber1 = false;
+            }
+        });
+        watch(() => formState.usedAccounting, (newVal) => {
+            if(!newVal) {
+                formState.accountingfacilityBusinesses.map((e: any) => {
+                    e.price = 0
+                    e.options.map((value: any) => {
+                        value.price = 0
                     })
-                }
-                console.log(formState);
+                })
             }
-        );
+        });
         watch(() => formState.usedWithholding, (newVal) => {
             if(!newVal) {
                 formState.usedServiceInfoWithholdingPrice = 0
                 formState.fourMajorInsurance = 0
             }
         })
-
-        watch(
-            () => formState.checkBoxAccInput,
-            (newVal) => {
-                if (newVal === false) {
-                    formState.inputAgent = 0;
-                    formState.disableNumber2 = true;
-
-                    objDataDefault.inputAgent = 0;
-                    objDataDefault.disableNumber2 = true;
-                } else {
-                    formState.disableNumber2 = false;
-                    objDataDefault.disableNumber2 = false;
-                }
+        watch(() => formState.checkBoxAccInput, (newVal) => {
+            if (newVal === false) {
+                formState.inputAgent = 0;
+                formState.disableNumber2 = true;
+                objDataDefault.inputAgent = 0;
+                objDataDefault.disableNumber2 = true;
+            } else {
+                formState.disableNumber2 = false;
+                objDataDefault.disableNumber2 = false;
             }
-        );
-        watch(
-            () => formState.checkBoxAccConso,
-            (newVal) => {
-                if (newVal === false) {
-                    formState.accountIntegration = 0;
-                    formState.disableNumber3 = true;
-                } else {
-                    formState.disableNumber3 = false;
-                }
+        });
+        watch(() => formState.checkBoxAccConso, (newVal) => {
+            if (newVal === false) {
+                formState.accountIntegration = 0;
+                formState.disableNumber3 = true;
+            } else {
+                formState.disableNumber3 = false;
             }
-        );
-        watch(
-            () => formState.checkBoxAcc4wc,
-            (newVal) => {
-                if (newVal === false) {
-                    formState.sSIS = 0;
-                    formState.disableNumber4 = true;
-                } else {
-                    formState.disableNumber4 = false;
-                }
+        });
+        watch( () => formState.checkBoxAcc4wc, (newVal) => {
+            if (newVal === false) {
+                formState.sSIS = 0;
+                formState.disableNumber4 = true;
+            } else {
+                formState.disableNumber4 = false;
             }
-        );
-        watch(
-            () => formState.checkBoxBasicFee,
-            (newVal) => {
-                if (newVal === false) {
-                    formState.usedServiceInfoWithholdingPrice = 0;
-                    formState.disableNumber5 = true;
-                } else {
-                    formState.disableNumber5 = false;
-                }
+        });
+        watch(() => formState.checkBoxBasicFee, (newVal) => {
+            if (newVal === false) {
+                formState.usedServiceInfoWithholdingPrice = 0;
+                formState.disableNumber5 = true;
+            } else {
+                formState.disableNumber5 = false;
             }
-        );
-        watch(
-            () => formState.checkBoxMajorInsurance,
-            (newVal) => {
-                if (newVal === false) {
-                    formState.fourMajorInsurance = 0;
-                    formState.disableNumber6 = true;
-                } else {
-                    formState.disableNumber6 = false;
-                }
+        });
+        watch(() => formState.checkBoxMajorInsurance, (newVal) => {
+            if (newVal === false) {
+                formState.fourMajorInsurance = 0;
+                formState.disableNumber6 = true;
+            } else {
+                formState.disableNumber6 = false;
             }
-        );
+        });
         return {
             contentReady,
             selectionChanged,
