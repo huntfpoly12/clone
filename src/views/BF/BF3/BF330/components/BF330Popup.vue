@@ -37,7 +37,7 @@
                                 <a-row>
                                     <a-col :span="12">
                                         <a-form-item label="회계서비스" style="font-weight: bold">
-                                            <checkbox-basic v-model:valueCheckbox="formState.usedAccountingCount"
+                                            <checkbox-basic v-model:valueCheckbox="formState.usedAccounting"
                                                 :disabled="false" size="14" label="회계서비스 신청" />
                                         </a-form-item>
                                     </a-col>
@@ -55,7 +55,9 @@
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                                         :selected-row-keys="selectedItemKeys">
                                         <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                            :new-row-position="'pageBottom'" :allow-deleting="true" mode="cell" />
+                                            :new-row-position="'pageBottom'" :allow-deleting="true" mode="cell" >
+                                            <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                            </DxEditing>
                                         <DxSelection mode="single" />
                                         <DxPaging :enabled="false" />
                                         <DxColumn :width="10" />
@@ -392,7 +394,7 @@ export default defineComponent({
                     value.getServiceContract.usedServiceInfo.withholdingPrice;
                 formState.accountingfacilityBusinesses =
                     value.getServiceContract.usedServiceInfo.accounting;
-                formState.usedAccountingCount =
+                formState.usedAccounting =
                     value.getServiceContract.usedAccountingCount > 0 ? true : false;
                 formState.usedWithholding = value.getServiceContract.usedWithholding;
                 formState.withholdingStartYearMonth =
@@ -554,6 +556,7 @@ export default defineComponent({
             } else {
                 let accountingInfor: any = [];
                 let arrayAccountingOptions: any = [];
+
                 if (formState.checkBoxAccInput) {
                     arrayAccountingOptions.push({
                         accountingServiceType:
@@ -613,6 +616,8 @@ export default defineComponent({
                     withholdingPrice: totalWithholdingService.value,
                     accounting: accountingInfor,
                     withholding: withholdingInfor,
+                    usedAccounting: formState.usedAccounting,
+                    usedWithholding: formState.usedWithholding,
                 };
                 let extraData = {
                     salesRepresentativeId: formState.compactSalesRepresentativeId,
