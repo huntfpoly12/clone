@@ -252,11 +252,6 @@ export default defineComponent({
     min-height: 700px;
 }
 
-.search-form {
-    background: #f1f3f4;
-    padding: 10px 24px;
-}
-
 .components-grid-demo-flex .ant-col {
     display: flex;
     align-items: center;
@@ -296,22 +291,4 @@ export default defineComponent({
     text-align: center;
 }
 
-.search-form {
-    margin-bottom: 10px;
-
-    >div {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .lable-item {
-        white-space: nowrap;
-        margin-right: 10px;
-        width: auto !important;
-    }
-
-    .col {
-        align-items: center;
-    }
-}
 </style>
