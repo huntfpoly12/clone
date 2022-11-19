@@ -454,7 +454,7 @@ export default defineComponent({
 
 .top-content {
 	background: #e6f7ff;
-	padding: 10px 24px;
+	padding: 2px 24px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
