@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
+                <DxDataGrid :show-row-lines="true" :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />

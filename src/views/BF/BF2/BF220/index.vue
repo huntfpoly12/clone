@@ -20,14 +20,15 @@
             </div>
         </div>
         <div class="page-content">
-            <a-spin :spinning="spinning" size="large"> 
-                <DxDataGrid :data-source="valueResult" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+            <a-spin :spinning="spinning" size="large">
+                <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="id"
+                    @exporting="onExporting" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
+                        <DxItem name="page" template="pagination-table" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" />
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -37,6 +38,12 @@
                     </DxToolbar>
                     <template #button-template>
                         <DxButton icon="plus" @click="openAddNewModal" />
+                    </template>
+                    <template #pagination-table>
+                        <div v-if="totalRow > dataSearch.rows">
+                            <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
+                                :total="totalRow" />
+                        </div>
                     </template>
                     <DxColumn data-field="id" caption="그룹코드" data-type="text" :fixed="true" />
                     <DxColumn data-field="name" caption="그룹명" />
@@ -194,9 +201,9 @@ export default defineComponent({
             else if (key == '3')
                 buttonSearch.value.typeSevice3 = !buttonSearch.value.typeSevice3
         }
-        let valueResult = ref()
+        let dataSource = ref([])
         watch(resList, (value) => {
-            valueResult.value = value.searchScreenRoleGroups.datas
+            dataSource.value = value.searchScreenRoleGroups.datas
             totalRow.value = value.searchScreenRoleGroups.totalCount
             spinning.value = false
         });
@@ -222,15 +229,11 @@ export default defineComponent({
             buttonSearch,
             totalRow,
             IDRow,
-            valueResult
+            dataSource
         }
     },
 });
 </script>
-
-
-
-
 
 
 <style lang="scss" scoped src="./style/style.scss"/>
