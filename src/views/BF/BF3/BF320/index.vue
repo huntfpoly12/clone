@@ -54,7 +54,7 @@
             <div class="page-content">
                 <DxDataGrid :show-row-lines="true" :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" :hoverStateEnabled="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
