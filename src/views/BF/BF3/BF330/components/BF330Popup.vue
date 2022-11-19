@@ -37,7 +37,7 @@
                                 <a-row>
                                     <a-col :span="12">
                                         <a-form-item label="회계서비스" style="font-weight: bold">
-                                            <checkbox-basic v-model:valueCheckbox="formState.usedAccountingCount"
+                                            <checkbox-basic v-model:valueCheckbox="formState.usedAccounting"
                                                 :disabled="false" size="14" label="회계서비스 신청" />
                                         </a-form-item>
                                     </a-col>
@@ -55,7 +55,9 @@
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                                         :selected-row-keys="selectedItemKeys">
                                         <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                            :new-row-position="'pageBottom'" :allow-deleting="true" mode="cell" />
+                                            :new-row-position="'pageBottom'" :allow-deleting="true" mode="cell" >
+                                            <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                            </DxEditing>
                                         <DxSelection mode="single" />
                                         <DxPaging :enabled="false" />
                                         <DxColumn :width="10" />
@@ -69,7 +71,7 @@
                                         <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                                             :format="'yyyy-MM-dd'" />
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
-                                        <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
+                                        <DxColumn :allow-editing="false" caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
                                         <template #totalPrice="{ data }">
                                             {{ $filters.formatCurrency(getTotalAmount(data)) }}
                                         </template>
@@ -301,6 +303,7 @@ import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import DxTextBox from 'devextreme-vue/text-box';
+import { initialState } from "../utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -344,54 +347,6 @@ export default defineComponent({
         const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
         const fileList = ref<UploadProps["fileList"]>([]);
-        const initialState = {
-            id: null,
-            totalFee: 0,
-            accountingPrice: 0,
-            withholdingPrice: 0,
-            accountingfacilityBusinesses: [],
-            usedAccountingCount: false,
-            usedServiceInfoAccountingPrice: 0,
-            inputAgent: 0,
-            accountIntegration: 0,
-            sSIS: 0,
-            usedWithholding: false,
-            withholdingStartYearMonth: "",
-            withholdingCapacity: "",
-            usedServiceInfoWithholdingPrice: 0,
-            fourMajorInsurance: 0,
-            compactSalesRepresentativeId: 0,
-            manageUserId: 0,
-            name: "",
-            name2: "",
-            name3: "",
-            delivery: false,
-            type: [],
-            resource: "",
-            desc: "",
-            totalService: 0,
-            accFeeService: 0,
-            accBasicFee: "",
-            accInput: "",
-            accConsolidation: "",
-            acc4wc: "",
-            basicFee: "",
-            majorInsurance: "",
-            taxFeeSevice: 0,
-            checkBox: false,
-            checkBoxAccBasicFee: false,
-            checkBoxAccInput: false,
-            checkBoxAccConso: false,
-            checkBoxAcc4wc: false,
-            checkBoxMajorInsurance: false,
-            checkBoxBasicFee: false,
-            disableNumber1: false,
-            disableNumber2: false,
-            disableNumber3: false,
-            disableNumber4: false,
-            disableNumber5: false,
-            disableNumber6: false,
-        };
         let objDataDefault = reactive({ ...initialState });
         const formStateMomes = ref([
             {
@@ -439,7 +394,7 @@ export default defineComponent({
                     value.getServiceContract.usedServiceInfo.withholdingPrice;
                 formState.accountingfacilityBusinesses =
                     value.getServiceContract.usedServiceInfo.accounting;
-                formState.usedAccountingCount =
+                formState.usedAccounting =
                     value.getServiceContract.usedAccountingCount > 0 ? true : false;
                 formState.usedWithholding = value.getServiceContract.usedWithholding;
                 formState.withholdingStartYearMonth =
@@ -601,6 +556,7 @@ export default defineComponent({
             } else {
                 let accountingInfor: any = [];
                 let arrayAccountingOptions: any = [];
+
                 if (formState.checkBoxAccInput) {
                     arrayAccountingOptions.push({
                         accountingServiceType:
@@ -660,6 +616,8 @@ export default defineComponent({
                     withholdingPrice: totalWithholdingService.value,
                     accounting: accountingInfor,
                     withholding: withholdingInfor,
+                    usedAccounting: formState.usedAccounting,
+                    usedWithholding: formState.usedWithholding,
                 };
                 let extraData = {
                     salesRepresentativeId: formState.compactSalesRepresentativeId,
@@ -700,20 +658,19 @@ export default defineComponent({
         };
         const getTotalAmount = (data: any) => {
             let totalAmount = 0
-            data.data.options.map((e: any) => {
-                totalAmount += parseInt(e.price)
-            })
-            totalAmount += parseInt(data.data.price)
-
-
-            formState.usedServiceInfoAccountingPrice = data.data.price
-            let totalValuePrice = 0
-            data.data.options.map((val: any) => {
-                totalValuePrice += val.price
-            })
-            formState.inputAgent = totalValuePrice
-
-
+            if(data.data.options) {
+                data.data.options.map((e: any) => {
+                    totalAmount += parseInt(e.price)
+                })
+                totalAmount += parseInt(data.data.price)
+                formState.usedServiceInfoAccountingPrice = data.data.price
+                let totalValuePrice = 0
+                data.data.options.map((val: any) => {
+                    totalValuePrice += val.price
+                })
+                formState.inputAgent = totalValuePrice
+            }
+            
             return totalAmount
         }
         // Thay đổi giá trị option 
@@ -743,7 +700,8 @@ export default defineComponent({
         // Thay đổi trạng thái ô checkbox của  options
         const changeChecked = (valChange: any, optionChange: number, valOJ: any) => {
             // nếu checked thì thêm dòng mới trong mảng options để lưu giá trị
-            if (valChange == true)
+            if (valChange == true) {
+                console.log(formState.accountingfacilityBusinesses);
                 formState.accountingfacilityBusinesses.map((e: any) => {
                     if (e.name == valOJ.name) {
                         e.options.push({
@@ -752,6 +710,7 @@ export default defineComponent({
                         })
                     }
                 })
+            }
             // nếu unchecked thì xóa dòng đó trong options
             else {
                 setTimeout(() => {
@@ -772,31 +731,40 @@ export default defineComponent({
         // Lấy số tiền trong option đang thay đổi
         const getPriceOption = (arr: any, value: number) => {
             let price = 0
-            arr.map((e: any) => {
-                if (e.accountingServiceType == value) {
-                    price = e.price
-                }
-            })
+            if(arr) {
+                arr.map((e: any) => {
+                    if (e.accountingServiceType == value) {
+                        price = e.price
+                    }
+                })
+            }
+            
             return price
         }
         // disable input khi unchecked
         const disableInput = (arr: any, value: number) => {
             let checked = ref(true)
-            arr.map((e: any) => {
-                if (e.accountingServiceType == value) {
-                    checked.value = false
-                }
-            })
+            if(arr) {
+                arr.map((e: any) => {
+                    if (e.accountingServiceType == value) {
+                        checked.value = false
+                    }
+                })
+            }
+            
             return checked.value
         }
         // Kiểm tra checked của option ban đầu
         const checkOption = (arr: any, value: number) => {
             let count = 0
-            arr.map((e: any) => {
-                if (e.accountingServiceType == value) {
-                    count = 1
-                }
-            })
+            if (arr) {
+                arr.map((e: any) => {
+                    if (e.accountingServiceType == value) {
+                        count = 1
+                    }
+                })
+            }
+            
             if (count == 0) {
                 return false
             } else {
@@ -872,6 +840,17 @@ export default defineComponent({
                     trigger.value = false;
                 }
             }
+        );
+        watch(
+            () => formState.accountingfacilityBusinesses,
+            (newVal) => {
+                newVal.map((value: any) => {
+                    if(!value.options) {
+                        value.options = []
+                        value.facilityBusinessId = newVal.length
+                    }
+                })
+            },{ deep: true }
         );
         watch(
             () => formState.checkBoxAccBasicFee,
@@ -993,12 +972,5 @@ export default defineComponent({
     },
 });
 </script>  
-
-
-
-
-
-
-
 
 <style src="../style/stylePopup.scss" scoped />

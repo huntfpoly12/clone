@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-spin :spinning="loading" size="large">
-        <action-header title="계약정보관리&심사" @actionSearch="searching"/>  
+        <action-header title="계약정보관리&심사" @actionSearch="searching" />
         <div id="bf-310">
             <div class="search-form">
                 <a-row :gutter="[24, 8]">
@@ -46,11 +46,24 @@
                 </a-row>
             </div>
             <div class="page-content">
-                <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">                    
-                    <DxPaging :page-size="rowTable" />
+                <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="id"
+                    @exporting="onExporting" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" :hoverStateEnabled="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxPaging :page-size="rowTable" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxToolbar>                     
+                        <DxItem name="exportButton" />
+                        <DxItem name="page" template="pagination-table"  location="after"/>
+                        <DxItem name="searchPanel"/>
+                    </DxToolbar>
+                    <template #pagination-table>
+                        <div v-if="rowTable > originData.rows">
+                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                                :total="rowTable" show-less-items @change="searching" />
+                        </div>
+                    </template>
+
                     <DxColumn data-field="createdAt" caption="신청일자" cell-template="createdat-cell" data-type="date" />
                     <template #createdat-cell="{ data }">
                         {{ $filters.formatDate(data.value) }}
@@ -109,9 +122,9 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <div class="pagination-table" v-if="rowTable > 20">
-                    <a-pagination v-model:current="originData.page" v-model:page-size="pageSize" :total="rowTable"
-                        show-less-items @change="changePage" />
+                <div class="pagination-table" v-if="rowTable > originData.rows">
+                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                        :total="rowTable" show-less-items @change="searching" />
                 </div>
                 <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
             </div>
@@ -119,40 +132,17 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { ref, defineComponent ,reactive,watch, computed } from 'vue';
+import { ref, defineComponent, reactive, watch, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
-import { Workbook } from "exceljs";
-import { saveAs } from "file-saver-es";
-import { exportDataGrid } from "devextreme/excel_exporter";
-import dayjs, { Dayjs } from 'dayjs';
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
-import {
-    SearchOutlined,
-    EditOutlined,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    MailOutlined,
-    PrinterOutlined,
-    DeleteOutlined,
-    SaveOutlined,
-} from '@ant-design/icons-vue';
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxExport,
-    DxSelection,
-    DxSearchPanel,
-    DxPager,
-} from "devextreme-vue/data-grid";
+import dayjs from 'dayjs';
+import { SearchOutlined, EditOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxPager, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
+import { dataSearchIndex } from "./utils/index";
+import { onExportingCommon } from "../../../../helpers/commonFunction"
 
-
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -170,72 +160,37 @@ export default defineComponent({
         MailOutlined,
         PrinterOutlined,
         DeleteOutlined,
-        SaveOutlined
+        SaveOutlined,
+        DxToolbar,
+        DxItem
     },
     setup() {
-        // config grid
         const store = useStore();
-        
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate =  ref([dayjs().subtract(1, 'year'), dayjs()]);
+        const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
         const dataSource = ref([]);
         const modalStatus = ref(false);
         const idSubRequest = ref();
         const statuses: any = ref([]);
         const trigger = ref<boolean>(true);
-        const rowTable = ref(10)
+        const rowTable = ref()
         const originData = reactive({
-            page: 1,
+            ...dataSearchIndex,
             rows: per_page,
-            salesRepresentativeId: 0,
-            startDate: '',
-            finishDate: '',
-            accounting: true,
-            withholding: true,
-            companyName: "",
-            presidentName: "",
-            statuses: [10, 20, 30, 99]
         })
-
         const setModalVisible = (data: any,) => {
             idSubRequest.value = data.data.id;
             modalStatus.value = true;
         }
-        const pageSize = ref(20)
-
         const { refetch: refetchData, loading, error, result } = useQuery(queries.searchSubscriptionRequests, { filter: originData }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-
-        watch(result, (value) => {
-            if (value) {
-                rowTable.value = value.searchSubscriptionRequests.totalCount
-                dataSource.value = value.searchSubscriptionRequests.datas
-                trigger.value = false;
-            }
-        });
-
         const onExporting = (e: { component: any; cancel: boolean; }) => {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet("employees");
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(
-                        new Blob([buffer], { type: "application/octet-stream" }),
-                        "계약정보관리&심사.xlsx"
-                    );
-                });
-            });
-            e.cancel = true;
+            onExportingCommon(e.component, e.cancel, '계약정보관리&심사')
         }
-
         const getColorTag = (data: any) => {
             if (data == 10) {
                 return { "name": "red", "tag_name": "신청" };
@@ -248,7 +203,7 @@ export default defineComponent({
             }
         }
         const formarDate = (date: any) => {
-            return dayjs(date).format('YYYY/MM/DD')
+            return dayjs(date).format('YYYY-MM-DD')
         }
         const searching = () => {
             originData.startDate = formarDate(rangeDate.value[0]);
@@ -257,10 +212,13 @@ export default defineComponent({
             trigger.value = true;
             refetchData()
         }
-        const changePage = () => {
-            searching()
-        }
-
+        watch(result, (value) => {
+            if (value) {
+                rowTable.value = value.searchSubscriptionRequests.totalCount
+                dataSource.value = value.searchSubscriptionRequests.datas
+                trigger.value = false;
+            }
+        });
         return {
             loading,
             move_column,
@@ -272,18 +230,55 @@ export default defineComponent({
             rowTable,
             setModalVisible,
             originData,
-            refetchData,
-            pageSize,
             statuses,
             searching,
             getColorTag,
             onExporting,
-            changePage
         }
     },
 
 });
 </script>
-<style lang="scss" scoped  src="./style/style.scss">
 
-</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style lang="scss" scoped  src="./style/style.scss" />

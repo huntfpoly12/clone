@@ -1,32 +1,34 @@
 <template>
-    <a-spin :spinning="spinning" size="large">
-        <action-header title="권한그룹관리" @actionSearch="searching"/> 
-        <div id="bf-220">
-            <div class="search-form">
-                <div id="components-grid-demo-flex">
-                    <a-row justify="start" :gutter="[16, 8]">
-                        <a-col class="search">
-                            <label class="lable-item">대상회원 :</label>
-                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
-                            <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저
-                            </a-tag>
-                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
-                            <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
-                            </a-tag>
-                            <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
-                            <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
-                            </a-tag>
-                        </a-col>
-                    </a-row>
-                </div>
+    <action-header title="권한그룹관리" @actionSearch="searching" />
+    <div id="bf-220">
+        <div class="search-form">
+            <div id="components-grid-demo-flex">
+                <a-row justify="start" :gutter="[16, 8]">
+                    <a-col class="search">
+                        <label class="lable-item">대상회원 :</label>
+                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice1" :size="'16'" />
+                        <a-tag color="black" class="custom-service-search" @click="changeValSearch('1')">매니저
+                        </a-tag>
+                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice2" :size="'16'" />
+                        <a-tag color="gray" class="custom-service-search" @click="changeValSearch('2')">영업자회원
+                        </a-tag>
+                        <checkbox-basic v-model:valueCheckbox="buttonSearch.typeSevice3" :size="'16'" />
+                        <a-tag class="ant-tag-yellow custom-service-search" @click="changeValSearch('3')">파트너회원
+                        </a-tag>
+                    </a-col>
+                </a-row>
             </div>
-            <div class="page-content">
-                <DxDataGrid :data-source="resList ? resList.searchScreenRoleGroups.datas : ''" :show-borders="true"
-                    key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+        </div>
+        <div class="page-content">
+            <a-spin :spinning="spinning" size="large">
+                <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="id"
+                    @exporting="onExporting" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxPaging :page-size="dataSearch.rows" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
+                        <DxItem name="page" template="pagination-table" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" />
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -36,6 +38,12 @@
                     </DxToolbar>
                     <template #button-template>
                         <DxButton icon="plus" @click="openAddNewModal" />
+                    </template>
+                    <template #pagination-table>
+                        <div v-if="totalRow > dataSearch.rows">
+                            <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
+                                :total="totalRow" />
+                        </div>
                     </template>
                     <DxColumn data-field="id" caption="그룹코드" data-type="text" :fixed="true" />
                     <DxColumn data-field="name" caption="그룹명" />
@@ -66,57 +74,30 @@
                 </DxDataGrid>
                 <div class="pagination-table" v-if="totalRow > dataSearch.rows">
                     <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
-                        :total="totalRow" show-less-items />
+                        :total="totalRow" />
                 </div>
                 <BF220PopupAddNew :modalStatus="modalAddNewStatus" @closePopupAdd="closePopupAdd" />
                 <BF220PopupEdit :modalStatus="modalEditStatus" @closePopupEdit="closePopupEdit" :idRowIndex="IDRow" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="IDRow" typeHistory="cm-220" />
-                <!-- <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-110"
-                    :companyId="companyIdPopup" /> -->
-            </div>
+            </a-spin>
         </div>
-    </a-spin>
+    </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue';
+import { defineComponent, ref, watch, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
-import { Workbook } from 'exceljs';
-import { saveAs } from 'file-saver-es';
 import { dataSearchUtils, buttonSearchUtils } from "./utils";
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxExport,
-    DxSelection,
-    DxSearchPanel,
-    DxToolbar,
-    DxItem
-} from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from 'devextreme-vue/data-grid';
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
 import BF220PopupAddNew from "./components/BF220PopupAddNew.vue";
 import DxButton from "devextreme-vue/button";
 import notification from '../../../../utils/notification';
-import { exportDataGrid } from 'devextreme/excel_exporter';
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../graphql/queries/BF/BF2/BF220/index"; 
-import {
-    EditOutlined,
-    HistoryOutlined,
-    SearchOutlined,
-    PrinterOutlined,
-    DeleteOutlined,
-    SaveOutlined,
-    LoginOutlined
-} from '@ant-design/icons-vue';
-import dayjs from 'dayjs';
-import weekday from "dayjs/plugin/weekday"
-import localeData from "dayjs/plugin/localeData"
+import queries from "../../../../graphql/queries/BF/BF2/BF220/index";
+import { EditOutlined, HistoryOutlined, SearchOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, LoginOutlined } from '@ant-design/icons-vue';
 import BF220PopupEdit from './components/BF220PopupEdit.vue';
-dayjs.extend(weekday)
-dayjs.extend(localeData)
+import { onExportingCommon } from "../../../../helpers/commonFunction"
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -140,10 +121,8 @@ export default defineComponent({
         BF220PopupEdit
     },
     setup() {
-        // config grid
         const store = useStore();
-        
-        // const per_page = computed(() => store.state.settings.per_page);
+        const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const totalRow = ref(0)
@@ -157,7 +136,8 @@ export default defineComponent({
         const modalAddNewStatus = ref(false)
         const modalEditStatus = ref(false)
         const dataSearch = ref({
-            ...dataSearchUtils
+            ...dataSearchUtils,
+            rows: per_page,
         })
         const searching = () => {
             let arrayStatus = []
@@ -170,25 +150,17 @@ export default defineComponent({
             if (buttonSearch.value.typeSevice3 == true) {
                 arrayStatus.push('p')
             }
-            if (buttonSearch.value.typeSevice1 != true && buttonSearch.value.typeSevice2 != true && buttonSearch.value.typeSevice3 != true) { 
+            if (buttonSearch.value.typeSevice1 != true && buttonSearch.value.typeSevice2 != true && buttonSearch.value.typeSevice3 != true) {
                 notification('error', '대상회원을 선택해야합니다!')
             } else {
                 dataSearch.value.types = arrayStatus
                 spinning.value = true
-                setTimeout(() => {
-                    refetchData()
-                }, 100);
+                refetchData()
             }
         }
         const { refetch: refetchData, result: resList } = useQuery(queries.searchScreenRoleGroups, dataSearch, () => ({
             fetchPolicy: "no-cache",
         }))
-        watch(resList, (value) => {
-            totalRow.value = value.searchScreenRoleGroups.totalCount
-            setTimeout(() => {
-                spinning.value = false
-            }, 500);
-        });
         const closePopupAdd = () => {
             modalAddNewStatus.value = false
             refetchData()
@@ -198,18 +170,7 @@ export default defineComponent({
             refetchData()
         }
         const onExporting = (e: any) => {
-            const workbook = new Workbook();
-            const worksheet = workbook.addWorksheet('employees');
-            exportDataGrid({
-                component: e.component,
-                worksheet,
-                autoFilterEnabled: true,
-            }).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), '권한그룹관리.xlsx');
-                });
-            });
-            e.cancel = true;
+            onExportingCommon(e.component, e.cancel, '권한그룹관리')
         }
         const modalHistory = (data: any) => {
             IDRow.value = data.data.id
@@ -240,6 +201,12 @@ export default defineComponent({
             else if (key == '3')
                 buttonSearch.value.typeSevice3 = !buttonSearch.value.typeSevice3
         }
+        let dataSource = ref([])
+        watch(resList, (value) => {
+            dataSource.value = value.searchScreenRoleGroups.datas
+            totalRow.value = value.searchScreenRoleGroups.totalCount
+            spinning.value = false
+        });
         return {
             changeValSearch,
             move_column,
@@ -261,11 +228,12 @@ export default defineComponent({
             resList,
             buttonSearch,
             totalRow,
-            IDRow
+            IDRow,
+            dataSource
         }
     },
 });
 </script>
-<style lang="scss" scoped src="./style/style.scss">
 
-</style>
+
+<style lang="scss" scoped src="./style/style.scss"/>

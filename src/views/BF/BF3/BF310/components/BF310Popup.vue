@@ -203,7 +203,7 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                         <div id="data-grid-demo">
-                                            <DxDataGrid id="gridContainer" @selection-changed="selectionChanged"
+                                            <DxDataGrid :show-row-lines="true" id="gridContainer" @selection-changed="selectionChanged"
                                                 @content-ready="contentReady"
                                                 :data-source="formState.content.accounting.facilityBusinesses"
                                                 :allow-column-reordering="move_column"
