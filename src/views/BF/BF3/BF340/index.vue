@@ -41,6 +41,7 @@
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
+                        <DxItem location="after" template="pagination-table"/>
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" />
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -50,6 +51,12 @@
                     </DxToolbar>
                     <template #button-template>
                         <DxButton icon="plus" @click="openAddNewModal" />
+                    </template>
+                    <template #pagination-table>
+                        <div v-if="rowTable > originData.rows">
+                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                                :total="rowTable" show-less-items  @change="searching" />
+                        </div>
                     </template>
                     <DxColumn caption="영업자코드" data-field="code" />
                     <DxColumn caption="상태" data-field="status" data-type="text" cell-template="grid-cell" />
@@ -156,7 +163,7 @@ export default defineComponent({
         const saleGrade = ref<number>(0);
         const saleStatus = ref<number>(1);
         var idRowEdit = ref<number>(0);
-        const originData = reactive({ ...origindata, rows: per_page.value });
+        const originData = reactive({ ...origindata, rows: per_page });
         const rowTable = ref(0);
         const dataSource = ref([]);
         const trigger = ref<boolean>(true);
