@@ -37,12 +37,11 @@
                                 <a-row>
                                     <a-col :span="12">
                                         <a-form-item label="회계서비스" style="font-weight: bold">
-                                            <checkbox-basic v-model:valueCheckbox="formState.usedAccounting"
-                                                :disabled="false" size="14" label="회계서비스 신청" />
+                                            <checkbox-basic v-model:valueCheckbox="formState.usedAccounting" size="14" label="회계서비스 신청" />
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
-                                <div>
+                                <div :class=" formState.usedAccounting ? '' : 'disabled-div' ">
                                     <div>
                                         <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
@@ -51,6 +50,7 @@
                                     <DxDataGrid id="grid-container" :show-borders="true"
                                         @selection-changed="selectionChanged" @content-ready="contentReady"
                                         :data-source="formState.accountingfacilityBusinesses"
+                                        :show-row-lines="true"  :hoverStateEnabled="true"
                                         key-expr="facilityBusinessId" :allow-column-reordering="move_column"
                                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                                         :selected-row-keys="selectedItemKeys">
@@ -161,6 +161,8 @@
                                                 :disabled="false" size="14" label="원천서비스 신청" />
                                         </a-form-item>
                                     </a-col>
+                                </a-row>
+                                <a-row :class="formState.usedWithholding ? '' : 'disabled-div' ">
                                     <a-col :span="14">
                                         <a-form-item label="서비스 시작년월" class="custom-label-select">
                                             <date-time-box width="150px"
@@ -309,6 +311,7 @@ dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DateTimeBox from "../../../../../components/common/DateTimeBox.vue";
 import notification from '../../../../../utils/notification';
+import { log } from "console";
 export default defineComponent({
     components: {
         DxTextBox, DxDropDownBox, DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxButton, DxToolbar, DxItem, DxNumberBox, DxTexts, DxMasterDetail, DxCheckBox,
@@ -701,7 +704,6 @@ export default defineComponent({
         const changeChecked = (valChange: any, optionChange: number, valOJ: any) => {
             // nếu checked thì thêm dòng mới trong mảng options để lưu giá trị
             if (valChange == true) {
-                console.log(formState.accountingfacilityBusinesses);
                 formState.accountingfacilityBusinesses.map((e: any) => {
                     if (e.name == valOJ.name) {
                         e.options.push({
@@ -867,6 +869,27 @@ export default defineComponent({
                 }
             }
         );
+        watch(
+            () => formState.usedAccounting,
+            (newVal) => {
+                if(!newVal) {
+                    formState.accountingfacilityBusinesses.map((e: any) => {
+                        e.price = 0
+                        e.options.map((value: any) => {
+                            value.price = 0
+                        })
+                    })
+                }
+                console.log(formState);
+            }
+        );
+        watch(() => formState.usedWithholding, (newVal) => {
+            if(!newVal) {
+                formState.usedServiceInfoWithholdingPrice = 0
+                formState.fourMajorInsurance = 0
+            }
+        })
+
         watch(
             () => formState.checkBoxAccInput,
             (newVal) => {
