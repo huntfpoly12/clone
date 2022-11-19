@@ -361,7 +361,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import { bizTypeItems, inputInCollapse } from "../utils";
-import { initialFormState, initialDataStatus } from "../utils/index"
+import { initialFormState, initialDataStatus, initialArrayRadioWithdrawDay } from "../utils/index"
 import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
 import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
 import imgUpload from "../../../../../components/UploadImage.vue";
@@ -418,11 +418,9 @@ export default defineComponent({
         const titleModal = ref("사업자등록증")
         var dataStatus = initialDataStatus
         let objDataDefault = ref({ ...initialFormState });
-        const arrayRadioWithdrawDay = reactive([
-            { id: '매월 5일', text: '매월 5일' },
-            { id: '매월 12일', text: '매월 12일' },
-            { id: '매월 19일', text: '매월 19일' },
-        ])
+        const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay])
+        console.log(arrayRadioWithdrawDay);
+        
         var formState = ref({ ...initialFormState });
         // event close popup
         const setModalVisible = () => {
@@ -434,25 +432,22 @@ export default defineComponent({
             trigger.value = false;
         };
         // watch event modal popup
-        watch(
-            () => props.modalStatus,
-            (newValue, old) => {
-                trigger.value = true;
-                if (newValue) {
-                    visible.value = newValue;
-                    dataQuery.value = { id: props.data };
-                    refetch();
-                    Object.assign(formState, initialFormState);
-                } else {
-                    Object.assign(formState, initialFormState);
-                    imageLicenseFile.value = "";
-                    licenseFileName.value = "";
-                    visible.value = newValue;
-                    trigger.value = false;
-                    activeKey.value = 1;
-                }
+        watch(() => props.modalStatus, (newValue, old) => {
+            trigger.value = true;
+            if (newValue) {
+                visible.value = newValue;
+                dataQuery.value = { id: props.data };
+                refetch();
+                Object.assign(formState, initialFormState);
+            } else {
+                Object.assign(formState, initialFormState);
+                imageLicenseFile.value = "";
+                licenseFileName.value = "";
+                visible.value = newValue;
+                trigger.value = false;
+                activeKey.value = 1;
             }
-        );
+        });
         const { result, loading, error, refetch } = useQuery(
             queries.getSubscriptionRequest,
             dataQuery,
@@ -573,8 +568,7 @@ export default defineComponent({
                     customAccountingfacilityBusinesses =
                         formState.value.content.accounting.facilityBusinesses.map(
                             (val: any) => ({
-                                longTermCareInstitutionNumber:
-                                    val.longTermCareInstitutionNumber,
+                                longTermCareInstitutionNumber: val.longTermCareInstitutionNumber,
                                 capacity: val.capacity,
                                 facilityBizType: val.facilityBizType,
                                 name: val.name,

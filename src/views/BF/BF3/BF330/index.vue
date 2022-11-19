@@ -139,14 +139,6 @@ export default defineComponent({
         DeleteOutlined,
         PrinterOutlined
     },
-    data() {
-        return {
-            amountFormat: { currency: 'VND', useGrouping: true },
-            popupData: [],
-
-            modalHistoryStatus: false,
-        };
-    },
     setup() {
         // config grid
         const store = useStore();
@@ -157,6 +149,9 @@ export default defineComponent({
         const idRowEdit = ref(0)
         const idSubRequest = ref();
         let trigger = ref(true);
+        const modalHistoryStatus = ref<boolean>(false)
+        const popupData = ref([]);
+        const amountFormat = ref({ currency: 'VND', useGrouping: true })
         const modalStatus = ref(false)
         const listServiceContract = ref([])
         const rowTable = ref(10)
@@ -200,25 +195,7 @@ export default defineComponent({
             trigger.value = true;
             refetchData()
         }
-        return {
-            closePopup,
-            modalStatus,
-            move_column,
-            colomn_resize,
-            idRowEdit,
-            listServiceContract,
-            loading,
-            searching,
-            originData,
-            refetchData,
-            rowTable,
-            idSubRequest,
-            changePage,
-            trigger
-        }
-    },
-    methods: {
-        onExporting(e: any) {
+        const onExporting = (e: any) => {
             const workbook = new Workbook();
             const worksheet = workbook.addWorksheet("employees");
             exportDataGrid({
@@ -234,17 +211,39 @@ export default defineComponent({
                 });
             });
             e.cancel = true;
-        },
-        setModalVisible(data: any) {
-            this.idSubRequest = data.data.id;
-            this.modalStatus = true;
-            this.popupData = data;
-        },
-        modalHistory(data: any) {
-            this.idSubRequest = data.data.id;
-            this.modalHistoryStatus = true;
-            this.popupData = data;
-        },
+        }
+        const setModalVisible = (data: any) => {
+            idSubRequest.value = data.data.id;
+            modalStatus.value = true;
+            popupData.value = data;
+        }
+        const modalHistory = (data: any) => {
+            idSubRequest.value = data.data.id;
+            modalHistoryStatus.value = true;
+            popupData.value = data;
+        }
+        return {
+            closePopup,
+            amountFormat,
+            modalHistory,
+            modalHistoryStatus,
+            modalStatus,
+            popupData,
+            move_column,
+            colomn_resize,
+            idRowEdit,
+            listServiceContract,
+            loading,
+            searching,
+            originData,
+            refetchData,
+            rowTable,
+            idSubRequest,
+            setModalVisible,
+            changePage,
+            trigger,
+            onExporting,
+        }
     },
 });
 </script>
