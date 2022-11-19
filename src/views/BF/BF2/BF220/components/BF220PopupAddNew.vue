@@ -49,7 +49,7 @@
                             <span>권한그룹메뉴별 권한</span>
                         </a-col>
                         <a-col :span="24">
-                            <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true" key-expr="enumKey"
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="enumKey"
                                 class="table-sevice" :allow-column-reordering="move_column"
                                 :allow-column-resizing="colomn_resize">
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />

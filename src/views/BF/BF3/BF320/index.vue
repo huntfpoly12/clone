@@ -52,17 +52,15 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :show-row-lines="true" :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true" :hoverStateEnabled="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
-                        
                         <DxItem name="searchPanel" />
                         <DxItem  template="pagination-table"/>
                         <DxItem name="exportButton" />
-                        
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" />

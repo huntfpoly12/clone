@@ -156,7 +156,7 @@
                             </div>
                             <div style="position: relative;">
                                 <div class="overlay" v-if="disableFormVal2 == true"></div>
-                                <DxDataGrid :show-row-lines="true" disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
+                                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
                                     :show-borders="true" :allow-column-reordering="move_column"
                                     :allow-column-resizing="colomn_resize" :selected-row-keys="selectedItemKeys"
                                     :column-auto-width="true" :repaint-changes-only="true">
