@@ -36,8 +36,10 @@
                             <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" />
                         </a-col>
                         <a-col>
-                            <!-- <checkbox-basic label="회계" v-model:valueCheckbox="originData.filter.usedAccountingCount" :size="'18'" /> -->
-                            <!-- <checkbox-basic label="원천" v-model:valueCheckbox="originData.filter.usedWithholding" :size="'18'" /> -->
+                            <checkbox-basic label="회계" v-model:valueCheckbox="originData.filter.usedAccounting" :size="'18'" />
+                        </a-col>
+                        <a-col>
+                            <checkbox-basic label="원천" v-model:valueCheckbox="originData.filter.usedWithholding" :size="'18'" />
                         </a-col>
                     </a-row>
                 </div>
@@ -168,8 +170,8 @@ export default defineComponent({
                 manageUserId: undefined,
                 salesRepresentativeId: undefined,
                 excludeCancel: true,
-                // usedAccountingCount: true,
-                // usedWithholding: true,
+                usedAccounting: true,
+                usedWithholding: true,
             }
         })
 
