@@ -23,7 +23,7 @@
             </div>
           </template>
           <template #itemTemplate="{ data: employee }">
-          
+            <country-code-select-box/>
             <component v-bind:is="employee.layoutName" />
           </template>
         </DxTabPanel>
