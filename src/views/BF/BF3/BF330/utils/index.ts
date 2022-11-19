@@ -5,7 +5,7 @@ export const initialState = {
     accountingPrice: 0,
     withholdingPrice: 0,
     accountingfacilityBusinesses: [],
-    usedAccountingCount: false,
+    usedAccounting: false,
     usedServiceInfoAccountingPrice: 0,
     inputAgent: 0,
     accountIntegration: 0,
