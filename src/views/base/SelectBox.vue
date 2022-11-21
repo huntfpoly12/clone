@@ -374,15 +374,44 @@
           >
         </td>
       </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">Select Employee Extra income</div>
+            <div class="dx-field-value">
+              {{ valueTypeCodeSelectSelectBox }}
+              <type-code-select-box
+                v-model:valueInput="valueTypeCodeSelectSelectBox"
+                width="150px"
+                :required="true">
+              </type-code-select-box>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; subs-req-status-process-bar / &gt;
+              </pre
+          >
+        </td>
+      </tr>
     </table>
   </form>
 </template>
 
 <script>
 import { defineComponent, ref } from "vue";
+import TypeCodeSelectBox from "../../components/common/TypeCodeSelectBox.vue";
 // import TagSelectBoxVue from "../../components/common/TagSelectBox.vue";
 export default defineComponent({
   components: {
+    TypeCodeSelectBox
     // TagSelectBoxVue
   },
   data() {
@@ -399,12 +428,16 @@ export default defineComponent({
       { id: 2, name: "Urgent" },
       { id: 3, name: "High" },
     ]);
+    const valueTypeCodeSelectSelectBox = ref();
     const valueTagSelectBox = ref([1, 2]);
     const saleStatus = ref(10);
+    const selectValue = ref();
     return {
         saleStatus,
       arrayTagSelectBox,
       valueTagSelectBox,
+      selectValue,
+      valueTypeCodeSelectSelectBox,
     };
   },
 });
