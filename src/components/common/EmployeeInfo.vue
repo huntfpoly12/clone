@@ -3,8 +3,11 @@
         <div class="style-Id">
             {{ idEmployee }}
         </div>
-        <div>
-            <a-tooltip placement="top" :title="convertBirthDay(idCardNumber)" color="#E8E8E8" key="black">
+        <div style="display: flex;align-items: flex-end;">
+            <a-tooltip placement="top" v-if="idCardNumber?.length == 11" :title="convertBirthDay(idCardNumber)" key="black">
+                {{ name }}
+            </a-tooltip>
+            <a-tooltip placement="top" v-else title="ERROR" color="red">
                 {{ name }}
             </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
