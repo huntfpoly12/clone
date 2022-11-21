@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :search-enabled="true" :data-source="arrSelect" :value="valueTypeCode" :read-only="readOnly"
+    <DxSelectBox :search-enabled="true" :data-source="arrSelect" :value="valueInput" :read-only="readOnly"
         value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
         :disabled="disabled" @value-changed="updateValue">
         <template #field="{ data }">
@@ -42,7 +42,7 @@ export default defineComponent({
 		},
         clearButton: Boolean,
         disabled: Boolean,
-        valueTypeCode: {
+        valueInput: {
             type: String,
             default: "940100",
         },

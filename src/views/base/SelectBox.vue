@@ -394,33 +394,38 @@
                 <td>
                     <pre class="mycode">
                 &lt; subs-req-status-process-bar / &gt;
-              </pre>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Select Employee Extra income</div>
-                        <div class="dx-field-value">
-                            <type-code-select-box v-model:valueInput="valueTypeCodeSelectSelectBox" :required="true">
-                            </type-code-select-box>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <ul>
-                        <li><strong>disabled:</strong> Boolean (option)</li>
-                        <li><strong>valueInput:</strong> {type: Number,}</li>
-                    </ul>
-                </td>
-                <td>
-                    <pre class="mycode">
-                &lt; subs-req-status-process-bar / &gt;
-              </pre>
-                </td>
-            </tr>
-        </table>
-    </form>
+              </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">Select Employee Extra income</div>
+            <div class="dx-field-value">
+              <type-code-select-box
+                v-model:valueInput="valueTypeCodeSelectSelectBox"
+                :disabled="false">
+              </type-code-select-box>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li><strong>valueInput:</strong> {type: String}</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; type-code-select-box v-model:valueInput="valueTypeCodeSelectSelectBox"
+                :required="true" &gt; &lt;/ type-code-select-box &gt;
+              </pre
+          >
+        </td>
+      </tr>
+    </table>
+  </form>
 </template>
 
 <script>
@@ -441,7 +446,7 @@ export default defineComponent({
     setup() {
         const valueCountry = ref('KR')
         const valueStayQualifiction = ref('C-4')
-        const valueTypeCodeSelectSelectBox = ref(940100)
+        const valueTypeCodeSelectSelectBox = ref('940908')
         const arrayTagSelectBox = ref([
             { id: 0, name: "Low" },
             { id: 1, name: "Normal" },
