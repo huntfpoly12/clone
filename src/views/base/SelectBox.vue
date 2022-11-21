@@ -371,10 +371,8 @@
           <div class="dx-field">
             <div class="dx-field-label">Select Employee Extra income</div>
             <div class="dx-field-value">
-              {{ valueTypeCodeSelectSelectBox }}
               <type-code-select-box
                 v-model:valueInput="valueTypeCodeSelectSelectBox"
-                width="150px"
                 :required="true">
               </type-code-select-box>
             </div>
@@ -414,7 +412,7 @@ export default defineComponent({
     },
     setup() {
         const valueCountry = ref('KR')
-        const valueTypeCodeSelectSelectBox = ref()
+        const valueTypeCodeSelectSelectBox = ref(940100)
         const arrayTagSelectBox = ref([
             { id: 0, name: "Low" },
             { id: 1, name: "Normal" },
