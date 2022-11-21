@@ -483,10 +483,6 @@ export default defineComponent({
 	max-height: 150px;
 }
 
-.ant-layout {
-	overflow-x: hidden;
-}
-
 .box-search {
 	overflow-y: auto;
 	position: absolute;
