@@ -186,7 +186,7 @@ export default [{
             title: '기타소득관리',
             id: 'pa-700',
             items: [
-                { name: '기타소득자등록', url: '#', id: 'pa-710' },
+                { name: '기타소득자등록', url: '/dashboard/pa-710', id: 'pa-710' },
                 { name: '기타소득자등록', url: '#', id: 'pa-720' },
                 { name: '기타소득자료입력', url: '#', id: 'pa-730' },
                 { name: '기타소득원천징수영수증', url: '#', id: 'pa-740' },

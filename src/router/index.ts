@@ -101,6 +101,11 @@ const routes = [
         path: "pa-610",
         component: () => import('../views/PA/PA6/PA610/index.vue')
       },
+      {
+        path: "pa-710",
+        component: () => import('../views/PA/PA7/PA710/index.vue')
+      },
+      
     ]
   },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
