@@ -2,9 +2,9 @@
 	<a-layout>
 		<a-layout-header class="header">
 			<div class="nav-logo"><a :href="'/dashboard/'"><img src="../assets/images/logo.png" /></a></div>
-			
+
 			<div class="user-info" v-if="username">
-				<year-header/>
+				<year-header />
 				<a-dropdown>
 					<a class="ant-dropdown-link" @click.prevent>
 						{{ username }}
@@ -35,17 +35,18 @@
 						<a-select v-model:value="selectedItems" :options="menuData.map(item => ({
 							value: item.id + ' | ' + item.name
 						}))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px;" @change="addMenuTab" />
-					</div>  
+					</div>
 				</div>
 				<div class="right">
-					
+
 					<nav class="nav-tabs" v-if="menuTab.length > 0">
 						<ul class="list-menu-tab">
-							
+
 							<li v-for="(item, index) in menuTab" :class="activeTab.id === item.id ? 'active' : ''"
 								:key="index" @click="changeActiveTab(item)">
 								{{ item.name }}
-								<close-circle-filled @click="removeItemTab(index)" :style="{ marginLeft: '2px' , color:activeTab.id === item.id ? 'red' : '#888'}"/>
+								<close-circle-filled @click="removeItemTab(index)"
+									:style="{ marginLeft: '2px', color: activeTab.id === item.id ? 'red' : '#888' }" />
 							</li>
 						</ul>
 					</nav>
@@ -55,7 +56,7 @@
 			<a-layout>
 				<a-layout-sider width="250" v-model:collapsed="collapsed" :trigger="null" collapsible>
 					<a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :open-keys="openKeys"
-						@openChange="onOpenChange" >
+						@openChange="onOpenChange">
 						<a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
 							<template #icon>
 								<MailOutlined />
@@ -77,7 +78,7 @@
 					<a-layout-content :style="{ background: '#fff', margin: 0, minHeight: '280px' }">
 						<div class="main-content">
 							<template v-if="activeTab">
-								
+
 								<keep-alive>
 									<component v-bind:is="currentComponent" />
 								</keep-alive>
@@ -127,6 +128,9 @@ const CM110 = defineAsyncComponent(() =>
 const CM130 = defineAsyncComponent(() =>
 	import("../views/CM/CM1/CM130/index.vue")
 );
+const PA610 = defineAsyncComponent(() =>
+	import("../views/PA/PA6/PA610/index.vue")
+);
 const Test = defineAsyncComponent(() =>
 	import("../views/DefaultComponent.vue")
 );
@@ -149,8 +153,8 @@ export default defineComponent({
 	data() {
 		return {
 			styles: {
-				main : this.$config_styles.Main,
-				sub : this.$config_styles.Sub,
+				main: this.$config_styles.Main,
+				sub: this.$config_styles.Sub,
 			},
 			user: null,
 			inputSearchText: "",
@@ -175,6 +179,7 @@ export default defineComponent({
 		BF220,
 		CM110,
 		CM130,
+		PA610,
 		Test,
 		Example,
 		MenuFoldOutlined,
@@ -192,21 +197,21 @@ export default defineComponent({
 				this.activeTab = item;
 				this.menuTab.push(item);
 				return;
-			}else if(this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard'){
+			} else if (this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard') {
 
 				this.activeTab = { name: "dashboard", url: "/dashboard", id: "" };
 			}
 		});
 
-		if(this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard'){
+		if (this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard') {
 			this.activeTab = { name: "Dashboard", url: "/dashboard", id: "" };
-				this.menuTab.push({ name: "Dashboard", url: "/dashboard", id: "" });
+			this.menuTab.push({ name: "Dashboard", url: "/dashboard", id: "" });
 		}
-		
+
 	},
 	watch: {
 		activeTab: {
-			handler(newValue,oldVal) {
+			handler(newValue, oldVal) {
 				if (newValue) {
 					if (newValue.id.includes("bf-1")) {
 						this.openKeys = ["bf-000", "bf-100"];
@@ -253,6 +258,9 @@ export default defineComponent({
 					if (newValue.id.includes("pa-5")) {
 						this.openKeys = ["pa-000", "pa-500"];
 					}
+					if (newValue.id.includes("pa-6")) {
+						this.openKeys = ["pa-000", "pa-600"];
+					}
 					if (newValue.id !== '#') {
 						this.$router.push(`/dashboard/${newValue.id}`);
 					}
@@ -271,7 +279,7 @@ export default defineComponent({
 			}
 		},
 
-		currentComponent() {
+		currentComponent() { 
 			if (this.activeTab.id === "") return Example;
 			if (this.activeTab.id === "bf-310") return BF310;
 			if (this.activeTab.id === "bf-320") return BF320;
@@ -281,6 +289,7 @@ export default defineComponent({
 			if (this.activeTab.id === "bf-220") return BF220;
 			if (this.activeTab.id === "cm-110") return CM110;
 			if (this.activeTab.id === "cm-130") return CM130;
+			if (this.activeTab.id === "pa-610") return PA610;
 			if (this.activeTab.id === "example") return Example;
 			return Test;
 		},
@@ -342,8 +351,8 @@ export default defineComponent({
 			if (this.menuTab.length === 0) {
 				this.activeTab = { name: "example", url: "/dashboard", id: "" };
 				this.$router.push('/dashboard');
-				
-				
+
+
 			}
 		},
 		changeActiveTab(item) {
@@ -395,6 +404,7 @@ export default defineComponent({
 	margin-top: 0px;
 	margin-bottom: 2px !important;
 }
+
 .ant-layout.ant-layout-has-sider {
 	min-height: calc(100vh - 64px);
 }
@@ -440,7 +450,7 @@ export default defineComponent({
 
 	.right {
 		// padding-left: 24px;
-		 padding-top: 3px;
+		padding-top: 3px;
 		float: left;
 		width: calc(100% - 324px);
 	}
@@ -542,7 +552,7 @@ export default defineComponent({
 .nav-tabs {
 	display: block;
 	box-shadow: inset 0 -1px 0 #888;
-	height:35px;
+	height: 35px;
 	// margin-bottom: 5px;
 
 	ul {
@@ -588,7 +598,8 @@ export default defineComponent({
 		}
 	}
 }
-.user-info{
-    display: flex;
+
+.user-info {
+	display: flex;
 }
 </style>
