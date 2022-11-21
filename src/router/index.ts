@@ -7,11 +7,12 @@ import ResetPassword from "../views/ResetPassword.vue"
 import ChangePassword from "../views/ChangePassword.vue"
 import NotFound from "../views/NotFound.vue"
 const routes = [
-  { path: "/", component: DefaultLayout, 
+  {
+    path: "/", component: DefaultLayout,
     meta: {
       needAuth: true,
       title: 'Home'
-    } 
+    }
   },
   {
     path: "/login",
@@ -23,7 +24,7 @@ const routes = [
       }
     ]
   },
-  
+
   {
     path: "/user",
     component: LoginLayout,
@@ -44,8 +45,9 @@ const routes = [
       }
     ]
   },
-  { path: "/request-contract", 
-  component: LoginLayout, 
+  {
+    path: "/request-contract",
+    component: LoginLayout,
     meta: {
       title: 'Request Contract'
     },
@@ -95,6 +97,10 @@ const routes = [
         path: "cm-130",
         component: () => import('../views/CM/CM1/CM130/index.vue')
       },
+      {
+        path: "pa-610",
+        component: () => import('../views/PA/PA6/PA610/index.vue')
+      },
     ]
   },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
@@ -105,8 +111,8 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  if(to.meta.needAuth) {
-    if(sessionStorage.getItem('token')) {
+  if (to.meta.needAuth) {
+    if (sessionStorage.getItem('token')) {
       next()
     } else {
       next("/login")
@@ -114,7 +120,7 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
- 
+
 })
 
 export default router;
