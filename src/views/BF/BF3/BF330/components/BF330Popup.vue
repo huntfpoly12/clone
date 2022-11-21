@@ -90,10 +90,10 @@
                                                         </p>
                                                     </a-form-item>
                                                     <div class="custom-money">
-                                                        <checkbox-basic :value="true" :disabled="true" size="16"
-                                                            label="기본이용료" />
-                                                        <number-box-money v-model:valueInput="data.data.price"
-                                                            width="100%" :spinButtons="false" />
+                                                        <a-form-item label="기본이용료" >
+                                                            <number-box-money style="float:right" :width="185" v-model:valueInput="data.data.price"
+                                                                :spinButtons="false" />
+                                                        </a-form-item>
                                                     </div>
 
                                                     <div class="custom-money">
@@ -187,10 +187,11 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <div style="display: flex; padding-left: 120px">
-                                            <checkbox-basic style="width: 180px"
+                                            <!-- <checkbox-basic style="width: 180px"
                                                 v-model:valueCheckbox="formState.checkBoxBasicFee" size="14"
-                                                label="기본이용료" @change="handleInputTexService" />
-                                            <number-box-money :min="0" width="180px"
+                                                label="기본이용료" @change="handleInputTexService" /> -->
+                                            <span style="width: 180px; line-height: 33px;">기본이용료</span>
+                                            <number-box-money  :min="0" width="180px"
                                                 :disabled="formState.disableNumber5"
                                                 v-model:valueInput="formState.usedServiceInfoWithholdingPrice"
                                                 :spinButtons="false" />
@@ -435,7 +436,7 @@ export default defineComponent({
                 // process price Company / Withholding information (사업자/원천정보)
                 formState.usedServiceInfoWithholdingPrice =
                     value.getServiceContract.usedServiceInfo.withholding.price;
-                formState.checkBoxBasicFee = value.getServiceContract.usedServiceInfo.withholding.price == 0 ? false : true;
+                // formState.checkBoxBasicFee = value.getServiceContract.usedServiceInfo.withholding.price == 0 ? false : true;
                 formState.disableNumber5 = value.getServiceContract.usedServiceInfo.withholding.price == 0 ? true : false;
                 formState.disableNumber6 = value.getServiceContract.usedServiceInfo.withholding.options.length == 0 ? true : false
                 if ( value.getServiceContract.usedServiceInfo.withholding.options.length > 0 ) {
@@ -897,14 +898,14 @@ export default defineComponent({
                 formState.disableNumber4 = false;
             }
         });
-        watch(() => formState.checkBoxBasicFee, (newVal) => {
-            if (newVal === false) {
-                formState.usedServiceInfoWithholdingPrice = 0;
-                formState.disableNumber5 = true;
-            } else {
-                formState.disableNumber5 = false;
-            }
-        });
+        // watch(() => formState.checkBoxBasicFee, (newVal) => {
+        //     if (newVal === false) {
+        //         formState.usedServiceInfoWithholdingPrice = 0;
+        //         formState.disableNumber5 = true;
+        //     } else {
+        //         formState.disableNumber5 = false;
+        //     }
+        // });
         watch(() => formState.checkBoxMajorInsurance, (newVal) => {
             if (newVal === false) {
                 formState.fourMajorInsurance = 0;
