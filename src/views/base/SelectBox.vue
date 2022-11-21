@@ -36,6 +36,33 @@
             <tr>
                 <td>
                     <div class="dx-field">
+                        <div class="dx-field-label">List country select box</div>
+                        <div class="dx-field-value">
+                            <stay-qualification-select-box v-model:valueStayQualifiction="valueStayQualifiction" />
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li><strong>required:</strong> Boolean (option)</li>
+                        <li><strong>valueStayQualifiction:</strong> {type: String}</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
+                &lt;stay-qualification-select-box v-model:valueStayQualifiction="valueStayQualifiction" /&gt;
+        </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
                         <div class="dx-field-label">List tag select box</div>
                         <div class="dx-field-value">
                             <tag-select-box :arrayValue="arrayTagSelectBox"
@@ -378,7 +405,7 @@
             <div class="dx-field-value">
               <type-code-select-box
                 v-model:valueInput="valueTypeCodeSelectSelectBox"
-                :required="true">
+                :disabled="false">
               </type-code-select-box>
             </div>
           </div>
@@ -386,12 +413,13 @@
         <td>
           <ul>
             <li><strong>disabled:</strong> Boolean (option)</li>
-            <li><strong>valueInput:</strong> {type: Number,}</li>
+            <li><strong>valueInput:</strong> {type: String}</li>
           </ul>
         </td>
         <td>
           <pre class="mycode">
-                &lt; subs-req-status-process-bar / &gt;
+                &lt; type-code-select-box v-model:valueInput="valueTypeCodeSelectSelectBox"
+                :required="true" &gt; &lt;/ type-code-select-box &gt;
               </pre
           >
         </td>
@@ -417,7 +445,8 @@ export default defineComponent({
     },
     setup() {
         const valueCountry = ref('KR')
-        const valueTypeCodeSelectSelectBox = ref(940100)
+        const valueStayQualifiction = ref('C-4')
+        const valueTypeCodeSelectSelectBox = ref('940908')
         const arrayTagSelectBox = ref([
             { id: 0, name: "Low" },
             { id: 1, name: "Normal" },
@@ -428,6 +457,7 @@ export default defineComponent({
         const saleStatus = ref(10);
         return {
             saleStatus,
+            valueStayQualifiction,
             arrayTagSelectBox,
             valueTagSelectBox,
             valueCountry,
