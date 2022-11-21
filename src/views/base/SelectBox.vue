@@ -367,15 +367,42 @@
                 <td>
                     <pre class="mycode">
                 &lt; subs-req-status-process-bar / &gt;
-              </pre>
-                </td>
-            </tr>
-        </table>
-    </form>
+              </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
+            <div class="dx-field-label">Select Employee Extra income</div>
+            <div class="dx-field-value">
+              <type-code-select-box
+                v-model:valueInput="valueTypeCodeSelectSelectBox"
+                :required="true">
+              </type-code-select-box>
+            </div>
+          </div>
+        </td>
+        <td>
+          <ul>
+            <li><strong>disabled:</strong> Boolean (option)</li>
+            <li><strong>valueInput:</strong> {type: Number,}</li>
+          </ul>
+        </td>
+        <td>
+          <pre class="mycode">
+                &lt; subs-req-status-process-bar / &gt;
+              </pre
+          >
+        </td>
+      </tr>
+    </table>
+  </form>
 </template>
 
 <script>
 import { defineComponent, ref } from "vue";
+import TypeCodeSelectBox from "../../components/common/TypeCodeSelectBox.vue";
 // import TagSelectBoxVue from "../../components/common/TagSelectBox.vue";
 export default defineComponent({
     components: {
@@ -390,6 +417,7 @@ export default defineComponent({
     },
     setup() {
         const valueCountry = ref('KR')
+        const valueTypeCodeSelectSelectBox = ref(940100)
         const arrayTagSelectBox = ref([
             { id: 0, name: "Low" },
             { id: 1, name: "Normal" },
@@ -402,7 +430,8 @@ export default defineComponent({
             saleStatus,
             arrayTagSelectBox,
             valueTagSelectBox,
-            valueCountry
+            valueCountry,
+            valueTypeCodeSelectSelectBox,
         };
     },
 });
