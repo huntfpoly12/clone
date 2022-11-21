@@ -9,7 +9,7 @@
             <tr>
                 <td>
                     <div class="dx-field">
-                        <div class="dx-field-label">List tag select box</div>
+                        <div class="dx-field-label">List country select box</div>
                         <div class="dx-field-value">
                             <country-code-select-box v-model:valueCountry="valueCountry" />
                         </div>
