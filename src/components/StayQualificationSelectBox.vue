@@ -59,11 +59,7 @@ export default defineComponent({
 				key: key
 			})
 
-		}
-
-		console.log(dataSelect);
-
-
+		}  
 		const onValueChanged = (val: any) => {
 			emit('update:valueStayQualifiction', val.value)
 		}
