@@ -76,13 +76,7 @@
                         &gt;
                     </span>
                 </td>
-            </tr> 
-
-            <tr>
-                <td>
-                    
-                </td>
-            </tr>
+            </tr>  
         </table>
     </form>
 </template>
