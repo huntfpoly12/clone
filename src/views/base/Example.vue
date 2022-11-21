@@ -22,8 +22,7 @@
               <span>{{ employee.TabName }}</span>
             </div>
           </template>
-          <template #itemTemplate="{ data: employee }">
-          
+          <template #itemTemplate="{ data: employee }"> 
             <component v-bind:is="employee.layoutName" />
           </template>
         </DxTabPanel>

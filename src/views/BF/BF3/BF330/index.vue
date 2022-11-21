@@ -22,18 +22,17 @@
                             <switch-basic v-model:valueSwitch="originData.filter.excludeCancel" :textCheck="'포함'"
                                 :textUnCheck="'제외'" />
                         </a-col>
-
                         <a-col>
                             <label class="lable-item">주소 :</label>
                             <default-text-box width="120px" v-model:valueInput="originData.filter.address" />
                         </a-col>
                         <a-col>
                             <label class="lable-item">매니저명 :</label>
-                            <list-manager-dropdown v-model:valueInput="originData.filter.manageUserId" />
+                            <list-manager-dropdown v-model:valueInput="originData.filter.manageUserId" width="150px"/>
                         </a-col>
                         <a-col>
                             <label class="lable-item">영업자명 :</label>
-                            <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" />
+                            <list-sales-dropdown v-model:valueInput="originData.filter.salesRepresentativeId" width="150px"/>
                         </a-col>
                         <a-col>
                             <checkbox-basic label="회계" v-model:valueCheckbox="originData.filter.usedAccounting" :size="'18'" />
@@ -54,7 +53,6 @@
                         <DxItem name="searchPanel" />
                         <DxItem location="after" template="pagination-table"/>
                         <DxItem name="exportButton" />
-                       
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" />
@@ -152,7 +150,6 @@ export default defineComponent({
     setup() {
         // config grid
         const store = useStore();
-        
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -180,7 +177,6 @@ export default defineComponent({
                 usedWithholding: true,
             }
         })
-
         const { refetch: refetchData, loading, result } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
         // process data after call getServiceContracts api
         watch(result, (value: any) => {
@@ -188,14 +184,10 @@ export default defineComponent({
             listServiceContract.value = value.searchServiceContracts.datas
             trigger.value = false;
         });
-
-
-
         const changePage = () => {
             trigger.value = true;
             refetchData();
         }
-
         const searching = () => {
             trigger.value = true;
             refetchData()
@@ -261,15 +253,12 @@ export default defineComponent({
 #data-grid-demo {
     min-height: 700px;
 }
-
 .components-grid-demo-flex .ant-col {
     display: flex;
     align-items: center;
 }
-
 ::v-deep .dx-toolbar-after {
     display: flex;
-
     .dx-toolbar-item {
         &:first-child {
             order: 2;
@@ -277,28 +266,22 @@ export default defineComponent({
         }
     }
 }
-
 .modal-note {
     max-height: 500px;
     overflow-y: auto;
-
     .title-note {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-
     th {
         display: none;
     }
 }
-
 .anticon {
     cursor: pointer;
 }
-
 .custom-action {
     text-align: center;
 }
-
 </style>
