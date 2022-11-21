@@ -1,13 +1,13 @@
-<template> 
-	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueCountry"
-		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
-		:disabled="disabled" :required="required">
+<template>
+	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged"
+		:value="valueStayQualifiction" value-expr="key" display-expr="value" field-template="field" item-template="item"
+		:style="{ width: width }" :disabled="disabled" :required="required">
 		<template #field="{ data }">
 			<div class="select-content" style="padding: 3px 0px;">
 				<a-tag color="default">{{ data.key }}</a-tag>
 				<div>
 					<DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
-					{{ data.value }}
+					{{ data.value }} 
 				</div>
 			</div>
 		</template>
@@ -23,17 +23,16 @@
 	</DxSelectBox>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 import DxSelectBox from "devextreme-vue/select-box";
-import ArrayStore from "devextreme/data/array_store";
-import { CountryCode, enum2KeysByValueMap } from "@trandung1291/common-tsv";
+import { StayQualification } from "@bankda/jangbuda-common";
 
 export default defineComponent({
 	props: {
-		valueCountry: {
+		valueStayQualifiction: {
 			type: String,
-			default: 'KR',
+			default: 'C-4',
 		},
 		width: {
 			type: String,
@@ -53,23 +52,23 @@ export default defineComponent({
 		DxTextBox,
 	},
 	setup(props, { emit }) {
-		let dataSelect = ref(Array());
-		const data = new ArrayStore({
-			data: dataSelect.value,
-			key: "key",
-		});
-		enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
-			dataSelect.value.push({ key: codeCountry, value: nameCountry });
-		});
-
-		const onValueChanged = (val: any) => {
-			console.log(val.value);
-
-			emit('update:valueCountry', val.value)
+		let dataSelect: any = reactive([]);
+		for (const [value, key] of Object.entries(StayQualification)) {
+			dataSelect.push({
+				value: value,
+				key: key
+			})
 
 		}
 
-		return { dataSelect, data, onValueChanged };
+		console.log(dataSelect);
+
+
+		const onValueChanged = (val: any) => {
+			emit('update:valueStayQualifiction', val.value)
+		}
+
+		return { dataSelect, onValueChanged };
 	},
 });
 </script>
