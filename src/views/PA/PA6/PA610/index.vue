@@ -184,7 +184,7 @@ export default defineComponent({
         const valueCheckbox = ref(1)
         const valueCountry = ref()
         const trigger = ref<boolean>(true);
-        const triggerDetail = ref(false);
+        const triggerDetail = ref<boolean>(false);
         const valueCallApiGetEmployeeBusinesses = reactive({
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
@@ -209,24 +209,31 @@ export default defineComponent({
             notification('error', res.message)
         })
 
-        const { refetch: refetchDataDetail, loading: loadingGetEmployeeBusinessesDetail, onError: errorGetEmployeeBusinessesDetail, result } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
-            enalbed: triggerDetail,
+        // const { refetch: refetchDataDetail, loading: loadingGetEmployeeBusinessesDetail, onError: errorGetEmployeeBusinessesDetail, result } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
+        //     enalbed: triggerDetail,
+        //     fetchPolicy: "no-cache",
+        // }));
+
+
+        const { } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
+            enalbed: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
+
         // resEmployeeBusinessesDetail(res => {
         //     console.log(res);
         //     // dataSource.value = res.data.getEmployeeBusinesses
         // })
 
-        watch(result, (newValue, old) => {
-            // if (newValue) {
-            console.log('123142');
-            //     triggerDetail.value = false;
-            // }
-        });
-        errorGetEmployeeBusinessesDetail(res => {
-            notification('error', res.message)
-        })
+        // watch(result, (newValue, old) => {
+        //     // if (newValue) {
+        //     console.log('123142');
+        //     //     triggerDetail.value = false;
+        //     // }
+        // });
+        // errorGetEmployeeBusinessesDetail(res => {
+        //     notification('error', res.message)
+        // })
 
 
 
