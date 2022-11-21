@@ -8,7 +8,12 @@
             </tr>
             <tr>
                 <td>
-                    <country-code-select-box v-model:valueCountry="valueCountry" />
+                    <div class="dx-field">
+                        <div class="dx-field-label">List country select box</div>
+                        <div class="dx-field-value">
+                            <country-code-select-box v-model:valueCountry="valueCountry" />
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <ul>
