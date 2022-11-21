@@ -43,6 +43,10 @@ export default defineComponent({
             type: String,
             default: "이해했다"
         },
+        cancelText:{
+            type: String,
+            default: "이해했다"
+        }
     },
     components: {
         WarningOutlined
@@ -99,10 +103,15 @@ export default defineComponent({
                             title: props.title,
                             content: props.content,
                             okText: props.okText,
-                            cancelText: '取消',
+                            cancelText: props.cancelText,
                             onOk() {
                                 emit("closePopup", false)
+                                emit("checkConfirm", true)
                             },
+                            onCancel() {
+                                emit("closePopup", false)
+                                emit("checkConfirm", false)
+                            }
 
                         });
                     else if (props.typeModal == "acceptInput") {
