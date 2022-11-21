@@ -19,7 +19,7 @@
                     <a-col :span="14" class="custom-layout">
                         <div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                                :show-borders="true" key-expr="id" @exporting="onExporting"
+                                :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                 :column-auto-width="true">
                                 <DxScrolling column-rendering-mode="virtual" />
@@ -43,18 +43,49 @@
                                             v-model:page-size="originData.rows" :total="rowTable" show-less-items />
                                     </div>
                                 </template>
-                                <DxColumn caption="영업자코드" data-field="code" />
-                                <DxColumn caption="영업자명" data-field="name" />
-                                <DxColumn caption="등급" data-field="grade" data-type="text" cell-template="grade-cell" />
-                                <DxColumn caption="주소" data-field="address" />
+                                <DxColumn caption="성명 (상호)" cell-template="tag" />
+                                <template #tag="{ data }" class="custom-action">
+                                    <div class="custom-action">
+                                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                            :idCardNumber="data.data.residentId" :status="data.data.status"
+                                            :foreigner="data.data.foreigner" :checkStatus="false" />
+                                    </div>
+                                </template>
 
+                                <DxColumn caption="주민등록번호" data-field="residentId" />
+                                <DxColumn caption="소득부분" cell-template="grade-cell" />
+                                <template #grade-cell="{ data }" class="custom-action">
+                                    <div class="custom-grade-cell">
+                                        <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
+                                        <span>{{ data.data.incomeTypeName }}</span>
+                                    </div>
+                                </template>
+
+                                <DxColumn :width="80" cell-template="pupop" />
+                                <template #pupop="{ data }" class="custom-action">
+                                    <div class="custom-action">
+                                        <a-space :size="10">
+                                            <a-tooltip placement="top">
+                                                <template #title>편집</template>
+                                                <EditOutlined />
+                                            </a-tooltip>
+                                            <a-tooltip placement="top">
+                                                <template #title>변경이력</template>
+                                                <HistoryOutlined />
+                                            </a-tooltip>
+                                            <a-tooltip placement="top">
+                                                <template #title>변경이력</template>
+                                                <DeleteOutlined />
+                                            </a-tooltip>
+                                        </a-space>
+                                    </div>
+                                </template>
                             </DxDataGrid>
                             <div class="pagination-table" v-if="rowTable > originData.rows">
                                 <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                                     :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                             </div>
                         </div>
-
                     </a-col>
                     <a-col :span="10" class="custom-layout">
                         <div>
@@ -105,14 +136,14 @@ import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
-import queries from "../../../../graphql/queries/BF/BF3/BF340/index";
+import queries from "../../../../graphql/queries/PA/PA6/PA610/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, ArrForeigner } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "../../../../../src/helpers/commonFunction";
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 export default defineComponent({
     components: {
@@ -153,16 +184,52 @@ export default defineComponent({
         const valueCheckbox = ref(1)
         const valueCountry = ref()
         const trigger = ref<boolean>(true);
+        const triggerDetail = ref(false);
         const valueCallApiGetEmployeeBusinesses = reactive({
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
         })
+        const valueCallApiGetEmployeeBusiness = reactive({
+            companyId: companyId,
+            imputedYear: parseInt(dayjs().format('YYYY')),
+            employeeId: null,
+            incomeTypeCode: ''
+        })
 
         // ================GRAPQL==============================================
-        const { refetch: refetchData, loading: getData, onError, result } = useQuery(queries.getDataSale, valueCallApiGetEmployeeBusinesses, () => ({
+        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
             enalbed: trigger.value,
             fetchPolicy: "no-cache",
         }));
+        resEmployeeBusinesses(res => {
+            // console.log(res);
+            dataSource.value = res.data.getEmployeeBusinesses
+        })
+        errorGetEmployeeBusinesses(res => {
+            notification('error', res.message)
+        })
+
+        const { refetch: refetchDataDetail, loading: loadingGetEmployeeBusinessesDetail, onError: errorGetEmployeeBusinessesDetail, result } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
+            enalbed: triggerDetail,
+            fetchPolicy: "no-cache",
+        }));
+        // resEmployeeBusinessesDetail(res => {
+        //     console.log(res);
+        //     // dataSource.value = res.data.getEmployeeBusinesses
+        // })
+
+        watch(result, (newValue, old) => {
+            // if (newValue) {
+            console.log('123142');
+            //     triggerDetail.value = false;
+            // }
+        });
+        errorGetEmployeeBusinessesDetail(res => {
+            notification('error', res.message)
+        })
+
+
+
 
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
@@ -175,6 +242,7 @@ export default defineComponent({
             // refetchData();
         };
         return {
+            loadingGetEmployeeBusinesses,
             arrForeigner,
             rowTable,
             loading,

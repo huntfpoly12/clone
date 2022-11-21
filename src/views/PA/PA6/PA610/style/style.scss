@@ -46,4 +46,18 @@
             padding-left: 5px;
         }
     }
+
+    .custom-grade-cell {
+        display: flex;
+        align-items: center;
+        
+        .custom-grade-cell-tag {
+            padding: 3px 10px;
+            border: 1px solid #304967;
+            margin-right: 10px;
+            border-radius: 5px;
+            min-width: 50px;
+            text-align: center;
+        }
+    }
 }
