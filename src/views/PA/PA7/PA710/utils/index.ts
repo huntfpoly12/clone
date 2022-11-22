@@ -1,7 +1,4 @@
 export const initialState = {
-    companyId: 0,
-    imputedYear: 0,
-    input: {
         name: "",
         foreigner: false,
         nationality: "베트남",
@@ -12,5 +9,4 @@ export const initialState = {
         employeeId: 0,
         incomeTypeCode: "940100",
         incomeTypeName: "저술가",
-    }
 }

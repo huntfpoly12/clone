@@ -64,7 +64,7 @@
                             <a-form-item label="코드" :label-col="labelCol">
                                 <div class="custom-note">
                                     <number-box :required="true" :width="150"
-                                        v-model:valueInput="formState.input.employeeId" :spinButtons="true"
+                                        v-model:valueInput="formState.employeeId" :spinButtons="true"
                                         :disabled="checkForm">
                                     </number-box>
                                     <span>
@@ -75,7 +75,7 @@
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="성명(상호) " :label-col="labelCol">
-                                <default-text-box :width="150" v-model:valueInput="formState.input.name"
+                                <default-text-box :width="150" v-model:valueInput="formState.name"
                                     :required="true">
                                 </default-text-box>
                             </a-form-item>
@@ -83,30 +83,30 @@
                         <a-col :span="24">
                             <a-form-item label="내/외국인 " :label-col="labelCol" class="red">
                                 <radio-group :arrayValue="optionsRadio" :required="true"
-                                    v-model:valueRadioCheck="formState.input.foreigner" :layoutCustom="'horizontal'" />
+                                    v-model:valueRadioCheck="formState.foreigner" :layoutCustom="'horizontal'" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 국적 " :label-col="labelCol">
-                                <country-code-select-box v-model:valueCountry="formState.input.nationalityCode"
+                                <country-code-select-box v-model:valueCountry="formState.nationalityCode"
                                     @textCountry="textCountry" :required="true" :disabled="disabledSelect" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 체류자격 " :label-col="labelCol">
                                 <stay-qualification-select-box :required="true" :disabled="disabledSelect"
-                                    v-model:valueStayQualifiction="formState.input.stayQualification" />
+                                    v-model:valueStayQualifiction="formState.stayQualification" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
                             <a-form-item :label="disabledSelect ? '외국인번호 유효성' : '주민등록번호' " :label-col="labelCol">
-                                <text-number-box :width="150" v-model:valueInput="formState.input.residentId"
+                                <text-number-box :width="150" v-model:valueInput="formState.residentId"
                                     :required="true"></text-number-box>
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 체류자격 " :label-col="labelCol">
-                                <type-code-select-box v-model:valueInput="formState.input.incomeTypeCode"
+                                <type-code-select-box v-model:valueInput="formState.incomeTypeCode"
                                     @textTypeCode="textTypeCode" :required="true">
                                 </type-code-select-box>
                             </a-form-item>
@@ -115,7 +115,7 @@
                             <a-form-item label="이메일" class="red" :label-col="labelCol">
                                 <div class="custom-note">
                                     <mail-text-box placeholder="abc@example.com"
-                                        v-model:valueInput="formState.input.email" :required="true" id="email">
+                                        v-model:valueInput="formState.email" :required="true" id="email">
                                     </mail-text-box>
                                     <span>
                                         <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
@@ -177,7 +177,7 @@ export default defineComponent({
         let trigger = ref(true);
         const listEmployeeExtra = ref([])
 
-        const formState = reactive( {...initialState} );
+        let formState = reactive( {...initialState} );
 
         const originData = {
             companyId: companyId,
@@ -230,7 +230,7 @@ export default defineComponent({
                 let dataCreate = {
                     companyId: companyId,
                     imputedYear: parseInt(dayjs().format("YYYY")),
-                    input: formState.input,
+                    input: formState,
                 };
                 createEmployeeExtra(dataCreate);
             }
@@ -243,17 +243,17 @@ export default defineComponent({
                 let dataUpdate = {
                     companyId: companyId,
                     imputedYear: parseInt(dayjs().format("YYYY")),
-                    employeeId: formState.input.employeeId,
-                    incomeTypeCode: formState.input.incomeTypeCode,
+                    employeeId: formState.employeeId,
+                    incomeTypeCode: formState.incomeTypeCode,
                     input: {
-                        name: formState.input.name,
-                        foreigner: formState.input.foreigner,
-                        nationality: formState.input.nationality,
-                        nationalityCode: formState.input.nationalityCode,
-                        stayQualification: formState.input.stayQualification,
-                        residentId: formState.input.residentId,
-                        email: formState.input.email,
-                        incomeTypeName: formState.input.incomeTypeName,
+                        name: formState.name,
+                        foreigner: formState.foreigner,
+                        nationality: formState.nationality,
+                        nationalityCode: formState.nationalityCode,
+                        stayQualification: formState.stayQualification,
+                        residentId: formState.residentId,
+                        email: formState.email,
+                        incomeTypeName: formState.incomeTypeName,
                     }
                 };
                 updateEmployeeExtra(dataUpdate);
@@ -278,14 +278,23 @@ export default defineComponent({
             popupData.value = data;
         }
         const textCountry = (e: any) => {
-            formState.input.nationality = e
+            formState.nationality = e
         }
         const textTypeCode = (e: any) => {
-            formState.input.incomeTypeName = e
+            formState.incomeTypeName = e
         }
         const editData = (e: any) => {
             checkForm.value = true;
-            formState.input = e.data
+            formState.name = e.data.name
+            formState.foreigner = e.data.foreigner
+            formState.nationality = e.data.nationality
+            formState.nationalityCode = e.data.nationalityCode
+            formState.stayQualification = e.data.stayQualification
+            formState.residentId = e.data.residentId
+            formState.email = e.data.email
+            formState.employeeId = e.data.employeeId
+            formState.incomeTypeCode = e.data.incomeTypeCode
+            formState.incomeTypeName = e.data.incomeTypeName
         }
 
         const deleteData = (data: any) => {
@@ -314,7 +323,7 @@ export default defineComponent({
                 trigger.value = false;
             }
         });
-        watch(() => formState.input.foreigner, (newValue) => {
+        watch(() => formState.foreigner, (newValue) => {
             if (newValue) {
                 disabledSelect.value = true;
             } else {
