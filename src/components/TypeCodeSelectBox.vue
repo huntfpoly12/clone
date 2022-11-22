@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :search-enabled="true" :data-source="arrSelect" :value="valueTypeCode" :read-only="readOnly"
+    <DxSelectBox :search-enabled="true" :data-source="arrSelect" :value="valueInput" :read-only="readOnly"
         value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
         :disabled="disabled" @value-changed="updateValue">
         <template #field="{ data }">
@@ -27,7 +27,7 @@ import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
-import { IncomeTypeCode610, enum2KeysByValueMap } from "../../configs/enum"
+import { IncomeTypeCode610, enum2KeysByValueMap } from "../configs/enum"
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
     props: {
@@ -42,7 +42,7 @@ export default defineComponent({
 		},
         clearButton: Boolean,
         disabled: Boolean,
-        valueTypeCode: {
+        valueInput: {
             type: String,
             default: "940100",
         },
