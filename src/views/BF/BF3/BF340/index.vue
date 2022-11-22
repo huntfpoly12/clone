@@ -168,7 +168,7 @@ export default defineComponent({
         const dataSource = ref([]);
         const trigger = ref<boolean>(true);
         const { refetch: refetchData, loading, onError, result } = useQuery(queries.getDataSale, originData, () => ({
-            enalbed: trigger.value,
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         onError((error) => {

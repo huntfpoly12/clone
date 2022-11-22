@@ -1,13 +1,131 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  dsfdsfsdfsf
+  <a-spin :spinning="loading" size="large">
+    <action-header title="" />
+    <div id="bf-310">
+      <div class="search-form">
+        <a-row :gutter="[24, 8]">
+          <a-col>
+            <div class="dflex custom-flex">
+              <label class="lable-item">구분 :</label>
+              <radio-group
+                :arrayValue="radioCheckDataSearch"
+                v-model:valueRadioCheck="radioCheckDataSearch[2]"
+                :layoutCustom="'horizontal'"
+                style="margin: 6px 20px 0px 0px"
+              />
+            </div>
+          </a-col>
+          <a-col>
+            <div class="dflex custom-flex">
+              <label class="lable-item">귀속연도 :</label>
+            </div>
+          </a-col>
+        </a-row>
+      </div>
+      <div class="page-content">
+        <a-row>
+          <a-col :span="12">
+            <div class="format-settings">
+              <strong>서식 설정 : </strong>
+              <div class="format-settings-text">
+                <InfoCircleFilled /> 본 설정으로 적용된 서식으로 출력 및
+                메일발송 됩니다.
+              </div>
+            </div>
+            <div class="tax-select">
+              <radio-group
+                :arrayValue="radioCheckData"
+                v-model:valueRadioCheck="radioCheckData[2]"
+              />
+            </div>
+          </a-col>
+          <a-col :span="12"> 
+                <div class="created-date">
+                    <label class="lable-item">구분 :</label>
+                    <date-time-box width="150px"></date-time-box>
+                </div>
+          </a-col>
+        </a-row>
+
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id"
+                    @exporting="onExporting" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxToolbar>
+                        <DxItem name="searchPanel" />
+                        <DxItem name="exportButton" />
+                        <DxItem name="groupPanel" />
+                        <DxItem name="addRowButton" show-text="always" />
+                        <DxItem name="columnChooserButton" />
+                    </DxToolbar>
+                    <DxColumn  caption="성명"/>
+                    <DxColumn  caption="주민등록번호" />
+                    <DxColumn  caption="비고" />
+                    <DxColumn  caption="구분" />
+                    <DxColumn  caption="총급여계"/>
+                    <DxColumn  caption="징수세액계 (소득세/지방소득세)" />
+                    <DxColumn  caption="비과세소득계 (작성O)"/>
+                    <DxColumn  caption="비과세소득계 (작성X)" />
+                    <DxColumn  caption="감면세액계" />
+                    <DxColumn  caption="납세조합공제세액계" />
+                    <DxColumn  caption="차감원천징수액계" />
+                    <DxColumn  caption="소득공제계" />
+        </DxDataGrid>
+      </div>
+    </div>
+  </a-spin>
 </template>
+<script lang="ts">
+import { ref, defineComponent, reactive, watch, computed } from "vue";
+import { useStore } from 'vuex';
+import { useQuery } from "@vue/apollo-composable";
+import { InfoCircleFilled } from "@ant-design/icons-vue";
+import { radioCheckDataSearch, radioCheckData } from "./utils/index";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel,DxToolbar,DxItem } from 'devextreme-vue/data-grid';
+import { companyId,onExportingCommon } from "../../../../helpers/commonFunction";
+import queries from "../../../../graphql/queries/PA/PA2/PA230/index"
 
-<script>
-export default {
+export default defineComponent({
+  components: {
+    DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel,DxToolbar,DxItem,
+    InfoCircleFilled
+  },
+  setup() {
+    const store = useStore();
+    const trigger = ref<boolean>(true);
+    const move_column = computed(() => store.state.settings.move_column);
+    const colomn_resize = computed(() => store.state.settings.colomn_resize);
+    const dataSource = ref([]);
+    const originData = ref({
+        companyId:companyId,
+        imputedYear:2022
+        });
+    const { refetch: refetchData, result, loading } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }));
+    const onExporting = (e: { component: any; cancel: boolean; }) => {
+            onExportingCommon(e.component, e.cancel, '계약정보관리&심사')
+    }
+    watch(result, (value) => {
+        if (value) {
+            dataSource.value = value.getEmployeeWageDailies
+            trigger.value = false
+        }
+    });
+    return {
+      loading,
+      dataSource,
+      move_column,
+      colomn_resize,
+      onExporting,
+      radioCheckDataSearch,
+      radioCheckData,
 
-}
+    };
+  },
+});
 </script>
-
-<style>
-
-</style>
+<style lang="scss" scoped src="./style/style.scss" />
