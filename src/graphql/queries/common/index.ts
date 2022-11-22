@@ -12,6 +12,7 @@ import getWithholdingConfigPayItemsLogs from "./getWithholdingConfigPayItemsLogs
 import getScreenRoleGroupLogs from "./getScreenRoleGroupLogs";
 import searchPublicInstitutions from "./searchPublicInstitutions";
 import getSaleRequestContact from "./getSaleRequestContact";
+import getEmployeeBusinessesLogs from "./getEmployeeBusinessesLogs";
 
 const queries = {
   getListSale: getListSale,
@@ -28,6 +29,7 @@ const queries = {
   getScreenRoleGroupLogs :getScreenRoleGroupLogs,
   searchPublicInstitutions:searchPublicInstitutions,
   getSaleRequestContact:getSaleRequestContact,
+  getEmployeeBusinessesLogs:getEmployeeBusinessesLogs,
 };
 
 export default queries;

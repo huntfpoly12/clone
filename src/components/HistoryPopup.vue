@@ -4,8 +4,9 @@
             :mask-closable="false">
             <a-spin tip="로딩 중..."
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="ts"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
+                    :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxColumn caption="기록일시" data-field="loggedAt" data-type="text" />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
@@ -29,7 +30,7 @@
                             </a-tooltip>
                         </a-space>
                     </template>
-                </DxDataGrid> 
+                </DxDataGrid>
             </a-spin>
             <template #footer>
             </template>
@@ -74,11 +75,12 @@ export default defineComponent({
         let trigger130 = ref<boolean>(false);
         let trigger110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
+        let trigger610 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
         const store = useStore();
-        
+
         // const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -96,7 +98,7 @@ export default defineComponent({
                     }
                     else {
                         dataQuery.value = { id: props.idRowEdit };
-                    }
+                    } 
                     switch (props.typeHistory) {
                         case 'bf-320':
                             trigger320.value = true;
@@ -124,6 +126,14 @@ export default defineComponent({
                             trigger220.value = true;
                             refetchCM220();
                             break;
+                        case 'pa-610': 
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger610.value = true;
+                            refetchPA610();
+                            break;
                         case 'cm-130':
                             dataQuery.value = {
                                 imputedYear: parseInt(dayjs().format('YYYY')),
@@ -143,6 +153,7 @@ export default defineComponent({
                     trigger130.value = false;
                     trigger110.value = false;
                     trigger220.value = false;
+                    trigger610.value = false;
                 }
             }
         );
@@ -236,6 +247,22 @@ export default defineComponent({
         watch(resultBF220, (value) => {
             if (value && value.getScreenRoleGroupLogs) {
                 dataTableShow.value = value.getScreenRoleGroupLogs;
+            }
+        });
+
+        // get getScreenRoleGroupLogs  610
+        const { result: resultPA610, loading: loadingPA610, refetch: refetchPA610 } = useQuery(
+            queries.getEmployeeBusinessesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger610.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        watch(resultPA610, (value) => {
+            if (value && value.getEmployeeBusinessesLogs) {
+                dataTableShow.value = value.getEmployeeBusinessesLogs;
             }
         });
 
