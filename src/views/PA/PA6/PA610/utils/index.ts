@@ -27,5 +27,5 @@ export const valueDefaultAction = {
     residentId: '',
     incomeTypeCode: '940100',
     incomeTypeName: '저술가',
-    email: '', 
-}
+    email: '',
+} 

@@ -5,7 +5,7 @@
             <a-row>
                 <a-col :span="3" class="total-user">
                     <div>
-                        <span>300</span>
+                        <span>{{ dataSource.length }}</span>
                         <br>
                         <span>전체</span>
                     </div>
@@ -69,7 +69,7 @@
                                                 <template #title>편집</template>
                                                 <EditOutlined />
                                             </a-tooltip>
-                                            <a-tooltip placement="top">
+                                            <a-tooltip placement="top" @click="modalHistory(data.data.employeeId)">
                                                 <template #title>변경이력</template>
                                                 <HistoryOutlined />
                                             </a-tooltip>
@@ -89,6 +89,8 @@
                             <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false"
                                 typeModal="confirm" title="Title Notification" content="Content notification" okText="네"
                                 cancelText="아니요" @checkConfirm="statusComfirm" />
+                            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                                :data="popupData" title="변경이력" typeHistory="pa-610" />
                         </div>
                     </a-spin>
                 </a-col>
@@ -158,7 +160,7 @@ import DxButton from "devextreme-vue/button";
 import { companyId } from "../../../../../src/helpers/commonFunction";
 import dayjs from 'dayjs';
 import mutations from "../../../../graphql/mutations/PA/PA6/PA610/index";
-
+import HistoryPopup from '../../../../components/HistoryPopup.vue';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -183,9 +185,13 @@ export default defineComponent({
         SaveOutlined,
         ArrForeigner,
         DxButton,
-        InfoCircleFilled
+        InfoCircleFilled,
+        HistoryPopup
     },
     setup() {
+        let arrRowEdit = reactive([])
+        let popupData = ref([])
+        let modalHistoryStatus = ref<boolean>(false)
         const dataSource = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
@@ -224,7 +230,6 @@ export default defineComponent({
         })
         let disabledInput = ref(false)
         const modalStatus = ref(false)
-
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
             enabled: trigger.value,
@@ -301,6 +306,20 @@ export default defineComponent({
             notification('success', `업데이트 완료!`)
         })
 
+        // ================WATCHING============================================
+        watch(() => dataAction, (newValue, old) => {
+            if (disabledInput.value == true) {
+                dataSource.value.map((e: any) => {
+                    if (e.employeeId == newValue.employeeId) {
+                        e.foreigner = newValue.input.foreigner
+                        e.incomeTypeCode = newValue.incomeTypeCode
+                        e.incomeTypeName = newValue.input.incomeTypeName
+                        e.name = newValue.input.name
+                        e.residentId = newValue.input.residentId
+                    }
+                })  
+            }
+        }, { deep: true });
 
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
@@ -312,7 +331,7 @@ export default defineComponent({
             // trigger.value = true;
             // refetchData();
         };
-        const actionEdit = (employeeId: any, incomeTypeCode: any) => {
+        const actionEdit = (employeeId: any, incomeTypeCode: any) => {  
             disabledInput.value = true
             triggerDetail.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
@@ -381,7 +400,14 @@ export default defineComponent({
                 actionDeleteApi(valueCallApiGetEmployeeBusiness)
 
         }
+
+        const modalHistory = (data: any) => {
+            modalHistoryStatus.value = true;
+        }
         return {
+            popupData,
+            modalHistory,
+            modalHistoryStatus,
             loadingCreacted,
             disabledInput,
             loadingGetEmployeeBusinessesDetail,
