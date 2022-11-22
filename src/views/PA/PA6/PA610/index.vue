@@ -281,18 +281,18 @@ export default defineComponent({
         }
         return {
             disabledInput,
-            changeTextTypeCode,
             loadingGetEmployeeBusinessesDetail,
-            actionEdit,
             loadingGetEmployeeBusinesses,
             arrForeigner,
             rowTable,
-            onExporting,
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
-            searching,
             dataAction,
+            changeTextTypeCode,
+            actionEdit,
+            onExporting,
+            searching,
             changeTextCountry,
             saving
         };
