@@ -15,7 +15,7 @@
                 </a-col>
                 <a-col :span="21"></a-col>
                 <a-col :span="16" class="custom-layout">
-                    <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate" size="large">
+                    <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete" size="large">
                         <div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                                 :show-borders="true" key-expr="employeeId" @exporting="onExporting"
@@ -73,7 +73,8 @@
                                                 <template #title>변경이력</template>
                                                 <HistoryOutlined />
                                             </a-tooltip>
-                                            <a-tooltip placement="top">
+                                            <a-tooltip placement="top"
+                                                @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
                                                 <template #title>변경이력</template>
                                                 <DeleteOutlined />
                                             </a-tooltip>
@@ -85,6 +86,9 @@
                                 <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                                     :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                             </div>
+                            <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false"
+                                typeModal="confirm" title="Title Notification" content="Content notification" okText="네"
+                                cancelText="아니요" @checkConfirm="statusComfirm" />
                         </div>
                     </a-spin>
                 </a-col>
@@ -93,7 +97,7 @@
                         <div>
                             <a-form-item label="영업자코드" label-align="right">
                                 <div class="custom-note">
-                                    <default-text-box width="200px" v-model:valueInput="dataAction.employeeId"
+                                    <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
                                         placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
                                     <span>
                                         <InfoCircleFilled /> 최초 저장된 이후 수정 불가
@@ -132,7 +136,7 @@
                                         <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                                     </span>
                                 </div>
-                            </a-form-item> 
+                            </a-form-item>
                         </div>
                     </a-spin>
                 </a-col>
@@ -219,6 +223,7 @@ export default defineComponent({
             }
         })
         let disabledInput = ref(false)
+        const modalStatus = ref(false)
 
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
@@ -254,17 +259,17 @@ export default defineComponent({
             notification('error', res.message)
         })
 
-
         const {
             mutate: actionUpdate,
-            onError: upadteErr,
+            onError: upadateErr,
             loading: loadingUpdate,
             onDone: updateDone,
         } = useMutation(mutations.updateEmployeeBusiness);
         updateDone(res => {
+            refetchData()
             notification('success', `업데이트 완료!`)
         })
-        upadteErr(res => {
+        upadateErr(res => {
             notification('error', res.message)
         })
 
@@ -274,14 +279,27 @@ export default defineComponent({
             loading: loadingCreacted,
             onDone: creactedDone,
         } = useMutation(mutations.createEmployeeBusiness);
-        updateDone(res => {
+        creactedDone(res => {
+            refetchData()
             notification('success', `업데이트 완료!`)
         })
-        upadteErr(res => {
+        createdErr(res => {
             notification('error', res.message)
         })
 
-
+        const {
+            mutate: actionDeleteApi,
+            onError: deleteError,
+            loading: loadingDelete,
+            onDone: deleteDone,
+        } = useMutation(mutations.deleteEmployeeBusiness);
+        deleteError(res => {
+            notification('error', res.message)
+        })
+        deleteDone(res => {
+            refetchData()
+            notification('success', `업데이트 완료!`)
+        })
 
 
         // ================FUNCTION============================================
@@ -322,18 +340,18 @@ export default defineComponent({
                         imputedYear: parseInt(dayjs().format('YYYY')),
                         input: {
                             name: dataAction.input.name,
-                            foreigner: dataAction.input.name,
-                            nationality: dataAction.input.name,
-                            nationalityCode: dataAction.input.name,
-                            stayQualification: dataAction.input.name,
-                            residentId: dataAction.input.name,
-                            email: dataAction.input.name,
-                            employeeId: dataAction.input.name,
-                            incomeTypeCode: dataAction.input.name,
-                            incomeTypeName: dataAction.input.name,
+                            foreigner: dataAction.input.foreigner,
+                            nationality: dataAction.input.nationality,
+                            nationalityCode: dataAction.input.nationalityCode,
+                            stayQualification: dataAction.input.stayQualification,
+                            residentId: dataAction.input.residentId,
+                            email: dataAction.input.email,
+                            employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
+                            incomeTypeCode: dataAction.incomeTypeCode,
+                            incomeTypeName: dataAction.input.incomeTypeName,
                         }
                     }
-                    actionCreacted
+                    actionCreacted(dataCreact)
                 }
             }
         }
@@ -351,6 +369,18 @@ export default defineComponent({
             dataAction.input.incomeTypeName = valueDefaultAction.incomeTypeName
             dataAction.input.email = valueDefaultAction.email
         }
+
+        const actionDelete = (employeeId: any, incomeTypeCode: any) => {
+            valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
+            valueCallApiGetEmployeeBusiness.employeeId = employeeId
+            modalStatus.value = true
+        }
+
+        const statusComfirm = (res: any) => {
+            if (res == true)
+                actionDeleteApi(valueCallApiGetEmployeeBusiness)
+
+        }
         return {
             loadingCreacted,
             disabledInput,
@@ -363,6 +393,10 @@ export default defineComponent({
             originData,
             dataAction,
             loadingUpdate,
+            loadingDelete,
+            modalStatus,
+            statusComfirm,
+            actionDelete,
             addRow,
             changeTextTypeCode,
             actionEdit,
