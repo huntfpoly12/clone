@@ -116,13 +116,13 @@
                             </a-form-item>
                             <a-form-item label="외국인 국적" label-align="right">
                                 <country-code-select-box v-model:valueCountry="dataAction.input.nationalityCode"
-                                    @textCountry="changeTextCountry" width="200px" :disabled="disabledInput" />
+                                    @textCountry="changeTextCountry" width="200px" :disabled="disabledInput2" />
                             </a-form-item>
                             <a-form-item label="외국인 체류자격" label-align="right">
-                                <stay-qualification-select-box :disabled="disabledInput"
+                                <stay-qualification-select-box :disabled="disabledInput2"
                                     v-model:valueStayQualifiction="dataAction.input.stayQualification" width="200px" />
                             </a-form-item>
-                            <a-form-item label="주민(외국인)번호" label-align="right">
+                            <a-form-item :label="textResidentId" label-align="right">
                                 <id-number-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
                                     placeholder="숫자 13자리" :required="true" />
                             </a-form-item>
@@ -228,7 +228,9 @@ export default defineComponent({
             }
         })
         let disabledInput = ref(false)
+        let disabledInput2 = ref(true)
         const modalStatus = ref(false)
+        const textResidentId = ref('주민등록번호')
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
             enabled: trigger.value,
@@ -321,6 +323,17 @@ export default defineComponent({
             }
         }, { deep: true });
 
+        watch(() => dataAction.input.foreigner, (newValue, old) => {
+            console.log(newValue);
+            if (newValue == false){
+                disabledInput2.value = true
+                textResidentId.value = '외국인번호 유효성'
+            }else{
+                disabledInput2.value = false
+                textResidentId.value = '주민등록번호'
+            }
+        },);
+
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
@@ -334,6 +347,7 @@ export default defineComponent({
         const actionEdit = (employeeId: any, incomeTypeCode: any) => {
             disabledInput.value = true
             triggerDetail.value = true
+            disabledInput2.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
             valueCallApiGetEmployeeBusiness.employeeId = employeeId
             refetchDataDetail()
@@ -422,6 +436,8 @@ export default defineComponent({
         }
 
         return {
+            textResidentId,
+            disabledInput2,
             popupData,
             modalHistory,
             modalHistoryStatus,
