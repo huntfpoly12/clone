@@ -418,8 +418,7 @@ export default defineComponent({
         const titleModal = ref("사업자등록증")
         var dataStatus = initialDataStatus
         let objDataDefault = ref({ ...initialFormState });
-        const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay])
-        console.log(arrayRadioWithdrawDay);
+        const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay]) 
         
         var formState = ref({ ...initialFormState });
         // event close popup

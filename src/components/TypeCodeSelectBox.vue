@@ -27,7 +27,7 @@ import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
-import { IncomeTypeCode610, enum2KeysByValueMap } from "../../configs/enum"
+import { IncomeTypeCode610, enum2KeysByValueMap } from "../configs/enum"
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
     props: {
