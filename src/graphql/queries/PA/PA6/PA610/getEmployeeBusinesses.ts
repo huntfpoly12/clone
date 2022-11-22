@@ -1,7 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-    query
-    getEmployeeExtras(
+    query getEmployeeBusinesses(
             $companyId: Int!
             $imputedYear: Int!
         ){

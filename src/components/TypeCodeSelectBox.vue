@@ -27,7 +27,7 @@ import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
-import { IncomeTypeCode610, enum2KeysByValueMap } from "../configs/enum"
+import { IncomeTypeCode610, enum2KeysByValueMap, getEnumKey } from "../configs/enum"
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
     props: {
@@ -35,11 +35,11 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
-        
+
         width: {
-			type: String,
-			default: '200px'
-		},
+            type: String,
+            default: '200px'
+        },
         clearButton: Boolean,
         disabled: Boolean,
         valueInput: {
@@ -70,6 +70,7 @@ export default defineComponent({
         });
 
         const updateValue = (value: any) => {
+            emit('textTypeCode', getEnumKey(IncomeTypeCode610, value.value))
             emit("update:valueInput", value.value);
         };
         return {

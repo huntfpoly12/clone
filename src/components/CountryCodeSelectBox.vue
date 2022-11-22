@@ -1,4 +1,4 @@
-<template> 
+<template>
 	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueCountry"
 		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
 		:disabled="disabled" :required="required">
@@ -27,7 +27,7 @@ import { defineComponent, ref } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
-import { CountryCode, enum2KeysByValueMap } from "@trandung1291/common-tsv";
+import { CountryCode, enum2KeysByValueMap , getEnumValue} from "@trandung1291/common-tsv"; 
 
 export default defineComponent({
 	props: {
@@ -62,11 +62,9 @@ export default defineComponent({
 			dataSelect.value.push({ key: codeCountry, value: nameCountry });
 		});
 
-		const onValueChanged = (val: any) => {
-			console.log(val.value);
-
+		const onValueChanged = (val: any) => { 
+			emit('textCountry',getEnumValue(CountryCode,val.value))
 			emit('update:valueCountry', val.value)
-
 		}
 
 		return { dataSelect, data, onValueChanged };
