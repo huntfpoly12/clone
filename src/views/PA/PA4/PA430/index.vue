@@ -27,47 +27,51 @@
                 />
               </div>
             </a-col>
-
             <a-col>
-              <div class="dflex custom-flex">
+              <div class="dflex selectRatio">
                 <label class="lable-item">귀속/지급 :</label>
                 <radio-group
                   :arrayValue="arrayRadioCheck"
                   v-model:valueRadioCheck="valueRadioBox"
                   :layoutCustom="'horizontal'"
+
                 />
+        
               </div>
             </a-col>
           </div>
-
-          <a-col>
-            <div class="dflex custom-flex">
-              <label class="lable-item">서식 설정 :</label>
-              <span>
-                본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
-              </span>
-            </div>
-          </a-col>
-          <a-col>
-            <div class="dflex custom-flex">
-              <label class="lable-item">영수일:</label>
-              <date-time-box
-                width="300px"
-                dateFormat="YYYY-MM-DD"
-              ></date-time-box>
-            </div>
-          </a-col>
-          <a-col>
-            <label class="lable-item">소득자보관용 :</label>
-            <switch-basic
-              v-model:valueSwitch="originData.excludeCancel2"
-              :textCheck="'발행자보관용'"
-              :textUnCheck="'발행자보관용'"
-            />
-          </a-col>
         </a-row>
       </div>
       <div class="page-content">
+        <a-col>
+          <div class="content-flex">
+            <a-col>
+              <div class="dflex custom-flex">
+                <label class="lable-item">서식 설정 :</label>
+                <span>
+                  본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
+                </span>
+              </div>
+            </a-col>
+            <a-col>
+              <div class="dflex custom-flex">
+                <label class="lable-item">영수일:</label>
+                <date-time-box
+                  width="200px"
+                  dateFormat="YYYY-MM-DD"
+                ></date-time-box>
+              </div>
+            </a-col>
+          </div>
+        </a-col>
+        <a-col>
+          <label class="lable-item">소득자보관용 :</label>
+          <switch-basic
+            v-model:valueSwitch="originData.excludeCancel2"
+            :textCheck="'발행자보관용'"
+            :textUnCheck="'발행자보관용'"
+          />
+        </a-col>
         <DxDataGrid
           :show-row-lines="true"
           :hoverStateEnabled="true"
@@ -98,100 +102,20 @@
               />
             </div>
           </template>
-          <DxColumn data-field="checkbox" caption="Select Box" />
-          <DxColumn data-field="employInfo" caption="사원" />
-          <DxColumn data-field="phancong" caption="구분 " />
-          <DxColumn
-            data-field="createdAt"
-            caption="입사일 (정산시작일)"
-            cell-template="createdat-cell"
-            data-type="date"
-          />
-          <DxColumn
-            data-field="createdAt"
-            caption="퇴사일 (정산종료일)"
-            cell-template="createdat-cell"
-            data-type="date"
-          />
-          <DxColumn
-            data-field="createdAt"
-            caption="귀속연월"
-            cell-template="createdat-cell"
-            data-type="date"
-          />
-          <DxColumn
-            data-field="createdAt"
-            caption="지급연월"
-            cell-template="createdat-cell"
-            data-type="date"
-          />
-          <DxColumn data-field="companyName" caption="상호" />
-          <DxColumn data-field="companyAddress" caption="주소" />
-          <DxColumn data-field="presidentName" caption="대표자" />
-          <DxColumn caption="신청서비스" cell-template="acc-service" />
-          <template #acc-service="{ data }">
-            <span
-              >회계
-              <a-popover>
-                <template #content>
-                  <a-table
-                    :columns="[
-                      {
-                        title: 'Name',
-                        dataIndex: 'name',
-                      },
-                      {
-                        title: 'Year Month',
-                        dataIndex: 'startYearMonth',
-                      },
-                    ]"
-                    :data-source="data.data.simpleAccountingInfos"
-                    bordered
-                    :pagination="false"
-                  >
-                  </a-table>
-                </template>
-                <a-tag v-if="data.data.simpleAccountingInfos"
-                  >{{ data.data.simpleAccountingInfos.length }}
-                </a-tag>
-              </a-popover>
-            </span>
-            <span
-              >원천
-              <a-popover>
-                <template #content>
-                  <a-table
-                    :columns="[
-                      {
-                        title: 'Name',
-                        dataIndex: 'name',
-                      },
-                      {
-                        title: 'Year Month',
-                        dataIndex: 'startYearMonth',
-                      },
-                    ]"
-                    :data-source="[data.data.simpleWithholdingInfo]"
-                    bordered
-                    :pagination="false"
-                  >
-                  </a-table>
-                </template>
-                <a-tag>1</a-tag>
-              </a-popover>
-            </span>
-          </template>
+          <DxColumn caption="checkBox" />
+          <DxColumn caption="사원" />
+          <DxColumn caption="구분" />
+          <DxColumn caption="입사일 (정산시작일) " />
+          <DxColumn caption="퇴사일 (정산종료일) " />
+          <DxColumn caption="지급연월" />
+          <DxColumn caption="퇴직급여" />
+          <DxColumn caption="비과세 퇴직급여" />
+          <DxColumn caption="과세대상 퇴직급여" />
+          <DxColumn caption="공제" />
+          <DxColumn caption="차인지급액" />
+          <DxColumn caption="비고" />
           <DxColumn :width="80" cell-template="pupop" type="buttons" />
-          <template #pupop="{ data }" class="custom-action">
-            <div class="custom-action">
-              <div
-                style="color: blue; cursor: pointer"
-                @click="setModalVisible(data)"
-              >
-                편집
-              </div>
-            </div>
-          </template>
+
         </DxDataGrid>
         <div class="pagination-table" v-if="rowTable > originData.rows">
           <a-pagination
@@ -202,12 +126,16 @@
             @change="searching"
           />
         </div>
-        <BF310Popup
-          :modalStatus="modalStatus"
-          @closePopup="modalStatus = false"
-          :data="idSubRequest"
-        />
       </div>
+      <!-- Modal -->
+      <template>
+        <div>
+          <a-button type="primary" @click="showModal">Open Modal</a-button>
+          <a-modal v-model:visible="visible" title="Basic Modal" @ok="handleOk">
+            <p>Some contents...</p>
+          </a-modal>
+        </div>
+      </template>
     </div>
   </a-spin>
 </template>
@@ -237,11 +165,11 @@ import {
   DxToolbar,
   DxItem,
 } from "devextreme-vue/data-grid";
-import BF310Popup from "./components/BF310Popup.vue";
-import queries from "../../../../graphql/queries/BF/BF3/BF310/index";
+import PA430Popup from "./components/PA430Popup.vue";
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "../../../../helpers/commonFunction";
-
+import queries from "../../../../graphql/queries/PA/PA4/index";
+import mutations from "../../../../graphql/mutations/PA/PA4/PA430";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -250,7 +178,7 @@ export default defineComponent({
     DxSelection,
     DxExport,
     DxSearchPanel,
-    BF310Popup,
+    PA430Popup,
     SearchOutlined,
     EditOutlined,
     DxPager,
@@ -284,7 +212,7 @@ export default defineComponent({
       { id: 1, text: "퇴직소득" },
       { id: 2, text: "중간정산" },
     ]);
-    const valueRadioBox = ref(arrayRadioCheck.value[2]);
+    const valueRadioBox = ref(0);
     const mode2 = ref(["month", "month"]);
     const value = ref([]);
     const handleChange = (val: any) => {
@@ -297,9 +225,15 @@ export default defineComponent({
         mode[1] === "date" ? "month" : mode[1],
       ];
     };
-    const setModalVisible = (data: any) => {
-      idSubRequest.value = data.data.id;
-      modalStatus.value = true;
+    const visible = ref<boolean>(false);
+
+    const showModal = () => {
+      visible.value = true;
+    };
+
+    const handleOk = (e: MouseEvent) => {
+      console.log(e);
+      visible.value = false;
     };
     const {
       refetch: refetchData,
@@ -307,7 +241,7 @@ export default defineComponent({
       error,
       result,
     } = useQuery(
-      queries.searchSubscriptionRequests,
+      queries.searchIncomeRetirementWithholdingReceipts,
       { filter: originData },
       () => ({
         enabled: trigger.value,
@@ -317,17 +251,7 @@ export default defineComponent({
     const onExporting = (e: { component: any; cancel: boolean }) => {
       onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
     };
-    const getColorTag = (data: any) => {
-      if (data == 10) {
-        return { name: "red", tag_name: "신청" };
-      } else if (data == 20) {
-        return { name: "blue", tag_name: "심사중" };
-      } else if (data == 30) {
-        return { name: "green", tag_name: "승인" };
-      } else if (data == 99) {
-        return { name: "grey", tag_name: "반려" };
-      }
-    };
+
     const formarDate = (date: any) => {
       return dayjs(date).format("YYYY-MM-DD");
     };
@@ -341,8 +265,8 @@ export default defineComponent({
     };
     watch(result, (value) => {
       if (value) {
-        rowTable.value = value.searchSubscriptionRequests.totalCount;
-        dataSource.value = value.searchSubscriptionRequests.datas;
+        rowTable.value = value.searchIncomeRetirementWithholdingReceipts.totalCount;
+        dataSource.value = value.searchIncomeRetirementWithholdingReceipts.datas;
         trigger.value = false;
       }
     });
@@ -361,11 +285,12 @@ export default defineComponent({
       dataSource,
       modalStatus,
       rowTable,
-      setModalVisible,
+      visible,
+      showModal,
+      handleOk,
       originData,
       statuses,
       searching,
-      getColorTag,
       onExporting,
     };
   },
