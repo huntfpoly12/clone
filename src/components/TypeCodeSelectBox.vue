@@ -70,7 +70,7 @@ export default defineComponent({
         });
 
         const updateValue = (value: any) => {
-            emit('textCountry', getEnumKey(IncomeTypeCode610, value.value))
+            emit('textTypeCode', getEnumKey(IncomeTypeCode610, value.value))
             emit("update:valueInput", value.value);
         };
         return {
