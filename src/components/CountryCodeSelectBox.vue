@@ -63,10 +63,7 @@ export default defineComponent({
 		});
 
 		const onValueChanged = (val: any) => {
-			console.log(val.value);
-
 			emit('update:valueCountry', val.value)
-
 		}
 
 		return { dataSelect, data, onValueChanged };
