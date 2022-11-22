@@ -110,10 +110,11 @@
                                     v-model:valueRadioCheck="dataAction.foreigner" layoutCustom="horizontal" />
                             </a-form-item>
                             <a-form-item label="외국인 국적" label-align="right">
-                                <country-code-select-box v-model:valueCountry="valueCountry" width="200px" />
+                                <country-code-select-box v-model:valueCountry="dataAction.nationalityCode"
+                                    @textCountry="changeTextCountry" width="200px" />
                             </a-form-item>
                             <a-form-item label="외국인 체류자격" label-align="right">
-                                <stay-qualification-select-box v-model:valueStayQualifiction="valueStayQualifiction"
+                                <stay-qualification-select-box v-model:valueStayQualifiction="dataAction.stayQualification"
                                     width="200px" />
                             </a-form-item>
                             <a-form-item label="주민(외국인)번호" label-align="right">
@@ -148,7 +149,7 @@ import queries from "../../../../graphql/queries/PA/PA6/PA610/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
-import { origindata, ArrForeigner } from "./utils";
+import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "../../../../../src/helpers/commonFunction";
 import dayjs from 'dayjs';
@@ -189,9 +190,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(0);
         const originData = reactive({ ...origindata, rows: per_page });
-        const arrForeigner = ArrForeigner
-        const valueCountry = ref('VN')
-        const valueStayQualifiction = ref()
+        const arrForeigner = ArrForeigner  
         const valueTypeCode = ref()
         const trigger = ref<boolean>(true);
         const triggerDetail = ref<boolean>(false);
@@ -199,23 +198,14 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
         })
-        const valueCallApiGetEmployeeBusiness = reactive({
+        let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
             incomeTypeCode: '',
             employeeId: null
         })
-        const dataAction = reactive({
-            employeeId: null,
-            name: '',
-            foreigner: false,
-            natinationalityonality: '',
-            nationalityCode: 'VN',
-            stayQualification: '',
-            residentId: '',
-            incomeTypeCode: '',
-            incomeTypeName: '',
-            email: '',
+        let dataAction = reactive({
+            ...valueDefaultAction
         })
 
         // ================GRAPQL==============================================
@@ -237,24 +227,24 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinessesDetail(res => {
-            dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
-            dataAction.name = res.data.getEmployeeBusiness.name
-            dataAction.foreigner = res.data.getEmployeeBusiness.foreigner
-            dataAction.natinationalityonality = res.data.getEmployeeBusiness.natinationalityonality
-            dataAction.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
-            dataAction.stayQualification = res.data.getEmployeeBusiness.stayQualification
-            dataAction.residentId = res.data.getEmployeeBusiness.residentId
-            dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
-            dataAction.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
-            dataAction.email = res.data.getEmployeeBusiness.email
+            if (res) {
+                dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
+                dataAction.name = res.data.getEmployeeBusiness.name
+                dataAction.foreigner = res.data.getEmployeeBusiness.foreigner
+                dataAction.natinationalityonality = res.data.getEmployeeBusiness.natinationalityonality
+                dataAction.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
+                dataAction.stayQualification = res.data.getEmployeeBusiness.stayQualification
+                dataAction.residentId = res.data.getEmployeeBusiness.residentId
+                dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
+                dataAction.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
+                dataAction.email = res.data.getEmployeeBusiness.email 
 
-            valueCountry.value = res.data.getEmployeeBusiness.nationalityCode
-            console.log(valueCountry);
-            
+            }
             loading2.value = false
         })
         errorGetEmployeeBusinessesDetail(res => {
             notification('error', res.message)
+            loading2.value = false
         })
 
 
@@ -270,14 +260,22 @@ export default defineComponent({
             // refetchData();
         };
         const actionEdit = (employeeId: any, incomeTypeCode: any) => {
+            triggerDetail.value = true
+            const oldValue = valueCallApiGetEmployeeBusiness.employeeId
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
             valueCallApiGetEmployeeBusiness.employeeId = employeeId
-            if (valueCallApiGetEmployeeBusiness.employeeId) {
-                triggerDetail.value = true
+
+            if (valueCallApiGetEmployeeBusiness.employeeId != oldValue) {
                 refetchDataDetail()
             } else {
                 triggerDetail.value = false
             }
+        }
+
+        const changeTextCountry = (text: any) => {
+            console.log(text);
+            
+            dataAction.natinationalityonality = text
         }
         return {
             valueTypeCode,
@@ -292,10 +290,9 @@ export default defineComponent({
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
-            searching,
-            valueCountry,
-            dataAction,
-            valueStayQualifiction
+            searching, 
+            dataAction, 
+            changeTextCountry
         };
     },
 });

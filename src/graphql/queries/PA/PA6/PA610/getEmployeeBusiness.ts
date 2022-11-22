@@ -10,10 +10,13 @@ export default gql`
             getEmployeeBusiness(companyId: $companyId, imputedYear: $imputedYear, employeeId : $employeeId,incomeTypeCode:$incomeTypeCode) { 
                 employeeId
                 name
-                status
-                foreigner 
+                foreigner
+                nationality
+                nationalityCode
+                stayQualification
                 residentId
                 incomeTypeCode
-                incomeTypeName 
+                incomeTypeName
+                email
             }
         }`
