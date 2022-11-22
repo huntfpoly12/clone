@@ -64,7 +64,7 @@
                             <a-form-item label="코드" :label-col="labelCol">
                                 <div class="custom-note">
                                     <number-box :required="true" :width="150"
-                                        v-model:valueInput="formState.employeeId" :spinButtons="true"
+                                        v-model:valueInput="formState.employeeId" placeholder="숫자만 입력 가능"
                                         :disabled="checkForm">
                                     </number-box>
                                     <span>
@@ -76,7 +76,7 @@
                         <a-col :span="24">
                             <a-form-item label="성명(상호) " :label-col="labelCol">
                                 <default-text-box :width="150" v-model:valueInput="formState.name"
-                                    :required="true">
+                                    :required="true" placeholder="한글,영문(대문자) 입력 가능">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>
