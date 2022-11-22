@@ -60,7 +60,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .dx-button-mode-contained{
-    font-size: 18px;
+    font-size: 19px;
     margin-left: 3px;
 }
 </style>

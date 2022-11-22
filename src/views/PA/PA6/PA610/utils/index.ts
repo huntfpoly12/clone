@@ -21,11 +21,11 @@ export const valueDefaultAction = {
     employeeId: null,
     name: '',
     foreigner: false,
-    natinationalityonality: '대한민국',
+    nationality: '대한민국',
     nationalityCode: 'KR',
     stayQualification: 'C-4',
     residentId: '',
     incomeTypeCode: '940100',
     incomeTypeName: '저술가',
-    email: '',
+    email: '', 
 }
