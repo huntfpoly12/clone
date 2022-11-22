@@ -16,3 +16,16 @@ export const origindata: Origindata = {
 }
 
 export const ArrForeigner = [{ id: false, text: '내국인' }, { id: true, text: '외국인' }]
+
+export const valueDefaultAction = {
+    employeeId: null,
+    name: '',
+    foreigner: false,
+    natinationalityonality: '',
+    nationalityCode: 'KR',
+    stayQualification: 'C-4',
+    residentId: '',
+    incomeTypeCode: '',
+    incomeTypeName: '',
+    email: '',
+}
