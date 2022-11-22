@@ -1,22 +1,22 @@
 <template>
-    <a-spin :spinning="loading" size="large">
-        <action-header title="사업소득자등록" />
-        <div id="pa-610">
-            <div class="page-content">
-                <a-row>
-                    <a-col :span="3" class="total-user">
-                        <div>
-                            <span>300</span>
-                            <br>
-                            <span>전체</span>
-                        </div>
-                        <div>
-                            <i class="dx-icon-user"></i>
-                        </div>
-                    </a-col>
 
-                    <a-col :span="21"></a-col>
-                    <a-col :span="14" class="custom-layout">
+    <action-header title="사업소득자등록" />
+    <div id="pa-610">
+        <div class="page-content">
+            <a-row>
+                <a-col :span="3" class="total-user">
+                    <div>
+                        <span>300</span>
+                        <br>
+                        <span>전체</span>
+                    </div>
+                    <div>
+                        <i class="dx-icon-user"></i>
+                    </div>
+                </a-col>
+                <a-col :span="21"></a-col>
+                <a-col :span="16" class="custom-layout">
+                    <a-spin :spinning="loading" size="large">
                         <div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                                 :show-borders="true" key-expr="employeeId" @exporting="onExporting"
@@ -65,7 +65,8 @@
                                 <template #pupop="{ data }" class="custom-action">
                                     <div class="custom-action">
                                         <a-space :size="10">
-                                            <a-tooltip placement="top">
+                                            <a-tooltip placement="top"
+                                                @click="actionEdit(data.data.employeeId, data.data.incomeTypeCode)">
                                                 <template #title>편집</template>
                                                 <EditOutlined />
                                             </a-tooltip>
@@ -86,50 +87,57 @@
                                     :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                             </div>
                         </div>
-                    </a-col>
-                    <a-col :span="10" class="custom-layout">
+                    </a-spin>
+                </a-col>
+                <a-col :span="8" class="custom-layout">
+                    <a-spin :spinning="loading2 || loadingGetEmployeeBusinessesDetail" size="large">
                         <div>
                             <a-form-item label="영업자코드" label-align="right">
                                 <div class="custom-note">
-                                    <default-text-box width="200px" placeholder="숫자만 입력 가능" />
+                                    <default-text-box width="200px" v-model:valueInput="dataAction.employeeId"
+                                        placeholder="숫자만 입력 가능" />
                                     <span>
                                         <InfoCircleFilled /> 최초 저장된 이후 수정 불가
                                     </span>
                                 </div>
                             </a-form-item>
                             <a-form-item label="성명(상호)" label-align="right">
-                                <default-text-box width="200px" placeholder="한글,영문(대문자) 입력 가능" />
+                                <default-text-box v-model:valueInput="dataAction.name" width="200px"
+                                    placeholder="한글,영문(대문자) 입력 가능" />
                             </a-form-item>
                             <a-form-item label="내/외국인" label-align="right">
                                 <radio-group :arrayValue="arrForeigner" width="200px"
-                                    v-model:valueRadioCheck="valueCheckbox" layoutCustom="horizontal" />
+                                    v-model:valueRadioCheck="dataAction.foreigner" layoutCustom="horizontal" />
                             </a-form-item>
                             <a-form-item label="외국인 국적" label-align="right">
                                 <country-code-select-box v-model:valueCountry="valueCountry" width="200px" />
                             </a-form-item>
                             <a-form-item label="외국인 체류자격" label-align="right">
-                                <stay-qualification-select-box width="200px" />
+                                <stay-qualification-select-box v-model:valueStayQualifiction="valueStayQualifiction"
+                                    width="200px" />
                             </a-form-item>
                             <a-form-item label="주민(외국인)번호" label-align="right">
-                                <default-text-box width="200px" placeholder="숫자 13자리" />
+                                <default-text-box v-model:valueInput="dataAction.residentId" width="200px"
+                                    placeholder="숫자 13자리" />
                             </a-form-item>
                             <a-form-item label="소득구분" label-align="right">
-                                <type-code-select-box width="200px" />
+                                <type-code-select-box width="200px" v-model:valueInput="valueTypeCode" />
                             </a-form-item>
                             <a-form-item label="이메일" label-align="right">
                                 <div class="custom-note">
-                                    <mail-text-box width="300px" placeholder="abc@example.com" />
+                                    <mail-text-box width="300px" v-model:valueInput="dataAction.email"
+                                        placeholder="abc@example.com" />
                                     <span>
                                         <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                                     </span>
                                 </div>
                             </a-form-item>
                         </div>
-                    </a-col>
-                </a-row>
-            </div>
+                    </a-spin>
+                </a-col>
+            </a-row>
         </div>
-    </a-spin>
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -172,7 +180,8 @@ export default defineComponent({
         InfoCircleFilled
     },
     setup() {
-        const loading = ref(false)
+        const loading = ref(true)
+        const loading2 = ref(false)
         const dataSource = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
@@ -181,10 +190,11 @@ export default defineComponent({
         const rowTable = ref(0);
         const originData = reactive({ ...origindata, rows: per_page });
         const arrForeigner = ArrForeigner
-        const valueCheckbox = ref(1)
-        const valueCountry = ref()
+        const valueCountry = ref('VN')
+        const valueStayQualifiction = ref()
+        const valueTypeCode = ref()
         const trigger = ref<boolean>(true);
-        const triggerDetail = ref(false);
+        const triggerDetail = ref<boolean>(false);
         const valueCallApiGetEmployeeBusinesses = reactive({
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
@@ -192,42 +202,60 @@ export default defineComponent({
         const valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
+            incomeTypeCode: '',
+            employeeId: null
+        })
+        const dataAction = reactive({
             employeeId: null,
-            incomeTypeCode: ''
+            name: '',
+            foreigner: false,
+            natinationalityonality: '',
+            nationalityCode: 'VN',
+            stayQualification: '',
+            residentId: '',
+            incomeTypeCode: '',
+            incomeTypeName: '',
+            email: '',
         })
 
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
-            enalbed: trigger.value,
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
             // console.log(res);
+            loading.value = false
             dataSource.value = res.data.getEmployeeBusinesses
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
         })
 
-        const { refetch: refetchDataDetail, loading: loadingGetEmployeeBusinessesDetail, onError: errorGetEmployeeBusinessesDetail, result } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
-            enalbed: triggerDetail,
+        const { refetch: refetchDataDetail, loading: loadingGetEmployeeBusinessesDetail, onError: errorGetEmployeeBusinessesDetail, onResult: resEmployeeBusinessesDetail } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
+            enabled: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
-        // resEmployeeBusinessesDetail(res => {
-        //     console.log(res);
-        //     // dataSource.value = res.data.getEmployeeBusinesses
-        // })
+        resEmployeeBusinessesDetail(res => {
+            dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
+            dataAction.name = res.data.getEmployeeBusiness.name
+            dataAction.foreigner = res.data.getEmployeeBusiness.foreigner
+            dataAction.natinationalityonality = res.data.getEmployeeBusiness.natinationalityonality
+            dataAction.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
+            dataAction.stayQualification = res.data.getEmployeeBusiness.stayQualification
+            dataAction.residentId = res.data.getEmployeeBusiness.residentId
+            dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
+            dataAction.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
+            dataAction.email = res.data.getEmployeeBusiness.email
 
-        watch(result, (newValue, old) => {
-            // if (newValue) {
-            console.log('123142');
-            //     triggerDetail.value = false;
-            // }
-        });
+            valueCountry.value = res.data.getEmployeeBusiness.nationalityCode
+            console.log(valueCountry);
+            
+            loading2.value = false
+        })
         errorGetEmployeeBusinessesDetail(res => {
             notification('error', res.message)
         })
-
 
 
 
@@ -241,7 +269,21 @@ export default defineComponent({
             // trigger.value = true;
             // refetchData();
         };
+        const actionEdit = (employeeId: any, incomeTypeCode: any) => {
+            valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
+            valueCallApiGetEmployeeBusiness.employeeId = employeeId
+            if (valueCallApiGetEmployeeBusiness.employeeId) {
+                triggerDetail.value = true
+                refetchDataDetail()
+            } else {
+                triggerDetail.value = false
+            }
+        }
         return {
+            valueTypeCode,
+            loadingGetEmployeeBusinessesDetail,
+            loading2,
+            actionEdit,
             loadingGetEmployeeBusinesses,
             arrForeigner,
             rowTable,
@@ -251,8 +293,9 @@ export default defineComponent({
             per_page, move_column, colomn_resize,
             originData,
             searching,
-            valueCheckbox,
-            valueCountry
+            valueCountry,
+            dataAction,
+            valueStayQualifiction
         };
     },
 });

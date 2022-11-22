@@ -4,8 +4,10 @@ export default gql`
     getEmployeeBusiness(
             $companyId: Int!
             $imputedYear: Int!
+            $employeeId:Int! 
+            $incomeTypeCode: String!
         ){
-            getEmployeeBusiness(companyId: $companyId, imputedYear: $imputedYear) { 
+            getEmployeeBusiness(companyId: $companyId, imputedYear: $imputedYear, employeeId : $employeeId,incomeTypeCode:$incomeTypeCode) { 
                 employeeId
                 name
                 status
