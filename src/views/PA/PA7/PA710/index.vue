@@ -1,10 +1,10 @@
 <template>
-    <action-header title="기타소득자등록" />
+    <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
     <div id="pa-710" class="page-content">
         <a-row>
             <a-col :span="3" class="total-user">
                 <div>
-                    <span>300</span>
+                    <span>{{ listEmployeeExtra.length }}</span>
                     <br>
                     <span>전체</span>
                 </div>
@@ -21,7 +21,7 @@
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
+                            <DxButton icon="plus" />
                         </template>
                         <DxColumn caption="성명 (상호)" :width="200" cell-template="company-name" />
                         <template #company-name="{ data }">
@@ -42,101 +42,106 @@
                                 <a-space :size="10">
                                     <a-tooltip placement="top">
                                         <template #title>편집</template>
-                                        <!-- <EditOutlined @click="editData(data)" /> -->
+                                        <EditOutlined @click="editData(data)" />
                                     </a-tooltip>
                                     <a-tooltip placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
-                                    <!-- <deleteOutlined @click="deleteConfig(data)" /> -->
+                                    <DeleteOutlined @click="deleteData(data)" />
                                 </a-space>
                             </div>
                         </template>
                     </DxDataGrid>
-                    <AddCM710Popup :modalStatus="modalAddNewStatus" @closePopup="onCloseAddNewModal" title="원천설정">
-                    </AddCM710Popup>
+                    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                        :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-710" />
                 </a-spin>
             </a-col>
             <a-col :span="8" class="custom-layout">
                 <a-spin :spinning="loadingForm" size="large">
-                    <standard-form formName="add-pa710">
-                        <a-row :gutter="24" class="pa-710-popup-add">
-                            <a-col :span="24">
-                                <a-form-item label="코드" :label-col="labelCol">
-                                    <number-box :width="150" v-model:valueInput="formState.input.employeeId"
-                                        :spinButtons="true">
+                    <a-row :gutter="24" class="pa-710-popup-add">
+                        <a-col :span="24">
+                            <a-form-item label="코드" :label-col="labelCol">
+                                <div class="custom-note">
+                                    <number-box :required="true" :width="150"
+                                        v-model:valueInput="formState.employeeId" :spinButtons="true"
+                                        :disabled="checkForm">
                                     </number-box>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="24">
-                                <a-form-item label="성명(상호) " :label-col="labelCol">
-                                    <default-text-box :width="150" v-model:valueInput="formState.input.name"
-                                        :required="true">
-                                    </default-text-box>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="24">
-                                <a-form-item label="내/외국인 " :label-col="labelCol" class="red">
-                                    <radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="formState.input.foreigner"
-                                        :layoutCustom="'horizontal'" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="24">
-                                <a-form-item label="외국인 국적 " :label-col="labelCol">
-                                    <country-code-select-box v-model:valueCountry="formState.input.nationalityCode" :required="true" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="24">
-                                <a-form-item label="외국인 체류자격 " :label-col="labelCol">
-                                    <stay-qualification-select-box
-                                        v-model:valueStayQualifiction="formState.input.stayQualification" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="24">
-                                <a-form-item label="주민(외국인)번호 " :label-col="labelCol">
-                                    <text-number-box
-                                        :width="150" v-model:valueInput="formState.input.residentId"
-                                        :required="true"
-                                    ></text-number-box>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="24">
-                                <a-form-item label="외국인 체류자격 " :label-col="labelCol">
-                                    <type-code-select-box v-model:valueInput="formState.input.incomeTypeCode" :required="true">
-                                    </type-code-select-box>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="24">
-                                <a-form-item label="이메일" class="red" :label-col="labelCol">
-                                    <div class="custom-note">
-                                        <mail-text-box placeholder="abc@example.com"
-                                            v-model:valueInput="formState.input.email" :required="true" id="email">
-                                        </mail-text-box>
-                                        <span>
-                                            <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
-                                        </span>
-                                    </div>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                        <div class="text-align-center mt-20">
+                                    <span>
+                                        <InfoCircleFilled /> 최초 저장된 이후 수정 불가
+                                    </span>
+                                </div>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-form-item label="성명(상호) " :label-col="labelCol">
+                                <default-text-box :width="150" v-model:valueInput="formState.name"
+                                    :required="true">
+                                </default-text-box>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-form-item label="내/외국인 " :label-col="labelCol" class="red">
+                                <radio-group :arrayValue="optionsRadio" :required="true"
+                                    v-model:valueRadioCheck="formState.foreigner" :layoutCustom="'horizontal'" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-form-item label="외국인 국적 " :label-col="labelCol">
+                                <country-code-select-box v-model:valueCountry="formState.nationalityCode"
+                                    @textCountry="textCountry" :required="true" :disabled="disabledSelect" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-form-item label="외국인 체류자격 " :label-col="labelCol">
+                                <stay-qualification-select-box :required="true" :disabled="disabledSelect"
+                                    v-model:valueStayQualifiction="formState.stayQualification" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-form-item :label="disabledSelect ? '외국인번호 유효성' : '주민등록번호' " :label-col="labelCol">
+                                <text-number-box :width="150" v-model:valueInput="formState.residentId"
+                                    :required="true"></text-number-box>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-form-item label="외국인 체류자격 " :label-col="labelCol">
+                                <type-code-select-box v-model:valueInput="formState.incomeTypeCode"
+                                    @textTypeCode="textTypeCode" :required="true">
+                                </type-code-select-box>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-form-item label="이메일" class="red" :label-col="labelCol">
+                                <div class="custom-note">
+                                    <mail-text-box placeholder="abc@example.com"
+                                        v-model:valueInput="formState.email" :required="true" id="email">
+                                    </mail-text-box>
+                                    <span>
+                                        <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
+                                    </span>
+                                </div>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <div v-if="checkForm" class="text-align-center mt-20">
                             <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
-                                :mode="'contained'" @onClick="onSubmit($event)" />
+                                :mode="'contained'" @onClick="onUpdate($event)" />
                         </div>
-                    </standard-form>
                 </a-spin>
             </a-col>
         </a-row>
-        
     </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, createVNode } from "vue";
+import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
 import { Modal } from 'ant-design-vue'
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -156,40 +161,67 @@ export default defineComponent({
         DxToolbar,
         DxItem,
         DeleteOutlined,
-        DxButton
+        DxButton,
+        SaveOutlined,
+        HistoryPopup
     },
     setup() {
         const loadingForm = ref(false)
+        let checkForm = ref(false)
+        let disabledSelect = ref(false)
         let modalEditStatus = ref(false);
-        let modalHistoryStatus = ref(false);
+        const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
-        const modalAddNewStatus = ref<boolean>(false);
         let popupData = ref();
-        const valueForeigner = ref(1)
 
-        let returnRadio = ref();
+        let trigger = ref(true);
+        const listEmployeeExtra = ref([])
 
-        const formState = reactive({ ...initialState });
+        let formState = reactive( {...initialState} );
 
+        const originData = {
+            companyId: companyId,
+            imputedYear: parseInt(dayjs().format('YYYY')),
+        }
         const optionsRadio = [
             { id: false, text: "내국인" },
-            { id: true, text: "내국인" },
+            { id: true, text: "외국인" },
         ];
-        const {
-            mutate: createEmployeeExtraOne,
-            onDone: onDoneAdd,
-            onError: onErrorAdd,
-        } = useMutation(mutations.createEmployeeExtra);
+        const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd} = useMutation(
+            mutations.createEmployeeExtra
+        );
 
-        onDoneAdd((e) => {
+        const { mutate: updateEmployeeExtra, onDone: onDoneUpdate, onError: onErrorUpdate} = useMutation(
+            mutations.updateEmployeeExtra
+        );
+
+        const { refetch: refetchData, loading, result } = useQuery(queries.getEmployeeExtras, originData, () => ({
+            fetchPolicy: "no-cache",
+            enabled: trigger.value,
+        }));
+
+        const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
+            mutations.deleteEmployeeExtra
+        );
+
+        onDoneAdd(() => {
+            trigger.value = true;
+            refetchData();
+            console.log(initialState);
+            
+            Object.assign(formState, initialState);
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorAdd((e) => {
             notification('error', e.message)
-        }); 
-        watch(() => formState.input.nationalityCode, (newValue) => {
-           console.log(formState.input);
-        })
+        });
+
+        onDoneDelete(() => {
+            trigger.value = true;
+            refetchData();
+        });
+
+
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -198,92 +230,127 @@ export default defineComponent({
                 let dataCreate = {
                     companyId: companyId,
                     imputedYear: parseInt(dayjs().format("YYYY")),
-                    input: formState.input,
+                    input: formState,
                 };
-                createEmployeeExtraOne(dataCreate);
+                createEmployeeExtra(dataCreate);
             }
         };
-
-
-
-        const originData = {
-            companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
-        }
-        let trigger = ref(true);
-        const listEmployeeExtra = ref([])
-        const { refetch: refetchData, loading, result } = useQuery(queries.getEmployeeExtras, originData, () => ({
-            fetchPolicy: "no-cache",
-            enabled: trigger.value,
-        }));
-        // const openEditModal = (data: any) => {
-        //     modalEditStatus.value = true;
-        //     popupData.value = {
-        //         userId: data.data.id,
-        //         // companyId: companyId
-        //     };
-        // }
-        const openAddNewModal = () => {
-            modalAddNewStatus.value = true;
-        }
-        const modalHistory = (data: any) => {
-            idRowEdit.value = data.data.id
-            // companyIdPopup.value = companyId
-            modalHistoryStatus.value = true;
-        }
-        // const deleteConfig = (data: any) => {
-        //     Modal.confirm({
-        //         title: '삭제하겠습니까?',
-        //         icon: createVNode(ExclamationCircleOutlined),
-        //         okText: '네',
-        //         cancelText: '아니요',
-        //         //content: createVNode('div', { style: 'color:red;' }, 'Some descriptions'),
-        //         onOk() {
-        //             let variables = {
-        //                 // companyId: companyId,
-        //                 imputedYear: parseInt(dayjs().format('YYYY')),
-        //                 itemCode: data.data.itemCode
-        //             };
-        //             actionDelete(variables);
-        //         },
-        //         class: 'confirm',
-        //     });
-        // }
-        const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
-            mutations.deleteEmployeeExtra
-        );
-        const onCloseAddNewModal = () => {
-            modalAddNewStatus.value = false;
-            refetchData();
+        const onUpdate = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                let dataUpdate = {
+                    companyId: companyId,
+                    imputedYear: parseInt(dayjs().format("YYYY")),
+                    employeeId: formState.employeeId,
+                    incomeTypeCode: formState.incomeTypeCode,
+                    input: {
+                        name: formState.name,
+                        foreigner: formState.foreigner,
+                        nationality: formState.nationality,
+                        nationalityCode: formState.nationalityCode,
+                        stayQualification: formState.stayQualification,
+                        residentId: formState.residentId,
+                        email: formState.email,
+                        incomeTypeName: formState.incomeTypeName,
+                    }
+                };
+                updateEmployeeExtra(dataUpdate);
+            }
         };
+        onDoneUpdate(() => {
+            trigger.value = true;
+            refetchData();
+            checkForm.value = false;
+            Object.assign(formState, initialState);
+            notification('success', `업데이트 완료되었습니다!`)
+        });
+        onErrorUpdate((e) => {
+            notification('error', e.message)
+        });
+
+        const modalHistory = (data: any) => {
+            console.log(data);
+            
+            idRowEdit.value = data.data.id
+            modalHistoryStatus.value = companyId
+            popupData.value = data;
+        }
+        const textCountry = (e: any) => {
+            formState.nationality = e
+        }
+        const textTypeCode = (e: any) => {
+            formState.incomeTypeName = e
+        }
+        const editData = (e: any) => {
+            checkForm.value = true;
+            formState.name = e.data.name
+            formState.foreigner = e.data.foreigner
+            formState.nationality = e.data.nationality
+            formState.nationalityCode = e.data.nationalityCode
+            formState.stayQualification = e.data.stayQualification
+            formState.residentId = e.data.residentId
+            formState.email = e.data.email
+            formState.employeeId = e.data.employeeId
+            formState.incomeTypeCode = e.data.incomeTypeCode
+            formState.incomeTypeName = e.data.incomeTypeName
+        }
+
+        const deleteData = (data: any) => {
+            Modal.confirm({
+                title: '삭제하겠습니까?',
+                icon: createVNode(ExclamationCircleOutlined),
+                okText: '네',
+                cancelText: '아니요',
+                //content: createVNode('div', { style: 'color:red;' }, 'Some descriptions'),
+                onOk() {
+                    let variables = {
+                        companyId: companyId,
+                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        employeeId: data.data.employeeId,
+                        incomeTypeCode: data.data.incomeTypeCode
+                    };
+                    actionDelete(variables);
+                },
+                class: 'confirm',
+            });
+        }
+        
         watch(result, (value) => {
             if (value) {
-                // console.log(value);
                 listEmployeeExtra.value = value.getEmployeeExtras
                 trigger.value = false;
             }
         });
+        watch(() => formState.foreigner, (newValue) => {
+            if (newValue) {
+                disabledSelect.value = true;
+            } else {
+                disabledSelect.value = false;
+            }
+        });
         return {
+            textCountry,
+            idRowEdit,
+            textTypeCode,
+            editData,
             loading,
             loadingForm,
+            modalHistoryStatus,
             labelCol: { style: { width: "150px" } },
             formState,
-            // valueCountry,
-            // valueStayQualifiction,
-            // valueTypeCode,
-            valueForeigner,
             optionsRadio,
             onSubmit,
+            onUpdate,
+            disabledSelect,
+            checkForm,
             modalHistory,
-            returnRadio,
             modalEditStatus,
             popupData,
             listEmployeeExtra,
             DeleteOutlined,
-            // deleteConfig,
-            modalAddNewStatus,
-            onCloseAddNewModal,
-            openAddNewModal,
+            deleteData
         };
     },
 });

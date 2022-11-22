@@ -3,9 +3,10 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="ts"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
+                    :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxColumn caption="기록일시" data-field="loggedAt" data-type="text" />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
@@ -29,7 +30,7 @@
                             </a-tooltip>
                         </a-space>
                     </template>
-                </DxDataGrid> 
+                </DxDataGrid>
             </a-spin>
             <template #footer>
             </template>
@@ -74,11 +75,13 @@ export default defineComponent({
         let trigger130 = ref<boolean>(false);
         let trigger110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
+        let trigger610 = ref<boolean>(false);
+        let trigger710 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
         const store = useStore();
-        
+
         // const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -124,6 +127,14 @@ export default defineComponent({
                             trigger220.value = true;
                             refetchCM220();
                             break;
+                        case 'pa-610':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger610.value = true;
+                            refetchPA610();
+                            break;
                         case 'cm-130':
                             dataQuery.value = {
                                 imputedYear: parseInt(dayjs().format('YYYY')),
@@ -131,6 +142,14 @@ export default defineComponent({
                             };
                             trigger130.value = true;
                             refetchCM130();
+                            break;
+                        case 'pa-710':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger710.value = true;
+                            refetchPA710();
                             break;
                         default:
                             break;
@@ -143,6 +162,11 @@ export default defineComponent({
                     trigger130.value = false;
                     trigger110.value = false;
                     trigger220.value = false;
+
+                    trigger610.value = false;
+
+                    trigger710.value = false;
+
                 }
             }
         );
@@ -239,6 +263,22 @@ export default defineComponent({
             }
         });
 
+        // get getScreenRoleGroupLogs  610
+        const { result: resultPA610, loading: loadingPA610, refetch: refetchPA610 } = useQuery(
+            queries.getEmployeeBusinessesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger610.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        watch(resultPA610, (value) => {
+            if (value && value.getEmployeeBusinessesLogs) {
+                dataTableShow.value = value.getEmployeeBusinessesLogs;
+            }
+        });
+
         // get getWithholdingConfigPayItemsLogs cm-130
         const { result: resultCM130, loading: loadingCM130, refetch: refetchCM130 } = useQuery(
             queries.getWithholdingConfigPayItemsLogs,
@@ -251,6 +291,21 @@ export default defineComponent({
         watch(resultCM130, (value) => {
             if (value && value.getWithholdingConfigPayItemsLogs) {
                 dataTableShow.value = value.getWithholdingConfigPayItemsLogs;
+            }
+        });
+
+        // get getEmployeeExtrasLogs pa-710
+        const { result: resultPA710, loading: loadingPA710, refetch: refetchPA710 } = useQuery(
+            queries.getEmployeeExtrasLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger710.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA710, (value) => {
+            if (value && value.getEmployeeExtrasLogs) {
+                dataTableShow.value = value.getEmployeeExtrasLogs;
             }
         });
 
@@ -274,8 +329,10 @@ export default defineComponent({
             loadingCM110,
             loadingCM130,
             loadingBF220,
+            loadingPA710,
             formarDate,
-            dataQuery
+            dataQuery,
+            loadingPA610
         }
     },
 
