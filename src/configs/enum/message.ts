@@ -73,6 +73,15 @@ export class Message extends BaseType {
         '002': { "message" : "비밀번호 설정 링크가 이메일로 발송됩니다. 계속 진행하시겠습니까?", "icon": "iconWarning"}, //Contents modal : Send email to my company user
     });
 
+        //원천설정
+    public static CM130 = new Message({
+        '001': { "message" : "이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요", "icon": "iconError"}, 
+        '002': { "message" : "이미 사용중인 항목명입니다. 사용불가능", "icon": "iconError"}, // Item name already in use. unavailable
+
+        //Contents modal : There is a maximum of 20 payroll items available. Disable the old one and add the new one
+      
+    });
+  
     private static _ = Message.closeEnum();
 
     private constructor(
