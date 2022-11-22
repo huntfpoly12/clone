@@ -5,27 +5,27 @@
         <div class="list-action">
             <a-tooltip>
                 <template #title>조회</template>
-                <a-button @click="actionHeader('Search')" size="large">
+                <DxButton @click="actionHeader($event, 'Search')">
                     <SearchOutlined />
-                </a-button>
+                </DxButton> 
             </a-tooltip>
             <a-tooltip>
                 <template #title>저장</template>
-                <a-button @click="actionHeader('Save')" size="large">
+                <DxButton @click="actionHeader($event, 'Save')" size="large">
                     <SaveOutlined />
-                </a-button>
+                </DxButton>
             </a-tooltip>
             <a-tooltip>
                 <template #title>삭제</template>
-                <a-button @click="actionHeader('Delete')" size="large">
+                <DxButton @click="actionHeader($event, 'Delete')" size="large">
                     <DeleteOutlined />
-                </a-button>
+                </DxButton>
             </a-tooltip>
             <a-tooltip>
                 <template #title>출력</template>
-                <a-button @click="actionHeader('Print')" size="large">
+                <DxButton @click="actionHeader($event, 'Print')" size="large">
                     <PrinterOutlined />
-                </a-button>
+                </DxButton>
             </a-tooltip>
         </div>
     </div>
@@ -33,6 +33,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue";
+import DxButton from 'devextreme-vue/button';
 export default defineComponent({
     props: {
         title: {
@@ -43,12 +44,13 @@ export default defineComponent({
         SearchOutlined,
         SaveOutlined,
         DeleteOutlined,
-        PrinterOutlined
+        PrinterOutlined,
+        DxButton
     },
 
     setup(props, { emit }) {
-        const actionHeader = (method: any) => {
-            emit("action" + method, true)
+        const actionHeader = (event: any, method: any) => {
+            emit("action" + method, event)
         }
         return {
             actionHeader,
@@ -56,3 +58,9 @@ export default defineComponent({
     },
 });
 </script>
+<style lang="scss" scoped>
+.dx-button-mode-contained{
+    font-size: 19px;
+    margin-left: 3px;
+}
+</style>

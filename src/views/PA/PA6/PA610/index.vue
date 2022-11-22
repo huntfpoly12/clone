@@ -1,153 +1,149 @@
 <template>
-    <form action="">
-        <action-header title="사업소득자등록" @actionSave="saving" />
-        <div id="pa-610">
-            <div class="page-content">
-                <a-row>
-                    <a-col :span="3" class="total-user">
+    <action-header title="사업소득자등록" @actionSave="saving($event)" />
+    <div id="pa-610">
+        <div class="page-content">
+            <a-row>
+                <a-col :span="3" class="total-user">
+                    <div>
+                        <span>300</span>
+                        <br>
+                        <span>전체</span>
+                    </div>
+                    <div>
+                        <i class="dx-icon-user"></i>
+                    </div>
+                </a-col>
+                <a-col :span="21"></a-col>
+                <a-col :span="16" class="custom-layout">
+                    <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate" size="large">
                         <div>
-                            <span>300</span>
-                            <br>
-                            <span>전체</span>
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                                :show-borders="true" key-expr="employeeId" @exporting="onExporting"
+                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                                :column-auto-width="true">
+                                <DxScrolling column-rendering-mode="virtual" />
+                                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                                <DxExport :enabled="true" :allow-export-selected-data="true" />
+                                <DxToolbar>
+                                    <DxItem location="after" template="pagination-table" />
+                                    <DxItem name="searchPanel" />
+                                    <DxItem name="exportButton" />
+                                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                                    <DxItem name="groupPanel" />
+                                    <DxItem name="addRowButton" show-text="always" />
+                                    <DxItem name="columnChooserButton" />
+                                </DxToolbar>
+                                <template #button-template>
+                                    <DxButton icon="plus" @click="addRow" />
+                                </template>
+                                <template #pagination-table>
+                                    <div v-if="rowTable > originData.rows">
+                                        <a-pagination v-model:current="originData.page"
+                                            v-model:page-size="originData.rows" :total="rowTable" show-less-items />
+                                    </div>
+                                </template>
+                                <DxColumn caption="성명 (상호)" cell-template="tag" />
+                                <template #tag="{ data }" class="custom-action">
+                                    <div class="custom-action">
+                                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                            :idCardNumber="data.data.residentId" :status="data.data.status"
+                                            :foreigner="data.data.foreigner" :checkStatus="false" />
+                                    </div>
+                                </template>
+
+                                <DxColumn caption="주민등록번호" data-field="residentId" />
+                                <DxColumn caption="소득부분" cell-template="grade-cell" />
+                                <template #grade-cell="{ data }" class="custom-action">
+                                    <div class="custom-grade-cell">
+                                        <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
+                                        <span>{{ data.data.incomeTypeName }}</span>
+                                    </div>
+                                </template>
+
+                                <DxColumn :width="80" cell-template="pupop" />
+                                <template #pupop="{ data }" class="custom-action">
+                                    <div class="custom-action">
+                                        <a-space :size="10">
+                                            <a-tooltip placement="top"
+                                                @click="actionEdit(data.data.employeeId, data.data.incomeTypeCode)">
+                                                <template #title>편집</template>
+                                                <EditOutlined />
+                                            </a-tooltip>
+                                            <a-tooltip placement="top">
+                                                <template #title>변경이력</template>
+                                                <HistoryOutlined />
+                                            </a-tooltip>
+                                            <a-tooltip placement="top">
+                                                <template #title>변경이력</template>
+                                                <DeleteOutlined />
+                                            </a-tooltip>
+                                        </a-space>
+                                    </div>
+                                </template>
+                            </DxDataGrid>
+                            <div class="pagination-table" v-if="rowTable > originData.rows">
+                                <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                                    :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
+                            </div>
                         </div>
+                    </a-spin>
+                </a-col>
+                <a-col :span="8" class="custom-layout">
+                    <a-spin :spinning="loadingGetEmployeeBusinessesDetail || loadingUpdate" size="large">
                         <div>
-                            <i class="dx-icon-user"></i>
-                        </div>
-                    </a-col>
-                    <a-col :span="21"></a-col>
-                    <a-col :span="16" class="custom-layout">
-                        <a-spin :spinning="loadingGetEmployeeBusinesses" size="large">
-                            <div>
-                                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                                    :show-borders="true" key-expr="employeeId" @exporting="onExporting"
-                                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                    :column-auto-width="true">
-                                    <DxScrolling column-rendering-mode="virtual" />
-                                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                                    <DxExport :enabled="true" :allow-export-selected-data="true" />
-                                    <DxToolbar>
-                                        <DxItem location="after" template="pagination-table" />
-                                        <DxItem name="searchPanel" />
-                                        <DxItem name="exportButton" />
-                                        <DxItem location="after" template="button-template"
-                                            css-class="cell-button-add" />
-                                        <DxItem name="groupPanel" />
-                                        <DxItem name="addRowButton" show-text="always" />
-                                        <DxItem name="columnChooserButton" />
-                                    </DxToolbar>
-                                    <template #button-template>
-                                        <DxButton icon="plus" />
-                                    </template>
-                                    <template #pagination-table>
-                                        <div v-if="rowTable > originData.rows">
-                                            <a-pagination v-model:current="originData.page"
-                                                v-model:page-size="originData.rows" :total="rowTable" show-less-items />
-                                        </div>
-                                    </template>
-                                    <DxColumn caption="성명 (상호)" cell-template="tag" />
-                                    <template #tag="{ data }" class="custom-action">
-                                        <div class="custom-action">
-                                            <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                                :idCardNumber="data.data.residentId" :status="data.data.status"
-                                                :foreigner="data.data.foreigner" :checkStatus="false" />
-                                        </div>
-                                    </template>
-
-                                    <DxColumn caption="주민등록번호" data-field="residentId" />
-                                    <DxColumn caption="소득부분" cell-template="grade-cell" />
-                                    <template #grade-cell="{ data }" class="custom-action">
-                                        <div class="custom-grade-cell">
-                                            <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
-                                            <span>{{ data.data.incomeTypeName }}</span>
-                                        </div>
-                                    </template>
-
-                                    <DxColumn :width="80" cell-template="pupop" />
-                                    <template #pupop="{ data }" class="custom-action">
-                                        <div class="custom-action">
-                                            <a-space :size="10">
-                                                <a-tooltip placement="top"
-                                                    @click="actionEdit(data.data.employeeId, data.data.incomeTypeCode)">
-                                                    <template #title>편집</template>
-                                                    <EditOutlined />
-                                                </a-tooltip>
-                                                <a-tooltip placement="top">
-                                                    <template #title>변경이력</template>
-                                                    <HistoryOutlined />
-                                                </a-tooltip>
-                                                <a-tooltip placement="top">
-                                                    <template #title>변경이력</template>
-                                                    <DeleteOutlined />
-                                                </a-tooltip>
-                                            </a-space>
-                                        </div>
-                                    </template>
-                                </DxDataGrid>
-                                <div class="pagination-table" v-if="rowTable > originData.rows">
-                                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                        :total="rowTable" show-less-items style="margin-top: 10px"
-                                        @change="searching" />
+                            <a-form-item label="영업자코드" label-align="right">
+                                <div class="custom-note">
+                                    <default-text-box width="200px" v-model:valueInput="dataAction.employeeId"
+                                        placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
+                                    <span>
+                                        <InfoCircleFilled /> 최초 저장된 이후 수정 불가
+                                    </span>
                                 </div>
-                            </div>
-                        </a-spin>
-                    </a-col>
-                    <a-col :span="8" class="custom-layout">
-                        <a-spin :spinning="loadingGetEmployeeBusinessesDetail" size="large">
-                            <div>
-                                <a-form-item label="영업자코드" label-align="right">
-                                    <div class="custom-note">
-                                        <default-text-box width="200px" v-model:valueInput="dataAction.employeeId"
-                                            placeholder="숫자만 입력 가능" :disabled="disabledInput" />
-                                        <span>
-                                            <InfoCircleFilled /> 최초 저장된 이후 수정 불가
-                                        </span>
-                                    </div>
-                                </a-form-item>
-                                <a-form-item label="성명(상호)" label-align="right">
-                                    <default-text-box v-model:valueInput="dataAction.name" width="200px"
-                                        placeholder="한글,영문(대문자) 입력 가능" />
-                                </a-form-item>
-                                <a-form-item label="내/외국인" label-align="right">
-                                    <radio-group :arrayValue="arrForeigner" width="200px"
-                                        v-model:valueRadioCheck="dataAction.foreigner" layoutCustom="horizontal" />
-                                </a-form-item>
-                                <a-form-item label="외국인 국적" label-align="right">
-                                    <country-code-select-box v-model:valueCountry="dataAction.nationalityCode"
-                                        @textCountry="changeTextCountry" width="200px" />
-                                </a-form-item>
-                                <a-form-item label="외국인 체류자격" label-align="right">
-                                    <stay-qualification-select-box
-                                        v-model:valueStayQualifiction="dataAction.stayQualification" width="200px" />
-                                </a-form-item>
-                                <a-form-item label="주민(외국인)번호" label-align="right">
-                                    <default-text-box v-model:valueInput="dataAction.residentId" width="200px"
-                                        placeholder="숫자 13자리" />
-                                </a-form-item>
-                                <a-form-item label="소득구분" label-align="right">
-                                    <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
-                                        @textCountry="changeTextTypeCode" />
-                                </a-form-item>
-                                <a-form-item label="이메일" label-align="right">
-                                    <div class="custom-note">
-                                        <mail-text-box width="300px" v-model:valueInput="dataAction.email"
-                                            placeholder="abc@example.com" />
-                                        <span>
-                                            <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
-                                        </span>
-                                    </div>
-                                </a-form-item>
-                            </div>
-                        </a-spin>
-                    </a-col>
-                </a-row>
-            </div>
+                            </a-form-item>
+                            <a-form-item label="성명(상호)" label-align="right">
+                                <default-text-box v-model:valueInput="dataAction.input.name" width="200px"
+                                    placeholder="한글,영문(대문자) 입력 가능" :required="true" />
+                            </a-form-item>
+                            <a-form-item label="내/외국인" label-align="right">
+                                <radio-group :arrayValue="arrForeigner" width="200px"
+                                    v-model:valueRadioCheck="dataAction.input.foreigner" layoutCustom="horizontal" />
+                            </a-form-item>
+                            <a-form-item label="외국인 국적" label-align="right">
+                                <country-code-select-box v-model:valueCountry="dataAction.input.nationalityCode"
+                                    @textCountry="changeTextCountry" width="200px" :disabled="disabledInput" />
+                            </a-form-item>
+                            <a-form-item label="외국인 체류자격" label-align="right">
+                                <stay-qualification-select-box :disabled="disabledInput"
+                                    v-model:valueStayQualifiction="dataAction.input.stayQualification" width="200px" />
+                            </a-form-item>
+                            <a-form-item label="주민(외국인)번호" label-align="right">
+                                <default-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
+                                    placeholder="숫자 13자리" :required="true" />
+                            </a-form-item>
+                            <a-form-item label="소득구분" label-align="right">
+                                <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
+                                    @textTypeCode="changeTextTypeCode" :disabled="disabledInput" />
+                            </a-form-item>
+                            <a-form-item label="이메일" label-align="right">
+                                <div class="custom-note">
+                                    <mail-text-box width="300px" v-model:valueInput="dataAction.input.email"
+                                        placeholder="abc@example.com" :required="true" />
+                                    <span>
+                                        <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
+                                    </span>
+                                </div>
+                            </a-form-item> 
+                        </div>
+                    </a-spin>
+                </a-col>
+            </a-row>
         </div>
-    </form>
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA6/PA610/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
@@ -157,6 +153,7 @@ import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "../../../../../src/helpers/commonFunction";
 import dayjs from 'dayjs';
+import mutations from "../../../../graphql/mutations/PA/PA6/PA610/index";
 
 export default defineComponent({
     components: {
@@ -206,9 +203,22 @@ export default defineComponent({
             employeeId: null
         })
         let dataAction = reactive({
-            ...valueDefaultAction
+            companyId: companyId,
+            imputedYear: parseInt(dayjs().format('YYYY')),
+            employeeId: null,
+            incomeTypeCode: '940100',
+            input: {
+                name: '',
+                foreigner: false,
+                nationality: '대한민국',
+                nationalityCode: 'KR',
+                stayQualification: 'C-4',
+                residentId: '',
+                incomeTypeName: '저술가',
+                email: '',
+            }
         })
-        let disabledInput = ref(true)
+        let disabledInput = ref(false)
 
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
@@ -216,7 +226,6 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            // console.log(res);
             dataSource.value = res.data.getEmployeeBusinesses
         })
         errorGetEmployeeBusinesses(res => {
@@ -230,20 +239,48 @@ export default defineComponent({
         resEmployeeBusinessesDetail(res => {
             if (res) {
                 dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
-                dataAction.name = res.data.getEmployeeBusiness.name
-                dataAction.foreigner = res.data.getEmployeeBusiness.foreigner
-                dataAction.natinationalityonality = res.data.getEmployeeBusiness.natinationalityonality
-                dataAction.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
-                dataAction.stayQualification = res.data.getEmployeeBusiness.stayQualification
-                dataAction.residentId = res.data.getEmployeeBusiness.residentId
+                dataAction.input.name = res.data.getEmployeeBusiness.name
+                dataAction.input.foreigner = res.data.getEmployeeBusiness.foreigner
+                dataAction.input.nationality = res.data.getEmployeeBusiness.nationality
+                dataAction.input.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
+                dataAction.input.stayQualification = res.data.getEmployeeBusiness.stayQualification
+                dataAction.input.residentId = res.data.getEmployeeBusiness.residentId
                 dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
-                dataAction.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
-                dataAction.email = res.data.getEmployeeBusiness.email
+                dataAction.input.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
+                dataAction.input.email = res.data.getEmployeeBusiness.email
             }
         })
         errorGetEmployeeBusinessesDetail(res => {
             notification('error', res.message)
         })
+
+
+        const {
+            mutate: actionUpdate,
+            onError: upadteErr,
+            loading: loadingUpdate,
+            onDone: updateDone,
+        } = useMutation(mutations.updateEmployeeBusiness);
+        updateDone(res => {
+            notification('success', `업데이트 완료!`)
+        })
+        upadteErr(res => {
+            notification('error', res.message)
+        })
+
+        const {
+            mutate: actionCreacted,
+            onError: createdErr,
+            loading: loadingCreacted,
+            onDone: creactedDone,
+        } = useMutation(mutations.createEmployeeBusiness);
+        updateDone(res => {
+            notification('success', `업데이트 완료!`)
+        })
+        upadteErr(res => {
+            notification('error', res.message)
+        })
+
 
 
 
@@ -258,41 +295,79 @@ export default defineComponent({
             // refetchData();
         };
         const actionEdit = (employeeId: any, incomeTypeCode: any) => {
+            disabledInput.value = true
             triggerDetail.value = true
-            const oldValue = valueCallApiGetEmployeeBusiness.employeeId
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
             valueCallApiGetEmployeeBusiness.employeeId = employeeId
-
-            if (valueCallApiGetEmployeeBusiness.employeeId != oldValue) {
-                refetchDataDetail()
-            } else {
-                triggerDetail.value = false
-            }
+            refetchDataDetail()
         }
 
         const changeTextCountry = (text: any) => {
-            dataAction.natinationalityonality = text
+            dataAction.input.nationality = text
         }
         const changeTextTypeCode = (text: any) => {
-            dataAction.incomeTypeName = text
+            dataAction.input.incomeTypeName = text
         }
-        const saving = () => {
-            console.log(dataAction);
+        const saving = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                // if form disabled => action edit 
+                if (disabledInput.value == true) {
+                    actionUpdate(dataAction)
+                } else { // if form disabled => action add 
+                    let dataCreact = {
+                        companyId: companyId,
+                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        input: {
+                            name: dataAction.input.name,
+                            foreigner: dataAction.input.name,
+                            nationality: dataAction.input.name,
+                            nationalityCode: dataAction.input.name,
+                            stayQualification: dataAction.input.name,
+                            residentId: dataAction.input.name,
+                            email: dataAction.input.name,
+                            employeeId: dataAction.input.name,
+                            incomeTypeCode: dataAction.input.name,
+                            incomeTypeName: dataAction.input.name,
+                        }
+                    }
+                    actionCreacted
+                }
+            }
+        }
+
+        const addRow = () => {
+            disabledInput.value = false
+            dataAction.employeeId = valueDefaultAction.employeeId
+            dataAction.input.name = valueDefaultAction.name
+            dataAction.input.foreigner = valueDefaultAction.foreigner
+            dataAction.input.nationality = valueDefaultAction.nationality
+            dataAction.input.nationalityCode = valueDefaultAction.nationalityCode
+            dataAction.input.stayQualification = valueDefaultAction.stayQualification
+            dataAction.input.residentId = valueDefaultAction.residentId
+            dataAction.incomeTypeCode = valueDefaultAction.incomeTypeCode
+            dataAction.input.incomeTypeName = valueDefaultAction.incomeTypeName
+            dataAction.input.email = valueDefaultAction.email
         }
         return {
+            loadingCreacted,
             disabledInput,
-            changeTextTypeCode,
             loadingGetEmployeeBusinessesDetail,
-            actionEdit,
             loadingGetEmployeeBusinesses,
             arrForeigner,
             rowTable,
-            onExporting,
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
-            searching,
             dataAction,
+            loadingUpdate,
+            addRow,
+            changeTextTypeCode,
+            actionEdit,
+            onExporting,
+            searching,
             changeTextCountry,
             saving
         };
