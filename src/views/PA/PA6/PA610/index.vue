@@ -1,6 +1,6 @@
 <template>
-    <form action="">
-        <action-header title="사업소득자등록" @actionSave="saving" />
+    <standard-form name="page-610">
+        <action-header title="사업소득자등록" @actionSave="saving($event)" />
         <div id="pa-610">
             <div class="page-content">
                 <a-row>
@@ -36,7 +36,7 @@
                                         <DxItem name="columnChooserButton" />
                                     </DxToolbar>
                                     <template #button-template>
-                                        <DxButton icon="plus" />
+                                        <DxButton icon="plus" @click="addRow" />
                                     </template>
                                     <template #pagination-table>
                                         <div v-if="rowTable > originData.rows">
@@ -97,7 +97,7 @@
                                 <a-form-item label="영업자코드" label-align="right">
                                     <div class="custom-note">
                                         <default-text-box width="200px" v-model:valueInput="dataAction.employeeId"
-                                            placeholder="숫자만 입력 가능" :disabled="disabledInput" />
+                                            placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
                                         <span>
                                             <InfoCircleFilled /> 최초 저장된 이후 수정 불가
                                         </span>
@@ -105,7 +105,7 @@
                                 </a-form-item>
                                 <a-form-item label="성명(상호)" label-align="right">
                                     <default-text-box v-model:valueInput="dataAction.name" width="200px"
-                                        placeholder="한글,영문(대문자) 입력 가능" />
+                                        placeholder="한글,영문(대문자) 입력 가능" :required="true" />
                                 </a-form-item>
                                 <a-form-item label="내/외국인" label-align="right">
                                     <radio-group :arrayValue="arrForeigner" width="200px"
@@ -113,36 +113,39 @@
                                 </a-form-item>
                                 <a-form-item label="외국인 국적" label-align="right">
                                     <country-code-select-box v-model:valueCountry="dataAction.nationalityCode"
-                                        @textCountry="changeTextCountry" width="200px" />
+                                        @textCountry="changeTextCountry" width="200px" :disabled="disabledInput" />
                                 </a-form-item>
                                 <a-form-item label="외국인 체류자격" label-align="right">
-                                    <stay-qualification-select-box
+                                    <stay-qualification-select-box :disabled="disabledInput"
                                         v-model:valueStayQualifiction="dataAction.stayQualification" width="200px" />
                                 </a-form-item>
                                 <a-form-item label="주민(외국인)번호" label-align="right">
                                     <default-text-box v-model:valueInput="dataAction.residentId" width="200px"
-                                        placeholder="숫자 13자리" />
+                                        placeholder="숫자 13자리" :required="true" />
                                 </a-form-item>
                                 <a-form-item label="소득구분" label-align="right">
                                     <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
-                                        @textCountry="changeTextTypeCode" />
+                                        @textTypeCode="changeTextTypeCode" :disabled="disabledInput" />
                                 </a-form-item>
                                 <a-form-item label="이메일" label-align="right">
                                     <div class="custom-note">
                                         <mail-text-box width="300px" v-model:valueInput="dataAction.email"
-                                            placeholder="abc@example.com" />
+                                            placeholder="abc@example.com" :required="true" />
                                         <span>
                                             <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                                         </span>
                                     </div>
                                 </a-form-item>
+
+                                <button-basic :text="'단추'" :type="'success'" :mode="'contained'"
+                                    @onClick="saving($event)" />
                             </div>
                         </a-spin>
                     </a-col>
                 </a-row>
             </div>
         </div>
-    </form>
+    </standard-form>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -208,7 +211,7 @@ export default defineComponent({
         let dataAction = reactive({
             ...valueDefaultAction
         })
-        let disabledInput = ref(true)
+        let disabledInput = ref(false)
 
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
@@ -258,16 +261,12 @@ export default defineComponent({
             // refetchData();
         };
         const actionEdit = (employeeId: any, incomeTypeCode: any) => {
+            disabledInput.value = true
             triggerDetail.value = true
-            const oldValue = valueCallApiGetEmployeeBusiness.employeeId
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
             valueCallApiGetEmployeeBusiness.employeeId = employeeId
+            refetchDataDetail()
 
-            if (valueCallApiGetEmployeeBusiness.employeeId != oldValue) {
-                refetchDataDetail()
-            } else {
-                triggerDetail.value = false
-            }
         }
 
         const changeTextCountry = (text: any) => {
@@ -276,23 +275,49 @@ export default defineComponent({
         const changeTextTypeCode = (text: any) => {
             dataAction.incomeTypeName = text
         }
-        const saving = () => {
-            console.log(dataAction);
+        const saving = (e: any) => {
+            console.log(e);
+
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            }
+            // if form disabled => action edit 
+            if (disabledInput.value == true) {
+
+            } else { // if form disabled => action add 
+
+            }
+        }
+
+        const addRow = () => {
+            disabledInput.value = false
+            dataAction.employeeId = valueDefaultAction.employeeId
+            dataAction.name = valueDefaultAction.name
+            dataAction.foreigner = valueDefaultAction.foreigner
+            dataAction.natinationalityonality = valueDefaultAction.natinationalityonality
+            dataAction.nationalityCode = valueDefaultAction.nationalityCode
+            dataAction.stayQualification = valueDefaultAction.stayQualification
+            dataAction.residentId = valueDefaultAction.residentId
+            dataAction.incomeTypeCode = valueDefaultAction.incomeTypeCode
+            dataAction.incomeTypeName = valueDefaultAction.incomeTypeName
+            dataAction.email = valueDefaultAction.email
         }
         return {
             disabledInput,
-            changeTextTypeCode,
             loadingGetEmployeeBusinessesDetail,
-            actionEdit,
             loadingGetEmployeeBusinesses,
             arrForeigner,
             rowTable,
-            onExporting,
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
-            searching,
             dataAction,
+            addRow,
+            changeTextTypeCode,
+            actionEdit,
+            onExporting,
+            searching,
             changeTextCountry,
             saving
         };
