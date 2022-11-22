@@ -7,6 +7,9 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="ts"
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxColumn caption="기록일시" data-field="loggedAt" data-type="text" />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
@@ -76,6 +79,7 @@ export default defineComponent({
         let trigger110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
         let trigger610 = ref<boolean>(false);
+        let trigger710 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
@@ -142,6 +146,14 @@ export default defineComponent({
                             trigger130.value = true;
                             refetchCM130();
                             break;
+                        case 'pa-710':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger710.value = true;
+                            refetchPA710();
+                            break;
                         default:
                             break;
                     }
@@ -153,7 +165,11 @@ export default defineComponent({
                     trigger130.value = false;
                     trigger110.value = false;
                     trigger220.value = false;
+
                     trigger610.value = false;
+
+                    trigger710.value = false;
+
                 }
             }
         );
@@ -281,6 +297,21 @@ export default defineComponent({
             }
         });
 
+        // get getEmployeeExtrasLogs pa-710
+        const { result: resultPA710, loading: loadingPA710, refetch: refetchPA710 } = useQuery(
+            queries.getEmployeeExtrasLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger710.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA710, (value) => {
+            if (value && value.getEmployeeExtrasLogs) {
+                dataTableShow.value = value.getEmployeeExtrasLogs;
+            }
+        });
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -301,6 +332,7 @@ export default defineComponent({
             loadingCM110,
             loadingCM130,
             loadingBF220,
+            loadingPA710,
             formarDate,
             dataQuery
         }

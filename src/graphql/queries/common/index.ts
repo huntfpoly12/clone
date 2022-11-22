@@ -14,6 +14,7 @@ import searchPublicInstitutions from "./searchPublicInstitutions";
 import getSaleRequestContact from "./getSaleRequestContact";
 import getEmployeeBusinessesLogs from "./getEmployeeBusinessesLogs";
 
+import getEmployeeExtrasLogs from "./getEmployeeExtrasLogs";
 const queries = {
   getListSale: getListSale,
   getUserLogs: getUserLogs,
@@ -30,6 +31,7 @@ const queries = {
   searchPublicInstitutions:searchPublicInstitutions,
   getSaleRequestContact:getSaleRequestContact,
   getEmployeeBusinessesLogs:getEmployeeBusinessesLogs,
+  getEmployeeExtrasLogs: getEmployeeExtrasLogs,
 };
 
 export default queries;
