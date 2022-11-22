@@ -161,7 +161,7 @@ export default [{
             items: [
                 { name: '퇴직금시뮬레이션', url: '#', id: 'pa-410' },
                 { name: '퇴직소득자료입력', url: '#', id: 'pa-420' },
-                { name: '퇴직소득원천징수영수증', url: '#', id: 'pa-430' },
+                { name: '퇴직소득원천징수영수증', url: '/dashboard/pa-430', id: 'pa-430' },
             ]
         },
         {
