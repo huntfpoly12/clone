@@ -430,11 +430,8 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import TypeCodeSelectBox from "../../components/common/TypeCodeSelectBox.vue";
-// import TagSelectBoxVue from "../../components/common/TagSelectBox.vue";
 export default defineComponent({
     components: {
-        // TagSelectBoxVue
     },
     data() {
         return {
