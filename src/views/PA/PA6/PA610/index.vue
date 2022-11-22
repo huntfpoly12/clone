@@ -123,7 +123,7 @@
                                     v-model:valueStayQualifiction="dataAction.input.stayQualification" width="200px" />
                             </a-form-item>
                             <a-form-item label="주민(외국인)번호" label-align="right">
-                                <default-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
+                                <id-number-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
                                     placeholder="숫자 13자리" :required="true" />
                             </a-form-item>
                             <a-form-item label="소득구분" label-align="right">
@@ -189,7 +189,6 @@ export default defineComponent({
         HistoryPopup
     },
     setup() {
-        let arrRowEdit = reactive([])
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
         const dataSource = ref([]);
@@ -279,12 +278,12 @@ export default defineComponent({
         })
 
         const {
-            mutate: actionCreacted,
+            mutate: actionCreated,
             onError: createdErr,
-            loading: loadingCreacted,
-            onDone: creactedDone,
+            loading: loadingCreated,
+            onDone: createdDone,
         } = useMutation(mutations.createEmployeeBusiness);
-        creactedDone(res => {
+        createdDone(res => {
             refetchData()
             notification('success', `업데이트 완료!`)
         })
@@ -315,9 +314,10 @@ export default defineComponent({
                         e.incomeTypeCode = newValue.incomeTypeCode
                         e.incomeTypeName = newValue.input.incomeTypeName
                         e.name = newValue.input.name
-                        e.residentId = newValue.input.residentId
+                        e.residentId = newValue.input.residentId.slice(0, 6) + '-' + newValue.input.residentId.slice(7, 13)
+
                     }
-                })  
+                })
             }
         }, { deep: true });
 
@@ -331,7 +331,7 @@ export default defineComponent({
             // trigger.value = true;
             // refetchData();
         };
-        const actionEdit = (employeeId: any, incomeTypeCode: any) => {  
+        const actionEdit = (employeeId: any, incomeTypeCode: any) => {
             disabledInput.value = true
             triggerDetail.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
@@ -352,9 +352,25 @@ export default defineComponent({
             } else {
                 // if form disabled => action edit 
                 if (disabledInput.value == true) {
-                    actionUpdate(dataAction)
+                    let dataActionedit = {
+                        companyId: companyId,
+                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
+                        incomeTypeCode: dataAction.incomeTypeCode,
+                        input: {
+                            name: dataAction.input.name,
+                            foreigner: dataAction.input.foreigner,
+                            nationality: dataAction.input.nationality,
+                            nationalityCode: dataAction.input.nationalityCode,
+                            stayQualification: dataAction.input.stayQualification,
+                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(6, 13),
+                            email: dataAction.input.email,
+                            incomeTypeName: dataAction.input.incomeTypeName,
+                        }
+                    }
+                    actionUpdate(dataActionedit)
                 } else { // if form disabled => action add 
-                    let dataCreact = {
+                    let dataCreat = {
                         companyId: companyId,
                         imputedYear: parseInt(dayjs().format('YYYY')),
                         input: {
@@ -363,14 +379,14 @@ export default defineComponent({
                             nationality: dataAction.input.nationality,
                             nationalityCode: dataAction.input.nationalityCode,
                             stayQualification: dataAction.input.stayQualification,
-                            residentId: dataAction.input.residentId,
+                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(7, 13),
                             email: dataAction.input.email,
                             employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
                             incomeTypeCode: dataAction.incomeTypeCode,
                             incomeTypeName: dataAction.input.incomeTypeName,
                         }
                     }
-                    actionCreacted(dataCreact)
+                    actionCreated(dataCreat)
                 }
             }
         }
@@ -404,11 +420,12 @@ export default defineComponent({
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = true;
         }
+
         return {
             popupData,
             modalHistory,
             modalHistoryStatus,
-            loadingCreacted,
+            loadingCreated,
             disabledInput,
             loadingGetEmployeeBusinessesDetail,
             loadingGetEmployeeBusinesses,
