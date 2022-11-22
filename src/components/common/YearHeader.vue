@@ -6,6 +6,7 @@
 </template>
 <script lang="ts">
 import { defineComponent , ref, watch} from "vue";
+import { useStore } from 'vuex';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons-vue';
 import dayjs, { Dayjs } from 'dayjs';
 export default defineComponent({
@@ -17,13 +18,17 @@ export default defineComponent({
         CaretRightOutlined
     },
     setup(props, { emit }) {
+        const store = useStore();
+        
         const year = ref(dayjs().year());
         const increase = ()=>{
             year.value++;
+            store.state.settings.globalYear = year.value;
         }
 
         const decrease = ()=>{
             year.value--;
+            store.state.settings.globalYear = year.value;
         }
 
         return {

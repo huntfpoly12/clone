@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <a-spin :spinning="loading" size="large">
-    <action-header title="" />
+    <action-header title="" @actionSearch="searching"/>
     <div id="bf-310">
       <div class="search-form">
         <a-row :gutter="[24, 8]">
@@ -10,7 +10,7 @@
               <label class="lable-item">구분 :</label>
               <radio-group
                 :arrayValue="radioCheckDataSearch"
-                v-model:valueRadioCheck="radioCheckDataSearch[2]"
+                v-model:valueRadioCheck="testValue1"
                 :layoutCustom="'horizontal'"
                 style="margin: 6px 20px 0px 0px"
               />
@@ -19,6 +19,7 @@
           <a-col>
             <div class="dflex custom-flex">
               <label class="lable-item">귀속연도 :</label>
+              <a-tag color="#a3a2a0">귀 {{globalYear}}</a-tag>
             </div>
           </a-col>
         </a-row>
@@ -36,7 +37,7 @@
             <div class="tax-select">
               <radio-group
                 :arrayValue="radioCheckData"
-                v-model:valueRadioCheck="radioCheckData[2]"
+                v-model:valueRadioCheck="testValue2"
               />
             </div>
           </a-col>
@@ -72,6 +73,11 @@
                     <DxColumn  caption="납세조합공제세액계" />
                     <DxColumn  caption="차감원천징수액계" />
                     <DxColumn  caption="소득공제계" />
+                    <DxSelection
+                      select-all-mode="allPages"
+                      show-check-boxes-mode="always"
+                      mode="multiple"
+                    />
         </DxDataGrid>
       </div>
     </div>
@@ -93,7 +99,11 @@ export default defineComponent({
     InfoCircleFilled
   },
   setup() {
+    const testValue1 = ref(1);
+    const testValue2 = ref(1);
+
     const store = useStore();
+    const globalYear = computed(() => store.state.settings.globalYear);
     const trigger = ref<boolean>(true);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -115,15 +125,22 @@ export default defineComponent({
             trigger.value = false
         }
     });
+
+    const searching = () => {
+      refetchData();
+    };
     return {
       loading,
+      searching,
+      globalYear,
       dataSource,
       move_column,
       colomn_resize,
       onExporting,
       radioCheckDataSearch,
       radioCheckData,
-
+      testValue1,
+      testValue2
     };
   },
 });
