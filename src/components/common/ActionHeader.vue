@@ -63,4 +63,8 @@ export default defineComponent({
     font-size: 19px;
     margin-left: 3px;
 }
+
+.top-content{
+    padding: 2px 10px
+}
 </style>
