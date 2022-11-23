@@ -29,7 +29,7 @@
           <a-col :span="2">
             <div class="send-mail-230">
                 <img src="../../../../assets/images/email.png" alt="" height="40" class="mail-230" @click="sendMail('mail')"/>
-                <img src="../../../../assets/images/group.png" alt="" height="33" style="margin-top: 8px" class="group-mail-230"  @click="sendMail('groupMail')"/>
+                <img src="../../../../assets/images/group.png" alt="" height="33" class="group-mail-230"  @click="sendMail('groupMail')"/>
             </div>
           </a-col>
         </a-row>
@@ -147,7 +147,7 @@ export default defineComponent({
     const dataSource = ref([]);
     const originData = ref({
       companyId: companyId,
-      imputedYear: 2022,
+      imputedYear: globalYear,
     });
     const {
       refetch: refetchData,
@@ -168,6 +168,7 @@ export default defineComponent({
     });
 
     const searching = () => {
+      trigger.value = true;
       refetchData();
     };
 

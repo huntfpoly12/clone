@@ -60,7 +60,7 @@
                     @checkConfirm="statusComfirm" />
             </a-col>
             <a-col :span="8">
-                <b> typeModal</b> : acceptInput <br> 
+                <b> typeModal</b> : confirm <br> 
                 <b> title</b> : Title notification <br>
                 <b> content</b> : content notification<br>
                 <b> okText</b> : Text button comfirm

@@ -6,7 +6,6 @@ export default gql`
             $imputedYear: Int!
         ){
             getEmployeeExtras(companyId: $companyId, imputedYear: $imputedYear) {
-                type
                 employeeId
                 incomeTypeCode
                 name
@@ -14,17 +13,8 @@ export default gql`
                 nationality
                 nationalityCode
                 stayQualification
-                residentIdValidity
-                roadAddress
-                status
-                createdAt
-                createdBy
-                updatedAt
-                updatedBy
-                ip
-                active
+                email
                 residentId
                 incomeTypeName
-                deletable
             }
         }`

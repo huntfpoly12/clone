@@ -1,0 +1,45 @@
+.dflex {
+    display: flex;
+}
+
+.custom-flex {
+    align-items: flex-start;
+    align-items: center;
+}
+.format-settings{
+    padding-top: 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    .format-settings-text{
+        padding-left: 18px;
+    }
+}
+.tax-select{
+    padding-top: 15px;
+}
+
+.created-date{
+    padding-top: 15px;
+    float: right;
+    display: flex;
+    align-items: center;
+}
+
+.global-year{
+    margin-top: 6px;
+}
+
+.send-mail-230{
+    float: right;
+    .mail-230{
+        cursor: pointer;
+    }
+    .group-mail-230{
+        cursor: pointer;
+        margin-top: 8px;
+        margin-right: 13px;
+        margin-left: 10px;
+    }
+
+}

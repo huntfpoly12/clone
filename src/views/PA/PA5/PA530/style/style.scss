@@ -1,0 +1,78 @@
+#pa-530 {
+
+    ::v-deep .custom-mail-group {
+        .dx-button-content {
+            padding: 3px;
+        }
+    }
+
+    .custom-flex {
+        display: flex;
+        width: 100%;
+        align-items: center;
+
+        .ant-row {
+            width: 100%;
+        }
+    }
+
+    .total-user {
+        background-color: #337AB7;
+        color: white;
+        display: flex;
+        align-items: center;
+
+        >div {
+            font-size: 16px;
+            width: 50%;
+            text-align: center;
+            line-height: 16px;
+
+            .dx-icon-user {
+                font-size: 55px;
+            }
+        }
+    }
+
+    ::v-deep .ant-form-item-label>label {
+        width: 180px;
+        padding-left: 10px;
+        color: red;
+    }
+
+    .ant-form-item {
+        margin-bottom: 10px;
+    }
+
+    ::v-deep .custom-layout {
+        padding: 10px 10px 10px 0;
+
+        >div {
+            border: 1px solid #d7d7d7;
+            padding: 10px;
+            min-height: 500px;
+        }
+    }
+
+    .custom-note {
+        >span {
+            font-size: 11px;
+            color: #666666;
+            padding-left: 5px;
+        }
+    }
+
+    .custom-grade-cell {
+        display: flex;
+        align-items: center;
+
+        .custom-grade-cell-tag {
+            padding: 3px 10px;
+            border: 1px solid #304967;
+            margin-right: 10px;
+            border-radius: 5px;
+            min-width: 50px;
+            text-align: center;
+        }
+    }
+}

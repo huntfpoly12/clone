@@ -129,7 +129,7 @@ export default [{
             id: 'pa-100',
             items: [
                 { name: '근로소득자료입력', url: '#', id: 'pa-110' },
-                { name: '사원등록', url: '#', id: 'pa-120' },
+                { name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' },
             ]
         },
         {
@@ -170,7 +170,7 @@ export default [{
             items: [
                 { name: '일용직근로소득자료입력', url: '#', id: 'pa-510' },
                 { name: '일용직사원등록', url: '#', id: 'pa-520' },
-                { name: '일용직근로소득원천징수영수증', url: '#', id: 'pa-530' },
+                { name: '일용직근로소득원천징수영수증', url: '/dashboard/pa-530', id: 'pa-530' },
             ]
         },
         {
@@ -179,7 +179,7 @@ export default [{
             items: [
                 { name: '사업소득자등록', url: '/dashboard/pa-610', id: 'pa-610' },
                 { name: '사업소득자료입력', url: '#', id: 'pa-620' },
-                { name: '사업소득원천징수영수증', url: '#', id: 'pa-630' },
+                { name: '사업소득원천징수영수증', url: '/dashboard/pa-610', id: 'pa-630' },
             ]
         },
         {
