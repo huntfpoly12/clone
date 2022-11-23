@@ -1,4 +1,6 @@
-export const radioCheckDataSearch = [
-    { id: 1, text: '전체' },
-    { id: 2, text: '계속' },
-    { id: 3, text: '중도' }];
+export const radioCheckForeigner = [
+    { id: 1, text: '내국인' },
+    { id: 2, text: '외국인' }];
+export const radioCheckHouseholder = [
+        { id: 1, text: 'X' },
+        { id: 2, text: 'O' }];
