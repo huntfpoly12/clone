@@ -75,11 +75,12 @@ export class Message extends BaseType {
 
         //원천설정
     public static CM130 = new Message({
-        '001': { "message" : "이용 가능한 급여항목은 최대 20개입니다. 기존항목을 삭제한 후 새로 추가하세요", "icon": "iconError"}, 
-        '002': { "message" : "이미 사용중인 항목명입니다. 사용불가능", "icon": "iconError"}, // Item name already in use. unavailable
-
-        //Contents modal : There is a maximum of 20 payroll items available. Disable the old one and add the new one
-      
+        '001': { "message" : "이용 가능한 급여항목은 최대 20개입니다. 기존항목을 삭제한 후 새로 추가하세요", "icon": "iconError"},
+              //Contents modal : There is a maximum of 20 payroll items available. Delete the old one and add the new one
+        '002': { "message" : "이미 사용중인 항목명입니다. 사용불가능", "icon": "iconError"},
+              // Item name already in use. unavailable
+        '003': { "message" : "수정하거나 삭제할 수 없는 항목입니다.", "icon": "iconError"}, 
+              // This item cannot be edited or deleted.
     });
   
     private static _ = Message.closeEnum();
