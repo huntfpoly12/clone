@@ -8,6 +8,7 @@ export default defineComponent({
     props: {
         valueSwitch: {
             type: Boolean,
+            default: true
         },
         textCheck: {
             type: String
@@ -17,7 +18,7 @@ export default defineComponent({
         }
     },
 
-    setup(props, { emit }) {       
+    setup(props, { emit }) {
         const app: any = getCurrentInstance()
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
         const dataDef = ref(props.valueSwitch)

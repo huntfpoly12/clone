@@ -1,5 +1,5 @@
 <template>
-    <action-header title="일용직근로소득원천징수영수증" />
+    <action-header title="일용직근로소득원천징수영수증" @actionSearch="searching" />
     <div id="pa-530">
         <div class="search-form">
             <a-row :gutter="[24, 8]">
@@ -107,6 +107,37 @@
             </a-row>
         </div>
         <div class="page-content">
+            <div class="title-body">
+                <a-row>
+                    <a-col :span="12">
+                        <div class="title-body-left-1">
+                            <div>
+                                서식 설정 :
+                            </div>
+                            <div>
+                                <img src="../../../../assets/images/iconInfo.png" alt="">
+                            </div>
+                            <span>
+                                본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
+                            </span>
+                        </div>
+                        <div class="title-body-left-2">
+                            <span>소득자보관용 :</span>
+                            <div>
+                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자 보관용"
+                                    textUnCheck="지급자보관용" />
+                            </div>
+                        </div>
+                    </a-col>
+
+                    <a-col :span="12">
+                        <div class="title-body-right">
+                            <date-time-box width="160px" v-model:valueDate="dateSendEmail" dateFormat="YYYY-MM-DD" />
+                        </div>
+                    </a-col>
+                </a-row>
+
+            </div>
             <a-spin :spinning="loadingGetEmployeeBusinesses" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employeeId" @exporting="onExporting"
@@ -129,7 +160,8 @@
                             </DxButton>
                         </div>
                     </template>
-                    <DxColumn caption="성명 (상호)" cell-template="tag" />
+                    <DxSelection mode="multiple" />
+                    <DxColumn caption="성명 (상호)" cell-template="tag" width="300px" />
                     <template #tag="{ data }" class="custom-action">
                         <div class="custom-action" v-if="data.data.employeeId != '-1'">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
@@ -137,11 +169,11 @@
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </div>
                         <div v-else>
-                            {{data.data.summary}}
+                            {{ data.data.summary }}
                         </div>
                     </template>
 
-                    <DxColumn caption="주민등록번호" data-field="residentId" />
+                    <DxColumn caption="주민등록번호" data-field="residentId" width="150px" />
                     <DxColumn caption="비고" cell-template="four-major" />
                     <template #four-major="{ data }" class="custom-action">
                         <div>
@@ -161,6 +193,8 @@
                             <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
                         </div>
                     </template>
+
+
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
@@ -169,8 +203,6 @@
                 <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
                     title="Title Notification" content="Content notification" okText="네" cancelText="아니요"
                     @checkConfirm="statusComfirm" />
-                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력" typeHistory="pa-530" />
             </a-spin>
         </div>
     </div>
@@ -178,33 +210,21 @@
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
-import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA5/PA530/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "../../../../../src/helpers/commonFunction";
 import dayjs from 'dayjs';
-import mutations from "../../../../graphql/mutations/PA/PA5/PA530/index";
-import HistoryPopup from '../../../../components/HistoryPopup.vue';
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        DxScrolling,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton,
         EditOutlined,
         HistoryOutlined,
-        DxToolbar,
-        DxEditing,
-        DxGrouping,
-        DxItem,
         SearchOutlined,
         MenuFoldOutlined,
         MenuUnfoldOutlined,
@@ -212,11 +232,11 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        DxButton,
         InfoCircleFilled,
-        HistoryPopup
     },
     setup() {
+        const dateSendEmail = ref(new Date)
+        const valueSwitchChange = ref(true)
         const globalYear: any = computed(() => store.state.settings.globalYear);
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
@@ -229,11 +249,19 @@ export default defineComponent({
         const originData = reactive({ ...origindata, rows: per_page });
         const dataDemoUltil = reactive({ ...dataDemo })
         const trigger = ref<boolean>(true);
+        let year1 = reactive({
+            label: globalYear.value + 1 + '년 01월',
+            value: true,
+        })
+        let year2 = reactive({
+            label: globalYear.value + 1 + '년 02월',
+            value: true,
+        })
         const dataApiSearch = reactive({
             companyId: companyId,
             filter: {
                 imputedYear: parseInt(dayjs().format('YYYY')),
-                paymentYearMonths: ['1/4분기']
+                paymentYearMonths: ['1/4분기', '2/4분기', '3/4분기', '4/4분기', year1.label, year2.label]
             }
         })
         const modalStatus = ref(false)
@@ -243,60 +271,19 @@ export default defineComponent({
             ...arrCheckBox
         })
         let checkAllValue = ref(true)
-        let year1 = reactive({
-            label: globalYear.value + 1 + '년 01월',
-            value: true,
-        })
-        let year2 = reactive({
-            label: globalYear.value + 1 + '년 02월',
-            value: true,
-        })
+
+
+        let customTextWithholdingLocalIncomeTax = ref('')
+        let customTextWithholdingIncomeTax = ref('')
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.search, dataApiSearch, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            // dataSource.value = res.data.getEmployeeBusinesses
-
-            let fieldAdd = {
-                employeeId: "-1",
-                type: "2",
-                incomeTypeCode: "940905",
-                name: "",
-                foreigner: true,
-                nationality: "2",
-                nationalityCode: "2",
-                stayQualification: "2",
-                residentIdValidity: "2",
-                roadAddress: "2",
-                addressExtend: "2",
-                email: "2",
-                department: "2",
-                responsibility: "2",
-                status: 10,
-                withholdingIncomeTax: "withholdingIncomeTax",
-                withholdingLocalIncomeTax: "withholdingLocalIncomeTax",
-                withholdingRuralSpecialTax: "2",
-                createdAt: "2",
-                createdBy: "2",
-                updatedAt: "2",
-                updatedBy: "2",
-                ip: "2",
-                active: "2",
-                residentId: "990128-4654",
-                joinedAt: "2",
-                leavedAt: "2",
-                retirementIncome: "2",
-                weeklyWorkingHours: "2",
-                monthlyPaycheck: "2",
-                workingDays: "2",
-                dailyWage: "2",
-                monthlyWage: "2",
-                totalDeduction: "2",
-                deletable: "2", 
-            }
-            dataDemoUltil.employee.push(fieldAdd)
+            // dataSource.value = res.data.getEmployeeBusinesses 
+            // customTextWithholdingLocalIncomeTax.value = "withholdingLocalIncomeTax"
+            // customTextWithholdingIncomeTax.value = "withholdingIncomeTax"
             dataSource.value = dataDemoUltil.employee
         })
         errorGetEmployeeBusinesses(res => {
@@ -304,17 +291,108 @@ export default defineComponent({
         })
 
         // ================WATCHING============================================
+        watch(checkAllValue, (value) => {
+            arrCheckBoxSearch.quarter1.value = value
+            arrCheckBoxSearch.quarter2.value = value
+            arrCheckBoxSearch.quarter3.value = value
+            arrCheckBoxSearch.quarter4.value = value
+            year1.value = value
+            year2.value = value
+        }, { deep: true });
+        watch(arrCheckBoxSearch, (val) => {
+            if (val.month1.value == true && val.month2.value == true && val.month3.value == true)
+                val.quarter1.value = true
+            else
+                val.quarter1.value = false
 
+            if (val.month4.value == true && val.month5.value == true && val.month6.value == true)
+                val.quarter2.value = true
+            else
+                val.quarter2.value = false
 
+            if (val.month7.value == true && val.month8.value == true && val.month9.value == true)
+                val.quarter3.value = true
+            else
+                val.quarter3.value = false
+
+            if (val.month10.value == true && val.month11.value == true && val.month12.value == true)
+                val.quarter4.value = true
+            else
+                val.quarter4.value = false
+
+            if (val.quarter1.value == true && val.quarter2.value == true && val.quarter3.value == true && val.quarter4.value == true && year1.value == true && year2.value == true)
+                checkAllValue.value = true
+            else
+                checkAllValue.value = false
+        }, { deep: true });
+        watch(() => year2.value, (val) => {
+            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year1.value == true)
+                checkAllValue.value = true
+            else
+                checkAllValue.value = false
+        })
+        watch(() => year1.value, (val) => {
+            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year2.value == true)
+                checkAllValue.value = true
+            else
+                checkAllValue.value = false
+        })
+        watch(arrCheckBoxSearch.quarter1, (val) => {
+            arrCheckBoxSearch.month1.value = val.value
+            arrCheckBoxSearch.month2.value = val.value
+            arrCheckBoxSearch.month3.value = val.value
+        },);
+        watch(arrCheckBoxSearch.quarter2, (val) => {
+            arrCheckBoxSearch.month4.value = val.value
+            arrCheckBoxSearch.month5.value = val.value
+            arrCheckBoxSearch.month6.value = val.value
+        },);
+        watch(arrCheckBoxSearch.quarter3, (val) => {
+            arrCheckBoxSearch.month7.value = val.value
+            arrCheckBoxSearch.month8.value = val.value
+            arrCheckBoxSearch.month9.value = val.value
+        },);
+        watch(arrCheckBoxSearch.quarter4, (val) => {
+            arrCheckBoxSearch.month10.value = val.value
+            arrCheckBoxSearch.month11.value = val.value
+            arrCheckBoxSearch.month12.value = val.value
+        },);
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const searching = () => {
-            // originData.grade = saleGrade.value == 0 ? null : saleGrade.value;
-            // originData.statuses = [saleStatus.value];
-            // trigger.value = true;
-            // refetchData();
+            let arrVal = []
+            if (arrCheckBoxSearch.month1.value == true)
+                arrVal.push(arrCheckBoxSearch.month1.label)
+            if (arrCheckBoxSearch.month2.value == true)
+                arrVal.push(arrCheckBoxSearch.month2.label)
+            if (arrCheckBoxSearch.month3.value == true)
+                arrVal.push(arrCheckBoxSearch.month3.label)
+            if (arrCheckBoxSearch.month4.value == true)
+                arrVal.push(arrCheckBoxSearch.month4.label)
+            if (arrCheckBoxSearch.month5.value == true)
+                arrVal.push(arrCheckBoxSearch.month5.label)
+            if (arrCheckBoxSearch.month6.value == true)
+                arrVal.push(arrCheckBoxSearch.month6.label)
+            if (arrCheckBoxSearch.month7.value == true)
+                arrVal.push(arrCheckBoxSearch.month7.label)
+            if (arrCheckBoxSearch.month8.value == true)
+                arrVal.push(arrCheckBoxSearch.month8.label)
+            if (arrCheckBoxSearch.month9.value == true)
+                arrVal.push(arrCheckBoxSearch.month9.label)
+            if (arrCheckBoxSearch.month10.value == true)
+                arrVal.push(arrCheckBoxSearch.month10.label)
+            if (arrCheckBoxSearch.month11.value == true)
+                arrVal.push(arrCheckBoxSearch.month11.label)
+            if (arrCheckBoxSearch.month12.value == true)
+                arrVal.push(arrCheckBoxSearch.month12.label)
+            if (year1.value == true)
+                arrVal.push(year1.label)
+            if (year2.value == true)
+                arrVal.push(year2.label)
+            dataApiSearch.filter.paymentYearMonths = arrVal
+            refetchData()
         };
 
         const modalHistory = (data: any) => {
@@ -326,6 +404,9 @@ export default defineComponent({
         }
 
         return {
+            valueSwitchChange,
+            dateSendEmail,
+            customTextWithholdingLocalIncomeTax, customTextWithholdingIncomeTax,
             year1,
             year2,
             checkAllValue,
