@@ -59,6 +59,20 @@
                     <pre class="mycode">&lt;four-major-insurance :typeTag="6" :ratio="80" /&gt; </pre>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <p><b>Income Type</b></p>
+                    <income-type :typeCode="'940904'" :typeName="'직업운동가'" />
+                </td>
+                <td>
+                    <b>- typeCode (String):</b> Income TypeCode <br />
+                    <b>- typeName (String):</b> Income TypeName <br />
+                </td>
+                <td>
+                    <pre class="mycode"> &lt;income-type :typeCode="'940904'" :typeName="'직업운동가'"/&gt;
+                    </pre>
+                </td>
+            </tr>
         </table>
     </form>
 </template>
