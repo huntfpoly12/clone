@@ -116,14 +116,14 @@
                             </a-form-item>
                             <a-form-item label="외국인 국적" label-align="right">
                                 <country-code-select-box v-model:valueCountry="dataAction.input.nationalityCode"
-                                    @textCountry="changeTextCountry" width="200px" :disabled="disabledInput" />
+                                    @textCountry="changeTextCountry" width="200px" :disabled="disabledInput2" />
                             </a-form-item>
                             <a-form-item label="외국인 체류자격" label-align="right">
-                                <stay-qualification-select-box :disabled="disabledInput"
+                                <stay-qualification-select-box :disabled="disabledInput2"
                                     v-model:valueStayQualifiction="dataAction.input.stayQualification" width="200px" />
                             </a-form-item>
-                            <a-form-item label="주민(외국인)번호" label-align="right">
-                                <default-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
+                            <a-form-item :label="textResidentId" label-align="right">
+                                <id-number-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
                                     placeholder="숫자 13자리" :required="true" />
                             </a-form-item>
                             <a-form-item label="소득구분" label-align="right">
@@ -189,7 +189,6 @@ export default defineComponent({
         HistoryPopup
     },
     setup() {
-        let arrRowEdit = reactive([])
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
         const dataSource = ref([]);
@@ -229,7 +228,9 @@ export default defineComponent({
             }
         })
         let disabledInput = ref(false)
+        let disabledInput2 = ref(true)
         const modalStatus = ref(false)
+        const textResidentId = ref('주민등록번호')
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
             enabled: trigger.value,
@@ -279,12 +280,12 @@ export default defineComponent({
         })
 
         const {
-            mutate: actionCreacted,
+            mutate: actionCreated,
             onError: createdErr,
-            loading: loadingCreacted,
-            onDone: creactedDone,
+            loading: loadingCreated,
+            onDone: createdDone,
         } = useMutation(mutations.createEmployeeBusiness);
-        creactedDone(res => {
+        createdDone(res => {
             refetchData()
             notification('success', `업데이트 완료!`)
         })
@@ -315,11 +316,23 @@ export default defineComponent({
                         e.incomeTypeCode = newValue.incomeTypeCode
                         e.incomeTypeName = newValue.input.incomeTypeName
                         e.name = newValue.input.name
-                        e.residentId = newValue.input.residentId
+                        e.residentId = newValue.input.residentId.slice(0, 6) + '-' + newValue.input.residentId.slice(7, 13)
+
                     }
-                })  
+                })
             }
         }, { deep: true });
+
+        watch(() => dataAction.input.foreigner, (newValue, old) => {
+            console.log(newValue);
+            if (newValue == false){
+                disabledInput2.value = true
+                textResidentId.value = '주민등록번호'
+            }else{
+                disabledInput2.value = false
+                textResidentId.value = '외국인번호 유효성'
+            }
+        },);
 
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
@@ -331,9 +344,10 @@ export default defineComponent({
             // trigger.value = true;
             // refetchData();
         };
-        const actionEdit = (employeeId: any, incomeTypeCode: any) => {  
+        const actionEdit = (employeeId: any, incomeTypeCode: any) => {
             disabledInput.value = true
             triggerDetail.value = true
+            disabledInput2.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
             valueCallApiGetEmployeeBusiness.employeeId = employeeId
             refetchDataDetail()
@@ -352,9 +366,25 @@ export default defineComponent({
             } else {
                 // if form disabled => action edit 
                 if (disabledInput.value == true) {
-                    actionUpdate(dataAction)
+                    let dataActionedit = {
+                        companyId: companyId,
+                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
+                        incomeTypeCode: dataAction.incomeTypeCode,
+                        input: {
+                            name: dataAction.input.name,
+                            foreigner: dataAction.input.foreigner,
+                            nationality: dataAction.input.nationality,
+                            nationalityCode: dataAction.input.nationalityCode,
+                            stayQualification: dataAction.input.stayQualification,
+                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(6, 13),
+                            email: dataAction.input.email,
+                            incomeTypeName: dataAction.input.incomeTypeName,
+                        }
+                    }
+                    actionUpdate(dataActionedit)
                 } else { // if form disabled => action add 
-                    let dataCreact = {
+                    let dataCreat = {
                         companyId: companyId,
                         imputedYear: parseInt(dayjs().format('YYYY')),
                         input: {
@@ -363,14 +393,14 @@ export default defineComponent({
                             nationality: dataAction.input.nationality,
                             nationalityCode: dataAction.input.nationalityCode,
                             stayQualification: dataAction.input.stayQualification,
-                            residentId: dataAction.input.residentId,
+                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(7, 13),
                             email: dataAction.input.email,
                             employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
                             incomeTypeCode: dataAction.incomeTypeCode,
                             incomeTypeName: dataAction.input.incomeTypeName,
                         }
                     }
-                    actionCreacted(dataCreact)
+                    actionCreated(dataCreat)
                 }
             }
         }
@@ -404,11 +434,14 @@ export default defineComponent({
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = true;
         }
+
         return {
+            textResidentId,
+            disabledInput2,
             popupData,
             modalHistory,
             modalHistoryStatus,
-            loadingCreacted,
+            loadingCreated,
             disabledInput,
             loadingGetEmployeeBusinessesDetail,
             loadingGetEmployeeBusinesses,
