@@ -96,6 +96,7 @@ export const valueDefaultAction = {
     incomeTypeName: '저술가',
     email: '',
 }
+
 export const dataDemo =
 {
     totalTaxPay: "2",
