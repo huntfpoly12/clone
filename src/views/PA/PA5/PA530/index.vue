@@ -185,25 +185,32 @@
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
 
+                    <DxSummary>
+                        <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
+                        <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
+                        <DxTotalItem :customize-text="customizeTotalTaxfreePay" show-in-column="비과세소득" />
+                        <DxTotalItem :customize-text="customizeIncomeTax" column="withholdingIncomeTax" />
+                        <DxTotalItem :customize-text="customizeDateLocalIncomeTax" column="withholdingLocalIncomeTax" />
+                    </DxSummary>
+
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
                             <img src="../../../../assets/images/email.svg" alt=""
-                                style="width: 25px; margin-right: 3px;" />
-                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
+                                style="width: 25px; margin-right: 3px; cursor: pointer;"
+                                @click="openPopup(data.data)" />
+                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;cursor: pointer" />
                         </div>
                     </template>
-
-
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                 </div>
-                <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-                    title="Title Notification" content="Content notification" okText="네" cancelText="아니요"
-                    @checkConfirm="statusComfirm" />
             </a-spin>
+            <PA630Popup :modalStatus="modalStatus" :dataPopup="dataCallModal" :imputedYear="globalYear"
+                :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
+                :receiptDate="dateSendEmail.toString()" @closePopup="modalStatus = false" :companyId="companyId" />
         </div>
     </div>
 </template>
@@ -213,16 +220,17 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA5/PA530/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "../../../../../src/helpers/commonFunction";
+import PA630Popup from "./components/PA630Popup.vue";
 import dayjs from 'dayjs';
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
         EditOutlined,
         HistoryOutlined,
         SearchOutlined,
@@ -233,8 +241,11 @@ export default defineComponent({
         DeleteOutlined,
         SaveOutlined,
         InfoCircleFilled,
+        PA630Popup
     },
     setup() {
+        let paymentYearMonthsModal: any = ref()
+        let dataCallModal = ref()
         const dateSendEmail = ref(new Date)
         const valueSwitchChange = ref(true)
         const globalYear: any = computed(() => store.state.settings.globalYear);
@@ -399,11 +410,69 @@ export default defineComponent({
             modalHistoryStatus.value = true;
         }
 
-        const statusComfirm = (res: any) => {
+        const openPopup = (res: any) => {
+            dataCallModal.value = {
+                senderName: sessionStorage.getItem("username"),
+                receiverName: res.name,
+                receiverAddress: res.email,
+                employeeId: res.employeeId,
+            }
+            let arrVal = []
+            if (arrCheckBoxSearch.month1.value == true)
+                arrVal.push(arrCheckBoxSearch.month1.label)
+            if (arrCheckBoxSearch.month2.value == true)
+                arrVal.push(arrCheckBoxSearch.month2.label)
+            if (arrCheckBoxSearch.month3.value == true)
+                arrVal.push(arrCheckBoxSearch.month3.label)
+            if (arrCheckBoxSearch.month4.value == true)
+                arrVal.push(arrCheckBoxSearch.month4.label)
+            if (arrCheckBoxSearch.month5.value == true)
+                arrVal.push(arrCheckBoxSearch.month5.label)
+            if (arrCheckBoxSearch.month6.value == true)
+                arrVal.push(arrCheckBoxSearch.month6.label)
+            if (arrCheckBoxSearch.month7.value == true)
+                arrVal.push(arrCheckBoxSearch.month7.label)
+            if (arrCheckBoxSearch.month8.value == true)
+                arrVal.push(arrCheckBoxSearch.month8.label)
+            if (arrCheckBoxSearch.month9.value == true)
+                arrVal.push(arrCheckBoxSearch.month9.label)
+            if (arrCheckBoxSearch.month10.value == true)
+                arrVal.push(arrCheckBoxSearch.month10.label)
+            if (arrCheckBoxSearch.month11.value == true)
+                arrVal.push(arrCheckBoxSearch.month11.label)
+            if (arrCheckBoxSearch.month12.value == true)
+                arrVal.push(arrCheckBoxSearch.month12.label)
+            if (year1.value == true)
+                arrVal.push(year1.label)
+            if (year2.value == true)
+                arrVal.push(year2.label)
+            paymentYearMonthsModal.value = arrVal
+            modalStatus.value = true
 
         }
 
-        return {
+        const customizeIncomeTax = () => {
+            return dataDemoUltil.withholdingLocalIncomeTax
+        }
+        const customizeDateLocalIncomeTax = () => {
+            return dataDemoUltil.withholdingIncomeTax
+        }
+        const customizeTotal = () => {
+            return dataSource.value.length
+        }
+
+        const customizeTotalTaxfreePay = () => {
+            return dataDemoUltil.totalTaxfreePay
+        }
+        const customizeTotalTaxPay = () => {
+            return dataDemoUltil.totalTaxPay
+        }
+
+        return { 
+            companyId,
+            paymentYearMonthsModal,
+            dataCallModal,
+            modalStatus,
             valueSwitchChange,
             dateSendEmail,
             customTextWithholdingLocalIncomeTax, customTextWithholdingIncomeTax,
@@ -419,12 +488,16 @@ export default defineComponent({
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
-            modalStatus,
             globalYear,
-            statusComfirm,
+            openPopup,
             modalHistory,
             onExporting,
             searching,
+            customizeTotal,
+            customizeIncomeTax,
+            customizeDateLocalIncomeTax,
+            customizeTotalTaxPay,
+            customizeTotalTaxfreePay,
         };
     },
 });
