@@ -1,0 +1,8 @@
+import getIncomeBusinessWithholdingReceiptReportViewUrl from "./getIncomeBusinessWithholdingReceiptReportViewUrl"
+import searchIncomeBusinessWithholdingReceipts from "./searchIncomeBusinessWithholdingReceipts"
+
+const queries = {
+    getIncomeBusinessWithholdingReceiptReportViewUrl: getIncomeBusinessWithholdingReceiptReportViewUrl,
+    searchIncomeBusinessWithholdingReceipts: searchIncomeBusinessWithholdingReceipts
+};
+export default queries;
