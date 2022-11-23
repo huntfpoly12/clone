@@ -3,11 +3,11 @@
     <div id="pa-530">
         <div class="search-form">
             <a-row :gutter="[24, 8]">
-                <a-col :span="4">
+                <a-col :span="3">
                     <label class="lable-item">귀속연도 :</label>
                     <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
                 </a-col>
-                <a-col :span="20">
+                <a-col :span="21">
                     <div class="custom-flex">
                         <label class="lable-item">지급월 :</label>
                         <a-row :gutter="[24, 8]">
@@ -16,14 +16,20 @@
                                 <checkbox-basic size="14" label="전체" v-model:valueCheckbox="checkAllValue" />
                             </a-col>
                             <a-col :span="6">
-                                <checkbox-basic size="14" v-model:valueCheckbox="year1"
-                                    :label="globalYear + 1 + '년 01월'" />
+                                <checkbox-basic size="14" v-model:valueCheckbox="year1.value" :label="year1.label" />
                             </a-col>
-                            <a-col :span="6">
-                                <checkbox-basic size="14" v-model:valueCheckbox="year2"
-                                    :label="globalYear + 1 + '년 02월'" />
+                            <a-col :span="4">
+                                <checkbox-basic size="14" v-model:valueCheckbox="year2.value" :label="year2.label" />
                             </a-col>
-                            <a-col :span="6" />
+                            <a-col :span="8" class="custom-info">
+                                <div>
+                                    <img src="../../../../assets/images/iconInfo.png" alt="">
+                                </div>
+                                <span>
+                                    12월 말일까지 미지급한 경우,
+                                    서식 출력시 12월에 지급한걸로 표시됩니다.
+                                </span>
+                            </a-col>
 
                             <!-- ================== Row 2 =========================== -->
                             <a-col :span="6">
@@ -125,27 +131,34 @@
                     </template>
                     <DxColumn caption="성명 (상호)" cell-template="tag" />
                     <template #tag="{ data }" class="custom-action">
-                        <div class="custom-action">
+                        <div class="custom-action" v-if="data.data.employeeId != '-1'">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </div>
-                    </template>
-
-                    <DxColumn caption="주민등록번호" data-field="residentId" />
-                    <DxColumn caption="소득부분" cell-template="grade-cell" />
-                    <template #grade-cell="{ data }" class="custom-action">
-                        <div class="custom-grade-cell">
-                            <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
-                            <span>{{ data.data.incomeTypeName }}</span>
+                        <div v-else>
+                            {{data.data.summary}}
                         </div>
                     </template>
 
+                    <DxColumn caption="주민등록번호" data-field="residentId" />
+                    <DxColumn caption="비고" cell-template="four-major" />
+                    <template #four-major="{ data }" class="custom-action">
+                        <div>
+                            <four-major-insurance :typeTag="1" :typeValue="1" />
+                        </div>
+                    </template>
+                    <DxColumn caption="과세소득" />
+                    <DxColumn caption="비과세소득" />
+                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
+                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
+
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
-                        <div class="custom-action">
-                            <img src="../../../../assets/images/email.svg" alt="" style="width: 25px;" />
-
+                        <div class="custom-action" style="text-align: center;">
+                            <img src="../../../../assets/images/email.svg" alt=""
+                                style="width: 25px; margin-right: 3px;" />
+                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
                         </div>
                     </template>
                 </DxDataGrid>
@@ -171,7 +184,7 @@ import queries from "../../../../graphql/queries/PA/PA5/PA530/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
-import { origindata, arrCheckBox } from "./utils";
+import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "../../../../../src/helpers/commonFunction";
 import dayjs from 'dayjs';
@@ -205,47 +218,90 @@ export default defineComponent({
     },
     setup() {
         const globalYear: any = computed(() => store.state.settings.globalYear);
-        const arrCheckBoxSearch = reactive({
-            ...arrCheckBox
-        })
-        let checkAllValue = ref(true)
-        let year1 = reactive({ 
-            value: true,
-        })
-        let year2 = reactive({ 
-            value: true,
-        })
-
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
-        const dataSource = ref([]);
+        const dataSource: any = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(0);
         const originData = reactive({ ...origindata, rows: per_page });
-
+        const dataDemoUltil = reactive({ ...dataDemo })
         const trigger = ref<boolean>(true);
-        const valueCallApiGetEmployeeBusinesses = reactive({
+        const dataApiSearch = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            filter: {
+                imputedYear: parseInt(dayjs().format('YYYY')),
+                paymentYearMonths: ['1/4분기']
+            }
         })
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
+
+        const arrCheckBoxSearch = reactive({
+            ...arrCheckBox
+        })
+        let checkAllValue = ref(true)
+        let year1 = reactive({
+            label: globalYear.value + 1 + '년 01월',
+            value: true,
+        })
+        let year2 = reactive({
+            label: globalYear.value + 1 + '년 02월',
+            value: true,
+        })
         // ================GRAPQL==============================================
-        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
+        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.search, dataApiSearch, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            dataSource.value = res.data.getEmployeeBusinesses
+            // dataSource.value = res.data.getEmployeeBusinesses
+
+            let fieldAdd = {
+                employeeId: "-1",
+                type: "2",
+                incomeTypeCode: "940905",
+                name: "",
+                foreigner: true,
+                nationality: "2",
+                nationalityCode: "2",
+                stayQualification: "2",
+                residentIdValidity: "2",
+                roadAddress: "2",
+                addressExtend: "2",
+                email: "2",
+                department: "2",
+                responsibility: "2",
+                status: 10,
+                withholdingIncomeTax: "withholdingIncomeTax",
+                withholdingLocalIncomeTax: "withholdingLocalIncomeTax",
+                withholdingRuralSpecialTax: "2",
+                createdAt: "2",
+                createdBy: "2",
+                updatedAt: "2",
+                updatedBy: "2",
+                ip: "2",
+                active: "2",
+                residentId: "990128-4654",
+                joinedAt: "2",
+                leavedAt: "2",
+                retirementIncome: "2",
+                weeklyWorkingHours: "2",
+                monthlyPaycheck: "2",
+                workingDays: "2",
+                dailyWage: "2",
+                monthlyWage: "2",
+                totalDeduction: "2",
+                deletable: "2", 
+            }
+            dataDemoUltil.employee.push(fieldAdd)
+            dataSource.value = dataDemoUltil.employee
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
         })
-
-
 
         // ================WATCHING============================================
 

@@ -1,4 +1,17 @@
 #pa-530 {
+    .custom-info {
+        display: flex;
+        align-items: center;
+
+        img {
+            width: 16px;
+        }
+
+        span {
+            padding-left: 5px;
+            font-size: 11px;
+        }
+    }
 
     ::v-deep .custom-mail-group {
         .dx-button-content {
