@@ -1,9 +1,8 @@
 import gql from "graphql-tag";
 export default gql`
-mutation sendIncomeRetirementWithholdingReceiptReportEmail(    
-        ) {
-            sendIncomeRetirementWithholdingReceiptReportEmail(  
-            )
-            
-}
+  mutation sendIncomeRetirementWithholdingReceiptReportEmail($companyId: Int!) {
+    sendIncomeRetirementWithholdingReceiptReportEmail(companyId: $companyId) {
+      employeeId
+    }
+  }
 `;
