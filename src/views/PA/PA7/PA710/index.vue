@@ -16,7 +16,7 @@
             <a-col :span="16" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="listEmployeeExtra"
-                        :show-borders="true" key-expr="employeeId" :column-auto-width="true" style="width: 100%;">
+                        :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;">
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -134,9 +134,10 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, createVNode } from "vue";
+import { defineComponent, ref, watch, reactive, createVNode, computed } from "vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
@@ -166,6 +167,10 @@ export default defineComponent({
         HistoryPopup
     },
     setup() {
+        // config grid
+        const store = useStore();
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const loadingForm = ref(false)
         let checkForm = ref(false)
         let disabledSelect = ref(false)
@@ -342,6 +347,8 @@ export default defineComponent({
             }
         });
         return {
+            move_column,
+            colomn_resize,
             textCountry,
             formCreate,
             idRowEdit,
