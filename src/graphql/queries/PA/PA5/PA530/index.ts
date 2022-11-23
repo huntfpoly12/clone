@@ -1,8 +1,8 @@
-import getEmployeeBusinesses from "./getEmployeeBusinesses";
+import search from "./searchIncomeWageDailyWithholdingReceipts";
 import getEmployeeBusiness from "./getEmployeeBusiness";
 
 const queries = {
-    getEmployeeBusinesses: getEmployeeBusinesses,
+    search: search,
     getEmployeeBusiness: getEmployeeBusiness
 };
 export default queries;
