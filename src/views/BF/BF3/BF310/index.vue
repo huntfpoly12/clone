@@ -213,6 +213,7 @@ export default defineComponent({
             refetchData()
         }
         watch(result, (value) => {
+
             if (value) {
                 rowTable.value = value.searchSubscriptionRequests.totalCount
                 dataSource.value = value.searchSubscriptionRequests.datas

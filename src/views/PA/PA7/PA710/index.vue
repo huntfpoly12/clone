@@ -31,10 +31,7 @@
                         <DxColumn caption="주민등록번호" data-field="residentId" :width="200"/>
                         <DxColumn caption="소득부분" cell-template="grade-cell"/>
                         <template #grade-cell="{ data }" class="custom-action">
-                            <div class="custom-grade-cell">
-                                <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
-                                <span>{{ data.data.incomeTypeName }}</span>
-                            </div>
+                            <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.incomeTypeName" ></income-type>
                         </template>
                         <DxColumn :width="80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
