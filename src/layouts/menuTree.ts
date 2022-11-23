@@ -170,7 +170,7 @@ export default [{
             items: [
                 { name: '일용직근로소득자료입력', url: '#', id: 'pa-510' },
                 { name: '일용직사원등록', url: '#', id: 'pa-520' },
-                { name: '일용직근로소득원천징수영수증', url: '#', id: 'pa-530' },
+                { name: '일용직근로소득원천징수영수증', url: '/dashboard/pa-530', id: 'pa-530' },
             ]
         },
         {
