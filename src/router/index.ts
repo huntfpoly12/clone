@@ -98,6 +98,10 @@ const routes = [
         component: () => import('../views/CM/CM1/CM130/index.vue')
       },
       {
+        path: "pa-120",
+        component: () => import('../views/PA/PA1/PA120/index.vue')
+      },
+      {
         path: "pa-230",
         component: () => import('../views/PA/PA2/PA230/index.vue')
       },

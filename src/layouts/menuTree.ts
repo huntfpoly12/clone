@@ -129,7 +129,7 @@ export default [{
             id: 'pa-100',
             items: [
                 { name: '근로소득자료입력', url: '#', id: 'pa-110' },
-                { name: '사원등록', url: '#', id: 'pa-120' },
+                { name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' },
             ]
         },
         {
