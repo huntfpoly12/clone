@@ -179,7 +179,7 @@ export default [{
             items: [
                 { name: '사업소득자등록', url: '/dashboard/pa-610', id: 'pa-610' },
                 { name: '사업소득자료입력', url: '#', id: 'pa-620' },
-                { name: '사업소득원천징수영수증', url: '#', id: 'pa-630' },
+                { name: '사업소득원천징수영수증', url: '/dashboard/pa-610', id: 'pa-630' },
             ]
         },
         {

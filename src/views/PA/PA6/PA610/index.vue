@@ -327,10 +327,10 @@ export default defineComponent({
             console.log(newValue);
             if (newValue == false){
                 disabledInput2.value = true
-                textResidentId.value = '외국인번호 유효성'
+                textResidentId.value = '주민등록번호'
             }else{
                 disabledInput2.value = false
-                textResidentId.value = '주민등록번호'
+                textResidentId.value = '외국인번호 유효성'
             }
         },);
 
