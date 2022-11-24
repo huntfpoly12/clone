@@ -220,7 +220,7 @@ import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId, userId } from "../../../../../src/helpers/commonFunction";
-import PA630Popup from "./components/PA630Popup.vue";
+import PA630Popup from "./components/PA530Popup.vue";
 import dayjs from 'dayjs';
 export default defineComponent({
     components: {
