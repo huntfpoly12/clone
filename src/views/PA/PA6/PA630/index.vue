@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-spin :spinning="loading" size="large">
         <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" />
@@ -10,7 +9,7 @@
                             <a-col>
                                 <div class="dflex custom-flex global-year">
                                     <label class="lable-item">귀속연도 :</label>
-                                    <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
+                                    <a-tag color="#a3a2a0">{{ globalYear }}</a-tag>
                                 </div>
                             </a-col>
                         </a-row>
@@ -30,7 +29,7 @@
                     </a-col>
                     <a-col :span="12">
                         <div class="created-date">
-                            <label class="lable-item">구분 :</label>
+                            <label class="lable-item">영수일 :</label>
                             <date-time-box width="150px" v-model:valueDate="valueDefaultIncomeBusiness.input.receiptDate"></date-time-box>
                         </div>
                     </a-col>
@@ -39,43 +38,59 @@
                     <a-col :span="24">
                         <label class="lable-item">소득자보관용</label>
                         <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
-                                :textUnCheck="'발행자 보관용'" />
+                                :textUnCheck="'지급자 보관용'" />
                     </a-col>
                 </a-row>
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
+                    :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <!-- <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxExport :enabled="true" :allow-export-selected-data="true" /> -->
                     <DxToolbar>
-                        <DxItem name="searchPanel" />
+                        <!-- <DxItem name="searchPanel" />
                         <DxItem name="exportButton" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" />
+                        <DxItem name="columnChooserButton" /> -->
+                        <DxItem template="send-group-mail" />
                     </DxToolbar>
-                    <DxColumn caption="성명 (상호)" cell-template="tag" />
-                    <template #tag="{ data }" class="custom-action">
-                        <div class="custom-action">
-                            <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                :idCardNumber="data.data.residentId" :status="data.data.status"
-                                :foreigner="data.data.foreigner" :checkStatus="false" />
+                    <template #send-group-mail>
+                        <div class="custom-mail-group">
+                            <DxButton><img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                            </DxButton>
                         </div>
                     </template>
-                    <DxColumn caption="주민등록번호" data-field="residentId" />
-                    <DxColumn caption="소득부분" cell-template="grade-cell" />
-                    <template #grade-cell="{ data }" class="custom-action">
-                        <div class="custom-grade-cell">
-                            <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
-                            <span>{{ data.data.incomeTypeName }}</span>
+                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+                    <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
+                    <template #tag="{ data }" class="custom-action">
+                        <div class="custom-action">
+                            <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                                :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                                :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                         </div>
+                    </template>
+                    <DxColumn caption="주민등록번호" data-field="employee.residentId" />
+                    <DxColumn caption="소득부분" cell-template="grade-cell" :width="150"/>
+                    <template #grade-cell="{ data }" class="custom-action">
+                        <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName" ></income-type>
                     </template>
                     <DxColumn caption="지급총액" data-field="paymentAmount" />
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
-                    <DxColumn caption="원천징수세액 계" data-field="withholdingRuralSpecialTax" />
-                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+                    <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax" />
+                    <DxColumn :width="80" cell-template="pupop" />
+                    <template #pupop="{ data }" class="custom-action">
+                        <div class="custom-action" style="text-align: center;">
+                            <img @click="actionOpenPopupEmailSingle(data.data)" src="../../../../assets/images/email.svg" alt="" 
+                            style="width: 25px; margin-right: 3px;" />
+                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
+                        </div>
+                    </template>
                 </DxDataGrid>
+                <EmailSinglePopup 
+                :modalStatus="modalEmailSingle" 
+                @closePopup="onCloseEmailSingleModal" 
+                :data="popupData" />
             </div>
         </div>
     </a-spin>
@@ -85,6 +100,7 @@ import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
+import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
     DxColumn,
@@ -100,9 +116,11 @@ import {
     onExportingCommon,
 } from "../../../../helpers/commonFunction";
 import queries from "../../../../graphql/queries/PA/PA6/PA630/index";
+import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 
 export default defineComponent({
     components: {
+        DxButton,
         DxDataGrid,
         DxColumn,
         DxPaging,
@@ -112,16 +130,37 @@ export default defineComponent({
         DxToolbar,
         DxItem,
         InfoCircleFilled,
+        EmailSinglePopup,
     },
     setup() {
         const valueSwitch = ref(true);
+        const popupData = ref({})
         const store = useStore();
 
         const globalYear = computed(() => store.state.settings.globalYear);
         const trigger = ref<boolean>(true);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const dataSource = ref([]);
+        const modalEmailSingle = ref(false)
+        const dataSource = ref([
+            {
+                paymentAmount: 2,
+                withholdingIncomeTax: 5,
+                withholdingLocalIncomeTax: 20,
+                employee: {
+                    type: 1,
+                    employeeId: 40,
+                    incomeTypeCode: '23',
+                    name: 'hihi',
+                    email: 'khiem@gmail.com',
+                    foreigner: true,
+                    residentIdValidity: true,
+                    status: 1,
+                    residentId: '23',
+                    incomeTypeName: 'hahahha'
+                }
+            }
+        ]);
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
@@ -149,10 +188,31 @@ export default defineComponent({
         const onExporting = (e: { component: any; cancel: boolean }) => {
             onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
         };
+        const actionOpenPopupEmailSingle = (data: any) => {
+            popupData.value = {
+                companyId: companyId,
+                input: {
+                    imputedYear: globalYear,
+                    type: valueDefaultIncomeBusiness.value.input.type,
+                    receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
+                },
+                employeeInputs: {
+                    senderName: sessionStorage.getItem("username"),
+                    receiverName: data.employee.name,
+                    receiverAddress: data.employee.email,
+                    employeeId: data.employee.employeeId,
+                    incomeTypeCode: data.employee.incomeTypeCode
+                }
+            }
+            modalEmailSingle.value = true
+        }
+        const onCloseEmailSingleModal = () => {
+            modalEmailSingle.value = false
+        }
 
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.searchIncomeBusinessWithholdingReceipts;
+                // dataSource.value = value.searchIncomeBusinessWithholdingReceipts;
                 trigger.value = false;
             }
         });
@@ -176,6 +236,8 @@ export default defineComponent({
             valueDefaultIncomeBusiness,
             valueSwitch,
             loading,
+            popupData,
+            actionOpenPopupEmailSingle,
             searching,
             globalYear,
             dataSource,
@@ -183,6 +245,8 @@ export default defineComponent({
             move_column,
             colomn_resize,
             onExporting,
+            modalEmailSingle,
+            onCloseEmailSingleModal,
         };
     },
 });

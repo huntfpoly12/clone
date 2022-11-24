@@ -30,7 +30,6 @@
                                     서식 출력시 12월에 지급한걸로 표시됩니다.
                                 </span>
                             </a-col>
-
                             <!-- ================== Row 2 =========================== -->
                             <a-col :span="6">
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.quarter1.value"
@@ -48,7 +47,6 @@
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.quarter4.value"
                                     :label="arrCheckBoxSearch.quarter4.label" />
                             </a-col>
-
                             <!-- ================== Row 3 =========================== -->
                             <a-col :span="2">
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month1.value"
@@ -66,7 +64,6 @@
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month4.value"
                                     :label="arrCheckBoxSearch.month4.label" />
                             </a-col>
-
                             <a-col :span="2">
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month5.value"
                                     :label="arrCheckBoxSearch.month5.label" />
@@ -83,7 +80,6 @@
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month8.value"
                                     :label="arrCheckBoxSearch.month8.label" />
                             </a-col>
-
                             <a-col :span="2">
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month9.value"
                                     :label="arrCheckBoxSearch.month9.label" />
@@ -102,7 +98,6 @@
                             </a-col>
                         </a-row>
                     </div>
-
                 </a-col>
             </a-row>
         </div>
@@ -129,20 +124,18 @@
                             </div>
                         </div>
                     </a-col>
-
                     <a-col :span="12">
                         <div class="title-body-right">
                             <date-time-box width="160px" v-model:valueDate="dateSendEmail" dateFormat="YYYY-MM-DD" />
                         </div>
                     </a-col>
                 </a-row>
-
             </div>
             <a-spin :spinning="loadingGetEmployeeBusinesses" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                    @selection-changed="selectionChanged" :column-auto-width="true">
                     <DxScrolling column-rendering-mode="virtual" />
                     <DxToolbar>
                         <DxItem location="after" template="pagination-table" />
@@ -156,7 +149,8 @@
                     </template>
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
-                            <DxButton><img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                            <DxButton><img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;"
+                                    @click="sendMailGroup" />
                             </DxButton>
                         </div>
                     </template>
@@ -172,7 +166,6 @@
                             {{ data.data.summary }}
                         </div>
                     </template>
-
                     <DxColumn caption="주민등록번호" data-field="residentId" width="150px" />
                     <DxColumn caption="비고" cell-template="four-major" />
                     <template #four-major="{ data }" class="custom-action">
@@ -184,26 +177,33 @@
                     <DxColumn caption="비과세소득" />
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
-
+                    <DxSummary>
+                        <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
+                        <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
+                        <DxTotalItem :customize-text="customizeTotalTaxfreePay" show-in-column="비과세소득" />
+                        <DxTotalItem :customize-text="customizeIncomeTax" column="withholdingIncomeTax" />
+                        <DxTotalItem :customize-text="customizeDateLocalIncomeTax" column="withholdingLocalIncomeTax" />
+                    </DxSummary>
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
                             <img src="../../../../assets/images/email.svg" alt=""
-                                style="width: 25px; margin-right: 3px;" />
-                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
+                                style="width: 25px; margin-right: 3px; cursor: pointer;"
+                                @click="openPopup(data.data)" />
+                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
+                                @click="actionPrint(data.data)" />
                         </div>
                     </template>
-
-
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                 </div>
-                <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-                    title="Title Notification" content="Content notification" okText="네" cancelText="아니요"
-                    @checkConfirm="statusComfirm" />
             </a-spin>
+            <PA630Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
+                :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
+                :receiptDate="dateSendEmail.toString()" @closePopup="closePopupSendMail" :companyId="companyId"
+                :emailUserLogin="emailUserLogin" />
         </div>
     </div>
 </template>
@@ -213,16 +213,18 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA5/PA530/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, } from "devextreme-vue/data-grid";
+import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
-import { companyId } from "../../../../../src/helpers/commonFunction";
+import { companyId, userId } from "../../../../../src/helpers/commonFunction";
+import PA630Popup from "./components/PA630Popup.vue";
 import dayjs from 'dayjs';
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
         EditOutlined,
         HistoryOutlined,
         SearchOutlined,
@@ -233,8 +235,14 @@ export default defineComponent({
         DeleteOutlined,
         SaveOutlined,
         InfoCircleFilled,
+        PA630Popup
     },
     setup() {
+        const emailUserLogin = ref()
+        const actionSendEmailGroup = ref(false)
+        let dataCallApiPrint = ref()
+        let paymentYearMonthsModal: any = ref()
+        let dataCallModal: any = ref()
         const dateSendEmail = ref(new Date)
         const valueSwitchChange = ref(true)
         const globalYear: any = computed(() => store.state.settings.globalYear);
@@ -249,6 +257,7 @@ export default defineComponent({
         const originData = reactive({ ...origindata, rows: per_page });
         const dataDemoUltil = reactive({ ...dataDemo })
         const trigger = ref<boolean>(true);
+        const triggerPrint = ref<boolean>(false);
         let year1 = reactive({
             label: globalYear.value + 1 + '년 01월',
             value: true,
@@ -266,30 +275,46 @@ export default defineComponent({
         })
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
-
         const arrCheckBoxSearch = reactive({
             ...arrCheckBox
         })
         let checkAllValue = ref(true)
-
-
         let customTextWithholdingLocalIncomeTax = ref('')
         let customTextWithholdingIncomeTax = ref('')
+        let selectedItemKeys = ref([])
         // ================GRAPQL==============================================
+        // QUERY NAME : searchIncomeWageDailyWithholdingReceipts
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.search, dataApiSearch, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            // dataSource.value = res.data.getEmployeeBusinesses 
-            // customTextWithholdingLocalIncomeTax.value = "withholdingLocalIncomeTax"
-            // customTextWithholdingIncomeTax.value = "withholdingIncomeTax"
+            // dataSource.value = res.data.getEmployeeBusinesses  
             dataSource.value = dataDemoUltil.employee
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
         })
+        // QUERY NAME : getIncomeWageDailyWithholdingReceiptReportViewUrl
+        const {
+            refetch: refetchPrint,
+            loading: loadingPrint,
+            onError,
+            onResult,
+        } = useQuery(queries.print, dataCallApiPrint, () => ({
+            enabled: triggerPrint.value,
+            fetchPolicy: "no-cache",
+        }));
 
+        // QUERY NAME : getUser
+        const {
+            onResult: onResultUserInf
+        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+            fetchPolicy: "no-cache",
+        }));
+        onResultUserInf(e => {
+            emailUserLogin.value = e.data.getUser.email
+        })
         // ================WATCHING============================================
         watch(checkAllValue, (value) => {
             arrCheckBoxSearch.quarter1.value = value
@@ -304,22 +329,18 @@ export default defineComponent({
                 val.quarter1.value = true
             else
                 val.quarter1.value = false
-
             if (val.month4.value == true && val.month5.value == true && val.month6.value == true)
                 val.quarter2.value = true
             else
                 val.quarter2.value = false
-
             if (val.month7.value == true && val.month8.value == true && val.month9.value == true)
                 val.quarter3.value = true
             else
                 val.quarter3.value = false
-
             if (val.month10.value == true && val.month11.value == true && val.month12.value == true)
                 val.quarter4.value = true
             else
                 val.quarter4.value = false
-
             if (val.quarter1.value == true && val.quarter2.value == true && val.quarter3.value == true && val.quarter4.value == true && year1.value == true && year2.value == true)
                 checkAllValue.value = true
             else
@@ -361,7 +382,7 @@ export default defineComponent({
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
-        const searching = () => {
+        const getArrPaymentYearMonth = () => {
             let arrVal = []
             if (arrCheckBoxSearch.month1.value == true)
                 arrVal.push(arrCheckBoxSearch.month1.label)
@@ -391,19 +412,95 @@ export default defineComponent({
                 arrVal.push(year1.label)
             if (year2.value == true)
                 arrVal.push(year2.label)
-            dataApiSearch.filter.paymentYearMonths = arrVal
+            return arrVal
+        }
+        const searching = () => {
+            dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
             refetchData()
-        };
-
-        const modalHistory = (data: any) => {
-            modalHistoryStatus.value = true;
+        }; 
+        const openPopup = (res: any) => {
+            dataCallModal.value = {
+                senderName: sessionStorage.getItem("username"),
+                receiverName: res.name,
+                receiverAddress: res.email,
+                employeeId: res.employeeId,
+            }
+            paymentYearMonthsModal.value = getArrPaymentYearMonth()
+            modalStatus.value = true
         }
-
-        const statusComfirm = (res: any) => {
-
+        const customizeIncomeTax = () => {
+            return dataDemoUltil.withholdingLocalIncomeTax
         }
-
+        const customizeDateLocalIncomeTax = () => {
+            return dataDemoUltil.withholdingIncomeTax
+        }
+        const customizeTotal = () => {
+            return dataSource.value.length
+        }
+        const customizeTotalTaxfreePay = () => {
+            return dataDemoUltil.totalTaxfreePay
+        }
+        const customizeTotalTaxPay = () => {
+            return dataDemoUltil.totalTaxPay
+        }
+        const actionPrint = (res: any) => {
+            dataCallApiPrint.value = {
+                companyId: companyId,
+                employeeIds: [res.employeeId],
+                input: {
+                    imputedYear: globalYear,
+                    paymentYearMonths: getArrPaymentYearMonth(),
+                    type: valueSwitchChange.value == true ? 1 : 2,
+                    receiptDate: dateSendEmail.value
+                }
+            }
+            triggerPrint.value = true
+            refetchPrint()
+        }
+        const sendMailGroup = () => {
+            if (selectedItemKeys.value.length > 0) {
+                actionSendEmailGroup.value = true
+                let dataCall: any = []
+                dataDemoUltil.employee.map((val: any) => {
+                    if (check(val) == 1) {
+                        dataCall.push({
+                            senderName: sessionStorage.getItem("username"),
+                            receiverName: val.name,
+                            receiverAddress: val.email,
+                            employeeId: val.employeeId,
+                        })
+                    }
+                })
+                dataCallModal.value = dataCall
+                paymentYearMonthsModal.value = getArrPaymentYearMonth()
+                modalStatus.value = true
+            } else {
+                notification('error', "일용직근로자들을 선택하세요!")
+            }
+        }
+        const check = (val: any) => {
+            let value = 0
+            selectedItemKeys.value.map((e: any) => {
+                if (val.employeeId == e)
+                    value = 1
+            })
+            return value
+        }
+        const selectionChanged = (data: any) => {
+            selectedItemKeys.value = data.selectedRowKeys
+        }
+        const closePopupSendMail = () => {
+            modalStatus.value = false
+            refetchData()
+        }
         return {
+            emailUserLogin,
+            actionSendEmailGroup,
+            selectedItemKeys,
+            companyId,
+            paymentYearMonthsModal,
+            dataCallModal,
+            modalStatus,
             valueSwitchChange,
             dateSendEmail,
             customTextWithholdingLocalIncomeTax, customTextWithholdingIncomeTax,
@@ -419,16 +516,23 @@ export default defineComponent({
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
-            modalStatus,
             globalYear,
-            statusComfirm,
-            modalHistory,
+            closePopupSendMail,
+            selectionChanged,
+            sendMailGroup,
+            actionPrint,
+            openPopup, 
             onExporting,
             searching,
+            customizeTotal,
+            customizeIncomeTax,
+            customizeDateLocalIncomeTax,
+            customizeTotalTaxPay,
+            customizeTotalTaxfreePay,
         };
     },
 });
 </script>  
-<style scoped lang="scss" src="./style/style.scss" >
+<style scoped lang="scss" src="./style/style.scss">
 
 </style>

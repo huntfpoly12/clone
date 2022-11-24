@@ -29,17 +29,12 @@
 .global-year{
     margin-top: 6px;
 }
-
-.send-mail-230{
-    float: right;
-    .mail-230{
-        cursor: pointer;
+::v-deep .custom-mail-group {
+    .dx-button-content {
+        padding: 3px;
     }
-    .group-mail-230{
-        cursor: pointer;
-        margin-top: 8px;
-        margin-right: 13px;
-        margin-left: 10px;
-    }
+}
 
+.custom-action {
+    text-align: center;
 }
