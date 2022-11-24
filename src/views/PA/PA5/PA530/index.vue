@@ -30,7 +30,6 @@
                                     서식 출력시 12월에 지급한걸로 표시됩니다.
                                 </span>
                             </a-col>
-
                             <!-- ================== Row 2 =========================== -->
                             <a-col :span="6">
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.quarter1.value"
@@ -48,7 +47,6 @@
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.quarter4.value"
                                     :label="arrCheckBoxSearch.quarter4.label" />
                             </a-col>
-
                             <!-- ================== Row 3 =========================== -->
                             <a-col :span="2">
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month1.value"
@@ -66,7 +64,6 @@
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month4.value"
                                     :label="arrCheckBoxSearch.month4.label" />
                             </a-col>
-
                             <a-col :span="2">
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month5.value"
                                     :label="arrCheckBoxSearch.month5.label" />
@@ -83,7 +80,6 @@
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month8.value"
                                     :label="arrCheckBoxSearch.month8.label" />
                             </a-col>
-
                             <a-col :span="2">
                                 <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month9.value"
                                     :label="arrCheckBoxSearch.month9.label" />
@@ -102,7 +98,6 @@
                             </a-col>
                         </a-row>
                     </div>
-
                 </a-col>
             </a-row>
         </div>
@@ -129,14 +124,12 @@
                             </div>
                         </div>
                     </a-col>
-
                     <a-col :span="12">
                         <div class="title-body-right">
                             <date-time-box width="160px" v-model:valueDate="dateSendEmail" dateFormat="YYYY-MM-DD" />
                         </div>
                     </a-col>
                 </a-row>
-
             </div>
             <a-spin :spinning="loadingGetEmployeeBusinesses" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -172,7 +165,6 @@
                             {{ data.data.summary }}
                         </div>
                     </template>
-
                     <DxColumn caption="주민등록번호" data-field="residentId" width="150px" />
                     <DxColumn caption="비고" cell-template="four-major" />
                     <template #four-major="{ data }" class="custom-action">
@@ -184,7 +176,6 @@
                     <DxColumn caption="비과세소득" />
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
-
                     <DxSummary>
                         <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
                         <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
@@ -192,14 +183,14 @@
                         <DxTotalItem :customize-text="customizeIncomeTax" column="withholdingIncomeTax" />
                         <DxTotalItem :customize-text="customizeDateLocalIncomeTax" column="withholdingLocalIncomeTax" />
                     </DxSummary>
-
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
                             <img src="../../../../assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="openPopup(data.data)" />
-                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;cursor: pointer" />
+                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
+                                @click="actionPrint(data.data)" />
                         </div>
                     </template>
                 </DxDataGrid>
@@ -217,7 +208,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA5/PA530/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
@@ -228,6 +219,7 @@ import DxButton from "devextreme-vue/button";
 import { companyId } from "../../../../../src/helpers/commonFunction";
 import PA630Popup from "./components/PA630Popup.vue";
 import dayjs from 'dayjs';
+import mutations from "../../../../graphql/mutations/PA/PA5/PA530/index";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
@@ -277,13 +269,10 @@ export default defineComponent({
         })
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
-
         const arrCheckBoxSearch = reactive({
             ...arrCheckBox
         })
         let checkAllValue = ref(true)
-
-
         let customTextWithholdingLocalIncomeTax = ref('')
         let customTextWithholdingIncomeTax = ref('')
         // ================GRAPQL==============================================
@@ -292,15 +281,24 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            // dataSource.value = res.data.getEmployeeBusinesses 
-            // customTextWithholdingLocalIncomeTax.value = "withholdingLocalIncomeTax"
-            // customTextWithholdingIncomeTax.value = "withholdingIncomeTax"
+            // dataSource.value = res.data.getEmployeeBusinesses  
             dataSource.value = dataDemoUltil.employee
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
         })
 
+        const {
+            mutate,
+            onError,
+            onDone,
+        } = useMutation(mutations.printFile);
+        onError(e => {
+            notification('error', e.message)
+        })
+        onDone(e => {
+            notification('success', `업데이트 완료!`)
+        })
         // ================WATCHING============================================
         watch(checkAllValue, (value) => {
             arrCheckBoxSearch.quarter1.value = value
@@ -315,22 +313,18 @@ export default defineComponent({
                 val.quarter1.value = true
             else
                 val.quarter1.value = false
-
             if (val.month4.value == true && val.month5.value == true && val.month6.value == true)
                 val.quarter2.value = true
             else
                 val.quarter2.value = false
-
             if (val.month7.value == true && val.month8.value == true && val.month9.value == true)
                 val.quarter3.value = true
             else
                 val.quarter3.value = false
-
             if (val.month10.value == true && val.month11.value == true && val.month12.value == true)
                 val.quarter4.value = true
             else
                 val.quarter4.value = false
-
             if (val.quarter1.value == true && val.quarter2.value == true && val.quarter3.value == true && val.quarter4.value == true && year1.value == true && year2.value == true)
                 checkAllValue.value = true
             else
@@ -405,11 +399,9 @@ export default defineComponent({
             dataApiSearch.filter.paymentYearMonths = arrVal
             refetchData()
         };
-
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = true;
         }
-
         const openPopup = (res: any) => {
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
@@ -448,9 +440,7 @@ export default defineComponent({
                 arrVal.push(year2.label)
             paymentYearMonthsModal.value = arrVal
             modalStatus.value = true
-
         }
-
         const customizeIncomeTax = () => {
             return dataDemoUltil.withholdingLocalIncomeTax
         }
@@ -460,15 +450,59 @@ export default defineComponent({
         const customizeTotal = () => {
             return dataSource.value.length
         }
-
         const customizeTotalTaxfreePay = () => {
             return dataDemoUltil.totalTaxfreePay
         }
         const customizeTotalTaxPay = () => {
             return dataDemoUltil.totalTaxPay
         }
+        const actionPrint = (res: any) => {
+            let arrVal = []
+            if (arrCheckBoxSearch.month1.value == true)
+                arrVal.push(arrCheckBoxSearch.month1.label)
+            if (arrCheckBoxSearch.month2.value == true)
+                arrVal.push(arrCheckBoxSearch.month2.label)
+            if (arrCheckBoxSearch.month3.value == true)
+                arrVal.push(arrCheckBoxSearch.month3.label)
+            if (arrCheckBoxSearch.month4.value == true)
+                arrVal.push(arrCheckBoxSearch.month4.label)
+            if (arrCheckBoxSearch.month5.value == true)
+                arrVal.push(arrCheckBoxSearch.month5.label)
+            if (arrCheckBoxSearch.month6.value == true)
+                arrVal.push(arrCheckBoxSearch.month6.label)
+            if (arrCheckBoxSearch.month7.value == true)
+                arrVal.push(arrCheckBoxSearch.month7.label)
+            if (arrCheckBoxSearch.month8.value == true)
+                arrVal.push(arrCheckBoxSearch.month8.label)
+            if (arrCheckBoxSearch.month9.value == true)
+                arrVal.push(arrCheckBoxSearch.month9.label)
+            if (arrCheckBoxSearch.month10.value == true)
+                arrVal.push(arrCheckBoxSearch.month10.label)
+            if (arrCheckBoxSearch.month11.value == true)
+                arrVal.push(arrCheckBoxSearch.month11.label)
+            if (arrCheckBoxSearch.month12.value == true)
+                arrVal.push(arrCheckBoxSearch.month12.label)
+            if (year1.value == true)
+                arrVal.push(year1.label)
+            if (year2.value == true)
+                arrVal.push(year2.label)
 
-        return { 
+            let dataCallApiPrint = {
+                companyId: companyId,
+                employeeIds: [res.employeeId],
+                input: {
+                    imputedYear: globalYear,
+                    paymentYearMonths: arrVal,
+                    type: valueSwitchChange.value == true ? 1 : 2,
+                    receiptDate: dayjs(dateSendEmail.value).format('YYYYMMDD')
+                }
+            }
+
+            mutate(dataCallApiPrint)
+
+
+        }
+        return {
             companyId,
             paymentYearMonthsModal,
             dataCallModal,
@@ -489,6 +523,7 @@ export default defineComponent({
             per_page, move_column, colomn_resize,
             originData,
             globalYear,
+            actionPrint,
             openPopup,
             modalHistory,
             onExporting,
@@ -502,6 +537,6 @@ export default defineComponent({
     },
 });
 </script>  
-<style scoped lang="scss" src="./style/style.scss" >
+<style scoped lang="scss" src="./style/style.scss">
 
 </style>
