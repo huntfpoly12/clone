@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <a-spin :spinning="loading" size="large">
     <action-header title="기타소득원천징수영수증 " @actionSearch="searching" />
@@ -10,7 +9,7 @@
               <a-col>
                 <div class="dflex custom-flex global-year">
                   <label class="lable-item">귀속연도 :</label>
-                  <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
+                  <a-tag color="#a3a2a0">{{ globalYear }}</a-tag>
                 </div>
               </a-col>
             </a-row>
@@ -30,10 +29,10 @@
           </a-col>
           <a-col :span="12">
             <div class="created-date">
-              <label class="lable-item">영수일: </label>
+              <label class="lable-item">영수일 :</label>
               <date-time-box
                 width="150px"
-                v-model:valueDate="valueDefaultIncomeBusiness.input.receiptDate"
+                v-model:valueDate="valueDefaultIncomeExtra.input.receiptDate"
               ></date-time-box>
             </div>
           </a-col>
@@ -45,109 +44,41 @@
               style="width: 120px"
               v-model:valueSwitch="valueSwitch"
               :textCheck="'소득자보관용'"
-              :textUnCheck="'지급자보관용'"
+              :textUnCheck="'지급자 보관용'"
             />
           </a-col>
         </a-row>
-
         <DxDataGrid
           :show-row-lines="true"
           :hoverStateEnabled="true"
           :data-source="dataSource"
           :show-borders="true"
-          key-expr="id"
           @exporting="onExporting"
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
+          @selection-changed="onSelectionChanged"
         >
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
           <DxExport :enabled="true" :allow-export-selected-data="true" />
           <DxToolbar>
-            <DxItem name="searchPanel" />
+            <!-- <DxItem name="searchPanel" />
             <DxItem name="exportButton" />
-            <DxItem name="groupPanel" />
+            <DxItem name="groupPanel" /> -->
             <DxItem name="addRowButton" show-text="always" />
             <DxItem name="columnChooserButton" />
-            <DxItem
-              template="button-template"
-              location="after"
-              css-class="cell-button-add"
-            />
+            <DxItem template="pagination-send-group-mail" />
           </DxToolbar>
-          <template #button-template>
-            <div>
-              <DxButton name="mailgroup" icon="plus" />
-              <img
-                src="../../../../assets/images/group_email.png"
-                alt=""
-                height="35"
-                class="group-mail-730"
-                @click="openAddNewModal"
-              />
-            </div>
-          </template>
-          <DxColumn caption="성명 (상호)" cell-template="tag" />
-          <template #tag="{ data }" class="custom-action">
-            <div class="custom-action">
-              <employee-info
-                :idEmployee="data.data.employeeId"
-                :name="data.data.name"
-                :idCardNumber="data.data.residentId"
-                :status="data.data.status"
-                :foreigner="data.data.foreigner"
-                :checkStatus="false"
-              />
-            </div>
-          </template>
-          <DxColumn caption="주민등록번호" data-field="residentId" />
-          <DxColumn caption="소득구분" cell-template="grade-cell" />
-          <template #grade-cell="{ data }" class="custom-action">
-            <div class="custom-grade-cell">
-              <div class="custom-grade-cell-tag">
-                {{ data.data.incomeTypeCode }}
-              </div>
-              <span>{{ data.data.incomeTypeName }}</span>
-            </div>
-          </template>
-          <DxColumn caption="지급총액" data-field="paymentAmount" />
-          <DxColumn caption="비과세소득" data-field="withholdingIncomeTax" />
-          <DxColumn caption="필요경비" data-field="requiredExpenses" />
-          <DxColumn caption="소득금액" data-field="incomePayment" />
-          <DxColumn
-            caption="원천징수세액 소득세
-"
-            data-field=""
-          />
-          <DxColumn
-            caption="원천징수세액 지방소득세
-
-"
-            data-field="withholdingLocalIncomeTax"
-          />
-          <DxColumn
-            caption="원천징수세액 농어촌특별세
-"
-          />
-          <DxColumn
-            caption="원천징수세액 농어촌특별세
-"
-          />
-          <DxColumn :width="80" cell-template="pupop" type="buttons" />
-          <template #pupop="{ data }" class="custom-action">
-            <div class="custom-action-icon">
-              <div style="color: blue; cursor: pointer">
-                <img
-                  src="../../../../assets/images/email.png"
+          <template #pagination-send-group-mail="{ data }">
+            <div class="custom-mail-group">
+              <DxButton
+                ><img
+                  src="../../../../assets/images/emailGroup.png"
                   alt=""
-                  height="20"
-                  class="mail-730"
-                  @click="openAddNewModal"
+                  @click="actionOpenPopupEmailGroup(data)"
+                  style="width: 35px; margin-right: 3px; cursor: pointer"
                 />
-              </div>
-              <div class="printer-action">
-                <PrinterOutlined />
-              </div>
+              </DxButton>
             </div>
           </template>
           <DxSelection
@@ -155,20 +86,82 @@
             show-check-boxes-mode="always"
             mode="multiple"
           />
+          <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
+          <template #tag="{ data }" class="custom-action">
+            <div class="custom-action">
+              <employee-info
+                :idEmployee="data.data.employee.employeeId"
+                :name="data.data.employee.name"
+                :idCardNumber="data.data.employee.residentId"
+                :status="data.data.employee.status"
+                :foreigner="data.data.employee.foreigner"
+                :checkStatus="false"
+              />
+            </div>
+          </template>
+          <DxColumn caption="주민등록번호" data-field="employee.residentId" />
+          <DxColumn
+            caption="소득구분"
+            cell-template="grade-cell"
+            :width="150"
+          />
+          <template #grade-cell="{ data }" class="custom-action">
+            <income-type
+              :typeCode="data.data.employee.incomeTypeCode"
+              :typeName="data.data.employee.incomeTypeName"
+            ></income-type>
+          </template>
+          <DxColumn caption="지급총액" data-field="paymentAmount" />
+          <DxColumn caption="비과세소득" data-field="withholdingIncomeTax" />
+          <DxColumn caption="필요경비" data-field="requiredExpenses" />
+          <DxColumn caption="소득금액" data-field="incomePayment" />
+
+          <DxColumn
+            caption="원천징수세액 소득세"
+            data-field="withholdingIncomeTax"
+          />
+          <DxColumn
+            caption="원천징수세액 지방소득세"
+            data-field="withholdingLocalIncomeTax"
+          />
+          <DxColumn caption="원천징수세액 농어촌특별세" data-field="" />
+          <DxColumn caption="원천징수세액 농어촌특별세" data-field="" />
+          <DxColumn :width="80" cell-template="pupop" />
+          <template #pupop="{ data }" class="custom-action">
+            <div class="custom-action" style="text-align: center">
+              <img
+                @click="actionOpenPopupEmailSingle(data.data)"
+                src="../../../../assets/images/email.svg"
+                alt=""
+                style="width: 25px; margin-right: 3px; cursor: pointer"
+              />
+              <img
+                src="../../../../assets/images/print.svg"
+                alt=""
+                style="width: 25px"
+              />
+            </div>
+          </template>
         </DxDataGrid>
+        <EmailSinglePopup
+          :modalStatus="modalEmailSingle"
+          @closePopup="onCloseEmailSingleModal"
+          :data="popupSingleData"
+        />
+        <EmailGroupPopup
+          :modalStatus="modalEmailGroup"
+          @closePopup="onCloseEmailGroupModal"
+          :data="popupGroupData"
+        />
       </div>
     </div>
-    <PA730PopupSendMail
-      :modalStatus="modalAddNewStatus"
-      @closePopupAdd="closePopupAdd"
-    />
   </a-spin>
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
-import { InfoCircleFilled, PrinterOutlined } from "@ant-design/icons-vue";
+import { InfoCircleFilled } from "@ant-design/icons-vue";
 import {
   DxDataGrid,
   DxColumn,
@@ -184,7 +177,8 @@ import {
   onExportingCommon,
 } from "../../../../helpers/commonFunction";
 import queries from "../../../../graphql/queries/PA/PA7/PA730/index";
-import PA730PopupSendMail from "./components/PA730PopupSendMail.vue";
+import EmailSinglePopup from "./components/PA730PopupSendSingleEmail.vue";
+import EmailGroupPopup from "./components/PA730PopupSendGroupEmail.vue";
 
 export default defineComponent({
   components: {
@@ -197,117 +191,85 @@ export default defineComponent({
     DxToolbar,
     DxItem,
     InfoCircleFilled,
-    PA730PopupSendMail,
-    PrinterOutlined,
+    EmailSinglePopup,
+    EmailGroupPopup,
   },
   setup() {
     const valueSwitch = ref(true);
+    const popupSingleData = ref({});
+    const popupGroupData = ref({});
     const store = useStore();
 
     const globalYear = computed(() => store.state.settings.globalYear);
     const trigger = ref<boolean>(true);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    // const dataSource = ref([]);
-
-    const dataSource = [
+    const modalEmailSingle = ref(false);
+    const modalEmailGroup = ref(false);
+    const dataSource = ref([
       {
-        id: 187,
-        paymentAmount: 20,
-        withholdingIncomeTax: "R22111001",
-        requiredExpenses: null,
-        companyName: "AnTus",
-        incomePayment: "서울 강동구 천중로43길 20 213asdq23",
-        presidentName: "1251512",
-        createdAt: 1668069496098,
-        simpleAccountingInfos: [
-          {
-            name: "12314",
-            startYearMonth: "2022/11/18",
-            __typename: "SimpleServiceInfo",
-          },
-        ],
-        simpleWithholdingInfo: {
-          name: null,
-          startYearMonth: "",
-          __typename: "SimpleServiceInfo",
+        paymentAmount: 1,
+        requiredExpenses: 12,
+        incomePayment: 123,
+        withholdingIncomeTax: 2,
+        withholdingLocalIncomeTax: 3,
+        employee: {
+          type: 2,
+          employeeId: 10,
+          incomeTypeCode: "12",
+          name: "qweqr",
+          email: "qweqe@email.com",
+          foreigner: true,
+          residentIdValidity: true,
+          status: 2,
+          residentId: "12",
+          incomeTypeName: "qweasd",
         },
-        compactSalesRepresentative: {
-          id: 11,
-          code: "S0011",
-          name: "sale 13",
-          active: true,
-          __typename: "CompactSalesRepresentative",
-        },
-        __typename: "SubscriptionRequestView",
       },
       {
-        id: 186,
-        paymentAmount: 30,
-        withholdingIncomeTax: "R22111001",
-        requiredExpenses: null,
-        companyName: "AnTus",
-        incomePayment: "서울 강동구 천중로43길 20 213asdq23",
-        presidentName: "1251512",
-        createdAt: 1668069496098,
-        simpleAccountingInfos: [
-          {
-            name: "12314",
-            startYearMonth: "2022/11/18",
-            __typename: "SimpleServiceInfo",
-          },
-        ],
-        simpleWithholdingInfo: {
-          name: null,
-          startYearMonth: "",
-          __typename: "SimpleServiceInfo",
+        paymentAmount: 2,
+        requiredExpenses: 12,
+        incomePayment: 123,
+        withholdingIncomeTax: 3,
+        withholdingLocalIncomeTax: 51,
+        employee: {
+          type: 3,
+          employeeId: 11,
+          incomeTypeCode: "31",
+          name: "123312",
+          email: "3123@email.com",
+          foreigner: false,
+          residentIdValidity: false,
+          status: 3,
+          residentId: "12",
+          incomeTypeName: "313ad",
         },
-        compactSalesRepresentative: {
-          id: 11,
-          code: "S0011",
-          name: "sale 13",
-          active: true,
-          __typename: "CompactSalesRepresentative",
-        },
-        __typename: "SubscriptionRequestView",
       },
       {
-        id: 183,
-        paymentAmount: 40,
-        withholdingIncomeTax: "R22111002",
-        requiredExpenses: null,
-        companyName: "AnTus",
-        incomePayment: "서울 강동구 천중로43길 20 213asdq23",
-        presidentName: "1251512",
-        createdAt: 1668069496098,
-        simpleAccountingInfos: [
-          {
-            name: "12314",
-            startYearMonth: "2022/11/18",
-            __typename: "SimpleServiceInfo",
-          },
-        ],
-        simpleWithholdingInfo: {
-          name: null,
-          startYearMonth: "",
-          __typename: "SimpleServiceInfo",
+        paymentAmount: 41,
+        requiredExpenses: 12,
+        incomePayment: 123,
+        withholdingIncomeTax: 12,
+        withholdingLocalIncomeTax: 23,
+        employee: {
+          type: 3,
+          employeeId: 42,
+          incomeTypeCode: "312",
+          name: "khjasd",
+          email: "asdgas@gmail.com",
+          foreigner: true,
+          residentIdValidity: true,
+          status: 32,
+          residentId: "12",
+          incomeTypeName: "412",
         },
-        compactSalesRepresentative: {
-          id: 11,
-          code: "S0011",
-          name: "sale 13",
-          active: true,
-          __typename: "CompactSalesRepresentative",
-        },
-        __typename: "SubscriptionRequestView",
       },
-    ];
-
+    ]);
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
     });
-    const valueDefaultIncomeBusiness = ref({
+    const valueDefaultIncomeExtra = ref({
       companyId: companyId,
       input: {
         imputedYear: globalYear,
@@ -334,18 +296,34 @@ export default defineComponent({
     const onExporting = (e: { component: any; cancel: boolean }) => {
       onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
     };
+    const actionOpenPopupEmailSingle = (data: any) => {
+      modalEmailSingle.value = true;
+      popupSingleData.value = data;
+    };
+    const onCloseEmailSingleModal = () => {
+      modalEmailSingle.value = false;
+    };
+    const actionOpenPopupEmailGroup = (data: any) => {
+      modalEmailGroup.value = true;
+    };
+    const onSelectionChanged = (value: any) => {
+      popupGroupData.value = value.selectedRowsData;
+    };
+    const onCloseEmailGroupModal = () => {
+      modalEmailGroup.value = false;
+    };
 
     watch(result, (value) => {
       if (value) {
-        dataSource.values = value.searchIncomeExtraWithholdingReceipts;
+        dataSource.value = value.searchIncomeExtraWithholdingReceipts;
         trigger.value = false;
       }
     });
     watch(valueSwitch, (newValue) => {
       if (newValue) {
-        valueDefaultIncomeBusiness.value.input.type = 1;
+        valueDefaultIncomeExtra.value.input.type = 1;
       } else {
-        valueDefaultIncomeBusiness.value.input.type = 2;
+        valueDefaultIncomeExtra.value.input.type = 2;
       }
     });
 
@@ -353,29 +331,25 @@ export default defineComponent({
       trigger.value = true;
       refetchData();
     };
-    const modalAddNewStatus = ref(false);
-
-    const openAddNewModal = () => {
-      modalAddNewStatus.value = true;
-    };
-    const closePopupAdd = () => {
-      modalAddNewStatus.value = false;
-      refetchData();
-    };
-
     return {
-      valueDefaultIncomeBusiness,
+      valueDefaultIncomeExtra,
       valueSwitch,
       loading,
+      popupSingleData,
+      popupGroupData,
+      actionOpenPopupEmailSingle,
+      actionOpenPopupEmailGroup,
       searching,
       globalYear,
       dataSource,
       move_column,
       colomn_resize,
       onExporting,
-      openAddNewModal,
-      closePopupAdd,
-      modalAddNewStatus,
+      modalEmailSingle,
+      modalEmailGroup,
+      onCloseEmailSingleModal,
+      onCloseEmailGroupModal,
+      onSelectionChanged,
     };
   },
 });
