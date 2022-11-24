@@ -202,7 +202,8 @@
             </a-spin>
             <PA630Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
                 :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
-                :receiptDate="dateSendEmail.toString()" @closePopup="modalStatus = false" :companyId="companyId" />
+                :receiptDate="dateSendEmail.toString()" @closePopup="closePopupSendMail" :companyId="companyId"
+                :emailUserLogin="emailUserLogin" />
         </div>
     </div>
 </template>
@@ -212,12 +213,13 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA5/PA530/index";
+import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
-import { companyId } from "../../../../../src/helpers/commonFunction";
+import { companyId, userId } from "../../../../../src/helpers/commonFunction";
 import PA630Popup from "./components/PA630Popup.vue";
 import dayjs from 'dayjs';
 export default defineComponent({
@@ -236,6 +238,7 @@ export default defineComponent({
         PA630Popup
     },
     setup() {
+        const emailUserLogin = ref()
         const actionSendEmailGroup = ref(false)
         let dataCallApiPrint = ref()
         let paymentYearMonthsModal: any = ref()
@@ -302,13 +305,15 @@ export default defineComponent({
             enabled: triggerPrint.value,
             fetchPolicy: "no-cache",
         }));
-        onError(e => {
-            notification('error', e.message)
-            triggerPrint.value = false
-        })
-        onResult(e => {
-            triggerPrint.value = false
-            notification('success', `업데이트 완료!`)
+
+        // QUERY NAME : getUser
+        const {
+            onResult: onResultUserInf
+        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+            fetchPolicy: "no-cache",
+        }));
+        onResultUserInf(e => {
+            emailUserLogin.value = e.data.getUser.email
         })
         // ================WATCHING============================================
         watch(checkAllValue, (value) => {
@@ -412,10 +417,7 @@ export default defineComponent({
         const searching = () => {
             dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
             refetchData()
-        };
-        const modalHistory = (data: any) => {
-            modalHistoryStatus.value = true;
-        }
+        }; 
         const openPopup = (res: any) => {
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
@@ -459,7 +461,7 @@ export default defineComponent({
             if (selectedItemKeys.value.length > 0) {
                 actionSendEmailGroup.value = true
                 let dataCall: any = []
-                dataDemoUltil.employee.map((val: any) => { 
+                dataDemoUltil.employee.map((val: any) => {
                     if (check(val) == 1) {
                         dataCall.push({
                             senderName: sessionStorage.getItem("username"),
@@ -468,7 +470,7 @@ export default defineComponent({
                             employeeId: val.employeeId,
                         })
                     }
-                }) 
+                })
                 dataCallModal.value = dataCall
                 paymentYearMonthsModal.value = getArrPaymentYearMonth()
                 modalStatus.value = true
@@ -482,12 +484,17 @@ export default defineComponent({
                 if (val.employeeId == e)
                     value = 1
             })
-            return value 
+            return value
         }
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
         }
+        const closePopupSendMail = () => {
+            modalStatus.value = false
+            refetchData()
+        }
         return {
+            emailUserLogin,
             actionSendEmailGroup,
             selectedItemKeys,
             companyId,
@@ -510,11 +517,11 @@ export default defineComponent({
             per_page, move_column, colomn_resize,
             originData,
             globalYear,
+            closePopupSendMail,
             selectionChanged,
             sendMailGroup,
             actionPrint,
-            openPopup,
-            modalHistory,
+            openPopup, 
             onExporting,
             searching,
             customizeTotal,
@@ -527,4 +534,5 @@ export default defineComponent({
 });
 </script>  
 <style scoped lang="scss" src="./style/style.scss">
+
 </style>

@@ -72,6 +72,9 @@ export default defineComponent({
         groupSendMail: {
             type: Boolean,
             default: false
+        },
+        emailUserLogin: {
+            type: String,
         }
     },
     setup(props, { emit }) {
@@ -80,7 +83,10 @@ export default defineComponent({
             emit('closePopup', false)
         }
         watch(() => props.dataPopup, (val) => {
-            email.value = val?.receiverAddress
+            if (props.groupSendMail == false)
+                email.value = val?.receiverAddress
+            else
+                email.value = props.emailUserLogin
         });
         const {
             mutate,
@@ -89,6 +95,7 @@ export default defineComponent({
         } = useMutation(mutations.sendEmail);
         onError(e => {
             notification('error', e.message)
+            setModalVisible();
         })
         onDone(e => {
             notification('success', `업데이트 완료!`)
@@ -140,9 +147,11 @@ export default defineComponent({
     width: 100%;
     justify-content: center;
     margin-top: 20px;
+
     img {
         margin-right: 5px;
     }
+
     span {
         padding-left: 5px;
     }
