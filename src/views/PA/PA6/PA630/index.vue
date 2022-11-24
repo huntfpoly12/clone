@@ -46,13 +46,20 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <!-- <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" /> -->
-                    <!-- <DxToolbar>
-                        <DxItem name="searchPanel" />
+                    <DxToolbar>
+                        <!-- <DxItem name="searchPanel" />
                         <DxItem name="exportButton" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" />
-                    </DxToolbar> -->
+                        <DxItem name="columnChooserButton" /> -->
+                        <DxItem template="send-group-mail" />
+                    </DxToolbar>
+                    <template #send-group-mail>
+                        <div class="custom-mail-group">
+                            <DxButton><img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                            </DxButton>
+                        </div>
+                    </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                     <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
                     <template #tag="{ data }" class="custom-action">
@@ -80,7 +87,10 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal" :data="popupData" />
+                <EmailSinglePopup 
+                :modalStatus="modalEmailSingle" 
+                @closePopup="onCloseEmailSingleModal" 
+                :data="popupData" />
             </div>
         </div>
     </a-spin>
@@ -90,6 +100,7 @@ import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
+import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
     DxColumn,
@@ -109,6 +120,7 @@ import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 
 export default defineComponent({
     components: {
+        DxButton,
         DxDataGrid,
         DxColumn,
         DxPaging,
@@ -177,8 +189,22 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
         };
         const actionOpenPopupEmailSingle = (data: any) => {
+            popupData.value = {
+                companyId: companyId,
+                input: {
+                    imputedYear: globalYear,
+                    type: valueDefaultIncomeBusiness.value.input.type,
+                    receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
+                },
+                employeeInputs: {
+                    senderName: sessionStorage.getItem("username"),
+                    receiverName: data.employee.name,
+                    receiverAddress: data.employee.email,
+                    employeeId: data.employee.employeeId,
+                    incomeTypeCode: data.employee.incomeTypeCode
+                }
+            }
             modalEmailSingle.value = true
-            popupData.value = data
         }
         const onCloseEmailSingleModal = () => {
             modalEmailSingle.value = false
