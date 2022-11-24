@@ -3,7 +3,7 @@
     <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
     <div id="pa-520" class="page-content">
         <a-row>
-            <a-col :span="3" style="padding-right: 10px;">
+            <a-col :span="3" style="padding-right: 10px">
                 <div class="total-user">
                     <div>
                         <span>{{ dataSource.length }}</span>
@@ -11,11 +11,11 @@
                         <span>전체</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px;">
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
-            <a-col :span="3" style="padding-right: 10px;">
+            <a-col :span="3" style="padding-right: 10px">
                 <div class="current-user">
                     <div>
                         <span>{{ totalUserOnl }}</span>
@@ -23,11 +23,11 @@
                         <span>재직</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px;">
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
-            <a-col :span="3" style="padding-right: 10px;">
+            <a-col :span="3" style="padding-right: 10px">
                 <div class="leave-user">
                     <div>
                         <span>{{ totalUserOff }}</span>
@@ -35,7 +35,7 @@
                         <span>퇴사</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px;">
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -93,18 +93,18 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue";
-import DxButton from "devextreme-vue/button";
-import { useStore } from 'vuex';
-import { useQuery, useMutation } from "@vue/apollo-composable";
-import { companyId } from "../../../../helpers/commonFunction";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
-import notification from "../../../../utils/notification";
-import queries from "../../../../graphql/queries/PA/PA5/PA520/index";
-import PA520PopupAddNewVue from "./components/PA520PopupAddNew.vue";
-import mutations from "../../../../graphql/mutations/PA/PA5/PA520/index";
-import { Message } from "../../../../configs/enum";
+import { ref, defineComponent, watch, computed } from "vue"
+import DxButton from "devextreme-vue/button"
+import { useStore } from 'vuex'
+import { useQuery, useMutation } from "@vue/apollo-composable"
+import { companyId } from "../../../../helpers/commonFunction"
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid"
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
+import notification from "../../../../utils/notification"
+import queries from "../../../../graphql/queries/PA/PA5/PA520/index"
+import PA520PopupAddNewVue from "./components/PA520PopupAddNew.vue"
+import mutations from "../../../../graphql/mutations/PA/PA5/PA520/index"
+import { Message } from "../../../../configs/enum"
 
 export default defineComponent({
     components: {
@@ -124,22 +124,22 @@ export default defineComponent({
     setup() {
         const contentDelete = Message.getMessage('PA120', '002').message
         const modalStatus = ref(false)
-        const dataSource = ref([]);
-        const store = useStore();
+        const dataSource = ref([])
+        const store = useStore()
         const totalUserOnl = ref(0)
         const totalUserOff = ref(0)
-        const globalYear = computed(() => store.state.settings.globalYear);
-        const per_page = computed(() => store.state.settings.per_page);
-        const move_column = computed(() => store.state.settings.move_column);
-        const trigger = ref<boolean>(true);
-        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const globalYear = computed(() => store.state.settings.globalYear)
+        const per_page = computed(() => store.state.settings.per_page)
+        const move_column = computed(() => store.state.settings.move_column)
+        const trigger = ref<boolean>(true)
+        const colomn_resize = computed(() => store.state.settings.colomn_resize)
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
-        });
+        })
         const idAction = ref()
-        const modalAddNewStatus = ref<boolean>(false);
-        const modalEditStatus = ref<boolean>(false);
+        const modalAddNewStatus = ref<boolean>(false)
+        const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
 
@@ -151,13 +151,13 @@ export default defineComponent({
         } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
-        }));
+        }))
 
         const {
             mutate: actionDelete,
             onError: errorDelete,
             onDone: successDelete,
-        } = useMutation(mutations.deleteEmployeeWageDaily);
+        } = useMutation(mutations.deleteEmployeeWageDaily)
         errorDelete(e => {
             notification('error', e.message)
         })
@@ -170,7 +170,7 @@ export default defineComponent({
         // ======================= WATCH ==================================
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.getEmployeeWageDailies;
+                dataSource.value = value.getEmployeeWageDailies
                 totalUserOnl.value = 0
                 totalUserOff.value = 0
                 dataSource.value.map((val: any) => {
@@ -180,14 +180,14 @@ export default defineComponent({
                         totalUserOff.value++
                     }
                 })
-                trigger.value = false;
+                trigger.value = false
             }
-        });
+        })
 
         // ======================= FUNCTION ================================
         const openAddNewModal = () => {
-            modalAddNewStatus.value = true;
-        };
+            modalAddNewStatus.value = true
+        }
         const actionEdit = (data: any) => {
 
         }
@@ -200,7 +200,7 @@ export default defineComponent({
             modalStatus.value = true
         }
         const onSubmit = (e: any) => {
-        };
+        }
 
         const statusComfirm = (res: any) => {
             if (res == true)
@@ -231,7 +231,7 @@ export default defineComponent({
             statusComfirm,
         }
     },
-});
+})
 </script> 
 <style lang="scss" scoped src="./style/style.scss" >
 
