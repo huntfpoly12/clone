@@ -366,7 +366,8 @@ export default defineComponent({
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
-        const searching = () => {
+
+        const getArrPaymentYearMonth = () => {
             let arrVal = []
             if (arrCheckBoxSearch.month1.value == true)
                 arrVal.push(arrCheckBoxSearch.month1.label)
@@ -396,7 +397,10 @@ export default defineComponent({
                 arrVal.push(year1.label)
             if (year2.value == true)
                 arrVal.push(year2.label)
-            dataApiSearch.filter.paymentYearMonths = arrVal
+            return arrVal
+        }
+        const searching = () => {
+            dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
             refetchData()
         };
         const modalHistory = (data: any) => {
@@ -409,36 +413,7 @@ export default defineComponent({
                 receiverAddress: res.email,
                 employeeId: res.employeeId,
             }
-            let arrVal = []
-            if (arrCheckBoxSearch.month1.value == true)
-                arrVal.push(arrCheckBoxSearch.month1.label)
-            if (arrCheckBoxSearch.month2.value == true)
-                arrVal.push(arrCheckBoxSearch.month2.label)
-            if (arrCheckBoxSearch.month3.value == true)
-                arrVal.push(arrCheckBoxSearch.month3.label)
-            if (arrCheckBoxSearch.month4.value == true)
-                arrVal.push(arrCheckBoxSearch.month4.label)
-            if (arrCheckBoxSearch.month5.value == true)
-                arrVal.push(arrCheckBoxSearch.month5.label)
-            if (arrCheckBoxSearch.month6.value == true)
-                arrVal.push(arrCheckBoxSearch.month6.label)
-            if (arrCheckBoxSearch.month7.value == true)
-                arrVal.push(arrCheckBoxSearch.month7.label)
-            if (arrCheckBoxSearch.month8.value == true)
-                arrVal.push(arrCheckBoxSearch.month8.label)
-            if (arrCheckBoxSearch.month9.value == true)
-                arrVal.push(arrCheckBoxSearch.month9.label)
-            if (arrCheckBoxSearch.month10.value == true)
-                arrVal.push(arrCheckBoxSearch.month10.label)
-            if (arrCheckBoxSearch.month11.value == true)
-                arrVal.push(arrCheckBoxSearch.month11.label)
-            if (arrCheckBoxSearch.month12.value == true)
-                arrVal.push(arrCheckBoxSearch.month12.label)
-            if (year1.value == true)
-                arrVal.push(year1.label)
-            if (year2.value == true)
-                arrVal.push(year2.label)
-            paymentYearMonthsModal.value = arrVal
+            paymentYearMonthsModal.value = getArrPaymentYearMonth()
             modalStatus.value = true
         }
         const customizeIncomeTax = () => {
@@ -456,43 +431,13 @@ export default defineComponent({
         const customizeTotalTaxPay = () => {
             return dataDemoUltil.totalTaxPay
         }
-        const actionPrint = (res: any) => {
-            let arrVal = []
-            if (arrCheckBoxSearch.month1.value == true)
-                arrVal.push(arrCheckBoxSearch.month1.label)
-            if (arrCheckBoxSearch.month2.value == true)
-                arrVal.push(arrCheckBoxSearch.month2.label)
-            if (arrCheckBoxSearch.month3.value == true)
-                arrVal.push(arrCheckBoxSearch.month3.label)
-            if (arrCheckBoxSearch.month4.value == true)
-                arrVal.push(arrCheckBoxSearch.month4.label)
-            if (arrCheckBoxSearch.month5.value == true)
-                arrVal.push(arrCheckBoxSearch.month5.label)
-            if (arrCheckBoxSearch.month6.value == true)
-                arrVal.push(arrCheckBoxSearch.month6.label)
-            if (arrCheckBoxSearch.month7.value == true)
-                arrVal.push(arrCheckBoxSearch.month7.label)
-            if (arrCheckBoxSearch.month8.value == true)
-                arrVal.push(arrCheckBoxSearch.month8.label)
-            if (arrCheckBoxSearch.month9.value == true)
-                arrVal.push(arrCheckBoxSearch.month9.label)
-            if (arrCheckBoxSearch.month10.value == true)
-                arrVal.push(arrCheckBoxSearch.month10.label)
-            if (arrCheckBoxSearch.month11.value == true)
-                arrVal.push(arrCheckBoxSearch.month11.label)
-            if (arrCheckBoxSearch.month12.value == true)
-                arrVal.push(arrCheckBoxSearch.month12.label)
-            if (year1.value == true)
-                arrVal.push(year1.label)
-            if (year2.value == true)
-                arrVal.push(year2.label)
-
+        const actionPrint = (res: any) => { 
             let dataCallApiPrint = {
                 companyId: companyId,
                 employeeIds: [res.employeeId],
                 input: {
                     imputedYear: globalYear,
-                    paymentYearMonths: arrVal,
+                    paymentYearMonths: getArrPaymentYearMonth(),
                     type: valueSwitchChange.value == true ? 1 : 2,
                     receiptDate: dayjs(dateSendEmail.value).format('YYYYMMDD')
                 }
