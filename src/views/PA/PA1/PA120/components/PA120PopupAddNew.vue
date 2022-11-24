@@ -1,7 +1,7 @@
 <template>
     <div>
         <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()"
-            :mask-closable="false" :width="1028" :footer="null" :bodyStyle="{padding: '0px', height: '500px' }">
+            :mask-closable="false" :width="1028" :footer="null" :bodyStyle="{padding: '0px', height: '800px' }">
                 <a-spin :spinning="false" size="large">
                     <div  id="pa-120" class="page-content">
                         <a-tabs v-model:activeKey="activeKey" type="card">
