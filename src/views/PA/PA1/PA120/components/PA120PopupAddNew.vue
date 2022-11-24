@@ -1,7 +1,7 @@
 <template>
     <div>
         <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()"
-            :mask-closable="false" :width="1028" :footer="null" :bodyStyle="{padding: '0px', height: '800px' }">
+            :mask-closable="false" :width="1028" :footer="null" :bodyStyle="{padding: '0px', height: '650px' }">
                 <a-spin :spinning="false" size="large">
                     <div  id="pa-120" class="page-content">
                         <a-tabs v-model:activeKey="activeKey" type="card">
@@ -117,6 +117,7 @@
                                 <Tab2Component></Tab2Component>
                             </a-tab-pane>
                             <a-tab-pane key="3" tab="부양가족">
+                                <Tab3Component></Tab3Component>
                             </a-tab-pane>
                         </a-tabs>
                 
@@ -131,6 +132,7 @@ import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 import Tab2Component from "./Tab2Component.vue";
+import Tab3Component from "./Tab3Component.vue";
 import { radioCheckForeigner , radioCheckHouseholder} from "../utils/index";
 import DataSource from "devextreme/data/data_source";
 
@@ -138,7 +140,8 @@ export default defineComponent({
     components: {
         InfoCircleFilled,
         DxSelectBox,
-        Tab2Component
+        Tab2Component,
+        Tab3Component
     },
     props:{
         modalStatus: Boolean,
