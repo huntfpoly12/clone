@@ -161,14 +161,14 @@ export default defineComponent({
         });
         const customItemCreating = (e:any)=>{
             // Generates a new 'id'
-            let nextId;
-            selectBoxData.store().totalCount().done(count => {nextId = count + 1});
-            // Creates a new entry
-            e.customItem = { id: nextId, firstName: e.text };
-            // Adds the entry to the data source
-            selectBoxData.store().insert(e.customItem);
-            // Reloads the data source
-            selectBoxData.reload();
+            // let nextId;
+            // selectBoxData.store().totalCount().done(count => {nextId = count + 1});
+            // // Creates a new entry
+            // e.customItem = { id: nextId, firstName: e.text };
+            // // Adds the entry to the data source
+            // selectBoxData.store().insert(e.customItem);
+            // // Reloads the data source
+            // selectBoxData.reload();
         }
         return {
             isForeigner,
