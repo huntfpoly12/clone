@@ -53,7 +53,7 @@ export default [
   { name: "근로소득자료입력", url: "/dashboard/bf-310", id: "pa-110" },
   { name: "사원등록", url: "/dashboard/pa-120", id: "pa-120" },
   { name: "원천징수이행상황신고서", url: "/dashboard/bf-310", id: "pa-210" },
-  { name: "근로소득원천징수영수증", url: "/dashboard/bf-220", id: "pa-220" },
+  { name: "근로소득원천징수영수증", url: "/dashboard/pa-220", id: "pa-220" },
   {
     name: "소득자별근로소득원천징수부",
     url: "/dashboard/bf-310",
@@ -86,7 +86,7 @@ export default [
   { name: "사업소득원천징수영수증", url: "/dashboard/pa-630", id: "pa-630" },
   { name: "기타소득자등록", url: "/dashboard/pa-710", id: "pa-710" },
   { name: "기타소득자등록", url: "/dashboard/bf-310", id: "pa-720" },
-  { name: "기타소득자등록", url: "/dashboard/pa-730", id: "pa-730" },
+  { name: "기타소득자료입력", url: "/dashboard/bf-310", id: "pa-730" },
   { name: "기타소득원천징수영수증", url: "/dashboard/bf-310", id: "pa-740" },
   { name: "취득신고", url: "/dashboard/bf-310", id: "pa-810" },
   { name: "상실신고", url: "/dashboard/bf-310", id: "pa-820" },

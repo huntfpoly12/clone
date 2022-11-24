@@ -185,6 +185,9 @@ const PA710 = defineAsyncComponent(() =>
 const PA730 = defineAsyncComponent(() =>
   import("../views/PA/PA7/PA730/index.vue")
 );
+const PA220 = defineAsyncComponent(() =>
+  import("../views/PA/PA2/PA220/index.vue")
+);
 const Test = defineAsyncComponent(() =>
   import("../views/DefaultComponent.vue")
 );
@@ -239,6 +242,7 @@ export default defineComponent({
     PA530,
     PA710,
     PA730,
+    PA220,
     Test,
     Example,
     MenuFoldOutlined,
@@ -358,7 +362,8 @@ export default defineComponent({
       if (this.activeTab.id === "pa-630") return PA630;
       if (this.activeTab.id === "pa-530") return PA530;
       if (this.activeTab.id === "pa-710") return PA710;
-      if (this.activeTab.id === "pa-730") return PA730;
+      if (this.activeTab.id === "pa-710") return PA730;
+      if (this.activeTab.id === "pa-220") return PA220;
       if (this.activeTab.id === "example") return Example;
       return Test;
     },
