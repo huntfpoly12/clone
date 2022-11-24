@@ -99,14 +99,14 @@ export const valueDefaultAction = {
 
 export const dataDemo =
 {
-    totalTaxPay: "2",
-    totalTaxfreePay: "2",
-    withholdingIncomeTax: "2",
-    withholdingLocalIncomeTax: "2",
+    totalTaxPay: "totalTaxPay",
+    totalTaxfreePay: "totalTaxfreePay",
+    withholdingIncomeTax: "221312",
+    withholdingLocalIncomeTax: "22222",
     employee:
         [
             { 
-                employeeId: "280120",
+                employeeId: 28,
                 type: "2",
                 incomeTypeCode: "940905",
                 name: "An Tú",
@@ -117,7 +117,7 @@ export const dataDemo =
                 residentIdValidity: "2",
                 roadAddress: "2",
                 addressExtend: "2",
-                email: "2",
+                email: "phamantu123@gmail.com",
                 department: "2",
                 responsibility: "2",
                 status: 10,
