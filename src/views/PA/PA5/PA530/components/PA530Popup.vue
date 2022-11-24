@@ -78,12 +78,14 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
-        const modalStatus = props.modalStatus
+        const modalStatus = ref()
         const email = ref()
         const setModalVisible = () => {
+            modalStatus.value = false
             emit('closePopup', false)
         }
         watch(() => props.dataPopup, (val) => {
+            modalStatus.value = props.modalStatus
             if (props.groupSendMail == false)
                 email.value = val?.receiverAddress
             else
@@ -94,7 +96,7 @@ export default defineComponent({
             onError,
             onDone,
         } = useMutation(mutations.sendEmail);
-        onError(e => {
+        onError(e => { 
             notification('error', e.message)
             setModalVisible();
         })
