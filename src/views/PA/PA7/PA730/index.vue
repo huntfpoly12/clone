@@ -111,7 +111,7 @@
             ></income-type>
           </template>
           <DxColumn caption="지급총액" data-field="paymentAmount" />
-          <DxColumn caption="비과세소득" data-field="withholdingIncomeTax" />
+          <!-- <DxColumn caption="비과세소득" data-field="withholdingIncomeTax" /> -->
           <DxColumn caption="필요경비" data-field="requiredExpenses" />
           <DxColumn caption="소득금액" data-field="incomePayment" />
 
@@ -201,6 +201,8 @@ export default defineComponent({
     const popupSingleData = ref({});
     const popupGroupData = ref({});
     let dataSelect = ref<any>([]);
+    let selectedItemKeys = ref([]);
+
     const store = useStore();
 
     const globalYear = computed(() => store.state.settings.globalYear);
@@ -320,7 +322,7 @@ export default defineComponent({
     const onCloseEmailSingleModal = () => {
       modalEmailSingle.value = false;
     };
-    const actionOpenPopupEmailGroup = (data: any) => {
+    const actionOpenPopupEmailGroup = () => {
       popupGroupData.value = {
         companyId: companyId,
         input: {
@@ -332,16 +334,26 @@ export default defineComponent({
       };
       modalEmailGroup.value = true;
     };
-    const onSelectionChanged = (data: any) => {
-      data.selectedRowKeys.forEach((data: any) => {
-        dataSelect.value.push({
-          senderName: sessionStorage.getItem("username"),
-          receiverName: data.employee.name,
-          receiverAddress: data.employee.email,
-          employeeId: data.employee.employeeId,
-          incomeTypeCode: data.employee.incomeTypeCode,
-        });
+    const check = (val: any) => {
+      let value = 0;
+      selectedItemKeys.value.map((e: any) => {
+        if (val.employeeId == e) value = 1;
       });
+      return value;
+    };
+    const onSelectionChanged = (data: any) => {
+      data.selectedRowKeys.map((val: any) => {
+        if (check(val) == 1) {
+          dataSelect.value.push({
+            senderName: sessionStorage.getItem("username"),
+            receiverName: data.employee.name,
+            receiverAddress: data.employee.email,
+            employeeId: data.employee.employeeId,
+            incomeTypeCode: data.employee.incomeTypeCode,
+          });
+        }
+      });
+      data.selectedRowKeys.value = dataSelect;
     };
     const onCloseEmailGroupModal = () => {
       dataSelect = ref<any>([]);

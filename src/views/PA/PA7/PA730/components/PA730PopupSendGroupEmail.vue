@@ -7,7 +7,7 @@
     footer=""
     :width="562"
   >
-    <standard-form action="" name="email-single-630">
+    <standard-form action="" name="email-single-730">
       <img
         src="../../../../../assets/images/emailGroup.png"
         alt=""
@@ -20,16 +20,16 @@
           </span>
           <div style="display: flex; align-items: center">
             <mail-text-box
-              class="model-input"
               width="250px"
               :required="true"
               v-model:valueInput="emailAddress"
+              placeholder="abc@example.com"
             ></mail-text-box>
             <span>로 메일을 발송하시겠습니까?</span>
           </div>
         </div>
       </div>
-      <div class="text-align-center mt-20">
+      <div class="text-align-center mt-50">
         <button-basic
           class="button-form-modal"
           :text="'그냥 나가기'"
@@ -128,23 +128,25 @@ export default defineComponent({
   width: 100%;
   justify-content: center;
   margin-top: 20px;
-  .model-input {
-    margin: 10px 0px;
-  }
+
   img {
     width: 40px;
     margin-right: 5px;
   }
+
   span {
     padding-left: 5px;
   }
 }
-.mt-20 {
-  margin-top: 20px;
+
+.mt-50 {
+  margin-top: 50px;
 }
+
 .text-align-center {
   text-align: center;
 }
+
 .button-form-modal {
   margin: 0px 5px;
 }
