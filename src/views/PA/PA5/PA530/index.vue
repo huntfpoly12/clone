@@ -475,7 +475,7 @@ export default defineComponent({
                 paymentYearMonthsModal.value = getArrPaymentYearMonth()
                 modalStatus.value = true
             } else {
-                notification('error', "Vui lòng chọn tài khoản cần đăng gửi mail")
+                notification('error', "일용직근로자들을 선택하세요!")
             }
         }
         const check = (val: any) => {
