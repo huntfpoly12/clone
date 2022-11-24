@@ -135,7 +135,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                    @selection-changed="selectionChanged" :column-auto-width="true">
                     <DxScrolling column-rendering-mode="virtual" />
                     <DxToolbar>
                         <DxItem location="after" template="pagination-table" />
@@ -149,7 +149,8 @@
                     </template>
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
-                            <DxButton><img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                            <DxButton><img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;"
+                                    @click="sendMailGroup" />
                             </DxButton>
                         </div>
                     </template>
@@ -199,27 +200,28 @@
                         :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                 </div>
             </a-spin>
-            <PA630Popup :modalStatus="modalStatus" :dataPopup="dataCallModal" :imputedYear="globalYear"
-                :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
-                :receiptDate="dateSendEmail.toString()" @closePopup="modalStatus = false" :companyId="companyId" />
+            <PA630Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
+                :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
+                :receiptDate="dateSendEmail.toString()" @closePopup="closePopupSendMail" :companyId="companyId"
+                :emailUserLogin="emailUserLogin" />
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
-import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA5/PA530/index";
+import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
-import { companyId } from "../../../../../src/helpers/commonFunction";
+import { companyId, userId } from "../../../../../src/helpers/commonFunction";
 import PA630Popup from "./components/PA630Popup.vue";
 import dayjs from 'dayjs';
-import mutations from "../../../../graphql/mutations/PA/PA5/PA530/index";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
@@ -236,8 +238,11 @@ export default defineComponent({
         PA630Popup
     },
     setup() {
+        const emailUserLogin = ref()
+        const actionSendEmailGroup = ref(false)
+        let dataCallApiPrint = ref()
         let paymentYearMonthsModal: any = ref()
-        let dataCallModal = ref()
+        let dataCallModal: any = ref()
         const dateSendEmail = ref(new Date)
         const valueSwitchChange = ref(true)
         const globalYear: any = computed(() => store.state.settings.globalYear);
@@ -252,6 +257,7 @@ export default defineComponent({
         const originData = reactive({ ...origindata, rows: per_page });
         const dataDemoUltil = reactive({ ...dataDemo })
         const trigger = ref<boolean>(true);
+        const triggerPrint = ref<boolean>(false);
         let year1 = reactive({
             label: globalYear.value + 1 + '년 01월',
             value: true,
@@ -275,7 +281,9 @@ export default defineComponent({
         let checkAllValue = ref(true)
         let customTextWithholdingLocalIncomeTax = ref('')
         let customTextWithholdingIncomeTax = ref('')
+        let selectedItemKeys = ref([])
         // ================GRAPQL==============================================
+        // QUERY NAME : searchIncomeWageDailyWithholdingReceipts
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.search, dataApiSearch, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
@@ -287,17 +295,25 @@ export default defineComponent({
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
         })
-
+        // QUERY NAME : getIncomeWageDailyWithholdingReceiptReportViewUrl
         const {
-            mutate,
+            refetch: refetchPrint,
+            loading: loadingPrint,
             onError,
-            onDone,
-        } = useMutation(mutations.printFile);
-        onError(e => {
-            notification('error', e.message)
-        })
-        onDone(e => {
-            notification('success', `업데이트 완료!`)
+            onResult,
+        } = useQuery(queries.print, dataCallApiPrint, () => ({
+            enabled: triggerPrint.value,
+            fetchPolicy: "no-cache",
+        }));
+
+        // QUERY NAME : getUser
+        const {
+            onResult: onResultUserInf
+        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+            fetchPolicy: "no-cache",
+        }));
+        onResultUserInf(e => {
+            emailUserLogin.value = e.data.getUser.email
         })
         // ================WATCHING============================================
         watch(checkAllValue, (value) => {
@@ -366,7 +382,6 @@ export default defineComponent({
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
-
         const getArrPaymentYearMonth = () => {
             let arrVal = []
             if (arrCheckBoxSearch.month1.value == true)
@@ -402,10 +417,7 @@ export default defineComponent({
         const searching = () => {
             dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
             refetchData()
-        };
-        const modalHistory = (data: any) => {
-            modalHistoryStatus.value = true;
-        }
+        }; 
         const openPopup = (res: any) => {
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
@@ -431,23 +443,60 @@ export default defineComponent({
         const customizeTotalTaxPay = () => {
             return dataDemoUltil.totalTaxPay
         }
-        const actionPrint = (res: any) => { 
-            let dataCallApiPrint = {
+        const actionPrint = (res: any) => {
+            dataCallApiPrint.value = {
                 companyId: companyId,
                 employeeIds: [res.employeeId],
                 input: {
                     imputedYear: globalYear,
                     paymentYearMonths: getArrPaymentYearMonth(),
                     type: valueSwitchChange.value == true ? 1 : 2,
-                    receiptDate: dayjs(dateSendEmail.value).format('YYYYMMDD')
+                    receiptDate: dateSendEmail.value
                 }
             }
-
-            mutate(dataCallApiPrint)
-
-
+            triggerPrint.value = true
+            refetchPrint()
+        }
+        const sendMailGroup = () => {
+            if (selectedItemKeys.value.length > 0) {
+                actionSendEmailGroup.value = true
+                let dataCall: any = []
+                dataDemoUltil.employee.map((val: any) => {
+                    if (check(val) == 1) {
+                        dataCall.push({
+                            senderName: sessionStorage.getItem("username"),
+                            receiverName: val.name,
+                            receiverAddress: val.email,
+                            employeeId: val.employeeId,
+                        })
+                    }
+                })
+                dataCallModal.value = dataCall
+                paymentYearMonthsModal.value = getArrPaymentYearMonth()
+                modalStatus.value = true
+            } else {
+                notification('error', "Vui lòng chọn tài khoản cần đăng gửi mail")
+            }
+        }
+        const check = (val: any) => {
+            let value = 0
+            selectedItemKeys.value.map((e: any) => {
+                if (val.employeeId == e)
+                    value = 1
+            })
+            return value
+        }
+        const selectionChanged = (data: any) => {
+            selectedItemKeys.value = data.selectedRowKeys
+        }
+        const closePopupSendMail = () => {
+            modalStatus.value = false
+            refetchData()
         }
         return {
+            emailUserLogin,
+            actionSendEmailGroup,
+            selectedItemKeys,
             companyId,
             paymentYearMonthsModal,
             dataCallModal,
@@ -468,9 +517,11 @@ export default defineComponent({
             per_page, move_column, colomn_resize,
             originData,
             globalYear,
+            closePopupSendMail,
+            selectionChanged,
+            sendMailGroup,
             actionPrint,
-            openPopup,
-            modalHistory,
+            openPopup, 
             onExporting,
             searching,
             customizeTotal,
