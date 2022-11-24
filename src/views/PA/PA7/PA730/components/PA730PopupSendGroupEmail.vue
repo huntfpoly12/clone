@@ -5,28 +5,28 @@
     :mask-closable="false"
     class="confirm-md"
     footer=""
-    :width="521"
+    :width="562"
   >
-    <standard-form action="" name="email-group-730">
+    <standard-form action="" name="email-single-630">
       <img
         src="../../../../../assets/images/emailGroup.png"
         alt=""
-        style="width: 35px; margin-right: 3px"
+        style="width: 40px"
       />
-      <div class="text-align-center mt-20">
-        <span
-          >개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서
-        </span>
-
-        <div class="email-group-content">
-          <mail-text-box
-            class="mail-group-input"
-            width="200px"
-            :required="true"
-            v-model:valueInput="emailAddress"
-            placeholder="abc@example.com"
-          ></mail-text-box>
-          <span>로 메일을 발송하시겠습니까?</span>
+      <div class="custom-modal-send-email">
+        <div>
+          <span
+            >개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서
+          </span>
+          <div style="display: flex; align-items: center">
+            <mail-text-box
+              class="model-input"
+              width="250px"
+              :required="true"
+              v-model:valueInput="emailAddress"
+            ></mail-text-box>
+            <span>로 메일을 발송하시겠습니까?</span>
+          </div>
         </div>
       </div>
       <div class="text-align-center mt-20">
@@ -52,8 +52,7 @@
 
 <script lang="ts">
 import { defineComponent, watch, ref } from "vue";
-import { companyId } from "../../../../../helpers/commonFunction";
-import dayjs, { Dayjs } from "dayjs";
+import notification from "../../../../../utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/PA/PA7/PA730/index";
 export default defineComponent({
@@ -64,16 +63,29 @@ export default defineComponent({
     },
     data: {
       type: Object,
+      default: {},
+    },
+    emailUserLogin: {
+      type: String,
+      default: "",
     },
   },
   components: {},
   setup(props, { emit }) {
-    let emailAddress = ref();
+    let emailAddress = ref("");
+    watch(
+      () => props.data,
+      (val) => {
+        emailAddress.value = props.emailUserLogin;
+      }
+    );
+
     const setModalVisible = () => {
       emit("closePopup", false);
     };
+
     const {
-      mutate: sendIncomeExtraWithholdingReceiptReportEmail,
+      mutate: sendEmail,
       onDone: onDoneAdd,
       onError: errorSendEmail,
       error,
@@ -83,31 +95,22 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        let variables = {
-          companyId: companyId,
-          input: {
-            imputedYear: parseInt(dayjs().format("YYYY")),
-            type: 1,
-            receiptDate: "sgs",
-          },
-          employeeInputs: {
-            senderName: "",
-            receiverName: "",
-            receiverAddress: "",
-            employeeId: 1,
-            incomeTypeCode: "",
-          },
-        };
-        sendIncomeExtraWithholdingReceiptReportEmail(variables);
+        props.data.employeeInputs.map((value: any) => {
+          if (value.receiverAddress == "") {
+            value.receiverAddress = emailAddress.value;
+          }
+        });
+        let variables = props.data;
+        sendEmail(variables);
       }
     };
     onDoneAdd(() => {
+      notification("success", `업데이트 완료!`);
       emit("closePopup", false);
     });
-    watch(
-      () => props.modalStatus,
-      (value) => {}
-    );
+    errorSendEmail((e: any) => {
+      notification("error", e.message);
+    });
 
     return {
       setModalVisible,
@@ -119,24 +122,30 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.mt-20 {
-  margin-top: 10px;
+.custom-modal-send-email {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  margin-top: 20px;
+  .model-input {
+    margin: 10px 0px;
+  }
+  img {
+    width: 40px;
+    margin-right: 5px;
+  }
+  span {
+    padding-left: 5px;
+  }
 }
-
+.mt-20 {
+  margin-top: 20px;
+}
 .text-align-center {
   text-align: center;
 }
-
 .button-form-modal {
   margin: 0px 5px;
-}
-.email-group-content {
-  display: flex;
-  margin: 20px;
-  align-items: center;
-  justify-content: center;
-  .mail-group-input {
-    margin: 0px 10px;
-  }
 }
 </style>

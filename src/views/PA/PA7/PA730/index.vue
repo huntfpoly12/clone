@@ -67,15 +67,14 @@
             <DxItem name="groupPanel" /> -->
             <DxItem name="addRowButton" show-text="always" />
             <DxItem name="columnChooserButton" />
-            <DxItem template="pagination-send-group-mail" />
+            <DxItem template="send-group-mail" />
           </DxToolbar>
-          <template #pagination-send-group-mail="{ data }">
+          <template #send-group-mail>
             <div class="custom-mail-group">
-              <DxButton
-                ><img
+              <DxButton @click="actionOpenPopupEmailGroup">
+                <img
                   src="../../../../assets/images/emailGroup.png"
                   alt=""
-                  @click="actionOpenPopupEmailGroup(data)"
                   style="width: 35px; margin-right: 3px; cursor: pointer"
                 />
               </DxButton>
@@ -162,6 +161,8 @@ import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
+import DxButton from "devextreme-vue/button";
+
 import {
   DxDataGrid,
   DxColumn,
@@ -190,6 +191,7 @@ export default defineComponent({
     DxSearchPanel,
     DxToolbar,
     DxItem,
+    DxButton,
     InfoCircleFilled,
     EmailSinglePopup,
     EmailGroupPopup,
@@ -198,6 +200,7 @@ export default defineComponent({
     const valueSwitch = ref(true);
     const popupSingleData = ref({});
     const popupGroupData = ref({});
+    let dataSelect = ref<any>([]);
     const store = useStore();
 
     const globalYear = computed(() => store.state.settings.globalYear);
@@ -297,19 +300,51 @@ export default defineComponent({
       onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
     };
     const actionOpenPopupEmailSingle = (data: any) => {
+      popupSingleData.value = {
+        companyId: companyId,
+        input: {
+          imputedYear: globalYear,
+          type: valueDefaultIncomeExtra.value.input.type,
+          receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
+        },
+        employeeInputs: {
+          senderName: sessionStorage.getItem("username"),
+          receiverName: data.employee.name,
+          receiverAddress: data.employee.email,
+          employeeId: data.employee.employeeId,
+          incomeTypeCode: data.employee.incomeTypeCode,
+        },
+      };
       modalEmailSingle.value = true;
-      popupSingleData.value = data;
     };
     const onCloseEmailSingleModal = () => {
       modalEmailSingle.value = false;
     };
     const actionOpenPopupEmailGroup = (data: any) => {
+      popupGroupData.value = {
+        companyId: companyId,
+        input: {
+          imputedYear: globalYear,
+          type: valueDefaultIncomeExtra.value.input.type,
+          receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
+        },
+        employeeInputs: dataSelect.value,
+      };
       modalEmailGroup.value = true;
     };
-    const onSelectionChanged = (value: any) => {
-      popupGroupData.value = value.selectedRowsData;
+    const onSelectionChanged = (data: any) => {
+      data.selectedRowKeys.forEach((data: any) => {
+        dataSelect.value.push({
+          senderName: sessionStorage.getItem("username"),
+          receiverName: data.employee.name,
+          receiverAddress: data.employee.email,
+          employeeId: data.employee.employeeId,
+          incomeTypeCode: data.employee.incomeTypeCode,
+        });
+      });
     };
     const onCloseEmailGroupModal = () => {
+      dataSelect = ref<any>([]);
       modalEmailGroup.value = false;
     };
 

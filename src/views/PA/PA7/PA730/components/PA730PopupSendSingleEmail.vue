@@ -5,27 +5,19 @@
     :mask-closable="false"
     class="confirm-md"
     footer=""
-    :width="521"
+    :width="562"
   >
-    <standard-form action="" name="email-single-730">
-      <div class="text-align-center mt-20">
-        <div class="email-single-content">
-          <img
-            src="../../../../../assets/images/email.svg"
-            alt=""
-            style="width: 35px; margin-right: 3px"
-          />
-          <mail-text-box
-            class="mail-single-input"
-            width="150px"
-            :required="true"
-            v-model:valueInput="emailAddress"
-            placeholder="abc@example.com"
-          ></mail-text-box>
-          <span>로 메일을 발송하시겠습니까?</span>
-        </div>
+    <standard-form action="" name="email-single-630">
+      <div class="custom-modal-send-email">
+        <img src="../../../../../assets/images/email.svg" alt="" />
+        <mail-text-box
+          width="250px"
+          :required="true"
+          v-model:valueInput="emailAddress"
+        ></mail-text-box>
+        <span>로 메일을 발송하시겠습니까?</span>
       </div>
-      <div class="text-align-center mt-20">
+      <div class="text-align-center mt-50">
         <button-basic
           class="button-form-modal"
           :text="'그냥 나가기'"
@@ -48,8 +40,7 @@
 
 <script lang="ts">
 import { defineComponent, watch, ref } from "vue";
-import { companyId } from "../../../../../helpers/commonFunction";
-import dayjs, { Dayjs } from "dayjs";
+import notification from "../../../../../utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/PA/PA7/PA730/index";
 export default defineComponent({
@@ -60,16 +51,24 @@ export default defineComponent({
     },
     data: {
       type: Object,
+      default: {},
     },
   },
   components: {},
   setup(props, { emit }) {
-    let emailAddress = ref();
+    let emailAddress = ref("");
+    watch(
+      () => props.data,
+      (val) => {
+        emailAddress.value = val?.employeeInputs.receiverAddress;
+      }
+    );
+
     const setModalVisible = () => {
       emit("closePopup", false);
     };
     const {
-      mutate: sendIncomeExtraWithholdingReceiptReportEmail,
+      mutate: sendEmail,
       onDone: onDoneAdd,
       onError: errorSendEmail,
       error,
@@ -79,26 +78,17 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        let variables = {
-          companyId: companyId,
-          input: {
-            imputedYear: parseInt(dayjs().format("YYYY")),
-            type: 1,
-            receiptDate: "sgs",
-          },
-          employeeInputs: {
-            senderName: "",
-            receiverName: "",
-            receiverAddress: "",
-            employeeId: 1,
-            incomeTypeCode: "",
-          },
-        };
-        sendIncomeExtraWithholdingReceiptReportEmail(variables);
+        let variables = props.data;
+        variables.employeeInputs.receiverAddress = emailAddress.value;
+        sendEmail(variables);
       }
     };
     onDoneAdd(() => {
+      notification("success", `업데이트 완료!`);
       emit("closePopup", false);
+    });
+    errorSendEmail((e: any) => {
+      notification("error", e.message);
     });
     watch(
       () => props.modalStatus,
@@ -115,8 +105,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.mt-20 {
+.custom-modal-send-email {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
   margin-top: 20px;
+
+  img {
+    width: 40px;
+    margin-right: 5px;
+  }
+
+  span {
+    padding-left: 5px;
+  }
+}
+.mt-50 {
+  margin-top: 50px;
 }
 
 .text-align-center {
@@ -125,14 +131,5 @@ export default defineComponent({
 
 .button-form-modal {
   margin: 0px 5px;
-}
-.email-single-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0px;
-  .mail-single-input {
-    margin: 0px 10px;
-  }
 }
 </style>
