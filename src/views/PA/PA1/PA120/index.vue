@@ -107,7 +107,6 @@ export default defineComponent({
   },
   setup() {
     const dataSource = ref([]);
-
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     const per_page = computed(() => store.state.settings.per_page);
