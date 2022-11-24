@@ -1,6 +1,6 @@
-import getEmployeeWages from "./getEmployeeWages";
+import getEmployeeWageDailies from "./getEmployeeWageDailies";
 
 const queries = {
-    getEmployeeWages: getEmployeeWages
+    getEmployeeWageDailies: getEmployeeWageDailies
 };
 export default queries;

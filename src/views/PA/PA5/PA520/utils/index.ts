@@ -22,3 +22,11 @@ export const IncomeTaxAppRate = [
     { id: 3, text: '520%' },
 ];
 
+export const dataDemo = [
+    { id: 1, text: '100%' },
+    { id: 2, text: '180%' },
+    { id: 3, text: '520%' },
+];
+
+
+

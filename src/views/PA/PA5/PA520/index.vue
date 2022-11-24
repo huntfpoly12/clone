@@ -2,38 +2,43 @@
 <template>
     <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
     <div id="pa-520" class="page-content">
-        <a-row justify="space-around">
-            <a-col :span="4" class="total-user">
-                <div>
-                    <span>8</span>
-                    <br>
-                    <span>전체</span>
-                </div>
-                <div>
-                    <i class="dx-icon-user"></i>
-                </div>
-            </a-col>
-            <a-col :span="4" class="current-user">
-                <div>
-                    <span>8</span>
-                    <br>
-                    <span>재직</span>
-                </div>
-                <div>
-                    <i class="dx-icon-user"></i>
+        <a-row>
+            <a-col :span="3" style="padding-right: 10px;">
+                <div class="total-user">
+                    <div>
+                        <span>{{ dataSource.length }}</span>
+                        <br>
+                        <span>전체</span>
+                    </div>
+                    <div>
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px;">
+                    </div>
                 </div>
             </a-col>
-            <a-col :span="4" class="leave-user">
-                <div>
-                    <span>8</span>
-                    <br>
-                    <span>퇴사</span>
-                </div>
-                <div>
-                    <i class="dx-icon-user"></i>
+            <a-col :span="3" style="padding-right: 10px;">
+                <div class="current-user">
+                    <div>
+                        <span>{{ totalUserOnl }}</span>
+                        <br>
+                        <span>재직</span>
+                    </div>
+                    <div>
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px;">
+                    </div>
                 </div>
             </a-col>
-
+            <a-col :span="3" style="padding-right: 10px;">
+                <div class="leave-user">
+                    <div>
+                        <span>{{ totalUserOff }}</span>
+                        <br>
+                        <span>퇴사</span>
+                    </div>
+                    <div>
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px;">
+                    </div>
+                </div>
+            </a-col>
         </a-row>
         <a-row>
             <a-col :span="24">
@@ -47,20 +52,20 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <DxColumn caption="성명" cell-template="company-name" :width="500" />
+                        <DxColumn caption="성명" cell-template="company-name" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false" />
+                                :idCardNumber="data.data.residentId" :status="data.data.status"
+                                :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" :width="200" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
                             <div class="custom-grade-cell">
-                                <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
-                                <span>{{ data.data.incomeTypeName }}</span>
+                                <four-major-insurance :typeTag="1" :typeValue="1" />
                             </div>
                         </template>
-                        <DxColumn :width="80" cell-template="pupop" />
+                        <DxColumn cell-template="pupop" width="100" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
@@ -72,41 +77,57 @@
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
-                                    <DeleteOutlined @click="actionDelete(data)" />
+                                    <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                                 </a-space>
                             </div>
                         </template>
                     </DxDataGrid>
-                    <PA520PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-                    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        typeHistory="pa-520" />
                 </a-spin>
-            </a-col> 
+                <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+                    :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+                <PA520PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+                <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    typeHistory="pa-520" />
+            </a-col>
         </a-row>
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { ref, defineComponent, watch, computed } from "vue";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { companyId } from "../../../../helpers/commonFunction";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA5/PA520/index";
 import PA520PopupAddNewVue from "./components/PA520PopupAddNew.vue";
+import mutations from "../../../../graphql/mutations/PA/PA5/PA520/index";
+import { Message } from "../../../../configs/enum";
+
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        DxToolbar,
-        DxItem,
-        DxButton,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
+        EditOutlined,
+        HistoryOutlined,
+        SearchOutlined,
+        MenuFoldOutlined,
+        MenuUnfoldOutlined,
+        MailOutlined,
+        PrinterOutlined,
+        DeleteOutlined,
+        SaveOutlined,
+        InfoCircleFilled,
         PA520PopupAddNewVue
     },
     setup() {
+        const contentDelete = Message.getMessage('PA120', '002').message
+        const modalStatus = ref(false)
         const dataSource = ref([]);
         const store = useStore();
+        const totalUserOnl = ref(0)
+        const totalUserOff = ref(0)
         const globalYear = computed(() => store.state.settings.globalYear);
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -116,24 +137,54 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear,
         });
+        const idAction = ref()
         const modalAddNewStatus = ref<boolean>(false);
         const modalEditStatus = ref<boolean>(false);
         const modalHistoryStatus = ref<boolean>(false)
+        const modalDeleteStatus = ref<boolean>(false)
+
+        // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
             result,
             loading,
-        } = useQuery(queries.getEmployeeWages, originData, () => ({
+        } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
 
+        const {
+            mutate: actionDelete,
+            onError: errorDelete,
+            onDone: successDelete,
+        } = useMutation(mutations.deleteEmployeeWageDaily);
+        errorDelete(e => {
+            notification('error', e.message)
+        })
+        successDelete(e => {
+            notification('success', `업데이트 완료!`)
+            trigger.value = true
+            refetchData()
+        })
+
+        // ======================= WATCH ==================================
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.getEmployeeWages;
+                dataSource.value = value.getEmployeeWageDailies;
+                totalUserOnl.value = 0
+                totalUserOff.value = 0
+                dataSource.value.map((val: any) => {
+                    if (val.status != 0) {
+                        totalUserOnl.value++
+                    } else {
+                        totalUserOff.value++
+                    }
+                })
                 trigger.value = false;
             }
         });
+
+        // ======================= FUNCTION ================================
         const openAddNewModal = () => {
             modalAddNewStatus.value = true;
         };
@@ -144,30 +195,44 @@ export default defineComponent({
 
         }
 
-        const actionDelete = (data: any) => {
-
+        const actionDeleteFuc = (data: any) => {
+            idAction.value = data
+            modalStatus.value = true
         }
         const onSubmit = (e: any) => {
         };
+
+        const statusComfirm = (res: any) => {
+            if (res == true)
+                actionDelete({
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    employeeId: idAction.value
+                })
+
+        }
         return {
+            totalUserOff,
+            totalUserOnl,
+            modalStatus,
             loading,
-            onSubmit,
+            modalEditStatus,
+            modalDeleteStatus,
             dataSource,
-            actionEdit,
-            actionDelete,
-            modalHistory,
             modalHistoryStatus,
-            openAddNewModal,
             modalAddNewStatus,
             per_page, move_column, colomn_resize,
+            contentDelete,
+            onSubmit,
+            actionEdit,
+            actionDeleteFuc,
+            modalHistory,
+            openAddNewModal,
+            statusComfirm,
         }
     },
 });
-</script>
+</script> 
+<style lang="scss" scoped src="./style/style.scss" >
 
-
-
-
-
-
-<style lang="scss" scoped src="./style/style.scss" />
+</style>
