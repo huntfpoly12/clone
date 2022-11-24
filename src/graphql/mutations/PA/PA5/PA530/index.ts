@@ -1,11 +1,8 @@
-
-import deleteEmployeeBusiness from "./deleteEmployeeBusiness";
-import createEmployeeBusiness from "./createEmployeeBusiness";
-import updateEmployeeBusiness from "./updateEmployeeBusiness";
+import sendEmail from "./sendIncomeWageDailyWithholdingReceiptReportEmail"; 
+import printFile from "./getIncomeWageDailyWithholdingReceiptReportViewUrl"; 
 const mutations = {
-    deleteEmployeeBusiness: deleteEmployeeBusiness,
-    createEmployeeBusiness: createEmployeeBusiness,
-    updateEmployeeBusiness: updateEmployeeBusiness, 
+    sendEmail: sendEmail, 
+    printFile: printFile, 
 };
 
 export default mutations;
