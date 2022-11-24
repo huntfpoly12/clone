@@ -419,6 +419,7 @@ export default defineComponent({
             refetchData()
         }; 
         const openPopup = (res: any) => { 
+            actionSendEmailGroup.value = false
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
                 receiverName: res.name,
