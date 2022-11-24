@@ -34,37 +34,23 @@
           </a-button>
 
           <div class="wrap-search">
-            <a-select
-              v-model:value="selectedItems"
-              :options="
-                menuData.map((item) => ({
-                  value: item.id + ' | ' + item.name,
-                }))
-              "
-              show-search
-              placeholder="메뉴를 입력해보세요"
-              style="width: 180px"
-              @change="addMenuTab"
-            />
+            <a-select v-model:value="selectedItems" :options="
+              menuData.map((item) => ({
+                value: item.id + ' | ' + item.name,
+              }))
+            " show-search placeholder="메뉴를 입력해보세요" style="width: 180px" @change="addMenuTab" />
           </div>
         </div>
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
             <ul class="list-menu-tab">
-              <li
-                v-for="(item, index) in menuTab"
-                :class="activeTab.id === item.id ? 'active' : ''"
-                :key="index"
-                @click="changeActiveTab(item)"
-              >
+              <li v-for="(item, index) in menuTab" :class="activeTab.id === item.id ? 'active' : ''" :key="index"
+                @click="changeActiveTab(item)">
                 {{ item.name }}
-                <close-circle-filled
-                  @click="removeItemTab(index)"
-                  :style="{
-                    marginLeft: '2px',
-                    color: activeTab.id === item.id ? 'red' : '#888',
-                  }"
-                />
+                <close-circle-filled @click="removeItemTab(index)" :style="{
+                  marginLeft: '2px',
+                  color: activeTab.id === item.id ? 'red' : '#888',
+                }" />
               </li>
             </ul>
           </nav>
@@ -72,39 +58,20 @@
       </div>
 
       <a-layout>
-        <a-layout-sider
-          width="250"
-          v-model:collapsed="collapsed"
-          :trigger="null"
-          collapsible
-        >
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            theme="dark"
-            mode="inline"
-            :open-keys="openKeys"
-            @openChange="onOpenChange"
-          >
+        <a-layout-sider width="250" v-model:collapsed="collapsed" :trigger="null" collapsible>
+          <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :open-keys="openKeys"
+            @openChange="onOpenChange">
             <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
               <template #icon>
                 <MailOutlined />
               </template>
               <template #title>{{ menuItem.title }}</template>
-              <a-sub-menu
-                v-for="subMenu in menuItem.subMenus"
-                :key="subMenu.id"
-                :title="subMenu.title"
-              >
-                <a-menu-item
-                  v-for="item in subMenu.items"
-                  :key="item.id"
-                  :class="
-                    item.id === activeTab.id
-                      ? 'ant-menu-item-selected-active'
-                      : ''
-                  "
-                  @click.enter="addMenuTab(item.id + ' | ' + item.name)"
-                >
+              <a-sub-menu v-for="subMenu in menuItem.subMenus" :key="subMenu.id" :title="subMenu.title">
+                <a-menu-item v-for="item in subMenu.items" :key="item.id" :class="
+                  item.id === activeTab.id
+                    ? 'ant-menu-item-selected-active'
+                    : ''
+                " @click.enter="addMenuTab(item.id + ' | ' + item.name)">
                   <router-link :to="item.url">{{ item.name }}</router-link>
                 </a-menu-item>
               </a-sub-menu>
@@ -112,9 +79,7 @@
           </a-menu>
         </a-layout-sider>
         <a-layout>
-          <a-layout-content
-            :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
-          >
+          <a-layout-content :style="{ background: '#fff', margin: 0, minHeight: '280px' }">
             <div class="main-content">
               <template v-if="activeTab">
                 <keep-alive>
@@ -595,7 +560,7 @@ export default defineComponent({
   background-color: #096dd9;
 }
 
-::v-deep .ant-menu-dark .ant-menu-item-selected > span > a {
+::v-deep .ant-menu-dark .ant-menu-item-selected>span>a {
   color: rgba(255, 255, 255, 0.65);
 }
 
@@ -603,9 +568,7 @@ export default defineComponent({
   margin-bottom: 0;
 }
 
-::v-deep
-  .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
-  .ant-menu-item-selected {
+::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
   background: none;
 }
 

@@ -30,35 +30,21 @@
           <a-col :span="12">
             <div class="created-date">
               <label class="lable-item">영수일 :</label>
-              <date-time-box
-                width="150px"
-                v-model:valueDate="valueDefaultIncomeExtra.input.receiptDate"
-              ></date-time-box>
+              <date-time-box width="150px" v-model:valueDate="valueDefaultIncomeExtra.input.receiptDate">
+              </date-time-box>
             </div>
           </a-col>
         </a-row>
         <a-row style="margin-bottom: 20px">
           <a-col :span="24">
             <label class="lable-item">소득자보관용</label>
-            <switch-basic
-              style="width: 120px"
-              v-model:valueSwitch="valueSwitch"
-              :textCheck="'소득자보관용'"
-              :textUnCheck="'지급자 보관용'"
-            />
+            <switch-basic style="width: 120px" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
+              :textUnCheck="'지급자 보관용'" />
           </a-col>
         </a-row>
-        <DxDataGrid
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="dataSource"
-          :show-borders="true"
-          @exporting="onExporting"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-          @selection-changed="onSelectionChanged"
-        >
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+          @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true" @selection-changed="onSelectionChanged">
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
           <DxExport :enabled="true" :allow-export-selected-data="true" />
           <DxToolbar>
@@ -72,86 +58,47 @@
           <template #send-group-mail>
             <div class="custom-mail-group">
               <DxButton @click="actionOpenPopupEmailGroup">
-                <img
-                  src="../../../../assets/images/emailGroup.png"
-                  alt=""
-                  style="width: 35px; margin-right: 3px; cursor: pointer"
-                />
+                <img src="../../../../assets/images/emailGroup.png" alt=""
+                  style="width: 35px; margin-right: 3px; cursor: pointer" />
               </DxButton>
             </div>
           </template>
-          <DxSelection
-            select-all-mode="allPages"
-            show-check-boxes-mode="always"
-            mode="multiple"
-          />
+          <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
           <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
           <template #tag="{ data }" class="custom-action">
             <div class="custom-action">
-              <employee-info
-                :idEmployee="data.data.employee.employeeId"
-                :name="data.data.employee.name"
-                :idCardNumber="data.data.employee.residentId"
-                :status="data.data.employee.status"
-                :foreigner="data.data.employee.foreigner"
-                :checkStatus="false"
-              />
+              <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                :foreigner="data.data.employee.foreigner" :checkStatus="false" />
             </div>
           </template>
           <DxColumn caption="주민등록번호" data-field="employee.residentId" />
-          <DxColumn
-            caption="소득구분"
-            cell-template="grade-cell"
-            :width="150"
-          />
+          <DxColumn caption="소득구분" cell-template="grade-cell" :width="150" />
           <template #grade-cell="{ data }" class="custom-action">
-            <income-type
-              :typeCode="data.data.employee.incomeTypeCode"
-              :typeName="data.data.employee.incomeTypeName"
-            ></income-type>
+            <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
+            </income-type>
           </template>
           <DxColumn caption="지급총액" data-field="paymentAmount" />
           <!-- <DxColumn caption="비과세소득" data-field="withholdingIncomeTax" /> -->
           <DxColumn caption="필요경비" data-field="requiredExpenses" />
           <DxColumn caption="소득금액" data-field="incomePayment" />
 
-          <DxColumn
-            caption="원천징수세액 소득세"
-            data-field="withholdingIncomeTax"
-          />
-          <DxColumn
-            caption="원천징수세액 지방소득세"
-            data-field="withholdingLocalIncomeTax"
-          />
+          <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
+          <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
           <DxColumn caption="원천징수세액 농어촌특별세" data-field="" />
           <DxColumn caption="원천징수세액 농어촌특별세" data-field="" />
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
             <div class="custom-action" style="text-align: center">
-              <img
-                @click="actionOpenPopupEmailSingle(data.data)"
-                src="../../../../assets/images/email.svg"
-                alt=""
-                style="width: 25px; margin-right: 3px; cursor: pointer"
-              />
-              <img
-                src="../../../../assets/images/print.svg"
-                alt=""
-                style="width: 25px"
-              />
+              <img @click="actionOpenPopupEmailSingle(data.data)" src="../../../../assets/images/email.svg" alt=""
+                style="width: 25px; margin-right: 3px; cursor: pointer" />
+              <img src="../../../../assets/images/print.svg" alt="" style="width: 25px" />
             </div>
           </template>
         </DxDataGrid>
-        <EmailSinglePopup
-          :modalStatus="modalEmailSingle"
-          @closePopup="onCloseEmailSingleModal"
-          :data="popupSingleData"
-        />
-        <EmailGroupPopup
-          :modalStatus="modalEmailGroup"
-          @closePopup="onCloseEmailGroupModal"
-          :data="popupGroupData"
-        />
+        <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
+          :data="popupSingleData" />
+        <EmailGroupPopup :modalStatus="modalEmailGroup" @closePopup="onCloseEmailGroupModal" :data="popupGroupData" />
       </div>
     </div>
   </a-spin>
@@ -401,5 +348,7 @@ export default defineComponent({
   },
 });
 </script>
+
+
 
 <style lang="scss" scoped src="./style/style.scss" />
