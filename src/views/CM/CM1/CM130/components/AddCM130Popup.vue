@@ -1,5 +1,5 @@
 <template>
-    <div id="edit-popup-130">
+    <div id="add-popup-130">
         <a-modal :visible="modalStatus" :title="title" centered okText="저장하고 나가기" cancelText="그냥 나가기"
             @cancel="setModalVisible()" :mask-closable="false" width="650px" footer="">
             <standard-form formName="add-cm-310">
