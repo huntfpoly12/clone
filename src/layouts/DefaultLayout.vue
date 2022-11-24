@@ -327,7 +327,7 @@ export default defineComponent({
       if (this.activeTab.id === "pa-630") return PA630;
       if (this.activeTab.id === "pa-530") return PA530;
       if (this.activeTab.id === "pa-710") return PA710;
-      if (this.activeTab.id === "pa-710") return PA730;
+      if (this.activeTab.id === "pa-730") return PA730;
       if (this.activeTab.id === "pa-220") return PA220;
       if (this.activeTab.id === "example") return Example;
       return Test;
