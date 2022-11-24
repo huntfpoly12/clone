@@ -1,32 +1,18 @@
 <template>
-    <div ref="root">
+    <div>
         <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()"
-            :mask-closable="false" :width="1028" :footer="null">
+            :mask-closable="false" :width="1028" :footer="null" :bodyStyle="{padding: '0px', height: '650px' }">
                 <a-spin :spinning="false" size="large">
-                    <div id="cm-110" class="page-content">
+                    <div  id="pa-120" class="page-content">
                         <a-tabs v-model:activeKey="activeKey" type="card">
                             <a-tab-pane key="1" tab="기본">
-                                <div>
-                                    <a-form-item label="영업자코드" label-align="right">
-                                        <div class="custom-note">
-                                            <text-number-box width="200px" :required="true" placeholder="숫자만 입력 가능"/>
-                                        </div>
-                                    </a-form-item>
-                                    <a-form-item label="성명" label-align="right">
-                                            <text-number-box width="200px" :required="true" placeholder="한글,영문(대문자) 입력 가능"/>
-                                    </a-form-item>
-                                    <a-form-item label="내/외국인" label-align="right">
-                                    
-                                    </a-form-item>
-                                    <a-form-item label="외국인 국적" label-align="right">
-                                    
-                                    </a-form-item>
-                                
-                                </div>
+                                <Tab1Component></Tab1Component>
                             </a-tab-pane>
                             <a-tab-pane key="2" tab="급여">
+                                <Tab2Component></Tab2Component>
                             </a-tab-pane>
                             <a-tab-pane key="3" tab="부양가족">
+                                <Tab3Component></Tab3Component>
                             </a-tab-pane>
                         </a-tabs>
                 
@@ -36,13 +22,24 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref } from "vue";
+import { InfoCircleFilled } from "@ant-design/icons-vue";
+import { DxSelectBox } from 'devextreme-vue/select-box';
+import Tab1Component from "./Tab1Component.vue";
+import Tab2Component from "./Tab2Component.vue";
+import Tab3Component from "./Tab3Component.vue";
+import { radioCheckForeigner , radioCheckHouseholder} from "../utils/index";
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+
 export default defineComponent({
     components: {
-
+        InfoCircleFilled,
+        DxSelectBox,
+        Tab1Component,
+        Tab2Component,
+        Tab3Component
     },
-    props: {
+    props:{
         modalStatus: Boolean,
     },
     setup(props,{emit}) {
@@ -51,9 +48,11 @@ export default defineComponent({
         }
         return {
             setModalVisible,
+            radioCheckForeigner,
+            radioCheckHouseholder,
             activeKey: ref("1"),
         };
     },
 });
 </script>
-
+<style lang="scss" scoped src="../style/popupAddNew.scss" />
