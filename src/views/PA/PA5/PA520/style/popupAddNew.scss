@@ -1,0 +1,17 @@
+
+#pa-520{
+    .tab1 ::v-deep .ant-form-item-label>label {
+        width: 125px;
+        padding-left: 10px;
+    }
+
+    .input-text{
+        display: flex;
+        align-items: center;
+        span{
+            margin-left: 10px;
+        }
+    }
+ 
+}
+
