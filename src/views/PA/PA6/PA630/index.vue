@@ -30,7 +30,8 @@
                     <a-col :span="12">
                         <div class="created-date">
                             <label class="lable-item">영수일 :</label>
-                            <date-time-box width="150px" v-model:valueDate="valueDefaultIncomeBusiness.input.receiptDate"></date-time-box>
+                            <date-time-box width="150px"
+                                v-model:valueDate="valueDefaultIncomeBusiness.input.receiptDate"></date-time-box>
                         </div>
                     </a-col>
                 </a-row>
@@ -38,21 +39,30 @@
                     <a-col :span="24">
                         <label class="lable-item">소득자보관용</label>
                         <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
-                                :textUnCheck="'지급자 보관용'" />
+                            :textUnCheck="'지급자 보관용'" />
                     </a-col>
                 </a-row>
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    @selection-changed="selectionChanged">
                     <!-- <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" /> -->
-                    <!-- <DxToolbar>
-                        <DxItem name="searchPanel" />
+                    <DxToolbar>
+                        <!-- <DxItem name="searchPanel" />
                         <DxItem name="exportButton" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" />
-                    </DxToolbar> -->
+                        <DxItem name="columnChooserButton" /> -->
+                        <DxItem template="send-group-mail" />
+                    </DxToolbar>
+                    <template #send-group-mail>
+                        <div class="custom-mail-group">
+                            <DxButton @click="actionOpenPopupEmailMulti">
+                                <img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                            </DxButton>
+                        </div>
+                    </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                     <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
                     <template #tag="{ data }" class="custom-action">
@@ -63,9 +73,10 @@
                         </div>
                     </template>
                     <DxColumn caption="주민등록번호" data-field="employee.residentId" />
-                    <DxColumn caption="소득부분" cell-template="grade-cell" :width="150"/>
+                    <DxColumn caption="소득부분" cell-template="grade-cell" :width="150" />
                     <template #grade-cell="{ data }" class="custom-action">
-                        <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName" ></income-type>
+                        <income-type :typeCode="data.data.employee.incomeTypeCode"
+                            :typeName="data.data.employee.incomeTypeName"></income-type>
                     </template>
                     <DxColumn caption="지급총액" data-field="paymentAmount" />
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
@@ -74,13 +85,17 @@
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action" style="text-align: center;">
-                            <img @click="actionOpenPopupEmailSingle(data.data)" src="../../../../assets/images/email.svg" alt="" 
-                            style="width: 25px; margin-right: 3px;" />
+                            <img @click="actionOpenPopupEmailSingle(data.data)"
+                                src="../../../../assets/images/email.svg" alt=""
+                                style="width: 25px; margin-right: 3px;" />
                             <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
                         </div>
                     </template>
                 </DxDataGrid>
-                <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal" :data="popupData" />
+                <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
+                    :data="popupDataEmailSingle" />
+                <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="onCloseEmailMultiModal"
+                    :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin" />
             </div>
         </div>
     </a-spin>
@@ -90,6 +105,7 @@ import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
+import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
     DxColumn,
@@ -103,12 +119,16 @@ import {
 import {
     companyId,
     onExportingCommon,
+    userId,
 } from "../../../../helpers/commonFunction";
 import queries from "../../../../graphql/queries/PA/PA6/PA630/index";
 import EmailSinglePopup from "./components/EmailSinglePopup.vue";
+import EmailMultiPopup from "./components/EmailMultiPopup.vue";
+import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
 
 export default defineComponent({
     components: {
+        DxButton,
         DxDataGrid,
         DxColumn,
         DxPaging,
@@ -119,10 +139,13 @@ export default defineComponent({
         DxItem,
         InfoCircleFilled,
         EmailSinglePopup,
+        EmailMultiPopup
     },
     setup() {
         const valueSwitch = ref(true);
-        const popupData = ref({})
+        const popupDataEmailSingle = ref({})
+        const popupDataEmailMulti = ref({})
+        const dataSelect = ref<any>([])
         const store = useStore();
 
         const globalYear = computed(() => store.state.settings.globalYear);
@@ -130,6 +153,7 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalEmailSingle = ref(false)
+        const modalEmailMulti = ref(false)
         const dataSource = ref([
             {
                 paymentAmount: 2,
@@ -146,6 +170,23 @@ export default defineComponent({
                     status: 1,
                     residentId: '23',
                     incomeTypeName: 'hahahha'
+                }
+            },
+            {
+                paymentAmount: 2,
+                withholdingIncomeTax: 5,
+                withholdingLocalIncomeTax: 20,
+                employee: {
+                    type: 1,
+                    employeeId: 40,
+                    incomeTypeCode: '23',
+                    name: 'kkkkkkk',
+                    email: '',
+                    foreigner: true,
+                    residentIdValidity: true,
+                    status: 1,
+                    residentId: '23',
+                    incomeTypeName: 'hhhhhh'
                 }
             }
         ]);
@@ -177,12 +218,65 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
         };
         const actionOpenPopupEmailSingle = (data: any) => {
+            popupDataEmailSingle.value = {
+                companyId: companyId,
+                input: {
+                    imputedYear: globalYear,
+                    type: valueDefaultIncomeBusiness.value.input.type,
+                    receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
+                },
+                employeeInputs: {
+                    senderName: sessionStorage.getItem("username"),
+                    receiverName: data.employee.name,
+                    receiverAddress: data.employee.email,
+                    employeeId: data.employee.employeeId,
+                    incomeTypeCode: data.employee.incomeTypeCode
+                }
+            }
             modalEmailSingle.value = true
-            popupData.value = data
         }
         const onCloseEmailSingleModal = () => {
             modalEmailSingle.value = false
         }
+        const onCloseEmailMultiModal = () => {
+            modalEmailMulti.value = false
+        }
+
+        const actionOpenPopupEmailMulti = () => {
+            popupDataEmailMulti.value = {
+                companyId: companyId,
+                input: {
+                    imputedYear: globalYear,
+                    type: valueDefaultIncomeBusiness.value.input.type,
+                    receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
+                },
+                employeeInputs: dataSelect.value
+            }
+            // console.log(popupDataEmailMulti.value);
+
+            modalEmailMulti.value = true
+        }
+
+        const selectionChanged = (data: any) => {
+            data.selectedRowKeys.forEach((data: any) => {
+                dataSelect.value.push({
+                    senderName: sessionStorage.getItem("username"),
+                    receiverName: data.employee.name,
+                    receiverAddress: data.employee.email,
+                    employeeId: data.employee.employeeId,
+                    incomeTypeCode: data.employee.incomeTypeCode
+                })
+            })
+        }
+        const {
+            onResult: onResultUserInf
+        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+            fetchPolicy: "no-cache",
+        }));
+        const emailUserLogin = ref('')
+        onResultUserInf(e => {
+            emailUserLogin.value = e.data.getUser.email
+        })
 
         watch(result, (value) => {
             if (value) {
@@ -210,8 +304,10 @@ export default defineComponent({
             valueDefaultIncomeBusiness,
             valueSwitch,
             loading,
-            popupData,
+            popupDataEmailSingle,
+            popupDataEmailMulti,
             actionOpenPopupEmailSingle,
+            actionOpenPopupEmailMulti,
             searching,
             globalYear,
             dataSource,
@@ -220,12 +316,18 @@ export default defineComponent({
             colomn_resize,
             onExporting,
             modalEmailSingle,
+            modalEmailMulti,
             onCloseEmailSingleModal,
+            onCloseEmailMultiModal,
+            selectionChanged,
+            emailUserLogin,
         };
     },
 });
 </script>
   
+
+
 
 <style lang="scss" scoped src="./style/style.scss" />
   

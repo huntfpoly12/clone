@@ -2,10 +2,15 @@
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="562">
         <standard-form action="" name="email-single-630">
+            <img src="../../../../../assets/images/emailGroup.png" alt="" style="width: 40px;">
             <div class="custom-modal-send-email">
-                    <img src="../../../../../assets/images/email.svg" alt="" />
-                    <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
-                    <span>로 메일을 발송하시겠습니까?</span>
+                <div>
+                    <span>개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서 </span>
+                    <div style="display: flex;align-items: center;">
+                        <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
+                        <span>로 메일을 발송하시겠습니까?</span>
+                    </div>
+                </div>
             </div>
             <div class="text-align-center mt-50">
                 <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
@@ -31,6 +36,10 @@ export default defineComponent({
         data: {
             type: Object,
             default: {}
+        },
+        emailUserLogin: {
+            type: String,
+            default: ""
         }
     },
     components: {
@@ -38,12 +47,13 @@ export default defineComponent({
     setup(props, { emit }) {
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
-            emailAddress.value = val?.employeeInputs.receiverAddress
+            emailAddress.value = props.emailUserLogin
         });
-        
+
         const setModalVisible = () => {
             emit("closePopup", false)
         };
+
         const {
             mutate: sendEmail,
             onDone: onDoneAdd,
@@ -55,8 +65,12 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+                props.data.employeeInputs.map((value: any) => {
+                    if (value.receiverAddress == "") {
+                        value.receiverAddress = emailAddress.value
+                    }
+                })
                 let variables = props.data
-                variables.employeeInputs.receiverAddress = emailAddress.value
                 sendEmail(variables);
             }
         };
@@ -66,9 +80,6 @@ export default defineComponent({
         })
         errorSendEmail((e: any) => {
             notification('error', e.message)
-        })
-        watch(() => props.modalStatus, (value) => {
-
         })
 
         return {
@@ -97,6 +108,7 @@ export default defineComponent({
         padding-left: 5px;
     }
 }
+
 .mt-50 {
     margin-top: 50px;
 }
