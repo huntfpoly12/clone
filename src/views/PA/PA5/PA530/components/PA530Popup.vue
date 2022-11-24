@@ -78,6 +78,7 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
+        const modalStatus = props.modalStatus
         const email = ref()
         const setModalVisible = () => {
             emit('closePopup', false)
@@ -106,7 +107,7 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let employeeInputsCall = <any>[]
+                let employeeInputsCall: any = []
                 if (props.groupSendMail == false) {
                     employeeInputsCall = [{
                         ...props.dataPopup,
@@ -133,6 +134,7 @@ export default defineComponent({
             }
         }
         return {
+            modalStatus,
             email,
             sendEmail,
             setModalVisible

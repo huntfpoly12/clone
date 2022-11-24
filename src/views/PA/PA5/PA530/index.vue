@@ -220,7 +220,7 @@ import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId, userId } from "../../../../../src/helpers/commonFunction";
-import PA630Popup from "./components/PA630Popup.vue";
+import PA630Popup from "./components/PA530Popup.vue";
 import dayjs from 'dayjs';
 export default defineComponent({
     components: {
@@ -475,7 +475,7 @@ export default defineComponent({
                 paymentYearMonthsModal.value = getArrPaymentYearMonth()
                 modalStatus.value = true
             } else {
-                notification('error', "Vui lòng chọn tài khoản cần đăng gửi mail")
+                notification('error', "일용직근로자들을 선택하세요!")
             }
         }
         const check = (val: any) => {
