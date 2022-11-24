@@ -200,7 +200,7 @@
                         :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                 </div>
             </a-spin>
-            <PA630Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
+            <PA530Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
                 :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
                 :receiptDate="dateSendEmail.toString()" @closePopup="closePopupSendMail" :companyId="companyId"
                 :emailUserLogin="emailUserLogin" />
@@ -220,7 +220,7 @@ import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, arrCheckBox, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId, userId } from "../../../../../src/helpers/commonFunction";
-import PA630Popup from "./components/PA530Popup.vue";
+import PA530Popup from "./components/PA530Popup.vue";
 import dayjs from 'dayjs';
 export default defineComponent({
     components: {
@@ -235,7 +235,7 @@ export default defineComponent({
         DeleteOutlined,
         SaveOutlined,
         InfoCircleFilled,
-        PA630Popup
+        PA530Popup
     },
     setup() {
         const emailUserLogin = ref()
@@ -418,7 +418,7 @@ export default defineComponent({
             dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
             refetchData()
         }; 
-        const openPopup = (res: any) => {
+        const openPopup = (res: any) => { 
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
                 receiverName: res.name,
