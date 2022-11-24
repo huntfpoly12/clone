@@ -55,7 +55,7 @@ export default defineComponent({
     const value = ref(props.valueInput);
 
     const updateValue = (value: any) => {   
-      emit("update:valueInput", value.slice(0,6) + '-' + value.slice(7,13));
+      emit("update:valueInput", value); 
     };
 
     watch(

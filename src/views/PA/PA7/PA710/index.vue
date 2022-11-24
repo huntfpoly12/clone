@@ -16,25 +16,22 @@
             <a-col :span="16" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="listEmployeeExtra"
-                        :show-borders="true" key-expr="employeeId" :column-auto-width="true" style="width: 100%;">
+                        :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;">
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
-                            <DxButton icon="plus" />
+                            <DxButton icon="plus" @click="formCreate" />
                         </template>
-                        <DxColumn caption="성명 (상호)" :width="200" cell-template="company-name" />
+                        <DxColumn caption="성명 (상호)" cell-template="company-name" :width="500"/>
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" :width="200" />
-                        <DxColumn caption="소득부분" cell-template="grade-cell" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" :width="200"/>
+                        <DxColumn caption="소득부분" cell-template="grade-cell"/>
                         <template #grade-cell="{ data }" class="custom-action">
-                            <div class="custom-grade-cell">
-                                <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
-                                <span>{{ data.data.incomeTypeName }}</span>
-                            </div>
+                            <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.incomeTypeName" ></income-type>
                         </template>
                         <DxColumn :width="80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
@@ -64,7 +61,7 @@
                             <a-form-item label="코드" :label-col="labelCol">
                                 <div class="custom-note">
                                     <number-box :required="true" :width="150"
-                                        v-model:valueInput="formState.employeeId" :spinButtons="true"
+                                        v-model:valueInput="formState.employeeId" placeholder="숫자만 입력 가능"
                                         :disabled="checkForm">
                                     </number-box>
                                     <span>
@@ -76,7 +73,7 @@
                         <a-col :span="24">
                             <a-form-item label="성명(상호) " :label-col="labelCol">
                                 <default-text-box :width="150" v-model:valueInput="formState.name"
-                                    :required="true">
+                                    :required="true" placeholder="한글,영문(대문자) 입력 가능">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>
@@ -100,8 +97,8 @@
                         </a-col>
                         <a-col :span="24">
                             <a-form-item :label="disabledSelect ? '외국인번호 유효성' : '주민등록번호' " :label-col="labelCol">
-                                <text-number-box :width="150" v-model:valueInput="formState.residentId"
-                                    :required="true"></text-number-box>
+                                <id-number-text-box :width="150" v-model:valueInput="formState.residentId"
+                                    :required="true"></id-number-text-box>
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
@@ -134,9 +131,10 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, createVNode } from "vue";
+import { defineComponent, ref, watch, reactive, createVNode, computed } from "vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
@@ -166,6 +164,10 @@ export default defineComponent({
         HistoryPopup
     },
     setup() {
+        // config grid
+        const store = useStore();
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const loadingForm = ref(false)
         let checkForm = ref(false)
         let disabledSelect = ref(false)
@@ -176,7 +178,7 @@ export default defineComponent({
 
         let trigger = ref(true);
         const listEmployeeExtra = ref([])
-
+        
         let formState = reactive( {...initialState} );
 
         const originData = {
@@ -230,7 +232,18 @@ export default defineComponent({
                 let dataCreate = {
                     companyId: companyId,
                     imputedYear: parseInt(dayjs().format("YYYY")),
-                    input: formState,
+                    input: {
+                        employeeId: formState.employeeId,
+                        incomeTypeCode: formState.incomeTypeCode,
+                        name: formState.name,
+                        foreigner: formState.foreigner,
+                        nationality: formState.nationality,
+                        nationalityCode: formState.nationalityCode,
+                        stayQualification: formState.stayQualification,
+                        residentId: formState.residentId.slice(0,6) + '-' + formState.residentId.slice(6,13),
+                        email: formState.email,
+                        incomeTypeName: formState.incomeTypeName,
+                    },
                 };
                 createEmployeeExtra(dataCreate);
             }
@@ -251,7 +264,7 @@ export default defineComponent({
                         nationality: formState.nationality,
                         nationalityCode: formState.nationalityCode,
                         stayQualification: formState.stayQualification,
-                        residentId: formState.residentId,
+                        residentId: formState.residentId.slice(0,6) + '-' + formState.residentId.slice(6,13),
                         email: formState.email,
                         incomeTypeName: formState.incomeTypeName,
                     }
@@ -271,8 +284,6 @@ export default defineComponent({
         });
 
         const modalHistory = (data: any) => {
-            console.log(data);
-            
             idRowEdit.value = data.data.id
             modalHistoryStatus.value = companyId
             popupData.value = data;
@@ -296,14 +307,16 @@ export default defineComponent({
             formState.incomeTypeCode = e.data.incomeTypeCode
             formState.incomeTypeName = e.data.incomeTypeName
         }
-
+        const formCreate = (e: any) => {
+            checkForm.value = false;
+            Object.assign(formState, initialState);
+        }
         const deleteData = (data: any) => {
             Modal.confirm({
                 title: '삭제하겠습니까?',
                 icon: createVNode(ExclamationCircleOutlined),
                 okText: '네',
                 cancelText: '아니요',
-                //content: createVNode('div', { style: 'color:red;' }, 'Some descriptions'),
                 onOk() {
                     let variables = {
                         companyId: companyId,
@@ -331,7 +344,10 @@ export default defineComponent({
             }
         });
         return {
+            move_column,
+            colomn_resize,
             textCountry,
+            formCreate,
             idRowEdit,
             textTypeCode,
             editData,

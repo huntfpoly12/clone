@@ -98,6 +98,10 @@ const routes = [
         component: () => import('../views/CM/CM1/CM130/index.vue')
       },
       {
+        path: "pa-120",
+        component: () => import('../views/PA/PA1/PA120/index.vue')
+      },
+      {
         path: "pa-230",
         component: () => import('../views/PA/PA2/PA230/index.vue')
       },
@@ -108,6 +112,14 @@ const routes = [
       {
         path: "pa-610",
         component: () => import('../views/PA/PA6/PA610/index.vue')
+      },
+      {
+        path: "pa-630",
+        component: () => import('../views/PA/PA6/PA630/index.vue')
+      },
+      {
+        path: "pa-530",
+        component: () => import('../views/PA/PA5/PA530/index.vue')
       },
       {
         path: "pa-710",
