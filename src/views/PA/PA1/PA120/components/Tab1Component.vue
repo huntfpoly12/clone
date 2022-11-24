@@ -3,7 +3,7 @@
         <a-row>
             <a-col :span="12">
                 <a-form-item label="사번(코드)" label-align="right">
-                    <text-number-box width="200px" :required="true" placeholder="숫자만 입력 가능"/>
+                    <text-number-box width="200px" :required="true" v-model:valueInput="formData.a1" placeholder="숫자만 입력 가능"/>
                 </a-form-item>
             </a-col>
             <a-col>
@@ -19,7 +19,7 @@
         </a-row>
 
         <a-form-item label="성명" label-align="right">
-            <text-number-box width="200px" :required="true" placeholder="한글,영문(대문자) 입력 가능"/>
+            <text-number-box width="200px" :required="true"  placeholder="한글,영문(대문자) 입력 가능"/>
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
             <date-time-box width="150px"></date-time-box>
@@ -104,10 +104,16 @@
                     width="150px"
                 />                                                        
         </a-form-item>
+        <a-row style="margin-top: 60px;">
+                        <a-col :span="8" :offset="8">
+                            <button-basic text="저장" type="default" mode="contained"
+                                @onClick="updateSubscriptionRequest($event)" :width="90" />
+                        </a-col>
+                    </a-row>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, reactive, ref, watch } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
@@ -120,13 +126,23 @@ export default defineComponent({
         DxSelectBox,
     },
     props:{
-        modalStatus: Boolean,
+        dataInput: {
+            type: Object,
+        },
     },
     setup(props,{emit}) {
+        const formData : any = ref(props.dataInput);
         let isForeigner = ref(false);
-   
-
         const funcAddress = (data: any) => {}
+
+        watch(
+            () => formData,
+            (newValue, oldValue) => {
+                console.log(newValue);
+                
+                emit("update:dataInput", newValue);
+            }
+        );
 
         const selectBoxData = new DataSource({
             store: [
@@ -138,16 +154,17 @@ export default defineComponent({
         });
         const customItemCreating = (e:any)=>{
             // Generates a new 'id'
-            // let nextId;
-            // selectBoxData.store().totalCount().done(count => {nextId = count + 1});
-            // // Creates a new entry
-            // e.customItem = { id: nextId, firstName: e.text };
-            // // Adds the entry to the data source
-            // selectBoxData.store().insert(e.customItem);
-            // // Reloads the data source
-            // selectBoxData.reload();
+            let nextId;
+            selectBoxData.store().totalCount({}).done((count : any) => {nextId = count + 1});
+            // Creates a new entry
+            e.customItem = { id: nextId, firstName: e.text };
+            // Adds the entry to the data source
+            selectBoxData.store().insert(e.customItem);
+            // Reloads the data source
+            selectBoxData.reload();
         }
         return {
+            formData,
             isForeigner,
             funcAddress,
             radioCheckForeigner,
