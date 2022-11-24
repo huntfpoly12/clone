@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 export default gql`
-mutation getIncomeWageDailyWithholdingReceiptReportViewUrl( 
+query
+getIncomeWageDailyWithholdingReceiptReportViewUrl( 
     $companyId: Int!
     $input: IncomeWageDailyWithholdingReceiptInput!
     $employeeIds: [Int!]! 

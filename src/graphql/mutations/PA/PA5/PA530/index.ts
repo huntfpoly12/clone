@@ -1,8 +1,6 @@
-import sendEmail from "./sendIncomeWageDailyWithholdingReceiptReportEmail"; 
-import printFile from "./getIncomeWageDailyWithholdingReceiptReportViewUrl"; 
+import sendEmail from "./sendIncomeWageDailyWithholdingReceiptReportEmail";  
 const mutations = {
-    sendEmail: sendEmail, 
-    printFile: printFile, 
+    sendEmail: sendEmail,  
 };
 
 export default mutations;
