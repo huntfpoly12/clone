@@ -37,7 +37,7 @@
         </a-row>
         <a-row style="margin-bottom: 20px">
           <a-col :span="24">
-            <label class="lable-item">소득자보관용</label>
+            <strong class="lable-item">소득자보관용: </strong>
             <switch-basic style="width: 120px" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
               :textUnCheck="'지급자 보관용'" />
           </a-col>
@@ -348,6 +348,12 @@ export default defineComponent({
   },
 });
 </script>
+
+
+
+
+
+
 
 
 
