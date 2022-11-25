@@ -5,7 +5,7 @@
             <div id="pa-520" class="page-content">
                 <a-tabs v-model:activeKey="activeKey" type="card">
                     <a-tab-pane key="1" tab="기본" class="tab1">
-                        <Tab1Component />
+                        <Tab1Component :idRowEdit="idRowEdit" />
                     </a-tab-pane>
                     <a-tab-pane key="2" tab="급여/공제">
                         <Tab2Component />
@@ -19,8 +19,8 @@
 import { defineComponent, ref, watch } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
-import Tab1Component from "./ComponentAdd/Tab1Component.vue";
-import Tab2Component from "./ComponentAdd/Tab2Component.vue";
+import Tab1Component from "./ComponentEdit/Tab1Component.vue";
+import Tab2Component from "./ComponentEdit/Tab2Component.vue";
 export default defineComponent({
     components: {
         InfoCircleFilled,
@@ -41,25 +41,21 @@ export default defineComponent({
         const setModalVisible = () => {
             emit('closePopup', false)
         }
-        
-        
-        const activeComponent = ref(false)
+
+        const editRow = ref() 
         watch(() => props.modalStatus, (value) => {
-            if (value){
-                console.log(props.idRowEdit);
-                    activeComponent.value = true
+            if (value) { 
+                editRow.value = props.idRowEdit 
             }
         })
         return {
-            activeComponent,
+            editRow, 
             setModalVisible,
             activeKey: ref("1"),
         };
     },
 });
 </script> 
+<style lang="scss" scoped src="../style/popupAddNew.scss" >
 
-
-
-
-<style lang="scss" scoped src="../style/popupAddNew.scss" />
+</style>
