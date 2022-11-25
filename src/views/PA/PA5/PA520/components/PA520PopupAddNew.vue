@@ -91,7 +91,8 @@
                         </a-form-item>
                         <a-form-item label="이메일" label-align="right">
                             <div class="input-text">
-                                <mail-text-box width="200px" v-model:valueInput="dataCreated.email" placeholder="abc@example.com"></mail-text-box>
+                                <mail-text-box width="200px" v-model:valueInput="dataCreated.email"
+                                    placeholder="abc@example.com"></mail-text-box>
                                 <img src="../../../../../assets/images/iconInfo.png" style="width: 16px;">
                                 <span>
                                     원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
@@ -99,14 +100,20 @@
                             </div>
                         </a-form-item>
                         <a-form-item label="부서" label-align="right">
-                            <DxSelectBox :data-source="selectBoxData" :accept-custom-value="true"
+                            <!-- <DxSelectBox :data-source="selectBoxData" :accept-custom-value="true"
                                 display-expr="firstName" value-expr="id" @custom-item-creating="customItemCreating"
-                                width="200px" />
+                                width="200px" /> -->
+
+                            <custom-item-select-box v-model:valueInput="dataCreated.department"
+                                :arrSelect="selectBoxData" width="200px" />
                         </a-form-item>
                         <a-form-item label="부서" label-align="right">
-                            <DxSelectBox :data-source="selectBoxData" :accept-custom-value="true"
+                            <!-- <DxSelectBox :data-source="selectBoxData" :accept-custom-value="true"
                                 display-expr="firstName" value-expr="id" @custom-item-creating="customItemCreating"
-                                width="200px" />
+                                width="200px" /> -->
+
+                            <custom-item-select-box v-model:valueInput="dataCreated.department"
+                                :arrSelect="selectBoxData" width="200px" />
                         </a-form-item>
 
                         <div style="width: 100%;text-align: center;">
@@ -171,9 +178,9 @@ export default defineComponent({
 
         const funcAddress = (data: any) => {
             dataCreated.zipcode = data.zonecode;
-            dataCreated.roadAddress = data.roadAddress; 
+            dataCreated.roadAddress = data.roadAddress;
             // console.log(parseInt(dataCreated.joinedAt.replaceAll('-', '')));
-            console.log(dataCreated); 
+            console.log(dataCreated);
         }
 
         const selectBoxData = new DataSource({
