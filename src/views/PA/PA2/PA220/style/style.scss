@@ -1,0 +1,105 @@
+#pa-220 {
+    .custom-info {
+        display: flex;
+        align-items: center;
+
+        img {
+            width: 16px;
+        }
+
+        span {
+            padding-left: 5px;
+            font-size: 11px;
+        }
+    }
+
+    ::v-deep .custom-mail-group {
+        .dx-button-content {
+            padding: 3px;
+        }
+    }
+
+    .custom-flex {
+        display: flex;
+        width: 100%;
+        align-items: center;
+
+        .ant-row {
+            width: 100%;
+        }
+    }
+
+    .title-body {
+        .title-body-left-1 {
+            display: flex;
+            align-items: center;
+
+            >div {
+                font-size: 16px;
+                padding-right: 5px;
+            }
+
+            >span {
+                font-size: 12px;
+            }
+        }
+
+        .title-body-left-2 {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+
+            >span {
+                font-size: 16px;
+                padding-right: 5px;
+            }
+        }
+
+        .title-body-right{
+            float: right;
+        }
+    }
+
+
+    ::v-deep .ant-form-item-label>label {
+        width: 180px;
+        padding-left: 10px;
+        color: red;
+    }
+
+    .ant-form-item {
+        margin-bottom: 10px;
+    }
+
+    ::v-deep .custom-layout {
+        padding: 10px 10px 10px 0;
+
+        >div {
+            border: 1px solid #d7d7d7;
+            padding: 10px;
+            min-height: 500px;
+        }
+    }
+
+    .custom-note {
+        >span {
+            font-size: 11px;
+            color: #666666;
+            padding-left: 5px;
+        }
+    }
+
+    .custom-grade-cell {
+        display: flex;
+        align-items: center;
+
+        .custom-grade-cell-tag {
+            padding: 3px 10px;
+            border: 1px solid #304967;
+            margin-right: 10px;
+            border-radius: 5px;
+            min-width: 50px;
+            text-align: center;
+        }
+    }
+}
