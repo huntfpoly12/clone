@@ -41,3 +41,23 @@ export const initFormStateTab1 = {
     department: '',
     responsibility: '',
 }
+
+export const initFormStateTab2 = {
+    incomeTaxMagnification: null,
+    payItems: {
+        itemCode:null,
+        amount:null
+    },
+    deductionItems:{
+        itemCode:null,
+        amount:null,
+        supportAmount:null
+    },
+    reductionItems: {
+        temCode:null,
+        reductionRate:null,
+        reductionStartDate: '',
+        reductionFinishDate: '',
+        reductionInput: null
+    }
+}

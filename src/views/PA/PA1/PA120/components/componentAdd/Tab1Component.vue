@@ -1,7 +1,7 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
-      <standard-form>
+      <standard-form formName="tab1-pa120">
       <a-row>
         <a-col :span="12">
           <a-form-item label="사번(코드)" label-align="right" class="red">
@@ -194,6 +194,7 @@ export default defineComponent({
   props: {
     popupStatus: {
       type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {
@@ -204,7 +205,7 @@ export default defineComponent({
     const arrDepartments = ref([]);
     const arrResponsibility = ref([]);
     const labelResidebId = ref("주민(외국인)번호 ");
-    const formStateTab1 = reactive({
+    const formStateTab1 = reactive<any>({
       ...initFormStateTab1,
       joinedAt: dayjs().format("YYYY-MM-DD"),
       leavedAt: dayjs().format("YYYY-MM-DD"),
@@ -218,11 +219,11 @@ export default defineComponent({
     };
 
     watch(()=> props.popupStatus, (newValue)=>{
-        if(newValue){
-            console.log('xxxxxxx');
-            
-        }else{
-            console.log('xxdddddxxxxx');
+        if(!newValue){
+          employeeId.value = null;
+          residentId.value = '';
+          foreigner.value = 0;
+          Object.assign(formStateTab1, initFormStateTab1);
         }
     })
     const foreigner = ref(formStateTab1.foreigner == true ? 1 : 0);
@@ -312,6 +313,8 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
+
+        emit('employeeId',employeeId);
         let dataNew = {
           companyId: companyId,
           imputedYear: globalYear.value,
@@ -336,6 +339,7 @@ export default defineComponent({
       postCode,
       radioCheckForeigner,
       radioCheckHouseholder,
+      initFormStateTab1,
       activeKey: ref("1"),
       createNewEmployeeWage,
       arrDepartments,
