@@ -490,7 +490,9 @@ export default defineComponent({
         ]);
         const valueTagSelectBox = ref([1, 2]);
         const saleStatus = ref(10);
+        const valTest = ref('Nancy');
         return {
+            valTest,
             saleStatus,
             valueStayQualifiction,
             arrayTagSelectBox,
