@@ -71,7 +71,7 @@
                                 <a-space :size="10">
                                     <a-tooltip placement="top">
                                         <template #title>편집</template>
-                                        <EditOutlined @click="actionEdit(data)" />
+                                        <EditOutlined @click="openEditModal(data.data.employeeId)" />
                                     </a-tooltip>
                                     <a-tooltip placement="top">
                                         <template #title>변경이력</template>
@@ -85,7 +85,9 @@
                 </a-spin>
                 <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
                     :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-                <PA520PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+                <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+                <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
+                    @closePopup="modalEditStatus = false" />
                 <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     typeHistory="pa-520" />
             </a-col>
@@ -102,7 +104,8 @@ import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, D
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
 import notification from "../../../../utils/notification"
 import queries from "../../../../graphql/queries/PA/PA5/PA520/index"
-import PA520PopupAddNewVue from "./components/PA520PopupAddNew.vue"
+import PA520PopupAddNew from "./components/PA520PopupAddNew.vue"
+import PA520PopupEdit from "./components/PA520PopupEdit.vue"
 import mutations from "../../../../graphql/mutations/PA/PA5/PA520/index"
 import { Message } from "../../../../configs/enum"
 
@@ -119,7 +122,8 @@ export default defineComponent({
         DeleteOutlined,
         SaveOutlined,
         InfoCircleFilled,
-        PA520PopupAddNewVue
+        PA520PopupAddNew,
+        PA520PopupEdit
     },
     setup() {
         const contentDelete = Message.getMessage('PA120', '002').message
@@ -142,7 +146,7 @@ export default defineComponent({
         const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
-
+        const idRowEdit = ref()
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -190,14 +194,23 @@ export default defineComponent({
                 refetchData()
             }
         })
+        watch(() => modalEditStatus.value, (value) => {
+            if (value == false) {
+                trigger.value = true
+                refetchData()
+            }
+        })
 
         // ======================= FUNCTION ================================
         const openAddNewModal = () => {
             modalAddNewStatus.value = true
         }
-        const actionEdit = (data: any) => {
+        const openEditModal = (val: any) => {
+            idRowEdit.value = val
+            modalEditStatus.value = true
 
         }
+
         const modalHistory = (data: any) => {
 
         }
@@ -219,6 +232,7 @@ export default defineComponent({
 
         }
         return {
+            idRowEdit,
             totalUserOff,
             totalUserOnl,
             modalStatus,
@@ -231,10 +245,10 @@ export default defineComponent({
             per_page, move_column, colomn_resize,
             contentDelete,
             onSubmit,
-            actionEdit,
             actionDeleteFuc,
             modalHistory,
             openAddNewModal,
+            openEditModal,
             statusComfirm,
         }
     },
