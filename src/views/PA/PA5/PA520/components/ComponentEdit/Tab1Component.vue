@@ -3,7 +3,7 @@
         <standard-form action="" name="add-page-210">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
-                    placeholder="숫자만 입력 가능" />
+                    placeholder="숫자만 입력 가능" :disabled="true" />
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
                 <default-text-box width="200px" v-model:valueInput="dataEdited.name" :required="true"
@@ -41,12 +41,13 @@
                 <a-col :span="8">
                     <a-form-item label="외국인 국적" label-align="right" class="label-custom-width label-red">
                         <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
-                            @textCountry="(res: any) => { dataEdited.nationality = res }" />
+                            @textCountry="(res: any) => { dataEdited.nationality = res }" :disabled="true" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="8">
                     <a-form-item label="외국인 체류자격" label-align="right" class="label-custom-width label-red">
-                        <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification" />
+                        <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
+                            :disabled="true" />
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -102,7 +103,7 @@
                     width="200px" />
             </a-form-item>
             <div style="width: 100%;text-align: center;margin-top: 30px;">
-                <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated($event)" />
+                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)" />
             </div>
         </standard-form>
     </a-spin>
@@ -120,6 +121,9 @@ import { useStore } from 'vuex';
 export default defineComponent({
     props: {
         idRowEdit: {
+            type: Number
+        },
+        openPopup: {
             type: Number
         }
     },
@@ -162,7 +166,6 @@ export default defineComponent({
         } = useQuery(queries.getDepartments, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-
         resGetDepartments(res => {
             // selectBoxData.value = res.data.getDepartments 
             let valArr: any = []
@@ -174,13 +177,11 @@ export default defineComponent({
             })
             selectBoxData1.value = valArr
         })
-
         const {
             onResult: resGetResponsibilities,
         } = useQuery(queries.getResponsibilities, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-
         resGetResponsibilities(res => {
             let valArr: any = []
             res.data.getResponsibilities.map((v: any) => {
@@ -191,7 +192,6 @@ export default defineComponent({
             })
             selectBoxData2.value = valArr
         })
-
         const {
             refetch: refetchValueDetail,
             onResult: getValueDefault,
@@ -199,15 +199,14 @@ export default defineComponent({
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
             fetchPolicy: "no-cache",
         }))
-
         getValueDefault(res => {
-            if (res.data.getEmployeeWageDaily) {
+            if (res.data.getEmployeeWageDaily) { 
                 dataEdited.name = res.data.getEmployeeWageDaily.name
                 dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
                 dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
                 dataEdited.nationalityCode = res.data.getEmployeeWageDaily.nationalityCode
                 dataEdited.stayQualification = res.data.getEmployeeWageDaily.stayQualification
-                dataEdited.residentId = res.data.getEmployeeWageDaily.residentId
+                dataEdited.residentId = res.data.getEmployeeWageDaily.residentId.replace("-")
                 // dataEdited.zipcode=res.data.getEmployeeWageDail
                 dataEdited.roadAddress = res.data.getEmployeeWageDaily.roadAddress
                 dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
@@ -226,18 +225,20 @@ export default defineComponent({
             mutate,
             onError,
             onDone,
-        } = useMutation(mutations.createEmployeeWageDaily);
+        } = useMutation(mutations.updateEmployeeWageDaily);
         onError(e => {
             notification('error', e.message)
         })
         onDone(res => {
+            emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
 
         // ============ WATCH ================================
-        watch(() => props.idRowEdit, (value) => {
-            console.log(value);
-            originDataDetail.value.employeeId = value
+        watch(() => props.idRowEdit, (value) => { 
+            originDataDetail.value.employeeId = value 
+        })
+        watch(() => props.openPopup, (value) => {  
             refetchValueDetail()
         })
 
@@ -251,29 +252,31 @@ export default defineComponent({
 
         }
 
-        const actionCreated = (e: any) => {
+        const actionUpdated = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-            } else {
+            } else {  
                 dataEdited = {
                     ...dataEdited,
-                    employeeId: parseInt(dataEdited.employeeId),
-                    joinedAt: parseInt(dataEdited.joinedAt.replaceAll('-', '')),
-                    leavedAt: parseInt(dataEdited.joinedAt.replaceAll('-', '')),
-                    residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(7, 13)
+                    joinedAt: typeof dataEdited.joinedAt == "string" ? parseInt(dataEdited.joinedAt.replaceAll('-', '')) : dataEdited.joinedAt,
+                    leavedAt: typeof dataEdited.leavedAt == "string" ? parseInt(dataEdited.leavedAt.replaceAll('-', '')) : dataEdited.leavedAt,
+                    residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
                 };
+                delete dataEdited.employeeId;
+                
                 let dataCallCreat = {
                     companyId: companyId,
                     imputedYear: globalYear.value,
+                    employeeId: props.idRowEdit,
                     input: dataEdited
-                }
-                mutate(dataCallCreat)
+                }  ;
+                mutate(dataCallCreat) 
             }
         }
         return {
             loading,
-            actionCreated,
+            actionUpdated,
             countryInfo,
             dataEdited,
             funcAddress,

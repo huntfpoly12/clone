@@ -212,7 +212,7 @@ export default defineComponent({
                     ...dataCreated,
                     employeeId: parseInt(dataCreated.employeeId),
                     joinedAt: parseInt(dataCreated.joinedAt.replaceAll('-', '')),
-                    leavedAt: parseInt(dataCreated.joinedAt.replaceAll('-', '')),
+                    leavedAt: parseInt(dataCreated.leavedAt.replaceAll('-', '')),
                     residentId: dataCreated.residentId.slice(0, 6) + '-' + dataCreated.residentId.slice(7, 13)
                 };
                 let dataCallCreat = {
