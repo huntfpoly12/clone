@@ -3,7 +3,7 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610">
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -77,6 +77,7 @@ export default defineComponent({
         let trigger220 = ref<boolean>(false);
         let trigger610 = ref<boolean>(false);
         let trigger710 = ref<boolean>(false);
+        let trigger520 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
@@ -151,6 +152,14 @@ export default defineComponent({
                             trigger710.value = true;
                             refetchPA710();
                             break;
+                        case 'pa-520':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger520.value = true;
+                            refetchPA520();
+                            break;
                         default:
                             break;
                     }
@@ -166,6 +175,7 @@ export default defineComponent({
                     trigger610.value = false;
 
                     trigger710.value = false;
+                    trigger520.value = false;
 
                 }
             }
@@ -309,6 +319,21 @@ export default defineComponent({
             }
         });
 
+        // get getEmployeeWageDailiesLogs pa-520
+        const { result: resultPA520, loading: loadingPA520, refetch: refetchPA520 } = useQuery(
+            queries.getEmployeeWageDailiesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger520.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA520, (value) => {
+            if (value && value.getEmployeeWageDailiesLogs) {
+                dataTableShow.value = value.getEmployeeWageDailiesLogs;
+            }
+        });
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -330,6 +355,7 @@ export default defineComponent({
             loadingCM130,
             loadingBF220,
             loadingPA710,
+            loadingPA520,
             formarDate,
             dataQuery,
             loadingPA610
