@@ -6,7 +6,7 @@
                     <div  id="pa-120" class="page-content">
                         <a-tabs v-model:activeKey="activeKey" type="card">
                             <a-tab-pane key="1" tab="기본">
-                                <Tab1Component></Tab1Component>
+                                <Tab1Component v-model:dataInput="demoData.tab1"></Tab1Component>
                             </a-tab-pane>
                             <a-tab-pane key="2" tab="급여">
                                 <Tab2Component></Tab2Component>
@@ -15,14 +15,13 @@
                                 <Tab3Component></Tab3Component>
                             </a-tab-pane>
                         </a-tabs>
-                
                     </div>
                 </a-spin>
         </a-modal>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import Tab1Component from "./Tab1Component.vue";
@@ -43,6 +42,13 @@ export default defineComponent({
         modalStatus: Boolean,
     },
     setup(props,{emit}) {
+
+        const demoData = reactive({
+            tab1: {
+                a1:"5345345",
+                a2:"45345345"
+            }
+        })
         const setModalVisible = () => {
             comfirmClosePopup(() => emit('closePopup', false))
         }
@@ -51,6 +57,7 @@ export default defineComponent({
             radioCheckForeigner,
             radioCheckHouseholder,
             activeKey: ref("1"),
+            demoData
         };
     },
 });
