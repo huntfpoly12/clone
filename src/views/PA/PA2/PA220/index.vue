@@ -32,7 +32,7 @@
                             </span>
                         </div>
                         <div class="title-body-left-2">
-                            <radio-group :arrayValue="arrayRadioKeeping" v-model:valueRadioCheck="formSearch.keeping"
+                            <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="formSearch.type"
                                 :layoutCustom="'horizontal'" />
                         </div>
                     </a-col>
@@ -107,26 +107,18 @@ import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 import DxButton from "devextreme-vue/button";
+import { radioDivision, radioType } from "./utils/index"
 import { companyId, userId } from "../../../../../src/helpers/commonFunction";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton,
     },
     setup() {
-        const arrayRadioDivision = ref([
-            { id: 1, text: "전체" },
-            { id: 2, text: "계속" },
-            { id: 3, text: "중도" },
-        ])
-        const arrayRadioKeeping = ref([
-            { id: 1, text: "소득자보관용" },
-            { id: 2, text: "소득자보관용" },
-            { id: 3, text: "발행자보관용" },
-            { id: 4, text: "발행자보고용" },
-        ])
+        const arrayRadioDivision = ref([...radioDivision])
+        const arrayRadioType = ref([ ...radioType ])
         const formSearch = ref({
             division: 1,
-            keeping: 1,
+            type: 1,
             receiptDate: new Date().toJSON().slice(0, 10),
         })
 
@@ -157,8 +149,6 @@ export default defineComponent({
             // modalEmailSingle.value = true
         }
 
-
-        const valueSwitchChange = ref(true)
         const dataSource: any = ref([]);
         const store = useStore();
 
@@ -221,9 +211,8 @@ export default defineComponent({
 
         return {
             arrayRadioDivision,
-            arrayRadioKeeping,
+            arrayRadioType,
             formSearch,
-            valueSwitchChange,
             dataSource,
             per_page, move_column, colomn_resize,
             globalYear,

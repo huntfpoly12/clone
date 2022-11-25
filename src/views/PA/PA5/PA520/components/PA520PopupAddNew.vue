@@ -40,30 +40,33 @@
                         <a-row>
                             <a-col :span="8">
                                 <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
-                                    <radio-group :arrayValue="radioCheckForeigner" :valueRadioCheck="1"
-                                        layoutCustom="horizontal" />
+                                    <radio-group :arrayValue="radioCheckForeigner"
+                                        v-model:valueRadioCheck="dataCreated.foreigner" layoutCustom="horizontal" />
                                 </a-form-item>
                             </a-col>
                             <a-col :span="8">
                                 <a-form-item label="외국인 국적" label-align="right" class="label-custom-width label-red">
-                                    <country-code-select-box :disabled="isForeigner" />
+                                    <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
+                                        @textCountry="(res: any) => { dataCreated.nationality = res }" />
                                 </a-form-item>
                             </a-col>
                             <a-col :span="8">
                                 <a-form-item label="외국인 체류자격" label-align="right" class="label-custom-width label-red">
-                                    <stay-qualification-select-box />
+                                    <stay-qualification-select-box
+                                        v-model:valueStayQualifiction="dataCreated.stayQualification" />
                                 </a-form-item>
                             </a-col>
                         </a-row>
                         <a-form-item label="주민(외국인)번호" label-align="right" class="label-red">
-                            <id-number-text-box width="200px" />
+                            <id-number-text-box width="200px" v-model:valueInput="dataCreated.residentId" />
                         </a-form-item>
                         <a-form-item label="주소" class="clr" label-align="left">
                             <a-row :gutter="[0, 4]">
                                 <a-col :span="24">
                                     <a-row>
                                         <a-col :span="6">
-                                            <default-text-box width="100%" :disabled="true" />
+                                            <default-text-box width="100%" :disabled="true"
+                                                v-model:valueInput="dataCreated.zipcode" />
                                         </a-col>
                                         <a-col :span="18">
                                             <div style="margin-left: 5px">
@@ -75,10 +78,12 @@
                                 <a-col :span="24">
                                     <a-row>
                                         <a-col :span="12">
-                                            <default-text-box width="100%" :disabled="true" placeholder="주소1" />
+                                            <default-text-box width="100%" :disabled="true" placeholder="주소1"
+                                                v-model:valueInput="dataCreated.roadAddress" />
                                         </a-col>
                                         <a-col :span="12" style="padding-left: 9px">
-                                            <default-text-box width="100%" placeholder="주소2" />
+                                            <default-text-box width="100%" placeholder="주소2"
+                                                v-model:valueInput="dataCreated.addressExtend" />
                                         </a-col>
                                     </a-row>
                                 </a-col>
@@ -86,7 +91,7 @@
                         </a-form-item>
                         <a-form-item label="이메일" label-align="right">
                             <div class="input-text">
-                                <mail-text-box width="200px" placeholder="abc@example.com"></mail-text-box>
+                                <mail-text-box width="200px" v-model:valueInput="dataCreated.email" placeholder="abc@example.com"></mail-text-box>
                                 <img src="../../../../../assets/images/iconInfo.png" style="width: 16px;">
                                 <span>
                                     원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
@@ -120,7 +125,7 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, reactive } from "vue";
+import { defineComponent, ref, reactive } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
@@ -140,18 +145,18 @@ export default defineComponent({
         modalStatus: Boolean,
     },
     setup(props, { emit }) {
-        let valCheckCondition = ref(false)
-        let isForeigner = ref(false);
+        const countryInfo = ref()
         const setModalVisible = () => {
             comfirmClosePopup(() => emit('closePopup', false))
         }
         const dataCreated = reactive({
             name: '',
             foreigner: false,
-            nationality: '',
-            nationalityCode: '',
-            stayQualification: '',
-            residentId: '',
+            nationality: '대한민국',
+            nationalityCode: 'KR',
+            stayQualification: 'C-4',
+            residentId: '123456-1234562',
+            zipcode: '',
             roadAddress: '',
             addressExtend: '',
             email: '',
@@ -164,10 +169,11 @@ export default defineComponent({
             responsibility: '',
         })
 
-
         const funcAddress = (data: any) => {
+            dataCreated.zipcode = data.zonecode;
+            dataCreated.roadAddress = data.roadAddress; 
             // console.log(parseInt(dataCreated.joinedAt.replaceAll('-', '')));
-
+            console.log(dataCreated); 
         }
 
         const selectBoxData = new DataSource({
@@ -181,10 +187,10 @@ export default defineComponent({
         const customItemCreating = (e: any) => {
 
         }
+
         return {
+            countryInfo,
             dataCreated,
-            valCheckCondition,
-            isForeigner,
             funcAddress,
             setModalVisible,
             radioCheckForeigner,
@@ -196,76 +202,7 @@ export default defineComponent({
     },
 });
 </script>
+ 
+<style lang="scss" scoped src="../style/popupAddNew.scss" >
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style lang="scss" scoped src="../style/popupAddNew.scss" />
+</style>
