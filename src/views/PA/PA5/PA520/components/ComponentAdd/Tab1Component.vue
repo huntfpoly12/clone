@@ -8,7 +8,6 @@
             <default-text-box width="200px" v-model:valueInput="dataCreated.name" :required="true"
                 placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
-
         <a-form-item label="퇴직급여대상 여부" label-align="right">
             <a-radio-group v-model:value="dataCreated.retirementIncome">
                 <a-radio :value="true">
@@ -19,7 +18,6 @@
                 </a-radio>
             </a-radio-group>
         </a-form-item>
-
         <a-form-item label="입사년월일" label-align="right">
             <date-time-box width="150px" v-model:valueDate="dataCreated.joinedAt" />
         </a-form-item>
@@ -102,16 +100,13 @@
             <custom-item-select-box v-model:valueInput="dataCreated.responsibility" :arrSelect="selectBoxData2"
                 width="200px" />
         </a-form-item>
-
         <div style="width: 100%;text-align: center;margin-top: 30px;">
             <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated($event)" />
         </div>
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, computed } from "vue";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
-import { DxSelectBox } from 'devextreme-vue/select-box';
+import { defineComponent, ref, reactive, computed } from "vue";  
 import { radioCheckForeigner } from "../../utils/index";
 import dayjs from 'dayjs';
 import queries from "../../../../../../graphql/queries/PA/PA5/PA520/index"
@@ -120,11 +115,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "../../../../../../helpers/commonFunction"
 import notification from "../../../../../../utils/notification";
 import { useStore } from 'vuex';
-export default defineComponent({
-    components: {
-        InfoCircleFilled,
-        DxSelectBox,
-    },
+export default defineComponent({ 
     setup(props, { emit }) {
         const countryInfo = ref()
         const selectBoxData1 = ref()
@@ -148,9 +139,6 @@ export default defineComponent({
             department: '',
             responsibility: '',
         })
-        const dataDefaultCreated = reactive({
-            ...dataCreated
-        })
         const originData = ref({
             companyId: companyId,
         })
@@ -165,8 +153,14 @@ export default defineComponent({
 
         resGetDepartments(res => {
             // selectBoxData.value = res.data.getDepartments 
-            // res.data.getDepartments.map()
-            selectBoxData1.value = [{ id: "부서 1", value: "부서 1" }, { id: "부서 2", value: "부서 2" }]
+            let valArr: any = []
+            res.data.getDepartments.map((v: any) => {
+                valArr.push({
+                    id: v.department,
+                    value: v.department
+                })
+            })
+            selectBoxData1.value = valArr
         })
 
         const {
@@ -175,9 +169,15 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
 
-        resGetResponsibilities(res => {
-            // selectBoxData.value = res.data.responsibility 
-            selectBoxData2.value = [{ id: "직위 1", value: "직위 1" }, { id: "직위 2", value: "직위 2" }]
+        resGetResponsibilities(res => { 
+            let valArr: any = []
+            res.data.getResponsibilities.map((v: any) => {
+                valArr.push({
+                    id: v.responsibility,
+                    value: v.responsibility
+                })
+            })
+            selectBoxData2.value = valArr 
         })
 
         const {
