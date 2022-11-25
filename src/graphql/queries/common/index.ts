@@ -13,7 +13,8 @@ import getScreenRoleGroupLogs from "./getScreenRoleGroupLogs";
 import searchPublicInstitutions from "./searchPublicInstitutions";
 import getSaleRequestContact from "./getSaleRequestContact";
 import getEmployeeBusinessesLogs from "./getEmployeeBusinessesLogs";
-
+import getResponsibilities from "./getResponsibilities";
+import getDepartments from "./getDepartments";
 import getEmployeeExtrasLogs from "./getEmployeeExtrasLogs";
 const queries = {
   getListSale: getListSale,
@@ -32,6 +33,8 @@ const queries = {
   getSaleRequestContact:getSaleRequestContact,
   getEmployeeBusinessesLogs:getEmployeeBusinessesLogs,
   getEmployeeExtrasLogs: getEmployeeExtrasLogs,
+  getResponsibilities:getResponsibilities,
+  getDepartments:getDepartments
 };
 
 export default queries;

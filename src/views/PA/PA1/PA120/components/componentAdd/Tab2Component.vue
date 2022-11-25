@@ -89,7 +89,7 @@
 import { defineComponent, ref, computed } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import { radioCheckPersenPension,radioCheckReductioRate,radioCheckReductionInput,IncomeTaxAppRate } from "../utils/index";
+import { radioCheckPersenPension,radioCheckReductioRate,radioCheckReductionInput,IncomeTaxAppRate } from "../../utils/index";
 import dayjs from 'dayjs';
 
 export default defineComponent({

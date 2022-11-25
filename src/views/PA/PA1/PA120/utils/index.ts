@@ -1,6 +1,6 @@
 export const radioCheckForeigner = [
-    { id: 1, text: '내국인' },
-    { id: 2, text: '외국인' }];
+    { id: 0, text: '내국인' },
+    { id: 1, text: '외국인' }];
 export const radioCheckHouseholder = [
     { id: 1, text: 'X' },
     { id: 2, text: 'O' }];
@@ -22,3 +22,22 @@ export const IncomeTaxAppRate = [
     { id: 3, text: '120%' },
 ];
 
+export const initFormStateTab1 = {
+    name:'',
+    foreigner: false,
+    nationality: '',
+    nationalityCode: 'KR',
+    stayQualification: 'C-4',
+    residentId: '',
+    roadAddress: '',
+    addressExtend: '',
+    email: '',
+    employeeId: 0,
+    joinedAt: '',
+    leavedAt: '',
+    president: false,
+    householder: false,
+    weeklyWorkingHours: 0,
+    department: '',
+    responsibility: '',
+}

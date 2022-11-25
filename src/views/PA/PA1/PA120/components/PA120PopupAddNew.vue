@@ -6,7 +6,7 @@
                     <div  id="pa-120" class="page-content">
                         <a-tabs v-model:activeKey="activeKey" type="card">
                             <a-tab-pane key="1" tab="기본">
-                                <Tab1Component v-model:dataInput="demoData.tab1"></Tab1Component>
+                                <Tab1Component :popupStatus="modalStatus"></Tab1Component>
                             </a-tab-pane>
                             <a-tab-pane key="2" tab="급여">
                                 <Tab2Component></Tab2Component>
@@ -24,9 +24,9 @@
 import { defineComponent, reactive, ref } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
-import Tab1Component from "./Tab1Component.vue";
-import Tab2Component from "./Tab2Component.vue";
-import Tab3Component from "./Tab3Component.vue";
+import Tab1Component from "./componentAdd/Tab1Component.vue";
+import Tab2Component from "./componentAdd/Tab2Component.vue";
+import Tab3Component from "./componentAdd/Tab3Component.vue";
 import { radioCheckForeigner , radioCheckHouseholder} from "../utils/index";
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 
@@ -50,7 +50,7 @@ export default defineComponent({
             }
         })
         const setModalVisible = () => {
-            comfirmClosePopup(() => emit('closePopup', false))
+            emit('closePopup', false);
         }
         return {
             setModalVisible,
