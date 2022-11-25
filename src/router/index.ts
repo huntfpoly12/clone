@@ -1,19 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/Login.vue";
-import LoginLayout from "../layouts/LoginLayout.vue";
-import DefaultLayout from "../layouts/DefaultLayout.vue";
-import RquestContract from "../views/requestContract/index.vue";
-import ResetPassword from "../views/ResetPassword.vue";
-import ChangePassword from "../views/ChangePassword.vue";
-import NotFound from "../views/NotFound.vue";
+import LoginLayout from '../layouts/LoginLayout.vue'
+import DefaultLayout from '../layouts/DefaultLayout.vue'
+import RquestContract from "../views/requestContract/index.vue"
+import ResetPassword from "../views/ResetPassword.vue"
+import ChangePassword from "../views/ChangePassword.vue"
+import NotFound from "../views/NotFound.vue"
 const routes = [
   {
-    path: "/",
-    component: DefaultLayout,
+    path: "/", component: DefaultLayout,
     meta: {
       needAuth: true,
-      title: "Home",
-    },
+      title: 'Home'
+    }
   },
   {
     path: "/login",
@@ -21,9 +20,9 @@ const routes = [
     children: [
       {
         path: "",
-        component: Login,
-      },
-    ],
+        component: Login
+      }
+    ]
   },
 
   {
@@ -32,9 +31,9 @@ const routes = [
     children: [
       {
         path: "recovery/:key",
-        component: ResetPassword,
-      },
-    ],
+        component: ResetPassword
+      }
+    ]
   },
   {
     path: "/change-password",
@@ -42,81 +41,81 @@ const routes = [
     children: [
       {
         path: "",
-        component: ChangePassword,
-      },
-    ],
+        component: ChangePassword
+      }
+    ]
   },
   {
     path: "/request-contract",
     component: LoginLayout,
     meta: {
-      title: "Request Contract",
+      title: 'Request Contract'
     },
     children: [
       {
         path: "",
-        component: RquestContract,
+        component: RquestContract
       },
-    ],
+    ]
   },
   {
     path: "/dashboard",
     component: DefaultLayout,
     meta: {
-      needAuth: true,
+      needAuth: true
     },
     children: [
       {
         path: "bf-310",
-        component: () => import("../views/BF/BF3/BF310/index.vue"),
+        component: () => import('../views/BF/BF3/BF310/index.vue')
       },
       {
         path: "bf-320",
-        component: () => import("../views/BF/BF3/BF320/index.vue"),
+        component: () => import('../views/BF/BF3/BF320/index.vue')
       },
       {
         path: "bf-330",
-        component: () => import("../views/BF/BF3/BF330/index.vue"),
+        component: () => import('../views/BF/BF3/BF330/index.vue')
       },
       {
         path: "bf-340",
-        component: () => import("../views/BF/BF3/BF340/index.vue"),
+        component: () => import('../views/BF/BF3/BF340/index.vue')
       },
       {
         path: "bf-210",
-        component: () => import("../views/BF/BF2/BF210/index.vue"),
+        component: () => import('../views/BF/BF2/BF210/index.vue')
       },
       {
         path: "bf-220",
-        component: () => import("../views/BF/BF2/BF220/index.vue"),
+        component: () => import('../views/BF/BF2/BF220/index.vue')
       },
       {
         path: "cm-110",
-        component: () => import("../views/CM/CM1/CM110/index.vue"),
+        component: () => import('../views/CM/CM1/CM110/index.vue')
       },
       {
         path: "cm-130",
-        component: () => import("../views/CM/CM1/CM130/index.vue"),
+        component: () => import('../views/CM/CM1/CM130/index.vue')
       },
       {
         path: "pa-120",
-        component: () => import("../views/PA/PA1/PA120/index.vue"),
+        component: () => import('../views/PA/PA1/PA120/index.vue')
       },
       {
         path: "pa-230",
-        component: () => import("../views/PA/PA2/PA230/index.vue"),
+        component: () => import('../views/PA/PA2/PA230/index.vue')
       },
       {
         path: "pa-430",
-        component: () => import("../views/PA/PA4/PA430/index.vue"),
+        component: () => import('../views/PA/PA4/PA430/index.vue')
       },
       {
         path: "pa-610",
-        component: () => import("../views/PA/PA6/PA610/index.vue"),
+        component: () => import('../views/PA/PA6/PA610/index.vue')
       },
       {
         path: "pa-630",
-        component: () => import("../views/PA/PA6/PA630/index.vue"),
+        component: () => import('../views/PA/PA6/PA630/index.vue')
       },
       {
         path: "pa-520",
@@ -124,11 +123,11 @@ const routes = [
       },
       {
         path: "pa-530",
-        component: () => import("../views/PA/PA5/PA530/index.vue"),
+        component: () => import('../views/PA/PA5/PA530/index.vue')
       },
       {
         path: "pa-710",
-        component: () => import("../views/PA/PA7/PA710/index.vue"),
+        component: () => import('../views/PA/PA7/PA710/index.vue')
       },
       {
         path: "pa-730",
@@ -138,9 +137,9 @@ const routes = [
         path: "pa-220",
         component: () => import("../views/PA/PA2/PA220/index.vue"),
       },
-    ],
+    ]
   },
-  { path: "/:pathMatch(.*)*", name: "not-found", component: NotFound },
+  { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
 ];
 
 const router = createRouter({
@@ -149,14 +148,15 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   if (to.meta.needAuth) {
-    if (sessionStorage.getItem("token")) {
-      next();
+    if (sessionStorage.getItem('token')) {
+      next()
     } else {
-      next("/login");
+      next("/login")
     }
   } else {
-    next();
+    next()
   }
-});
+
+})
 
 export default router;

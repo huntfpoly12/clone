@@ -1,133 +1,128 @@
-export default [
-  {
-    title: "Back Office",
-    id: "bf-000",
+export default [{
+    title: 'Back Office',
+    id: 'bf-000',
     subMenus: [
-      {
-        title: "회원관리",
-        id: "bf-200",
-        items: [
-          { name: "회원등록", url: "/dashboard/bf-210", id: "bf-210" },
-          { name: "권한그룹관리", url: "/dashboard/bf-220", id: "bf-220" },
-        ],
-      },
-      {
-        title: "계약관리",
-        id: "bf-300",
-        items: [
-          {
-            name: "계약정보관리&심사 ",
-            url: "/dashboard/bf-310",
-            id: "bf-310",
-          },
-          { name: "사업자관리", url: "/dashboard/bf-320", id: "bf-320" },
-          { name: "서비스관리", url: "/dashboard/bf-330", id: "bf-330" },
-          { name: "영업자관리", url: "/dashboard/bf-340", id: "bf-340" },
-        ],
-      },
-      {
-        title: "수납관리",
-        id: "bf-400",
-        items: [
-          { name: "요금청구,심사", url: "#", id: "bf-410" },
-          { name: "서비스해지", url: "#", id: "bf-420" },
-          { name: "미납관리", url: "#", id: "bf-430" },
-          { name: "수납관리", url: "#", id: "bf-440" },
-        ],
-      },
-      {
-        title: "업무마감",
-        id: "bf-500",
-        items: [
-          { name: "회계업무마감관리", url: "#", id: "bf-510" },
-          { name: "원천업무마감관리", url: "#", id: "bf-520" },
-          { name: "4대보험업무관리", url: "#", id: "bf-530" },
-          { name: "제본/배송관리", url: "#", id: "bf-540" },
-        ],
-      },
-    ],
-  },
-  {
-    title: "공통모듈",
-    id: "cm-000",
+        {
+            title: '회원관리',
+            id: 'bf-200',
+            items: [
+                { name: '회원등록', url: '/dashboard/bf-210', id: 'bf-210' },
+                { name: '권한그룹관리', url: '/dashboard/bf-220', id: 'bf-220' },
+            ]
+        },
+        {
+            title: '계약관리',
+            id: 'bf-300',
+            items: [
+                { name: '계약정보관리&심사 ', url: '/dashboard/bf-310', id: 'bf-310' },
+                { name: '사업자관리', url: '/dashboard/bf-320', id: 'bf-320' },
+                { name: '서비스관리', url: '/dashboard/bf-330', id: 'bf-330' },
+                { name: '영업자관리', url: '/dashboard/bf-340', id: 'bf-340' }
+            ]
+        },
+        {
+            title: '수납관리',
+            id: 'bf-400',
+            items: [
+                { name: '요금청구,심사', url: '#', id: 'bf-410' },
+                { name: '서비스해지', url: '#', id: 'bf-420' },
+                { name: '미납관리', url: '#', id: 'bf-430' },
+                { name: '수납관리', url: '#', id: 'bf-440' }
+            ]
+        },
+        {
+            title: '업무마감',
+            id: 'bf-500',
+            items: [
+                { name: '회계업무마감관리', url: '#', id: 'bf-510' },
+                { name: '원천업무마감관리', url: '#', id: 'bf-520' },
+                { name: '4대보험업무관리', url: '#', id: 'bf-530' },
+                { name: '제본/배송관리', url: '#', id: 'bf-540' }
+            ]
+        }
+    ]
+},
+{
+    title: '공통모듈',
+    id: 'cm-000',
     subMenus: [
-      {
-        title: "사용자업무설정",
-        id: "cm-100",
-        items: [
-          { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
-          { name: "회계설정", url: "#", id: "cm-120" },
-          { name: "원천설정", url: "/dashboard/cm-130", id: "cm-130" },
-        ],
-      },
-    ],
-  },
-  {
-    title: "회계모듈",
-    id: "ac-000",
+        {
+            title: '사용자업무설정',
+            id: 'cm-100',
+            items: [
+                { name: '기초정보설정', url: '/dashboard/cm-110', id: 'cm-110' },
+                { name: '회계설정', url: '#', id: 'cm-120' },
+                { name: '원천설정', url: '/dashboard/cm-130', id: 'cm-130' }
+            ]
+        },
+    ]
+},
+{
+    title: '회계모듈',
+    id: 'ac-000',
     subMenus: [
-      {
-        title: "입력/마감",
-        id: "ac-100",
-        items: [
-          { name: "통장내역", url: "#", id: "ac-110" },
-          { name: "전표", url: "#", id: "ac-120" },
-          { name: "마감", url: "#", id: "ac-130" },
-        ],
-      },
-      {
-        title: "W4C",
-        id: "ac-200",
-        items: [
-          { name: "전표/결의", url: "#", id: "ac-210" },
-          { name: "예산서", url: "#", id: "ac-220" },
-          { name: "결산서", url: "#", id: "ac-230" },
-        ],
-      },
-      {
-        title: "예산",
-        id: "ac-300",
-        items: [
-          { name: "세입예산서", url: "#", id: "ac-310" },
-          { name: "세출예산서", url: "#", id: "ac-320" },
-          { name: "예산총괄표", url: "#", id: "ac-330" },
-          { name: "임직원보수일람표", url: "#", id: "ac-340" },
-          { name: "과목전용조서", url: "#", id: "ac-350" },
-          { name: "추가경정 세입예산서", url: "#", id: "ac-360" },
-          { name: "추가경정 세출예산서", url: "#", id: "ac-370" },
-          { name: "예산서 자동작성", url: "#", id: "ac-380" },
-        ],
-      },
-      {
-        title: "결산",
-        id: "ac-400",
-        items: [
-          { name: "세입결산서", url: "#", id: "ac-400" },
-          { name: "세출결산서", url: "#", id: "ac-410" },
-          { name: "예비비사용조서", url: "#", id: "ac-420" },
-          { name: "정부보조금명세서", url: "#", id: "ac-430" },
-          { name: "후원금수입및사용결고보고서", url: "#", id: "ac-440" },
-          { name: "후원금계좌거래내역", url: "#", id: "ac-450" },
-          { name: "사업비명세서", url: "#", id: "ac-460" },
-          { name: "사업비명세서", url: "#", id: "ac-470" },
-          { name: "기타비용명세서", url: "#", id: "ac-480" },
-        ],
-      },
-      {
-        title: "보고서",
-        id: "ac-500",
-        items: [
-          { name: "장부", url: "#", id: "ac-510" },
-          { name: "필요경비대장", url: "#", id: "ac-520" },
-          { name: "정부보조금명세서", url: "#", id: "ac-530" },
-          { name: "보조금정산서", url: "#", id: "ac-540" },
-        ],
-      },
-    ],
-  },
-  {
-    title: "원천모듈",
-    id: "pa-000",
+        {
+            title: '입력/마감',
+            id: 'ac-100',
+            items: [
+                { name: '통장내역', url: '#', id: 'ac-110' },
+                { name: '전표', url: '#', id: 'ac-120' },
+                { name: '마감', url: '#', id: 'ac-130' }
+            ]
+        },
+        {
+            title: 'W4C',
+            id: 'ac-200',
+            items: [
+                { name: '전표/결의', url: '#', id: 'ac-210' },
+                { name: '예산서', url: '#', id: 'ac-220' },
+                { name: '결산서', url: '#', id: 'ac-230' }
+            ]
+        },
+        {
+            title: '예산',
+            id: 'ac-300',
+            items: [
+                { name: '세입예산서', url: '#', id: 'ac-310' },
+                { name: '세출예산서', url: '#', id: 'ac-320' },
+                { name: '예산총괄표', url: '#', id: 'ac-330' },
+                { name: '임직원보수일람표', url: '#', id: 'ac-340' },
+                { name: '과목전용조서', url: '#', id: 'ac-350' },
+                { name: '추가경정 세입예산서', url: '#', id: 'ac-360' },
+                { name: '추가경정 세출예산서', url: '#', id: 'ac-370' },
+                { name: '예산서 자동작성', url: '#', id: 'ac-380' },
+            ]
+        },
+        {
+            title: '결산',
+            id: 'ac-400',
+            items: [
+                { name: '세입결산서', url: '#', id: 'ac-400' },
+                { name: '세출결산서', url: '#', id: 'ac-410' },
+                { name: '예비비사용조서', url: '#', id: 'ac-420' },
+                { name: '정부보조금명세서', url: '#', id: 'ac-430' },
+                { name: '후원금수입및사용결고보고서', url: '#', id: 'ac-440' },
+                { name: '후원금계좌거래내역', url: '#', id: 'ac-450' },
+                { name: '사업비명세서', url: '#', id: 'ac-460' },
+                { name: '사업비명세서', url: '#', id: 'ac-470' },
+                { name: '기타비용명세서', url: '#', id: 'ac-480' },
+            ]
+        },
+        {
+            title: '보고서',
+            id: 'ac-500',
+            items: [
+                { name: '장부', url: '#', id: 'ac-510' },
+                { name: '필요경비대장', url: '#', id: 'ac-520' },
+                { name: '정부보조금명세서', url: '#', id: 'ac-530' },
+                { name: '보조금정산서', url: '#', id: 'ac-540' },
+            ]
+        },
+    ]
+},
+{
+    title: '원천모듈',
+    id: 'pa-000',
     subMenus: [
         {
             title: '근로소득관리',
@@ -174,7 +169,7 @@ export default [
             id: 'pa-500',
             items: [
                 { name: '일용직근로소득자료입력', url: '#', id: 'pa-510' },
-                { name: '일용직사원등록', url: '#', id: 'pa-520' },
+                { name: '일용직사원등록', url: '/dashboard/pa-520', id: 'pa-520' },
                 { name: '일용직근로소득원천징수영수증', url: '/dashboard/pa-530', id: 'pa-530' },
             ]
         },
