@@ -97,6 +97,9 @@
         <a-form-item label="부서" label-align="right">
             <custom-item-select-box width="200px" v-model:valueInput="valTest"></custom-item-select-box>                                                     
         </a-form-item>
+        <a-form-item label="직위" label-align="right">
+            <custom-item-select-box width="200px" v-model:valueInput="valTest"></custom-item-select-box>                                                     
+        </a-form-item>
         <a-row style="margin-top: 60px;">
             <a-col :span="8" :offset="8">
                 <button-basic text="저장" type="default" mode="contained"
@@ -130,9 +133,7 @@ export default defineComponent({
 
         watch(
             () => formData,
-            (newValue, oldValue) => {
-                console.log(newValue);
-                
+            (newValue, oldValue) => {           
                 emit("update:dataInput", newValue);
             }
         );
