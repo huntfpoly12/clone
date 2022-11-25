@@ -75,7 +75,7 @@
             </div>
           </template>
           <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-          <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
+          <DxColumn :width="250" caption="사원" cell-template="tag" />
           <template #tag="{ data }" class="custom-action">
             <div class="custom-action">
               <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -83,22 +83,27 @@
                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
             </div>
           </template>
-          <DxColumn caption="주민등록번호" data-field="employee.residentId" />
-          <DxColumn data-field="employee.status" caption="구분" cell-template="grid-cell" css-class="cell-center" />
+          <DxColumn data-field="employee.status" caption="구분 " cell-template="grid-cell" css-class="cell-center" />
           <template #grid-cell="{ data }">
             <a-tag :color="getColorTag(data.value)?.name">{{
-                getColorTag(data.value)?.tag_name
+            getColorTag(data.value)?.tag_name
             }}</a-tag>
           </template>
-          <DxColumn caption="소득부분" cell-template="grade-cell" :width="150" />
+          <DxColumn caption="입사일 (정산시작일) " data-field="employee.residentId" />
+
+          <DxColumn caption="퇴사일 (정산종료일) " cell-template="grade-cell" :width="150" />
           <template #grade-cell="{ data }" class="custom-action">
             <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
             </income-type>
           </template>
-          <DxColumn caption="지급총액" data-field="paymentAmount" />
-          <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
-          <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
-          <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax" />
+          <DxColumn caption="귀속연월" data-field="paymentAmount" />
+          <DxColumn caption="지급연월" data-field="withholdingIncomeTax" />
+          <DxColumn caption="퇴직급여" data-field="withholdingLocalIncomeTax" />
+          <DxColumn caption="비과세 퇴직급여" data-field="paymentAmount" />
+          <DxColumn caption="과세대상 퇴직급여" data-field="test1" />
+          <DxColumn caption="공제" data-field="test1" />
+          <DxColumn caption="차인지급액" data-field="test1" />
+          <DxColumn caption="비고" data-field="test1" />
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
             <div class="custom-action" style="text-align: center;">
@@ -107,6 +112,19 @@
               <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
             </div>
           </template>
+          <DxSummary>
+            <DxTotalItem show-in-column="성명 (상호)" />
+            <DxTotalItem column="paymentAmount" summary-type="sum" />
+            <DxTotalItem column="withholdingIncomeTax" summary-type="sum" />
+            <DxTotalItem column="requiredExpenses" summary-type="sum" />
+            <DxTotalItem column="incomePayment" summary-type="sum" />
+            <DxTotalItem column="withholdingLocalIncomeTax" summary-type="sum" />
+            <DxTotalItem column="비과세 퇴직급여" summary-type="sum" />
+            <DxTotalItem column="과세대상 퇴직급여" summary-type="sum" />
+            <DxTotalItem column="공제" summary-type="sum" />
+            <DxTotalItem column="차인지급액" summary-type="sum" />
+            <DxTotalItem column="비고" summary-type="sum" />
+          </DxSummary>
         </DxDataGrid>
         <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
           :data="popupDataEmailSingle" />
@@ -130,7 +148,7 @@ import {
   DxSelection,
   DxSearchPanel,
   DxToolbar,
-  DxItem,
+  DxItem, DxSummary, DxTotalItem
 } from "devextreme-vue/data-grid";
 import {
   companyId,
@@ -152,7 +170,7 @@ export default defineComponent({
     DxExport,
     DxSearchPanel,
     DxToolbar,
-    DxItem,
+    DxItem, DxSummary, DxTotalItem,
     InfoCircleFilled,
     EmailSinglePopup,
     EmailMultiPopup
@@ -387,6 +405,74 @@ export default defineComponent({
   },
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
