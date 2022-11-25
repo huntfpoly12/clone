@@ -48,7 +48,12 @@
               </date-time-box>
             </div>
           </a-col>
+
         </div>
+        <a-col>
+          <strong class="lable-item">소득자보관용 :</strong>
+          <switch-basic v-model:valueSwitch="valueSwitch2" :textCheck="'발행자보관용'" :textUnCheck="'발행자보관용'" />
+        </a-col>
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" @selection-changed="selectionChanged">
@@ -154,6 +159,7 @@ export default defineComponent({
   },
   setup() {
     const valueSwitch = ref(true);
+    const valueSwitch2 = ref(true);
     const popupDataEmailSingle = ref({})
     const popupDataEmailMulti = ref({})
     const dataSelect = ref<any>([])
@@ -333,6 +339,13 @@ export default defineComponent({
         valueDefaultIncomeRetirement.value.input.type = 2
       }
     });
+    watch(valueSwitch2, (newValue) => {
+      if (newValue) {
+        valueDefaultIncomeRetirement.value.input.type = 1
+      } else {
+        valueDefaultIncomeRetirement.value.input.type = 2
+      }
+    });
 
     const searching = () => {
       trigger.value = true;
@@ -344,7 +357,7 @@ export default defineComponent({
     }
     return {
       valueDefaultIncomeRetirement,
-      valueSwitch,
+      valueSwitch, valueSwitch2,
       loading,
       popupDataEmailSingle,
       popupDataEmailMulti,
@@ -374,6 +387,30 @@ export default defineComponent({
   },
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
