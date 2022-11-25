@@ -43,7 +43,7 @@ export default defineComponent({
             type: String,
             default: "이해했다"
         },
-        cancelText:{
+        cancelText: {
             type: String,
             default: "이해했다"
         }

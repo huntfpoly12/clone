@@ -217,7 +217,7 @@ import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
-import { origindata, arrCheckBox, dataDemo } from "./utils";
+import { origindata, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId, userId } from "../../../../../src/helpers/commonFunction";
 import PA530Popup from "./components/PA530Popup.vue";
@@ -238,16 +238,19 @@ export default defineComponent({
         PA530Popup
     },
     setup() {
-        const emailUserLogin = ref()
-        const actionSendEmailGroup = ref(false)
+        let popupData = ref([])
+        let modalHistoryStatus = ref<boolean>(false)
         let dataCallApiPrint = ref()
         let paymentYearMonthsModal: any = ref()
         let dataCallModal: any = ref()
+        let checkAllValue = ref(true)
+        let customTextWithholdingLocalIncomeTax = ref('')
+        let customTextWithholdingIncomeTax = ref('')
+        let selectedItemKeys = ref([])
+        const emailUserLogin = ref()
+        const actionSendEmailGroup = ref(false)
         const dateSendEmail = ref(new Date)
         const valueSwitchChange = ref(true)
-        const globalYear: any = computed(() => store.state.settings.globalYear);
-        let popupData = ref([])
-        let modalHistoryStatus = ref<boolean>(false)
         const dataSource: any = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
@@ -258,30 +261,136 @@ export default defineComponent({
         const dataDemoUltil = reactive({ ...dataDemo })
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
-        let year1 = reactive({
+        const globalYear: any = computed(() => store.state.settings.globalYear);
+        const arrCheckBoxSearch = reactive({
+            quarter1: {
+                label: "1/4분기",
+                value: true,
+            },
+            quarter2: {
+                label: "2/4분기",
+                value: true,
+            },
+            quarter3: {
+                label: "3/4분기",
+                value: true,
+            },
+            quarter4: {
+                label: "4/4분기",
+                value: true,
+            },
+            month1: {
+                label: "01월",
+                value: true,
+                subValue: globalYear.value + "-01"
+            },
+            month2: {
+                label: "02월",
+                value: true,
+                subValue: globalYear.value + "-02"
+            },
+            month3: {
+                label: "03월",
+                value: true,
+                subValue: globalYear.value + "-03"
+            },
+            month4: {
+                label: "04월",
+                value: true,
+                subValue: globalYear.value + "-04"
+            },
+            month5: {
+                label: "05월",
+                value: true,
+                subValue: globalYear.value + "-05"
+            },
+            month6: {
+                label: "06월",
+                value: true,
+                subValue: globalYear.value + "-06"
+            },
+            month7: {
+                label: "07월",
+                value: true,
+                subValue: globalYear.value + "-07"
+            },
+            month8: {
+                label: "08월",
+                value: true,
+                subValue: globalYear.value + "-08"
+            },
+            month9: {
+                label: "09월",
+                value: true,
+                subValue: globalYear.value + "-09"
+            },
+            month10: {
+                label: "10월",
+                value: true,
+                subValue: globalYear.value + "-10"
+            },
+            month11: {
+                label: "11월",
+                value: true,
+                subValue: globalYear.value + "-11"
+            },
+            month12: {
+                label: "12월",
+                value: true,
+                subValue: globalYear.value + "-12"
+            },
+        })
+        const getArrPaymentYearMonth = () => {
+            let arrVal = []
+            if (arrCheckBoxSearch.month1.value == true)
+                arrVal.push(arrCheckBoxSearch.month1.subValue)
+            if (arrCheckBoxSearch.month2.value == true)
+                arrVal.push(arrCheckBoxSearch.month2.subValue)
+            if (arrCheckBoxSearch.month3.value == true)
+                arrVal.push(arrCheckBoxSearch.month3.subValue)
+            if (arrCheckBoxSearch.month4.value == true)
+                arrVal.push(arrCheckBoxSearch.month4.subValue)
+            if (arrCheckBoxSearch.month5.value == true)
+                arrVal.push(arrCheckBoxSearch.month5.subValue)
+            if (arrCheckBoxSearch.month6.value == true)
+                arrVal.push(arrCheckBoxSearch.month6.subValue)
+            if (arrCheckBoxSearch.month7.value == true)
+                arrVal.push(arrCheckBoxSearch.month7.subValue)
+            if (arrCheckBoxSearch.month8.value == true)
+                arrVal.push(arrCheckBoxSearch.month8.subValue)
+            if (arrCheckBoxSearch.month9.value == true)
+                arrVal.push(arrCheckBoxSearch.month9.subValue)
+            if (arrCheckBoxSearch.month10.value == true)
+                arrVal.push(arrCheckBoxSearch.month10.subValue)
+            if (arrCheckBoxSearch.month11.value == true)
+                arrVal.push(arrCheckBoxSearch.month11.subValue)
+            if (arrCheckBoxSearch.month12.value == true)
+                arrVal.push(arrCheckBoxSearch.month12.subValue)
+            if (year1.value == true)
+                arrVal.push(year1.subValue)
+            if (year2.value == true)
+                arrVal.push(year2.subValue)
+            return arrVal
+        }
+        const year1 = reactive({
             label: globalYear.value + 1 + '년 01월',
             value: true,
+            subValue: globalYear.value + 1 + '-01'
         })
-        let year2 = reactive({
+        const year2 = reactive({
             label: globalYear.value + 1 + '년 02월',
             value: true,
-        })
+            subValue: globalYear.value + 1 + '-02'
+        }) 
+        const modalStatus = ref(false)
+        const textResidentId = ref('주민등록번호') 
         const dataApiSearch = reactive({
             companyId: companyId,
             filter: {
                 imputedYear: parseInt(dayjs().format('YYYY')),
-                paymentYearMonths: ['1/4분기', '2/4분기', '3/4분기', '4/4분기', year1.label, year2.label]
+                paymentYearMonths: getArrPaymentYearMonth()
             }
         })
-        const modalStatus = ref(false)
-        const textResidentId = ref('주민등록번호')
-        const arrCheckBoxSearch = reactive({
-            ...arrCheckBox
-        })
-        let checkAllValue = ref(true)
-        let customTextWithholdingLocalIncomeTax = ref('')
-        let customTextWithholdingIncomeTax = ref('')
-        let selectedItemKeys = ref([])
         // ================GRAPQL==============================================
         // QUERY NAME : searchIncomeWageDailyWithholdingReceipts
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.search, dataApiSearch, () => ({
@@ -382,43 +491,11 @@ export default defineComponent({
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
-        const getArrPaymentYearMonth = () => {
-            let arrVal = []
-            if (arrCheckBoxSearch.month1.value == true)
-                arrVal.push(arrCheckBoxSearch.month1.label)
-            if (arrCheckBoxSearch.month2.value == true)
-                arrVal.push(arrCheckBoxSearch.month2.label)
-            if (arrCheckBoxSearch.month3.value == true)
-                arrVal.push(arrCheckBoxSearch.month3.label)
-            if (arrCheckBoxSearch.month4.value == true)
-                arrVal.push(arrCheckBoxSearch.month4.label)
-            if (arrCheckBoxSearch.month5.value == true)
-                arrVal.push(arrCheckBoxSearch.month5.label)
-            if (arrCheckBoxSearch.month6.value == true)
-                arrVal.push(arrCheckBoxSearch.month6.label)
-            if (arrCheckBoxSearch.month7.value == true)
-                arrVal.push(arrCheckBoxSearch.month7.label)
-            if (arrCheckBoxSearch.month8.value == true)
-                arrVal.push(arrCheckBoxSearch.month8.label)
-            if (arrCheckBoxSearch.month9.value == true)
-                arrVal.push(arrCheckBoxSearch.month9.label)
-            if (arrCheckBoxSearch.month10.value == true)
-                arrVal.push(arrCheckBoxSearch.month10.label)
-            if (arrCheckBoxSearch.month11.value == true)
-                arrVal.push(arrCheckBoxSearch.month11.label)
-            if (arrCheckBoxSearch.month12.value == true)
-                arrVal.push(arrCheckBoxSearch.month12.label)
-            if (year1.value == true)
-                arrVal.push(year1.label)
-            if (year2.value == true)
-                arrVal.push(year2.label)
-            return arrVal
-        }
         const searching = () => {
             dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
             refetchData()
-        }; 
-        const openPopup = (res: any) => { 
+        };
+        const openPopup = (res: any) => {
             actionSendEmailGroup.value = false
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
@@ -522,7 +599,7 @@ export default defineComponent({
             selectionChanged,
             sendMailGroup,
             actionPrint,
-            openPopup, 
+            openPopup,
             onExporting,
             searching,
             customizeTotal,

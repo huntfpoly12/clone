@@ -118,6 +118,10 @@ const routes = [
         component: () => import('../views/PA/PA6/PA630/index.vue')
       },
       {
+        path: "pa-520",
+        component: () => import('../views/PA/PA5/PA520/index.vue')
+      },
+      {
         path: "pa-530",
         component: () => import('../views/PA/PA5/PA530/index.vue')
       },
@@ -125,7 +129,14 @@ const routes = [
         path: "pa-710",
         component: () => import('../views/PA/PA7/PA710/index.vue')
       },
-      
+      {
+        path: "pa-730",
+        component: () => import("../views/PA/PA7/PA730/index.vue"),
+      },
+      {
+        path: "pa-220",
+        component: () => import("../views/PA/PA2/PA220/index.vue"),
+      },
     ]
   },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
