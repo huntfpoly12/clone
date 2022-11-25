@@ -3,7 +3,6 @@
     <div class="header-text-1">공제 / 감면 / 소득세 적용율 {{employeeId}}</div>
     <a-row :gutter="16">
       <a-col :span="12">
-        {{formStateTab2}}
         <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
           <checkbox-basic size="18px" label="국민연금" class="check-box-tab1"></checkbox-basic>
           <checkbox-basic size="18px" label="건강보험" class="check-box-tab1"></checkbox-basic>
