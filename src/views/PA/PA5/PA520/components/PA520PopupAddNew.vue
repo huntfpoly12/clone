@@ -1,19 +1,21 @@
 <template>
     <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()" :mask-closable="false"
-        :width="1028" :footer="null" :bodyStyle="{ padding: '0px', height: '800px' }">
+        :width="1028" :footer="null" :bodyStyle="{ padding: '0px' }">
         <a-spin :spinning="false" size="large">
             <div id="pa-520" class="page-content">
                 <a-tabs v-model:activeKey="activeKey" type="card">
-                    <a-tab-pane key="1" tab="기본" class="tab1"> 
+                    <a-tab-pane key="1" tab="기본" class="tab1">
                         <a-form-item label="사번(코드)" class="label-red" label-align="right">
-                            <text-number-box width="200px" v-model:default-text-box="dataCreated.employeeId" :required="true" placeholder="숫자만 입력 가능" />
+                            <text-number-box width="200px" v-model:default-text-box="dataCreated.employeeId"
+                                :required="true" placeholder="숫자만 입력 가능" />
                         </a-form-item>
                         <a-form-item label="성명" label-align="right" class="label-red">
-                            <text-number-box width="200px" v-model:default-text-box="dataCreated.name" :required="true" placeholder="한글,영문(대문자) 입력 가능" />
+                            <text-number-box width="200px" v-model:default-text-box="dataCreated.name" :required="true"
+                                placeholder="한글,영문(대문자) 입력 가능" />
                         </a-form-item>
 
                         <a-form-item label="퇴직급여대상 여부" label-align="right">
-                            <a-radio-group v-model:value="dataCreated.president">
+                            <a-radio-group v-model:value="dataCreated.retirementIncome">
                                 <a-radio :value="true">
                                     <div class="custom-checkbox-group" style=" background-color: #77933C;">O</div>
                                 </a-radio>
@@ -24,11 +26,11 @@
                         </a-form-item>
 
                         <a-form-item label="입사년월일" label-align="right">
-                            <date-time-box width="150px"></date-time-box>
+                            <date-time-box width="150px" v-model:valueDate="dataCreated.joinedAt" />
                         </a-form-item>
                         <a-form-item label="퇴사년월일" label-align="right">
                             <div class="input-text">
-                                <date-time-box width="150px"></date-time-box>
+                                <date-time-box width="150px" v-model:valueDate="dataCreated.leavedAt" />
                                 <img src="../../../../../assets/images/iconInfo.png" style="width: 16px;" />
                                 <span>
                                     마지막 근무한 날
@@ -103,7 +105,7 @@
                         </a-form-item>
 
                         <div style="width: 100%;text-align: center;">
-                            <button-basic text="저장" type="default" mode="contained" />
+                            <button-basic text="저장" type="default" mode="contained" @onClick="funcAddress" />
                         </div>
                     </a-tab-pane>
                     <a-tab-pane key="2" tab="급여">
@@ -111,8 +113,8 @@
                     </a-tab-pane>
                     <a-tab-pane key="3" tab="부양가족">
                         <Tab2Component></Tab2Component>
-                    </a-tab-pane> 
-                </a-tabs> 
+                    </a-tab-pane>
+                </a-tabs>
             </div>
         </a-spin>
     </a-modal>
@@ -126,7 +128,7 @@ import Tab1Component from "./Tab1Component.vue";
 import Tab2Component from "./Tab2Component.vue";
 import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
 import DataSource from "devextreme/data/data_source";
-
+import dayjs from 'dayjs';
 export default defineComponent({
     components: {
         InfoCircleFilled,
@@ -154,8 +156,8 @@ export default defineComponent({
             addressExtend: '',
             email: '',
             employeeId: null,
-            joinedAt: 20221011,
-            leavedAt: 20221011,
+            joinedAt: dayjs().format('YYYY-MM-DD'),
+            leavedAt: dayjs().format('YYYY-MM-DD'),
             retirementIncome: false,
             weeklyWorkingHours: null,
             department: '',
@@ -163,7 +165,10 @@ export default defineComponent({
         })
 
 
-        const funcAddress = (data: any) => { }
+        const funcAddress = (data: any) => {
+            // console.log(parseInt(dataCreated.joinedAt.replaceAll('-', '')));
+
+        }
 
         const selectBoxData = new DataSource({
             store: [
@@ -191,6 +196,12 @@ export default defineComponent({
     },
 });
 </script>
+
+
+
+
+
+
 
 
 
