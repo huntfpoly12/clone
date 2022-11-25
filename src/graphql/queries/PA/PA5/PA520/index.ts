@@ -1,6 +1,6 @@
 import getEmployeeWageDailies from "./getEmployeeWageDailies";
-import getDepartments from "./getDepartments";
-import getResponsibilities from "./getResponsibilities";
+import getDepartments from "../../../common/getDepartments";
+import getResponsibilities from "../../../common/getResponsibilities";
 
 const queries = {
     getEmployeeWageDailies: getEmployeeWageDailies,
