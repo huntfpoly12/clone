@@ -4,12 +4,15 @@
             {{ idEmployee }}
         </div>
         <div style="display: flex;align-items: flex-end;">
-            <a-tooltip placement="top" v-if="idCardNumber?.length == 14" :title="convertBirthDay(idCardNumber)" key="black">
+            <a-tooltip placement="top"
+                v-if="idCardNumber?.length == 14
+                && parseInt(idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(idCardNumber.split('-')[0].slice(4, 6)) < 32"
+                :title="convertBirthDay(idCardNumber)" key="black">
                 {{ name }}
             </a-tooltip>
             <a-tooltip placement="top" v-else title="ERROR" color="red">
                 {{ name }}
-            </a-tooltip> 
+            </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
             <span class="tag-checkStatus" v-if="checkStatus == false">신고X</span>

@@ -184,6 +184,13 @@ export default defineComponent({
             }
         })
 
+        watch(() => modalAddNewStatus.value, (value) => {
+            if (value == false) {
+                trigger.value = true
+                refetchData()
+            }
+        })
+
         // ======================= FUNCTION ================================
         const openAddNewModal = () => {
             modalAddNewStatus.value = true
