@@ -95,21 +95,14 @@
             </div>                                                               
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-            <DxSelectBox 
-                    :data-source="selectBoxData"
-                    :accept-custom-value="true"
-                    display-expr="firstName"
-                    value-expr="id"
-                    @custom-item-creating="customItemCreating"
-                    width="150px"
-                />                                                        
+            <custom-item-select-box width="200px" v-model:valueInput="valTest"></custom-item-select-box>                                                     
         </a-form-item>
         <a-row style="margin-top: 60px;">
-                        <a-col :span="8" :offset="8">
-                            <button-basic text="저장" type="default" mode="contained"
-                                @onClick="updateSubscriptionRequest($event)" :width="90" />
-                        </a-col>
-                    </a-row>
+            <a-col :span="8" :offset="8">
+                <button-basic text="저장" type="default" mode="contained"
+                                :width="90" />
+            </a-col>
+        </a-row>
     </div>
 </template>
 <script lang="ts">
@@ -118,12 +111,12 @@ import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 import { radioCheckForeigner , radioCheckHouseholder} from "../utils/index";
-import DataSource from "devextreme/data/data_source";
 
 export default defineComponent({
     components: {
         InfoCircleFilled,
-        DxSelectBox,
+        DxSelectBox
+     
     },
     props:{
         dataInput: {
@@ -143,35 +136,16 @@ export default defineComponent({
                 emit("update:dataInput", newValue);
             }
         );
-
-        const selectBoxData = new DataSource({
-            store: [
-                { id: 1, firstName: "Andrew" },
-                { id: 2, firstName: "Nancy" },
-                { id: 3, firstName: "Steven" }
-            ],
-            key: "id"
-        });
-        const customItemCreating = (e:any)=>{
-            // Generates a new 'id'
-            let nextId;
-            selectBoxData.store().totalCount({}).done((count : any) => {nextId = count + 1});
-            // Creates a new entry
-            e.customItem = { id: nextId, firstName: e.text };
-            // Adds the entry to the data source
-            selectBoxData.store().insert(e.customItem);
-            // Reloads the data source
-            selectBoxData.reload();
-        }
+        const valTest = ref('Nancy');
         return {
             formData,
+            valTest,
             isForeigner,
             funcAddress,
             radioCheckForeigner,
             radioCheckHouseholder,
             activeKey: ref("1"),
-            customItemCreating,
-            selectBoxData
+      
         };
     },
 });

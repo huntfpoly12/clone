@@ -1,8 +1,8 @@
 <template>
     <DxSelectBox :search-enabled="true" :width="width" :data-source="selectBoxData" :show-clear-button="clearButton"
-        v-model:value="value" :read-only="readOnly" display-expr="value" value-expr="id" :disabled="disabled"  
-        :accept-custom-value="true" @custom-item-creating="customItemCreating"
-        @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
+        v-model:value="value" :read-only="readOnly" display-expr="value" value-expr="value" :disabled="disabled"  
+        :accept-custom-value="customValue" @custom-item-creating="customItemCreating"
+        @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" placeholder="직접입력">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
@@ -50,26 +50,29 @@ export default defineComponent({
             messageRequired.value = props.messRequired;
         }
         const value = ref(props.valueInput);
-
+        const customValue = ref(false);
         watch(
             () => props.valueInput,
             (newValue) => {
                 value.value = newValue;
             }
         );
-        const updateValue = (value: any) => {
-            emit("update:valueInput", value);
+        const updateValue = (value: any) => {    
+            if(value === '직접입력'){
+                customValue.value = true;
+            }else{
+                emit("update:valueInput", value);
+            }
         };
         const selectBoxData = new DataSource({
-            store: props.arrSelect,
+            store:[
+                { id: 1, value: "직접입력" },
+            ],
             key: "id"
         });
-
+   
         const customItemCreating = (e:any)=>{
-            // Generates a new 'id'
             let nextId;
-            console.log(selectBoxData.store().totalCount({}));
-            
             selectBoxData.store().totalCount({}).then((count : any) => { nextId = count + 1});
             // Creates a new entry
             e.customItem = { id: nextId, value: e.text };
@@ -80,6 +83,7 @@ export default defineComponent({
         }
         return {
             value,
+            customValue,
             updateValue,
             messageRequired,
             customItemCreating,
