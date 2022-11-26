@@ -417,11 +417,10 @@
           </ul>
         </td>
         <td>
-          <pre class="mycode">
+            <pre class="mycode">
                 &lt; type-code-select-box v-model:valueInput="valueTypeCodeSelectSelectBox"
                 :required="true" &gt; &lt;/ type-code-select-box &gt;
-              </pre
-          >
+            </pre>
         </td>
       </tr>
 
@@ -452,11 +451,12 @@
                     <strong>valueInput:</strong> {type: [String, Number],default: "",}
                 </li>
                 <li><strong>readOnly:</strong> Boolean (option)</li>
+                <li><strong>Note:</strong> Có thể thêm item select bằng cách nhập tại input rồi ấn enter</li>
             </ul>
         </td>
         <td>
           <pre class="mycode">
-                &lt; custom-item-select-box v-model:valueInput="valueTypeCodeSelectSelectBox"
+                &lt; custom-item-select-box v-model:valueInput="valTest"
                 :required="true" &gt; &lt;/ custom-item-select-box &gt;
               </pre
           >
