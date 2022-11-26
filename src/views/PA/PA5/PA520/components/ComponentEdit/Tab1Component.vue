@@ -200,13 +200,13 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
         getValueDefault(res => {
-            if (res.data.getEmployeeWageDaily) { 
+            if (res.data.getEmployeeWageDaily) {
                 dataEdited.name = res.data.getEmployeeWageDaily.name
                 dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
                 dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
                 dataEdited.nationalityCode = res.data.getEmployeeWageDaily.nationalityCode
                 dataEdited.stayQualification = res.data.getEmployeeWageDaily.stayQualification
-                dataEdited.residentId = res.data.getEmployeeWageDaily.residentId.replace("-")
+                dataEdited.residentId = res.data.getEmployeeWageDaily.residentId.replace("-", "")
                 // dataEdited.zipcode=res.data.getEmployeeWageDail
                 dataEdited.roadAddress = res.data.getEmployeeWageDaily.roadAddress
                 dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
@@ -235,10 +235,10 @@ export default defineComponent({
         })
 
         // ============ WATCH ================================
-        watch(() => props.idRowEdit, (value) => { 
-            originDataDetail.value.employeeId = value 
+        watch(() => props.idRowEdit, (value) => {
+            originDataDetail.value.employeeId = value
         })
-        watch(() => props.openPopup, (value) => {  
+        watch(() => props.openPopup, (value) => {
             refetchValueDetail()
         })
 
@@ -256,22 +256,23 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-            } else {  
-                dataEdited = {
+            } else {
+                let newValDataEdit = {
                     ...dataEdited,
                     joinedAt: typeof dataEdited.joinedAt == "string" ? parseInt(dataEdited.joinedAt.replaceAll('-', '')) : dataEdited.joinedAt,
                     leavedAt: typeof dataEdited.leavedAt == "string" ? parseInt(dataEdited.leavedAt.replaceAll('-', '')) : dataEdited.leavedAt,
                     residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
                 };
-                delete dataEdited.employeeId;
-                
+                delete newValDataEdit.employeeId;
+                console.log(newValDataEdit);
+
                 let dataCallCreat = {
                     companyId: companyId,
                     imputedYear: globalYear.value,
                     employeeId: props.idRowEdit,
-                    input: dataEdited
-                }  ;
-                mutate(dataCallCreat) 
+                    input: newValDataEdit
+                };
+                mutate(dataCallCreat)
             }
         }
         return {

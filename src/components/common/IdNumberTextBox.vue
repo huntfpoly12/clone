@@ -54,9 +54,7 @@ export default defineComponent({
     }
     const value = ref(props.valueInput);
 
-    const updateValue = (value: any) => {   
-      console.log(value);
-      
+    const updateValue = (value: any) => {    
       emit("update:valueInput", value); 
     };
 
