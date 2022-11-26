@@ -19,12 +19,12 @@
                     </a-radio>
                 </a-radio-group>
             </a-form-item>
-            <a-form-item label="입사년월일" label-align="right">
-                <date-time-box width="150px" v-model:valueDate="dataEdited.joinedAt" />
+            <a-form-item label="입사년월일" label-align="right" class="joinedAt">
+                <date-time-box width="150px" className="joinedAt" v-model:valueDate="dataEdited.joinedAt" />
             </a-form-item>
-            <a-form-item label="퇴사년월일" label-align="right">
+            <a-form-item label="퇴사년월일" label-align="right" class="leavedAt">
                 <div class="input-text">
-                    <date-time-box width="150px" v-model:valueDate="dataEdited.leavedAt" />
+                    <date-time-box width="150px" className="leavedAt" v-model:valueDate="dataEdited.leavedAt" />
                     <img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;" />
                     <span>
                         마지막 근무한 날
@@ -141,7 +141,7 @@ export default defineComponent({
             joinedAt: "",
             leavedAt: "",
             retirementIncome: false,
-            weeklyWorkingHours: null,
+            weeklyWorkingHours: 0,
             department: '',
             responsibility: '',
         })
@@ -276,6 +276,8 @@ export default defineComponent({
                 };
                 delete newValDataEdit.employeeId;
                 delete newValDataEdit.zipcode;
+                console.log(dataEdited.joinedAt);
+                console.log(dataEdited.leavedAt);
 
                 let dataCallCreat = {
                     companyId: companyId,
