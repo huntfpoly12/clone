@@ -158,8 +158,8 @@ export default defineComponent({
                                 imputedYear: parseInt(dayjs().format('YYYY')),
                                 companyId: companyId
                             };
-                            trigger710.value = true;
-                            refetchPA710();
+                            trigger120.value = true;
+                            refetchPA120();
                             break;
                         case 'pa-520':
                             dataQuery.value = {
@@ -344,7 +344,7 @@ export default defineComponent({
             }
         });
         // get getEmployeeWagesLogs pa-120
-        const { result: resultPA120, loading: loadingPA120, refetch: refetchP1520 } = useQuery(
+        const { result: resultPA120, loading: loadingPA120, refetch: refetchPA120 } = useQuery(
             queries.getEmployeeWageDailiesLogs,
             dataQuery,
             () => ({
@@ -352,7 +352,7 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-        watch(resultPA520, (value) => {
+        watch(resultPA120, (value) => {
             if (value && value.getEmployeeWageDailiesLogs) {
                 dataTableShow.value = value.getEmployeeWageDailiesLogs;
             }
