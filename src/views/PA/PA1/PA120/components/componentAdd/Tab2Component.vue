@@ -1,8 +1,9 @@
 <template>
   <div id="tab2-pa120">
-    <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
+    <div class="header-text-1">공제 / 감면 / 소득세 적용율 {{employeeId}}</div>
     <a-row :gutter="16">
       <a-col :span="12">
+        {{formStateTab2}}
         <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
           <checkbox-basic size="18px" label="국민연금" class="check-box-tab1"></checkbox-basic>
           <checkbox-basic size="18px" label="건강보험" class="check-box-tab1"></checkbox-basic>
@@ -86,24 +87,40 @@
 
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed ,reactive} from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
-import { DxSelectBox } from "devextreme-vue/select-box";
-import { radioCheckPersenPension,radioCheckReductioRate,radioCheckReductionInput,IncomeTaxAppRate } from "../utils/index";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { 
+  radioCheckPersenPension,
+  radioCheckReductioRate,
+  radioCheckReductionInput,
+  IncomeTaxAppRate ,
+  initFormStateTab2
+} from "../../utils/index";
 import dayjs from 'dayjs';
 
 export default defineComponent({
   components: {
     InfoCircleFilled,
-    DxSelectBox
   },
   props: {
+    employeeId:{
+      type:String,
+      default:0
+    },
     modalStatus: Boolean,
   },
   setup(props, { emit }) {
     const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
-
+    const formStateTab2 = reactive<any>({
+      ...initFormStateTab2,
+      reductionItems:{
+        reductionStartDate: dayjs().format("YYYY-MM-DD"),
+        reductionFinishDate: dayjs().format("YYYY-MM-DD")
+      }
+    });
     return {
+      formStateTab2,
       rangeDate,
       radioCheckPersenPension,
       radioCheckReductioRate,

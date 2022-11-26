@@ -89,7 +89,7 @@
                 <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
                     @closePopup="modalEditStatus = false" />
                 <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    typeHistory="pa-520" />
+                     title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-520" />
             </a-col>
         </a-row>
     </div>
@@ -212,7 +212,8 @@ export default defineComponent({
         }
 
         const modalHistory = (data: any) => {
-
+            idRowEdit.value = data.data.id
+            modalHistoryStatus.value = companyId
         }
 
         const actionDeleteFuc = (data: any) => {
