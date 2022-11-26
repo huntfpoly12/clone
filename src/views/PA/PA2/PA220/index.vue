@@ -8,9 +8,9 @@
                     <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
                 </a-col>
                 <a-col :span="21">
-                    <div class="custom-flex">
-                        <label class="lable-item">구분:</label>
-                        <radio-group style="height: 20px" :arrayValue="arrayRadioDivision" v-model:valueRadioCheck="formSearch.division"
+                    <div class="selectRatio">
+                        <strong class="lable-item">구분 :</strong>
+                        <radio-group :arrayValue="arrayRadioDivision" v-model:valueRadioCheck="formSearch.division"
                             :layoutCustom="'horizontal'" />
                     </div>
                 </a-col>

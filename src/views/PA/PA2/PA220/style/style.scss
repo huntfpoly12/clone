@@ -13,6 +13,11 @@
         }
     }
 
+    .selectRatio {
+        display: flex;
+        align-items: flex-start;
+    }
+
     ::v-deep .custom-mail-group {
         .dx-button-content {
             padding: 3px;
@@ -55,7 +60,7 @@
             }
         }
 
-        .title-body-right{
+        .title-body-right {
             float: right;
         }
     }
@@ -101,5 +106,26 @@
             min-width: 50px;
             text-align: center;
         }
+    }
+
+    ::v-deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
+        background: white;
+        padding: 2px 15px;
+        border-radius: 5px;
+        color: black;
+    }
+
+    ::v-deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
+        background: rgb(194, 56, 56);
+        padding: 2px 15px;
+        border-radius: 5px;
+        color: white;
+    }
+
+    ::v-deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
+        background: rgb(76, 134, 65);
+        padding: 2px 15px;
+        border-radius: 5px;
+        color: white;
     }
 }
