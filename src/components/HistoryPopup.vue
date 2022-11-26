@@ -345,7 +345,7 @@ export default defineComponent({
         });
         // get getEmployeeWagesLogs pa-120
         const { result: resultPA120, loading: loadingPA120, refetch: refetchPA120 } = useQuery(
-            queries.getEmployeeWageDailiesLogs,
+            queries.getEmployeeWagesLogs,
             dataQuery,
             () => ({
                 enabled: trigger120.value,
@@ -353,8 +353,8 @@ export default defineComponent({
             })
         );
         watch(resultPA120, (value) => {
-            if (value && value.getEmployeeWageDailiesLogs) {
-                dataTableShow.value = value.getEmployeeWageDailiesLogs;
+            if (value && value.getEmployeeWagesLogs) {
+                dataTableShow.value = value.getEmployeeWagesLogs;
             }
         });
 
