@@ -66,22 +66,24 @@
                                 <a-space :size="10">
                                     <a-tooltip placement="top">
                                         <template #title>편집</template>
-                                        <EditOutlined @click="actionEdit(data)" />
+                                        <EditOutlined @click="actionEdit(data.data.employeeId)" />
                                     </a-tooltip>
                                     <a-tooltip placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
-                                    <DeleteOutlined @click="actionDelete(data)" />
+                                    <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                                 </a-space>
                             </div>
                         </template>
                     </DxDataGrid>
+                    <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+                        :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
                     <PA120PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
                     <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
                         @closePopup="modalEditStatus = false" />
                     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        typeHistory="pa-120" />
+                        title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-120" />
                 </a-spin>
             </a-col>
 
@@ -97,8 +99,11 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { companyId } from "../../../../helpers/commonFunction";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA1/PA120/index";
+import mutations from "../../../../graphql/mutations/PA/PA1/PA120/index"
 import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
+import { Message } from "../../../../configs/enum"
+
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
 
 export default defineComponent({
@@ -111,6 +116,8 @@ export default defineComponent({
         PA120PopupAddNewVue, PA120PopupEdit
     },
     setup() {
+        const contentDelete = Message.getMessage('PA120', '002').message
+        const modalStatus = ref(false)
         const dataSource = ref([]);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
@@ -122,6 +129,7 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear,
         });
+        const idAction = ref()
         const modalAddNewStatus = ref<boolean>(false);
         const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
@@ -134,7 +142,19 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-
+        const {
+            mutate: actionDelete,
+            onError: errorDelete,
+            onDone: successDelete,
+        } = useMutation(mutations.deleteEmployeeWage)
+        errorDelete(e => {
+            notification('error', e.message)
+        })
+        successDelete(e => {
+            notification('success', `업데이트 완료!`)
+            trigger.value = true
+            refetchData()
+        })
         watch(result, (value) => {
             if (value) {
                 dataSource.value = value.getEmployeeWages;
@@ -150,10 +170,21 @@ export default defineComponent({
 
         }
         const modalHistory = (data: any) => {
-
+            idRowEdit.value = data.data.id
+            modalHistoryStatus.value = companyId
         }
 
-        const actionDelete = (data: any) => {
+        const actionDeleteFuc = (data: any) => {
+            idAction.value = data
+            modalStatus.value = true
+        }
+        const statusComfirm = (res: any) => {
+            if (res == true)
+                actionDelete({
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    employeeId: idAction.value
+                })
 
         }
         const onSubmit = (e: any) => {
@@ -168,19 +199,29 @@ export default defineComponent({
             loading,
             idRowEdit,
             modalEditStatus,
+            modalStatus,
             onSubmit,
             dataSource,
             actionEdit,
             actionDelete,
+            actionDeleteFuc,
             modalHistory,
+            contentDelete,
             modalHistoryStatus,
             openAddNewModal,
-            modalAddNewStatus,
+            modalAddNewStatus, statusComfirm,
             per_page, move_column, colomn_resize,
         }
     },
 });
 </script>
+
+
+
+
+
+
+
 
 
 

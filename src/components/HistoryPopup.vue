@@ -3,7 +3,7 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520">
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA120">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -78,6 +78,7 @@ export default defineComponent({
         let trigger610 = ref<boolean>(false);
         let trigger710 = ref<boolean>(false);
         let trigger520 = ref<boolean>(false);
+        let trigger120 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
@@ -152,6 +153,14 @@ export default defineComponent({
                             trigger710.value = true;
                             refetchPA710();
                             break;
+                        case 'pa-120':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger710.value = true;
+                            refetchPA710();
+                            break;
                         case 'pa-520':
                             dataQuery.value = {
                                 imputedYear: parseInt(dayjs().format('YYYY')),
@@ -176,6 +185,7 @@ export default defineComponent({
 
                     trigger710.value = false;
                     trigger520.value = false;
+                    trigger120.value = false;
 
                 }
             }
@@ -333,6 +343,20 @@ export default defineComponent({
                 dataTableShow.value = value.getEmployeeWageDailiesLogs;
             }
         });
+        // get getEmployeeWagesLogs pa-120
+        const { result: resultPA120, loading: loadingPA120, refetch: refetchP1520 } = useQuery(
+            queries.getEmployeeWageDailiesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger120.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA520, (value) => {
+            if (value && value.getEmployeeWageDailiesLogs) {
+                dataTableShow.value = value.getEmployeeWageDailiesLogs;
+            }
+        });
 
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
@@ -356,6 +380,7 @@ export default defineComponent({
             loadingBF220,
             loadingPA710,
             loadingPA520,
+            loadingPA120,
             formarDate,
             dataQuery,
             loadingPA610
