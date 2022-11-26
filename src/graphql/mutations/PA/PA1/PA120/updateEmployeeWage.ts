@@ -1,14 +1,16 @@
 import gql from "graphql-tag";
 export default gql`
-  query getEmployeeWageDaily(
+  mutation updateEmployeeWage(
     $companyId: Int!
     $imputedYear: Int!
     $employeeId: Int!
+    $input: EmployeeWageDailyUpdateInput!
   ) {
-    getEmployeeWageDaily(
+    updateEmployeeWage(
       companyId: $companyId
       imputedYear: $imputedYear
       employeeId: $employeeId
+      input: $input
     ) {
       type
       employeeId
@@ -37,10 +39,20 @@ export default gql`
       residentId
       joinedAt
       leavedAt
+      president
+      householder
       weeklyWorkingHours
+      deductionDependentCount
+      incomeTaxMagnification
+      incomePayment
+      totalPay
       totalDeduction
+      totalReduction
       deletable
-      retirementIncome
+      payItems
+      deductionItems
+      reductionItems
+      dependents
     }
   }
 `;
