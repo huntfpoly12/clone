@@ -32,6 +32,7 @@ export default gql`
       weeklyWorkingHours    
       totalDeduction 
       deletable 
+      retirementIncome
        
     }
   }
