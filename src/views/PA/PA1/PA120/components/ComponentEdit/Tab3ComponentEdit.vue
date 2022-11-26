@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div id="tab3-pa120">
+    <div id="tab3Edit-pa120">
         <a-row>
             <a-col :span="24">
                 <a-spin :spinning="false" size="large">
