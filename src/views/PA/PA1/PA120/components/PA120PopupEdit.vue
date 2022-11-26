@@ -25,9 +25,9 @@
 import { defineComponent, reactive, ref } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
-import Tab1Component from "./componentEdit/Tab1ComponentEdit.vue";
-import Tab2Component from "./componentEdit/Tab2ComponentEdit.vue";
-import Tab3Component from "./componentEdit/Tab3ComponentEdit.vue";
+import Tab1Component from "./componentEdit/Tab1Component.vue";
+import Tab2Component from "./componentEdit/Tab2Component.vue";
+import Tab3Component from "./componentEdit/Tab3Component.vue";
 import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 
@@ -70,6 +70,9 @@ export default defineComponent({
     },
 });
 </script>
+
+
+
 
 
 
