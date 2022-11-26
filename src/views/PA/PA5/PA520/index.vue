@@ -41,7 +41,7 @@
             </a-col>
         </a-row>
         <a-row>
-            <a-col :span="24">
+            <a-col :span="12" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
@@ -52,13 +52,13 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <DxColumn caption="성명" cell-template="company-name" width="450px"/>
+                        <DxColumn caption="성명" cell-template="company-name" width="350px" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" width="450px" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
                             <div class="custom-grade-cell">
@@ -83,15 +83,18 @@
                         </template>
                     </DxDataGrid>
                 </a-spin>
-                <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-                    :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-                <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-                <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
-                    @closePopup="modalEditStatus = false" />
-                <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                     title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-520" />
+            </a-col>
+            <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+                <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
+                    v-if="actionChangeComponent == 1" />
+                <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
+                    v-if="actionChangeComponent == 2" />
             </a-col>
         </a-row>
+        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+            :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+        <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+            :idRowEdit="idRowEdit" typeHistory="pa-520" />
     </div>
 </template>
 <script lang="ts">
@@ -125,6 +128,7 @@ export default defineComponent({
         PA520PopupEdit
     },
     setup() {
+        const actionChangeComponent = ref(1)
         const contentDelete = Message.getMessage('PA120', '002').message
         const modalStatus = ref(false)
         const dataSource = ref([])
@@ -198,9 +202,11 @@ export default defineComponent({
         })
         // ======================= FUNCTION ================================
         const openAddNewModal = () => {
+            actionChangeComponent.value = 1
             modalAddNewStatus.value = true
         }
         const openEditModal = (val: any) => {
+            actionChangeComponent.value = 2
             idRowEdit.value = val
             modalEditStatus.value = true
         }
@@ -222,7 +228,12 @@ export default defineComponent({
                     employeeId: idAction.value
                 })
         }
+        const closeAction = () => {
+            trigger.value = true
+            refetchData()
+        }
         return {
+            actionChangeComponent,
             idRowEdit,
             totalUserOff,
             totalUserOnl,
@@ -235,6 +246,8 @@ export default defineComponent({
             modalAddNewStatus,
             per_page, move_column, colomn_resize,
             contentDelete,
+            closeAction,
+            refetchData,
             onSubmit,
             actionDeleteFuc,
             modalHistory,
@@ -246,4 +259,5 @@ export default defineComponent({
 })
 </script> 
 <style lang="scss" scoped src="./style/style.scss" >
+
 </style>
