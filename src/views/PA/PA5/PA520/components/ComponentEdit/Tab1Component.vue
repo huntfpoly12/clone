@@ -38,12 +38,14 @@
             </a-form-item>
 
 
-            <a-form-item label="외국인 국적" label-align="right" class="label-custom-width label-red">
+            <a-form-item label="외국인 국적" label-align="right"
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
                 <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
                     @textCountry="(res: any) => { dataEdited.nationality = res }" :disabled="disabledSelectBox" />
             </a-form-item>
 
-            <a-form-item label="외국인 체류자격" label-align="right" class="label-custom-width label-red">
+            <a-form-item label="외국인 체류자격" label-align="right"
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
                 <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
                     :disabled="disabledSelectBox" />
             </a-form-item>
@@ -119,6 +121,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const labelResident = ref('외국인번호 유효성')
+        const activeLabel = ref(true)
         const disabledSelectBox = ref(true)
         const countryInfo = ref()
         const selectBoxData1 = ref()
@@ -238,9 +241,11 @@ export default defineComponent({
             if (value == true) {
                 disabledSelectBox.value = false
                 labelResident.value = '주민등록번호'
+                activeLabel.value = true
             } else {
                 labelResident.value = '외국인번호 유효성'
                 disabledSelectBox.value = true
+                activeLabel.value = false
                 dataEdited.nationality = '대한민국'
                 dataEdited.nationalityCode = 'KR'
                 dataEdited.stayQualification = 'C-4'
@@ -282,6 +287,7 @@ export default defineComponent({
             }
         }
         return {
+            activeLabel,
             labelResident,
             disabledSelectBox,
             loading,

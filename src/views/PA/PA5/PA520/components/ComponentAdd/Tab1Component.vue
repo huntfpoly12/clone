@@ -36,13 +36,15 @@
                 layoutCustom="horizontal" />
         </a-form-item>
 
-        <a-form-item label="외국인 국적" label-align="right" class="label-custom-width label-red">
+        <a-form-item label="외국인 국적" label-align="right"
+            :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
             <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
                 @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
                 width="250px" />
         </a-form-item>
 
-        <a-form-item label="외국인 체류자격" label-align="right" class="label-custom-width label-red">
+        <a-form-item label="외국인 체류자격" label-align="right"
+            :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
             <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification" width="250px"
                 :disabled="disabledSelectBox" />
         </a-form-item>
@@ -109,6 +111,7 @@ import { useStore } from 'vuex';
 export default defineComponent({
     setup(props, { emit }) {
         const labelResident = ref('외국인번호 유효성')
+        const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
         const countryInfo = ref()
         const selectBoxData1 = ref()
@@ -187,7 +190,9 @@ export default defineComponent({
             if (value == true) {
                 disabledSelectBox.value = false
                 labelResident.value = '주민등록번호'
+                activeLabel.value = true
             } else {
+                activeLabel.value = false
                 labelResident.value = '외국인번호 유효성'
                 disabledSelectBox.value = true
                 dataCreated.nationality = '대한민국'
@@ -225,6 +230,7 @@ export default defineComponent({
             }
         }
         return {
+            activeLabel,
             labelResident,
             disabledSelectBox,
             actionCreated,
