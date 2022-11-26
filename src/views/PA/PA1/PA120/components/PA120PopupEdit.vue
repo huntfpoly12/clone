@@ -6,15 +6,15 @@
             <a-spin :spinning="false" size="large">
                 <div id="pa-120" class="page-content">
                     <a-tabs v-model:activeKey="activeKey" type="card">
-                        <!-- <a-tab-pane key="1" tab="기본">
+                        <a-tab-pane key="1" tab="기본">
                             <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId"></Tab1Component>
-                        </a-tab-pane> -->
-                        <!-- <a-tab-pane key="2" tab="급여">
+                        </a-tab-pane>
+                        <a-tab-pane key="2" tab="급여">
                             <Tab2Component :employeeId="employeeId"></Tab2Component>
                         </a-tab-pane>
                         <a-tab-pane key="3" tab="부양가족">
                             <Tab3Component></Tab3Component>
-                        </a-tab-pane> -->
+                        </a-tab-pane>
                     </a-tabs>
                 </div>
             </a-spin>
@@ -70,6 +70,8 @@ export default defineComponent({
     },
 });
 </script>
+
+
 
 
 
