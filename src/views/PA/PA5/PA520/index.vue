@@ -108,7 +108,6 @@ import PA520PopupAddNew from "./components/PA520PopupAddNew.vue"
 import PA520PopupEdit from "./components/PA520PopupEdit.vue"
 import mutations from "../../../../graphql/mutations/PA/PA5/PA520/index"
 import { Message } from "../../../../configs/enum"
-
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
@@ -156,7 +155,6 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
-
         const {
             mutate: actionDelete,
             onError: errorDelete,
@@ -170,7 +168,6 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         })
-
         // ======================= WATCH ==================================
         watch(result, (value) => {
             if (value) {
@@ -187,7 +184,6 @@ export default defineComponent({
                 trigger.value = false
             }
         })
-
         watch(() => modalAddNewStatus.value, (value) => {
             if (value == false) {
                 trigger.value = true
@@ -200,7 +196,6 @@ export default defineComponent({
                 refetchData()
             }
         })
-
         // ======================= FUNCTION ================================
         const openAddNewModal = () => {
             modalAddNewStatus.value = true
@@ -208,21 +203,17 @@ export default defineComponent({
         const openEditModal = (val: any) => {
             idRowEdit.value = val
             modalEditStatus.value = true
-
         }
-
         const modalHistory = (data: any) => {
             idRowEdit.value = data.data.id
             modalHistoryStatus.value = companyId
         }
-
         const actionDeleteFuc = (data: any) => {
             idAction.value = data
             modalStatus.value = true
         }
         const onSubmit = (e: any) => {
         }
-
         const statusComfirm = (res: any) => {
             if (res == true)
                 actionDelete({
@@ -230,7 +221,6 @@ export default defineComponent({
                     imputedYear: globalYear.value,
                     employeeId: idAction.value
                 })
-
         }
         return {
             idRowEdit,
@@ -256,5 +246,4 @@ export default defineComponent({
 })
 </script> 
 <style lang="scss" scoped src="./style/style.scss" >
-
 </style>

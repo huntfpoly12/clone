@@ -54,6 +54,10 @@
             <a-form-item label="주민(외국인)번호" label-align="right" class="label-red">
                 <id-number-text-box width="200px" v-model:valueInput="dataEdited.residentId" :required="true" />
             </a-form-item>
+            <a-form-item label="주소정근무시간" class="label-red" label-align="right">
+                <text-number-box width="200px" v-model:valueInput="dataEdited.weeklyWorkingHours" :required="true"
+                    placeholder="숫자만 입력 가능" />
+            </a-form-item>
             <a-form-item label="주소" class="clr" label-align="left">
                 <a-row :gutter="[0, 4]">
                     <a-col :span="24">
@@ -146,7 +150,7 @@ export default defineComponent({
             joinedAt: "",
             leavedAt: "",
             retirementIncome: false,
-            weeklyWorkingHours: 10,
+            weeklyWorkingHours: null,
             department: '',
             responsibility: '',
         })
@@ -252,7 +256,7 @@ export default defineComponent({
 
         }
 
-        const actionUpdated = (e: any) => {
+        const actionUpdated = (e: any) => { 
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();

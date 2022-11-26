@@ -52,6 +52,12 @@
         <a-form-item label="주민(외국인)번호" label-align="right" class="label-red">
             <id-number-text-box width="200px" v-model:valueInput="dataCreated.residentId" :required="true" />
         </a-form-item>
+
+        <a-form-item label="주소정근무시간" label-align="right" class="label-red">
+            <text-number-box width="200px" v-model:valueInput="dataCreated.weeklyWorkingHours" :required="true"
+                placeholder="숫자만 입력 가능" />
+        </a-form-item>
+
         <a-form-item label="주소" class="clr" label-align="left">
             <a-row :gutter="[0, 4]">
                 <a-col :span="24">
@@ -106,7 +112,7 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, computed } from "vue";  
+import { defineComponent, ref, reactive, computed } from "vue";
 import { radioCheckForeigner } from "../../utils/index";
 import dayjs from 'dayjs';
 import queries from "../../../../../../graphql/queries/PA/PA5/PA520/index"
@@ -115,7 +121,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "../../../../../../helpers/commonFunction"
 import notification from "../../../../../../utils/notification";
 import { useStore } from 'vuex';
-export default defineComponent({ 
+export default defineComponent({
     setup(props, { emit }) {
         const countryInfo = ref()
         const selectBoxData1 = ref()
@@ -135,7 +141,7 @@ export default defineComponent({
             joinedAt: dayjs().format('YYYY-MM-DD'),
             leavedAt: dayjs().format('YYYY-MM-DD'),
             retirementIncome: false,
-            weeklyWorkingHours: 10,
+            weeklyWorkingHours: 0,
             department: '',
             responsibility: '',
         })
@@ -150,7 +156,6 @@ export default defineComponent({
         } = useQuery(queries.getDepartments, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-
         resGetDepartments(res => {
             // selectBoxData.value = res.data.getDepartments 
             let valArr: any = []
@@ -162,14 +167,12 @@ export default defineComponent({
             })
             selectBoxData1.value = valArr
         })
-
         const {
             onResult: resGetResponsibilities,
         } = useQuery(queries.getResponsibilities, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-
-        resGetResponsibilities(res => { 
+        resGetResponsibilities(res => {
             let valArr: any = []
             res.data.getResponsibilities.map((v: any) => {
                 valArr.push({
@@ -177,9 +180,8 @@ export default defineComponent({
                     value: v.responsibility
                 })
             })
-            selectBoxData2.value = valArr 
+            selectBoxData2.value = valArr
         })
-
         const {
             mutate,
             onError,
@@ -189,20 +191,14 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(res => {
+            emit("closePopup", true)
             notification('success', '업데이트 완료!')
         })
-
-
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             // dataCreated.zipcode = data.zonecode;
             dataCreated.roadAddress = data.roadAddress;
-        }
-
-        const customItemCreating = (e: any) => {
-
-        }
-
+        } 
         const actionCreated = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -213,7 +209,7 @@ export default defineComponent({
                     employeeId: parseInt(dataCreated.employeeId),
                     joinedAt: parseInt(dataCreated.joinedAt.replaceAll('-', '')),
                     leavedAt: parseInt(dataCreated.leavedAt.replaceAll('-', '')),
-                    residentId: dataCreated.residentId.slice(0, 6) + '-' + dataCreated.residentId.slice(7, 13)
+                    residentId: dataCreated.residentId.slice(0, 6) + '-' + dataCreated.residentId.slice(6, 14)
                 };
                 let dataCallCreat = {
                     companyId: companyId,
@@ -229,15 +225,13 @@ export default defineComponent({
             dataCreated,
             funcAddress,
             radioCheckForeigner,
-            activeKey: ref("1"),
-            customItemCreating,
+            activeKey: ref("1"), 
             selectBoxData1,
             selectBoxData2
         };
     },
 });
 </script>
- 
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
 
 </style>

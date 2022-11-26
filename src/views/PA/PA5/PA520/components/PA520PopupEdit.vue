@@ -43,7 +43,6 @@ export default defineComponent({
             emit('closePopup', false)
         }
         const openPopupValue = ref(0)
-
         const editRow = ref()
         watch(() => props.modalStatus, (value) => {
             if (value) {
@@ -61,5 +60,4 @@ export default defineComponent({
 });
 </script> 
 <style lang="scss" scoped src="../style/popupAddNew.scss" >
-
 </style>
