@@ -682,7 +682,7 @@ export default defineComponent({
             label: TaxPayItem.all()[index].name,
         }));
 
-        const arrLabel = <any>[];
+        const arrLabel = Array();
         TaxFreePayItem.all().forEach((k, index) => {
             if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
                 arrLabel[index] = TaxFreePayItem.all()[index].name + ' 월' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit
