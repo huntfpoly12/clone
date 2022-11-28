@@ -11,7 +11,7 @@
                     </a-col>
                     <a-col :span="12">
                         <a-form-item label="소득세 적용율" label-align="right" class="income-tax-app-rate">
-                            <radio-group :arrayValue="IncomeTaxAppRate" :valueRadioCheck="1" layoutCustom="horizontal"></radio-group>
+                            <radio-group :valueRadioCheck="1" layoutCustom="horizontal"></radio-group>
                         </a-form-item>
                     </a-col>
                 </a-row>
