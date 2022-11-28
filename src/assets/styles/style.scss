@@ -1,16 +1,15 @@
-
 // grid scss
-.dx-datagrid-headers .dx-header-row {  
-  background-color: #F2F5F7;  
-}  
+.dx-datagrid-headers .dx-header-row {
+  background-color: #F2F5F7;
+}
 
-.dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused) {  
-  background-color: #D1E1F8!important;  
-  color: black!important;  
-  cursor: pointer;  
-} 
+.dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row)>td:not(.dx-focused) {
+  background-color: #D1E1F8 !important;
+  color: black !important;
+  cursor: pointer;
+}
 
-.pagination-table{
+.pagination-table {
   float: right;
 }
 
@@ -62,4 +61,40 @@
 
 .ant-form-item {
   margin-bottom: 5px;
+}
+
+$lenght: 100;
+
+@for $i from 1 through $lenght {
+  .pl-#{$i} {
+    padding-left: $i+ px;
+  }
+
+  .pt-#{$i} {
+    padding-top: $i+ px;
+  }
+
+  .pr-#{$i} {
+    padding-right: $i+ px;
+  }
+
+  .pb-#{$i} {
+    padding-bottom: $i+ px;
+  }
+
+  .ml-#{$i} {
+    padding-left: $i+ px;
+  }
+
+  .mt-#{$i} {
+    padding-top: $i+ px;
+  }
+
+  .mr-#{$i} {
+    padding-right: $i+ px;
+  }
+
+  .mb-#{$i} {
+    padding-bottom: $i+ px;
+  }
 }
