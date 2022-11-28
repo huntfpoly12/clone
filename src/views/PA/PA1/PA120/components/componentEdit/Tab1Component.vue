@@ -301,9 +301,6 @@ export default defineComponent({
     watch(() => props.idRowEdit, (value) => {
       originDataDetail.value.employeeId = value
     })
-    watch(() => props.openPopup, (value) => {
-      refetchValueDetail()
-    })
     const actionUpdated = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
