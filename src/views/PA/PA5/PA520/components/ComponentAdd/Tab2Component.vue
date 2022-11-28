@@ -62,11 +62,19 @@
 				<div class="deduction-main">
 					<div v-for="(item, index) in arrDeduction" class="custom-deduction">
 						<span>
-							{{ item.name }} - {{ item.itemCode }}
+							<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name"
+								:type="1" subName="과세" />
+							<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name"
+								:type="2" subName="상여(과세)" />
+							<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode" :name="item.name"
+								:type="3"
+								:subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+							<deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+								:name="item.name" :type="4" subName="과세" />
 						</span>
 						<div>
-							<text-number-box width="150px" class="mr-5" />
-							<span>원</span>
+							<number-box-money width="150px" :required="true" :spinButtons="false"></number-box-money>
+							<span class="pl-5">원</span>
 						</div>
 					</div>
 				</div>
@@ -101,11 +109,11 @@ export default defineComponent({
 		})
 		const arrDeduction = ref()
 		const {
-			onResult: resGetDepartments,
+			onResult: resWithholdingConfigPayItems,
 		} = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
 			fetchPolicy: "no-cache",
 		}))
-		resGetDepartments(res => {
+		resWithholdingConfigPayItems(res => {
 			arrDeduction.value = res.data.getWithholdingConfigPayItems
 		})
 		return {
