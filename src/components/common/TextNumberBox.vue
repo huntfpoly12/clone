@@ -54,7 +54,7 @@ export default defineComponent({
     const onInputValue = (e: any) => {
       var inputElement = e.event.target;
       inputElement.value = inputElement.value.replaceAll(/\D/g, '');
-      emit("update:valueInput", inputElement.value);
+      emit("update:valueInput", parseInt(inputElement.value));
     };
 
     watch(

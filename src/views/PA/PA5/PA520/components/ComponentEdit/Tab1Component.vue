@@ -19,69 +19,60 @@
                     </a-radio>
                 </a-radio-group>
             </a-form-item>
-            <a-form-item label="입사년월일" label-align="right">
-                <date-time-box width="150px" v-model:valueDate="dataEdited.joinedAt" />
+            <a-form-item label="입사년월일" label-align="right" class="joinedAt">
+                <date-time-box width="150px" className="joinedAt" v-model:valueDate="dataEdited.joinedAt" />
             </a-form-item>
-            <a-form-item label="퇴사년월일" label-align="right">
+            <a-form-item label="퇴사년월일" label-align="right" class="leavedAt">
                 <div class="input-text">
-                    <date-time-box width="150px" v-model:valueDate="dataEdited.leavedAt" />
+                    <date-time-box width="150px" className="leavedAt" v-model:valueDate="dataEdited.leavedAt" />
                     <img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;" />
                     <span>
                         마지막 근무한 날
                     </span>
                 </div>
             </a-form-item>
-            <a-row>
-                <a-col :span="8">
-                    <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
-                        <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataEdited.foreigner"
-                            layoutCustom="horizontal" />
-                    </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                    <a-form-item label="외국인 국적" label-align="right" class="label-custom-width label-red">
-                        <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
-                            @textCountry="(res: any) => { dataEdited.nationality = res }" :disabled="true" />
-                    </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                    <a-form-item label="외국인 체류자격" label-align="right" class="label-custom-width label-red">
-                        <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
-                            :disabled="true" />
-                    </a-form-item>
-                </a-col>
-            </a-row>
-            <a-form-item label="주민(외국인)번호" label-align="right" class="label-red">
+
+            <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
+                <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataEdited.foreigner"
+                    layoutCustom="horizontal" />
+            </a-form-item>
+
+
+            <a-form-item label="외국인 국적" label-align="right"
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
+                <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
+                    @textCountry="(res: any) => { dataEdited.nationality = res }" :disabled="disabledSelectBox" />
+            </a-form-item>
+
+            <a-form-item label="외국인 체류자격" label-align="right"
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
+                <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
+                    :disabled="disabledSelectBox" />
+            </a-form-item>
+
+            <a-form-item :label="labelResident" label-align="right" class="label-red">
                 <id-number-text-box width="200px" v-model:valueInput="dataEdited.residentId" :required="true" />
             </a-form-item>
+            <a-form-item label="주소정근무시간" class="label-red" label-align="right">
+                <text-number-box width="200px" v-model:valueInput="dataEdited.weeklyWorkingHours" :required="true"
+                    placeholder="숫자만 입력 가능" />
+            </a-form-item>
+
             <a-form-item label="주소" class="clr" label-align="left">
-                <a-row :gutter="[0, 4]">
-                    <a-col :span="24">
-                        <a-row>
-                            <a-col :span="6">
-                                <default-text-box width="100%" :disabled="true" />
-                                <!-- <default-text-box width="100%" :disabled="true"
-                            v-model:valueInput="dataEdited.zipcode" /> -->
-                            </a-col>
-                            <a-col :span="18">
-                                <div style="margin-left: 5px">
-                                    <post-code-button @dataAddress="funcAddress" />
-                                </div>
-                            </a-col>
-                        </a-row>
+                <a-row>
+                    <a-col :span="5">
+                        <default-text-box width="100%" :disabled="true" v-model:valueInput="dataEdited.zipcode" />
                     </a-col>
-                    <a-col :span="24">
-                        <a-row>
-                            <a-col :span="12">
-                                <default-text-box width="100%" :disabled="true" placeholder="주소1"
-                                    v-model:valueInput="dataEdited.roadAddress" />
-                            </a-col>
-                            <a-col :span="12" style="padding-left: 9px">
-                                <default-text-box width="100%" placeholder="주소2"
-                                    v-model:valueInput="dataEdited.addressExtend" />
-                            </a-col>
-                        </a-row>
+                    <a-col :span="14">
+                        <div style="margin-left: 5px">
+                            <post-code-button @dataAddress="funcAddress" />
+                        </div>
                     </a-col>
+                </a-row>
+                <a-row style="display: inherit;">
+                    <default-text-box width="357px" :disabled="true" placeholder="주소1"
+                        v-model:valueInput="dataEdited.roadAddress" style="margin: 5px 0 5px 0" />
+                    <default-text-box width="357px" placeholder="주소2" v-model:valueInput="dataEdited.addressExtend" />
                 </a-row>
             </a-form-item>
             <a-form-item label="이메일" label-align="right">
@@ -94,6 +85,7 @@
                     </span>
                 </div>
             </a-form-item>
+
             <a-form-item label="부서" label-align="right">
                 <custom-item-select-box v-model:valueInput="dataEdited.department" :arrSelect="selectBoxData1"
                     width="200px" />
@@ -128,6 +120,9 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
+        const labelResident = ref('외국인번호 유효성')
+        const activeLabel = ref(true)
+        const disabledSelectBox = ref(true)
         const countryInfo = ref()
         const selectBoxData1 = ref()
         const selectBoxData2 = ref()
@@ -146,7 +141,7 @@ export default defineComponent({
             joinedAt: "",
             leavedAt: "",
             retirementIncome: false,
-            weeklyWorkingHours: 10,
+            weeklyWorkingHours: 0,
             department: '',
             responsibility: '',
         })
@@ -207,7 +202,7 @@ export default defineComponent({
                 dataEdited.nationalityCode = res.data.getEmployeeWageDaily.nationalityCode
                 dataEdited.stayQualification = res.data.getEmployeeWageDaily.stayQualification
                 dataEdited.residentId = res.data.getEmployeeWageDaily.residentId.replace("-", "")
-                // dataEdited.zipcode=res.data.getEmployeeWageDail
+                dataEdited.zipcode = ''
                 dataEdited.roadAddress = res.data.getEmployeeWageDaily.roadAddress
                 dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
                 dataEdited.email = res.data.getEmployeeWageDaily.email
@@ -242,9 +237,25 @@ export default defineComponent({
             refetchValueDetail()
         })
 
+        watch(() => dataEdited.foreigner, (value: any) => {
+            if (value == true) {
+                disabledSelectBox.value = false
+                labelResident.value = '주민등록번호'
+                activeLabel.value = true
+            } else {
+                labelResident.value = '외국인번호 유효성'
+                disabledSelectBox.value = true
+                activeLabel.value = false
+                dataEdited.nationality = '대한민국'
+                dataEdited.nationalityCode = 'KR'
+                dataEdited.stayQualification = 'C-4'
+            }
+        })
+
+
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
-            // dataEdited.zipcode = data.zonecode;
+            dataEdited.zipcode = data.zonecode;
             dataEdited.roadAddress = data.roadAddress;
         }
 
@@ -264,7 +275,9 @@ export default defineComponent({
                     residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
                 };
                 delete newValDataEdit.employeeId;
-                console.log(newValDataEdit);
+                delete newValDataEdit.zipcode;
+                console.log(dataEdited.joinedAt);
+                console.log(dataEdited.leavedAt);
 
                 let dataCallCreat = {
                     companyId: companyId,
@@ -276,6 +289,9 @@ export default defineComponent({
             }
         }
         return {
+            activeLabel,
+            labelResident,
+            disabledSelectBox,
             loading,
             actionUpdated,
             countryInfo,
