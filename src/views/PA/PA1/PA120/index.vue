@@ -79,7 +79,7 @@
                     </DxDataGrid>
                     <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
                         :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-                    <PA120PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+                    <PA120PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="eventCLoseAddPopup" />
                     <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
                         @closePopup="modalEditStatus = false" />
                     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -169,6 +169,12 @@ export default defineComponent({
             modalEditStatus.value = true
 
         }
+        const eventCLoseAddPopup = () => {
+            modalAddNewStatus.value = false;
+            trigger.value = true
+            refetchData()
+
+        }
         const modalHistory = (data: any) => {
             idRowEdit.value = data.data.id
             modalHistoryStatus.value = companyId
@@ -208,13 +214,29 @@ export default defineComponent({
             modalHistory,
             contentDelete,
             modalHistoryStatus,
-            openAddNewModal,
+            openAddNewModal, eventCLoseAddPopup,
             modalAddNewStatus, statusComfirm,
             per_page, move_column, colomn_resize,
         }
     },
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

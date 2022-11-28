@@ -4,7 +4,7 @@ export default gql`
     $companyId: Int!
     $imputedYear: Int!
     $employeeId: Int!
-    $input: EmployeeWageDailyUpdateInput!
+    $input: EmployeeWageUpdateInput!
   ) {
     updateEmployeeWage(
       companyId: $companyId
@@ -13,46 +13,6 @@ export default gql`
       input: $input
     ) {
       type
-      employeeId
-      incomeTypeCode
-      name
-      foreigner
-      nationality
-      nationalityCode
-      stayQualification
-      residentIdValidity
-      roadAddress
-      addressExtend
-      email
-      department
-      responsibility
-      status
-      withholdingIncomeTax
-      withholdingLocalIncomeTax
-      withholdingRuralSpecialTax
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
-      ip
-      active
-      residentId
-      joinedAt
-      leavedAt
-      president
-      householder
-      weeklyWorkingHours
-      deductionDependentCount
-      incomeTaxMagnification
-      incomePayment
-      totalPay
-      totalDeduction
-      totalReduction
-      deletable
-      payItems
-      deductionItems
-      reductionItems
-      dependents
     }
   }
 `;
