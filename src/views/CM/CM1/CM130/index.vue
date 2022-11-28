@@ -317,19 +317,18 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    <standard-form formName="add-deduction-310">
+                    <standard-form formName="add-deduction-310" style="border: 1px solid #ddd; margin-top: 20px; padding: 10px;">
                         <h2 style="font-weight: 600; color: gray" class="title_modal">
                             급여상세항목
                         </h2>
                         <a-row :gutter="24">
-                            <a-col :span="14">
+                            <a-col :span="5">
                                 <a-form-item label="코드" :label-col="labelCol">
                                     <number-box :width="150" :min="0" :max="30" v-model:valueInput="formStateDeduction.itemCode"
                                         :spinButtons="true" :disabled="true" >
                                     </number-box>
                                 </a-form-item>
                             </a-col>
-                            <a-col :span="4"></a-col>
                             <a-col :span="6">
                                 <switch-basic style="width: 80px;" v-model:valueSwitch="formStateDeduction.use"
                                     :textCheck="'이용중'" :textUnCheck="'이용중지'" :disabled="true"/>
