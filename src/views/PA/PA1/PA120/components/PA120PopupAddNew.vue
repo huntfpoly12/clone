@@ -1,7 +1,7 @@
 <template>
     <div>
         <a-spin :spinning="false" size="large">
-            <div  id="pa-120">
+            <div id="pa-120">
                 <a-tabs v-model:activeKey="activeKey" type="card">
                     <a-tab-pane key="1" tab="기본">
                         <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId"></Tab1Component>
@@ -24,9 +24,8 @@ import { DxSelectBox } from 'devextreme-vue/select-box';
 import Tab1Component from "./componentAdd/Tab1Component.vue";
 import Tab2Component from "./componentAdd/Tab2Component.vue";
 import Tab3Component from "./componentAdd/Tab3Component.vue";
-import { radioCheckForeigner , radioCheckHouseholder} from "../utils/index";
+import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
-
 export default defineComponent({
     components: {
         InfoCircleFilled,
@@ -35,23 +34,23 @@ export default defineComponent({
         Tab2Component,
         Tab3Component
     },
-    props:{
+    props: {
         modalStatus: Boolean,
     },
-    setup(props,{emit}) {
+    setup(props, { emit }) {
         const employeeId = ref('');
         const demoData = reactive({
             tab1: {
-                a1:"5345345",
-                a2:"45345345"
+                a1: "5345345",
+                a2: "45345345"
             }
         })
         const setModalVisible = () => {
             emit('closePopup', false);
         }
-        const setEmployeeId = (val : any) => {
+        const setEmployeeId = (val: any) => {
             console.log(val);
-            
+
             employeeId.value = val;
         }
         return {
@@ -66,4 +65,8 @@ export default defineComponent({
     },
 });
 </script>
+
+
+
+
 <style lang="scss" scoped src="../style/popupAddNew.scss" />
