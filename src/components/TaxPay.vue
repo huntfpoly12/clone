@@ -17,7 +17,7 @@ const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
   value: TaxPayItem.all()[index].enumOrdinal,
   label: TaxPayItem.all()[index].name,
 }));
-const arrLabel = <any>[];
+const arrLabel = Array();
 TaxFreePayItem.all().forEach((k, index) => {
   let submission = JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission ? 'O' : 'X'
   if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
