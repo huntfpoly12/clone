@@ -64,14 +64,14 @@
                         <default-text-box width="100%" :disabled="true" v-model:valueInput="dataEdited.zipcode" />
                     </a-col>
                     <a-col :span="14">
-                        <div style="margin-left: 5px">
+                        <div class="ml-5">
                             <post-code-button @dataAddress="funcAddress" />
                         </div>
                     </a-col>
                 </a-row>
                 <a-row style="display: inherit;">
                     <default-text-box width="357px" :disabled="true" placeholder="주소1"
-                        v-model:valueInput="dataEdited.roadAddress" style="margin: 5px 0 5px 0" />
+                        v-model:valueInput="dataEdited.roadAddress" class="mt-5 mb-5" />
                     <default-text-box width="357px" placeholder="주소2" v-model:valueInput="dataEdited.addressExtend" />
                 </a-row>
             </a-form-item>

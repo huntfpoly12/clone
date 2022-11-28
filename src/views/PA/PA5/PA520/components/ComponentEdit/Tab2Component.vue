@@ -44,24 +44,46 @@
 				<div class="header-text-0">월급여</div>
 				<div>
 					<a-form-item label="일급/월급">
-						<div style="display: flex; align-items: center;">
+						<div class="d-flex-center">
 							<switch-basic switch-basic textCheck="일급" textUnCheck="N" style="margin-right: 10px;" />
-							<default-text-box width="200px" />
+							<default-text-box width="200px" class="mr-5" />
+						</div>
+					</a-form-item>
+					<a-form-item label="근무일수">
+						<div class="d-flex-center">
+							<default-text-box width="200px" class="mr-5" />
+							<span class="ml-10">일</span>
 						</div>
 					</a-form-item>
 				</div>
 			</a-col>
 			<a-col :span="12">
 				<div class="header-text-0">공제 항목 <span style="font-size: 12px;">{50000}원</span></div>
-				<a-form-item label="감면입력">
-					<div style="display: flex; align-items: center;">
-						<text-number-box style="margin-right: 5px;" />
-						<span>원</span>
+				<a-spin :spinning="loading" size="large">
+					<div class="deduction-main">
+						<div v-for="(item, index) in arrDeduction" class="custom-deduction">
+							<span>
+								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+									:name="item.name" :type="1" subName="과세" />
+								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+									:name="item.name" :type="2" subName="상여(과세)" />
+								<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+									:name="item.name" :type="3"
+									:subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+								<deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+									:name="item.name" :type="4" subName="과세" />
+							</span>
+							<div>
+								<number-box-money width="150px" :required="true" :spinButtons="false">
+								</number-box-money>
+								<span class="pl-5">원</span>
+							</div>
+						</div>
 					</div>
-				</a-form-item>
+				</a-spin>
 			</a-col>
 		</a-row>
-		<div style="width: 100%;text-align: center;margin-top: 30px;">
+		<div class="button-action">
 			<button-basic text="저장" type="default" mode="contained" />
 		</div>
 	</div>
@@ -71,6 +93,10 @@
 import { defineComponent, ref, computed } from "vue";
 import { radioCheckPersenPension, radioCheckReductioRate, radioCheckReductionInput, IncomeTaxAppRate } from "../../utils/index";
 import dayjs from 'dayjs';
+import { useQuery } from "@vue/apollo-composable"
+import { useStore } from 'vuex';
+import queries from "../../../../../../graphql/queries/PA/PA5/PA520/index"
+import { companyId } from "../../../../../../helpers/commonFunction"
 
 export default defineComponent({
 	props: {
@@ -78,13 +104,29 @@ export default defineComponent({
 	},
 	setup(props, { emit }) {
 		const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
-
+		const store = useStore();
+		const globalYear: any = computed(() => store.state.settings.globalYear);
+		const originData = ref({
+			companyId: companyId,
+			imputedYear: globalYear.value,
+		})
+		const arrDeduction = ref()
+		const {
+			loading: loading,
+			onResult: resWithholdingConfigPayItems,
+		} = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
+			fetchPolicy: "no-cache",
+		}))
+		resWithholdingConfigPayItems(res => {
+			arrDeduction.value = res.data.getWithholdingConfigPayItems
+		})
 		return {
+			arrDeduction,
 			rangeDate,
 			radioCheckPersenPension,
 			radioCheckReductioRate,
 			radioCheckReductionInput,
-			IncomeTaxAppRate
+			IncomeTaxAppRate, loading
 		};
 	},
 });

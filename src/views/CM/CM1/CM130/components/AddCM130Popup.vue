@@ -9,22 +9,22 @@
                     </h2>
                     <a-row :gutter="24">
                         <a-col :span="14">
-                            <a-form-item label="코드" :label-col="labelCol">
-                                <number-box :width="150" placeholder="Number box" :min="0" :max="30"
-                                    v-model:valueInput="formState.itemCode" :spinButtons="true">
+                            <a-form-item label="코드" :label-col="labelCol" class="red">
+                                <number-box :width="150" :min="0" :max="30"
+                                    v-model:valueInput="formState.itemCode" :spinButtons="true" :required="true">
                                 </number-box>
                             </a-form-item>
                         </a-col>
-                        <a-col :span="4"></a-col>
+                        <!-- <a-col :span="4"></a-col>
                         <a-col :span="6">
                             <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :textCheck="'이용중'"
                                 :textUnCheck="'이용중지'" />
-                        </a-col>
+                        </a-col> -->
                     </a-row>
                     <a-row>
                         <a-col :span="14">
-                            <a-form-item label="항목명" :label-col="labelCol">
-                                <default-text-box style="width: 150px; margin-right: 10px"
+                            <a-form-item label="항목명" :label-col="labelCol" class="red">
+                                <default-text-box style="width: 150px; margin-right: 10px" :required="true"
                                     v-model:valueInput="formState.name">
                                 </default-text-box>
                             </a-form-item>
@@ -32,10 +32,18 @@
                     </a-row>
                     <a-row>
                         <a-col :span="24">
-                            <a-form-item label="과세구분/유형" :label-col="labelCol">
-                                <div style="width: 320px">
-                                    <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode"></TaxPay>
-                                </div>
+                            <a-form-item label="과세구분/유형" :label-col="labelCol" class="red">
+                                <TaxPay style="width: 320px" placeholder="선택" v-model:selectedValue="formState.taxPayCode" :required="true"></TaxPay>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row>
+                        <a-col :span="24">
+                            <a-form-item label="산출방법" :label-col="labelCol">
+                                <default-text-box style="width: 320px"
+                                placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                                    v-model:valueInput="formState.formula">
+                                </default-text-box>
                             </a-form-item>
                         </a-col>
                     </a-row>
@@ -44,7 +52,7 @@
                     <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
                         @onClick="setModalVisible()" />
                     <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140"
-                        :type="'default'" :mode="'contained'" @onClick="onSubmit" />
+                        :type="'default'" :mode="'contained'" @onClick="onSubmit($event)" />
                 </div>
             </standard-form>
         </a-modal>
@@ -123,24 +131,30 @@ export default defineComponent({
             emit('closePopup', false)
         });
 
-        const onSubmit = () => {
-            let variables = {
-                companyId: companyId,
-                imputedYear: parseInt(dayjs().format("YYYY")),
-                input: {
-                    itemCode: formState.itemCode,
-                    name: formState.name,
-                    use: formState.use,
-                    sort: formState.formula,
-                    tax: true,
-                    taxfreePayItemCode:
-                        formState.taxPayCode[0] === "비과세" ? formState.taxPayCode[1] : null,
-                    taxPayItemCode:
-                        formState.taxPayCode[0] === "과세" ? formState.taxPayCode[1] : null,
-                },
-            };
+        const onSubmit = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                let variables = {
+                    companyId: companyId,
+                    imputedYear: parseInt(dayjs().format("YYYY")),
+                    input: {
+                        itemCode: formState.itemCode,
+                        name: formState.name,
+                        use: formState.use,
+                        sort: 0,
+                        formula: formState.formula,
+                        tax: true,
+                        taxfreePayItemCode:
+                            formState.taxPayCode[0] === "비과세" ? formState.taxPayCode[1] : null,
+                        taxPayItemCode:
+                            formState.taxPayCode[0] === "과세" ? formState.taxPayCode[1] : null,
+                    },
+                };
 
-            creactConfigPayItem(variables);
+                creactConfigPayItem(variables);
+            }
         };
         const setModalVisible = () => {
             if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)

@@ -98,3 +98,12 @@ $lenght: 100;
     padding-bottom: $i+ px;
   }
 }
+
+.d-flex {
+  display: flex;
+}
+
+.d-flex-center {
+  display: flex;
+  align-items: center;
+}
