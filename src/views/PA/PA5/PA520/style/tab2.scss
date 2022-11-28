@@ -1,0 +1,144 @@
+#tab2-pa520 {
+	::v-deep .ant-form-item-label>label {
+		padding-left: 10px;
+	}
+
+	.input-text {
+		display: flex;
+		align-items: center;
+
+		span {
+			margin-left: 10px;
+		}
+	}
+
+	.header-text-1 {
+		background-color: #558ED5;
+		padding: 5px;
+		font-weight: bold;
+		font-size: 18px;
+		margin-bottom: 10px;
+	}
+
+	.header-text-2 {
+		background-color: #C6D9F1;
+		padding: 5px;
+		font-weight: bold;
+		font-size: 18px;
+		margin-bottom: 10px;
+	}
+
+	.header-text-0 {
+		background-color: #C6D9F1;
+		padding: 5px;
+		font-size: 16px;
+		margin-bottom: 10px;
+	}
+
+	.header-text-3 {
+		background-color: #558ED5;
+		padding: 5px;
+		font-weight: bold;
+		font-size: 18px;
+		margin-bottom: 10px;
+
+		span {
+			display: flex;
+			align-items: center;
+			font-size: 13px;
+			color: white;
+			float: right;
+			padding-right: 20px;
+
+			p {
+				margin: 5px 0px 3px 10px;
+			}
+		}
+	}
+
+	.ins-dedu {
+		display: flex;
+
+		.check-box-tab1 {
+			margin-left: 20px;
+		}
+	}
+
+	.durunuri-insurance {
+		::v-deep .ant-form-item-label>label {
+			width: 200px;
+			padding-left: 10px;
+		}
+
+		.switch-insurance {
+			width: 50px;
+			float: right;
+		}
+	}
+
+	.empl-ins {
+		margin-bottom: 2px;
+
+		span {
+			display: flex;
+			align-items: center;
+
+			p {
+				font-size: 11px;
+				margin-left: 5px;
+				margin-bottom: 0px;
+			}
+		}
+	}
+
+
+	.income-tax-app-rate {
+		::v-deep .dx-radiobutton {
+			margin: 0px 0px 0px 50px;
+		}
+	}
+
+	.sal-item {
+		display: flex;
+		align-items: center;
+	}
+
+
+	.salary-item {
+
+		::v-deep .ant-form-item-label>label {
+			width: 100px;
+			padding-left: 10px;
+		}
+	}
+
+	::v-deep .custom-style-label {
+		.dx-widget.dx-collection {
+			float: right;
+		}
+	}
+
+	.custom-deduction {
+		display: flex;
+		align-items: center;
+
+		>span {
+			margin-right: 10px;
+			min-width: 150px;
+		}
+
+		>div {
+			display: flex;
+			align-items: center;
+			margin-bottom: 5px;
+		}
+	}
+
+	.deduction-main {
+		max-height: 200px;
+		overflow: scroll;
+		border: 1px solid #ddd;
+		padding-left: 5px;
+		padding-top: 5px;
+	} 
+}

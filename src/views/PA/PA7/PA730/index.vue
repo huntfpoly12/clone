@@ -37,7 +37,7 @@
         </a-row>
         <a-row style="margin-bottom: 20px">
           <a-col :span="24">
-            <label class="lable-item">소득자보관용</label>
+            <strong class="lable-item">소득자보관용: </strong>
             <switch-basic style="width: 120px" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
               :textUnCheck="'지급자 보관용'" />
           </a-col>
@@ -85,8 +85,18 @@
 
           <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
           <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
-          <DxColumn caption="원천징수세액 농어촌특별세" data-field="" />
-          <DxColumn caption="원천징수세액 농어촌특별세" data-field="" />
+          <DxColumn caption="원천징수세액 농어촌특별세" data-field="waitapi1" />
+          <DxColumn caption="원천징수세액 농어촌특별세" data-field="waitapi2" />
+          <DxSummary>
+            <DxTotalItem show-in-column="성명 (상호)" />
+            <DxTotalItem column="paymentAmount" summary-type="sum" />
+            <DxTotalItem column="withholdingIncomeTax" summary-type="sum" />
+            <DxTotalItem column="requiredExpenses" summary-type="sum" />
+            <DxTotalItem column="incomePayment" summary-type="sum" />
+            <DxTotalItem column="withholdingLocalIncomeTax" summary-type="sum" />
+            <DxTotalItem column="waitapi1" summary-type="sum" />
+            <DxTotalItem column="waitapi2" summary-type="sum" />
+          </DxSummary>
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
             <div class="custom-action" style="text-align: center">
@@ -118,7 +128,7 @@ import {
   DxSelection,
   DxSearchPanel,
   DxToolbar,
-  DxItem,
+  DxItem, DxSummary, DxTotalItem,
 } from "devextreme-vue/data-grid";
 import {
   companyId,
@@ -138,7 +148,7 @@ export default defineComponent({
     DxSearchPanel,
     DxToolbar,
     DxItem,
-    DxButton,
+    DxButton, DxSummary, DxTotalItem,
     InfoCircleFilled,
     EmailSinglePopup,
     EmailGroupPopup,
@@ -149,7 +159,6 @@ export default defineComponent({
     const popupGroupData = ref({});
     let dataSelect = ref<any>([]);
     let selectedItemKeys = ref([]);
-
     const store = useStore();
 
     const globalYear = computed(() => store.state.settings.globalYear);
@@ -158,7 +167,7 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const modalEmailSingle = ref(false);
     const modalEmailGroup = ref(false);
-    const dataSource = ref([
+    const dataSource = [
       {
         paymentAmount: 1,
         requiredExpenses: 12,
@@ -216,7 +225,7 @@ export default defineComponent({
           incomeTypeName: "412",
         },
       },
-    ]);
+    ];
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -306,10 +315,9 @@ export default defineComponent({
       dataSelect = ref<any>([]);
       modalEmailGroup.value = false;
     };
-
     watch(result, (value) => {
       if (value) {
-        dataSource.value = value.searchIncomeExtraWithholdingReceipts;
+        // dataSource.value = value.searchIncomeExtraWithholdingReceipts;
         trigger.value = false;
       }
     });
@@ -344,10 +352,43 @@ export default defineComponent({
       onCloseEmailSingleModal,
       onCloseEmailGroupModal,
       onSelectionChanged,
+
     };
   },
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

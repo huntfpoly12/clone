@@ -1,6 +1,6 @@
 <template>
-  <div id="tab2-pa520">
-    <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
+  <div id="tab2-pa120">
+    <div class="header-text-1">공제 / 감면 / 소득세 적용율 {{employeeId}}</div>
     <a-row :gutter="16">
       <a-col :span="12">
         <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -51,42 +51,75 @@
     <a-row :gutter="16">
       <a-col :span="8">
         <div class="header-text-2">요약</div>
+        <div class="summary">
+          <div class="text0">소득수당 합계</div>
+          <div class="text1">수당 과세 합계 {50000}원</div>
+          <div class="text2">수당 비과세 합계 {50000}원</div>
+          <div class="text3">공제 합계 {50000}원 </div>
+          <div class="text4">차인지급액 {50000}원 </div>
+          <div class="text5">
+            <span>
+              <InfoCircleFilled /> <p>차인지급액 = 수당 합계 - 공제 합계</p>
+            </span>
+          </div>
+        </div>
+  
       </a-col>
       <a-col :span="8">
         <div class="header-text-2">수당 항목 {50000}원 = 과세 + 비과세</div>
         <a-form-item label="감면입력" label-align="right" class="salary-item">
           <div class="sal-item">
-            <text-number-box width="520px"></text-number-box><p>원</p>
+            <text-number-box width="200px"></text-number-box><p>원</p>
           </div>
-          
         </a-form-item>
       </a-col>
       <a-col :span="8">
         <div class="header-text-2">공제 항목 ${50000}원</div>
+        <a-form-item label="급여항목" label-align="right" class="salary-item">
+          <div class="sal-item">
+            <text-number-box width="200px"></text-number-box><p>원</p>
+          </div>
+        </a-form-item>
       </a-col>
     </a-row>
   </div>
 
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed ,reactive} from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
-import { DxSelectBox } from "devextreme-vue/select-box";
-import { radioCheckPersenPension,radioCheckReductioRate,radioCheckReductionInput,IncomeTaxAppRate } from "../utils/index";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { 
+  radioCheckPersenPension,
+  radioCheckReductioRate,
+  radioCheckReductionInput,
+  IncomeTaxAppRate ,
+  initFormStateTab2
+} from "../../utils/index";
 import dayjs from 'dayjs';
 
 export default defineComponent({
   components: {
     InfoCircleFilled,
-    DxSelectBox
   },
   props: {
+    employeeId:{
+      type:String,
+      default:0
+    },
     modalStatus: Boolean,
   },
   setup(props, { emit }) {
     const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
-
+    const formStateTab2 = reactive<any>({
+      ...initFormStateTab2,
+      reductionItems:{
+        reductionStartDate: dayjs().format("YYYY-MM-DD"),
+        reductionFinishDate: dayjs().format("YYYY-MM-DD")
+      }
+    });
     return {
+      formStateTab2,
       rangeDate,
       radioCheckPersenPension,
       radioCheckReductioRate,
@@ -97,7 +130,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped >
-#tab2-pa520{
+#tab2-pa120{
     ::v-deep .ant-form-item-label>label {
         width: 130px;
         padding-left: 10px;
@@ -174,7 +207,7 @@ export default defineComponent({
 
     .pension{
       ::v-deep .dx-radiobutton{
-        margin: 0px 0px 0px 520px;
+        margin: 0px 0px 0px 120px;
       }
     }
     .income-tax-app-rate{
@@ -187,12 +220,34 @@ export default defineComponent({
       .sal-item{
         display:flex;
         align-items: center;
+        p{
+          margin: 0px;
+        }
       }
  
       ::v-deep .ant-form-item-label>label {
             width: 100px;
             padding-left: 10px;
         }
+    }
+
+    .summary{
+      font-weight: bold;
+      .text1{
+        margin-left: 50px;
+      }
+      .text2{
+        margin-left: 50px;
+      }
+      .text5{
+       span{
+        display: flex;
+        p{
+          margin-left: 10px;
+          font-size: 12px;
+        }
+       }
+      }
     }
 }
 

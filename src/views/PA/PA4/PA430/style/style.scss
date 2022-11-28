@@ -2,6 +2,7 @@
     .custom-flex {
         display: flex;
         align-items: center;
+        justify-content: space-between !important;
       }
       .content-flex{
         margin: 10px;
@@ -12,6 +13,27 @@
         display: flex;
         align-items: flex-start;
       }
+
+}
+.page-content-top{
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0px;
+
+}
+.format-settings{
+  display: flex;
+  .format-settings-text{
+    margin: 0px 10px;
+    span{
+      margin: 0px 5px;
+    }
+  }
+}
+.created-date{
+  display: flex;
+  align-items: center;
+  justify-content: end;
 
 }
 .modal-email-pa430{
