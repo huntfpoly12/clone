@@ -18,12 +18,13 @@ export default gql`
                 ip
                 active
                 companyAddressInfo{
-                address
-                roadAddress
-                addressExtend
-                zipcode
-                bcode
+                    address
+                    roadAddress
+                    addressExtend
+                    zipcode
+                    bcode
                 }
+                undeclaredIncomeStatus
             }
         }
 `
