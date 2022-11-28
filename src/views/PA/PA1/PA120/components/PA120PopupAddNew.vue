@@ -1,67 +1,70 @@
 <template>
-    <a-spin :spinning="false" size="large">
-        <div id="pa-120" class="page-content">
-            <a-tabs v-model:activeKey="activeKey" type="card">
-                <a-tab-pane key="1" tab="기본" class="tab1">
-                    <Tab1Component @closePopup="setModalVisible" />
-                </a-tab-pane>
-                <a-tab-pane key="2" tab="급여">
-                    <Tab2Component />
-                </a-tab-pane>
-                <a-tab-pane key="3" tab="부양가족">
-                    <Tab3Component />
-                </a-tab-pane>
-            </a-tabs>
-        </div>
-    </a-spin>
+    <div>
+        <a-spin :spinning="false" size="large">
+            <div id="pa-120">
+                <a-tabs v-model:activeKey="activeKey" type="card">
+                    <a-tab-pane key="1" tab="기본">
+                        <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId"></Tab1Component>
+                    </a-tab-pane>
+                    <a-tab-pane key="2" tab="급여">
+                        <Tab2Component :employeeId="employeeId"></Tab2Component>
+                    </a-tab-pane>
+                    <a-tab-pane key="3" tab="부양가족">
+                        <Tab3Component></Tab3Component>
+                    </a-tab-pane>
+                </a-tabs>
+            </div>
+        </a-spin>
+    </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
-import Tab1Component from "./ComponentAdd/Tab1Component.vue";
-import Tab2Component from "./ComponentAdd/Tab2Component.vue";
-import Tab3Component from "./ComponentAdd/Tab3Component.vue";
+import Tab1Component from "./componentAdd/Tab1Component.vue";
+import Tab2Component from "./componentAdd/Tab2Component.vue";
+import Tab3Component from "./componentAdd/Tab3Component.vue";
+import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
+import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 export default defineComponent({
     components: {
         InfoCircleFilled,
         DxSelectBox,
-        Tab2Component,
         Tab1Component,
-        Tab3Component,
+        Tab2Component,
+        Tab3Component
     },
     props: {
-        modalStatus: {
-            type: Boolean
-        },
-
+        modalStatus: Boolean,
     },
     setup(props, { emit }) {
-        // ============ FUNCTION ============================= 
-        const setModalVisible = () => {
-            emit('closePopup', false)
-        }
-        const activeComponent = ref(false)
-        watch(() => props.modalStatus, (value) => {
-            if (value)
-                activeComponent.value = true
+        const employeeId = ref('');
+        const demoData = reactive({
+            tab1: {
+                a1: "5345345",
+                a2: "45345345"
+            }
         })
+        const setModalVisible = () => {
+            emit('closePopup', false);
+        }
+        const setEmployeeId = (val: any) => {
+            console.log(val);
+
+            employeeId.value = val;
+        }
         return {
-            activeComponent,
             setModalVisible,
+            setEmployeeId,
+            employeeId,
+            radioCheckForeigner,
+            radioCheckHouseholder,
             activeKey: ref("1"),
+            demoData
         };
     },
 });
-</script>  
-
-
-
-
-
-
-
-
+</script>
 
 
 <style lang="scss" scoped src="../style/popupAddNew.scss" />

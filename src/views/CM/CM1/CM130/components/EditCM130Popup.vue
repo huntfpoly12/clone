@@ -23,8 +23,9 @@
                     </a-row>
                     <a-row>
                         <a-col :span="14">
-                            <a-form-item label="항목명" :label-col="labelCol">
+                            <a-form-item label="항목명" :label-col="labelCol" class="red">
                                 <default-text-box style="width: 150px; margin-right: 10px"
+                                :requied="true"
                                     v-model:valueInput="formState.name">
                                 </default-text-box>
                             </a-form-item>
@@ -37,6 +38,16 @@
                                     <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode"
                                         :disabled="true"></TaxPay>
                                 </div>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row>
+                        <a-col :span="24">
+                            <a-form-item label="산출방법" :label-col="labelCol">
+                                <default-text-box style="width: 320px"
+                                placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                                    v-model:valueInput="formState.formula">
+                                </default-text-box>
                             </a-form-item>
                         </a-col>
                     </a-row>
