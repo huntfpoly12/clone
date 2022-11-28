@@ -59,25 +59,28 @@
 			</a-col>
 			<a-col :span="12">
 				<div class="header-text-0">공제 항목 <span style="font-size: 12px;">{50000}원</span></div>
-				<div class="deduction-main">
-					<div v-for="(item, index) in arrDeduction" class="custom-deduction">
-						<span>
-							<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name"
-								:type="1" subName="과세" />
-							<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name"
-								:type="2" subName="상여(과세)" />
-							<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode" :name="item.name"
-								:type="3"
-								:subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-							<deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-								:name="item.name" :type="4" subName="과세" />
-						</span>
-						<div>
-							<number-box-money width="150px" :required="true" :spinButtons="false"></number-box-money>
-							<span class="pl-5">원</span>
+				<a-spin :spinning="loading" size="large">
+					<div class="deduction-main">
+						<div v-for="(item, index) in arrDeduction" class="custom-deduction">
+							<span>
+								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+									:name="item.name" :type="1" subName="과세" />
+								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+									:name="item.name" :type="2" subName="상여(과세)" />
+								<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+									:name="item.name" :type="3"
+									:subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+								<deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+									:name="item.name" :type="4" subName="과세" />
+							</span>
+							<div>
+								<number-box-money width="150px" :required="true" :spinButtons="false">
+								</number-box-money>
+								<span class="pl-5">원</span>
+							</div>
 						</div>
 					</div>
-				</div>
+				</a-spin>
 			</a-col>
 		</a-row>
 		<div class="button-action">
@@ -109,6 +112,7 @@ export default defineComponent({
 		})
 		const arrDeduction = ref()
 		const {
+			loading: loading,
 			onResult: resWithholdingConfigPayItems,
 		} = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
 			fetchPolicy: "no-cache",
@@ -122,7 +126,7 @@ export default defineComponent({
 			radioCheckPersenPension,
 			radioCheckReductioRate,
 			radioCheckReductionInput,
-			IncomeTaxAppRate
+			IncomeTaxAppRate, loading
 		};
 	},
 });
