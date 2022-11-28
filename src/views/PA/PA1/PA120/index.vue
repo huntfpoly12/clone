@@ -2,41 +2,46 @@
 <template>
     <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
     <div id="pa-120" class="page-content">
-        <a-row justify="space-around">
-            <a-col :span="4" class="total-user">
-                <div>
-                    <span>8</span>
-                    <br>
-                    <span>전체</span>
-                </div>
-                <div>
-                    <i class="dx-icon-user"></i>
-                </div>
-            </a-col>
-            <a-col :span="4" class="current-user">
-                <div>
-                    <span>8</span>
-                    <br>
-                    <span>재직</span>
-                </div>
-                <div>
-                    <i class="dx-icon-user"></i>
+        <a-row>
+            <a-col :span="3" style="padding-right: 10px">
+                <div class="total-user">
+                    <div>
+                        <span>{{ dataSource.length }}</span>
+                        <br>
+                        <span>전체</span>
+                    </div>
+                    <div>
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                    </div>
                 </div>
             </a-col>
-            <a-col :span="4" class="leave-user">
-                <div>
-                    <span>8</span>
-                    <br>
-                    <span>퇴사</span>
-                </div>
-                <div>
-                    <i class="dx-icon-user"></i>
+            <a-col :span="3" style="padding-right: 10px">
+                <div class="current-user">
+                    <div>
+                        <span>{{ totalUserOnl }}</span>
+                        <br>
+                        <span>재직</span>
+                    </div>
+                    <div>
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                    </div>
                 </div>
             </a-col>
-
+            <a-col :span="3" style="padding-right: 10px">
+                <div class="leave-user">
+                    <div>
+                        <span>{{ totalUserOff }}</span>
+                        <br>
+                        <span>퇴사</span>
+                    </div>
+                    <div>
+                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                    </div>
+                </div>
+            </a-col>
         </a-row>
         <a-row>
-            <a-col :span="24">
+            <a-col :span="12" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
@@ -47,20 +52,20 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <DxColumn caption="성명" cell-template="company-name" :width="500" />
+                        <DxColumn caption="성명" cell-template="company-name" width="350px" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false" />
+                                :idCardNumber="data.data.residentId" :status="data.data.status"
+                                :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" :width="200" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
                             <div class="custom-grade-cell">
-                                <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
-                                <span>{{ data.data.incomeTypeName }}</span>
+                                <four-major-insurance :typeTag="1" :typeValue="1" />
                             </div>
                         </template>
-                        <DxColumn :width="80" cell-template="pupop" />
+                        <DxColumn cell-template="pupop" width="100" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
@@ -77,17 +82,19 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-                        :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-                    <PA120PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="eventCLoseAddPopup" />
-                    <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
-                        @closePopup="modalEditStatus = false" />
-                    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                        title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-120" />
                 </a-spin>
             </a-col>
-
+            <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+                <PA120PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="eventCLoseAddPopup"
+                    v-if="actionChangeComponent == 1" />
+                <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
+                    v-if="actionChangeComponent == 2" />
+            </a-col>
         </a-row>
+        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+            :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+        <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+            :idRowEdit="idRowEdit" typeHistory="pa-120" />
     </div>
 </template>
 <script lang="ts">
@@ -116,10 +123,14 @@ export default defineComponent({
         PA120PopupAddNewVue, PA120PopupEdit
     },
     setup() {
+        const actionChangeComponent = ref(1)
+
         const contentDelete = Message.getMessage('PA120', '002').message
         const modalStatus = ref(false)
         const dataSource = ref([]);
         const store = useStore();
+        const totalUserOnl = ref(0)
+        const totalUserOff = ref(0)
         const globalYear = computed(() => store.state.settings.globalYear);
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -162,15 +173,16 @@ export default defineComponent({
             }
         });
         const openAddNewModal = () => {
+            actionChangeComponent.value = 1
             modalAddNewStatus.value = true;
         };
         const actionEdit = (val: any) => {
+            actionChangeComponent.value = 2
             idRowEdit.value = val
             modalEditStatus.value = true
 
         }
         const eventCLoseAddPopup = () => {
-            modalAddNewStatus.value = false;
             trigger.value = true
             refetchData()
 
@@ -193,6 +205,21 @@ export default defineComponent({
                 })
 
         }
+        watch(result, (value) => {
+            if (value) {
+                dataSource.value = value.getEmployeeWages
+                totalUserOnl.value = 0
+                totalUserOff.value = 0
+                dataSource.value.map((val: any) => {
+                    if (val.status != 0) {
+                        totalUserOnl.value++
+                    } else {
+                        totalUserOff.value++
+                    }
+                })
+                trigger.value = false
+            }
+        })
         const onSubmit = (e: any) => {
         };
         watch(() => modalEditStatus.value, (value) => {
@@ -204,6 +231,7 @@ export default defineComponent({
         return {
             loading,
             idRowEdit,
+            actionChangeComponent,
             modalEditStatus,
             modalStatus,
             onSubmit,
@@ -213,6 +241,8 @@ export default defineComponent({
             actionDeleteFuc,
             modalHistory,
             contentDelete,
+            totalUserOnl,
+            totalUserOff,
             modalHistoryStatus,
             openAddNewModal, eventCLoseAddPopup,
             modalAddNewStatus, statusComfirm,
@@ -221,42 +251,6 @@ export default defineComponent({
     },
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

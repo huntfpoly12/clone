@@ -245,6 +245,7 @@ export default defineComponent({
         };
         createEmployeeWage(dataNew);
       }
+
     };
 
     return {
