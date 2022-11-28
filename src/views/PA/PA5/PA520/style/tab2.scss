@@ -1,5 +1,5 @@
 #tab2-pa520 {
-	::v-deep .ant-form-item-label>label { 
+	::v-deep .ant-form-item-label>label {
 		padding-left: 10px;
 	}
 
@@ -71,8 +71,8 @@
 		}
 
 		.switch-insurance {
-			margin-left: 192px;
-			width: 100px;
+			width: 50px;
+			float: right;
 		}
 	}
 
@@ -98,10 +98,12 @@
 		}
 	}
 
-    .sal-item {
-        display: flex;
-        align-items: center;
-    }
+	.sal-item {
+		display: flex;
+		align-items: center;
+	}
+
+
 	.salary-item {
 
 		::v-deep .ant-form-item-label>label {
@@ -115,4 +117,28 @@
 			float: right;
 		}
 	}
+
+	.custom-deduction {
+		display: flex;
+		align-items: center;
+
+		>span {
+			margin-right: 10px;
+			min-width: 150px;
+		}
+
+		>div {
+			display: flex;
+			align-items: center;
+			margin-bottom: 5px;
+		}
+	}
+
+	.deduction-main {
+		max-height: 200px;
+		overflow: scroll;
+		border: 1px solid #ddd;
+		padding-left: 5px;
+		padding-top: 5px;
+	} 
 }

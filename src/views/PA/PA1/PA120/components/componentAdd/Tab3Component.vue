@@ -12,7 +12,7 @@
                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
                            </DxToolbar>
                            <template #button-template>
-                               <DxButton icon="plus" @click="openAddNewModal" />
+                               <DxButton icon="plus" @click="openAddDependent" />
                            </template>
                            <DxColumn caption="성명" cell-template="company-name" :width="500"/>
                            <template #company-name="{ data }">
@@ -39,12 +39,11 @@
                                    </a-space>
                                </div>
                            </template>
-                       </DxDataGrid>
-                    
+                       </DxDataGrid>    
                    </a-spin>
                </a-col>
-   
            </a-row>
+           <popup-add-new-dependent :modalStatus="modalAddNewDependent"></popup-add-new-dependent>
        </div>
    </template>
    <script lang="ts">
@@ -52,9 +51,10 @@
    import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
    import DxButton from "devextreme-vue/button";
    import { useStore } from 'vuex';
-
+   import PopupAddNewDependent from './PopupAddNewDependent.vue'
    export default defineComponent({
      components: {
+            PopupAddNewDependent,
            DxDataGrid,
            DxColumn,
            DxToolbar,
@@ -68,12 +68,12 @@
         const move_column = computed(() => store.state.settings.move_column);
         const trigger = ref<boolean>(true);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const modalAddNewStatus = ref<boolean>(false);
+        const modalAddNewDependent = ref<boolean>(false);
         const modalEditStatus = ref<boolean>(false);
         const modalHistoryStatus = ref<boolean>(false)
     
-        const openAddNewModal = () => {
-                modalAddNewStatus.value = true;
+        const openAddDependent = () => {
+                modalAddNewDependent.value = true;
         };
         const actionEdit = (data : any) => {
 
@@ -88,10 +88,11 @@
         const onSubmit = (e: any) => {
         };
        return {
+
          dataSource,
          modalEditStatus,
-         modalHistoryStatus,
-         openAddNewModal,
+         modalAddNewDependent,
+         openAddDependent,
          actionEdit,
          modalHistory,
          actionDelete,
