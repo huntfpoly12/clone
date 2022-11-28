@@ -1,8 +1,4 @@
 <template>
-<<<<<<< HEAD
-=======
-
->>>>>>> 11558edc8be4884ac7dd0e930d0a230a6c6780a2
     <div>
         <a-spin :spinning="false" size="large">
             <div id="pa-120">
@@ -20,10 +16,6 @@
             </div>
         </a-spin>
     </div>
-<<<<<<< HEAD
-=======
-
->>>>>>> 11558edc8be4884ac7dd0e930d0a230a6c6780a2
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
@@ -73,6 +65,8 @@ export default defineComponent({
     },
 });
 </script>
+
+
 
 
 <style lang="scss" scoped src="../style/popupAddNew.scss" />
