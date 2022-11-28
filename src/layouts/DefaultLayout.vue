@@ -444,42 +444,7 @@ export default defineComponent({
 	},
 });
 </script>
-<style lang="scss">
-$lenght: 100;
-
-@for $i from 1 through $lenght {
-	.pl-#{$i} {
-		padding-left: $i+ px;
-	}
-
-	.pt-#{$i} {
-		padding-top: $i+ px;
-	}
-
-	.pr-#{$i} {
-		padding-right: $i+ px;
-	}
-
-	.pb-#{$i} {
-		padding-bottom: $i+ px;
-	}
-
-	.ml-#{$i} {
-		padding-left: $i+ px;
-	}
-
-	.mt-#{$i} {
-		padding-top: $i+ px;
-	}
-
-	.mr-#{$i} {
-		padding-right: $i+ px;
-	}
-
-	.mb-#{$i} {
-		padding-bottom: $i+ px;
-	}
-}
+<style lang="scss"> 
 
 .list-menu-tab {
 	margin-top: 0px;
