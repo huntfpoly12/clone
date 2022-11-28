@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 export default gql`
-  query getEmployeeWageDaily($companyId: Int!, $imputedYear: Int!,$employeeId:Int!) {
-    getEmployeeWageDaily(companyId: $companyId, imputedYear: $imputedYear, employeeId : $employeeId) {
-      type
+  query getEmployeeWagesLogs($companyId: Int!, $imputedYear: Int!) {
+    getEmployeeWagesLogs(companyId: $companyId, imputedYear: $imputedYear) {
+      ts
       employeeId
       incomeTypeCode
       name
@@ -26,14 +26,23 @@ export default gql`
       updatedBy
       ip
       active
-      residentId
+      loggedAt
+      remark
       joinedAt
-      leavedAt  
-      weeklyWorkingHours    
-      totalDeduction 
-      deletable 
-      retirementIncome
-       
+      leavedAt
+      president
+      householder
+      weeklyWorkingHours
+      deductionDependentCount
+      incomeTaxMagnification
+      incomePayment
+      totalPay
+      totalDeduction
+      totalReduction
+      payItems
+      deductionItems
+      reductionItems
+      dependents
     }
   }
 `;

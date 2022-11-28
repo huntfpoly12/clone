@@ -13,9 +13,11 @@ import getScreenRoleGroupLogs from "./getScreenRoleGroupLogs";
 import searchPublicInstitutions from "./searchPublicInstitutions";
 import getSaleRequestContact from "./getSaleRequestContact";
 import getEmployeeBusinessesLogs from "./getEmployeeBusinessesLogs";
+import getEmployeeWageDailiesLogs from "./getEmployeeWageDailiesLogs";
 import getResponsibilities from "./getResponsibilities";
 import getDepartments from "./getDepartments";
 import getEmployeeExtrasLogs from "./getEmployeeExtrasLogs";
+import getEmployeeWagesLogs from "./getEmployeeWagesLogs";
 const queries = {
   getListSale: getListSale,
   getUserLogs: getUserLogs,
@@ -27,14 +29,16 @@ const queries = {
   getSalesRepresentativeLogs: getSalesRepresentativeLogs,
   getMyCompanyUserLogs: getMyCompanyUserLogs,
   getMyCompanyAuthentications: getMyCompanyAuthentications,
-  getWithholdingConfigPayItemsLogs:getWithholdingConfigPayItemsLogs,
-  getScreenRoleGroupLogs :getScreenRoleGroupLogs,
-  searchPublicInstitutions:searchPublicInstitutions,
-  getSaleRequestContact:getSaleRequestContact,
-  getEmployeeBusinessesLogs:getEmployeeBusinessesLogs,
+  getWithholdingConfigPayItemsLogs: getWithholdingConfigPayItemsLogs,
+  getScreenRoleGroupLogs: getScreenRoleGroupLogs,
+  searchPublicInstitutions: searchPublicInstitutions,
+  getSaleRequestContact: getSaleRequestContact,
+  getEmployeeBusinessesLogs: getEmployeeBusinessesLogs,
   getEmployeeExtrasLogs: getEmployeeExtrasLogs,
-  getResponsibilities:getResponsibilities,
-  getDepartments:getDepartments
+  getEmployeeWageDailiesLogs: getEmployeeWageDailiesLogs,
+  getResponsibilities: getResponsibilities,
+  getDepartments: getDepartments,
+  getEmployeeWagesLogs: getEmployeeWagesLogs,
 };
 
 export default queries;

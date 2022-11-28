@@ -1,6 +1,7 @@
 import getEmployeeWages from "./getEmployeeWages";
-
+import getEmployeeWagesLogs from "../../../common/getEmployeeWagesLogs";
 const queries = {
-    getEmployeeWages: getEmployeeWages
+  getEmployeeWages: getEmployeeWages,
+  getEmployeeWagesLogs: getEmployeeWagesLogs,
 };
 export default queries;
