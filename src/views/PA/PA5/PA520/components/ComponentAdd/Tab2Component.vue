@@ -44,14 +44,14 @@
 				<div class="header-text-0">월급여</div>
 				<div>
 					<a-form-item label="일급/월급">
-						<div style="display: flex; align-items: center;">
-							<default-text-box width="200px" style="margin-right: 5px;" />
+						<div class="d-flex-center">
 							<switch-basic switch-basic textCheck="일급" textUnCheck="N" style="margin-right: 10px;" />
+							<default-text-box width="200px" class="mr-5" />
 						</div>
 					</a-form-item>
 					<a-form-item label="근무일수">
-						<div style="display: flex; align-items: center;">
-							<default-text-box width="200px" style="margin-right: 5px;" />
+						<div class="d-flex-center">
+							<default-text-box width="200px" class="mr-5" />
 							<span class="ml-10">일</span>
 						</div>
 					</a-form-item>
@@ -65,14 +65,14 @@
 							{{ item.name }} - {{ item.itemCode }}
 						</span>
 						<div>
-							<text-number-box width="150px" style="margin-right: 5px;" />
+							<text-number-box width="150px" class="mr-5" />
 							<span>원</span>
 						</div>
 					</div>
 				</div>
 			</a-col>
 		</a-row>
-		<div style="width: 100%;text-align: center;margin-top: 30px;">
+		<div class="button-action">
 			<button-basic text="저장" type="default" mode="contained" />
 		</div>
 	</div>
