@@ -18,14 +18,17 @@ const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
   label: TaxPayItem.all()[index].name,
 }));
 const arrLabel = Array();
+
 TaxFreePayItem.all().forEach((k, index) => {
-  let submission = JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission ? 'O' : 'X'
-  if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
-    arrLabel[index] = TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ' 월' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit + ', 제출' + submission
-  } else if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit) {
-    arrLabel[index] = TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ' 년' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit + ', 제출' + submission
+  let data = TaxFreePayItem.all()[index];
+  let parseToStringData = JSON.parse(JSON.stringify(data)).props;
+  let submission = parseToStringData.submission ? 'O' : 'X'
+  if (parseToStringData.monthlyLimit) {
+    arrLabel[index] = data.enumKey +' '+ data.name + ' 월' + parseToStringData.monthlyLimit + ', 제출' + submission
+  } else if (parseToStringData.annualLimit) {
+    arrLabel[index] = data.enumKey +' '+ data.name + ' 년' + parseToStringData.annualLimit + ', 제출' + submission
   } else {
-    arrLabel[index] = TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ', 제출' + submission
+    arrLabel[index] = data.enumKey +' '+ data.name + ', 제출' + submission
   }
 });
 const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({

@@ -274,7 +274,8 @@
                 <a-tab-pane key="3" tab="공제항목">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        :onRowClick="editData">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -301,14 +302,10 @@
                         <DxColumn data-field="name" caption="항목명" />
                         <DxColumn caption="유형" />
                         <DxColumn data-field="formula" caption="산출방법" />
-                        <DxColumn cell-template="pupop" css-class="cell-center" :width="50" />
+                        <DxColumn cell-template="pupop" css-class="cell-center" :width="30" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space>
-                                    <a-tooltip placement="top">
-                                        <template #title>편집</template>
-                                        <EditOutlined @click="editData(data)" />
-                                    </a-tooltip>
                                     <a-tooltip placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
