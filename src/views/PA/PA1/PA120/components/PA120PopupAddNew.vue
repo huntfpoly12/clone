@@ -1,24 +1,20 @@
 <template>
     <div>
-        <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()"
-            :mask-closable="false" :width="1028" :footer="null" :bodyStyle="{padding: '0px', height: '650px' }">
-            {{employeeId}}
-                <a-spin :spinning="false" size="large">
-                    <div  id="pa-120" class="page-content">
-                        <a-tabs v-model:activeKey="activeKey" type="card">
-                            <a-tab-pane key="1" tab="기본">
-                                <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId"></Tab1Component>
-                            </a-tab-pane>
-                            <a-tab-pane key="2" tab="급여">
-                                <Tab2Component :employeeId="employeeId"></Tab2Component>
-                            </a-tab-pane>
-                            <a-tab-pane key="3" tab="부양가족">
-                                <Tab3Component></Tab3Component>
-                            </a-tab-pane>
-                        </a-tabs>
-                    </div>
-                </a-spin>
-        </a-modal>
+        <a-spin :spinning="false" size="large">
+            <div  id="pa-120" class="page-content">
+                <a-tabs v-model:activeKey="activeKey" type="card">
+                    <a-tab-pane key="1" tab="기본">
+                        <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId"></Tab1Component>
+                    </a-tab-pane>
+                    <a-tab-pane key="2" tab="급여">
+                        <Tab2Component :employeeId="employeeId"></Tab2Component>
+                    </a-tab-pane>
+                    <a-tab-pane key="3" tab="부양가족">
+                        <Tab3Component></Tab3Component>
+                    </a-tab-pane>
+                </a-tabs>
+            </div>
+        </a-spin>
     </div>
 </template>
 <script lang="ts">
