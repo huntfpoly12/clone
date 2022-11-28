@@ -1,7 +1,7 @@
 <template>
     <div>
         <a-spin :spinning="false" size="large">
-            <div  id="pa-120" class="page-content">
+            <div  id="pa-120">
                 <a-tabs v-model:activeKey="activeKey" type="card">
                     <a-tab-pane key="1" tab="기본">
                         <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId"></Tab1Component>

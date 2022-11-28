@@ -48,7 +48,7 @@
                 </td>
                 <td>
                     <pre class="mycode">
-                &lt;number-box width="150px" width="150px" :required="true"
+                &lt;number-box-money width="150px" width="150px" :required="true"
                 placeholder="Number box" :min="5" :max="50"
                 :spinButtons="true"/&gt;
                     </pre>

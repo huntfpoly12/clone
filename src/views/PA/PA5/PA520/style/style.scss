@@ -3,10 +3,11 @@
 
     .total-user {
         display: flex;
-        align-items: center; 
-        
+        align-items: center;
+
         background-color: #17375E;
         color: white;
+
         >div {
             font-size: 16px;
             width: 50%;
@@ -63,7 +64,7 @@
 
     ::v-deep .custom-layout {
         padding: 10px 10px 10px 0;
-
+ 
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
