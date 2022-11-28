@@ -20,7 +20,7 @@
       </a-col>
       <a-col :span="12">
         <div class="input-text empl-ins">
-            <checkbox-basic size="18px" label="고용보험" width="80px" ></checkbox-basic>  
+            <checkbox-basic size="18px" label="고용보험" width="120px" ></checkbox-basic>  
             <span>
                 <InfoCircleFilled /> <p>본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.</p>
             </span>
@@ -29,10 +29,10 @@
         <a-form-item label="중소기업취업 감면 여부" label-align="right" class="durunuri-insurance">
           <switch-basic switch-basic  textCheck="Y" textUnCheck="N" class="switch-insurance"></switch-basic>
         </a-form-item>
-        <a-form-item label="감면기간" label-align="right" class="durunuri-insurance">
-          <a-range-picker v-model:value="rangeDate" width="50%" :placeholder="['Start', 'End']" />
+        <a-form-item label="감면기간" label-align="right" :label-col="{ style: { width: '85px' }}">
+          <a-range-picker v-model:value="rangeDate" :placeholder="['Start', 'End']" />
         </a-form-item>
-        <a-form-item label="감면율" label-align="right" class="durunuri-insurance">
+        <a-form-item label="감면율" label-align="right">
           <radio-group :arrayValue="radioCheckReductioRate" :valueRadioCheck="1" layoutCustom="horizontal"></radio-group>
         </a-form-item>
         <a-form-item label="감면입력" label-align="right" class="durunuri-insurance">
@@ -155,7 +155,7 @@ export default defineComponent({
         background-color: #C6D9F1;
         padding: 5px;
         font-weight: bold;
-        font-size: 18px;
+        font-size: 14px;
         margin-bottom: 10px;
     }
     .header-text-3{
@@ -179,7 +179,7 @@ export default defineComponent({
     .ins-dedu{
       display: flex;
       .check-box-tab1{
-          margin-left: 80px;
+          margin-left: 35px;
       }
     }
     .durunuri-insurance{
@@ -188,7 +188,7 @@ export default defineComponent({
             padding-left: 10px;
         }
         .switch-insurance{
-          margin-left: 192px;
+          margin-left: 72px;
           width: 100px;
         }
     }
@@ -207,7 +207,7 @@ export default defineComponent({
 
     .pension{
       ::v-deep .dx-radiobutton{
-        margin: 0px 0px 0px 120px;
+        margin: 0px 0px 0px 76px;
       }
     }
     .income-tax-app-rate{

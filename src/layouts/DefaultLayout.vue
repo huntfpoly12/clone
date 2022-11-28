@@ -444,7 +444,7 @@ export default defineComponent({
 	},
 });
 </script>
-<style lang="scss" src="./style.scss">
+<style lang="scss" src="./style/style.scss">
 .header-content {
 	background: v-bind('styles.sub');
 }
