@@ -17,11 +17,20 @@ const taxPayItem = Object.keys(TaxPayItem.all()).map((k, index) => ({
   value: TaxPayItem.all()[index].enumOrdinal,
   label: TaxPayItem.all()[index].name,
 }));
-console.log();
-
+const arrLabel = <any>[];
+TaxFreePayItem.all().forEach((k, index) => {
+  let submission = JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission ? 'O' : 'X'
+  if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
+    arrLabel[index] = TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ' 월' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit + ', 제출' + submission
+  } else if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit) {
+    arrLabel[index] = TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ' 년' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit + ', 제출' + submission
+  } else {
+    arrLabel[index] = TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ', 제출' + submission
+  }
+});
 const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
   value: TaxFreePayItem.all()[index].enumKey,
-  label: JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission ? TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ',  제출O' : TaxFreePayItem.all()[index].enumKey +' '+ TaxFreePayItem.all()[index].name + ',  제출X' ,
+  label: arrLabel[index]
 }));
 const options: CascaderProps["options"] = [
   {

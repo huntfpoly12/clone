@@ -53,7 +53,7 @@
                     <b>- typeValue (Number):</b> Apply to typeTag from 1->5 (1: 1 letters, 2: 2 letters)
                     <br />
                     <b>- ratio (Number):</b> Apply to typeTag from 6->10
-                </td> 
+                </td>
                 <td>
                     <pre class="mycode">&lt;four-major-insurance :typeTag="1" :typeValue="1" /&gt; </pre>
                     <pre class="mycode">&lt;four-major-insurance :typeTag="6" :ratio="80" /&gt; </pre>
@@ -70,6 +70,24 @@
                 </td>
                 <td>
                     <pre class="mycode"> &lt;income-type :typeCode="'940904'" :typeName="'직업운동가'"/&gt;
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p><b>Deduction Items</b></p>
+                    <deduction-items name="940904" :type="1" subName="과세" />-
+                    <deduction-items name="940904" :type="2" subName="과세" />-
+                    <deduction-items name="940904" :type="3" subName="과세" />-
+                    <deduction-items name="940904" :type="4" subName="과세" />
+                </td>
+                <td>
+                    <b>- name (String):</b> Name <br />
+                    <b>- type (Number):</b> Number : 1,2,3,4 <br />
+                    <b>- subName (Number):</b> Text tooltip <br />
+                </td>
+                <td>
+                    <pre class="mycode"> &lt;deduction-items name="940904" :type="1" subName="과세" /&gt;
                     </pre>
                 </td>
             </tr>
