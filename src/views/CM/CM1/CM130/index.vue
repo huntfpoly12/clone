@@ -1,6 +1,6 @@
 <template>
     <div id="cm-130" class="cm-130" style="padding: 24px;">
-        <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig">
+        <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig || loadingDeduction">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <template #rightExtra>
                     <div class="list-action">
@@ -34,6 +34,14 @@
                                 </a-tooltip>
                             </div>
                         </div>
+                        <div v-if="activeKey == '3'">
+                            <a-tooltip>
+                                <template #title>저장</template>
+                                <a-button @click="onSubmitConfigDeduction">
+                                    <SaveOutlined />
+                                </a-button>
+                            </a-tooltip>
+                        </div>
                     </div>
                 </template>
                 <a-tab-pane key="1" tab="기본">
@@ -45,60 +53,91 @@
                                         급여기본설정
                                     </h2>
                                     <a-row>
-                                        <a-col :span="12">
+                                        <a-col :span="24">
                                             <a-form-item label="급여신고주기" :label-col="labelCol">
-                                                <radio-group :arrayValue="optionsRadioReportType" v-model:valueRadioCheck="formState.reportType" :layoutCustom="'horizontal'" />
+                                                <radio-group :disabled="formState.undeclaredIncomeStatus"
+                                                    :arrayValue="optionsRadioReportType"
+                                                    v-model:valueRadioCheck="formState.reportType"
+                                                    :layoutCustom="'horizontal'" />
                                             </a-form-item>
+                                            <div style="margin: -10px 0px 20px 150px">
+                                                <InfoCircleFilled />
+                                                <span style="margin-left: 5px">
+                                                    신고가 안된 소득자료가 있으면 수정불가합니다. 입력된 소득자료에 대해 신고하거나 삭제 후 변경가능합니다.
+                                                </span>
+                                            </div>
                                         </a-col>
                                     </a-row>
                                     <a-row>
-                                        <a-col :span="12">
+                                        <a-col :span="24">
                                             <a-form-item label="급여지급형태" :label-col="labelCol">
-                                                <radio-group :arrayValue="optionsRadioPaymentType" v-model:valueRadioCheck="formState.paymentType" :layoutCustom="'horizontal'" />
+                                                <radio-group :disabled="formState.undeclaredIncomeStatus"
+                                                    :arrayValue="optionsRadioPaymentType"
+                                                    v-model:valueRadioCheck="formState.paymentType"
+                                                    :layoutCustom="'horizontal'" />
                                             </a-form-item>
+                                            <div style="margin: -10px 0px 20px 150px">
+                                                <InfoCircleFilled />
+                                                <span style="margin-left: 5px">
+                                                    신고가 안된 소득자료가 있으면 수정불가합니다. 입력된 소득자료에 대해 신고하거나 삭제 후 변경가능합니다.
+                                                </span>
+                                            </div>
                                         </a-col>
                                     </a-row>
                                     <a-row>
-                                        <a-col :span="16">
+                                        <a-col :span="24">
                                             <a-form-item label="급여지급일자" :label-col="labelCol">
                                                 <div style="display: flex; align-items: center">
-                                                    <number-box
-                                                        :width="150"
-                                                        :required="true"
-                                                        placeholder="Number box"
-                                                        :min="0" 
-                                                        :max="30"
-                                                        v-model:valueInput="formState.paymentDay"
+                                                    <number-box :width="150" :required="true" placeholder="Number box"
+                                                        :min="0" :max="30" v-model:valueInput="formState.paymentDay"
                                                         :spinButtons="true">
                                                     </number-box>
                                                     <span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
                                                 </div>
-                                                <div style=" display: flex; margin-top: 10px; align-items: center; ">
-                                                    <info-circle-outlined />
-                                                    <span style="margin-left: 5px">
-                                                        급여지급일자는 선택사항으로 지정시 급여명세서 등에
-                                                        해당 급여일자가 입력되며, 수정 가능합니다.
-                                                    </span>
-                                                </div>
                                             </a-form-item>
+                                            <div style="margin: 0px 0px 20px 150px">
+                                                <InfoCircleFilled />
+                                                <span style="margin-left: 5px">
+                                                    급여지급일자는 선택사항으로 지정시 급여명세서 등에
+                                                    해당 급여일자가 입력되며, 수정 가능합니다.
+                                                </span>
+                                            </div>
                                         </a-col>
                                     </a-row>
                                     <a-row>
-                                        <a-col :span="12">
+                                        <a-col :span="24">
                                             <a-form-item>
                                                 <div style="margin-left: 50px">
                                                     <span>두루누리 적용 여부 (사업자):</span>
-                                                    <switch-basic style="width: 80px; margin-left: 8px;" v-model:valueSwitch="formState.insuranceSupport" :textCheck="'적용'"
-                                                        :textUnCheck="'미적용'" />
-                                                </div>
-                                                <div style="margin-left: 150px; margin-top: 10px">
-                                                    <info-circle-outlined />
-                                                    <span style="margin-left: 5px">
-                                                        사업자 두루누리 미적용시 해당 사원이 두루누리
-                                                        적용이더라도 급여계산에 반영되지 않습니다.
-                                                    </span>
+                                                    <switch-basic style="width: 80px; margin-left: 8px;"
+                                                        v-model:valueSwitch="formState.insuranceSupport"
+                                                        :textCheck="'적용'" :textUnCheck="'미적용'" />
                                                 </div>
                                             </a-form-item>
+                                            <div style="margin: 0px 0px 20px 150px">
+                                                <InfoCircleFilled />
+                                                <span style="margin-left: 5px">
+                                                    사업자 두루누리 미적용시 해당 사원이 두루누리
+                                                    적용이더라도 급여계산에 반영되지 않습니다.
+                                                </span>
+                                            </div>
+                                        </a-col>
+                                    </a-row>
+                                    <a-row>
+                                        <a-col :span="6">
+                                            <a-form-item label="일괄납부 여부" :label-col="labelCol">
+                                                <switch-basic style="width: 80px; margin-left: 8px;"
+                                                    v-model:valueSwitch="formState.collectivePayment" :textCheck="'적용'"
+                                                    :textUnCheck="'미적용'" />
+                                            </a-form-item>
+                                        </a-col>
+                                        <a-col :span="12">
+                                            <a-form-item label="사업자단위 과세여부" :label-col="labelCol">
+                                                <switch-basic style="width: 80px; margin-left: 8px;"
+                                                    v-model:valueSwitch="formState.taxForEachBusiness" :textCheck="'적용'"
+                                                    :textUnCheck="'미적용'" />
+                                            </a-form-item>
+
                                         </a-col>
                                     </a-row>
                                     <h2 style="font-weight: 600; color: gray" class="title-h2">
@@ -107,12 +146,12 @@
                                     <a-row :gutter="24">
                                         <a-col>
                                             <a-form-item label="사업장주소" :label-col="labelCol">
-                                                <default-text-box
-                                                    style="width: 574px; margin-right: 10px; float: left;"
+                                                <default-text-box style="width: 574px; margin-right: 10px; float: left;"
                                                     :disabled="true"
                                                     v-model:valueInput="formState.companyAddressInfoAddress">
                                                 </default-text-box>
-                                                <button-basic class="button-form-modal" :text="'자동선택'" :type="'default'" :mode="'contained'" @onClick="showModal"/>
+                                                <button-basic class="button-form-modal" :text="'자동선택'" :type="'default'"
+                                                    :mode="'contained'" @onClick="showModal" />
                                                 <a-modal class="container_email" v-model:visible="isShow"
                                                     okText="네. 적용합니다" cancelText="아니오" @ok="handleSuccsess"
                                                     :mask-closable="false" footer="">
@@ -134,8 +173,12 @@
                                                         </div>
                                                     </div>
                                                     <div class="text-align-right mt-20">
-                                                        <button-basic class="button-form-modal" :text="'아니오'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()"/>
-                                                        <button-basic class="button-form-modal" :text="'네. 적용합니다'" :width="140" :type="'default'" :mode="'contained'" @onClick="handleSuccsess"/>
+                                                        <button-basic class="button-form-modal" :text="'아니오'"
+                                                            :type="'default'" :mode="'outlined'"
+                                                            @onClick="setModalVisible()" />
+                                                        <button-basic class="button-form-modal" :text="'네. 적용합니다'"
+                                                            :width="140" :type="'default'" :mode="'contained'"
+                                                            @onClick="handleSuccsess" />
                                                     </div>
                                                 </a-modal>
                                             </a-form-item>
@@ -146,9 +189,7 @@
                                             <a-row :gutter="24">
                                                 <a-col>
                                                     <a-form-item label="관할세무서" :label-col="labelCol">
-                                                        <default-text-box
-                                                            style="width: 200px;"
-                                                            :disabled="true"
+                                                        <default-text-box style="width: 200px;" :disabled="true"
                                                             v-model:valueInput="formState.competentTaxOfficeCode">
                                                         </default-text-box>
                                                     </a-form-item>
@@ -156,7 +197,7 @@
                                                 <a-col>
                                                     <div style="margin-left: 22px;">
                                                         <span>지방소득세 납세지:</span>
-                                                        <default-text-box 
+                                                        <default-text-box
                                                             style="width: 200px; display: inline-block; margin-left: 10px;"
                                                             :disabled="true"
                                                             v-model:valueInput="formState.localIncomeTaxArea">
@@ -164,7 +205,8 @@
                                                     </div>
                                                 </a-col>
                                                 <a-form-item>
-                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'contained'" @onClick="modalSetting"/>
+                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'contained'"
+                                                        @onClick="modalSetting" />
                                                 </a-form-item>
                                             </a-row>
                                         </a-col>
@@ -177,8 +219,10 @@
                         @dataEmit="changeValueAddress" title="원천설정" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여항목">
-                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="itemCode"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        :onRowPrepared="changeColorRow">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -198,17 +242,17 @@
                         <template #use="{ data }">
                             <a-tag :color="getAbleDisable(data.value)">이용중지</a-tag>
                         </template>
-                        <DxColumn data-field="printName" caption="과세구분"/>
+                        <DxColumn data-field="printName" caption="과세구분" />
                         <DxColumn data-field="name" caption="항목명" />
                         <DxColumn data-field="taxfreePayItemCode" caption="비과세코드" css-class="cell-center" />
                         <DxColumn data-field="printTaxFreeIncludeSubmission" caption="제출여부" />
-                        <DxColumn data-field="printCode" caption="유형"/>
+                        <DxColumn data-field="printCode" caption="유형" />
                         <DxColumn data-field="formula" caption="산출방법" />
                         <DxColumn cell-template="pupop" css-class="cell-center" :width="100" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
-                                    <a-tooltip placement="top">
+                                    <a-tooltip v-if="data.data.editable" placement="top">
                                         <template #title>편집</template>
                                         <EditOutlined @click="setModalEditVisible(data)" />
                                     </a-tooltip>
@@ -216,7 +260,7 @@
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
-                                    <deleteOutlined @click="deleteConfig(data)" />
+                                    <deleteOutlined v-if="data.data.editable" @click="deleteConfig(data)" />
                                 </a-space>
                             </div>
                         </template>
@@ -227,14 +271,106 @@
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                         :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-130" />
                 </a-tab-pane>
+                <a-tab-pane key="3" tab="공제항목">
+                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
+                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                        <DxExport :enabled="true" :allow-export-selected-data="true" />
+                        <DxToolbar>
+                            <DxItem name="searchPanel" />
+                            <DxItem name="exportButton" />
+                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                            <DxItem name="groupPanel" />
+                            <DxItem name="addRowButton" show-text="always" />
+                            <DxItem name="columnChooserButton" />
+                        </DxToolbar>
+                        <template #button-template>
+                            <DxButton icon="plus" @click="openAddNewModal" />
+                        </template>
+                        <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
+                        <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
+                            css-class="cell-center" />
+                        <template #use="{ data }">
+                            <a-tag :color="getAbleDisable(data.value)">{{ data.value ? "이용중" : "이용중지" }}</a-tag>
+                        </template>
+                        <DxColumn caption="구분" cell-template="deduction" />
+                        <template #deduction="{ data }">
+                            공제
+                        </template>
+                        <DxColumn data-field="name" caption="항목명" />
+                        <DxColumn caption="유형" />
+                        <DxColumn data-field="formula" caption="산출방법" />
+                        <DxColumn cell-template="pupop" css-class="cell-center" :width="50" />
+                        <template #pupop="{ data }" class="custom-action">
+                            <div class="custom-action">
+                                <a-space>
+                                    <a-tooltip placement="top">
+                                        <template #title>편집</template>
+                                        <EditOutlined @click="editData(data)" />
+                                    </a-tooltip>
+                                    <a-tooltip placement="top">
+                                        <template #title>변경이력</template>
+                                        <HistoryOutlined @click="modalHistory(data)" />
+                                    </a-tooltip>
+                                </a-space>
+                            </div>
+                        </template>
+                    </DxDataGrid>
+                    <standard-form formName="add-deduction-310">
+                        <h2 style="font-weight: 600; color: gray" class="title_modal">
+                            급여상세항목
+                        </h2>
+                        <a-row :gutter="24">
+                            <a-col :span="14">
+                                <a-form-item label="코드" :label-col="labelCol">
+                                    <number-box :width="150" :min="0" :max="30" v-model:valueInput="formStateDeduction.itemCode"
+                                        :spinButtons="true" :disabled="true" >
+                                    </number-box>
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="4"></a-col>
+                            <a-col :span="6">
+                                <switch-basic style="width: 80px;" v-model:valueSwitch="formStateDeduction.use"
+                                    :textCheck="'이용중'" :textUnCheck="'이용중지'" :disabled="true"/>
+                            </a-col>
+                        </a-row>
+                        <a-row>
+                            <a-col :span="14">
+                                <a-form-item label="항목명" :label-col="labelCol">
+                                    <default-text-box style="width: 150px; margin-right: 10px"
+                                        v-model:valueInput="formStateDeduction.name" :disabled="true">
+                                    </default-text-box>
+                                </a-form-item>
+                            </a-col>
+                        </a-row>
+                        <a-row>
+                            <a-col :span="24">
+                                <a-form-item label="과세구분/유형" :label-col="labelCol">
+                                    <TaxPay style="width: 320px" placeholder="선택"
+                                        v-model:selectedValue="formStateDeduction.taxPayCode" :disabled="true"></TaxPay>
+                                </a-form-item>
+                            </a-col>
+                        </a-row>
+                        <a-row>
+                            <a-col :span="24">
+                                <a-form-item label="산출방법" :label-col="labelCol">
+                                    <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                                        v-model:valueInput="formStateDeduction.formula">
+                                    </default-text-box>
+                                </a-form-item>
+                            </a-col>
+                        </a-row>
+                    </standard-form>
+                    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                        :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-deduction-130" />
+                </a-tab-pane>
             </a-tabs>
         </a-spin>
     </div>
 </template>
 <script lang="ts">
 import { companyId } from "../../../../helpers/commonFunction";
-import {
-} from "@ant-design/icons-vue";
 import {
     WarningFilled,
     EditOutlined,
@@ -243,6 +379,7 @@ import {
     DeleteOutlined, SaveOutlined,
     HistoryOutlined,
     LoginOutlined,
+    InfoCircleFilled,
 } from "@ant-design/icons-vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import queries from "../../../../graphql/queries/CM/CM130/index";
@@ -271,11 +408,11 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
 import dayjs, { Dayjs } from "dayjs";
-import { optionsRadioReportType, optionsRadioPaymentType  } from "./data";
+import { optionsRadioReportType, optionsRadioPaymentType } from "./data";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
-import { initialFormState } from "./data";
+import { initialFormState, initialFormStateDeduction } from "./data";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
@@ -300,13 +437,13 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        DxPaging
+        DxPaging,
+        InfoCircleFilled
     },
     setup() {
         // config grid
         const store = useStore();
-        
-        // const per_page = computed(() => store.state.settings.per_page);
+
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const popupData = ref([]);
@@ -314,23 +451,20 @@ export default defineComponent({
         const modalEditStatus = ref<boolean>(false);
         const modalAddNewStatus = ref<boolean>(false);
         const modalHistoryStatus = ref<boolean>(false);
-        const isSwitch = ref<boolean>(false);
         const isShow = ref<boolean>(false);
         const idRowEdit = ref(0);
         const formState = reactive({ ...initialFormState });
+        const formStateDeduction = reactive({ ...initialFormStateDeduction });
         const setModalVisible = () => {
-			isShow.value = false;
-		}
+            isShow.value = false;
+        }
         const dataSource = ref([]);
+        const dataSourceDeduction = ref([]);
         const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
         //================================================= FUNCTION============================================
         const showModal = () => {
             isShow.value = true;
         };
-        const SwitchButton = () => {
-            isSwitch.value = true;
-        };
-        let previewImage: any = ref("/public/images/demo-image.jpg");
         const handleSuccsess = (e: MouseEvent) => {
             isShow.value = false;
         };
@@ -356,7 +490,21 @@ export default defineComponent({
                 formState.companyAddressInfoAddress = value.getWithholdingConfig.companyAddressInfo.address;
                 formState.collectivePayment = value.getWithholdingConfig.collectivePayment;
                 formState.taxForEachBusiness = value.getWithholdingConfig.taxForEachBusiness;
+                formState.undeclaredIncomeStatus = value.getWithholdingConfig.undeclaredIncomeStatus;
             }
+        });
+
+        const dataQueryDeduction = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
+        const { result: resultConfigDeduction, loading: loadingDeduction, refetch: refetchConfigDeduction } = useQuery(
+            queries.getWithholdingConfigDeductionItems,
+            dataQueryDeduction,
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultConfigDeduction, (value) => {
+            dataSourceDeduction.value = value.getWithholdingConfigDeductionItems
+
         });
         // update config 
         const { mutate: actionUpdateWithholdingConfig, onDone: onDoneUpdated, onError: errorEditConfig } = useMutation(
@@ -386,6 +534,35 @@ export default defineComponent({
             };
             actionUpdateWithholdingConfig(variables)
         };
+        const { mutate: updateWithholdingConfigDeductionItem, onDone: onDoneUpdatedDeduction, onError: errorEditConfigDeduction } = useMutation(
+            mutations.updateWithholdingConfigDeductionItem
+        );
+        errorEditConfigDeduction((error) => {
+            notification('error', error.message)
+        })
+        onDoneUpdatedDeduction(() => {
+            notification('success', `업데이트 성공되었습니다!`)
+            refetchConfigDeduction();
+        });
+        const onSubmitConfigDeduction = () => {
+            let variables = {
+                companyId: companyId,
+                imputedYear: parseInt(dayjs().format('YYYY')),
+                itemCode: formStateDeduction.itemCode,
+                input: {
+                    formula: formStateDeduction.formula
+                }
+            };
+            updateWithholdingConfigDeductionItem(variables)
+        };
+        const editData = (e: any) => {
+            formStateDeduction.itemCode = e.data.itemCode;
+            formStateDeduction.taxPayCode = e.data.taxfreePayItemCode != null ? ['비과세', e.data.taxfreePayItemCode] : ['과세', e.data.taxPayItemCode];
+            formStateDeduction.name = e.data.name;
+            formStateDeduction.use = e.data.use;
+            formStateDeduction.formula = e.data.formula;
+
+        }
         // get withholding config pay items  
         const { result: resultWithholdingConfig, refetch: refetchWithholdingConfig, loading: loadingWithholdingConfig } = useQuery(
             queries.getWithholdingConfigPayItems,
@@ -395,19 +572,19 @@ export default defineComponent({
             })
         );
         watch(resultWithholdingConfig, (value) => {
-            dataSource.value = value.getWithholdingConfigPayItems; 
-            dataSource.value.map((e: any) =>{
-                if(e.taxPayItemCode != null) {
+            dataSource.value = value.getWithholdingConfigPayItems;
+            dataSource.value.map((e: any) => {
+                if (e.taxPayItemCode != null) {
                     taxPayItem.map((eData: any) => {
                         if (eData.value == e.taxPayItemCode) {
                             e.printCode = eData.label
                         }
                     })
                     e.printName = "과세"
-                }else{
+                } else {
                     taxFreePayItem.map((eData: any) => {
                         if (eData.value == e.taxfreePayItemCode) {
-                            e.printCode = eData.Label
+                            e.printCode = eData.label
                             if (eData.submission) {
                                 e.printTaxFreeIncludeSubmission = 'O'
                             } else {
@@ -433,7 +610,6 @@ export default defineComponent({
                 icon: createVNode(ExclamationCircleOutlined),
                 okText: '네',
                 cancelText: '아니요',
-                //content: createVNode('div', { style: 'color:red;' }, 'Some descriptions'),
                 onOk() {
                     let variables = {
                         companyId: companyId,
@@ -506,13 +682,33 @@ export default defineComponent({
             value: TaxPayItem.all()[index].enumOrdinal,
             label: TaxPayItem.all()[index].name,
         }));
-        
-        
+
+        const arrLabel = <any>[];
+        TaxFreePayItem.all().forEach((k, index) => {
+            if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit) {
+                arrLabel[index] = TaxFreePayItem.all()[index].name + ' 월' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.monthlyLimit
+            } else if (JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit) {
+                arrLabel[index] = TaxFreePayItem.all()[index].name + ' 년' + JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.annualLimit
+            } else {
+                arrLabel[index] = TaxFreePayItem.all()[index].name
+            }
+        });
         const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
             value: TaxFreePayItem.all()[index].enumKey,
-            label: TaxFreePayItem.all()[index].name,
+            label: arrLabel[index],
             submission: JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission,
         }));
+        const changeColorRow = (e: any) => {
+            if (e.data?.use) {
+                if(e.data.tax) {
+                    e.rowElement.style.backgroundColor = '#FFB6C1';
+                } else {
+                    e.rowElement.style.backgroundColor = '#D2ECFC';
+                }
+            } else if (e.data?.use == "false") {
+                e.rowElement.style.backgroundColor = '#ECECEC';
+            }
+        }
         return {
             changeValueAddress,
             idRowEdit,
@@ -522,24 +718,27 @@ export default defineComponent({
             optionsRadioPaymentType,
             labelCol: { style: { width: "150px" } },
             formState,
+            formStateDeduction,
             activeKey: ref("1"),
             onSubmitConfig,
-            previewImage,
-            SwitchButton,
-            isSwitch,
+            editData,
+            changeColorRow,
             isShow,
             setModalVisible,
             showModal,
             handleSuccsess,
             dataSource,
+            dataSourceDeduction,
             loading,
             loadingWithholdingConfig,
+            loadingDeduction,
             deleteConfig,
             popupData,
             modalSettingStatus,
             modalEditStatus,
             modalAddNewStatus,
             modalHistoryStatus,
+            onSubmitConfigDeduction,
             modalSetting,
             openAddNewModal,
             onCloseAddNewModal,
@@ -548,8 +747,6 @@ export default defineComponent({
             modalHistory,
             getAbleDisable,
             onExporting,
-            taxPayItem,
-            taxFreePayItem,
         };
     },
 });

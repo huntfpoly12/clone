@@ -10,9 +10,11 @@
 .button-form-modal {
     margin: 0px 5px;
 }
-// ::v-deep .ant-form-item-label>label {
-//     width: 110px;
-// }
+::v-deep .red {
+    label {
+        color: red;
+    }
+}
 
 ::v-deep .ant-form-item {
     margin-bottom: 10px;
