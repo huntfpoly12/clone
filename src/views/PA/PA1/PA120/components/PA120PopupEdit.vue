@@ -1,11 +1,11 @@
 <template>
     <div>
         <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()" :mask-closable="false"
-            :width="1028" :footer="null" :bodyStyle="{ padding: '0px', height: '650px' }">
+            :width="1028" :footer="null" :bodyStyle="{ padding: '0px', height: '750px' }">
             <a-spin :spinning="false" size="large">
                 <div id="pa-120" class="page-content">
                     <a-tabs v-model:activeKey="activeKey" type="card">
-                        <a-tab-pane key="1" tab="기본">
+                        <a-tab-pane key="1" tab="기본" class="tab1">
                             <Tab1Component :idRowEdit="idRowEdit" :openPopup="openPopupValue"
                                 @closePopup="setModalVisible" />
                         </a-tab-pane>
@@ -47,12 +47,6 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const employeeId = ref('');
-        const demoData = reactive({
-            tab1: {
-                a1: "5345345",
-                a2: "45345345"
-            }
-        })
         const setModalVisible = () => {
             emit('closePopup', false);
         }
@@ -71,7 +65,6 @@ export default defineComponent({
         })
         return {
             editRow,
-
             setModalVisible,
             setEmployeeId,
             openPopupValue,
@@ -79,23 +72,11 @@ export default defineComponent({
             radioCheckForeigner,
             radioCheckHouseholder,
             activeKey: ref("1"),
-            demoData
+
         };
     },
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
