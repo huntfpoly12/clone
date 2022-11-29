@@ -14,6 +14,7 @@ const filters = {
     },
     formatDate(date: any){
         return dayjs(date).format('YYYY-MM-DD')
-    }
+    },
+
 }
 export default filters;

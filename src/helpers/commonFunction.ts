@@ -1,4 +1,5 @@
 import { getJwtObject } from "@bankda/jangbuda-common";
+import dayjs from 'dayjs';
 let companyId: any = null
 let userType: any = null
 let userId: any = null
@@ -38,4 +39,24 @@ const onExportingCommon = (component: any, cancel: boolean, name: String) => {
     cancel = true;
 }
 
-export { companyId, userType, userId, infoUser, onExportingCommon }
+
+const convertAge = (idCart: any)=>{
+    let birthDay = idCart.split("-")[0]
+    let typeYear = idCart.split("-")[1].charAt(0)
+    if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6){
+        const bdDate1 =  '19' + birthDay.slice(0, 2) + '-' + birthDay.slice(2, 4) + '-' + birthDay.slice(4, 6);
+        const date1 = dayjs(bdDate1);
+        const date2 = dayjs();
+        return date2.diff(date1, 'year')
+    }
+
+    else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8){
+        const bdDate2 = '20' + birthDay.slice(0, 2) + '-' + birthDay.slice(2, 4) + '-' + birthDay.slice(4, 6);
+        const date1 = dayjs(bdDate2);
+        const date2 = dayjs();
+        return date2.diff(date1, 'year')
+    }
+}
+
+export { companyId, userType, userId, infoUser, onExportingCommon ,convertAge}
+
