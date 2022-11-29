@@ -17,12 +17,12 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="listEmployeeExtra"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;">
-                        <DxToolbar>
+                        <!-- <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
                             <DxButton icon="plus" @click="formCreate" />
-                        </template>
+                        </template> -->
                         <DxColumn caption="성명 (상호)" cell-template="company-name" :width="500"/>
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
@@ -56,6 +56,7 @@
             </a-col>
             <a-col :span="8" class="custom-layout">
                 <a-spin :spinning="loadingForm" size="large">
+                    <DxButton icon="plus" @click="formCreate" />
                     <a-row :gutter="24" class="pa-710-popup-add">
                         <a-col :span="24">
                             <a-form-item label="코드" :label-col="labelCol">
@@ -136,7 +137,7 @@ import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, InfoCircleFilled, ExclamationCircleOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, DeleteOutlined, InfoCircleFilled, ExclamationCircleOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
 import { Modal } from 'ant-design-vue';
 import dayjs, { Dayjs } from "dayjs";
@@ -161,6 +162,7 @@ export default defineComponent({
         DxButton,
         HistoryPopup,
         InfoCircleFilled,
+        SaveOutlined,
     },
     setup() {
         // config grid
