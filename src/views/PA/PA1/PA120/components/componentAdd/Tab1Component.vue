@@ -110,7 +110,6 @@ import { companyId } from "../../../../../../helpers/commonFunction";
 export default defineComponent({
   components: {
     InfoCircleFilled
-
   },
   props: {
     popupStatus: {
@@ -234,7 +233,6 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-
         emit('employeeId', employeeId);
         let dataNew = {
           companyId: companyId,

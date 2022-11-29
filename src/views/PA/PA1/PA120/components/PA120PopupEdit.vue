@@ -10,7 +10,7 @@
                     <Tab2Component />
                 </a-tab-pane>
                 <a-tab-pane key="3" tab="부양가족">
-                    <Tab3Component />
+                    <Tab3Component :idRowEdit="idRowEdit" :openPopup="openPopupValue" />
                 </a-tab-pane>
             </a-tabs>
         </div>

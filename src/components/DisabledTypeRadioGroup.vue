@@ -12,10 +12,6 @@ import {
 
 export default defineComponent({
     props: {
-        arrayValue: {
-            type: Array,
-            required: true
-        },
         valueRadioCheck: {
             type: Object
         },
