@@ -1,7 +1,15 @@
 import gql from "graphql-tag";
 export default gql`
-  query getEmployeeWage($companyId: Int!, $imputedYear: Int!) {
-    getEmployeeWage(companyId: $companyId, imputedYear: $imputedYear) {
+  query getEmployeeWage(
+    $companyId: Int!
+    $imputedYear: Int!
+    $employeeId: Int!
+  ) {
+    getEmployeeWage(
+      companyId: $companyId
+      imputedYear: $imputedYear
+      employeeId: $employeeId
+    ) {
       type
       employeeId
       incomeTypeCode

@@ -18,7 +18,15 @@
             }
         }
     }
+    ::v-deep .custom-layout {
+        padding: 10px 10px 10px 0;
 
+        >div {
+            border: 1px solid #d7d7d7;
+            padding: 10px;
+            min-height: 770px;
+        }
+    }
     .current-user {
         background-color: #D99694;
         color: white;
@@ -67,7 +75,7 @@
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            min-height: 500px;
+            min-height: 770px;
         }
     }
 
