@@ -30,8 +30,7 @@ export default gql`
       healthInsuranceDeduction
       employeementInsuranceDeduction
       nationalPensionSupportPercent
-      employeementInsuranceSupportPercent
-      
+      employeementInsuranceSupportPercent 
       deductionItems {
         itemCode
         amount
@@ -39,6 +38,4 @@ export default gql`
       }  
     }
   }
-`;
-// employeementReductionRatePercent
-//       incomeTaxMagnification
+`; 
