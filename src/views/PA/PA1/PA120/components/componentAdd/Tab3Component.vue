@@ -43,7 +43,7 @@
                    </a-spin>
                </a-col>
            </a-row>
-           <popup-add-new-dependent :modalStatus="modalAddNewDependent"></popup-add-new-dependent>
+           <popup-add-new-dependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"></popup-add-new-dependent>
        </div>
    </template>
    <script lang="ts">
