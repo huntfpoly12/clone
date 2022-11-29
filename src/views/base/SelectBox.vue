@@ -463,45 +463,79 @@
         </td>
       </tr>
       <tr>
-                <td>
-                    <div class="dx-field">
-                        <div class="dx-field-label">Dependants Relation select box</div>
-                        <div class="dx-field-value">
-                            <dependants-relation-select-box width="150px" :required="true"></dependants-relation-select-box>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <ul>
-                        <li>
-                            <strong>required:</strong> {type: Boolean,default: false,}
-                            (option)
-                        </li>
-                        <li>
-                            <strong>messRequired:</strong> { type: String, default: "Input is
-                            required!",} (option)
-                        </li>
-                        <li><strong>width:</strong> String (option)</li>
-                        <li><strong>clearButton:</strong> Boolean (option)</li>
-                        <li><strong>disabled:</strong> Boolean (option)</li>
-                        <li><strong>valueInput:</strong> {type: Number,}</li>
-                        <li><strong>readOnly:</strong> Boolean (option)</li>
-                    </ul>
-                </td>
-                <td>
-                    <pre class="mycode">
-                &lt; dependants-relation-select-box width="150px" :required="true" / &gt;
-              </pre>
-                </td>
-            </tr>
+        <td>
+            <div class="dx-field">
+                <div class="dx-field-label">Dependants Relation select box</div>
+                <div class="dx-field-value">
+                    <dependants-relation-select-box width="150px" :required="true"></dependants-relation-select-box>
+                </div>
+            </div>
+        </td>
+        <td>
+            <ul>
+                <li>
+                    <strong>required:</strong> {type: Boolean,default: false,}
+                    (option)
+                </li>
+                <li>
+                    <strong>messRequired:</strong> { type: String, default: "Input is
+                    required!",} (option)
+                </li>
+                <li><strong>width:</strong> String (option)</li>
+                <li><strong>clearButton:</strong> Boolean (option)</li>
+                <li><strong>disabled:</strong> Boolean (option)</li>
+                <li><strong>valueInput:</strong> {type: Number,}</li>
+                <li><strong>readOnly:</strong> Boolean (option)</li>
+            </ul>
+        </td>
+        <td>
+            <pre class="mycode">
+        &lt; dependants-relation-select-box width="150px" :required="true" / &gt;
+    </pre>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="dx-field">
+                <div class="dx-field-label">Basic Deduction select box</div>
+                <div class="dx-field-value">
+                    <basic-deduction-select-box width="150px" :required="true"></basic-deduction-select-box>
+                </div>
+            </div>
+        </td>
+        <td>
+            <ul>
+                <li>
+                    <strong>required:</strong> {type: Boolean,default: false,}
+                    (option)
+                </li>
+                <li>
+                    <strong>messRequired:</strong> { type: String, default: "Input is
+                    required!",} (option)
+                </li>
+                <li><strong>width:</strong> String (option)</li>
+                <li><strong>clearButton:</strong> Boolean (option)</li>
+                <li><strong>disabled:</strong> Boolean (option)</li>
+                <li><strong>valueInput:</strong> {type: Number,}</li>
+                <li><strong>readOnly:</strong> Boolean (option)</li>
+            </ul>
+        </td>
+        <td>
+            <pre class="mycode">
+        &lt; basic-deduction-select-box width="150px" :required="true" / &gt;
+    </pre>
+        </td>
+    </tr>
     </table>
   </form>
 </template>
 
 <script>
 import { defineComponent, ref } from "vue";
+import BasicDeductionSelectBox from "../../components/BasicDeductionSelectBox.vue";
 export default defineComponent({
     components: {
+        BasicDeductionSelectBox
     },
     data() {
         return {
