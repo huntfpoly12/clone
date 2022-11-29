@@ -126,14 +126,16 @@
                                     <a-row>
                                         <a-col :span="6">
                                             <a-form-item label="일괄납부 여부" :label-col="labelCol">
-                                                <switch-basic style="width: 80px; margin-left: 8px;"
+                                                <switch-basic style="width: 80px;"
+                                                    :disabled="true"
                                                     v-model:valueSwitch="formState.collectivePayment" :textCheck="'적용'"
                                                     :textUnCheck="'미적용'" />
                                             </a-form-item>
                                         </a-col>
                                         <a-col :span="12">
                                             <a-form-item label="사업자단위 과세여부" :label-col="labelCol">
-                                                <switch-basic style="width: 80px; margin-left: 8px;"
+                                                <switch-basic style="width: 80px;"
+                                                :disabled="true"
                                                     v-model:valueSwitch="formState.taxForEachBusiness" :textCheck="'적용'"
                                                     :textUnCheck="'미적용'" />
                                             </a-form-item>
@@ -274,20 +276,14 @@
                 <a-tab-pane key="3" tab="공제항목">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        :onRowClick="editData">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
                             <DxItem name="searchPanel" />
                             <DxItem name="exportButton" />
-                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                            <DxItem name="groupPanel" />
-                            <DxItem name="addRowButton" show-text="always" />
-                            <DxItem name="columnChooserButton" />
                         </DxToolbar>
-                        <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
-                        </template>
                         <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
@@ -295,20 +291,16 @@
                             <a-tag :color="getAbleDisable(data.value)">{{ data.value ? "이용중" : "이용중지" }}</a-tag>
                         </template>
                         <DxColumn caption="구분" cell-template="deduction" />
-                        <template #deduction="{ data }">
+                        <template #deduction>
                             공제
                         </template>
                         <DxColumn data-field="name" caption="항목명" />
                         <DxColumn caption="유형" />
                         <DxColumn data-field="formula" caption="산출방법" />
-                        <DxColumn cell-template="pupop" css-class="cell-center" :width="50" />
+                        <DxColumn cell-template="pupop" css-class="cell-center" :width="30" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space>
-                                    <a-tooltip placement="top">
-                                        <template #title>편집</template>
-                                        <EditOutlined @click="editData(data)" />
-                                    </a-tooltip>
                                     <a-tooltip placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
@@ -371,13 +363,11 @@
 <script lang="ts">
 import { companyId } from "../../../../helpers/commonFunction";
 import {
-    WarningFilled,
     EditOutlined,
     SearchOutlined,
     PrinterOutlined,
     DeleteOutlined, SaveOutlined,
     HistoryOutlined,
-    LoginOutlined,
     InfoCircleFilled,
 } from "@ant-design/icons-vue";
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
@@ -395,7 +385,6 @@ import {
     DxExport,
     DxSearchPanel,
     DxToolbar,
-    DxPaging,
     DxItem,
 } from "devextreme-vue/data-grid";
 import notification from "../../../../utils/notification";
@@ -417,7 +406,6 @@ dayjs.extend(localeData);
 export default defineComponent({
     components: {
         DxNumberBox,
-        WarningFilled,
         SettingPopup,
         DxDataGrid,
         DxColumn,
@@ -428,7 +416,6 @@ export default defineComponent({
         DxItem,
         EditOutlined,
         HistoryOutlined,
-        LoginOutlined,
         EditCM130Popup,
         HistoryPopup,
         AddCM130Popup,
@@ -436,7 +423,6 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        DxPaging,
         InfoCircleFilled
     },
     setup() {

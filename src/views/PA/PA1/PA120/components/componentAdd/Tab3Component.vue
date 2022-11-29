@@ -43,7 +43,7 @@
                    </a-spin>
                </a-col>
            </a-row>
-           <popup-add-new-dependent :modalStatus="modalAddNewDependent"></popup-add-new-dependent>
+           <popup-add-new-dependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false" :employeeId="employeeId"></popup-add-new-dependent>
        </div>
    </template>
    <script lang="ts">
@@ -51,7 +51,7 @@
    import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
    import DxButton from "devextreme-vue/button";
    import { useStore } from 'vuex';
-   import PopupAddNewDependent from './PopupAddNewDependent.vue'
+   import PopupAddNewDependent from './tab3Dependent/PopupAddNewDependent.vue'
    export default defineComponent({
      components: {
             PopupAddNewDependent,
@@ -61,6 +61,12 @@
            DxItem,
            DxButton,
      },
+     props: {
+        employeeId:{
+            type:String,
+            default:0
+            },
+    },
      setup() {
         const dataSource = ref([]);
         const store = useStore();

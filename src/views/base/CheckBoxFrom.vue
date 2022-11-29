@@ -56,6 +56,53 @@
             </tr>
             <tr>
                 <td>
+                    <p style="margin-top: 10px;"><strong>Disabled type radio box: </strong></p>
+                    <disabled-type-radio-group  v-model:valueRadioCheck="valueRadioBox"
+                        :layoutCustom="'horizontal'" />
+                </td>
+
+                <td>
+                    <b>v-model:valueRadioCheck</b> : Object emit or default <br>
+                    <b>layoutCustom</b> : Layout horizontal and vertical ( horizontal / '' )
+                </td>
+
+                <td>
+                    Return value row select
+                </td>
+
+                <td>
+                    <span class="mycode">
+                        &lt;disabled-type-radio-group  v-model:valueRadioCheck="valueRadioBox"
+                        :layoutCustom="'horizontal'" /&gt;
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="margin-top: 10px;"><strong>Maternity adoption radio box: </strong></p>
+                    <maternity-adoption-radio-box  v-model:valueRadioCheck="valueRadioBox"
+                        :layoutCustom="'horizontal'" />
+                </td>
+
+                <td>
+                  
+                    <b>v-model:valueRadioCheck</b> : Object emit or default <br>
+                    <b>layoutCustom</b> : Layout horizontal and vertical ( horizontal / '' )
+                </td>
+
+                <td>
+                    Return value row select
+                </td>
+
+                <td>
+                    <span class="mycode">
+                        &lt;maternity-adoption-radio-box v-model:valueRadioCheck="valueRadioBox"
+                        :layoutCustom="'horizontal'" /&gt;
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <p style="margin-top: 10px;"><strong>switch box: </strong></p>
                     <switch-basic v-model:valueSwitch="valueSwitchChange" :textCheck="'포함'" :textUnCheck="'제외'" />
                 </td>
@@ -88,7 +135,7 @@ import DxButton from "devextreme-vue/button";
 export default defineComponent({
     components: {
         DxButton,
-        DxValidationSummary,
+        DxValidationSummary
     },
     data() {
         return {

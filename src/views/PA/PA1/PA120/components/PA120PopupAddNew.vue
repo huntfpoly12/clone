@@ -10,7 +10,7 @@
                         <Tab2Component :employeeId="employeeId"></Tab2Component>
                     </a-tab-pane>
                     <a-tab-pane key="3" tab="부양가족">
-                        <Tab3Component></Tab3Component>
+                        <Tab3Component :employeeId="employeeId"></Tab3Component>
                     </a-tab-pane>
                 </a-tabs>
             </div>

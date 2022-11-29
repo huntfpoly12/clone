@@ -10,8 +10,8 @@
                     <a-row :gutter="24">
                         <a-col :span="14">
                             <a-form-item label="코드" :label-col="labelCol" class="red">
-                                <number-box :width="150" :min="0" :max="30"
-                                    v-model:valueInput="formState.itemCode" :spinButtons="true" :required="true">
+                                <number-box :width="150" :min="0" :max="30" v-model:valueInput="formState.itemCode"
+                                    :spinButtons="true" :required="true">
                                 </number-box>
                             </a-form-item>
                         </a-col>
@@ -33,19 +33,26 @@
                     <a-row>
                         <a-col :span="24">
                             <a-form-item label="과세구분/유형" :label-col="labelCol" class="red">
-                                <TaxPay style="width: 320px" placeholder="선택" v-model:selectedValue="formState.taxPayCode" :required="true"></TaxPay>
+                                <TaxPay style="width: 320px" placeholder="선택"
+                                    v-model:selectedValue="formState.taxPayCode" :required="true"></TaxPay>
                             </a-form-item>
                         </a-col>
                     </a-row>
                     <a-row>
                         <a-col :span="24">
                             <a-form-item label="산출방법" :label-col="labelCol">
-                                <default-text-box style="width: 320px"
-                                placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                                <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
                                     v-model:valueInput="formState.formula">
                                 </default-text-box>
                             </a-form-item>
+                            <div style="margin: 0px 0px 20px 150px">
+                                <InfoCircleFilled />
+                                <span style="margin-left: 5px">
+                                    급여명세서 계산방법에 표시됩니다.
+                                </span>
+                            </div>
                         </a-col>
+
                     </a-row>
                 </a-spin>
                 <div class="text-align-center mt-20">
@@ -65,44 +72,18 @@ import { companyId } from "../../../../../helpers/commonFunction";
 import TaxPay from "../../../../../components/TaxPay.vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "../../../../../graphql/mutations/CM/CM130/index";
-import { DxSelectBox } from "devextreme-vue/select-box";
 import notification from "../../../../../utils/notification";
-import { DxNumberBox } from "devextreme-vue/number-box";
 import { initialState } from "../data";
 import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxExport,
-    DxSelection,
-    DxSearchPanel,
-} from "devextreme-vue/data-grid";
-import {
-    SearchOutlined,
-    WarningOutlined,
-    MailOutlined,
-    MenuOutlined,
-} from "@ant-design/icons-vue";
+import { InfoCircleFilled } from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
 
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title"],
 
     components: {
-        MenuOutlined,
-        SearchOutlined,
-        WarningOutlined,
-        MailOutlined,
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        DxSelectBox,
-        DxNumberBox,
         TaxPay,
+        InfoCircleFilled,
     },
 
     setup(props, { emit }) {
@@ -165,7 +146,6 @@ export default defineComponent({
         return {
             formState,
             labelCol: { style: { width: "150px" } },
-            error,
             onSubmit,
             loading,
             setModalVisible,
