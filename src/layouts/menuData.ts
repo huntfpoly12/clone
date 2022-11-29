@@ -63,7 +63,7 @@ export default
         { name: "퇴직금시뮬레이션", url: "/dashboard/bf-310", id: "pa-410" },
         { name: "퇴직소득자료입력", url: "/dashboard/bf-310", id: "pa-420" },
         { name: "퇴직소득원천징수영수증", url: "/dashboard/pa-430", id: "pa-430", },
-        { name: "일용직근로소득자료입력", url: "/dashboard/bf-310", id: "pa-510", },
+        { name: "일용직근로소득자료입력", url: "/dashboard/pa-510", id: "pa-510", },
         { name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" },
         { name: "일용직근로소득원천징수영수증", url: "/dashboard/pa-530", id: "pa-530", },
         { name: "사업소득자등록", url: "/dashboard/pa-610", id: "pa-610" },
