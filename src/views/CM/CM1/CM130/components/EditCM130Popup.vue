@@ -49,6 +49,12 @@
                                     v-model:valueInput="formState.formula">
                                 </default-text-box>
                             </a-form-item>
+                            <div style="margin: 0px 0px 20px 150px">
+                                <InfoCircleFilled />
+                                <span style="margin-left: 5px">
+                                    급여명세서 계산방법에 표시됩니다.
+                                </span>
+                            </div>
                         </a-col>
                     </a-row>
                 </a-spin>
@@ -64,11 +70,9 @@
 </template>
 
 <script lang="ts">
-import { DxNumberBox } from "devextreme-vue/number-box";
 import { companyId } from "../../../../../helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch } from "vue";
-import { DxSelectBox } from "devextreme-vue/select-box";
 import notification from "../../../../../utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -79,39 +83,15 @@ dayjs.extend(localeData);
 import queries from "../../../../../graphql/queries/CM/CM130/index";
 import mutations from "../../../../../graphql/mutations/CM/CM130/index";
 import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxExport,
-    DxSelection,
-    DxSearchPanel,
-} from "devextreme-vue/data-grid";
-import {
-    SearchOutlined,
-    WarningOutlined,
-    MailOutlined,
-    MenuOutlined,
-} from "@ant-design/icons-vue";
+import { InfoCircleFilled } from "@ant-design/icons-vue";
 import TaxPay from "../../../../../components/TaxPay.vue";
 
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", "idRowEdit"],
 
     components: {
-        MenuOutlined,
-        SearchOutlined,
-        WarningOutlined,
-        MailOutlined,
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        DxSelectBox,
-        DxNumberBox,
-        TaxPay
+        TaxPay,
+        InfoCircleFilled
     },
     setup(props, { emit }) {
         let trigger = ref<boolean>(false);
@@ -192,7 +172,7 @@ export default defineComponent({
             loading,
             onSubmit,
             setModalVisible,
-            value: ref<string[]>(["과세", "G03"]),
+            // value: ref<string[]>(["과세", "G03"]),
         };
     },
     methods: {

@@ -79,7 +79,7 @@
             </tr>
             <tr>
                 <td>
-                    <p style="margin-top: 10px;"><strong>Disabled type radio box: </strong></p>
+                    <p style="margin-top: 10px;"><strong>Maternity adoption radio box: </strong></p>
                     <maternity-adoption-radio-box  v-model:valueRadioCheck="valueRadioBox"
                         :layoutCustom="'horizontal'" />
                 </td>
