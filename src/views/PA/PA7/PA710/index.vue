@@ -136,14 +136,13 @@ import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, DeleteOutlined, InfoCircleFilled, ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
-import { Modal } from 'ant-design-vue'
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { Modal } from 'ant-design-vue';
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { initialState } from "./utils/index"
+import { initialState, initialOptionsRadio } from "./utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import mutations from "../../../../graphql/mutations/PA/PA7/PA710/index";
@@ -160,8 +159,8 @@ export default defineComponent({
         DxItem,
         DeleteOutlined,
         DxButton,
-        SaveOutlined,
-        HistoryPopup
+        HistoryPopup,
+        InfoCircleFilled,
     },
     setup() {
         // config grid
@@ -171,7 +170,6 @@ export default defineComponent({
         const loadingForm = ref(false)
         let checkForm = ref(false)
         let disabledSelect = ref(false)
-        let modalEditStatus = ref(false);
         const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
         let popupData = ref();
@@ -185,10 +183,7 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
         }
-        const optionsRadio = [
-            { id: false, text: "내국인" },
-            { id: true, text: "외국인" },
-        ];
+        const optionsRadio = ref([...initialOptionsRadio] );
         const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd} = useMutation(
             mutations.createEmployeeExtra
         );
@@ -362,7 +357,6 @@ export default defineComponent({
             disabledSelect,
             checkForm,
             modalHistory,
-            modalEditStatus,
             popupData,
             listEmployeeExtra,
             DeleteOutlined,

@@ -278,19 +278,12 @@
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         :onRowClick="editData">
-                        <!-- <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                        <DxExport :enabled="true" :allow-export-selected-data="true" /> -->
-                        <!-- <DxToolbar>
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                        <DxExport :enabled="true" :allow-export-selected-data="true" />
+                        <DxToolbar>
                             <DxItem name="searchPanel" />
                             <DxItem name="exportButton" />
-                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                            <DxItem name="groupPanel" />
-                            <DxItem name="addRowButton" show-text="always" />
-                            <DxItem name="columnChooserButton" />
-                        </DxToolbar> -->
-                        <!-- <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
-                        </template> -->
+                        </DxToolbar>
                         <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
@@ -298,7 +291,7 @@
                             <a-tag :color="getAbleDisable(data.value)">{{ data.value ? "이용중" : "이용중지" }}</a-tag>
                         </template>
                         <DxColumn caption="구분" cell-template="deduction" />
-                        <template #deduction="{ data }">
+                        <template #deduction>
                             공제
                         </template>
                         <DxColumn data-field="name" caption="항목명" />
