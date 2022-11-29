@@ -110,7 +110,6 @@ import { companyId } from "../../../../../../helpers/commonFunction";
 export default defineComponent({
   components: {
     InfoCircleFilled
-
   },
   props: {
     popupStatus: {

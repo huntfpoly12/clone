@@ -55,37 +55,84 @@
             </div>
             <a-row style="margin-top: 40px">
                 <a-col :span="8" :offset="8" style="text-align: center;">
-                    <button-basic text="저장" type="default" mode="contained" :width="90"
-                    />
+                    <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="createNewEmployeeWageDependent($event)" />
                 </a-col>
             </a-row>
         </a-modal>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
-import BasicDeductionSelectBox from "../../../../../../components/BasicDeductionSelectBox.vue";
-import DisabledTypeRadioGroup from "../../../../../../components/DisabledTypeRadioGroup.vue";
-import MaternityAdoptionRadioBox from "../../../../../../components/MaternityAdoptionRadioBox.vue";
-
+import { defineComponent, reactive, ref ,computed} from "vue";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useStore } from "vuex";
+import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
+import notification from "../../../../../../utils/notification";
+import { companyId } from "../../../../../../helpers/commonFunction";
 export default defineComponent({
-    components: {BasicDeductionSelectBox, DisabledTypeRadioGroup, MaternityAdoptionRadioBox},
+    components: {},
     props:{
         modalStatus: Boolean,
     },
     setup(props,{emit}) {
+        const store = useStore();
+        const globalYear = computed(() => store.state.settings.globalYear);
         const employeeId = ref('');
-
+        const formState = reactive<any>({
+            relation: null,
+            name: '',
+            foreigner: false,
+            residentId: '',
+            basicDeduction: null,
+            women: false,
+            singleParent: false,
+            senior: false,
+            disabled: null,
+            maternityAdoption: null,
+            descendant: true,
+            consignmentRelationship: '',
+            index: null
+        });
         const setModalVisible = () => {
             emit('closePopup', false);
         }
-        const setEmployeeId = (val : any) => {
-            console.log(val);
-            
-            employeeId.value = val;
+
+        // createEmployeeWage
+        const {
+        mutate: createEmployeeWageDependent,
+        loading: loading,
+        onDone: onDoneAdd,
+        onError,
+        } = useMutation(mutations.createEmployeeWageDependent);
+
+        onDoneAdd((res) => {
+        notification("success", `Create employee wage successfully! `);
+        });
+
+        onError((error) => {
+        notification("error", error.message);
+        });
+
+        const createNewEmployeeWageDependent = (e: any) => {
+        var res = e.validationGroup.validate();
+        if (!res.isValid) {
+            res.brokenRules[0].validator.focus();
+        } else {
+
+            emit('employeeId', employeeId);
+            let dataNew = {
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            input: {
+                ...formState,
+            },
+            };
+            createEmployeeWageDependent(dataNew);
         }
+
+        };
         return {
             setModalVisible,
+            createNewEmployeeWageDependent
         };
     },
 });
