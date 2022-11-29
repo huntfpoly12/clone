@@ -10,7 +10,7 @@ export default gql`
       companyId: $companyId
       imputedYear: $imputedYear
       employeeId: $employeeId
-      index: $employeeId
+      index: $index
     )
   }
 `;
