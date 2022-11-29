@@ -2,10 +2,9 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || 
-                loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || 
-                loadingPA120 || loadingCMDeduction130">
+            <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
+            loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 ||
+            loadingPA120 || loadingCMDeduction130">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -81,6 +80,7 @@ export default defineComponent({
         let trigger610 = ref<boolean>(false);
         let trigger710 = ref<boolean>(false);
         let trigger520 = ref<boolean>(false);
+        let trigger510 = ref<boolean>(false);
         let trigger120 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
@@ -370,6 +370,20 @@ export default defineComponent({
                 dataTableShow.value = value.getEmployeeWageDailiesLogs;
             }
         });
+        // get getEmployeeWageDailiesLogs pa-510
+        const { result: resultPA510, loading: loadingPA510, refetch: refetchPA510 } = useQuery(
+            queries.getEmployeeWageDailiesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger510.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA510, (value) => {
+            if (value && value.getEmployeeWageDailiesLogs) {
+                dataTableShow.value = value.getEmployeeWageDailiesLogs;
+            }
+        });
         // get getEmployeeWagesLogs pa-120
         const { result: resultPA120, loading: loadingPA120, refetch: refetchPA120 } = useQuery(
             queries.getEmployeeWagesLogs,
@@ -408,6 +422,7 @@ export default defineComponent({
             loadingBF220,
             loadingPA710,
             loadingPA520,
+            loadingPA510,
             loadingPA120,
             formarDate,
             dataQuery,

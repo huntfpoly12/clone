@@ -102,8 +102,8 @@
 import { defineComponent, ref, reactive, computed, watch } from "vue";
 import { radioCheckForeigner } from "../../utils/index";
 import dayjs from 'dayjs';
-import queries from "../../../../../../graphql/queries/PA/PA5/PA520/index"
-import mutations from "../../../../../../graphql/mutations/PA/PA5/PA520/index";
+import queries from "../../../../../../graphql/queries/PA/PA5/PA510/index"
+import mutations from "../../../../../../graphql/mutations/PA/PA5/PA510/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "../../../../../../helpers/commonFunction"
 import notification from "../../../../../../utils/notification";
