@@ -17,16 +17,11 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="listEmployeeExtra"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;">
-                        <!-- <DxToolbar>
-                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                        </DxToolbar>
-                        <template #button-template>
-                            <DxButton icon="plus" @click="formCreate" />
-                        </template> -->
                         <DxColumn caption="성명 (상호)" cell-template="company-name" :width="500"/>
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false" />
+                                :idCardNumber="data.data.residentId" :status="data.data.status"
+                                :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
                         <DxColumn caption="주민등록번호" data-field="residentId" :width="200"/>
                         <DxColumn caption="소득부분" cell-template="grade-cell"/>
