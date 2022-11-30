@@ -88,7 +88,6 @@ export default defineComponent({
         idRowIndex: {
             type: Number
         },
-        popupStatus: Boolean
     },
     setup(props, { emit }) {
         const dataSource = ref([]);
@@ -246,11 +245,9 @@ export default defineComponent({
                 mutate(dataCallUpdate)
             }
         }
-        watch(() => props.modalStatus, (value) => {
-            if (value == false) {
-                trigger.value = true
-                refetchValueDetail()
-            }
+        watch(() => props.idRowIndex, (value) => {
+            trigger.value = true
+            refetchValueDetail()
         })
         watch(() => props.idRowEdit, (value) => {
             originDataDetail.value.employeeId = value
