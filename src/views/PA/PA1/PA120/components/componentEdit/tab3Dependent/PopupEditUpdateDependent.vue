@@ -14,7 +14,7 @@
                                 v-model:valueInput="formState.name"></default-text-box>
                         </a-form-item>
                         <a-form-item label="연말관계" label-align="right">
-                            <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="foreigner" />
+                            <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="formState.foreigner" />
                         </a-form-item>
                         <a-form-item :label="labelResidebId" label-align="right">
                             <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId">
@@ -64,7 +64,7 @@
             <a-row style="margin-top: 40px">
                 <a-col :span="8" :offset="8" style="text-align: center;">
                     <button-basic text="저장" type="default" mode="contained" :width="90"
-                        @onClick="createNewEmployeeWageDependent($event)" />
+                        @onClick="actionUpdated($event)" />
                 </a-col>
             </a-row>
         </a-modal>
@@ -72,26 +72,31 @@
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref, computed, watch } from "vue";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import mutations from "../../../../../../../graphql/mutations/PA/PA1/PA120";
+import queries from "../../../../../../../graphql/queries/PA/PA1/PA120";
 import notification from "../../../../../../../utils/notification";
 import { companyId, convertAge } from "../../../../../../../helpers/commonFunction";
 export default defineComponent({
     components: {},
     props: {
-        employeeId: {
-            type: String,
-            default: 0
-        },
         modalStatus: Boolean,
+        idRowEdit: {
+            type: Number
+        },
+        idRowIndex: {
+            type: Number
+        }
     },
     setup(props, { emit }) {
+        const dataSource = ref([]);
+        const trigger = ref<boolean>(true);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         const ageCount = ref();
         const labelResidebId = ref("주민(외국인)번호 ");
-        const initialFormState = {
+        let initialFormState = {
             relation: null,
             name: '',
             foreigner: false,
@@ -104,9 +109,9 @@ export default defineComponent({
             maternityAdoption: 0,
             descendant: true,
             consignmentRelationship: '',
-            index: null
         };
-        const formState = reactive<any>({ ...initialFormState });
+        let formState = reactive<any>({ ...initialFormState });
+        let formState2 = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
             emit('closePopup', false);
         }
@@ -175,40 +180,75 @@ export default defineComponent({
                 Object.assign(formState, initialFormState);
             }
         });
-        // createEmployeeWage
+        // get employer dependent
+        const originDataDetail = ref({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            employeeId: props.idRowEdit
+        })
         const {
-            mutate: createEmployeeWageDependent,
-            loading: loading,
-            onDone: onDoneAdd,
+            refetch: refetchValueDetail,
+            result,
+            loading
+        } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
+            fetchPolicy: "no-cache",
+        }))
+        watch(result, (value) => {
+            if (props.idRowIndex) {
+                dataSource.value = value.getEmployeeWage.dependents;
+                trigger.value = false;
+                formState2 = {
+                    ...dataSource.value
+                }
+                formState.name = formState2[props.idRowIndex - 1].name
+                formState.relation = formState2[props.idRowIndex - 1].relation
+                formState.foreigner = formState2[props.idRowIndex - 1].foreigner
+                formState.residentId = formState2[props.idRowIndex - 1].residentId
+                formState.basicDeduction = formState2[props.idRowIndex - 1].basicDeduction
+                formState.women = formState2[props.idRowIndex - 1].women
+                formState.singleParent = formState2[props.idRowIndex - 1].singleParent
+                formState.senior = formState2[props.idRowIndex - 1].senior
+                formState.disabled = formState2[props.idRowIndex - 1].disabled
+                formState.maternityAdoption = formState2[props.idRowIndex - 1].maternityAdoption
+                formState.descendant = formState2[props.idRowIndex - 1].descendant
+                formState.consignmentRelationship = formState2[props.idRowIndex - 1].consignmentRelationship
+            }
+        });
+        const {
+            mutate,
             onError,
-        } = useMutation(mutations.createEmployeeWageDependent);
-
-        onDoneAdd((res) => {
-            notification("success", `Create employee wage successfully! `);
-        });
-
-        onError((error) => {
-            notification("error", error.message);
-        });
-
-        const createNewEmployeeWageDependent = (e: any) => {
+            onDone,
+        } = useMutation(mutations.updateEmployeeWageDependent);
+        onError(e => {
+            notification('error', e.message)
+        })
+        onDone(res => {
+            emit('closePopup', false)
+            notification('success', '업데이트 완료!')
+        })
+        const actionUpdated = (e: any) => {
+            refetchValueDetail()
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-
-                let dataNew = {
-                    companyId: companyId,
-                    employeeId: props.employeeId,
-                    imputedYear: globalYear.value,
-                    input: {
-                        ...formState,
-                    },
+                let newValDataEdit = {
+                    ...formState
                 };
-                createEmployeeWageDependent(dataNew);
+                let dataCallUpdate = {
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    employeeId: props.idRowEdit,
+                    index: props.idRowIndex,
+                    input: newValDataEdit,
+                };
+                mutate(dataCallUpdate)
             }
 
-        };
+        }
+        watch(() => props.idRowEdit, (value) => {
+            originDataDetail.value.employeeId = value
+        })
         return {
             women,
             singleParent,
@@ -219,9 +259,8 @@ export default defineComponent({
             ageCount,
             foreigner,
             residentId,
-            setModalVisible,
+            setModalVisible, actionUpdated,
             labelResidebId,
-            createNewEmployeeWageDependent
         };
     },
 });

@@ -114,7 +114,7 @@ import { defineComponent, ref, watch, computed } from "vue";
 import { useStore } from 'vuex';
 import { DxDataGrid,DxColumn,DxPaging,DxExport,DxSelection,DxSearchPanel,DxToolbar,DxItem} from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
-import HistoryPopup from '../../../../components/HistoryPopup.vue';
+import HistoryPopup from '@/components/HistoryPopup.vue';
 import DxButton from "devextreme-vue/button";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
@@ -124,7 +124,7 @@ import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../graphql/queries/BF/BF3/BF330/index"
+import queries from "@/graphql/queries/BF/BF3/BF330/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({

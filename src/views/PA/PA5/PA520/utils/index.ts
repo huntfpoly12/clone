@@ -5,8 +5,8 @@ export const radioCheckHouseholder = [
     { id: 1, text: 'X' },
     { id: 2, text: 'O' }];
 export const radioCheckPersenPension = [
-    { id: 1, text: '0%' },
-    { id: 2, text: '80%' }];
+    { id: 0, text: '0%' },
+    { id: 80, text: '80%' }];
 export const radioCheckReductioRate = [
     { id: 1, text: '50%' },
     { id: 2, text: '70%' },
