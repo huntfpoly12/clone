@@ -80,10 +80,6 @@ import { companyId, convertAge } from "../../../../../../../helpers/commonFuncti
 export default defineComponent({
     components: {},
     props: {
-        employeeId: {
-            type: String,
-            default: 0
-        },
         modalStatus: Boolean,
         idRowEdit: {
             type: Number
@@ -194,7 +190,7 @@ export default defineComponent({
             notification("error", error.message);
         });
 
-        const createNewEmployeeWageDependent = (e: any) => {
+        const createNewEmployeeWageDependent = async (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -202,13 +198,14 @@ export default defineComponent({
 
                 let dataNew = {
                     companyId: companyId,
-                    employeeId: props.employeeId,
+                    employeeId: props.idRowEdit,
                     imputedYear: globalYear.value,
                     input: {
                         ...formState,
+                        index: 2,
                     },
                 };
-                createEmployeeWageDependent(dataNew);
+                await createEmployeeWageDependent(dataNew);
             }
 
         };
