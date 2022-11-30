@@ -275,10 +275,7 @@ export default defineComponent({
                     residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
                 };
                 delete newValDataEdit.employeeId;
-                delete newValDataEdit.zipcode;
-                console.log(dataEdited.joinedAt);
-                console.log(dataEdited.leavedAt);
-
+                delete newValDataEdit.zipcode;  
                 let dataCallCreat = {
                     companyId: companyId,
                     imputedYear: globalYear.value,
