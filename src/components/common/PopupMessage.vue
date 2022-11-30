@@ -104,15 +104,14 @@ export default defineComponent({
                             content: props.content,
                             okText: props.okText,
                             cancelText: props.cancelText,
-                            onOk() {
+                            onOk() { 
                                 emit("closePopup", false)
                                 emit("checkConfirm", true)
                             },
-                            onCancel() {
+                            onCancel() { 
                                 emit("closePopup", false)
                                 emit("checkConfirm", false)
-                            }
-
+                            }, 
                         });
                     else if (props.typeModal == "acceptInput") {
                         visibleConfirm.value = true

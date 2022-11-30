@@ -72,8 +72,7 @@ export default defineComponent({
 
 .style-Id {
     margin-right: 5px;
-    text-align: center;
-    color: black;
+    text-align: center; 
     border: 1px solid rgb(164, 164, 164);
     border-radius: 5px;
     line-height: 23px;
