@@ -1,11 +1,11 @@
 <template>
     <standard-form action="" name="add-page-210">
         <a-form-item label="사번(코드)" class="label-red" label-align="right">
-            <text-number-box width="250px" v-model:valueInput="dataCreated.employeeId" :required="true"
+            <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
                 placeholder="숫자만 입력 가능" />
         </a-form-item>
         <a-form-item label="성명" label-align="right" class="label-red">
-            <default-text-box width="250px" v-model:valueInput="dataCreated.name" :required="true"
+            <default-text-box width="200px" v-model:valueInput="dataCreated.name" :required="true"
                 placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="퇴직급여대상 여부" label-align="right">
@@ -40,12 +40,12 @@
             :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
             <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
                 @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
-                width="250px" />
+                width="200px" />
         </a-form-item>
 
         <a-form-item label="외국인 체류자격" label-align="right"
             :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-            <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification" width="250px"
+            <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification" width="200px"
                 :disabled="disabledSelectBox" />
         </a-form-item>
 
@@ -54,7 +54,7 @@
         </a-form-item>
 
         <a-form-item label="주소정근무시간" label-align="right" class="label-red">
-            <text-number-box width="250px" v-model:valueInput="dataCreated.weeklyWorkingHours" :required="true"
+            <text-number-box width="200px" v-model:valueInput="dataCreated.weeklyWorkingHours" :required="true"
                 placeholder="숫자만 입력 가능" />
         </a-form-item>
 
@@ -77,7 +77,7 @@
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
             <div class="input-text">
-                <mail-text-box width="250px" v-model:valueInput="dataCreated.email" placeholder="abc@example.com">
+                <mail-text-box width="200px" v-model:valueInput="dataCreated.email" placeholder="abc@example.com">
                 </mail-text-box>
                 <img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;">
                 <span>
@@ -87,11 +87,11 @@
         </a-form-item>
         <a-form-item label="부서" label-align="right">
             <custom-item-select-box v-model:valueInput="dataCreated.department" :arrSelect="selectBoxData1"
-                width="250px" />
+                width="200px" />
         </a-form-item>
         <a-form-item label="직위" label-align="right">
             <custom-item-select-box v-model:valueInput="dataCreated.responsibility" :arrSelect="selectBoxData2"
-                width="250px" />
+                width="200px" />
         </a-form-item>
         <div style="width: 100%;text-align: center;margin-top: 30px;">
             <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated($event)" />

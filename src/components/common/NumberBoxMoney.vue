@@ -39,7 +39,7 @@ export default defineComponent({
         readOnly: Boolean,
         rtlEnabled: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         placeholder: String,
         mode: {

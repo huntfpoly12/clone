@@ -139,9 +139,9 @@ import dayjs from 'dayjs';
 import { SearchOutlined, EditOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxPager, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import BF310Popup from "./components/BF310Popup.vue";
-import queries from "../../../../graphql/queries/BF/BF3/BF310/index"
+import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
-import { onExportingCommon } from "../../../../helpers/commonFunction"
+import { onExportingCommon } from "@/helpers/commonFunction"
 
 export default defineComponent({
     components: {

@@ -200,10 +200,10 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
-import imgUpload from "../../../../../components/UploadImage.vue";
-import queries from "../../../../../graphql/queries/BF/BF3/BF320/index";
-import mutations from "../../../../../graphql/mutations/BF/BF3/BF320/index";
-import notification from '../../../../../utils/notification';
+import imgUpload from "@/components/UploadImage.vue";
+import queries from "@/graphql/queries/BF/BF3/BF320/index";
+import mutations from "@/graphql/mutations/BF/BF3/BF320/index";
+import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -227,7 +227,7 @@ import {
 } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: {
         modalStatus: {

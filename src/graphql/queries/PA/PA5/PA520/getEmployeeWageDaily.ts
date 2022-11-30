@@ -44,6 +44,7 @@ export default gql`
       monthlyWage
       totalDeduction
       deletable
+      nationalPensionSupportPercent
       deductionItems{
         itemCode
         amount
