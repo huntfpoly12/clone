@@ -4,16 +4,15 @@
 		<a-row :gutter="16">
 			<a-col :span="24">
 				<a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
-					<div style="display: flex;align-items: center;">
+					<div class="d-flex-center">
 						<checkbox-basic size="14px" label="국민연금" class="check-box-tab1"></checkbox-basic>
 						<checkbox-basic size="14px" label="건강보험" class="check-box-tab1"></checkbox-basic>
 						<checkbox-basic size="14px" label="고용보험" class="check-box-tab1"></checkbox-basic>
-						<div style="padding: 0 5px 0 10px">
+						<div class="pr-5 pl-10">
 							<img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;">
 						</div>
-						<span class="fz-11">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
+						<span class="fz-11">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
 						</span>
-
 					</div>
 				</a-form-item>
 			</a-col>
@@ -49,7 +48,7 @@
 				<div>
 					<a-form-item label="일급/월급">
 						<div class="d-flex-center">
-							<switch-basic textCheck="일급" textUnCheck="월급" style="margin-right: 10px;"
+							<switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
 								v-model:valueSwitch="formDifferencePayment.status" />
 							<number-box-money min="0" width="200px" class="mr-5"
 								v-model:valueInput="formDifferencePayment.wage" />
@@ -135,7 +134,8 @@ export default defineComponent({
 			companyId: companyId,
 			imputedYear: globalYear.value,
 			employeeId: props.idRowEdit
-		})
+		}) 
+		
 		const formDifferencePayment: any = reactive({
 			totalAmount: '0',
 			status: true,
@@ -152,8 +152,7 @@ export default defineComponent({
 		}))
 
 		resApiGetEmployeeWageDaily(e => {
-			console.log(e);
-
+			console.log(e.data.getEmployeeWageDaily); 
 		})
 
 

@@ -17,7 +17,10 @@ export default defineComponent({
     props: {
         width: String,
         clearButton: Boolean,
-        spinButtons: Boolean,
+        spinButtons: {
+            type: Boolean,
+            default: false
+        },
         disabled: Boolean,
         required: {
             type: Boolean,
@@ -36,7 +39,7 @@ export default defineComponent({
         readOnly: Boolean,
         rtlEnabled: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         placeholder: String,
         mode: {
