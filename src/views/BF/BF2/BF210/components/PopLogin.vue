@@ -30,7 +30,7 @@ import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxPaging } from "devextreme-vue/data-grid";
 import { ZoomInOutlined } from "@ant-design/icons-vue";
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
+import queries from "@/graphql/queries/BF/BF2/BF210/index";
 export default defineComponent({
     props: ['modalStatus', 'data', 'title', 'idRow']
 

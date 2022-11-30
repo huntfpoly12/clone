@@ -76,10 +76,10 @@ import { ref, defineComponent, reactive, watch } from "vue";
 import DxButton from 'devextreme-vue/button';
 import { MailOutlined } from '@ant-design/icons-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import mutations from "../../../../../graphql/mutations/CM/CM110/index";
-import notification from "../../../../../utils/notification";
-import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
-import queries from "../../../../../graphql/queries/CM/CM110/index"
+import mutations from "@/graphql/mutations/CM/CM110/index";
+import notification from "@/utils/notification";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import queries from "@/graphql/queries/CM/CM110/index"
 import DxValidationGroup from 'devextreme-vue/validation-group';
 import { initialOptionsRadio, initialState } from "../utils/index";
 export default defineComponent({

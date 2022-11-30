@@ -38,8 +38,8 @@
 import { ref, defineComponent, watch } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import mutations from "../../../../../graphql/mutations/CM/CM110/index";
-import queries from "../../../../../graphql/queries/CM/CM110/index"
+import mutations from "@/graphql/mutations/CM/CM110/index";
+import queries from "@/graphql/queries/CM/CM110/index"
 
 export default defineComponent({
     props: ["modalStatus", "data"],

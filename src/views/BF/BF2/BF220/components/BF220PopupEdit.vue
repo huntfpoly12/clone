@@ -88,12 +88,12 @@ import {
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
-import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
+import queries from "@/graphql/queries/BF/BF2/BF220/index";
+import mutations from "@/graphql/mutations/BF/BF2/BF220/index";
 import { AdminScreenRole } from '@bankda/jangbuda-common';
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import notification from '../../../../../utils/notification';
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import notification from '@/utils/notification';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {

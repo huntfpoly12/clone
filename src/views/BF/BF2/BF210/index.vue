@@ -134,16 +134,16 @@ import { useStore } from "vuex";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
-import HistoryPopup from "../../../../components/HistoryPopup.vue";
+import HistoryPopup from "@/components/HistoryPopup.vue";
 import PopLogin from "./components/PopLogin.vue";
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, SearchOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import DxSelectBox from 'devextreme-vue/select-box';
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../graphql/queries/BF/BF2/BF210/index";
+import queries from "@/graphql/queries/BF/BF2/BF210/index";
 import Field from './components/Field.vue';
 import { dataSearchIndex, productsValue } from "./utils/index";
-import { onExportingCommon } from "../../../../helpers/commonFunction"
+import { onExportingCommon } from "@/helpers/commonFunction"
 export default defineComponent({
     components: {
         DxDataGrid,
