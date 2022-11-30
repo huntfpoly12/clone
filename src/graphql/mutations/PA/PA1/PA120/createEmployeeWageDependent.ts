@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 export default gql`
   mutation createEmployeeWageDependent($companyId:Int!,$imputedYear:Int!,$employeeId:Int!,$input:EmployeeWageDependentCreateInput!) {
-    createEmployeeWageDependent(companyId:$companyId,imputedYear:$imputedYear,input:$input){
+    createEmployeeWageDependent(companyId:$companyId,imputedYear:$imputedYear,input:$input,employeeId: $employeeId){
       employeeId
       incomeTypeCode
       index
