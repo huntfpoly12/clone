@@ -23,8 +23,7 @@
 				<div class="header-text-2">두루누리사회보험 공제</div>
 				<a-form-item label="두루누리사회보험 공제 여부" label-align="right" class="durunuri-insurance">
 					<switch-basic textCheck="Y" textUnCheck="N"
-						v-model:valueSwitch="originDataUpdate.input.employeementInsuranceDeduction"
-						class="switch-insurance" />
+						v-model:valueSwitch="originDataUpdate.input.insuranceSupport" class="switch-insurance" />
 				</a-form-item>
 				<a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
 					<radio-group :arrayValue="radioCheckPersenPension"
@@ -60,7 +59,8 @@
 							<switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
 								v-model:valueSwitch="formDifferencePayment.status" />
 							<number-box-money min="0" width="200px" class="mr-5"
-								v-model:valueInput="formDifferencePayment.wage" />
+								v-model:valueInput="formDifferencePayment.wage"
+								:placeholder="formDifferencePayment.status == false ? '일급여' : '월급여'" />
 						</div>
 					</a-form-item>
 					<div class="pl-10">
@@ -176,28 +176,31 @@ export default defineComponent({
 
 		// ================== GRAPQL ====================================
 		const {
+			refetch: refectchDetail,
 			onResult: resApiGetEmployeeWageDaily,
 		} = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
 			fetchPolicy: "no-cache",
 		}))
 		resApiGetEmployeeWageDaily(e => {
-			let res = e.data.getEmployeeWageDaily
-			originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
-			originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
-			originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
-			originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction
-			originDataUpdate.value.input.insuranceSupport = res.insuranceSupport
-			originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent ? res.nationalPensionSupportPercent : 0
-			originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent ? res.employeementInsuranceSupportPercent : 0
-			originDataUpdate.value.input.monthlyPaycheck = res.monthlyPaycheck
-			originDataUpdate.value.input.workingDays = res.workingDays
-			originDataUpdate.value.input.dailyWage = res.dailyWage
-			originDataUpdate.value.input.monthlyWage = res.monthlyWage
-			originDataUpdate.value.input.deductionItems = res.deductionItems
+			if (e.data) {
+				let res = e.data.getEmployeeWageDaily
+				originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
+				originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
+				originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
+				originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction
+				originDataUpdate.value.input.insuranceSupport = res.insuranceSupport
+				originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent ? res.nationalPensionSupportPercent : 0
+				originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent ? res.employeementInsuranceSupportPercent : 0
+				originDataUpdate.value.input.monthlyPaycheck = res.monthlyPaycheck
+				originDataUpdate.value.input.workingDays = res.workingDays
+				originDataUpdate.value.input.dailyWage = res.dailyWage
+				originDataUpdate.value.input.monthlyWage = res.monthlyWage
+				originDataUpdate.value.input.deductionItems = res.deductionItems
 
-			formDifferencePayment.status = res.monthlyPaycheck
-			formDifferencePayment.wage = res.monthlyPaycheck == false ? res.dailyWage : res.monthlyWage
-			formDifferencePayment.working = res.workingDays
+				formDifferencePayment.status = res.monthlyPaycheck
+				formDifferencePayment.wage = res.monthlyPaycheck == false ? res.dailyWage : res.monthlyWage
+				formDifferencePayment.working = res.workingDays
+			}
 		})
 		const {
 			loading: loading,
@@ -230,6 +233,12 @@ export default defineComponent({
 		})
 
 		// ================== WATCH ====================================
+		watch(() => props.idRowEdit, (res) => { 
+			originDataDetail.value.employeeId = res 
+			originDataUpdate.value.employeeId = res  
+			
+			refectchDetail()
+		}, { deep: true })
 		watch(() => arrDeduction, (res) => {
 			let total = 0
 			res.value.map((val: any) => {
@@ -257,8 +266,6 @@ export default defineComponent({
 
 		// ================== FUNCTION ==================================
 		const updateDeduction = () => {
-			console.log(formDifferencePayment);
-
 			let dataUpdate = {
 				...originDataUpdate.value,
 				input: {
@@ -267,14 +274,14 @@ export default defineComponent({
 					dailyWage: formDifferencePayment.status == false ? formDifferencePayment.wage : 0,
 					monthlyWage: formDifferencePayment.status == true ? formDifferencePayment.wage : 0,
 					workingDays: formDifferencePayment.working,
-					deductionItems: [{
-						itemCode: 1001,
-						amount: 2000
-					}]
+					deductionItems: [
+						{ itemCode: 1001, amount: 200000 },
+						{ itemCode: 1002, amount: 200000 },
+						{ itemCode: 1003, amount: 200000 },
+						{ itemCode: 1004, amount: 200000 }
+					]
 				}
 			}
-
-			console.log(dataUpdate);
 			mutate(dataUpdate)
 		}
 
