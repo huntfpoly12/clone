@@ -5,7 +5,9 @@ export default gql`
             $input: IncomeBusinessWithholdingReceiptInput!
             $employeeKeys: [ReportEmployeeBusinessKeyInput!]!
         ){
-            getIncomeBusinessWithholdingReceiptReportViewUrl(companyId: $companyId, input: $input, employeeKeys: $employeeKeys) { 
-                scalar
-            }
+            getIncomeBusinessWithholdingReceiptReportViewUrl(
+                companyId: $companyId, 
+                input: $input, 
+                employeeKeys: $employeeKeys
+                ) 
         }`

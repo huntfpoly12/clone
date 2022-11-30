@@ -18,7 +18,7 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="listEmployeeExtra"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;"
-                        :onRowClick="editData">
+                        :onRowClick="editData" :focused-row-enabled="true">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
