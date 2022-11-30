@@ -52,17 +52,27 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <DxColumn caption="성명" cell-template="company-name" width="350px" />
+                        <DxColumn caption="성명" cell-template="company-name" width="300px" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" width="120px" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
-                            <div class="custom-grade-cell">
-                                <four-major-insurance :typeTag="1" :typeValue="1" />
+                            <div v-if="data.data.employeeId == 1" class="custom-grade-cell">
+                                <four-major-insurance v-if="data.data.nationalPensionDeduction == true" :typeTag="1"
+                                    :typeValue="1" />
+                                <four-major-insurance v-if="data.data.healthInsuranceDeduction == true" :typeTag="2"
+                                    :typeValue="1" />
+                                <four-major-insurance v-if="data.data.employeementInsuranceDeduction == true"
+                                    :typeTag="4" :typeValue="1" />
+                                <br>
+                                <four-major-insurance v-if="data.data.employeementInsuranceDeduction" :typeTag="6"
+                                    :typeValue="1" :ratio="data.data.employeementInsuranceDeduction" />
+                                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7"
+                                    :typeValue="1" :ratio="data.data.employeementInsuranceSupportPercent" />
                             </div>
                         </template>
                         <DxColumn cell-template="pupop" width="100" />

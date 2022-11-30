@@ -2,28 +2,23 @@
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
       <standard-form formName="tab1-pa120">
-        <a-row class="dflex-first">
-          <a-col :span="12">
-            <a-form-item label="사번(코드)" label-align="right" class="red">
-              <text-number-box width="200px" :required="true" v-model:valueInput="formStateTab1.employeeId"
-                :disabled="true" placeholder="숫자만 입력 가능" />
-            </a-form-item>
-          </a-col>
-          <a-col>
-            <a-form-item label="영업자코드" label-align="right">
-              <div class="input-text">
-                <switch-basic v-model:valueSwitch="formStateTab1.president" textCheck="O" textUnCheck="X"
-                  style="width: 80px"></switch-basic>
-                <span>
-                  <InfoCircleFilled /> 대표자인 경우 고용보험 제외됩니다.
-                </span>
-              </div>
-            </a-form-item>
-          </a-col>
-        </a-row>
+        <a-form-item label="사번(코드)" label-align="right" class="red">
+          <text-number-box width="200px" :required="true" v-model:valueInput="formStateTab1.employeeId"
+            placeholder="숫자만 입력 가능" />
+        </a-form-item>
+
+        <a-form-item label="영업자코드" label-align="right">
+          <div class="input-text">
+            <switch-basic v-model:valueSwitch="formStateTab1.president" textCheck="O" textUnCheck="X"
+              style="width: 80px"></switch-basic>
+            <span>
+              <InfoCircleFilled /> 대표자인 경우 고용보험 제외됩니다.
+            </span>
+          </div>
+        </a-form-item>
 
         <a-form-item label="성명" label-align="right" class="red">
-          <text-number-box width="200px" v-model:valueInput="formStateTab1.name" :required="true"
+          <default-text-box width="200px" v-model:valueInput="formStateTab1.name" :required="true"
             placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
@@ -39,62 +34,42 @@
             </span>
           </div>
         </a-form-item>
-        <a-row>
-          <a-col :span="7">
-            <a-form-item label="내/외국인" label-align="right">
-              <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner"
-                layoutCustom="horizontal"></radio-group>
-            </a-form-item>
-          </a-col>
-          <a-col :span="9">
-            <a-form-item label="외국인 국적" label-align="right" class="red">
-              <country-code-select-box v-model:valueCountry="formStateTab1.nationalityCode" :disabled="isForeigner" />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="외국인 체류자격" label-align="right" class="red">
-              <stay-qualification-select-box v-model:valueStayQualifiction="formStateTab1.stayQualification" />
-            </a-form-item>
-          </a-col>
-        </a-row>
+
+        <a-form-item label="내/외국인" label-align="right">
+          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal">
+          </radio-group>
+        </a-form-item>
+
+        <a-form-item label="외국인 국적" label-align="right" class="red">
+          <country-code-select-box v-model:valueCountry="formStateTab1.nationalityCode" :disabled="isForeigner" />
+        </a-form-item>
+
+        <a-form-item label="외국인 체류자격" label-align="right" class="red">
+          <stay-qualification-select-box v-model:valueStayQualifiction="formStateTab1.stayQualification" />
+        </a-form-item>
+
         <a-form-item :label="labelResidebId" label-align="right" class="red">
           <id-number-text-box :required="true" v-model:valueInput="formStateTab1.residentId" width="150px">
           </id-number-text-box>
         </a-form-item>
         <a-form-item label="주소" class="clr" label-align="left">
-          <a-row :gutter="[0, 4]">
-            <a-col :span="24">
-              <a-row>
-                <a-col :span="6">
-                  <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="100%" :disabled="true" />
-                </a-col>
-                <a-col :span="18">
-                  <div style="margin-left: 5px">
-                    <post-code-button @dataAddress="funcAddress" />
-                  </div>
-                </a-col>
-              </a-row>
-            </a-col>
-            <a-col :span="24">
-              <a-row>
-                <a-col :span="12">
-                  <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="100%" :disabled="true"
-                    placeholder="주소1" />
-                </a-col>
-                <a-col :span="12" style="padding-left: 9px">
-                  <default-text-box v-model:valueInput="formStateTab1.addressExtend" width="100%" placeholder="주소2" />
-                </a-col>
-              </a-row>
-            </a-col>
-          </a-row>
+          <div class="zip-code">
+            <default-text-box v-model:valueInput="formStateTab1.postCode" width="120px" :disabled="true" />
+            <div style="margin-left: 5px">
+              <post-code-button @dataAddress="funcAddress" />
+            </div>
+          </div>
+          <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="300px" :disabled="true"
+            class="roadAddress" placeholder="주소1" />
+
+          <default-text-box v-model:valueInput="formStateTab1.addressExtend" width="300px" placeholder="주소2" />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
           <div class="input-text">
             <mail-text-box v-model:valueInput="formStateTab1.email" width="200px" placeholder="abc@example.com">
             </mail-text-box>
             <span>
-              <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달
-              가능합니다.
+              <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
             </span>
           </div>
         </a-form-item>
@@ -115,6 +90,8 @@
     </a-spin>
   </div>
 </template>
+
+
 <script lang="ts">
 import { defineComponent, reactive, ref, watch, computed } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
@@ -344,16 +321,12 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
 #tab1-pa120 {
   ::v-deep .ant-form-item-label>label {
-    width: 100px;
+    width: 135px;
     padding-left: 10px;
-  }
-
-  .dflex-first {
-    display: flex;
-
   }
 
   .input-text {
@@ -369,6 +342,16 @@ export default defineComponent({
     label {
       color: red;
     }
+  }
+
+  .zip-code {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .roadAddress {
+    margin-bottom: 5px;
   }
 }
 </style>

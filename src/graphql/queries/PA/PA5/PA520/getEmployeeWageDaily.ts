@@ -28,19 +28,26 @@ export default gql`
       withholdingIncomeTax
       withholdingLocalIncomeTax
       withholdingRuralSpecialTax
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
-      ip
-      active
       residentId
-      joinedAt
-      leavedAt
+      retirementIncome
+      nationalPensionDeduction
+      healthInsuranceDeduction
+      longTermCareInsuranceDeduction
+      employeementInsuranceDeduction
+      insuranceSupport
+      nationalPensionDeduction
+      employeementInsuranceSupportPercent
       weeklyWorkingHours
+      monthlyPaycheck
+      workingDays
+      dailyWage
+      monthlyWage
       totalDeduction
       deletable
-      retirementIncome
+      deductionItems{
+        itemCode
+        amount
+      }
     }
   }
 `;

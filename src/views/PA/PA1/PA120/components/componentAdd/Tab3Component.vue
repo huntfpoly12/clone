@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
+  {{employeeId}} {{dataSource}}
      <div id="tab23-pa120">
              <a-row>
                <a-col :span="24">
@@ -14,31 +15,16 @@
                            <template #button-template>
                                <DxButton icon="plus" @click="openAddDependent" />
                            </template>
-                           <DxColumn caption="성명" cell-template="company-name" :width="500"/>
-                           <template #company-name="{ data }">
-                               <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                   :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false" />
-                           </template>
-                           <DxColumn caption="주민등록번호" data-field="residentId" :width="200"/>
-                           <DxColumn caption="비고" cell-template="grade-cell"/>
-                           <template #grade-cell="{ data }" class="custom-action">
-                               <div class="custom-grade-cell">
-                                   <div class="custom-grade-cell-tag">{{ data.data.incomeTypeCode }}</div>
-                                   <span>{{ data.data.incomeTypeName }}</span>
-                               </div>
-                           </template>
-                           <DxColumn :width="80" cell-template="pupop" />
-                           <template #pupop="{ data }" class="custom-action">
-                               <div class="custom-action">
-                                   <a-space :size="10">
-                                       <a-tooltip placement="top">
-                                           <template #title>편집</template>
-                                           <EditOutlined @click="actionEdit(data)" />
-                                       </a-tooltip>
-                                       <DeleteOutlined @click="actionDelete(data)" />
-                                   </a-space>
-                               </div>
-                           </template>
+                           <DxColumn caption="연말 관계" data-field="relation" />
+                          <DxColumn caption="성명" data-field="name" />
+                          <DxColumn caption="내/외국인 " data-field="age" cell-template="foreigner" />
+                          <template #foreigner="{ data }">
+                              <employee-info :foreigner="data.foreigner" :checkStatus="false" />
+                          </template>
+                          <DxColumn caption="주민등록번호" data-field="residentId" />
+                          <DxColumn caption="나이" data-field="Age" />
+                          <DxColumn caption="기본공제" data-field="basicDeduction" />
+                          <DxColumn caption="부녀자" data-field="women" />
                        </DxDataGrid>    
                    </a-spin>
                </a-col>
@@ -51,7 +37,10 @@
    import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
    import DxButton from "devextreme-vue/button";
    import { useStore } from 'vuex';
-   import PopupAddNewDependent from './tab3Dependent/PopupAddNewDependent.vue'
+   import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue'
+   import { useMutation, useQuery } from "@vue/apollo-composable";
+   import queries from "../../../../../../graphql/queries/PA/PA1/PA120/index";
+import { companyId } from "../../../../../../helpers/commonFunction";
    export default defineComponent({
      components: {
             PopupAddNewDependent,
@@ -64,10 +53,10 @@
      props: {
         employeeId:{
             type:String,
-            default:0
+            default:0,
             },
     },
-     setup() {
+     setup(props, context) {
         const dataSource = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
@@ -76,8 +65,26 @@
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalAddNewDependent = ref<boolean>(false);
         const modalEditStatus = ref<boolean>(false);
-        const modalHistoryStatus = ref<boolean>(false)
-    
+        const modalHistoryStatus = ref<boolean>(false);
+        const globalYear = computed(() => store.state.settings.globalYear);
+        const originDataDetail = reactive({
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          employeeId: ref(props.employeeId).value,
+        });
+        const {
+          result,
+        } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }));
+        watch(result, (value) => {
+            if (value) {
+                dataSource.value = value.getEmployeeWage.dependents;
+                console.log(value.getEmployeeWage.dependents);
+                trigger.value = false;
+            }
+        });
         const openAddDependent = () => {
                 modalAddNewDependent.value = true;
         };
@@ -104,6 +111,7 @@
          actionDelete,
          onSubmit,
          per_page, move_column, colomn_resize,
+         originDataDetail,
        }
      },
    });
