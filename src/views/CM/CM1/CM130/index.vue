@@ -126,16 +126,14 @@
                                     <a-row>
                                         <a-col :span="6">
                                             <a-form-item label="일괄납부 여부" :label-col="labelCol">
-                                                <switch-basic style="width: 80px;"
-                                                    :disabled="true"
+                                                <switch-basic style="width: 80px;" :disabled="true"
                                                     v-model:valueSwitch="formState.collectivePayment" :textCheck="'적용'"
                                                     :textUnCheck="'미적용'" />
                                             </a-form-item>
                                         </a-col>
                                         <a-col :span="12">
                                             <a-form-item label="사업자단위 과세여부" :label-col="labelCol">
-                                                <switch-basic style="width: 80px;"
-                                                :disabled="true"
+                                                <switch-basic style="width: 80px;" :disabled="true"
                                                     v-model:valueSwitch="formState.taxForEachBusiness" :textCheck="'적용'"
                                                     :textUnCheck="'미적용'" />
                                             </a-form-item>
@@ -163,10 +161,10 @@
                                                                 style="padding-right: 10px; font-size: xxx-large" />
                                                             <div>
                                                                 <p style="margin: 0; font-weight: 600">
-                                                                    관할세무서 : 송파세무서
+                                                                    관할세무서 : {{ dataPublicInstitution.taxOfficeName }}
                                                                 </p>
                                                                 <p style="margin: 0; font-weight: 600">
-                                                                    지방소득세 납세지 : 서울특별시 송파구
+                                                                    지방소득세 납세지 : {{ dataPublicInstitution.localIncomeTaxArea }}
                                                                 </p>
                                                                 <p style="margin: 0">
                                                                     위 자동으로 선택된 결과로 적용하시겠습니까?
@@ -207,7 +205,7 @@
                                                     </div>
                                                 </a-col>
                                                 <a-form-item>
-                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'contained'"
+                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'outlined'"
                                                         @onClick="modalSetting" />
                                                 </a-form-item>
                                             </a-row>
@@ -242,7 +240,7 @@
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
                         <template #use="{ data }">
-                            <a-tag :color="getAbleDisable(data.value)">이용중지</a-tag>
+                            <a-tag :color="getAbleDisable(data.value)">{{ data.value ? "이용중" : "이용중지" }}</a-tag>
                         </template>
                         <DxColumn data-field="printName" caption="과세구분" />
                         <DxColumn data-field="name" caption="항목명" />
@@ -276,21 +274,13 @@
                 <a-tab-pane key="3" tab="공제항목">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        :onRowClick="editData">
-                        <!-- <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                        <DxExport :enabled="true" :allow-export-selected-data="true" /> -->
-                        <!-- <DxToolbar>
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="editData">
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                        <DxExport :enabled="true" :allow-export-selected-data="true" />
+                        <DxToolbar>
                             <DxItem name="searchPanel" />
                             <DxItem name="exportButton" />
-                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                            <DxItem name="groupPanel" />
-                            <DxItem name="addRowButton" show-text="always" />
-                            <DxItem name="columnChooserButton" />
-                        </DxToolbar> -->
-                        <!-- <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
-                        </template> -->
+                        </DxToolbar>
                         <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
@@ -298,7 +288,7 @@
                             <a-tag :color="getAbleDisable(data.value)">{{ data.value ? "이용중" : "이용중지" }}</a-tag>
                         </template>
                         <DxColumn caption="구분" cell-template="deduction" />
-                        <template #deduction="{ data }">
+                        <template #deduction>
                             공제
                         </template>
                         <DxColumn data-field="name" caption="항목명" />
@@ -316,21 +306,23 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    <standard-form formName="add-deduction-310" style="border: 1px solid #ddd; margin-top: 20px; padding: 10px;">
+                    <standard-form formName="add-deduction-310"
+                        style="border: 1px solid #ddd; margin-top: 20px; padding: 10px;">
                         <h2 style="font-weight: 600; color: gray" class="title_modal">
                             급여상세항목
                         </h2>
                         <a-row :gutter="24">
                             <a-col :span="5">
                                 <a-form-item label="코드" :label-col="labelCol">
-                                    <number-box :width="150" :min="0" :max="30" v-model:valueInput="formStateDeduction.itemCode"
-                                        :spinButtons="true" :disabled="true" >
+                                    <number-box :width="150" :min="0" :max="30"
+                                        v-model:valueInput="formStateDeduction.itemCode" :spinButtons="true"
+                                        :disabled="true">
                                     </number-box>
                                 </a-form-item>
                             </a-col>
                             <a-col :span="6">
                                 <switch-basic style="width: 80px;" v-model:valueSwitch="formStateDeduction.use"
-                                    :textCheck="'이용중'" :textUnCheck="'이용중지'" :disabled="true"/>
+                                    :textCheck="'이용중'" :textUnCheck="'이용중지'" :disabled="true" />
                             </a-col>
                         </a-row>
                         <a-row>
@@ -450,6 +442,7 @@ export default defineComponent({
         const setModalVisible = () => {
             isShow.value = false;
         }
+        const dataQueryInstitution = ref();
         const dataSource = ref([]);
         const dataSourceDeduction = ref([]);
         const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
@@ -460,6 +453,7 @@ export default defineComponent({
         const handleSuccsess = (e: MouseEvent) => {
             isShow.value = false;
         };
+        const trigger = ref(false)
         // reportType: 1 or 6
         // paymentType: 1 or 2
         // get config
@@ -483,6 +477,14 @@ export default defineComponent({
                 formState.collectivePayment = value.getWithholdingConfig.collectivePayment;
                 formState.taxForEachBusiness = value.getWithholdingConfig.taxForEachBusiness;
                 formState.undeclaredIncomeStatus = value.getWithholdingConfig.undeclaredIncomeStatus;
+
+                trigger.value = true;
+                dataQueryInstitution.value = {
+                    bcode: value.getWithholdingConfig.companyAddressInfo.bcode
+                }
+                if (dataQueryInstitution.value) {
+                    refetchConfigInstitution()
+                }
             }
         });
 
@@ -496,7 +498,19 @@ export default defineComponent({
         );
         watch(resultConfigDeduction, (value) => {
             dataSourceDeduction.value = value.getWithholdingConfigDeductionItems
+        });
 
+        const { result: resultConfigInstitution, refetch: refetchConfigInstitution } = useQuery(
+            queries.getPublicInstitution,
+            dataQueryInstitution,
+            () => ({
+                enabled: trigger.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        const dataPublicInstitution = ref<any>({})
+        watch(resultConfigInstitution, (value) => {
+            dataPublicInstitution.value = value.getPublicInstitution
         });
         // update config 
         const { mutate: actionUpdateWithholdingConfig, onDone: onDoneUpdated, onError: errorEditConfig } = useMutation(
@@ -660,7 +674,7 @@ export default defineComponent({
         }
         const getAbleDisable = (data: any) => {
             if (data) {
-                return "transparent";
+                return "gray";
             } else {
                 return "red";
             }
@@ -692,7 +706,7 @@ export default defineComponent({
         }));
         const changeColorRow = (e: any) => {
             if (e.data?.use) {
-                if(e.data.tax) {
+                if (e.data.tax) {
                     e.rowElement.style.backgroundColor = '#FFB6C1';
                 } else {
                     e.rowElement.style.backgroundColor = '#D2ECFC';
@@ -739,6 +753,7 @@ export default defineComponent({
             modalHistory,
             getAbleDisable,
             onExporting,
+            dataPublicInstitution,
         };
     },
 });
@@ -776,4 +791,5 @@ export default defineComponent({
     margin-left: 2%;
     color: #c3baba;
 }
+
 </style>
