@@ -87,7 +87,8 @@ export default defineComponent({
         },
         idRowIndex: {
             type: Number
-        }
+        },
+        popupStatus: Boolean
     },
     setup(props, { emit }) {
         const dataSource = ref([]);
@@ -114,6 +115,7 @@ export default defineComponent({
         let formState2 = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
             emit('closePopup', false);
+
         }
 
         const women = ref(formState.women == true ? 1 : 0);
@@ -227,7 +229,6 @@ export default defineComponent({
             notification('success', '업데이트 완료!')
         })
         const actionUpdated = (e: any) => {
-            refetchValueDetail()
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -244,11 +245,17 @@ export default defineComponent({
                 };
                 mutate(dataCallUpdate)
             }
-
         }
+        watch(() => props.modalStatus, (value) => {
+            if (value == false) {
+                trigger.value = true
+                refetchValueDetail()
+            }
+        })
         watch(() => props.idRowEdit, (value) => {
             originDataDetail.value.employeeId = value
         })
+
         return {
             women,
             singleParent,

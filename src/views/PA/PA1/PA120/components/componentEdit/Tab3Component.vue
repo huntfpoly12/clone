@@ -235,7 +235,12 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-
+        watch(() => modalEditStatus.value, (value) => {
+            if (value == false) {
+                trigger.value = true
+                refetchData()
+            }
+        })
         watch(result, (value) => {
             if (value) {
                 dataSource.value = value.getEmployeeWage.dependents;
