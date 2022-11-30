@@ -6,7 +6,7 @@
             <img v-else :src="dataImage.url" :style="{ width: width, height: height }" />
         </div>
         <div v-else class="img-preview">
-            <img src="../../../src/assets/images/imgdefault.jpg" :style="{ width: width, height: height }" />
+            <img src="@/assets/images/imgdefault.jpg" :style="{ width: width, height: height }" />
         </div>
     </a-col>
     <div v-if="dataImage && dataImage.url">

@@ -49,7 +49,7 @@ import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from 'vuex';
 import { employees } from "../data.js";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import queries from "../../../../../graphql/queries/common/index";
+import queries from "@/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 import {
 	DxDataGrid,

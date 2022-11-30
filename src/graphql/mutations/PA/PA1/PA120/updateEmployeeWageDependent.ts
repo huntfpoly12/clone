@@ -1,20 +1,36 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation EmployeeWageDependent(
+  mutation updateEmployeeWageDependent(
     $companyId: Int!
     $imputedYear: Int!
     $employeeId: Int!
     $index: Int!
     $input: EmployeeWageDependentUpdateInput!
   ) {
-    EmployeeWageDependent(
+    updateEmployeeWageDependent(
       companyId: $companyId
       imputedYear: $imputedYear
       employeeId: $employeeId
-      index: $employeeId
+      index: $index
       input: $input
     ) {
-      type
+      employeeId
+      incomeTypeCode
+      index
+      relation
+      name
+      foreigner
+      residentIdValidity
+      basicDeduction
+      women
+      singleParent
+      senior
+      disabled
+      maternityAdoption
+      descendant
+      consignmentRelationship
+      householder
+      residentId
     }
   }
 `;

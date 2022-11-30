@@ -104,12 +104,12 @@
 <script lang="ts">
 import { ref, defineComponent, watch, reactive } from "vue";
 import { MailOutlined } from "@ant-design/icons-vue";
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import type { SelectProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import queries from "../../../../../graphql/queries/CM/CM110/index";
-import mutations from "../../../../../graphql/mutations/CM/CM110/index";
-import notification from "../../../../../utils/notification";
+import queries from "@/graphql/queries/CM/CM110/index";
+import mutations from "@/graphql/mutations/CM/CM110/index";
+import notification from "@/utils/notification";
 import { initialOptionsRadio, initialState } from "../utils/index";
 
 export default defineComponent({

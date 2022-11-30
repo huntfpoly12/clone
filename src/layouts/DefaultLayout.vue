@@ -301,6 +301,9 @@ export default defineComponent({
 					if (newValue.id.includes("pa-6")) {
 						this.openKeys = ["pa-000", "pa-600"];
 					}
+					if (newValue.id.includes("pa-7")) {
+						this.openKeys = ["pa-000", "pa-700"];
+					}
 					if (newValue.id !== '#') {
 						this.$router.push(`/dashboard/${newValue.id}`);
 					}

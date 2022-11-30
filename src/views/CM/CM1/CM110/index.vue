@@ -247,22 +247,22 @@ import {
 import DxButton from "devextreme-vue/button";
 import AddNewCM110Poup from "./components/AddNewCM110Poup.vue";
 import EditCM110Popup from "./components/EditCM110Popup.vue"
-import HistoryPopup from "../../../../components/HistoryPopup.vue";
-import inputFormat from '../../../../components/inputBoxFormat.vue';
+import HistoryPopup from "@/components/HistoryPopup.vue";
+import inputFormat from '@/components/inputBoxFormat.vue';
 import { defineComponent, ref, computed } from "vue";
 import { useStore } from 'vuex';
 import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import ReviewStampImage from "./components/ReviewStampImage.vue";
-import ListLoginPopup from "../../../../components/ListLoginPopup.vue";
+import ListLoginPopup from "@/components/ListLoginPopup.vue";
 import type { UploadProps } from 'ant-design-vue';
 import { initialFormState } from "./utils/index";
-import notification from "../../../../utils/notification";
-import mutations from "../../../../graphql/mutations/CM/CM110/index";
+import notification from "@/utils/notification";
+import mutations from "@/graphql/mutations/CM/CM110/index";
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../graphql/queries/CM/CM110/index"
+import queries from "@/graphql/queries/CM/CM110/index"
 import { useMutation } from "@vue/apollo-composable";
 import { getJwtObject } from "@bankda/jangbuda-common";
-import { companyId } from "../../../../helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 function getBase64(file: File) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();

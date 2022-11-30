@@ -1,5 +1,5 @@
 <template>
-    <action-header title="사업소득자등록" @actionSave="saving($event)" />
+    <action-header title="사업소득자등록" @actionSave="saving($event)" :buttonDelete="false" />
     <div id="pa-610">
         <div class="page-content">
             <a-row>
@@ -20,7 +20,7 @@
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                                 :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                :column-auto-width="true">
+                                :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
                                 <DxScrolling column-rendering-mode="virtual" />
                                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                                 <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -51,31 +51,26 @@
                                     </div>
                                 </template>
 
-                                <DxColumn caption="주민등록번호" data-field="residentId" />
-                                <DxColumn caption="소득부분" cell-template="grade-cell" />
+                                <DxColumn caption="주민등록번호" data-field="residentId" width="200px" />
+                                <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
                                 <template #grade-cell="{ data }" class="custom-action">
-                                    <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.incomeTypeName" ></income-type>
+                                    <income-type :typeCode="data.data.incomeTypeCode"
+                                        :typeName="data.data.incomeTypeName" />
                                 </template>
 
-                                <DxColumn :width="80" cell-template="pupop" />
+                                <DxColumn :width="70" cell-template="pupop" />
                                 <template #pupop="{ data }" class="custom-action">
-                                    <div class="custom-action">
-                                        <a-space :size="10">
-                                            <a-tooltip placement="top"
-                                                @click="actionEdit(data.data.employeeId, data.data.incomeTypeCode)">
-                                                <template #title>편집</template>
-                                                <EditOutlined />
-                                            </a-tooltip>
-                                            <a-tooltip placement="top" @click="modalHistory(data.data.employeeId)">
-                                                <template #title>변경이력</template>
-                                                <HistoryOutlined />
-                                            </a-tooltip>
-                                            <a-tooltip placement="top"
-                                                @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
-                                                <template #title>변경이력</template>
-                                                <DeleteOutlined />
-                                            </a-tooltip>
-                                        </a-space>
+                                    <div class="custom-action" style="text-align: center;">
+                                        <a-tooltip placement="top" @click="modalHistory(data.data.employeeId)"
+                                            class="mr-10">
+                                            <template #title>변경이력</template>
+                                            <HistoryOutlined />
+                                        </a-tooltip>
+                                        <a-tooltip placement="top" v-if="data.data.deletable == true"
+                                            @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
+                                            <template #title>변경이력</template>
+                                            <DeleteOutlined />
+                                        </a-tooltip>
                                     </div>
                                 </template>
                             </DxDataGrid>
@@ -84,8 +79,8 @@
                                     :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                             </div>
                             <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false"
-                                typeModal="confirm" title="Title Notification" content="Content notification" okText="네"
-                                cancelText="아니요" @checkConfirm="statusComfirm" />
+                                typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요"
+                                @checkConfirm="statusComfirm" />
                             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                                 :data="popupData" title="변경이력" typeHistory="pa-610" />
                         </div>
@@ -158,6 +153,8 @@ import { companyId } from "../../../../../src/helpers/commonFunction";
 import dayjs from 'dayjs';
 import mutations from "../../../../graphql/mutations/PA/PA6/PA610/index";
 import HistoryPopup from '../../../../components/HistoryPopup.vue';
+import { Message } from "../../../../configs/enum"
+
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -186,6 +183,7 @@ export default defineComponent({
         HistoryPopup
     },
     setup() {
+        const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
         const dataSource = ref([]);
@@ -245,7 +243,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinessesDetail(res => {
-            if (res) {
+            if (res.data) {
                 dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
                 dataAction.input.name = res.data.getEmployeeBusiness.name
                 dataAction.input.foreigner = res.data.getEmployeeBusiness.foreigner
@@ -309,23 +307,22 @@ export default defineComponent({
             if (disabledInput.value == true) {
                 dataSource.value.map((e: any) => {
                     if (e.employeeId == newValue.employeeId) {
+                        let newID = newValue.input.residentId.replace('-', '')
                         e.foreigner = newValue.input.foreigner
                         e.incomeTypeCode = newValue.incomeTypeCode
                         e.incomeTypeName = newValue.input.incomeTypeName
                         e.name = newValue.input.name
-                        e.residentId = newValue.input.residentId.slice(0, 6) + '-' + newValue.input.residentId.slice(7, 13)
-
+                        e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
                     }
                 })
             }
         }, { deep: true });
 
         watch(() => dataAction.input.foreigner, (newValue, old) => {
-            console.log(newValue);
-            if (newValue == false){
+            if (newValue == false) {
                 disabledInput2.value = true
                 textResidentId.value = '주민등록번호'
-            }else{
+            } else {
                 disabledInput2.value = false
                 textResidentId.value = '외국인번호 유효성'
             }
@@ -341,12 +338,12 @@ export default defineComponent({
             // trigger.value = true;
             // refetchData();
         };
-        const actionEdit = (employeeId: any, incomeTypeCode: any) => {
+        const actionEdit = (data: any) => {
             disabledInput.value = true
             triggerDetail.value = true
             disabledInput2.value = true
-            valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
-            valueCallApiGetEmployeeBusiness.employeeId = employeeId
+            valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
+            valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
             refetchDataDetail()
         }
 
@@ -390,7 +387,7 @@ export default defineComponent({
                             nationality: dataAction.input.nationality,
                             nationalityCode: dataAction.input.nationalityCode,
                             stayQualification: dataAction.input.stayQualification,
-                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(7, 13),
+                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(6, 13),
                             email: dataAction.input.email,
                             employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
                             incomeTypeCode: dataAction.incomeTypeCode,
@@ -451,6 +448,7 @@ export default defineComponent({
             loadingUpdate,
             loadingDelete,
             modalStatus,
+            contentDelete,
             statusComfirm,
             actionDelete,
             addRow,
