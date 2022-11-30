@@ -36,8 +36,8 @@ export default gql`
       incomeTaxMagnification
       incomePayment
       totalPay
-      totalDeduction
-      totalReduction
+      # totalDeduction
+      # totalReduction
       deletable
       payItems {
         itemCode
@@ -46,15 +46,11 @@ export default gql`
       deductionItems {
         itemCode
         amount
-        supportAmount
       }
-      reductionItems {
-        itemCode
-        reductionRate
-        reductionStartDate
-        reductionFinishDate
-        reductionInput
-      }
+      # reductionItems {
+      #   itemCode
+      #   amount
+      # }
       dependents {
         employeeId
         incomeTypeCode
@@ -72,7 +68,7 @@ export default gql`
         descendant
         consignmentRelationship
         householder
-        residentId
+        # residentId
       }
     }
   }
