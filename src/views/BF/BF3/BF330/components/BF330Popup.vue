@@ -272,10 +272,10 @@ import { FacilityBizType } from "@bankda/jangbuda-common";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import DxDropDownBox from "devextreme-vue/drop-down-box";
-import imgUpload from "../../../../../components/UploadImage.vue";
+import imgUpload from "@/components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import {
     DxDataGrid,
     DxColumn,
@@ -300,8 +300,8 @@ import {
     PlusOutlined,
 } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
-import queries from "../../../../../graphql/queries/BF/BF3/BF330/index";
-import mutations from "../../../../../graphql/mutations/BF/BF3/BF330/index";
+import queries from "@/graphql/queries/BF/BF3/BF330/index";
+import mutations from "@/graphql/mutations/BF/BF3/BF330/index";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -310,8 +310,8 @@ import { initialState } from "../utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import DateTimeBox from "../../../../../components/common/DateTimeBox.vue";
-import notification from '../../../../../utils/notification';
+import DateTimeBox from "@/components/common/DateTimeBox.vue";
+import notification from '@/utils/notification';
 export default defineComponent({
     components: {
         DxTextBox, DxDropDownBox, DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxButton, DxToolbar, DxItem, DxNumberBox, DxTexts, DxMasterDetail, DxCheckBox,
