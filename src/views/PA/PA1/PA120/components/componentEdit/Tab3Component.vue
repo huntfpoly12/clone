@@ -4,32 +4,40 @@
         <a-row>
             <a-col :span="24">
                 <a-spin :spinning="false" size="large">
+
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" id="gridContainer">
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddDependent" />
                         </template>
-                        <DxColumn caption="연말 관계" data-field="relation" />
-                        <DxColumn caption="성명" data-field="name" />
-                        <DxColumn caption="내/외국인 " data-field="foreigner" cell-template="foreigner" />
-                        <template #foreigner="{ data }">
-                            <employee-info :foreigner="data.foreigner" :checkStatus="false" />
-                        </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" />
-                        <DxColumn caption="나이" data-field="Age" />
-                        <DxColumn caption="기본공제" data-field="basicDeduction" />
-                        <DxColumn caption="부녀자" data-field="women" />
-                        <DxColumn caption="한부모" data-field="singleParent" />
-                        <DxColumn caption="경로 우대" data-field="Senior" />
-                        <DxColumn caption="장애인 " data-field="Disabled" />
-                        <DxColumn caption="자녀" data-field="Descendant" />
-                        <DxColumn caption="출산 입양" data-field="maternityAdoption" />
-                        <DxColumn caption="위탁 관계 " data-field="consignmentRelationship" />
-                        <DxColumn caption="세대주 여부 " data-field="Householder" />
+                        <DxColumn alignment="left" caption="연말 관계" data-field="relation" />
+                        <DxColumn alignment="left" caption="성명" data-field="name" />
+                        <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
+                        <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
+                        <DxColumn alignment="left" caption="나이" data-field="Age" />
+                        <DxColumn alignment="left" caption="기본공제" data-field="basicDeduction"
+                            cell-template="basicDeductionChange" />
+                        <DxColumn alignment="left" caption="부녀자" data-field="women" cell-template="womenChange" />
+                        <DxColumn alignment="left" caption="한부모" data-field="singleParent"
+                            cell-template="singleParentChange" />
+                        <DxColumn alignment="left" caption="경로 우대" data-field="senior" cell-template="SeniorChange" />
+                        <DxColumn alignment="left" caption="장애인 " data-field="disabled"
+                            cell-template="disabledChange" />
+                        <DxColumn alignment="left" caption="자녀" data-field="descendant"
+                            cell-template="DescendantChange" />
+                        <DxColumn alignment="left" caption="출산 입양" data-field="maternityAdoption"
+                            cell-template="maternityAdoptionChange" />
+                        <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
+                            cell-template="consignmentRelationshipChange" />
+                        <!-- <DxColumn
+              alignment="left"
+              caption="세대주 여부 "
+              data-field="householder"
+            /> -->
                         <DxColumn :width="80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
@@ -41,6 +49,36 @@
                                     <DeleteOutlined @click="actionDeleteFuc(data.data.index)" />
                                 </a-space>
                             </div>
+                        </template>
+                        <template #foreignerChange="{ data: cellData }">
+                            <employee-info :foreigner="cellData.value" :status="hasStatus(cellData.value)">
+                            </employee-info>
+                        </template>
+                        <template #womenChange="{ data: cellData }">
+                            <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #basicDeductionChange="{ data: cellData }">
+                            <div v-if="cellData.value == 0">
+                                <button class="btn-red">해당없음</button>
+                            </div>
+                        </template>
+                        <template #singleParentChange="{ data: cellData }">
+                            <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #SeniorChange="{ data: cellData }">
+                            <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #disabledChange="{ data: cellData }">
+                            <div v-if="cellData.value">{{ cellData.value }}</div>
+                        </template>
+                        <template #DescendantChange="{ data: cellData }">
+                            <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #maternityAdoptionChange="{ data: cellData }">
+                            <div v-if="cellData.value">{{ cellData.value }}</div>
+                        </template>
+                        <template #consignmentRelationshipChange="{ data: cellData }">
+                            <BtnCheck :value="cellData.value" />
                         </template>
                     </DxDataGrid>
                 </a-spin>
@@ -124,10 +162,11 @@
                 </div>
             </a-col>
         </a-row>
-        <PopupEditAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
-            :idRowEdit="idRowEdit"></PopupEditAddNewDependent>
+        <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
+            :employeeId="employeeId" :dataSourceLen="dataSource.length" @upDateData="updateData"></PopupAddNewDependent>
         <PopupEditUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
-            :idRowIndex="idRowIndex" :idRowEdit="idRowEdit"></PopupEditUpdateDependent>
+            :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
+        </PopupEditUpdateDependent>
 
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
@@ -145,9 +184,11 @@ import { companyId } from "../../../../../../helpers/commonFunction";
 import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
 import queries from "../../../../../../graphql/queries/PA/PA1/PA120/index";
 import notification from "../../../../../../utils/notification";
-import PopupEditAddNewDependent from './tab3Dependent/PopupEditAddNewDependent.vue'
+import PopupAddNewDependent from './tab3Dependent/PopupEditAddNewDependent.vue'
 import PopupEditUpdateDependent from './tab3Dependent/PopupEditUpdateDependent.vue'
 import { Message } from "../../../../../../configs/enum"
+import BtnCheck from '../btnCheck/BtnCheck.vue';
+
 import { divide } from "lodash";
 import { string } from "vue-types";
 import {
@@ -155,12 +196,12 @@ import {
 } from "../../utils/index";
 export default defineComponent({
     components: {
-        PopupEditAddNewDependent,
+        PopupAddNewDependent,
         PopupEditUpdateDependent,
         DxDataGrid,
         DxColumn,
         DxToolbar,
-        DxItem,
+        DxItem, BtnCheck,
         DxButton, EditOutlined, DeleteOutlined
     },
     props: {
@@ -171,7 +212,10 @@ export default defineComponent({
         idRowEdit: {
             type: Number
         },
-
+        employeeId: {
+            type: String,
+            default: 0,
+        },
     },
     setup(props, { emit }) {
         const dataSource = ref([]);
@@ -266,8 +310,16 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         })
-
-
+        const updateData = (emit: Boolean) => {
+            console.log(emit);
+            refetchData();
+        };
+        const hasStatus = (foreigner: Boolean) => {
+            if (foreigner) {
+                return null;
+            }
+            return 0;
+        };
         return {
             companyId, idAction, idRowIndex,
             dataSource,
@@ -279,6 +331,7 @@ export default defineComponent({
             actionEdit,
             modalHistory,
             actionDelete,
+            hasStatus, updateData,
             onSubmit, statusComfirm, contentDelete,
             per_page, move_column, colomn_resize,
         }
@@ -292,6 +345,15 @@ export default defineComponent({
     font-weight: bold;
     font-size: 14px;
     margin-bottom: 10px;
+}
+
+.btn-red {
+    background: rgb(236, 29, 29);
+    padding: 3px 18px;
+    border: 1px solid transparent;
+    color: #ffffff;
+    border-radius: 3px;
+    font-size: 12px;
 }
 
 ::v-deep .ant-form-item-label>label {
@@ -327,6 +389,6 @@ export default defineComponent({
 
 }
 </style>
-
-
+  
+     
   

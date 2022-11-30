@@ -4,102 +4,38 @@
     <a-row>
       <a-col :span="24">
         <a-spin :spinning="false" size="large">
-          <DxDataGrid
-            :show-row-lines="true"
-            :hoverStateEnabled="true"
-            :data-source="dataSource"
-            :show-borders="true"
-            :allow-column-reordering="move_column"
-            :allow-column-resizing="colomn_resize"
-            :column-auto-width="true"
-            id="gridContainer"
-          >
+          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+            :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+            id="gridContainer">
             <DxToolbar>
-              <DxItem
-                location="after"
-                template="button-template"
-                css-class="cell-button-add"
-              />
+              <DxItem location="after" template="button-template" css-class="cell-button-add" />
             </DxToolbar>
             <template #button-template>
               <DxButton icon="plus" @click="openAddDependent" />
             </template>
-            <DxColumn
-              alignment="left"
-              caption="연말 관계"
-              data-field="relation"
-            />
+            <DxColumn alignment="left" caption="연말 관계" data-field="relation" />
             <DxColumn alignment="left" caption="성명" data-field="name" />
-            <DxColumn
-              caption="내/외국인"
-              data-field="foreigner"
-              cell-template="foreignerChange"
-              :width="80"
-            />
-            <DxColumn
-              alignment="left"
-              caption="주민등록번호"
-              data-field="residentId"
-            />
+            <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
+            <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
             <DxColumn alignment="left" caption="나이" data-field="Age" />
-            <DxColumn
-              alignment="left"
-              caption="기본공제"
-              data-field="basicDeduction"
-              cell-template="basicDeductionChange"
-            />
-            <DxColumn
-              alignment="left"
-              caption="부녀자"
-              data-field="women"
-              cell-template="womenChange"
-            />
-            <DxColumn
-              alignment="left"
-              caption="한부모"
-              data-field="singleParent"
-              cell-template="singleParentChange"
-            />
-            <DxColumn
-              alignment="left"
-              caption="경로 우대"
-              data-field="senior"
-              cell-template="SeniorChange"
-            />
-            <DxColumn
-              alignment="left"
-              caption="장애인 "
-              data-field="disabled"
-              cell-template="disabledChange"
-            />
-            <DxColumn
-              alignment="left"
-              caption="자녀"
-              data-field="descendant"
-              cell-template="DescendantChange"
-            />
-            <DxColumn
-              alignment="left"
-              caption="출산 입양"
-              data-field="maternityAdoption"
-              cell-template="maternityAdoptionChange"
-            />
-            <DxColumn
-              alignment="left"
-              caption="위탁 관계 "
-              data-field="consignmentRelationship"
-              cell-template="consignmentRelationshipChange"
-            />
+            <DxColumn alignment="left" caption="기본공제" data-field="basicDeduction"
+              cell-template="basicDeductionChange" />
+            <DxColumn alignment="left" caption="부녀자" data-field="women" cell-template="womenChange" />
+            <DxColumn alignment="left" caption="한부모" data-field="singleParent" cell-template="singleParentChange" />
+            <DxColumn alignment="left" caption="경로 우대" data-field="senior" cell-template="SeniorChange" />
+            <DxColumn alignment="left" caption="장애인 " data-field="disabled" cell-template="disabledChange" />
+            <DxColumn alignment="left" caption="자녀" data-field="descendant" cell-template="DescendantChange" />
+            <DxColumn alignment="left" caption="출산 입양" data-field="maternityAdoption"
+              cell-template="maternityAdoptionChange" />
+            <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
+              cell-template="consignmentRelationshipChange" />
             <!-- <DxColumn
               alignment="left"
               caption="세대주 여부 "
               data-field="householder"
             /> -->
             <template #foreignerChange="{ data: cellData }">
-              <employee-info
-                :foreigner="cellData.value"
-                :status="hasStatus(cellData.value)"
-              ></employee-info>
+              <employee-info :foreigner="cellData.value" :status="hasStatus(cellData.value)"></employee-info>
             </template>
             <template #womenChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
@@ -113,16 +49,16 @@
               <BtnCheck :value="cellData.value" />
             </template>
             <template #SeniorChange="{ data: cellData }">
-              <BtnCheck :value="cellData.value"/>
+              <BtnCheck :value="cellData.value" />
             </template>
             <template #disabledChange="{ data: cellData }">
-              <div v-if="cellData.value">{{cellData.value}}</div>
+              <div v-if="cellData.value">{{ cellData.value }}</div>
             </template>
             <template #DescendantChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
             </template>
             <template #maternityAdoptionChange="{ data: cellData }">
-              <div v-if="cellData.value">{{cellData.value}}</div>
+              <div v-if="cellData.value">{{ cellData.value }}</div>
             </template>
             <template #consignmentRelationshipChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
@@ -131,16 +67,11 @@
         </a-spin>
       </a-col>
     </a-row>
-    <popup-add-new-dependent
-      :modalStatus="modalAddNewDependent"
-      @closePopup="modalAddNewDependent = false"
-      :employeeId="employeeId"
-      :dataSourceLen="dataSource.length"
-      @upDateData="updateData"
-    ></popup-add-new-dependent>
+    <popup-add-new-dependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
+      :employeeId="employeeId" :dataSourceLen="dataSource.length" @upDateData="updateData"></popup-add-new-dependent>
   </div>
 </template>
-   <script lang="ts">
+<script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from 'vue';
 import {
   DxDataGrid,
@@ -206,10 +137,10 @@ export default defineComponent({
     const actionEdit = (data: any) => {
       refetch();
     };
-    const modalHistory = (data: any) => {};
+    const modalHistory = (data: any) => { };
 
-    const actionDelete = (data: any) => {};
-    const onSubmit = (e: any) => {};
+    const actionDelete = (data: any) => { };
+    const onSubmit = (e: any) => { };
     const hasStatus = (foreigner: Boolean) => {
       if (foreigner) {
         return null;
@@ -243,13 +174,13 @@ export default defineComponent({
 </script>
 <style scoped>
 .btn-red {
-    background: rgb(236, 29, 29);
-    padding: 3px 18px;
-    border: 1px solid transparent;
-    color: #ffffff;
-    border-radius: 3px;
-    font-size: 12px;
-  }
+  background: rgb(236, 29, 29);
+  padding: 3px 18px;
+  border: 1px solid transparent;
+  color: #ffffff;
+  border-radius: 3px;
+  font-size: 12px;
+}
 </style>
 
    
