@@ -58,7 +58,10 @@ export default gql`
       }
       # reductionItems {
       #   itemCode
-      #   amount
+      #   reductionRate
+      #   reductionStartDate
+      #   reductionFinishDate
+      #   reductionInput
       # }
       dependents {
         employeeId

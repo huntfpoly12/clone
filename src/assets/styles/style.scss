@@ -113,3 +113,8 @@ $lenght: 100;
   display: flex;
   align-items: center;
 }
+
+.ant-modal-confirm-btns {
+  float: inherit !important;
+  text-align: center !important;
+}

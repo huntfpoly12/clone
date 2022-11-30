@@ -1,6 +1,6 @@
 <template>
     <div class="main">
-        <div class="style-Id">
+        <div :class="[{'display-none': !idEmployee},'style-Id']">
             {{ idEmployee }}
         </div>
         <div style="display: flex;align-items: flex-end;">
@@ -15,7 +15,6 @@
             </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
-            <span class="tag-checkStatus" v-if="checkStatus == false">신고X</span>
         </div>
     </div>
 </template>
@@ -48,7 +47,7 @@ export default defineComponent({
         DxButton
     },
 
-    setup() {
+    setup(props) {
         const convertBirthDay = (birthDay: any) => {
             let newBirthDay = birthDay.split("-")[0]
             let typeYear = birthDay.split("-")[1].charAt(0)
@@ -57,6 +56,7 @@ export default defineComponent({
             else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
                 return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
         }
+        console.log(props.foreigner);
         return {
             convertBirthDay
         }
@@ -72,8 +72,7 @@ export default defineComponent({
 
 .style-Id {
     margin-right: 5px;
-    text-align: center;
-    color: black;
+    text-align: center; 
     border: 1px solid rgb(164, 164, 164);
     border-radius: 5px;
     line-height: 23px;
@@ -88,13 +87,6 @@ export default defineComponent({
     margin: 0 5px;
 }
 
-.tag-checkStatus {
-    background-color: black;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
-}
 
 .tag-status {
     background-color: red;
@@ -110,6 +102,12 @@ export default defineComponent({
     padding: 4px 10px;
     border-radius: 5px;
     margin: 0 5px;
+}
+.display-none {
+    display: none;
+}
+.jtf-center{
+  justify-content: center;
 }
 </style>
 
