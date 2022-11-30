@@ -114,15 +114,15 @@ import { useStore } from 'vuex';
 import { SalesRepresentativeGrade, getEnumValue } from "@bankda/jangbuda-common";
 import { useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button"; 
-import notification from "../../../../utils/notification"; 
+import notification from "@/utils/notification"; 
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import EditBF340Popup from "./components/EditBF340Popup.vue";
 import AddNew340Poup from "./components/AddNew340Poup.vue";
-import HistoryPopup from "../../../../components/HistoryPopup.vue";
-import queries from "../../../../graphql/queries/BF/BF3/BF340/index";
+import HistoryPopup from "@/components/HistoryPopup.vue";
+import queries from "@/graphql/queries/BF/BF3/BF340/index";
 import { origindata } from "./utils";
-import { onExportingCommon } from "../../../../helpers/commonFunction"
+import { onExportingCommon } from "@/helpers/commonFunction"
 export default defineComponent({
     components: {
         DxDataGrid,

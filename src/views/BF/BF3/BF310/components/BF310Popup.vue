@@ -362,11 +362,11 @@ import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
 import { bizTypeItems, inputInCollapse } from "../utils";
 import { initialFormState, initialDataStatus, initialArrayRadioWithdrawDay } from "../utils/index"
-import queries from "../../../../../graphql/queries/BF/BF3/BF310/index";
-import mutations from "../../../../../graphql/mutations/BF/BF3/BF310/index";
-import imgUpload from "../../../../../components/UploadImage.vue";
-import notification from '../../../../../utils/notification';
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import queries from "@/graphql/queries/BF/BF3/BF310/index";
+import mutations from "@/graphql/mutations/BF/BF3/BF310/index";
+import imgUpload from "@/components/UploadImage.vue";
+import notification from '@/utils/notification';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: {
         modalStatus: {
