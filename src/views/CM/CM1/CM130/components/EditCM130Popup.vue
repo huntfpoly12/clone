@@ -70,21 +70,21 @@
 </template>
 
 <script lang="ts">
-import { companyId } from "../../../../../helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch } from "vue";
-import notification from "../../../../../utils/notification";
+import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { initialState } from "../data"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-import queries from "../../../../../graphql/queries/CM/CM130/index";
-import mutations from "../../../../../graphql/mutations/CM/CM130/index";
-import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
+import queries from "@/graphql/queries/CM/CM130/index";
+import mutations from "@/graphql/mutations/CM/CM130/index";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
-import TaxPay from "../../../../../components/TaxPay.vue";
+import TaxPay from "@/components/TaxPay.vue";
 
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", "idRowEdit"],

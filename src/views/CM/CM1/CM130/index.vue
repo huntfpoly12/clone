@@ -360,7 +360,7 @@
     </div>
 </template>
 <script lang="ts">
-import { companyId } from "../../../../helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 import {
     EditOutlined,
     SearchOutlined,
@@ -369,9 +369,9 @@ import {
     HistoryOutlined,
     InfoCircleFilled,
 } from "@ant-design/icons-vue";
-import HistoryPopup from "../../../../components/HistoryPopup.vue";
-import queries from "../../../../graphql/queries/CM/CM130/index";
-import mutations from "../../../../graphql/mutations/CM/CM130/index";
+import HistoryPopup from "@/components/HistoryPopup.vue";
+import queries from "@/graphql/queries/CM/CM130/index";
+import mutations from "@/graphql/mutations/CM/CM130/index";
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref, reactive, watch, createVNode, computed } from "vue";
 import { useStore } from 'vuex';
@@ -386,7 +386,7 @@ import {
     DxToolbar,
     DxItem,
 } from "devextreme-vue/data-grid";
-import notification from "../../../../utils/notification";
+import notification from "@/utils/notification";
 import EditCM130Popup from "../CM130/components/EditCM130Popup.vue";
 import SettingPopup from "./components/SettingPopup.vue";
 import { Workbook } from "exceljs";
