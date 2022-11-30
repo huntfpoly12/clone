@@ -44,7 +44,7 @@ export default gql`
                 deductionItems{
                 itemCode
                 amount
-                supportAmount
-                }
             }
-        }`
+        }
+    }`
+    // supportAmount
