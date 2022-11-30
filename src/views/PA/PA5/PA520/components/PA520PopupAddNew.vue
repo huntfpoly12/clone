@@ -4,10 +4,8 @@
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1">
                     <Tab1Component @closePopup="setModalVisible" />
-                </a-tab-pane>
-                <a-tab-pane key="2" tab="급여/공제">
-                    <Tab2Component />
-                </a-tab-pane>
+                </a-tab-pane> 
+                 
             </a-tabs>
         </div>
     </a-spin>
@@ -16,13 +14,11 @@
 import { defineComponent, ref, watch } from "vue";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
-import Tab1Component from "./ComponentAdd/Tab1Component.vue";
-import Tab2Component from "./ComponentAdd/Tab2Component.vue";
+import Tab1Component from "./ComponentAdd/Tab1Component.vue"; 
 export default defineComponent({
     components: {
         InfoCircleFilled,
-        DxSelectBox,
-        Tab2Component,
+        DxSelectBox, 
         Tab1Component,
     },
     props: {
