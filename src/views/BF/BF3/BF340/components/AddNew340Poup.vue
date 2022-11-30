@@ -154,11 +154,11 @@
 <script lang="ts">
 import { ref, defineComponent, watch, reactive } from 'vue'
 import { useMutation } from "@vue/apollo-composable";
-import notification from '../../../../../utils/notification';
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import notification from '@/utils/notification';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { initialFormState } from '../utils';
-import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
-import SwitchBasic from '../../../../../components/common/SwitchBasic.vue';
+import mutations from "@/graphql/mutations/BF/BF3/BF340/index";
+import SwitchBasic from '@/components/common/SwitchBasic.vue';
 
 export default defineComponent({
     components: { SwitchBasic },

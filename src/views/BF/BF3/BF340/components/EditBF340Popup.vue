@@ -155,11 +155,11 @@
 import { ref, defineComponent, reactive, watch } from 'vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import dayjs, { Dayjs } from 'dayjs';
-import notification from '../../../../../utils/notification';
+import notification from '@/utils/notification';
 import { initialFormState } from '../utils';
-import queries from "../../../../../graphql/queries/BF/BF3/BF340/index";
-import mutations from "../../../../../graphql/mutations/BF/BF3/BF340/index";
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import queries from "@/graphql/queries/BF/BF3/BF340/index";
+import mutations from "@/graphql/mutations/BF/BF3/BF340/index";
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
