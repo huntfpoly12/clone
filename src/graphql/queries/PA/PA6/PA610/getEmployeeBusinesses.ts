@@ -12,5 +12,6 @@ export default gql`
                 residentId
                 incomeTypeCode
                 incomeTypeName 
+                deletable
             }
         }`

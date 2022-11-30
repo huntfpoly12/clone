@@ -45,7 +45,8 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="openEditModal">
+                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        :onRowClick="openEditModal">
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>

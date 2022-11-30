@@ -68,13 +68,13 @@
 
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
-import { companyId } from "../../../../../helpers/commonFunction";
-import TaxPay from "../../../../../components/TaxPay.vue";
+import { companyId } from "@/helpers/commonFunction";
+import TaxPay from "@/components/TaxPay.vue";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "../../../../../graphql/mutations/CM/CM130/index";
-import notification from "../../../../../utils/notification";
+import mutations from "@/graphql/mutations/CM/CM130/index";
+import notification from "@/utils/notification";
 import { initialState } from "../data";
-import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { InfoCircleFilled } from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
 

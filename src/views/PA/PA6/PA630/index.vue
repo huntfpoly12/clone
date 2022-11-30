@@ -42,7 +42,7 @@
                             :textUnCheck="'지급자 보관용'" />
                     </a-col>
                 </a-row>
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource.employee"
                     :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged">
@@ -67,28 +67,35 @@
                     <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
                     <template #tag="{ data }" class="custom-action">
                         <div class="custom-action">
-                            <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-                                :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-                                :foreigner="data.data.employee.foreigner" :checkStatus="false" />
+                            <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                :idCardNumber="data.data.residentId" :status="data.data.status"
+                                :foreigner="data.data.foreigner" :checkStatus="false" />
                         </div>
                     </template>
-                    <DxColumn caption="주민등록번호" data-field="employee.residentId" />
+                    <DxColumn caption="주민등록번호" data-field="residentId" />
                     <DxColumn caption="소득부분" cell-template="grade-cell" :width="150" />
                     <template #grade-cell="{ data }" class="custom-action">
-                        <income-type :typeCode="data.data.employee.incomeTypeCode"
-                            :typeName="data.data.employee.incomeTypeName"></income-type>
+                        <income-type :typeCode="data.data.incomeTypeCode"
+                            :typeName="data.data.incomeTypeName"></income-type>
                     </template>
                     <DxColumn caption="지급총액" data-field="paymentAmount" />
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
-                    <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax" />
+                    <DxColumn caption="원천징수세액 계" data-field="withholdingRuralSpecialTax" />
+                    <DxSummary>
+                        <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
+                        <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
+                        <DxTotalItem :customize-text="customizeTotalTaxfreePay" show-in-column="비과세소득" />
+                        <DxTotalItem :customize-text="customizeIncomeTax" column="withholdingIncomeTax" />
+                        <DxTotalItem :customize-text="customizeDateLocalIncomeTax" column="withholdingLocalIncomeTax" />
+                    </DxSummary>
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action" style="text-align: center;">
                             <img @click="actionOpenPopupEmailSingle(data.data)"
                                 src="../../../../assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px;" />
-                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
+                            <img @click="actionPrint(data.data)" src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
                         </div>
                     </template>
                 </DxDataGrid>
@@ -115,6 +122,7 @@ import {
     DxSearchPanel,
     DxToolbar,
     DxItem,
+    DxSummary,
 } from "devextreme-vue/data-grid";
 import {
     companyId,
@@ -128,6 +136,7 @@ import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
 
 export default defineComponent({
     components: {
+        DxSummary,
         DxButton,
         DxDataGrid,
         DxColumn,
@@ -150,46 +159,42 @@ export default defineComponent({
 
         const globalYear = computed(() => store.state.settings.globalYear);
         const trigger = ref<boolean>(true);
+        const triggerPrint = ref<boolean>(false);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalEmailSingle = ref(false)
         const modalEmailMulti = ref(false)
-        const dataSource = ref([
+        const dataSource = ref(
             {
                 paymentAmount: 2,
                 withholdingIncomeTax: 5,
                 withholdingLocalIncomeTax: 20,
-                employee: {
+                employee: [{
                     type: 1,
                     employeeId: 40,
-                    incomeTypeCode: '23',
+                    incomeTypeCode: 'sfhahf',
                     name: 'hihi',
                     email: 'khiem@gmail.com',
                     foreigner: true,
                     residentIdValidity: true,
                     status: 1,
-                    residentId: '23',
+                    residentId: 'g32rsd',
                     incomeTypeName: 'hahahha'
-                }
-            },
-            {
-                paymentAmount: 2,
-                withholdingIncomeTax: 5,
-                withholdingLocalIncomeTax: 20,
-                employee: {
+                },
+                {
                     type: 1,
                     employeeId: 40,
-                    incomeTypeCode: '23',
+                    incomeTypeCode: 'fsa34',
                     name: 'kkkkkkk',
                     email: '',
                     foreigner: true,
                     residentIdValidity: true,
                     status: 1,
-                    residentId: '23',
+                    residentId: 'ge234',
                     incomeTypeName: 'hhhhhh'
-                }
-            }
-        ]);
+                }]
+            },
+        );
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
@@ -212,6 +217,12 @@ export default defineComponent({
             loading,
         } = useQuery(queries.searchIncomeBusinessWithholdingReceipts, originData, () => ({
             enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }));
+        const {
+            refetch
+        } = useQuery(queries.getIncomeBusinessWithholdingReceiptReportViewUrl, valueDefaultIncomeBusiness, () => ({
+            enabled: triggerPrint.value,
             fetchPolicy: "no-cache",
         }));
         const onExporting = (e: { component: any; cancel: boolean }) => {
@@ -252,7 +263,6 @@ export default defineComponent({
                 },
                 employeeInputs: dataSelect.value
             }
-            // console.log(popupDataEmailMulti.value);
 
             modalEmailMulti.value = true
         }
@@ -297,9 +307,28 @@ export default defineComponent({
             refetchData();
         };
 
-        const sendMail = (sendType: string) => {
-            alert(sendType);
+        const actionPrint = (data: any) => {
+            valueDefaultIncomeBusiness.value.employeeKeys.employeeId = data.employee.employeeId
+            valueDefaultIncomeBusiness.value.employeeKeys.incomeTypeCode = data.employee.incomeTypeCode
+            triggerPrint.value = true;
         }
+
+        const customizeIncomeTax = () => {
+            // return dataSource.value.withholdingLocalIncomeTax
+        }
+        const customizeDateLocalIncomeTax = () => {
+            // return dataSource.value.withholdingIncomeTax
+        }
+        const customizeTotal = () => {
+            return dataSource.value.employee.length
+        }
+        const customizeTotalTaxfreePay = () => {
+            // return dataSource.value.totalTaxfreePay
+        }
+        const customizeTotalTaxPay = () => {
+            // return dataSource.value.totalTaxPay
+        }
+
         return {
             valueDefaultIncomeBusiness,
             valueSwitch,
@@ -311,7 +340,6 @@ export default defineComponent({
             searching,
             globalYear,
             dataSource,
-            sendMail,
             move_column,
             colomn_resize,
             onExporting,
@@ -321,6 +349,12 @@ export default defineComponent({
             onCloseEmailMultiModal,
             selectionChanged,
             emailUserLogin,
+            actionPrint,
+            customizeTotal,
+            customizeIncomeTax,
+            customizeDateLocalIncomeTax,
+            customizeTotalTaxPay,
+            customizeTotalTaxfreePay,
         };
     },
 });
