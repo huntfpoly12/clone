@@ -128,11 +128,11 @@ import { ref, defineComponent, watch, computed, reactive } from "vue";
 import { useStore } from 'vuex';
 import { DxSelectBox } from "devextreme-vue/select-box";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
-import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
-import notification from '../../../../../utils/notification';
+import queries from "@/graphql/queries/BF/BF2/BF210/index";
+import mutations from "@/graphql/mutations/BF/BF2/BF210/index";
+import notification from '@/utils/notification';
 import Field from '../components/Field.vue';
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import {
     DxDataGrid,
     DxColumn,

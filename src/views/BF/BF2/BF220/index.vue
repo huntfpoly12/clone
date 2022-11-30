@@ -89,15 +89,15 @@ import { defineComponent, ref, watch, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { dataSearchUtils, buttonSearchUtils } from "./utils";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from 'devextreme-vue/data-grid';
-import HistoryPopup from '../../../../components/HistoryPopup.vue';
+import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF220PopupAddNew from "./components/BF220PopupAddNew.vue";
 import DxButton from "devextreme-vue/button";
-import notification from '../../../../utils/notification';
+import notification from '@/utils/notification';
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../graphql/queries/BF/BF2/BF220/index";
+import queries from "@/graphql/queries/BF/BF2/BF220/index";
 import { EditOutlined, HistoryOutlined, SearchOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, LoginOutlined } from '@ant-design/icons-vue';
 import BF220PopupEdit from './components/BF220PopupEdit.vue';
-import { onExportingCommon } from "../../../../helpers/commonFunction"
+import { onExportingCommon } from "@/helpers/commonFunction"
 export default defineComponent({
     components: {
         DxDataGrid,

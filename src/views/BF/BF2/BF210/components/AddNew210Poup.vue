@@ -93,7 +93,7 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
+import mutations from "@/graphql/mutations/BF/BF2/BF210/index";
 import { initialFormState } from '../utils';
 import {
     DxDataGrid,
@@ -113,13 +113,13 @@ import {
     MailOutlined,
     MenuOutlined,
 } from "@ant-design/icons-vue";
-import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
+import queries from "@/graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DxSelectBox from 'devextreme-vue/select-box';
 import DxButton from 'devextreme-vue/button';
 import Field from './Field.vue';
-import notification from '../../../../../utils/notification';
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
+import notification from '@/utils/notification';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: ["modalStatus", "data"],
     components: {
