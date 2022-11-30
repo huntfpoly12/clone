@@ -5,9 +5,12 @@
 			<a-col :span="24">
 				<a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
 					<div class="d-flex-center">
-						<checkbox-basic size="14px" label="국민연금" class="check-box-tab1"></checkbox-basic>
-						<checkbox-basic size="14px" label="건강보험" class="check-box-tab1"></checkbox-basic>
-						<checkbox-basic size="14px" label="고용보험" class="check-box-tab1"></checkbox-basic>
+						<checkbox-basic size="14px" label="국민연금" class="check-box-tab1"
+							v-model:valueCheckbox="originDataUpdate.input.nationalPensionDeduction" />
+						<checkbox-basic size="14px" label="건강보험" class="check-box-tab1"
+							v-model:valueCheckbox="originDataUpdate.input.healthInsuranceDeduction" />
+						<checkbox-basic size="14px" label="고용보험" class="check-box-tab1"
+							v-model:valueCheckbox="originDataUpdate.input.employeementInsuranceDeduction" />
 						<div class="pr-5 pl-10">
 							<img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;">
 						</div>
@@ -19,13 +22,19 @@
 			<a-col :span="12">
 				<div class="header-text-2">두루누리사회보험 공제</div>
 				<a-form-item label="두루누리사회보험 공제 여부" label-align="right" class="durunuri-insurance">
-					<switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance"></switch-basic>
+					<switch-basic textCheck="Y" textUnCheck="N"
+						v-model:valueSwitch="originDataUpdate.input.employeementInsuranceDeduction"
+						class="switch-insurance" />
 				</a-form-item>
 				<a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
-					<radio-group :arrayValue="radioCheckPersenPension" :valueRadioCheck="1" layoutCustom="horizontal" />
+					<radio-group :arrayValue="radioCheckPersenPension"
+						v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
+						layoutCustom="horizontal" />
 				</a-form-item>
 				<a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
-					<radio-group :arrayValue="radioCheckPersenPension" :valueRadioCheck="1" layoutCustom="horizontal" />
+					<radio-group :arrayValue="radioCheckPersenPension"
+						v-model:valueRadioCheck="originDataUpdate.input.employeementInsuranceSupportPercent"
+						layoutCustom="horizontal" />
 				</a-form-item>
 			</a-col>
 		</a-row>
@@ -98,19 +107,21 @@
 		</a-row>
 		<div class="button-action">
 			<button-basic text="공제계산" type="default" mode="contained" />
-			<button-basic text="저장" type="default" mode="contained" class="ml-5" />
+			<button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction" />
 		</div>
 	</div>
 
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
-import { radioCheckPersenPension, radioCheckReductioRate, radioCheckReductionInput, IncomeTaxAppRate } from "../../utils/index";
+import { radioCheckPersenPension } from "../../utils/index";
 import dayjs from 'dayjs';
-import { useQuery } from "@vue/apollo-composable"
+import { useQuery, useMutation } from "@vue/apollo-composable"
 import { useStore } from 'vuex';
 import queries from "../../../../../../graphql/queries/PA/PA5/PA520/index"
 import { companyId } from "../../../../../../helpers/commonFunction"
+import mutations from "../../../../../../graphql/mutations/PA/PA5/PA520/index";
+import notification from "../../../../../../utils/notification";
 
 export default defineComponent({
 	props: {
@@ -134,8 +145,8 @@ export default defineComponent({
 			companyId: companyId,
 			imputedYear: globalYear.value,
 			employeeId: props.idRowEdit
-		}) 
-		
+		})
+
 		const formDifferencePayment: any = reactive({
 			totalAmount: '0',
 			status: true,
@@ -143,26 +154,57 @@ export default defineComponent({
 			working: null
 		})
 
+		const originDataUpdate: any = ref({
+			companyId: companyId,
+			imputedYear: globalYear.value,
+			employeeId: props.idRowEdit,
+			input: {
+				nationalPensionDeduction: false,
+				healthInsuranceDeduction: false,
+				longTermCareInsuranceDeduction: false,
+				employeementInsuranceDeduction: false,
+				insuranceSupport: false,
+				nationalPensionSupportPercent: 0,
+				employeementInsuranceSupportPercent: 0,
+				monthlyPaycheck: false,
+				workingDays: 0,
+				dailyWage: 0,
+				monthlyWage: 0,
+				deductionItems: []
+			}
+		})
+
 		// ================== GRAPQL ====================================
 		const {
-			loading: loadingGetDetail,
 			onResult: resApiGetEmployeeWageDaily,
 		} = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
 			fetchPolicy: "no-cache",
 		}))
-
 		resApiGetEmployeeWageDaily(e => {
-			console.log(e.data.getEmployeeWageDaily); 
+			let res = e.data.getEmployeeWageDaily
+			originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
+			originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
+			originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
+			originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction
+			originDataUpdate.value.input.insuranceSupport = res.insuranceSupport
+			originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent ? res.nationalPensionSupportPercent : 0
+			originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent ? res.employeementInsuranceSupportPercent : 0
+			originDataUpdate.value.input.monthlyPaycheck = res.monthlyPaycheck
+			originDataUpdate.value.input.workingDays = res.workingDays
+			originDataUpdate.value.input.dailyWage = res.dailyWage
+			originDataUpdate.value.input.monthlyWage = res.monthlyWage
+			originDataUpdate.value.input.deductionItems = res.deductionItems
+
+			formDifferencePayment.status = res.monthlyPaycheck
+			formDifferencePayment.wage = res.monthlyPaycheck == false ? res.dailyWage : res.monthlyWage
+			formDifferencePayment.working = res.workingDays
 		})
-
-
 		const {
 			loading: loading,
 			onResult: resWithholdingConfigPayItems,
 		} = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
 			fetchPolicy: "no-cache",
 		}))
-
 		resWithholdingConfigPayItems(res => {
 			arrDeduction.value = []
 			// arrDeduction.value = res.data.getWithholdingConfigDeductionItems  
@@ -172,6 +214,19 @@ export default defineComponent({
 					price: null
 				})
 			})
+		})
+
+		const {
+			mutate,
+			onError,
+			onDone,
+		} = useMutation(mutations.saveEmployeeWageDailyPayDeduction);
+		onError(e => {
+			notification('error', e.message)
+		})
+		onDone(res => {
+			emit('closePopup', false)
+			notification('success', '업데이트 완료!')
 		})
 
 		// ================== WATCH ====================================
@@ -185,7 +240,7 @@ export default defineComponent({
 		}, { deep: true })
 
 		watch(() => formDifferencePayment, (res) => {
-			if (res.status == true) {
+			if (res.status == false) {
 				res.totalAmount = res.wage * res.working
 				messageMonthlySalary.value = "일급 선택시, 월급 = 일급 x 근무일수"
 			}
@@ -200,13 +255,31 @@ export default defineComponent({
 			formDifferencePayment.totalAmount = res.totalAmount.toLocaleString('en-US', { currency: 'VND' })
 		}, { deep: true })
 
-
 		// ================== FUNCTION ==================================
-		const checkValueDeduction = (key: any) => {
+		const updateDeduction = () => {
+			console.log(formDifferencePayment);
 
+			let dataUpdate = {
+				...originDataUpdate.value,
+				input: {
+					...originDataUpdate.value.input,
+					monthlyPaycheck: formDifferencePayment.status,
+					dailyWage: formDifferencePayment.status == false ? formDifferencePayment.wage : 0,
+					monthlyWage: formDifferencePayment.status == true ? formDifferencePayment.wage : 0,
+					workingDays: formDifferencePayment.working,
+					deductionItems: [{
+						itemCode: 1001,
+						amount: 2000
+					}]
+				}
+			}
+
+			console.log(dataUpdate);
+			mutate(dataUpdate)
 		}
 
 		return {
+			originDataUpdate,
 			messageMonthlySalary,
 			totalPayDifferen,
 			formDifferencePayment,
@@ -214,9 +287,8 @@ export default defineComponent({
 			arrDeduction,
 			rangeDate,
 			radioCheckPersenPension,
-			radioCheckReductioRate,
-			radioCheckReductionInput,
-			IncomeTaxAppRate, loading
+			loading,
+			updateDeduction
 		};
 	},
 });

@@ -45,7 +45,7 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="openEditModal">
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -81,7 +81,7 @@
                                 <a-space :size="10">
                                     <a-tooltip placement="top">
                                         <template #title>편집</template>
-                                        <EditOutlined @click="openEditModal(data.data.employeeId)" />
+                                        <EditOutlined @click="openEditModal(data)" />
                                     </a-tooltip>
                                     <a-tooltip placement="top">
                                         <template #title>변경이력</template>
@@ -217,7 +217,7 @@ export default defineComponent({
         }
         const openEditModal = (val: any) => {
             actionChangeComponent.value = 2
-            idRowEdit.value = val
+            idRowEdit.value = val.data.employeeId
             modalEditStatus.value = true
         }
         const modalHistory = (data: any) => {
