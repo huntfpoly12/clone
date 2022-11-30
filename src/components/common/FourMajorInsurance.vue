@@ -61,7 +61,7 @@ export default defineComponent({
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
-    margin: 0 5px;
+    margin-right: 5px;
 }
 
 .tag-status-2 {
@@ -69,7 +69,7 @@ export default defineComponent({
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
-    margin: 0 5px;
+    margin-right: 5px;
 }
 
 .tag-status-3 {
@@ -77,7 +77,7 @@ export default defineComponent({
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
-    margin: 0 5px;
+    margin-right: 5px;
 }
 
 .tag-status-4 {
@@ -85,7 +85,7 @@ export default defineComponent({
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
-    margin: 0 5px;
+    margin-right: 5px;
 }
 </style>
 

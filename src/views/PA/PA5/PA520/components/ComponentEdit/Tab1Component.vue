@@ -51,7 +51,7 @@
             </a-form-item>
 
             <a-form-item :label="labelResident" label-align="right" class="label-red">
-                <id-number-text-box width="200px" v-model:valueInput="dataEdited.residentId" :required="true" />
+                <id-number-text-box width="150px" v-model:valueInput="dataEdited.residentId" :required="true" />
             </a-form-item>
             <a-form-item label="주소정근무시간" class="label-red" label-align="right">
                 <text-number-box width="200px" v-model:valueInput="dataEdited.weeklyWorkingHours" :required="true"
