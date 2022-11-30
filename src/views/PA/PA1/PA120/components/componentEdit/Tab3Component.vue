@@ -11,7 +11,7 @@
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
-                            <DxButton icon="plus" @click="openEditDependent" />
+                            <DxButton icon="plus" @click="openAddDependent" />
                         </template>
                         <DxColumn caption="연말 관계" data-field="relation" />
                         <DxColumn caption="성명" data-field="name" />
@@ -44,9 +44,90 @@
                         </template>
                     </DxDataGrid>
                 </a-spin>
+                <div>
+                    <div class="header-text-3">부양가족 요약
+                    </div>
+                    <a-row :gutter="12">
+                        <a-col :span="12">
+                            <div class="header-text-2">기본공제</div>
+
+                            <a-form-item label="본인" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.relation"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="배우자" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.women"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="20세이하" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.basicDeduction"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="60세이하" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.basicDeduction"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                            <div class="header-text-2">자녀세액공제</div>
+                            <a-form-item label="자녀세액공제" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.descendant"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                        </a-col>
+
+                        <a-col :span="12">
+                            <div class="header-text-2">추가/세액공제</div>
+                            <a-form-item label="경로우대" class="display-flex" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.senior"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="장애인" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.disabled"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="부녀자" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.women"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="한부모" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.singleParent"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="출산입양" label-align="right">
+                                <div class="display-flex">
+                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.maternityAdoption"
+                                        :readOnly="true" :required="false" />
+                                </div>
+                            </a-form-item>
+
+                        </a-col>
+
+                    </a-row>
+
+                </div>
             </a-col>
         </a-row>
-        <PopupUpdateDependent :modalStatus="modalAddNewDependent"></PopupUpdateDependent>
+        <PopupEditAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
+            :idRowEdit="idRowEdit"></PopupEditAddNewDependent>
+        <PopupEditUpdateDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
+            :idRowEdit="idRowEdit"></PopupEditUpdateDependent>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     </div>
@@ -63,14 +144,18 @@ import { companyId } from "../../../../../../helpers/commonFunction";
 import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
 import queries from "../../../../../../graphql/queries/PA/PA1/PA120/index";
 import notification from "../../../../../../utils/notification";
-import PopupUpdateDependent from './tab3Dependent/PopupUpdateDependent.vue'
+import PopupEditAddNewDependent from './tab3Dependent/PopupEditAddNewDependent.vue'
+import PopupEditUpdateDependent from './tab3Dependent/PopupEditUpdateDependent.vue'
 import { Message } from "../../../../../../configs/enum"
 import { divide } from "lodash";
 import { string } from "vue-types";
-
+import {
+    initFormStateTab3,
+} from "../../utils/index";
 export default defineComponent({
     components: {
-        PopupUpdateDependent,
+        PopupEditAddNewDependent,
+        PopupEditUpdateDependent,
         DxDataGrid,
         DxColumn,
         DxToolbar,
@@ -85,7 +170,9 @@ export default defineComponent({
         idRowEdit: {
             type: Number
         },
-
+        openPopup: {
+            type: Number
+        }
     },
     setup(props, { emit }) {
         const dataSource = ref([]);
@@ -100,9 +187,11 @@ export default defineComponent({
         const modalStatus = ref(false)
         const contentDelete = Message.getMessage('PA120', '002').message
         const idAction = ref()
-
         const globalYear = computed(() => store.state.settings.globalYear);
-        const openEditDependent = () => {
+        let formStateTab3 = reactive<any>({
+            ...initFormStateTab3,
+        })
+        const openAddDependent = () => {
             modalAddNewDependent.value = true;
         };
         const actionEdit = (data: any) => {
@@ -111,7 +200,6 @@ export default defineComponent({
         const modalHistory = (data: any) => {
 
         }
-
         const actionDeleteFuc = (data: any) => {
             idAction.value = data
             modalStatus.value = true
@@ -137,15 +225,38 @@ export default defineComponent({
         const {
             refetch: refetchData,
             result,
+            onResult: getValueDefault,
             loading,
         } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
+        getValueDefault(res => {
+            if (res.data.getEmployeeWage.dependents) {
+                formStateTab3.name = res.data.getEmployeeWage.dependents.name
+                formStateTab3.employeeId = res.data.getEmployeeWage.dependents.employeeId
+                formStateTab3.incomeTypeCode = res.data.getEmployeeWage.dependents.incomeTypeCode
+                formStateTab3.index = res.data.getEmployeeWage.dependents.index
+                formStateTab3.relation = res.data.getEmployeeWage.dependents.relation
+                formStateTab3.foreigner = res.data.getEmployeeWage.dependents.foreigner
+                formStateTab3.residentIdValidity = res.data.getEmployeeWage.dependents.residentIdValidity
+                formStateTab3.basicDeduction = res.data.getEmployeeWage.dependents.basicDeduction
+                formStateTab3.women = res.data.getEmployeeWage.dependents.women
+                formStateTab3.singleParent = res.data.getEmployeeWage.dependents.singleParent
+                formStateTab3.senior = res.data.getEmployeeWage.dependents.senior
+                formStateTab3.disabled = res.data.getEmployeeWage.dependents.disabled
+                formStateTab3.maternityAdoption = res.data.getEmployeeWage.dependents.maternityAdoption
+                formStateTab3.descendant = res.data.getEmployeeWage.dependents.descendant
+                formStateTab3.consignmentRelationship = res.data.getEmployeeWage.dependents.consignmentRelationship
+                formStateTab3.householder = res.data.getEmployeeWage.dependents.householder
+                formStateTab3.residentId = res.data.getEmployeeWage.dependents.residentId
+            }
+        })
         watch(result, (value) => {
             if (value) {
                 dataSource.value = value.getEmployeeWage.dependents;
                 trigger.value = false;
+
             }
         });
         // delete
@@ -162,14 +273,18 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         })
+        watch(() => props.openPopup, (value) => {
+            refetchData()
+        })
+        console.log('openPopup', props.openPopup)
 
         return {
             companyId,
             dataSource,
             modalEditStatus,
-            modalStatus,
+            modalStatus, formStateTab3,
             modalAddNewDependent,
-            openEditDependent,
+            openAddDependent,
             actionDeleteFuc,
             actionEdit,
             modalHistory,
@@ -181,7 +296,46 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped >
+.header-text-2 {
+    background-color: #C6D9F1;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
 
+::v-deep .ant-form-item-label>label {
+    font-weight: bold;
+
+}
+
+.display-flex {
+    display: flex;
+    justify-content: flex-end;
+    margin: 5px 0px;
+}
+
+
+.header-text-3 {
+    background-color: #558ED5;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    margin: 30px 0px;
+
+    span {
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        color: white;
+        float: right;
+
+        p {
+            margin: 5px 0px 3px 10px;
+        }
+    }
+
+}
 </style>
 
 
