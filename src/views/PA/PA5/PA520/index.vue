@@ -41,11 +41,11 @@
             </a-col>
         </a-row>
         <a-row>
-            <a-col :span="12" class="custom-layout">
+            <a-col :span="13" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="openEditModal">
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -61,40 +61,37 @@
                         <DxColumn caption="주민등록번호" data-field="residentId" width="120px" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
-                            <div v-if="data.data.employeeId == 1" class="custom-grade-cell">
+                            <div class="custom-grade-cell">
                                 <four-major-insurance v-if="data.data.nationalPensionDeduction == true" :typeTag="1"
                                     :typeValue="1" />
                                 <four-major-insurance v-if="data.data.healthInsuranceDeduction == true" :typeTag="2"
                                     :typeValue="1" />
                                 <four-major-insurance v-if="data.data.employeementInsuranceDeduction == true"
                                     :typeTag="4" :typeValue="1" />
-                                <br>
-                                <four-major-insurance v-if="data.data.employeementInsuranceDeduction" :typeTag="6"
-                                    :typeValue="1" :ratio="data.data.employeementInsuranceDeduction" />
+                                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6"
+                                    :typeValue="1" :ratio="data.data.nationalPensionSupportPercent" />
                                 <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7"
                                     :typeValue="1" :ratio="data.data.employeementInsuranceSupportPercent" />
                             </div>
                         </template>
-                        <DxColumn cell-template="pupop" width="100" />
+                        <DxColumn cell-template="pupop" width="70" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
-                                <a-space :size="10">
-                                    <a-tooltip placement="top">
-                                        <template #title>편집</template>
-                                        <EditOutlined @click="openEditModal(data.data.employeeId)" />
-                                    </a-tooltip>
-                                    <a-tooltip placement="top">
-                                        <template #title>변경이력</template>
-                                        <HistoryOutlined @click="modalHistory(data)" />
-                                    </a-tooltip>
-                                    <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
-                                </a-space>
+                                <a-tooltip placement="top">
+                                    <template #title>편집</template>
+                                    <EditOutlined @click="openEditModal(data)" class="mr-5" />
+                                </a-tooltip>
+                                <a-tooltip placement="top">
+                                    <template #title>변경이력</template>
+                                    <HistoryOutlined @click="modalHistory(data)" class="mr-5" />
+                                </a-tooltip>
+                                <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                             </div>
                         </template>
                     </DxDataGrid>
                 </a-spin>
             </a-col>
-            <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+            <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" />
                 <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
@@ -217,7 +214,7 @@ export default defineComponent({
         }
         const openEditModal = (val: any) => {
             actionChangeComponent.value = 2
-            idRowEdit.value = val
+            idRowEdit.value = val.data.employeeId
             modalEditStatus.value = true
         }
         const modalHistory = (data: any) => {
