@@ -124,8 +124,10 @@
                 </div>
             </a-col>
         </a-row>
-        <PopupEditAddNewDependent :modalStatus="modalAddNewDependent" :idRowEdit="idRowEdit"></PopupEditAddNewDependent>
-        <PopupEditUpdateDependent :modalStatus="modalAddNewDependent" :idRowEdit="idRowEdit"></PopupEditUpdateDependent>
+        <PopupEditAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
+            :idRowEdit="idRowEdit"></PopupEditAddNewDependent>
+        <PopupEditUpdateDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
+            :idRowEdit="idRowEdit"></PopupEditUpdateDependent>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     </div>
