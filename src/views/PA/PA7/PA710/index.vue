@@ -17,16 +17,11 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="listEmployeeExtra"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;">
-                        <DxToolbar>
-                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                        </DxToolbar>
-                        <template #button-template>
-                            <DxButton icon="plus" @click="formCreate" />
-                        </template>
                         <DxColumn caption="성명 (상호)" cell-template="company-name" :width="500"/>
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false" />
+                                :idCardNumber="data.data.residentId" :status="data.data.status"
+                                :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
                         <DxColumn caption="주민등록번호" data-field="residentId" :width="200"/>
                         <DxColumn caption="소득부분" cell-template="grade-cell"/>
@@ -56,6 +51,7 @@
             </a-col>
             <a-col :span="8" class="custom-layout">
                 <a-spin :spinning="loadingForm" size="large">
+                    <DxButton icon="plus" @click="formCreate" />
                     <a-row :gutter="24" class="pa-710-popup-add">
                         <a-col :span="24">
                             <a-form-item label="코드" :label-col="labelCol">
@@ -136,14 +132,13 @@ import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, DeleteOutlined, InfoCircleFilled, ExclamationCircleOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
-import { Modal } from 'ant-design-vue'
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { Modal } from 'ant-design-vue';
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { initialState } from "./utils/index"
+import { initialState, initialOptionsRadio } from "./utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import mutations from "../../../../graphql/mutations/PA/PA7/PA710/index";
@@ -160,8 +155,9 @@ export default defineComponent({
         DxItem,
         DeleteOutlined,
         DxButton,
+        HistoryPopup,
+        InfoCircleFilled,
         SaveOutlined,
-        HistoryPopup
     },
     setup() {
         // config grid
@@ -171,7 +167,6 @@ export default defineComponent({
         const loadingForm = ref(false)
         let checkForm = ref(false)
         let disabledSelect = ref(false)
-        let modalEditStatus = ref(false);
         const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
         let popupData = ref();
@@ -185,10 +180,7 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
         }
-        const optionsRadio = [
-            { id: false, text: "내국인" },
-            { id: true, text: "외국인" },
-        ];
+        const optionsRadio = ref([...initialOptionsRadio] );
         const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd} = useMutation(
             mutations.createEmployeeExtra
         );
@@ -362,7 +354,6 @@ export default defineComponent({
             disabledSelect,
             checkForm,
             modalHistory,
-            modalEditStatus,
             popupData,
             listEmployeeExtra,
             DeleteOutlined,

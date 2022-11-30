@@ -4,6 +4,7 @@ import deleteEmployeeWage from "./deleteEmployeeWage";
 import updateEmployeeWage from "./updateEmployeeWage";
 import updateEmployeeWageDependent from "./updateEmployeeWageDependent";
 import deleteEmployeeWageDependent from "./deleteEmployeeWageDependent";
+import createEmployeeWageDependent from "./createEmployeeWageDependent";
 const mutations = {
   updateEmployeeWage: updateEmployeeWage,
   updateEmployeeWageDependent: updateEmployeeWageDependent,
@@ -11,6 +12,7 @@ const mutations = {
   saveEmployeeWagePayDeductionReduction: saveEmployeeWagePayDeductionReduction,
   deleteEmployeeWage: deleteEmployeeWage,
   deleteEmployeeWageDependent: deleteEmployeeWageDependent,
+  createEmployeeWageDependent:createEmployeeWageDependent
 };
 
 export default mutations;

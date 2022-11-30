@@ -11,7 +11,7 @@
 						<div style="padding: 0 5px 0 10px">
 							<img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;">
 						</div>
-						<span style="font-size: 11px;">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
+						<span class="fz-11">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
 						</span>
 
 					</div>
@@ -38,27 +38,40 @@
 			</span>
 		</div>
 		<a-row :gutter="16">
-			<a-col :span="24"><b style="font-size: 20px;">차인지급액</b> <b>{50000}</b>원
+			<a-col :span="24"><b class="fz-20">차인지급액</b> <b>{ {{ totalPayDifferen }} }</b>원
 			</a-col>
 			<a-col :span="12">
-				<div class="header-text-0">월급여</div>
+				<div class="header-text-0">월급여
+					<span class="fz-12">
+						{ {{ formDifferencePayment.totalAmount }} }
+					</span>
+				</div>
 				<div>
 					<a-form-item label="일급/월급">
 						<div class="d-flex-center">
-							<switch-basic switch-basic textCheck="일급" textUnCheck="N" style="margin-right: 10px;" />
-							<default-text-box width="200px" class="mr-5" />
+							<switch-basic textCheck="일급" textUnCheck="월급" style="margin-right: 10px;"
+								v-model:valueSwitch="formDifferencePayment.status" />
+							<number-box-money min="0" width="200px" class="mr-5"
+								v-model:valueInput="formDifferencePayment.wage" />
 						</div>
 					</a-form-item>
+					<div class="pl-10">
+						<img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;">
+						<span class="pl-5 fz-11">
+							{{ messageMonthlySalary }}
+						</span>
+					</div>
 					<a-form-item label="근무일수">
 						<div class="d-flex-center">
-							<default-text-box width="200px" class="mr-5" />
+							<number-box-money width="200px" class="mr-5" min="0"
+								v-model:valueInput="formDifferencePayment.working" />
 							<span class="ml-10">일</span>
 						</div>
 					</a-form-item>
 				</div>
 			</a-col>
 			<a-col :span="12">
-				<div class="header-text-0">공제 항목 <span style="font-size: 12px;">{50000}원</span></div>
+				<div class="header-text-0">공제 항목 <span class="fz-12">{ {{ totalDeduction }} }원</span></div>
 				<a-spin :spinning="loading" size="large">
 					<div class="deduction-main">
 						<div v-for="(item, index) in arrDeduction" class="custom-deduction">
@@ -74,7 +87,8 @@
 									:name="item.name" :type="4" subName="과세" />
 							</span>
 							<div>
-								<number-box-money width="150px" :required="true" :spinButtons="false">
+								<number-box-money min="0" width="150px" :spinButtons="false"
+									v-model:valueInput="item.price" :disabled="true">
 								</number-box-money>
 								<span class="pl-5">원</span>
 							</div>
@@ -84,13 +98,14 @@
 			</a-col>
 		</a-row>
 		<div class="button-action">
-			<button-basic text="저장" type="default" mode="contained" />
+			<button-basic text="공제계산" type="default" mode="contained"/>
+			<button-basic text="저장" type="default" mode="contained" class="ml-5"/>
 		</div>
 	</div>
 
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, watch, reactive } from "vue";
 import { radioCheckPersenPension, radioCheckReductioRate, radioCheckReductionInput, IncomeTaxAppRate } from "../../utils/index";
 import dayjs from 'dayjs';
 import { useQuery } from "@vue/apollo-composable"
@@ -103,6 +118,7 @@ export default defineComponent({
 		modalStatus: Boolean,
 	},
 	setup(props, { emit }) {
+		const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수')
 		const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
 		const store = useStore();
 		const globalYear: any = computed(() => store.state.settings.globalYear);
@@ -110,17 +126,67 @@ export default defineComponent({
 			companyId: companyId,
 			imputedYear: globalYear.value,
 		})
-		const arrDeduction = ref()
+		const totalPayDifferen = ref()
+		const formDifferencePayment: any = reactive({
+			totalAmount: '0',
+			status: true,
+			wage: null,
+			working: null
+		})
+		const totalDeduction = ref('0')
+
+		const arrDeduction: any = ref()
+
+		// ================== GRAPQL ====================================
 		const {
 			loading: loading,
 			onResult: resWithholdingConfigPayItems,
-		} = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
+		} = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
 			fetchPolicy: "no-cache",
 		}))
+
 		resWithholdingConfigPayItems(res => {
-			arrDeduction.value = res.data.getWithholdingConfigPayItems
+			arrDeduction.value = []
+			// arrDeduction.value = res.data.getWithholdingConfigDeductionItems  
+			res.data.getWithholdingConfigDeductionItems.map((val: any) => {
+				arrDeduction.value.push({
+					...val,
+					price: null
+				})
+			})
 		})
+
+		// ================== WATCH ====================================
+		watch(() => arrDeduction, (res) => {
+			let total = 0
+			res.value.map((val: any) => {
+				total += val.price
+			})
+			totalPayDifferen.value = (total + parseInt(formDifferencePayment.totalAmount.replace(',', ''))).toLocaleString('en-US', { currency: 'VND' })
+			totalDeduction.value = total.toLocaleString('en-US', { currency: 'VND' })
+		}, { deep: true })
+
+		watch(() => formDifferencePayment, (res) => {
+			if (res.status == true) {
+				res.totalAmount = res.wage * res.working
+				messageMonthlySalary.value = "일급 선택시, 월급 = 일급 x 근무일수"
+			}
+			else {
+				if (res.wage)
+					res.totalAmount = res.wage
+				else
+					res.totalAmount = 0
+				messageMonthlySalary.value = "월급 선택시, 일급 = 월급 / 근무일수"
+			}
+			totalPayDifferen.value = (res.totalAmount + parseInt(totalDeduction.value.replace(',', ''))).toLocaleString('en-US', { currency: 'VND' })
+			formDifferencePayment.totalAmount = res.totalAmount.toLocaleString('en-US', { currency: 'VND' })
+		}, { deep: true })
+
 		return {
+			messageMonthlySalary,
+			totalPayDifferen,
+			formDifferencePayment,
+			totalDeduction,
 			arrDeduction,
 			rangeDate,
 			radioCheckPersenPension,

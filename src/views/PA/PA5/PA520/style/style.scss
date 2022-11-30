@@ -81,8 +81,9 @@
     }
 
     .custom-grade-cell {
-        display: flex;
-        align-items: center;
+        // display: flex;
+        // align-items: center;
+        line-height: 30px;
 
         .custom-grade-cell-tag {
             padding: 3px 10px;
