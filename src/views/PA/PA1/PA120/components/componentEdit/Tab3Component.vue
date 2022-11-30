@@ -36,7 +36,7 @@
                                 <a-space :size="10">
                                     <a-tooltip placement="top">
                                         <template #title>편집</template>
-                                        <EditOutlined @click="actionEdit(data)" />
+                                        <EditOutlined @click="actionEdit(data.data.index)" />
                                     </a-tooltip>
                                     <DeleteOutlined @click="actionDeleteFuc(data.data.index)" />
                                 </a-space>
@@ -126,8 +126,9 @@
         </a-row>
         <PopupEditAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
             :idRowEdit="idRowEdit"></PopupEditAddNewDependent>
-        <PopupEditUpdateDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
-            :idRowEdit="idRowEdit"></PopupEditUpdateDependent>
+        <PopupEditUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+            :idRowIndex="idRowIndex" :idRowEdit="idRowEdit"></PopupEditUpdateDependent>
+
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     </div>
@@ -170,9 +171,7 @@ export default defineComponent({
         idRowEdit: {
             type: Number
         },
-        openPopup: {
-            type: Number
-        }
+
     },
     setup(props, { emit }) {
         const dataSource = ref([]);
@@ -188,14 +187,17 @@ export default defineComponent({
         const contentDelete = Message.getMessage('PA120', '002').message
         const idAction = ref()
         const globalYear = computed(() => store.state.settings.globalYear);
+        const actionChangeComponent = ref(0)
+        const idRowIndex = ref()
         let formStateTab3 = reactive<any>({
             ...initFormStateTab3,
         })
         const openAddDependent = () => {
             modalAddNewDependent.value = true;
         };
-        const actionEdit = (data: any) => {
-
+        const actionEdit = (val: any) => {
+            idRowIndex.value = val
+            modalEditStatus.value = true
         }
         const modalHistory = (data: any) => {
 
@@ -216,6 +218,9 @@ export default defineComponent({
         }
         const onSubmit = (e: any) => {
         };
+        watch(() => props.idRowEdit, (value) => {
+            originDataDetail.value.employeeId = value
+        })
         // get employee independent
         const originDataDetail = ref({
             companyId: companyId,
@@ -225,40 +230,23 @@ export default defineComponent({
         const {
             refetch: refetchData,
             result,
-            onResult: getValueDefault,
             loading,
         } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-        getValueDefault(res => {
-            if (res.data.getEmployeeWage.dependents) {
-                formStateTab3.name = res.data.getEmployeeWage.dependents.name
-                formStateTab3.employeeId = res.data.getEmployeeWage.dependents.employeeId
-                formStateTab3.incomeTypeCode = res.data.getEmployeeWage.dependents.incomeTypeCode
-                formStateTab3.index = res.data.getEmployeeWage.dependents.index
-                formStateTab3.relation = res.data.getEmployeeWage.dependents.relation
-                formStateTab3.foreigner = res.data.getEmployeeWage.dependents.foreigner
-                formStateTab3.residentIdValidity = res.data.getEmployeeWage.dependents.residentIdValidity
-                formStateTab3.basicDeduction = res.data.getEmployeeWage.dependents.basicDeduction
-                formStateTab3.women = res.data.getEmployeeWage.dependents.women
-                formStateTab3.singleParent = res.data.getEmployeeWage.dependents.singleParent
-                formStateTab3.senior = res.data.getEmployeeWage.dependents.senior
-                formStateTab3.disabled = res.data.getEmployeeWage.dependents.disabled
-                formStateTab3.maternityAdoption = res.data.getEmployeeWage.dependents.maternityAdoption
-                formStateTab3.descendant = res.data.getEmployeeWage.dependents.descendant
-                formStateTab3.consignmentRelationship = res.data.getEmployeeWage.dependents.consignmentRelationship
-                formStateTab3.householder = res.data.getEmployeeWage.dependents.householder
-                formStateTab3.residentId = res.data.getEmployeeWage.dependents.residentId
-            }
-        })
+
         watch(result, (value) => {
             if (value) {
                 dataSource.value = value.getEmployeeWage.dependents;
                 trigger.value = false;
-
+                formStateTab3 = { ...dataSource.value }
             }
         });
+        watch(() => props.idRowEdit, (value) => {
+            trigger.value = true
+            refetchData()
+        })
         // delete
         const {
             mutate: actionDelete,
@@ -273,13 +261,10 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         })
-        watch(() => props.openPopup, (value) => {
-            refetchData()
-        })
-        console.log('openPopup', props.openPopup)
+
 
         return {
-            companyId,
+            companyId, idAction, idRowIndex,
             dataSource,
             modalEditStatus,
             modalStatus, formStateTab3,
