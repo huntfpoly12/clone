@@ -1,7 +1,7 @@
 #tab2-pa520 {
-	::v-deep .ant-form-item-label>label {
-		padding-left: 10px;
-	}
+	// ::v-deep .ant-form-item-label>label {
+	// 	padding-left: 10px;
+	// }
 
 	.input-text {
 		display: flex;
@@ -67,7 +67,6 @@
 	.durunuri-insurance {
 		::v-deep .ant-form-item-label>label {
 			width: 200px;
-			padding-left: 10px;
 		}
 
 		.switch-insurance {
