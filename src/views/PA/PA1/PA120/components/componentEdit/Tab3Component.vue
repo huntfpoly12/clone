@@ -11,7 +11,7 @@
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
-                            <DxButton icon="plus" @click="openEditDependent" />
+                            <DxButton icon="plus" @click="openAddDependent" />
                         </template>
                         <DxColumn caption="연말 관계" data-field="relation" />
                         <DxColumn caption="성명" data-field="name" />
@@ -124,7 +124,8 @@
                 </div>
             </a-col>
         </a-row>
-        <PopupUpdateDependent :modalStatus="modalAddNewDependent"></PopupUpdateDependent>
+        <PopupEditAddNewDependent :modalStatus="modalAddNewDependent" :idRowEdit="idRowEdit"></PopupEditAddNewDependent>
+        <PopupEditUpdateDependent :modalStatus="modalAddNewDependent" :idRowEdit="idRowEdit"></PopupEditUpdateDependent>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     </div>
@@ -141,7 +142,8 @@ import { companyId } from "../../../../../../helpers/commonFunction";
 import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
 import queries from "../../../../../../graphql/queries/PA/PA1/PA120/index";
 import notification from "../../../../../../utils/notification";
-import PopupUpdateDependent from './tab3Dependent/PopupUpdateDependent.vue'
+import PopupEditAddNewDependent from './tab3Dependent/PopupEditAddNewDependent.vue'
+import PopupEditUpdateDependent from './tab3Dependent/PopupEditUpdateDependent.vue'
 import { Message } from "../../../../../../configs/enum"
 import { divide } from "lodash";
 import { string } from "vue-types";
@@ -150,7 +152,8 @@ import {
 } from "../../utils/index";
 export default defineComponent({
     components: {
-        PopupUpdateDependent,
+        PopupEditAddNewDependent,
+        PopupEditUpdateDependent,
         DxDataGrid,
         DxColumn,
         DxToolbar,
@@ -186,7 +189,7 @@ export default defineComponent({
         let formStateTab3 = reactive<any>({
             ...initFormStateTab3,
         })
-        const openEditDependent = () => {
+        const openAddDependent = () => {
             modalAddNewDependent.value = true;
         };
         const actionEdit = (data: any) => {
@@ -279,7 +282,7 @@ export default defineComponent({
             modalEditStatus,
             modalStatus, formStateTab3,
             modalAddNewDependent,
-            openEditDependent,
+            openAddDependent,
             actionDeleteFuc,
             actionEdit,
             modalHistory,
