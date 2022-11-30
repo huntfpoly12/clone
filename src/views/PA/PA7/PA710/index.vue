@@ -16,31 +16,43 @@
             <a-col :span="16" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="listEmployeeExtra"
-                        :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;">
-                        <DxColumn caption="성명 (상호)" cell-template="company-name" :width="500"/>
+                        :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;"
+                        :onRowClick="editData">
+                        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                        <DxExport :enabled="true" :allow-export-selected-data="true" />
+                        <DxToolbar>
+                            <DxItem name="searchPanel" />
+                            <DxItem name="exportButton" />
+                            <DxItem location="after" template="button-history" css-class="cell-button-add" />
+                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                        </DxToolbar>
+                        <template #button-history style="border-color: #ddd;">
+                            <DxButton icon="plus">
+                                <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
+                            </DxButton>
+                        </template>
+                        <template #button-template>
+                            <DxButton icon="plus" @click="formCreate" />
+                        </template>
+
+                        <DxColumn caption="성명 (상호)" cell-template="company-name" :width="500" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" :width="200"/>
-                        <DxColumn caption="소득부분" cell-template="grade-cell"/>
+                        <DxColumn caption="주민등록번호" data-field="residentId" :width="200" />
+                        <DxColumn caption="소득부분" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
-                            <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.incomeTypeName" ></income-type>
+                            <income-type :typeCode="data.data.incomeTypeCode"
+                                :typeName="data.data.incomeTypeName"></income-type>
                         </template>
-                        <DxColumn :width="80" cell-template="pupop" />
+                        <DxColumn :width="30" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
-                                    <a-tooltip placement="top">
-                                        <template #title>편집</template>
-                                        <EditOutlined @click="editData(data)" />
-                                    </a-tooltip>
-                                    <a-tooltip placement="top">
-                                        <template #title>변경이력</template>
-                                        <HistoryOutlined @click="modalHistory(data)" />
-                                    </a-tooltip>
-                                    <DeleteOutlined @click="deleteData(data)" />
+                                    <DeleteOutlined v-if="data.data.deletable" @click="deleteData(data)" />
                                 </a-space>
                             </div>
                         </template>
@@ -51,14 +63,12 @@
             </a-col>
             <a-col :span="8" class="custom-layout">
                 <a-spin :spinning="loadingForm" size="large">
-                    <DxButton icon="plus" @click="formCreate" />
                     <a-row :gutter="24" class="pa-710-popup-add">
                         <a-col :span="24">
                             <a-form-item label="코드" :label-col="labelCol">
                                 <div class="custom-note">
-                                    <number-box :required="true" :width="150"
-                                        v-model:valueInput="formState.employeeId" placeholder="숫자만 입력 가능"
-                                        :disabled="checkForm">
+                                    <number-box :required="true" :width="150" v-model:valueInput="formState.employeeId"
+                                        placeholder="숫자만 입력 가능" :disabled="checkForm">
                                     </number-box>
                                     <span>
                                         <InfoCircleFilled /> 최초 저장된 이후 수정 불가
@@ -68,8 +78,8 @@
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="성명(상호) " :label-col="labelCol">
-                                <default-text-box :width="150" v-model:valueInput="formState.name"
-                                    :required="true" placeholder="한글,영문(대문자) 입력 가능">
+                                <default-text-box :width="150" v-model:valueInput="formState.name" :required="true"
+                                    placeholder="한글,영문(대문자) 입력 가능">
                                 </default-text-box>
                             </a-form-item>
                         </a-col>
@@ -92,7 +102,7 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item :label="disabledSelect ? '외국인번호 유효성' : '주민등록번호' " :label-col="labelCol">
+                            <a-form-item :label="disabledSelect ? '외국인번호 유효성' : '주민등록번호'" :label-col="labelCol">
                                 <id-number-text-box :width="150" v-model:valueInput="formState.residentId"
                                     :required="true"></id-number-text-box>
                             </a-form-item>
@@ -107,8 +117,8 @@
                         <a-col :span="24">
                             <a-form-item label="이메일" class="red" :label-col="labelCol">
                                 <div class="custom-note">
-                                    <mail-text-box placeholder="abc@example.com"
-                                        v-model:valueInput="formState.email" :required="true" id="email">
+                                    <mail-text-box placeholder="abc@example.com" v-model:valueInput="formState.email"
+                                        :required="true" id="email">
                                     </mail-text-box>
                                     <span>
                                         <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
@@ -118,9 +128,9 @@
                         </a-col>
                     </a-row>
                     <div v-if="checkForm" class="text-align-center mt-20">
-                            <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
-                                :mode="'contained'" @onClick="onUpdate($event)" />
-                        </div>
+                        <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
+                            :mode="'contained'" @onClick="onUpdate($event)" />
+                    </div>
                 </a-spin>
             </a-col>
         </a-row>
@@ -131,7 +141,7 @@ import { defineComponent, ref, watch, reactive, createVNode, computed } from "vu
 import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, InfoCircleFilled, ExclamationCircleOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
 import { Modal } from 'ant-design-vue';
@@ -153,6 +163,8 @@ export default defineComponent({
         HistoryOutlined,
         DxToolbar,
         DxItem,
+        DxExport,
+        DxSearchPanel,
         DeleteOutlined,
         DxButton,
         HistoryPopup,
@@ -173,19 +185,19 @@ export default defineComponent({
 
         let trigger = ref(true);
         const listEmployeeExtra = ref([])
-        
-        let formState = reactive( {...initialState} );
+
+        let formState = reactive({ ...initialState });
 
         const originData = {
             companyId: companyId,
             imputedYear: parseInt(dayjs().format('YYYY')),
         }
-        const optionsRadio = ref([...initialOptionsRadio] );
-        const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd} = useMutation(
+        const optionsRadio = ref([...initialOptionsRadio]);
+        const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd } = useMutation(
             mutations.createEmployeeExtra
         );
 
-        const { mutate: updateEmployeeExtra, onDone: onDoneUpdate, onError: onErrorUpdate} = useMutation(
+        const { mutate: updateEmployeeExtra, onDone: onDoneUpdate, onError: onErrorUpdate } = useMutation(
             mutations.updateEmployeeExtra
         );
 
@@ -202,7 +214,7 @@ export default defineComponent({
             trigger.value = true;
             refetchData();
             console.log(initialState);
-            
+
             Object.assign(formState, initialState);
             notification('success', `업데이트 완료되었습니다!`)
         });
@@ -232,7 +244,7 @@ export default defineComponent({
                         nationality: formState.nationality,
                         nationalityCode: formState.nationalityCode,
                         stayQualification: formState.stayQualification,
-                        residentId: formState.residentId.slice(0,6) + '-' + formState.residentId.slice(6,13),
+                        residentId: formState.residentId.slice(0, 6) + '-' + formState.residentId.slice(6, 13),
                         email: formState.email,
                         incomeTypeName: formState.incomeTypeName,
                     },
@@ -256,7 +268,7 @@ export default defineComponent({
                         nationality: formState.nationality,
                         nationalityCode: formState.nationalityCode,
                         stayQualification: formState.stayQualification,
-                        residentId: formState.residentId.slice(0,6) + '-' + formState.residentId.slice(6,13),
+                        residentId: formState.residentId.slice(0, 6) + '-' + formState.residentId.slice(6, 13),
                         email: formState.email,
                         incomeTypeName: formState.incomeTypeName,
                     }
@@ -276,9 +288,7 @@ export default defineComponent({
         });
 
         const modalHistory = (data: any) => {
-            idRowEdit.value = data.data.id
             modalHistoryStatus.value = companyId
-            popupData.value = data;
         }
         const textCountry = (e: any) => {
             formState.nationality = e
@@ -321,7 +331,7 @@ export default defineComponent({
                 class: 'confirm',
             });
         }
-        
+
         watch(result, (value) => {
             if (value) {
                 listEmployeeExtra.value = value.getEmployeeExtras
