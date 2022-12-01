@@ -11,7 +11,7 @@
                         <span>전체</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -23,7 +23,7 @@
                         <span>재직</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -35,7 +35,7 @@
                         <span>퇴사</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -110,15 +110,15 @@ import { ref, defineComponent, watch, computed } from "vue"
 import DxButton from "devextreme-vue/button"
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "../../../../helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
-import notification from "../../../../utils/notification"
-import queries from "../../../../graphql/queries/PA/PA5/PA520/index"
+import notification from "@/utils/notification"
+import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import PA520PopupAddNew from "./components/PA520PopupAddNew.vue"
 import PA520PopupEdit from "./components/PA520PopupEdit.vue"
-import mutations from "../../../../graphql/mutations/PA/PA5/PA520/index"
-import { Message } from "../../../../configs/enum"
+import mutations from "@/graphql/mutations/PA/PA5/PA520/index"
+import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,

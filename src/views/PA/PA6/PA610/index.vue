@@ -93,7 +93,7 @@
                                 <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
                                     placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
                                 <span>
-                                    <img src="../../../../assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후
+                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후
                                     수정 불가
                                 </span>
                             </div>
@@ -127,7 +127,7 @@
                                 <mail-text-box width="300px" v-model:valueInput="dataAction.input.email"
                                     placeholder="abc@example.com" :required="true" />
                                 <span>
-                                    <img src="../../../../assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등
+                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등
                                     주요 서류를 메일로 전달 가능합니다.
                                 </span>
                             </div>
@@ -142,18 +142,18 @@
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import notification from "../../../../utils/notification";
-import queries from "../../../../graphql/queries/PA/PA6/PA610/index";
+import notification from "@/utils/notification";
+import queries from "@/graphql/queries/PA/PA6/PA610/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
-import { onExportingCommon } from "../../../../helpers/commonFunction"
+import { onExportingCommon } from "@/helpers/commonFunction"
 import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
 import DxButton from "devextreme-vue/button";
-import { companyId } from "../../../../../src/helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 import dayjs from 'dayjs';
-import mutations from "../../../../graphql/mutations/PA/PA6/PA610/index";
-import HistoryPopup from '../../../../components/HistoryPopup.vue';
-import { Message } from "../../../../configs/enum"
+import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
+import HistoryPopup from '@/components/HistoryPopup.vue';
+import { Message } from "@/configs/enum"
 
 export default defineComponent({
     components: {
