@@ -5,19 +5,19 @@
             <div class="page-content" id="add-new-dependent-pa-120">
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="연말관계" label-align="right">
+                        <a-form-item label="연말관계" class="red" label-align="right">
                             <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation"
                                 :required="true">
                             </dependants-relation-select-box>
                         </a-form-item>
-                        <a-form-item label="성명" label-align="right">
+                        <a-form-item label="성명" label-align="right" class="red">
                             <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
                                 v-model:valueInput="formState.name"></default-text-box>
                         </a-form-item>
                         <a-form-item label="연말관계" label-align="right">
                             <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="foreigner" />
                         </a-form-item>
-                        <a-form-item :label="labelResidebId" label-align="right">
+                        <a-form-item :label="labelResidebId" class="red" label-align="right">
                             <id-number-text-box :required="true" width="150px"
                                 v-model:valueInput="residentId"></id-number-text-box>
                         </a-form-item>
@@ -25,7 +25,7 @@
                             <default-text-box width="200px" :readOnly="true"
                                 v-model:valueInput="ageCount"></default-text-box>
                         </a-form-item>
-                        <a-form-item label="기본공제" label-align="right">
+                        <a-form-item label="기본공제" label-align="right" class="red">
                             <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
                                 :required="true" />
                         </a-form-item>

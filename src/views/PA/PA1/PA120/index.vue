@@ -46,6 +46,7 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        <DxPaging :page-size="15" />
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -85,8 +86,8 @@
                 </a-spin>
             </a-col>
             <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-                <PA120PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="eventCLoseAddPopup"
-                    v-if="actionChangeComponent == 1" />
+                <PA120PopupAddNewVue :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
+                    @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" />
                 <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
                     v-if="actionChangeComponent == 2" />
             </a-col>
@@ -99,7 +100,7 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxPaging, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -117,7 +118,7 @@ export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn,
-        DxToolbar,
+        DxToolbar, DxPaging,
         DxItem,
         DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,
         PA120PopupAddNewVue, PA120PopupEdit
@@ -251,6 +252,12 @@ export default defineComponent({
     },
 });
 </script>
+
+
+
+
+
+
 
 
 

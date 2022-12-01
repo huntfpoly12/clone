@@ -34,6 +34,17 @@
               caption="세대주 여부 "
               data-field="householder"
             /> -->
+            <DxColumn :width="80" cell-template="pupop" />
+            <template #pupop="{ data }" class="custom-action">
+              <div class="custom-action">
+                <a-space :size="10">
+                  <a-tooltip placement="top">
+                    <template #title>편집</template>
+                    <EditOutlined @click="actionEdit(data.data.index)" />
+                  </a-tooltip>
+                </a-space>
+              </div>
+            </template>
             <template #foreignerChange="{ data: cellData }">
               <employee-info :foreigner="cellData.value" :status="hasStatus(cellData.value)"></employee-info>
             </template>
@@ -67,6 +78,9 @@
         </a-spin>
       </a-col>
     </a-row>
+    <PopupEditUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+      :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
+    </PopupEditUpdateDependent>
     <popup-add-new-dependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
       :employeeId="employeeId" :dataSourceLen="dataSource.length" @upDateData="updateData"></popup-add-new-dependent>
   </div>
@@ -82,14 +96,17 @@ import {
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue';
+import PopupEditUpdateDependent from '../tab3Dependent/PopupAddNewDependent.vue'
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
+
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import { companyId } from '@/helpers/commonFunction';
 import BtnCheck from '../btnCheck/BtnCheck.vue';
 export default defineComponent({
   components: {
-    PopupAddNewDependent,
-    DxDataGrid,
+    PopupAddNewDependent, PopupEditUpdateDependent,
+    DxDataGrid, EditOutlined,
     DxColumn,
     DxToolbar,
     DxItem,
@@ -100,6 +117,10 @@ export default defineComponent({
     employeeId: {
       type: String,
       default: 0,
+    }, idRowIndex: {
+      type: Number
+    }, idRowEdit: {
+      type: Number
     },
   },
   setup(props, context) {
@@ -113,6 +134,8 @@ export default defineComponent({
     const modalEditStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
     const globalYear = computed(() => store.state.settings.globalYear);
+    const idRowIndex = ref()
+
     const originDataDetail = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -134,9 +157,10 @@ export default defineComponent({
     const openAddDependent = () => {
       modalAddNewDependent.value = true;
     };
-    const actionEdit = (data: any) => {
-      refetch();
-    };
+    const actionEdit = (val: any) => {
+      idRowIndex.value = val
+      modalEditStatus.value = true
+    }
     const modalHistory = (data: any) => { };
 
     const actionDelete = (data: any) => { };
