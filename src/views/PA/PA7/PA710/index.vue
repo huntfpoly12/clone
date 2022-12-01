@@ -1,5 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
+    <action-header title="기타소득자등록" @actionSave=" checkForm ? onUpdate($event) : onSubmit($event)" :buttonDelete="false"/>
     <div id="pa-710" class="page-content">
         <a-row>
             <a-col :span="3" class="total-user">
@@ -91,13 +91,13 @@
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 국적 " :label-col="labelCol">
-                                <country-code-select-box v-model:valueCountry="formState.nationalityCode"
+                                <country-code-select-box style="width: 310px" v-model:valueCountry="formState.nationalityCode"
                                     @textCountry="textCountry" :required="true" :disabled="disabledSelect" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 체류자격 " :label-col="labelCol">
-                                <stay-qualification-select-box :required="true" :disabled="disabledSelect"
+                                <stay-qualification-select-box style="width: 310px" :required="true" :disabled="disabledSelect"
                                     v-model:valueStayQualifiction="formState.stayQualification" />
                             </a-form-item>
                         </a-col>
@@ -109,7 +109,7 @@
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 체류자격 " :label-col="labelCol">
-                                <type-code-select-box v-model:valueInput="formState.incomeTypeCode"
+                                <type-code-select-box style="width: 310px" v-model:valueInput="formState.incomeTypeCode"
                                     @textTypeCode="textTypeCode" :required="true">
                                 </type-code-select-box>
                             </a-form-item>
@@ -127,10 +127,10 @@
                             </a-form-item>
                         </a-col>
                     </a-row>
-                    <div v-if="checkForm" class="text-align-center mt-20">
+                    <!-- <div v-if="checkForm" class="text-align-center mt-20">
                         <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
                             :mode="'contained'" @onClick="onUpdate($event)" />
-                    </div>
+                    </div> -->
                 </a-spin>
             </a-col>
         </a-row>
