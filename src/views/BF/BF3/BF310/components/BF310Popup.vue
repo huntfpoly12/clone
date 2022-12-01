@@ -315,7 +315,7 @@
                                         v-model:valueInput="formState.content.cmsBank.ownerBizNumber"
                                         nameInput="cmsBank-ownerBizNumber" />
                                     <div class="noteImage">
-                                        <InfoCircleFilled />
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px; margin-top: 0px;" />
                                         <div class="noteText">
                                             <p>예금주의 사업자등록번호 또는 주민등록번호입니다.</p>
                                         </div>
@@ -356,7 +356,7 @@
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxToolbar, DxItem, DxTexts, DxMasterDetail } from "devextreme-vue/data-grid";
-import { UploadOutlined, MinusCircleOutlined, InfoCircleFilled, PlusOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import { UploadOutlined, MinusCircleOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
@@ -387,7 +387,6 @@ export default defineComponent({
         UploadOutlined,
         MinusCircleOutlined,
         DeleteOutlined,
-        InfoCircleFilled,
         PlusOutlined,
         imgUpload,
         DxEditing,

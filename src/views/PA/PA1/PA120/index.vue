@@ -11,7 +11,7 @@
                         <span>전체</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -23,7 +23,7 @@
                         <span>재직</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -35,7 +35,7 @@
                         <span>퇴사</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -111,7 +111,7 @@ import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
 import { Message } from "../../../../configs/enum"
 
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 
 export default defineComponent({
     components: {

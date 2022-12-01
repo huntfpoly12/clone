@@ -19,7 +19,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import Tab1Component from "./componentAdd/Tab1Component.vue";
 import Tab2Component from "./componentAdd/Tab2Component.vue";
@@ -28,7 +27,6 @@ import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
 import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 export default defineComponent({
     components: {
-        InfoCircleFilled,
         DxSelectBox,
         Tab1Component,
         Tab2Component,

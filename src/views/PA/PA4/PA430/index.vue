@@ -34,7 +34,7 @@
             <div class="format-settings">
               <strong>서식 설정: </strong>
               <div class="format-settings-text">
-                <InfoCircleFilled />
+                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                 <span>
                   본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
                 </span>
@@ -70,7 +70,7 @@
           <template #send-group-mail>
             <div class="custom-mail-group">
               <DxButton @click="actionOpenPopupEmailMulti">
-                <img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
               </DxButton>
             </div>
           </template>
@@ -107,9 +107,9 @@
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
             <div class="custom-action" style="text-align: center;">
-              <img @click="actionOpenPopupEmailSingle(data.data)" src="../../../../assets/images/email.svg" alt=""
+              <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                 style="width: 25px; margin-right: 3px;" />
-              <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
+              <img src="@/assets/images/print.svg" alt="" style="width: 25px;" />
             </div>
           </template>
           <DxSummary>
@@ -138,7 +138,6 @@
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import {
   DxDataGrid,
@@ -171,7 +170,6 @@ export default defineComponent({
     DxSearchPanel,
     DxToolbar,
     DxItem, DxSummary, DxTotalItem,
-    InfoCircleFilled,
     EmailSinglePopup,
     EmailMultiPopup
   },

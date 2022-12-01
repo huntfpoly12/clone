@@ -61,7 +61,7 @@
                                                     :layoutCustom="'horizontal'" />
                                             </a-form-item>
                                             <div style="margin: -10px 0px 20px 150px">
-                                                <InfoCircleFilled />
+                                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                                 <span style="margin-left: 5px">
                                                     신고가 안된 소득자료가 있으면 수정불가합니다. 입력된 소득자료에 대해 신고하거나 삭제 후 변경가능합니다.
                                                 </span>
@@ -77,7 +77,7 @@
                                                     :layoutCustom="'horizontal'" />
                                             </a-form-item>
                                             <div style="margin: -10px 0px 20px 150px">
-                                                <InfoCircleFilled />
+                                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                                 <span style="margin-left: 5px">
                                                     신고가 안된 소득자료가 있으면 수정불가합니다. 입력된 소득자료에 대해 신고하거나 삭제 후 변경가능합니다.
                                                 </span>
@@ -96,7 +96,7 @@
                                                 </div>
                                             </a-form-item>
                                             <div style="margin: 0px 0px 20px 150px">
-                                                <InfoCircleFilled />
+                                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                                 <span style="margin-left: 5px">
                                                     급여지급일자는 선택사항으로 지정시 급여명세서 등에
                                                     해당 급여일자가 입력되며, 수정 가능합니다.
@@ -115,7 +115,7 @@
                                                 </div>
                                             </a-form-item>
                                             <div style="margin: 0px 0px 20px 150px">
-                                                <InfoCircleFilled />
+                                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                                 <span style="margin-left: 5px">
                                                     사업자 두루누리 미적용시 해당 사원이 두루누리
                                                     적용이더라도 급여계산에 반영되지 않습니다.
@@ -367,7 +367,6 @@ import {
     PrinterOutlined,
     DeleteOutlined, SaveOutlined,
     HistoryOutlined,
-    InfoCircleFilled,
 } from "@ant-design/icons-vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import queries from "@/graphql/queries/CM/CM130/index";
@@ -422,7 +421,6 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        InfoCircleFilled
     },
     setup() {
         // config grid
