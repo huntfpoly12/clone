@@ -10,91 +10,84 @@
                         <span>전체</span>
                     </div>
                     <div>
-                        <i class="dx-icon-user"></i>
+                        <img src="@/assets/images/user.svg" style="width: 70px" />
                     </div>
                 </a-col>
                 <a-col :span="21"></a-col>
                 <a-col :span="16" class="custom-layout">
                     <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete" size="large">
-                        <div>
-                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                                :show-borders="true" key-expr="employeeId" @exporting="onExporting"
-                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
-                                <DxScrolling column-rendering-mode="virtual" />
-                                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                                <DxExport :enabled="true" :allow-export-selected-data="true" />
-                                <DxToolbar>
-                                    <DxItem location="after" template="pagination-table" />
-                                    <DxItem name="searchPanel" />
-                                    <DxItem name="exportButton" />
-                                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                                    <DxItem name="groupPanel" />
-                                    <DxItem name="addRowButton" show-text="always" />
-                                    <DxItem name="columnChooserButton" />
-                                </DxToolbar>
-                                <template #button-template>
-                                    <DxButton icon="plus" @click="addRow" />
-                                </template>
-                                <template #pagination-table>
-                                    <div v-if="rowTable > originData.rows">
-                                        <a-pagination v-model:current="originData.page"
-                                            v-model:page-size="originData.rows" :total="rowTable" show-less-items />
-                                    </div>
-                                </template>
-                                <DxColumn caption="성명 (상호)" cell-template="tag" />
-                                <template #tag="{ data }" class="custom-action">
-                                    <div class="custom-action">
-                                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                            :idCardNumber="data.data.residentId" :status="data.data.status"
-                                            :foreigner="data.data.foreigner" :checkStatus="false" />
-                                    </div>
-                                </template>
+                        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                            :show-borders="true" key-expr="employeeId" @exporting="onExporting"
+                            :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                            :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
+                            <DxScrolling column-rendering-mode="virtual" />
+                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                            <DxExport :enabled="true" :allow-export-selected-data="true" />
+                            <DxToolbar>
+                                <DxItem location="after" template="pagination-table" />
+                                <DxItem name="searchPanel" />
+                                <DxItem name="exportButton" />
+                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                                <DxItem name="groupPanel" />
+                                <DxItem name="addRowButton" show-text="always" />
+                                <DxItem name="columnChooserButton" />
+                            </DxToolbar>
+                            <template #button-template>
+                                <DxButton icon="plus" @click="addRow" />
+                            </template>
+                            <template #pagination-table>
+                                <div v-if="rowTable > originData.rows">
+                                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                                        :total="rowTable" show-less-items />
+                                </div>
+                            </template>
+                            <DxColumn caption="성명 (상호)" cell-template="tag" />
+                            <template #tag="{ data }" class="custom-action">
+                                <div class="custom-action">
+                                    <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                        :idCardNumber="data.data.residentId" :status="data.data.status"
+                                        :foreigner="data.data.foreigner" :checkStatus="false" />
+                                </div>
+                            </template>
 
-                                <DxColumn caption="주민등록번호" cell-template="resident-id" width="200px" />
-                                <template #resident-id="{ data }" class="custom-action">
-                                    <a-tooltip placement="top"
-                                        v-if="data.data.residentId?.length == 14
-                                        && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                                        key="black">
-                                        {{ data.data.residentId }}
+                            <DxColumn caption="주민등록번호" cell-template="resident-id" width="200px" />
+                            <template #resident-id="{ data }" class="custom-action">
+                                <a-tooltip placement="top"
+                                    v-if="data.data.residentId?.length == 14
+                                    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                                    key="black">
+                                    {{ data.data.residentId }}
+                                </a-tooltip>
+                                <a-tooltip placement="top" v-else title="ERROR" color="red">
+                                    {{ data.data.residentId }}
+                                </a-tooltip>
+
+                            </template>
+                            <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
+                            <template #grade-cell="{ data }" class="custom-action">
+                                <income-type :typeCode="data.data.incomeTypeCode"
+                                    :typeName="data.data.incomeTypeName" />
+                            </template>
+
+                            <DxColumn :width="70" cell-template="pupop" />
+                            <template #pupop="{ data }" class="custom-action">
+                                <div class="custom-action" style="text-align: center;">
+                                    <a-tooltip placement="top" @click="modalHistory(data.data.employeeId)"
+                                        class="mr-10">
+                                        <template #title>변경이력</template>
+                                        <HistoryOutlined />
                                     </a-tooltip>
-                                    <a-tooltip placement="top" v-else title="ERROR" color="red">
-                                        {{ data.data.residentId }}
+                                    <a-tooltip placement="top" v-if="data.data.deletable == true"
+                                        @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
+                                        <template #title>변경이력</template>
+                                        <DeleteOutlined />
                                     </a-tooltip>
-
-                                </template>
-                                <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
-                                <template #grade-cell="{ data }" class="custom-action">
-                                    <income-type :typeCode="data.data.incomeTypeCode"
-                                        :typeName="data.data.incomeTypeName" />
-                                </template>
-
-                                <DxColumn :width="70" cell-template="pupop" />
-                                <template #pupop="{ data }" class="custom-action">
-                                    <div class="custom-action" style="text-align: center;">
-                                        <a-tooltip placement="top" @click="modalHistory(data.data.employeeId)"
-                                            class="mr-10">
-                                            <template #title>변경이력</template>
-                                            <HistoryOutlined />
-                                        </a-tooltip>
-                                        <a-tooltip placement="top" v-if="data.data.deletable == true"
-                                            @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
-                                            <template #title>변경이력</template>
-                                            <DeleteOutlined />
-                                        </a-tooltip>
-                                    </div>
-                                </template>
-                            </DxDataGrid>
-                            <div class="pagination-table" v-if="rowTable > originData.rows">
-                                <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                    :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
-                            </div>
-                            <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false"
-                                typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요"
-                                @checkConfirm="statusComfirm" />
-                            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                                :data="popupData" title="변경이력" typeHistory="pa-610" />
+                                </div>
+                            </template>
+                        </DxDataGrid>
+                        <div class="pagination-table" v-if="rowTable > originData.rows">
+                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                                :total="rowTable" show-less-items style="margin-top: 10px" />
                         </div>
                     </a-spin>
                 </a-col>
@@ -149,6 +142,10 @@
             </a-row>
         </div>
     </div>
+    <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+        :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+        title="변경이력" typeHistory="pa-610" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -194,6 +191,7 @@ export default defineComponent({
         HistoryPopup
     },
     setup() {
+        const arrEdit = Array()
         const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
@@ -314,18 +312,25 @@ export default defineComponent({
         })
 
         // ================WATCHING============================================
-        watch(() => dataAction, (newValue, old) => {
+        watch(() => dataAction, (xxx, old) => {
             if (disabledInput.value == true) {
-                dataSource.value.map((e: any) => {
-                    if (e.employeeId == newValue.employeeId) {
-                        let newID = newValue.input.residentId.replace('-', '')
-                        e.foreigner = newValue.input.foreigner
-                        e.incomeTypeCode = newValue.incomeTypeCode
-                        e.incomeTypeName = newValue.input.incomeTypeName
-                        e.name = newValue.input.name
-                        e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
-                    }
-                })
+                console.log('------------',xxx);
+                
+                arrEdit.push(xxx) 
+                console.log(arrEdit);
+               
+
+
+                // dataSource.value.map((e: any) => {
+                //     if (e.employeeId == newValue.employeeId) {
+                //         let newID = newValue.input.residentId.replace('-', '')
+                //         e.foreigner = newValue.input.foreigner
+                //         e.incomeTypeCode = newValue.incomeTypeCode
+                //         e.incomeTypeName = newValue.input.incomeTypeName
+                //         e.name = newValue.input.name
+                //         e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
+                //     }
+                // })
             }
         }, { deep: true });
 
@@ -342,12 +347,6 @@ export default defineComponent({
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
-        };
-        const searching = () => {
-            // originData.grade = saleGrade.value == 0 ? null : saleGrade.value;
-            // originData.statuses = [saleStatus.value];
-            // trigger.value = true;
-            // refetchData();
         };
         const actionEdit = (data: any) => {
             disabledInput.value = true
@@ -465,7 +464,6 @@ export default defineComponent({
             changeTextTypeCode,
             actionEdit,
             onExporting,
-            searching,
             changeTextCountry,
             saving
         };
