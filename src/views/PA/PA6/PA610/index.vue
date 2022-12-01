@@ -53,7 +53,16 @@
 
                                 <DxColumn caption="주민등록번호" cell-template="resident-id" width="200px" />
                                 <template #resident-id="{ data }" class="custom-action">
-                                    <convert-resident-id :idCardNumber="data.data.residentId" :checkStatus="false" />
+                                    <a-tooltip placement="top"
+                                        v-if="data.data.residentId?.length == 14
+                                        && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                                        key="black">
+                                        {{ data.data.residentId }}
+                                    </a-tooltip>
+                                    <a-tooltip placement="top" v-else title="ERROR" color="red">
+                                        {{ data.data.residentId }}
+                                    </a-tooltip>
+
                                 </template>
                                 <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
                                 <template #grade-cell="{ data }" class="custom-action">
