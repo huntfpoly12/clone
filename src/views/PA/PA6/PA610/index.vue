@@ -51,7 +51,19 @@
                                     </div>
                                 </template>
 
-                                <DxColumn caption="주민등록번호" data-field="residentId" width="200px" />
+                                <DxColumn caption="주민등록번호" cell-template="resident-id" width="200px" />
+                                <template #resident-id="{ data }" class="custom-action">
+                                    <a-tooltip placement="top"
+                                        v-if="data.data.residentId?.length == 14
+                                        && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                                        key="black">
+                                        {{ data.data.residentId }}
+                                    </a-tooltip>
+                                    <a-tooltip placement="top" v-else title="ERROR" color="red">
+                                        {{ data.data.residentId }}
+                                    </a-tooltip>
+
+                                </template>
                                 <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
                                 <template #grade-cell="{ data }" class="custom-action">
                                     <income-type :typeCode="data.data.incomeTypeCode"
@@ -340,7 +352,6 @@ export default defineComponent({
         const actionEdit = (data: any) => {
             disabledInput.value = true
             triggerDetail.value = true
-            disabledInput2.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
             valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
             refetchDataDetail()
