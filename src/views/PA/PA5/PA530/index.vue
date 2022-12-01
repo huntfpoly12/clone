@@ -23,7 +23,7 @@
                             </a-col>
                             <a-col :span="8" class="custom-info">
                                 <div>
-                                    <img src="../../../../assets/images/iconInfo.png" alt="">
+                                    <img src="@/assets/images/iconInfo.png" alt="">
                                 </div>
                                 <span>
                                     12월 말일까지 미지급한 경우,
@@ -110,7 +110,7 @@
                                 서식 설정 :
                             </div>
                             <div>
-                                <img src="../../../../assets/images/iconInfo.png" alt="">
+                                <img src="@/assets/images/iconInfo.png" alt="">
                             </div>
                             <span>
                                 본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
@@ -149,7 +149,7 @@
                     </template>
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
-                            <DxButton><img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;"
+                            <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
                                     @click="sendMailGroup" />
                             </DxButton>
                         </div>
@@ -187,10 +187,10 @@
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
-                            <img src="../../../../assets/images/email.svg" alt=""
+                            <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="openPopup(data.data)" />
-                            <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
+                            <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
                                 @click="actionPrint(data.data)" />
                         </div>
                     </template>
@@ -211,15 +211,15 @@
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
-import notification from "../../../../utils/notification";
-import queries from "../../../../graphql/queries/PA/PA5/PA530/index";
-import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
+import notification from "@/utils/notification";
+import queries from "@/graphql/queries/PA/PA5/PA530/index";
+import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
-import { onExportingCommon } from "../../../../helpers/commonFunction"
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { onExportingCommon } from "@/helpers/commonFunction"
 import { origindata, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
-import { companyId, userId } from "../../../../../src/helpers/commonFunction";
+import { companyId, userId } from "@/../src/helpers/commonFunction";
 import PA530Popup from "./components/PA530Popup.vue";
 import dayjs from 'dayjs';
 export default defineComponent({
@@ -234,7 +234,6 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        InfoCircleFilled,
         PA530Popup
     },
     setup() {

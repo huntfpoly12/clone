@@ -7,7 +7,8 @@
                     <a-col :span="12">
                         <a-form-item label="연말관계" label-align="right">
                             <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation"
-                                :required="true"></dependants-relation-select-box>
+                                :required="true">
+                            </dependants-relation-select-box>
                         </a-form-item>
                         <a-form-item label="성명" label-align="right">
                             <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
@@ -17,12 +18,12 @@
                             <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="foreigner" />
                         </a-form-item>
                         <a-form-item :label="labelResidebId" label-align="right">
-                            <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId">
-                            </id-number-text-box>
+                            <id-number-text-box :required="true" width="150px"
+                                v-model:valueInput="residentId"></id-number-text-box>
                         </a-form-item>
                         <a-form-item label="나이" label-align="right">
-                            <default-text-box width="200px" :readOnly="true" v-model:valueInput="ageCount">
-                            </default-text-box>
+                            <default-text-box width="200px" :readOnly="true"
+                                v-model:valueInput="ageCount"></default-text-box>
                         </a-form-item>
                         <a-form-item label="기본공제" label-align="right">
                             <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
@@ -40,8 +41,8 @@
                             <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="senior" />
                         </a-form-item>
                         <a-form-item label="장애인" label-align="right">
-                            <disabled-type-radio-group v-model:valueRadioCheck="formState.disabled">
-                            </disabled-type-radio-group>
+                            <disabled-type-radio-group
+                                v-model:valueRadioCheck="formState.disabled"></disabled-type-radio-group>
                         </a-form-item>
                         <a-form-item label="출산입양" label-align="right">
                             <maternity-adoption-radio-box v-model:valueRadioCheck="formState.maternityAdoption">
@@ -59,10 +60,9 @@
                         </a-form-item>
                     </a-col>
                 </a-row>
-
             </div>
             <a-row style="margin-top: 40px">
-                <a-col :span="8" :offset="8" style="text-align: center;">
+                <a-col :span="8" :offset="8" style="text-align: center">
                     <button-basic text="저장" type="default" mode="contained" :width="90"
                         @onClick="createNewEmployeeWageDependent($event)" />
                 </a-col>
@@ -71,17 +71,27 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, computed, watch } from "vue";
-import { useMutation } from "@vue/apollo-composable";
-import { useStore } from "vuex";
-import mutations from "../../../../../../../graphql/mutations/PA/PA1/PA120";
-import notification from "../../../../../../../utils/notification";
-import { companyId, convertAge } from "../../../../../../../helpers/commonFunction";
+import { defineComponent, reactive, ref, computed, watch } from 'vue';
+import { useMutation } from '@vue/apollo-composable';
+import { useStore } from 'vuex';
+import mutations from '@/graphql/mutations/PA/PA1/PA120';
+import notification from '../../../../../../../utils/notification';
+import {
+    companyId,
+    convertAge,
+} from '@/helpers/commonFunction';
 export default defineComponent({
     components: {},
     props: {
+        employeeId: {
+            type: String,
+            default: 0,
+        },
         modalStatus: Boolean,
-        idRowEdit: {
+        dataSourceLen: {
+            type: Number,
+            default: 1,
+        }, idRowEdit: {
             type: Number
         },
     },
@@ -89,9 +99,9 @@ export default defineComponent({
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         const ageCount = ref();
-        const labelResidebId = ref("주민(외국인)번호 ");
+        const labelResidebId = ref('주민(외국인)번호 ');
         const initialFormState = {
-            relation: null,
+            relation: 1,
             name: '',
             foreigner: false,
             residentId: '',
@@ -103,12 +113,12 @@ export default defineComponent({
             maternityAdoption: 0,
             descendant: true,
             consignmentRelationship: '',
-            index: null
+            index: 2,
         };
         const formState = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
             emit('closePopup', false);
-        }
+        };
 
         const women = ref(formState.women == true ? 1 : 0);
         watch(women, (newValue) => {
@@ -143,37 +153,39 @@ export default defineComponent({
             }
         });
         const householder = ref(formState.householder == true ? 1 : 0);
-        watch(householder, (newValue) => {
-            if (newValue == 1) {
-                formState.householder = true;
-            } else {
-                formState.householder = false;
-            }
-        });
+        // watch(householder, (newValue) => {
+        // if (newValue == 1) {
+        //     formState.householder = true;
+        // } else {
+        //     formState.householder = false;
+        // }
+        // });
         const foreigner = ref(formState.foreigner == true ? 1 : 0);
         watch(foreigner, (newValue) => {
             if (newValue == 1) {
                 formState.foreigner = true;
-                labelResidebId.value = "외국인번호 유효성";
+                labelResidebId.value = '외국인번호 유효성';
             } else {
                 formState.foreigner = false;
-                labelResidebId.value = "주민등록번호";
+                labelResidebId.value = '주민등록번호';
             }
         });
-        const residentId = ref("");
+        const residentId = ref('');
         watch(residentId, (newValue: any) => {
-            formState.residentId =
-                newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
+            formState.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
             if (newValue.length >= 7) {
                 ageCount.value = convertAge(formState.residentId);
             }
         });
 
-        watch(() => props.modalStatus, (newValue: any) => {
-            if (newValue) {
-                Object.assign(formState, initialFormState);
+        watch(
+            () => props.modalStatus,
+            (newValue: any) => {
+                if (newValue) {
+                    Object.assign(formState, initialFormState);
+                }
             }
-        });
+        );
         // createEmployeeWage
         const {
             mutate: createEmployeeWageDependent,
@@ -183,11 +195,11 @@ export default defineComponent({
         } = useMutation(mutations.createEmployeeWageDependent);
 
         onDoneAdd((res) => {
-            notification("success", `Create employee wage successfully! `);
+            notification('success', `Create employee wage successfully! `);
         });
 
         onError((error) => {
-            notification("error", error.message);
+            notification('error', error.message);
         });
 
         const createNewEmployeeWageDependent = async (e: any) => {
@@ -195,19 +207,20 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-
                 let dataNew = {
                     companyId: companyId,
-                    employeeId: props.idRowEdit,
+                    employeeId: ref(props.idRowEdit).value,
                     imputedYear: globalYear.value,
                     input: {
                         ...formState,
-                        index: 2,
+                        index: ref(props.dataSourceLen).value + 1,
                     },
                 };
+                initialFormState.relation++;
                 await createEmployeeWageDependent(dataNew);
+                emit('upDateData');
+                setModalVisible();
             }
-
         };
         return {
             women,
@@ -221,7 +234,7 @@ export default defineComponent({
             residentId,
             setModalVisible,
             labelResidebId,
-            createNewEmployeeWageDependent
+            createNewEmployeeWageDependent,
         };
     },
 });
@@ -259,3 +272,4 @@ export default defineComponent({
     }
 }
 </style>
+  

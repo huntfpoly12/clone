@@ -25,7 +25,7 @@
                                 서식 설정 :
                             </div>
                             <div>
-                                <img src="../../../../assets/images/iconInfo.png" alt="">
+                                <img src="@/assets/images/iconInfo.png" alt="">
                             </div>
                             <span>
                                 본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
@@ -53,7 +53,7 @@
                 </DxToolbar>
                 <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
-                        <DxButton><img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;"
+                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
                                 @click="sendMailGroup" />
                         </DxButton>
                     </div>
@@ -85,9 +85,9 @@
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action" style="text-align: center;">
-                        <img @click="actionOpenPopupEmailSingle(data.data)" src="../../../../assets/images/email.svg"
+                        <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg"
                             alt="" style="width: 25px; margin-right: 3px;" />
-                        <img src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
+                        <img src="@/assets/images/print.svg" alt="" style="width: 25px;" />
                     </div>
                 </template>
             </DxDataGrid>

@@ -63,7 +63,7 @@
                                                         <button-basic :text="'직인자동생성'" :width="130" :type="'default'" :mode="'contained'" @onClick="stampReview"/>
                                                     </a-col>
                                                     <a-col :span="16">
-                                                        <InfoCircleFilled />
+                                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                                         <a-typography-text>
                                                             직인 이미지를 자동으로 생성하여 등록합니다.
                                                         </a-typography-text>
@@ -85,7 +85,7 @@
                                             </a-upload>
                                         </a-col>
                                         <a-col :span="14" :xl="14">
-                                            <InfoCircleFilled />
+                                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                             <a-typography-text>
                                                 이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 /
                                                 종류 : GIF, JPG, PNG
@@ -251,7 +251,7 @@ import HistoryPopup from "@/components/HistoryPopup.vue";
 import inputFormat from '@/components/inputBoxFormat.vue';
 import { defineComponent, ref, computed } from "vue";
 import { useStore } from 'vuex';
-import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import ReviewStampImage from "./components/ReviewStampImage.vue";
 import ListLoginPopup from "@/components/ListLoginPopup.vue";
 import type { UploadProps } from 'ant-design-vue';
@@ -273,7 +273,6 @@ function getBase64(file: File) {
 }
 export default defineComponent({
     components: {
-        InfoCircleFilled,
         LoginOutlined,
         EditOutlined,
         HistoryOutlined,

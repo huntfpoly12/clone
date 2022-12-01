@@ -19,14 +19,12 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import Tab1Component from "./componentEdit/Tab1Component.vue";
 import Tab2Component from "./componentEdit/Tab2Component.vue";
 import Tab3Component from "./componentEdit/Tab3Component.vue";
 export default defineComponent({
     components: {
-        InfoCircleFilled,
         DxSelectBox,
         Tab2Component,
         Tab1Component,

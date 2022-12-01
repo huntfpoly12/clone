@@ -11,7 +11,7 @@
               <switch-basic v-model:valueSwitch="formStateTab1.president" textCheck="O" textUnCheck="X"
                 style="width: 80px"></switch-basic>
               <span>
-                <InfoCircleFilled /> 대표자인 경우 고용보험 제외됩니다.
+                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 대표자인 경우 고용보험 제외됩니다.
               </span>
             </div>
           </a-form-item>
@@ -29,7 +29,7 @@
               <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt" dateFormat="YYYY-MM-DD">
               </date-time-box>
               <span>
-                <InfoCircleFilled /> 마지막 근무한 날
+                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 마지막 근무한 날
               </span>
             </div>
           </a-form-item>
@@ -67,7 +67,7 @@
             <mail-text-box v-model:valueInput="formStateTab1.email" width="200px" placeholder="abc@example.com">
             </mail-text-box>
             <span>
-              <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달
+              <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요 서류를 메일로 전달
               가능합니다.
             </span>
           </div>
@@ -92,7 +92,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref, watch, computed } from "vue";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { useStore } from "vuex";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -109,7 +108,6 @@ import { companyId } from "../../../../../../helpers/commonFunction";
 
 export default defineComponent({
   components: {
-    InfoCircleFilled
   },
   props: {
     popupStatus: {
@@ -221,6 +219,7 @@ export default defineComponent({
     } = useMutation(mutations.createEmployeeWage);
 
     onDoneAdd((res) => {
+       emit('setTabsStatus', false);
       notification("success", `Create employee wage successfully! `);
     });
 
