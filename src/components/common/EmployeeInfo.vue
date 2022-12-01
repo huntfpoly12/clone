@@ -1,6 +1,6 @@
 <template>
     <div class="main">
-        <div :class="[{'display-none': !idEmployee},'style-Id']">
+        <div :class="[{ 'display-none': !idEmployee }, 'style-Id']">
             {{ idEmployee }}
         </div>
         <div style="display: flex;align-items: flex-end;">
@@ -10,7 +10,7 @@
                 :title="convertBirthDay(idCardNumber)" key="black">
                 {{ name }}
             </a-tooltip>
-            <a-tooltip placement="top" v-else title="ERROR" color="red">
+            <a-tooltip placement="top" v-else>
                 {{ name }}
             </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
@@ -55,8 +55,7 @@ export default defineComponent({
                 return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
             else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
                 return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
-        }
-        console.log(props.foreigner);
+        } 
         return {
             convertBirthDay
         }
@@ -72,7 +71,7 @@ export default defineComponent({
 
 .style-Id {
     margin-right: 5px;
-    text-align: center; 
+    text-align: center;
     border: 1px solid rgb(164, 164, 164);
     border-radius: 5px;
     line-height: 23px;
@@ -103,11 +102,13 @@ export default defineComponent({
     border-radius: 5px;
     margin: 0 5px;
 }
+
 .display-none {
     display: none;
 }
-.jtf-center{
-  justify-content: center;
+
+.jtf-center {
+    justify-content: center;
 }
 </style>
 

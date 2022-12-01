@@ -1,5 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
+    <action-header title="기타소득자등록" @actionSave=" checkForm ? onUpdate($event) : onSubmit($event)" :buttonDelete="false"/>
     <div id="pa-710" class="page-content">
         <a-row>
             <a-col :span="3" class="total-user">
@@ -91,25 +91,25 @@
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 국적 " :label-col="labelCol">
-                                <country-code-select-box v-model:valueCountry="formState.nationalityCode"
+                                <country-code-select-box style="width: 310px" v-model:valueCountry="formState.nationalityCode"
                                     @textCountry="textCountry" :required="true" :disabled="disabledSelect" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 체류자격 " :label-col="labelCol">
-                                <stay-qualification-select-box :required="true" :disabled="disabledSelect"
+                                <stay-qualification-select-box style="width: 310px" :required="true" :disabled="disabledSelect"
                                     v-model:valueStayQualifiction="formState.stayQualification" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item :label="disabledSelect ? '외국인번호 유효성' : '주민등록번호'" :label-col="labelCol">
+                            <a-form-item :label="disabledSelect ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol">
                                 <id-number-text-box :width="150" v-model:valueInput="formState.residentId"
                                     :required="true"></id-number-text-box>
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
                             <a-form-item label="외국인 체류자격 " :label-col="labelCol">
-                                <type-code-select-box v-model:valueInput="formState.incomeTypeCode"
+                                <type-code-select-box style="width: 310px" v-model:valueInput="formState.incomeTypeCode"
                                     @textTypeCode="textTypeCode" :required="true">
                                 </type-code-select-box>
                             </a-form-item>
@@ -127,10 +127,10 @@
                             </a-form-item>
                         </a-col>
                     </a-row>
-                    <div v-if="checkForm" class="text-align-center mt-20">
+                    <!-- <div v-if="checkForm" class="text-align-center mt-20">
                         <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
                             :mode="'contained'" @onClick="onUpdate($event)" />
-                    </div>
+                    </div> -->
                 </a-spin>
             </a-col>
         </a-row>
@@ -177,7 +177,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const loadingForm = ref(false)
         let checkForm = ref(false)
-        let disabledSelect = ref(false)
+        let disabledSelect = ref(true)
         const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
         let popupData = ref();
@@ -339,9 +339,9 @@ export default defineComponent({
         });
         watch(() => formState.foreigner, (newValue) => {
             if (newValue) {
-                disabledSelect.value = true;
-            } else {
                 disabledSelect.value = false;
+            } else {
+                disabledSelect.value = true;
             }
         });
         return {
