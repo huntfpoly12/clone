@@ -24,7 +24,7 @@
         <div class="input-text empl-ins">
           <checkbox-basic size="18px" label="고용보험" width="120px"></checkbox-basic>
           <span>
-            <InfoCircleFilled />
+            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
             <p>본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.</p>
           </span>
         </div>
@@ -50,7 +50,7 @@
     </a-form-item>
     <div class="header-text-3">급여 (기본값)
       <span>
-        <InfoCircleFilled />
+        <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
         <p>급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
       </span>
     </div>
@@ -65,7 +65,7 @@
           <div class="text4">차인지급액 {50000}원 </div>
           <div class="text5">
             <span>
-              <InfoCircleFilled />
+              <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
               <p>차인지급액 = 수당 합계 - 공제 합계</p>
             </span>
           </div>
@@ -96,7 +96,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, reactive } from "vue";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   radioCheckPersenPension,
@@ -109,7 +108,6 @@ import dayjs from 'dayjs';
 
 export default defineComponent({
   components: {
-    InfoCircleFilled,
   },
   props: {
     employeeId: {

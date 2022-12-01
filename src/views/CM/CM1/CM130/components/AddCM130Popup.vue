@@ -46,7 +46,7 @@
                                 </default-text-box>
                             </a-form-item>
                             <div style="margin: 0px 0px 20px 150px">
-                                <InfoCircleFilled />
+                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                 <span style="margin-left: 5px">
                                     급여명세서 계산방법에 표시됩니다.
                                 </span>
@@ -75,7 +75,6 @@ import mutations from "@/graphql/mutations/CM/CM130/index";
 import notification from "@/utils/notification";
 import { initialState } from "../data";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
 
 export default defineComponent({
@@ -83,7 +82,6 @@ export default defineComponent({
 
     components: {
         TaxPay,
-        InfoCircleFilled,
     },
 
     setup(props, { emit }) {

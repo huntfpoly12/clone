@@ -22,7 +22,7 @@
                         <div class="format-settings">
                             <strong>서식 설정 : </strong>
                             <div class="format-settings-text">
-                                <InfoCircleFilled /> 본 설정으로 적용된 서식으로 출력 및
+                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 본 설정으로 적용된 서식으로 출력 및
                                 메일발송 됩니다.
                             </div>
                         </div>
@@ -111,7 +111,6 @@
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
@@ -146,7 +145,6 @@ export default defineComponent({
         DxSearchPanel,
         DxToolbar,
         DxItem,
-        InfoCircleFilled,
         EmailSinglePopup,
         EmailMultiPopup
     },
