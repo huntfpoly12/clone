@@ -336,9 +336,8 @@
                         </a-row>
                         <a-row>
                             <a-col :span="24">
-                                <a-form-item label="과세구분/유형" :label-col="labelCol">
-                                    <TaxPay style="width: 320px" placeholder="선택"
-                                        v-model:selectedValue="formStateDeduction.taxPayCode" :disabled="true"></TaxPay>
+                                <a-form-item label="구분/유형" :label-col="labelCol">
+                                    <TaxPay style="width: 320px" placeholder="공제" :disabled="true"></TaxPay>
                                 </a-form-item>
                             </a-col>
                         </a-row>

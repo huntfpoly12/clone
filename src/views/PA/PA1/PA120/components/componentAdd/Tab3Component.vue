@@ -52,9 +52,10 @@
               <BtnCheck :value="cellData.value" />
             </template>
             <template #basicDeductionChange="{ data: cellData }">
-              <div v-if="cellData.value == 0">
+              <div v-if="cellData.value == 0" key="basicDeductionChange">
                 <button class="btn-red">해당없음</button>
               </div>
+              <div v-else>{{ cellData.value }}</div>
             </template>
             <template #singleParentChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
@@ -76,6 +77,70 @@
             </template>
           </DxDataGrid>
         </a-spin>
+        <div>
+          <div class="header-text-3">부양가족 요약</div>
+          <a-row :gutter="12">
+            <a-col :span="12">
+              <div class="header-text-2">기본공제</div>
+
+              <a-form-item label="본인" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="relationSummary" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+              <a-form-item label="배우자" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="womenSummary" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+              <a-form-item label="20세이하" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="basicDeductionSummary" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+              <a-form-item label="60세이하" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="basicDeductionSummary2" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+              <div class="header-text-2">자녀세액공제</div>
+              <a-form-item label="자녀세액공제" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="descendantSummary" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="12">
+              <div class="header-text-2">추가/세액공제</div>
+              <a-form-item label="경로우대" class="display-flex" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="seniorSummary" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+              <a-form-item label="장애인" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="disabledSummary" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+              <a-form-item label="부녀자" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="womenSummary2" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+              <a-form-item label="한부모" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="singleParentSummary" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+              <a-form-item label="출산입양" label-align="right">
+                <div class="display-flex">
+                  <text-number-box width="200px" :value="maternityAdoptionSummary" :readOnly="true" :required="false" />
+                </div>
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </div>
       </a-col>
     </a-row>
     <PopupEditUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
@@ -86,7 +151,14 @@
   </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed } from 'vue';
+import {
+  ref,
+  defineComponent,
+  reactive,
+  watch,
+  computed,
+  onMounted,
+} from 'vue';
 import {
   DxDataGrid,
   DxColumn,
@@ -136,6 +208,7 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear);
     const idRowIndex = ref()
 
+    const common = computed(() => store.state.common.user);
     const originDataDetail = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -143,12 +216,63 @@ export default defineComponent({
     });
     const { refetch, result } = useQuery(
       queries.getEmployeeWage,
-      originDataDetail,
+      originDataDetail
     );
+    const relationSummary = ref();
+    const womenSummary = ref();
+    const basicDeductionSummary = ref();
+    const basicDeductionSummary2 = ref();
+    const descendantSummary = ref();
+    const seniorSummary = ref();
+    const disabledSummary = ref();
+    const womenSummary2 = ref();
+    const singleParentSummary = ref();
+    const maternityAdoptionSummary = ref();
     watch(result, (value) => {
       if (value) {
         dataSource.value = value.getEmployeeWage.dependents;
         trigger.value = false;
+        relationSummary.value =
+          dataSource.value.some((item: { relation: string | number }) => {
+            return item.relation == 0;
+          }) === true
+            ? 'O'
+            : '';
+        womenSummary.value =
+          dataSource.value.filter((item: any) => {
+            return item.women === true;
+          }).length >= 1
+            ? 'O'
+            : '';
+        basicDeductionSummary.value =
+          dataSource.value.filter((item: any) => {
+            return item.basicDeduction == 3;
+          }).length;
+        basicDeductionSummary2.value =
+          dataSource.value.filter((item: any) => {
+            return item.basicDeduction == 4;
+          }).length;
+        descendantSummary.value = dataSource.value.filter((item: any) => {
+          return item.descendant == true;
+        }).length;
+        seniorSummary.value = dataSource.value.filter((item: any) => {
+          return item.senior == true;
+        }).length;
+        disabledSummary.value = dataSource.value.filter((item: any) => {
+          return item.senior == 0;
+        }).length;
+        disabledSummary.value = dataSource.value.filter((item: any) => {
+          return item.senior == 0;
+        }).length;
+        womenSummary2.value = dataSource.value.filter((item: any) => {
+          return item.senior == 0;
+        }).length;
+        singleParentSummary.value = dataSource.value.filter((item: any) => {
+          return item.senior == true;
+        }).length;
+        maternityAdoptionSummary.value = dataSource.value.filter((item: any) => {
+          return item.senior == 0;
+        }).length;
       }
     });
     // watch(updateData, () => {
@@ -171,10 +295,19 @@ export default defineComponent({
       }
       return 0;
     };
-    const updateData = (emit: Boolean) => {
-      console.log(emit);
+    const updateData = () => {
       refetch();
     };
+    onMounted(() => {
+      console.log(common.value.email);
+    });
+    // console.log(dataSource.value);
+    // const relationSummary = computed(() => {
+    //   if (dataSource.value) {
+
+    //   }
+    //   return '';
+    // });
     return {
       dataSource,
       modalEditStatus,
@@ -192,11 +325,24 @@ export default defineComponent({
       refetch,
       hasStatus,
       updateData,
+      relationSummary,
+      womenSummary,
+      basicDeductionSummary,
+      basicDeductionSummary2,
+      descendantSummary,
+      seniorSummary,
+      disabledSummary,
+      womenSummary2,
+      singleParentSummary,
+      maternityAdoptionSummary,
     };
   },
+  //   mounted() {
+  //     this.$store.commit('increment');
+  //   }
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
 .btn-red {
   background: rgb(236, 29, 29);
   padding: 3px 18px;
@@ -204,6 +350,44 @@ export default defineComponent({
   color: #ffffff;
   border-radius: 3px;
   font-size: 12px;
+}
+
+.header-text-2 {
+  background-color: #c6d9f1;
+  padding: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+::v-deep .ant-form-item-label>label {
+  font-weight: bold;
+}
+
+.display-flex {
+  display: flex;
+  justify-content: flex-end;
+  margin: 5px 0px;
+}
+
+.header-text-3 {
+  background-color: #558ed5;
+  padding: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 30px 0px;
+
+  span {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: white;
+    float: right;
+
+    p {
+      margin: 5px 0px 3px 10px;
+    }
+  }
 }
 </style>
 
