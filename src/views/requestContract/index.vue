@@ -255,7 +255,7 @@
                                 <default-text-box width="170px" :required="true"
                                     v-model:valueInput="contractCreacted.ownerBizNumber" />
                                 <p>
-                                    <InfoCircleFilled /> : 예금주의 사업자등록번호 또는 주민등록번호입니다
+                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> : 예금주의 사업자등록번호 또는 주민등록번호입니다
                                 </p>
                             </div>
                             <div class="form-item">
@@ -316,7 +316,6 @@ import {
     CheckOutlined,
     EditOutlined,
     DeleteOutlined,
-    InfoCircleFilled
 } from "@ant-design/icons-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import {
@@ -372,7 +371,6 @@ export default {
         DxTextBox,
         DxStringLengthRule,
         DeleteOutlined,
-        InfoCircleFilled,
         DxAsyncRule
     },
     setup() {

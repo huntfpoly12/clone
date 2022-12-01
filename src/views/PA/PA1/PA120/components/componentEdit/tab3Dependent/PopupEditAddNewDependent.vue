@@ -18,12 +18,12 @@
                             <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="foreigner" />
                         </a-form-item>
                         <a-form-item :label="labelResidebId" label-align="right">
-                            <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId">
-                            </id-number-text-box>
+                            <id-number-text-box :required="true" width="150px"
+                                v-model:valueInput="residentId"></id-number-text-box>
                         </a-form-item>
                         <a-form-item label="나이" label-align="right">
-                            <default-text-box width="200px" :readOnly="true" v-model:valueInput="ageCount">
-                            </default-text-box>
+                            <default-text-box width="200px" :readOnly="true"
+                                v-model:valueInput="ageCount"></default-text-box>
                         </a-form-item>
                         <a-form-item label="기본공제" label-align="right">
                             <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
@@ -41,8 +41,8 @@
                             <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="senior" />
                         </a-form-item>
                         <a-form-item label="장애인" label-align="right">
-                            <disabled-type-radio-group v-model:valueRadioCheck="formState.disabled">
-                            </disabled-type-radio-group>
+                            <disabled-type-radio-group
+                                v-model:valueRadioCheck="formState.disabled"></disabled-type-radio-group>
                         </a-form-item>
                         <a-form-item label="출산입양" label-align="right">
                             <maternity-adoption-radio-box v-model:valueRadioCheck="formState.maternityAdoption">
@@ -74,12 +74,12 @@
 import { defineComponent, reactive, ref, computed, watch } from 'vue';
 import { useMutation } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import mutations from '../../../../../../../graphql/mutations/PA/PA1/PA120';
+import mutations from '@/graphql/mutations/PA/PA1/PA120';
 import notification from '../../../../../../../utils/notification';
 import {
     companyId,
     convertAge,
-} from '../../../../../../../helpers/commonFunction';
+} from '@/helpers/commonFunction';
 export default defineComponent({
     components: {},
     props: {
@@ -91,6 +91,8 @@ export default defineComponent({
         dataSourceLen: {
             type: Number,
             default: 1,
+        }, idRowEdit: {
+            type: Number
         },
     },
     setup(props, { emit }) {
@@ -207,7 +209,7 @@ export default defineComponent({
             } else {
                 let dataNew = {
                     companyId: companyId,
-                    employeeId: ref(props.employeeId).value,
+                    employeeId: ref(props.idRowEdit).value,
                     imputedYear: globalYear.value,
                     input: {
                         ...formState,
@@ -215,10 +217,9 @@ export default defineComponent({
                     },
                 };
                 initialFormState.relation++;
-                console.log(dataNew);
                 await createEmployeeWageDependent(dataNew);
-                setModalVisible();
                 emit('upDateData');
+                setModalVisible();
             }
         };
         return {

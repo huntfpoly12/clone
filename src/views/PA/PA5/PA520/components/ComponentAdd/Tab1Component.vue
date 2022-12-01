@@ -24,7 +24,7 @@
         <a-form-item label="퇴사년월일" label-align="right" class="leavedAt">
             <div class="input-text">
                 <date-time-box width="150px" className="leavedAt" v-model:valueDate="dataCreated.leavedAt" />
-                <img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;" />
+                <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                 <span>
                     마지막 근무한 날
                 </span>
@@ -79,7 +79,7 @@
             <div class="input-text">
                 <mail-text-box width="200px" v-model:valueInput="dataCreated.email" placeholder="abc@example.com">
                 </mail-text-box>
-                <img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;">
+                <img src="@/assets/images/iconInfo.png" style="width: 16px;">
                 <span>
                     원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                 </span>
@@ -102,11 +102,11 @@
 import { defineComponent, ref, reactive, computed, watch } from "vue";
 import { radioCheckForeigner } from "../../utils/index";
 import dayjs from 'dayjs';
-import queries from "../../../../../../graphql/queries/PA/PA5/PA520/index"
-import mutations from "../../../../../../graphql/mutations/PA/PA5/PA520/index";
+import queries from "@/graphql/queries/PA/PA5/PA520/index"
+import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "../../../../../../helpers/commonFunction"
-import notification from "../../../../../../utils/notification";
+import { companyId } from "@/helpers/commonFunction"
+import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 export default defineComponent({
     setup(props, { emit }) {

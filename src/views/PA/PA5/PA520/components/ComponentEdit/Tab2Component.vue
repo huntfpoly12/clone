@@ -12,7 +12,7 @@
 						<checkbox-basic size="14px" label="고용보험" class="check-box-tab1"
 							v-model:valueCheckbox="originDataUpdate.input.employeementInsuranceDeduction" />
 						<div class="pr-5 pl-10">
-							<img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;">
+							<img src="@/assets/images/iconInfo.png" style="width: 16px;">
 						</div>
 						<span class="fz-11">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
 						</span>
@@ -40,7 +40,7 @@
 
 		<div class="header-text-3">급여 (기본값)
 			<span>
-				<img src="../../../../../../assets/images/iconInfoWrite.png" style="width: 16px;">
+				<img src="@/assets/images/iconInfoWrite.png" style="width: 16px;">
 				<p>급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
 			</span>
 		</div>
@@ -64,7 +64,7 @@
 						</div>
 					</a-form-item>
 					<div class="pl-10">
-						<img src="../../../../../../assets/images/iconInfo.png" style="width: 16px;">
+						<img src="@/assets/images/iconInfo.png" style="width: 16px;">
 						<span class="pl-5 fz-11">
 							{{ messageMonthlySalary }}
 						</span>
@@ -118,10 +118,10 @@ import { radioCheckPersenPension } from "../../utils/index";
 import dayjs from 'dayjs';
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { useStore } from 'vuex';
-import queries from "../../../../../../graphql/queries/PA/PA5/PA520/index"
-import { companyId } from "../../../../../../helpers/commonFunction"
-import mutations from "../../../../../../graphql/mutations/PA/PA5/PA520/index";
-import notification from "../../../../../../utils/notification";
+import queries from "@/graphql/queries/PA/PA5/PA520/index"
+import { companyId } from "@/helpers/commonFunction"
+import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
+import notification from "@/utils/notification";
 
 export default defineComponent({
 	props: {

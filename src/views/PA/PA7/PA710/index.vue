@@ -71,7 +71,7 @@
                                         placeholder="숫자만 입력 가능" :disabled="checkForm">
                                     </number-box>
                                     <span>
-                                        <InfoCircleFilled /> 최초 저장된 이후 수정 불가
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가
                                     </span>
                                 </div>
                             </a-form-item>
@@ -121,7 +121,7 @@
                                         :required="true" id="email">
                                     </mail-text-box>
                                     <span>
-                                        <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                                     </span>
                                 </div>
                             </a-form-item>
@@ -142,7 +142,7 @@ import HistoryPopup from "../../../../components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, InfoCircleFilled, ExclamationCircleOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, DeleteOutlined, ExclamationCircleOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "../../../../utils/notification";
 import { Modal } from 'ant-design-vue';
 import dayjs, { Dayjs } from "dayjs";
@@ -168,7 +168,6 @@ export default defineComponent({
         DeleteOutlined,
         DxButton,
         HistoryPopup,
-        InfoCircleFilled,
         SaveOutlined,
     },
     setup() {

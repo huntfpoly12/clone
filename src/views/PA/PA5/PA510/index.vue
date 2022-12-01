@@ -11,7 +11,7 @@
                         <span>전체</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -23,7 +23,7 @@
                         <span>재직</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -104,7 +104,7 @@ import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "../../../../helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid"
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import notification from "../../../../utils/notification"
 import queries from "../../../../graphql/queries/PA/PA5/PA510/index"
 import PA510PopupAddNew from "./components/PA510PopupAddNew.vue"
@@ -123,7 +123,6 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        InfoCircleFilled,
         PA510PopupAddNew,
         PA510PopupEdit
     },

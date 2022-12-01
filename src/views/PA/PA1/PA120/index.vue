@@ -112,7 +112,7 @@ import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
 import { Message } from "@/configs/enum"
 
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 
 export default defineComponent({
     components: {
@@ -252,6 +252,8 @@ export default defineComponent({
     },
 });
 </script>
+
+
 
 
 

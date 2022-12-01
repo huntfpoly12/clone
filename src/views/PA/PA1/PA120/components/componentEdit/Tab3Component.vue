@@ -3,7 +3,7 @@
     <div id="tab23-pa120">
         <a-row>
             <a-col :span="24">
-                <a-spin :spinning="false" size="large">
+                <a-spin :spinning="loading" size="large">
 
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" :allow-column-reordering="move_column"
@@ -163,7 +163,8 @@
             </a-col>
         </a-row>
         <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
-            :employeeId="employeeId" :dataSourceLen="dataSource.length" @upDateData="updateData"></PopupAddNewDependent>
+            :employeeId="employeeId" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
+        </PopupAddNewDependent>
         <PopupEditUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
             :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
         </PopupEditUpdateDependent>
@@ -174,7 +175,7 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
@@ -311,7 +312,7 @@ export default defineComponent({
             refetchData()
         })
         const updateData = (emit: Boolean) => {
-            console.log(emit);
+            trigger.value = true
             refetchData();
         };
         const hasStatus = (foreigner: Boolean) => {
@@ -321,7 +322,7 @@ export default defineComponent({
             return 0;
         };
         return {
-            companyId, idAction, idRowIndex,
+            companyId, idAction, idRowIndex, loading,
             dataSource,
             modalEditStatus,
             modalStatus, formStateTab3,
