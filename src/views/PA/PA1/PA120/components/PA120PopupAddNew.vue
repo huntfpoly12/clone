@@ -43,7 +43,7 @@ export default defineComponent({
                 a1: "5345345",
                 a2: "45345345"
             }
-        })
+        });
         const setModalVisible = () => {
             emit('closePopup', false);
         }
@@ -62,7 +62,7 @@ export default defineComponent({
             activeKey: ref("1"),
             demoData,
             tabStatus,
-            setTabsStatus
+            setTabsStatus,
         };
     },
 });

@@ -24,7 +24,7 @@
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            min-height: 990px;
+            min-height: 780px;
         }
     }
     .current-user {
@@ -69,15 +69,7 @@
         margin-bottom: 10px;
     }
 
-    ::v-deep .custom-layout {
-        padding: 10px 10px 10px 0;
 
-        >div {
-            border: 1px solid #d7d7d7;
-            padding: 10px;
-            min-height: 990px;
-        }
-    }
 
     .custom-note {
         >span {

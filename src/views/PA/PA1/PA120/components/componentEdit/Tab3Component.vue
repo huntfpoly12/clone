@@ -46,7 +46,7 @@
                                         <template #title>편집</template>
                                         <EditOutlined @click="actionEdit(data.data.index)" />
                                     </a-tooltip>
-                                    <DeleteOutlined @click="actionDeleteFuc(data.data.index)" />
+                                    <!-- <DeleteOutlined @click="actionDeleteFuc(data.data.index)" /> -->
                                 </a-space>
                             </div>
                         </template>
@@ -83,41 +83,40 @@
                     </DxDataGrid>
                 </a-spin>
                 <div>
-                    <div class="header-text-3">부양가족 요약
-                    </div>
+                    <div class="header-text-3">부양가족 요약</div>
                     <a-row :gutter="12">
                         <a-col :span="12">
                             <div class="header-text-2">기본공제</div>
 
                             <a-form-item label="본인" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.relation"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="relationSummary" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="배우자" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.women"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="womenSummary" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="20세이하" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.basicDeduction"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="basicDeductionSummary" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="60세이하" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.basicDeduction"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="basicDeductionSummary2" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                             <div class="header-text-2">자녀세액공제</div>
                             <a-form-item label="자녀세액공제" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.descendant"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="descendantSummary" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                         </a-col>
@@ -126,39 +125,36 @@
                             <div class="header-text-2">추가/세액공제</div>
                             <a-form-item label="경로우대" class="display-flex" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.senior"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="seniorSummary" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="장애인" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.disabled"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="disabledSummary" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="부녀자" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.women"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="womenSummary2" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="한부모" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.singleParent"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="singleParentSummary" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="출산입양" label-align="right">
                                 <div class="display-flex">
-                                    <text-number-box width="200px" v-model:valueInput="formStateTab3.maternityAdoption"
-                                        :readOnly="true" :required="false" />
+                                    <text-number-box width="200px" :value="maternityAdoptionSummary" :readOnly="true"
+                                        :required="false" />
                                 </div>
                             </a-form-item>
-
                         </a-col>
-
                     </a-row>
-
                 </div>
             </a-col>
         </a-row>
@@ -175,23 +171,20 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { companyId } from "../../../../../../helpers/commonFunction";
-import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
-import queries from "../../../../../../graphql/queries/PA/PA1/PA120/index";
-import notification from "../../../../../../utils/notification";
-import PopupAddNewDependent from './tab3Dependent/PopupEditAddNewDependent.vue'
-import PopupEditUpdateDependent from './tab3Dependent/PopupEditUpdateDependent.vue'
-import { Message } from "../../../../../../configs/enum"
+import { companyId } from "@/helpers/commonFunction";
+import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
+import queries from "@/graphql/queries/PA/PA1/PA120/index";
+import notification from "@/utils/notification";
+import PopupAddNewDependent from './tab3EditDependent/PopupEditAddNewDependent.vue'
+import PopupEditUpdateDependent from './tab3EditDependent/PopupEditUpdateDependent.vue'
+import { Message } from "@/configs/enum"
 import BtnCheck from '../btnCheck/BtnCheck.vue';
-
-import { divide } from "lodash";
-import { string } from "vue-types";
 import {
     initFormStateTab3,
 } from "../../utils/index";
@@ -234,6 +227,16 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear);
         const actionChangeComponent = ref(0)
         const idRowIndex = ref()
+        const relationSummary = ref();
+        const womenSummary = ref();
+        const basicDeductionSummary = ref();
+        const basicDeductionSummary2 = ref();
+        const descendantSummary = ref();
+        const seniorSummary = ref();
+        const disabledSummary = ref();
+        const womenSummary2 = ref();
+        const singleParentSummary = ref();
+        const maternityAdoptionSummary = ref();
         let formStateTab3 = reactive<any>({
             ...initFormStateTab3,
         })
@@ -290,7 +293,47 @@ export default defineComponent({
             if (value) {
                 dataSource.value = value.getEmployeeWage.dependents;
                 trigger.value = false;
-                formStateTab3 = { ...dataSource.value }
+                relationSummary.value =
+                    dataSource.value.some((item: { relation: string | number }) => {
+                        return item.relation == 0;
+                    }) === true
+                        ? 'O'
+                        : '';
+                womenSummary.value =
+                    dataSource.value.filter((item: any) => {
+                        return item.women === true;
+                    }).length >= 1
+                        ? 'O'
+                        : '';
+                basicDeductionSummary.value =
+                    dataSource.value.filter((item: any) => {
+                        return item.basicDeduction == 3;
+                    }).length;
+                basicDeductionSummary2.value =
+                    dataSource.value.filter((item: any) => {
+                        return item.basicDeduction == 4;
+                    }).length;
+                descendantSummary.value = dataSource.value.filter((item: any) => {
+                    return item.descendant == true;
+                }).length;
+                seniorSummary.value = dataSource.value.filter((item: any) => {
+                    return item.senior == true;
+                }).length;
+                disabledSummary.value = dataSource.value.filter((item: any) => {
+                    return item.senior == 0;
+                }).length;
+                disabledSummary.value = dataSource.value.filter((item: any) => {
+                    return item.senior == 0;
+                }).length;
+                womenSummary2.value = dataSource.value.filter((item: any) => {
+                    return item.senior == 0;
+                }).length;
+                singleParentSummary.value = dataSource.value.filter((item: any) => {
+                    return item.senior == true;
+                }).length;
+                maternityAdoptionSummary.value = dataSource.value.filter((item: any) => {
+                    return item.senior == 0;
+                }).length;
             }
         });
         watch(() => props.idRowEdit, (value) => {
@@ -321,6 +364,7 @@ export default defineComponent({
             }
             return 0;
         };
+
         return {
             companyId, idAction, idRowIndex, loading,
             dataSource,
@@ -334,7 +378,16 @@ export default defineComponent({
             actionDelete,
             hasStatus, updateData,
             onSubmit, statusComfirm, contentDelete,
-            per_page, move_column, colomn_resize,
+            per_page, move_column, colomn_resize, relationSummary,
+            womenSummary,
+            basicDeductionSummary,
+            basicDeductionSummary2,
+            descendantSummary,
+            seniorSummary,
+            disabledSummary,
+            womenSummary2,
+            singleParentSummary,
+            maternityAdoptionSummary,
         }
     },
 });
