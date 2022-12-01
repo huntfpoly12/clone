@@ -98,15 +98,15 @@ import { useStore } from "vuex";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 
-import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
-import queries from "../../../../../../graphql/queries/PA/PA1/PA120/index";
-import notification from "../../../../../../utils/notification";
+import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
+import queries from "@/graphql/queries/PA/PA1/PA120/index";
+import notification from "@/utils/notification";
 import {
   radioCheckForeigner,
   radioCheckHouseholder,
   initFormStateTab1,
 } from "../../utils/index";
-import { companyId } from "../../../../../../helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 
 export default defineComponent({
   components: {

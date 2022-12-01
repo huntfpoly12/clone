@@ -46,7 +46,7 @@
                                         <template #title>편집</template>
                                         <EditOutlined @click="actionEdit(data.data.index)" />
                                     </a-tooltip>
-                                    <DeleteOutlined @click="actionDeleteFuc(data.data.index)" />
+                                    <!-- <DeleteOutlined @click="actionDeleteFuc(data.data.index)" /> -->
                                 </a-space>
                             </div>
                         </template>
@@ -175,23 +175,20 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { companyId } from "../../../../../../helpers/commonFunction";
-import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
-import queries from "../../../../../../graphql/queries/PA/PA1/PA120/index";
-import notification from "../../../../../../utils/notification";
-import PopupAddNewDependent from './tab3Dependent/PopupEditAddNewDependent.vue'
-import PopupEditUpdateDependent from './tab3Dependent/PopupEditUpdateDependent.vue'
-import { Message } from "../../../../../../configs/enum"
+import { companyId } from "@/helpers/commonFunction";
+import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
+import queries from "@/graphql/queries/PA/PA1/PA120/index";
+import notification from "@/utils/notification";
+import PopupAddNewDependent from './tab3EditDependent/PopupEditAddNewDependent.vue'
+import PopupEditUpdateDependent from './tab3EditDependent/PopupEditUpdateDependent.vue'
+import { Message } from "@/configs/enum"
 import BtnCheck from '../btnCheck/BtnCheck.vue';
-
-import { divide } from "lodash";
-import { string } from "vue-types";
 import {
     initFormStateTab3,
 } from "../../utils/index";
@@ -321,6 +318,7 @@ export default defineComponent({
             }
             return 0;
         };
+
         return {
             companyId, idAction, idRowIndex, loading,
             dataSource,

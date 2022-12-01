@@ -5,26 +5,27 @@
             <div class="page-content" id="add-new-dependent-pa-120">
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="연말관계" label-align="right">
+                        <a-form-item label="연말관계" class="red" label-align="right">
                             <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation"
-                                :required="true"></dependants-relation-select-box>
+                                :required="true">
+                            </dependants-relation-select-box>
                         </a-form-item>
-                        <a-form-item label="성명" label-align="right">
+                        <a-form-item label="성명" label-align="right" class="red">
                             <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
                                 v-model:valueInput="formState.name"></default-text-box>
                         </a-form-item>
                         <a-form-item label="연말관계" label-align="right">
-                            <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="formState.foreigner" />
+                            <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="foreigner" />
                         </a-form-item>
-                        <a-form-item :label="labelResidebId" label-align="right">
-                            <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId">
-                            </id-number-text-box>
+                        <a-form-item :label="labelResidebId" class="red" label-align="right">
+                            <id-number-text-box :required="true" width="150px"
+                                v-model:valueInput="residentId"></id-number-text-box>
                         </a-form-item>
                         <a-form-item label="나이" label-align="right">
-                            <default-text-box width="200px" :readOnly="true" v-model:valueInput="ageCount">
-                            </default-text-box>
+                            <default-text-box width="200px" :readOnly="true"
+                                v-model:valueInput="ageCount"></default-text-box>
                         </a-form-item>
-                        <a-form-item label="기본공제" label-align="right">
+                        <a-form-item label="기본공제" label-align="right" class="red">
                             <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
                                 :required="true" />
                         </a-form-item>
@@ -40,8 +41,8 @@
                             <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="senior" />
                         </a-form-item>
                         <a-form-item label="장애인" label-align="right">
-                            <disabled-type-radio-group v-model:valueRadioCheck="formState.disabled">
-                            </disabled-type-radio-group>
+                            <disabled-type-radio-group
+                                v-model:valueRadioCheck="formState.disabled"></disabled-type-radio-group>
                         </a-form-item>
                         <a-form-item label="출산입양" label-align="right">
                             <maternity-adoption-radio-box v-model:valueRadioCheck="formState.maternityAdoption">
@@ -59,45 +60,48 @@
                         </a-form-item>
                     </a-col>
                 </a-row>
-
             </div>
             <a-row style="margin-top: 40px">
-                <a-col :span="8" :offset="8" style="text-align: center;">
+                <a-col :span="8" :offset="8" style="text-align: center">
                     <button-basic text="저장" type="default" mode="contained" :width="90"
-                        @onClick="actionUpdated($event)" />
+                        @onClick="createNewEmployeeWageDependent($event)" />
                 </a-col>
             </a-row>
         </a-modal>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, computed, watch } from "vue";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import { useStore } from "vuex";
-import mutations from "../../../../../../../graphql/mutations/PA/PA1/PA120";
-import queries from "../../../../../../../graphql/queries/PA/PA1/PA120";
-import notification from "../../../../../../../utils/notification";
-import { companyId, convertAge } from "../../../../../../../helpers/commonFunction";
+import { defineComponent, reactive, ref, computed, watch } from 'vue';
+import { useMutation } from '@vue/apollo-composable';
+import { useStore } from 'vuex';
+import mutations from '@/graphql/mutations/PA/PA1/PA120';
+import notification from '../../../../../../../utils/notification';
+import {
+    companyId,
+    convertAge,
+} from '@/helpers/commonFunction';
 export default defineComponent({
     components: {},
     props: {
-        modalStatus: Boolean,
-        idRowEdit: {
-            type: Number
+        employeeId: {
+            type: String,
+            default: 0,
         },
-        idRowIndex: {
+        modalStatus: Boolean,
+        dataSourceLen: {
+            type: Number,
+            default: 1,
+        }, idRowEdit: {
             type: Number
         },
     },
     setup(props, { emit }) {
-        const dataSource = ref([]);
-        const trigger = ref<boolean>(true);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         const ageCount = ref();
-        const labelResidebId = ref("주민(외국인)번호 ");
-        let initialFormState = {
-            relation: null,
+        const labelResidebId = ref('주민(외국인)번호 ');
+        const initialFormState = {
+            relation: 1,
             name: '',
             foreigner: false,
             residentId: '',
@@ -109,13 +113,12 @@ export default defineComponent({
             maternityAdoption: 0,
             descendant: true,
             consignmentRelationship: '',
+            index: 2,
         };
-        let formState = reactive<any>({ ...initialFormState });
-        let formState2 = reactive<any>({ ...initialFormState });
+        const formState = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
             emit('closePopup', false);
-
-        }
+        };
 
         const women = ref(formState.women == true ? 1 : 0);
         watch(women, (newValue) => {
@@ -150,109 +153,75 @@ export default defineComponent({
             }
         });
         const householder = ref(formState.householder == true ? 1 : 0);
-        watch(householder, (newValue) => {
-            if (newValue == 1) {
-                formState.householder = true;
-            } else {
-                formState.householder = false;
-            }
-        });
+        // watch(householder, (newValue) => {
+        // if (newValue == 1) {
+        //     formState.householder = true;
+        // } else {
+        //     formState.householder = false;
+        // }
+        // });
         const foreigner = ref(formState.foreigner == true ? 1 : 0);
         watch(foreigner, (newValue) => {
             if (newValue == 1) {
                 formState.foreigner = true;
-                labelResidebId.value = "외국인번호 유효성";
+                labelResidebId.value = '외국인번호 유효성';
             } else {
                 formState.foreigner = false;
-                labelResidebId.value = "주민등록번호";
+                labelResidebId.value = '주민등록번호';
             }
         });
-        const residentId = ref("");
+        const residentId = ref('');
         watch(residentId, (newValue: any) => {
-            formState.residentId =
-                newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
+            formState.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
             if (newValue.length >= 7) {
                 ageCount.value = convertAge(formState.residentId);
             }
         });
 
-        watch(() => props.modalStatus, (newValue: any) => {
-            if (newValue) {
-                Object.assign(formState, initialFormState);
-            }
-        });
-        // get employer dependent
-        const originDataDetail = ref({
-            companyId: companyId,
-            imputedYear: globalYear.value,
-            employeeId: props.idRowEdit
-        })
-        const {
-            refetch: refetchValueDetail,
-            result,
-            loading
-        } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
-            fetchPolicy: "no-cache",
-        }))
-        watch(result, (value) => {
-            if (props.idRowIndex) {
-                dataSource.value = value.getEmployeeWage.dependents;
-                trigger.value = false;
-                formState2 = {
-                    ...dataSource.value
+        watch(
+            () => props.modalStatus,
+            (newValue: any) => {
+                if (newValue) {
+                    Object.assign(formState, initialFormState);
                 }
-                formState.name = formState2[props.idRowIndex - 1].name
-                formState.relation = formState2[props.idRowIndex - 1].relation
-                formState.foreigner = formState2[props.idRowIndex - 1].foreigner
-                formState.residentId = formState2[props.idRowIndex - 1].residentId
-                formState.basicDeduction = formState2[props.idRowIndex - 1].basicDeduction
-                formState.women = formState2[props.idRowIndex - 1].women
-                formState.singleParent = formState2[props.idRowIndex - 1].singleParent
-                formState.senior = formState2[props.idRowIndex - 1].senior
-                formState.disabled = formState2[props.idRowIndex - 1].disabled
-                formState.maternityAdoption = formState2[props.idRowIndex - 1].maternityAdoption
-                formState.descendant = formState2[props.idRowIndex - 1].descendant
-                formState.consignmentRelationship = formState2[props.idRowIndex - 1].consignmentRelationship
             }
-        });
+        );
+        // createEmployeeWage
         const {
-            mutate,
+            mutate: createEmployeeWageDependent,
+            loading: loading,
+            onDone: onDoneAdd,
             onError,
-            onDone,
-        } = useMutation(mutations.updateEmployeeWageDependent);
-        onError(e => {
-            notification('error', e.message)
-        })
-        onDone(res => {
-            emit('closePopup', false)
-            notification('success', '업데이트 완료!')
-        })
-        const actionUpdated = (e: any) => {
+        } = useMutation(mutations.createEmployeeWageDependent);
+
+        onDoneAdd((res) => {
+            notification('success', `Create employee wage successfully! `);
+        });
+
+        onError((error) => {
+            notification('error', error.message);
+        });
+
+        const createNewEmployeeWageDependent = async (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let newValDataEdit = {
-                    ...formState
-                };
-                let dataCallUpdate = {
+                let dataNew = {
                     companyId: companyId,
+                    employeeId: ref(props.idRowEdit).value,
                     imputedYear: globalYear.value,
-                    employeeId: props.idRowEdit,
-                    index: props.idRowIndex,
-                    input: newValDataEdit,
+                    input: {
+                        ...formState,
+                        index: ref(props.dataSourceLen).value + 1,
+                    },
                 };
-                mutate(dataCallUpdate)
+                initialFormState.relation++;
+                await createEmployeeWageDependent(dataNew);
+                emit('upDateData');
+                setModalVisible();
             }
-        }
-        watch(() => props.idRowIndex, (value) => {
-            trigger.value = true
-            refetchValueDetail()
-        })
-        watch(() => props.idRowEdit, (value) => {
-            originDataDetail.value.employeeId = value
-        })
-
+        };
         return {
             women,
             singleParent,
@@ -263,8 +232,9 @@ export default defineComponent({
             ageCount,
             foreigner,
             residentId,
-            setModalVisible, actionUpdated,
+            setModalVisible,
             labelResidebId,
+            createNewEmployeeWageDependent,
         };
     },
 });
@@ -302,3 +272,4 @@ export default defineComponent({
     }
 }
 </style>
+  
