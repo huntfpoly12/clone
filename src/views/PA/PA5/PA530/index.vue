@@ -215,7 +215,7 @@ import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA5/PA530/index";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { onExportingCommon } from "@/helpers/commonFunction"
 import { origindata, dataDemo } from "./utils";
 import DxButton from "devextreme-vue/button";
@@ -234,7 +234,6 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        InfoCircleFilled,
         PA530Popup
     },
     setup() {

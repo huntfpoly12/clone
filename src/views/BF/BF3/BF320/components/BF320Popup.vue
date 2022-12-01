@@ -149,7 +149,7 @@
                                         nameInput="formState-extendInfoCmsBankOwnerBizNumber">
                                     </default-text-box>
                                     <div class="warring-bank">
-                                        <InfoCircleFilled />
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px; margin-top: 0px;" />
                                         <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>
                                     </div>
                                 </a-form-item>
@@ -223,7 +223,6 @@ import {
     DeleteOutlined,
     PlusSquareOutlined,
     WarningFilled,
-    InfoCircleFilled
 } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -251,7 +250,6 @@ export default defineComponent({
         PlusSquareOutlined,
         WarningFilled,
         imgUpload,
-        InfoCircleFilled
     },
     setup(props, { emit }) {
         const inputInCollapse = [

@@ -112,7 +112,7 @@ import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid"
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import notification from "@/utils/notification"
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import PA520PopupAddNew from "./components/PA520PopupAddNew.vue"
@@ -131,7 +131,6 @@ export default defineComponent({
         PrinterOutlined,
         DeleteOutlined,
         SaveOutlined,
-        InfoCircleFilled,
         PA520PopupAddNew,
         PA520PopupEdit
     },
