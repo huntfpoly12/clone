@@ -11,7 +11,7 @@
                         <span>전체</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -23,7 +23,7 @@
                         <span>재직</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -35,7 +35,7 @@
                         <span>퇴사</span>
                     </div>
                     <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
                     </div>
                 </div>
             </a-col>
@@ -46,6 +46,7 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        <DxPaging :page-size="20"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -60,7 +61,7 @@
                         </template>
                         <DxColumn caption="주민등록번호" data-field="residentId" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{ data }" class="custom-action">
+                        <template #grade-cell="{ }" class="custom-action">
                             <div class="custom-grade-cell">
                                 <four-major-insurance :typeTag="1" :typeValue="1" />
                             </div>
@@ -99,17 +100,17 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem ,DxPaging } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { companyId } from "../../../../helpers/commonFunction";
-import notification from "../../../../utils/notification";
-import queries from "../../../../graphql/queries/PA/PA1/PA120/index";
-import mutations from "../../../../graphql/mutations/PA/PA1/PA120/index"
+import { companyId } from "@/helpers/commonFunction";
+import notification from "@/utils/notification";
+import queries from "@/graphql/queries/PA/PA1/PA120/index";
+import mutations from "@/graphql/mutations/PA/PA1/PA120/index"
 import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
-import { Message } from "../../../../configs/enum"
+import { Message } from "@/configs/enum"
 
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue"
 
@@ -119,7 +120,7 @@ export default defineComponent({
         DxColumn,
         DxToolbar,
         DxItem,
-        DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,
+        DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,DxPaging,
         PA120PopupAddNewVue, PA120PopupEdit
     },
     setup() {
