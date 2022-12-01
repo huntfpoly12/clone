@@ -88,50 +88,50 @@
                 </a-col>
                 <a-col :span="8" class="custom-layout">
                     <a-spin :spinning="loadingGetEmployeeBusinessesDetail || loadingUpdate" size="large">
-                        <div>
-                            <a-form-item label="영업자코드" label-align="right">
-                                <div class="custom-note">
-                                    <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
-                                        placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
-                                    <span>
-                                        <InfoCircleFilled /> 최초 저장된 이후 수정 불가
-                                    </span>
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="성명(상호)" label-align="right">
-                                <default-text-box v-model:valueInput="dataAction.input.name" width="200px"
-                                    placeholder="한글,영문(대문자) 입력 가능" :required="true" />
-                            </a-form-item>
-                            <a-form-item label="내/외국인" label-align="right">
-                                <radio-group :arrayValue="arrForeigner" width="200px"
-                                    v-model:valueRadioCheck="dataAction.input.foreigner" layoutCustom="horizontal" />
-                            </a-form-item>
-                            <a-form-item label="외국인 국적" label-align="right">
-                                <country-code-select-box v-model:valueCountry="dataAction.input.nationalityCode"
-                                    @textCountry="changeTextCountry" width="200px" :disabled="disabledInput2" />
-                            </a-form-item>
-                            <a-form-item label="외국인 체류자격" label-align="right">
-                                <stay-qualification-select-box :disabled="disabledInput2"
-                                    v-model:valueStayQualifiction="dataAction.input.stayQualification" width="200px" />
-                            </a-form-item>
-                            <a-form-item :label="textResidentId" label-align="right">
-                                <id-number-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
-                                    placeholder="숫자 13자리" :required="true" />
-                            </a-form-item>
-                            <a-form-item label="소득구분" label-align="right">
-                                <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
-                                    @textTypeCode="changeTextTypeCode" :disabled="disabledInput" />
-                            </a-form-item>
-                            <a-form-item label="이메일" label-align="right">
-                                <div class="custom-note">
-                                    <mail-text-box width="300px" v-model:valueInput="dataAction.input.email"
-                                        placeholder="abc@example.com" :required="true" />
-                                    <span>
-                                        <InfoCircleFilled /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
-                                    </span>
-                                </div>
-                            </a-form-item>
-                        </div>
+                        <a-form-item label="영업자코드" label-align="right">
+                            <div class="custom-note">
+                                <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
+                                    placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
+                                <span>
+                                    <img src="../../../../assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후
+                                    수정 불가
+                                </span>
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="성명(상호)" label-align="right">
+                            <default-text-box v-model:valueInput="dataAction.input.name" width="200px"
+                                placeholder="한글,영문(대문자) 입력 가능" :required="true" />
+                        </a-form-item>
+                        <a-form-item label="내/외국인" label-align="right">
+                            <radio-group :arrayValue="arrForeigner" width="200px"
+                                v-model:valueRadioCheck="dataAction.input.foreigner" layoutCustom="horizontal" />
+                        </a-form-item>
+                        <a-form-item label="외국인 국적" label-align="right">
+                            <country-code-select-box v-model:valueCountry="dataAction.input.nationalityCode"
+                                @textCountry="changeTextCountry" width="200px" :disabled="disabledInput2" />
+                        </a-form-item>
+                        <a-form-item label="외국인 체류자격" label-align="right">
+                            <stay-qualification-select-box :disabled="disabledInput2"
+                                v-model:valueStayQualifiction="dataAction.input.stayQualification" width="200px" />
+                        </a-form-item>
+                        <a-form-item :label="textResidentId" label-align="right">
+                            <id-number-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
+                                placeholder="숫자 13자리" :required="true" />
+                        </a-form-item>
+                        <a-form-item label="소득구분" label-align="right">
+                            <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
+                                @textTypeCode="changeTextTypeCode" :disabled="disabledInput" />
+                        </a-form-item>
+                        <a-form-item label="이메일" label-align="right">
+                            <div class="custom-note">
+                                <mail-text-box width="300px" v-model:valueInput="dataAction.input.email"
+                                    placeholder="abc@example.com" :required="true" />
+                                <span>
+                                    <img src="../../../../assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등
+                                    주요 서류를 메일로 전달 가능합니다.
+                                </span>
+                            </div>
+                        </a-form-item>
                     </a-spin>
                 </a-col>
             </a-row>
@@ -145,7 +145,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "../../../../utils/notification";
 import queries from "../../../../graphql/queries/PA/PA6/PA610/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, InfoCircleFilled } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { onExportingCommon } from "../../../../helpers/commonFunction"
 import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
 import DxButton from "devextreme-vue/button";
@@ -179,7 +179,6 @@ export default defineComponent({
         SaveOutlined,
         ArrForeigner,
         DxButton,
-        InfoCircleFilled,
         HistoryPopup
     },
     setup() {
