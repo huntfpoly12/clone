@@ -6,9 +6,6 @@
 import { defineComponent, ref } from 'vue';
 export default defineComponent({
   props: ['value'],
-  mounted() {
-    // console.log(this.value);
-  }
 });
 </script>
 
