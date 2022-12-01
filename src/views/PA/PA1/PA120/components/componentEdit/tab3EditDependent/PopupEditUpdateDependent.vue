@@ -224,6 +224,7 @@ export default defineComponent({
                 formState.disabled = formState2[props.idRowIndex - 1].disabled
                 formState.maternityAdoption = formState2[props.idRowIndex - 1].maternityAdoption
                 formState.descendant = formState2[props.idRowIndex - 1].descendant
+                formState.index = formState2[props.idRowIndex - 1].index
                 formState.consignmentRelationship = formState2[props.idRowIndex - 1].consignmentRelationship
             }
         });
@@ -277,7 +278,6 @@ export default defineComponent({
             notification('success', `업데이트 완료!`)
             trigger.value = true
             emit('closePopup', false)
-            refetchValueDetail()
 
         })
         const actionDeleteFuc = (data: any) => {
