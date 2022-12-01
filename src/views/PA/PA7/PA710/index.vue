@@ -102,7 +102,7 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item :label="disabledSelect ? '외국인번호 유효성' : '주민등록번호'" :label-col="labelCol">
+                            <a-form-item :label="disabledSelect ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol">
                                 <id-number-text-box :width="150" v-model:valueInput="formState.residentId"
                                     :required="true"></id-number-text-box>
                             </a-form-item>
@@ -177,7 +177,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const loadingForm = ref(false)
         let checkForm = ref(false)
-        let disabledSelect = ref(false)
+        let disabledSelect = ref(true)
         const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
         let popupData = ref();
@@ -339,9 +339,9 @@ export default defineComponent({
         });
         watch(() => formState.foreigner, (newValue) => {
             if (newValue) {
-                disabledSelect.value = true;
-            } else {
                 disabledSelect.value = false;
+            } else {
+                disabledSelect.value = true;
             }
         });
         return {
