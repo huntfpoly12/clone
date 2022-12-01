@@ -3,7 +3,7 @@
         :mask-closable="false">
         <standard-form>
             <div class="custom-modal-send-email">
-                <img src="@/../assets/images/email.svg" alt="" style="width: 40px;">
+                <img src="@/assets/images/email.svg" alt="" style="width: 40px;">
                 <mail-text-box :required="true" v-model:valueInput="email" width="250px" />
                 <span>로 메일을 발송하시겠습니까?</span>
             </div>
@@ -19,7 +19,7 @@
     </a-modal>
     <a-modal v-else :visible="modalStatus" @cancel="setModalVisible" width="562px" footer="" :mask-closable="false">
         <standard-form>
-            <img src="@/../assets/images/email.svg" alt="" style="width: 40px;">
+            <img src="@/assets/images/email.svg" alt="" style="width: 40px;">
             <div class="custom-modal-send-email">
                 <div>
                     <span>개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서 </span>
