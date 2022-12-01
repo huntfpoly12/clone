@@ -63,14 +63,19 @@
             </div>
             <a-row style="margin-top: 40px">
                 <a-col :span="8" :offset="8" style="text-align: center;">
+                    <button-basic style="margin-right: 20px" text="삭제" mode="contained" :width="90"
+                        @onClick="actionDeleteFuc($event)" />
                     <button-basic text="저장" type="default" mode="contained" :width="90"
                         @onClick="actionUpdated($event)" />
                 </a-col>
             </a-row>
+            <PopupMessage :modalStatus="modalStatusDelete" @closePopup="modalStatusDelete = false" typeModal="confirm"
+                :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         </a-modal>
     </div>
 </template>
 <script lang="ts">
+
 import { defineComponent, reactive, ref, computed, watch } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
@@ -78,6 +83,10 @@ import mutations from "../../../../../../../graphql/mutations/PA/PA1/PA120";
 import queries from "../../../../../../../graphql/queries/PA/PA1/PA120";
 import notification from "../../../../../../../utils/notification";
 import { companyId, convertAge } from "../../../../../../../helpers/commonFunction";
+const contentDelete = Message.getMessage('PA120', '002').message
+import { Message } from "@/configs/enum"
+
+
 export default defineComponent({
     components: {},
     props: {
@@ -95,6 +104,9 @@ export default defineComponent({
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         const ageCount = ref();
+        const modalStatusDelete = ref(false)
+        const idAction = ref()
+
         const labelResidebId = ref("주민(외국인)번호 ");
         let initialFormState = {
             relation: null,
@@ -252,6 +264,36 @@ export default defineComponent({
         watch(() => props.idRowEdit, (value) => {
             originDataDetail.value.employeeId = value
         })
+        // delete
+        const {
+            mutate: actionDelete,
+            onError: errorDelete,
+            onDone: successDelete,
+        } = useMutation(mutations.deleteEmployeeWageDependent)
+        errorDelete(e => {
+            notification('error', e.message)
+        })
+        successDelete(e => {
+            notification('success', `업데이트 완료!`)
+            trigger.value = true
+            emit('closePopup', false)
+            refetchValueDetail()
+
+        })
+        const actionDeleteFuc = (data: any) => {
+            idAction.value = data
+            modalStatusDelete.value = true
+        }
+        const statusComfirm = (res: any) => {
+            if (res == true)
+                actionDelete({
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    employeeId: props.idRowEdit,
+                    index: props.idRowIndex
+                })
+
+        }
 
         return {
             women,
@@ -263,8 +305,8 @@ export default defineComponent({
             ageCount,
             foreigner,
             residentId,
-            setModalVisible, actionUpdated,
-            labelResidebId,
+            setModalVisible, actionUpdated, statusComfirm, contentDelete,
+            labelResidebId, actionDeleteFuc, modalStatusDelete
         };
     },
 });

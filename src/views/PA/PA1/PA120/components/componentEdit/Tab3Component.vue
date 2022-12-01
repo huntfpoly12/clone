@@ -46,7 +46,7 @@
                                         <template #title>편집</template>
                                         <EditOutlined @click="actionEdit(data.data.index)" />
                                     </a-tooltip>
-                                    <DeleteOutlined @click="actionDeleteFuc(data.data.index)" />
+                                    <!-- <DeleteOutlined @click="actionDeleteFuc(data.data.index)" /> -->
                                 </a-space>
                             </div>
                         </template>
