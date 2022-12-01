@@ -1,46 +1,22 @@
 <template>
-    <div class="main">
-        <div :class="[{ 'display-none': !idEmployee }, 'style-Id']">
-            {{ idEmployee }}
-        </div>
-        <div style="display: flex;align-items: flex-end;">
-            <a-tooltip placement="top"
-                v-if="idCardNumber?.length == 14
-                && parseInt(idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(idCardNumber.split('-')[0].slice(4, 6)) < 32"
-                :title="convertBirthDay(idCardNumber)" key="black">
-                {{ name }}
-            </a-tooltip>
-            <a-tooltip placement="top" v-else>
-                {{ name }}
-            </a-tooltip>
-            <span class="tag-status" v-if="status == 0">퇴</span>
-            <span class="tag-foreigner" v-if="foreigner == true">외</span>
-        </div>
-    </div>
+    <a-tooltip placement="top"
+        v-if="idCardNumber?.length == 14
+        && parseInt(idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(idCardNumber.split('-')[0].slice(4, 6)) < 32" key="black">
+        {{ idCardNumber }}
+    </a-tooltip>
+    <a-tooltip placement="top" v-else title="ERROR" color="red">
+        {{ idCardNumber }}
+    </a-tooltip>
+
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import DxButton from 'devextreme-vue/button';
 
 export default defineComponent({
-    props: {
-        idEmployee: {
-            type: String,
-        },
+    props: { 
         idCardNumber: {
             type: String,
-        },
-        name: {
-            type: String,
-        },
-        status: {
-            type: Number,
-        },
-        foreigner: {
-            type: Boolean,
-        },
-        checkStatus: {
-            type: Boolean,
         },
     },
     components: {
@@ -55,7 +31,7 @@ export default defineComponent({
                 return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
             else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
                 return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
-        } 
+        }
         return {
             convertBirthDay
         }
