@@ -13,14 +13,14 @@
       <div class="page-content" id="add-new-dependent-pa-120">
         <a-row>
           <a-col :span="12">
-            <a-form-item label="연말관계" label-align="right">
+            <a-form-item label="연말관계" label-align="right" class="red">
               <dependants-relation-select-box
                 width="200px"
                 v-model:valueInput="formState.relation"
                 :required="true"
               ></dependants-relation-select-box>
             </a-form-item>
-            <a-form-item label="성명" label-align="right">
+            <a-form-item label="성명" label-align="right" class="red">
               <default-text-box
                 placeholder="한글,영문(대문자) 입력 가능"
                 width="200px"
@@ -28,14 +28,14 @@
                 v-model:valueInput="formState.name"
               ></default-text-box>
             </a-form-item>
-            <a-form-item label="연말관계" label-align="right">
+            <a-form-item label="내/외국인" label-align="right">
               <switch-basic
                 textCheck="내국인"
                 textUnCheck="외국인"
                 v-model:valueSwitch="foreigner"
               />
             </a-form-item>
-            <a-form-item :label="labelResidebId" label-align="right">
+            <a-form-item :label="labelResidebId" label-align="right" class="red">
               <id-number-text-box
                 :required="true"
                 width="150px"
@@ -49,7 +49,7 @@
                 v-model:valueInput="ageCount"
               ></default-text-box>
             </a-form-item>
-            <a-form-item label="기본공제" label-align="right">
+            <a-form-item label="기본공제" label-align="right" class="red">
               <basic-deduction-select-box
                 width="200px"
                 v-model:valueInput="formState.basicDeduction"
@@ -132,12 +132,12 @@
 import { defineComponent, reactive, ref, computed, watch } from 'vue';
 import { useMutation } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import mutations from '../../../../../../graphql/mutations/PA/PA1/PA120';
-import notification from '../../../../../../utils/notification';
+import mutations from '@/graphql/mutations/PA/PA1/PA120';
+import notification from '@/utils/notification';
 import {
   companyId,
   convertAge,
-} from '../../../../../../helpers/commonFunction';
+} from '@/helpers/commonFunction';
 export default defineComponent({
   components: {},
   props: {
@@ -155,7 +155,7 @@ export default defineComponent({
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     const ageCount = ref();
-    const labelResidebId = ref('주민(외국인)번호 ');
+    const labelResidebId = ref('주민(외국인)번호');
     const initialFormState = {
       relation: 1,
       name: '',

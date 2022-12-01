@@ -118,3 +118,9 @@ $lenght: 100;
   float: inherit !important;
   text-align: center !important;
 }
+
+::v-deep .red {
+  label {
+    color: red;
+  }
+}

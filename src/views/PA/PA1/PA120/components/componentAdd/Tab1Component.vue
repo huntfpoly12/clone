@@ -221,6 +221,7 @@ export default defineComponent({
     } = useMutation(mutations.createEmployeeWage);
 
     onDoneAdd((res) => {
+       emit('setTabsStatus', false);
       notification("success", `Create employee wage successfully! `);
     });
 
