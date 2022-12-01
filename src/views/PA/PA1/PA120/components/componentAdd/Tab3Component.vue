@@ -83,8 +83,8 @@ import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue';
 import { useMutation, useQuery } from '@vue/apollo-composable';
-import queries from '../../../../../../graphql/queries/PA/PA1/PA120/index';
-import { companyId } from '../../../../../../helpers/commonFunction';
+import queries from '@/graphql/queries/PA/PA1/PA120/index';
+import { companyId } from '@/helpers/commonFunction';
 import BtnCheck from '../btnCheck/BtnCheck.vue';
 export default defineComponent({
   components: {
