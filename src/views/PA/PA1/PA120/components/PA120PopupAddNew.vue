@@ -4,12 +4,12 @@
             <div id="pa-120">
                 <a-tabs v-model:activeKey="activeKey" type="card">
                     <a-tab-pane key="1" tab="기본">
-                        <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId"></Tab1Component>
+                        <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId" @setTabsStatus="setTabsStatus($event)"></Tab1Component>
                     </a-tab-pane>
-                    <a-tab-pane key="2" tab="급여">
+                    <a-tab-pane key="2" tab="급여" :disabled="tabStatus">
                         <Tab2Component :employeeId="employeeId"></Tab2Component>
                     </a-tab-pane>
-                    <a-tab-pane key="3" tab="부양가족">
+                    <a-tab-pane key="3" tab="부양가족" :disabled="tabStatus">
                         <Tab3Component :employeeId="employeeId"></Tab3Component>
                     </a-tab-pane>
                 </a-tabs>
@@ -38,6 +38,7 @@ export default defineComponent({
         modalStatus: Boolean,
     },
     setup(props, { emit }) {
+        const tabStatus = ref(true);
         const employeeId = ref('');
         const demoData = reactive({
             tab1: {
@@ -49,9 +50,10 @@ export default defineComponent({
             emit('closePopup', false);
         }
         const setEmployeeId = (val: any) => {
-            console.log(val);
-
             employeeId.value = val;
+        }
+        const setTabsStatus = (data : any) => {
+            tabStatus.value = data;
         }
         return {
             setModalVisible,
@@ -60,7 +62,9 @@ export default defineComponent({
             radioCheckForeigner,
             radioCheckHouseholder,
             activeKey: ref("1"),
-            demoData
+            demoData,
+            tabStatus,
+            setTabsStatus
         };
     },
 });
