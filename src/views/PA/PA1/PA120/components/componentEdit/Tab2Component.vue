@@ -91,6 +91,12 @@
         </a-form-item>
       </a-col>
     </a-row>
+    <a-row style="margin-top: 40px">
+      <a-col :span="8" :offset="8" style="text-align: center;">
+        <button-basic style="margin-right: 20px" text="공제계산" type="default" mode="contained" :width="120" />
+        <button-basic text="저장" type="default" mode="contained" :width="90" />
+      </a-col>
+    </a-row>
   </div>
 
 </template>
