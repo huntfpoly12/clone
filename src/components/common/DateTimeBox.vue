@@ -105,9 +105,9 @@ export default defineComponent({
     };
 
     const focusDatetime = () => {
-      let classDate = "." + classNameProps + " .dp__input";
-      var Url = document.querySelector(classDate) as HTMLInputElement;
-      Url.select();
+      // let classDate = "." + classNameProps + " .dp__input";
+      // var Url = document.querySelector(classDate) as HTMLInputElement;
+      // Url.select();
     };
 
     return {
