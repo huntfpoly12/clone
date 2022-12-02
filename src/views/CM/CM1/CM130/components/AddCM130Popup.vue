@@ -73,7 +73,7 @@ import TaxPay from "@/components/TaxPay.vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/CM/CM130/index";
 import notification from "@/utils/notification";
-import { initialState } from "../data";
+import { initialState } from "../utils/data";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import dayjs, { Dayjs } from "dayjs";
 
