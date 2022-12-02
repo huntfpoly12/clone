@@ -119,9 +119,9 @@ export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn,
-        DxToolbar, DxPaging,
+        DxToolbar,DxPaging,
         DxItem,
-        DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,DxPaging,
+        DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,
         PA120PopupAddNewVue, PA120PopupEdit
     },
     setup() {
