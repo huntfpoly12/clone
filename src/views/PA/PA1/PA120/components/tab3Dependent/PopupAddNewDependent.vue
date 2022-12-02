@@ -1,131 +1,69 @@
 <template>
   <div>
-    <a-modal
-      :visible="modalStatus"
-      title="사원등록"
-      centered
-      @cancel="setModalVisible()"
-      :mask-closable="false"
-      :width="750"
-      :footer="null"
-      :bodyStyle="{ padding: '0px', height: '478px' }"
-    >
-    <a-spin :spinning="loading" size="large">
-      <div class="page-content" id="add-new-dependent-pa-120">
-        <a-row>
-          <a-col :span="12">
-            <a-form-item label="연말관계" label-align="right" class="red">
-              <dependants-relation-select-box
-                width="200px"
-                v-model:valueInput="formState.relation"
-                :required="true"
-              ></dependants-relation-select-box>
-            </a-form-item>
-            <a-form-item label="성명" label-align="right" class="red">
-              <default-text-box
-                placeholder="한글,영문(대문자) 입력 가능"
-                width="200px"
-                :required="true"
-                v-model:valueInput="formState.name"
-              ></default-text-box>
-            </a-form-item>
-            <a-form-item label="내/외국인" label-align="right">
-              <switch-basic
-                textCheck="내국인"
-                textUnCheck="외국인"
-                v-model:valueSwitch="foreigner"
-              />
-            </a-form-item>
-            <a-form-item :label="labelResidebId" label-align="right" class="red">
-              <id-number-text-box
-                :required="true"
-                width="150px"
-                v-model:valueInput="residentId"
-              ></id-number-text-box>
-            </a-form-item>
-            <a-form-item label="나이" label-align="right">
-              <default-text-box
-                width="200px"
-                :readOnly="true"
-                v-model:valueInput="ageCount"
-              ></default-text-box>
-            </a-form-item>
-            <a-form-item label="기본공제" label-align="right" class="red">
-              <basic-deduction-select-box
-                width="200px"
-                v-model:valueInput="formState.basicDeduction"
-                :required="true"
-              />
-            </a-form-item>
-            <a-form-item label="부녀자" label-align="right">
-              <switch-basic
-                textCheck="X"
-                textUnCheck="O"
-                v-model:valueSwitch="women"
-              />
-            </a-form-item>
-            <a-form-item label="한부모" label-align="right">
-              <switch-basic
-                textCheck="X"
-                textUnCheck="O"
-                v-model:valueSwitch="singleParent"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-item label="경로우대" label-align="right">
-              <switch-basic
-                textCheck="X"
-                textUnCheck="O"
-                v-model:valueSwitch="senior"
-              />
-            </a-form-item>
-            <a-form-item label="장애인" label-align="right">
-              <disabled-type-radio-group
-                v-model:valueRadioCheck="formState.disabled"
-              ></disabled-type-radio-group>
-            </a-form-item>
-            <a-form-item label="출산입양" label-align="right">
-              <maternity-adoption-radio-box
-                v-model:valueRadioCheck="formState.maternityAdoption"
-              ></maternity-adoption-radio-box>
-            </a-form-item>
-            <a-form-item label="자녀세액공제" label-align="right">
-              <switch-basic
-                textCheck="X"
-                textUnCheck="O"
-                v-model:valueSwitch="descendant"
-              />
-            </a-form-item>
-            <a-form-item label="위탁관계" label-align="right">
-              <default-text-box
-                placeholder="최대 20자"
-                width="200px"
-                :maxCharacter="20"
-                v-model:valueInput="formState.consignmentRelationship"
-              ></default-text-box>
-            </a-form-item>
-            <a-form-item label="세대주여부" label-align="right">
-              <switch-basic
-                textCheck="X"
-                textUnCheck="O"
-                v-model:valueSwitch="householder"
-              />
-            </a-form-item>
+    <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()" :mask-closable="false"
+      :width="750" :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
+      <a-spin :spinning="loading" size="large">
+        <div class="page-content" id="add-new-dependent-pa-120">
+          <a-row>
+            <a-col :span="12">
+              <a-form-item label="연말관계" label-align="right" class="red">
+                <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation"
+                  :required="true"></dependants-relation-select-box>
+              </a-form-item>
+              <a-form-item label="성명" label-align="right" class="red">
+                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
+                  v-model:valueInput="formState.name"></default-text-box>
+              </a-form-item>
+              <a-form-item label="내/외국인" label-align="right">
+                <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="foreigner" />
+              </a-form-item>
+              <a-form-item :label="labelResidebId" label-align="right" class="red">
+                <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId"></id-number-text-box>
+              </a-form-item>
+              <a-form-item label="나이" label-align="right">
+                <default-text-box width="200px" :readOnly="true" v-model:valueInput="ageCount"></default-text-box>
+              </a-form-item>
+              <a-form-item label="기본공제" label-align="right" class="red">
+                <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
+                  :required="true" />
+              </a-form-item>
+              <a-form-item label="부녀자" label-align="right">
+                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="women" />
+              </a-form-item>
+              <a-form-item label="한부모" label-align="right">
+                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="singleParent" />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="경로우대" label-align="right">
+                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="senior" />
+              </a-form-item>
+              <a-form-item label="장애인" label-align="right">
+                <disabled-type-radio-group v-model:valueRadioCheck="formState.disabled"></disabled-type-radio-group>
+              </a-form-item>
+              <a-form-item label="출산입양" label-align="right">
+                <maternity-adoption-radio-box
+                  v-model:valueRadioCheck="formState.maternityAdoption"></maternity-adoption-radio-box>
+              </a-form-item>
+              <a-form-item label="자녀세액공제" label-align="right">
+                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="descendant" />
+              </a-form-item>
+              <a-form-item label="위탁관계" label-align="right">
+                <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
+                  v-model:valueInput="formState.consignmentRelationship"></default-text-box>
+              </a-form-item>
+              <a-form-item label="세대주여부" label-align="right">
+                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="householder" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </div>
+        <a-row style="margin-top: 40px">
+          <a-col :span="8" :offset="8" style="text-align: center">
+            <button-basic text="저장" type="default" mode="contained" :width="90"
+              @onClick="createNewEmployeeWageDependent($event)" />
           </a-col>
         </a-row>
-      </div>
-      <a-row style="margin-top: 40px">
-        <a-col :span="8" :offset="8" style="text-align: center">
-          <button-basic
-            text="저장"
-            type="default"
-            mode="contained"
-            :width="90"
-            @onClick="createNewEmployeeWageDependent($event)"
-          />
-        </a-col>
-      </a-row>
       </a-spin>
     </a-modal>
   </div>
@@ -151,6 +89,8 @@ export default defineComponent({
     dataSourceLen: {
       type: Number,
       default: 1,
+    }, idRowEdit: {
+      type: Number
     },
   },
   setup(props, { emit }) {
@@ -262,22 +202,42 @@ export default defineComponent({
 
     const createNewEmployeeWageDependent = async (e: any) => {
       var res = e.validationGroup.validate();
-      if (!res.isValid) {
-        res.brokenRules[0].validator.focus();
+      if (props.idRowEdit) {
+        if (!res.isValid) {
+          res.brokenRules[0].validator.focus();
+        } else {
+          let dataNew = {
+            companyId: companyId,
+            employeeId: ref(props.idRowEdit).value,
+            imputedYear: globalYear.value,
+            input: {
+              ...formState,
+              index: ref(props.dataSourceLen).value + 1,
+            },
+          };
+          await createEmployeeWageDependent(dataNew);
+          setModalVisible();
+          emit('upDateData');
+        }
       } else {
-        let dataNew = {
-          companyId: companyId,
-          employeeId: ref(props.employeeId).value,
-          imputedYear: globalYear.value,
-          input: {
-            ...formState,
-            index: ref(props.dataSourceLen).value + 1,
-          },
-        };
-        await createEmployeeWageDependent(dataNew);
-        setModalVisible();
-        emit('upDateData');
+        if (!res.isValid) {
+          res.brokenRules[0].validator.focus();
+        } else {
+          let dataNew = {
+            companyId: companyId,
+            employeeId: ref(props.employeeId).value,
+            imputedYear: globalYear.value,
+            input: {
+              ...formState,
+              index: ref(props.dataSourceLen).value + 1,
+            },
+          };
+          await createEmployeeWageDependent(dataNew);
+          setModalVisible();
+          emit('upDateData');
+        }
       }
+
     };
     return {
       women,
@@ -299,7 +259,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 #add-new-dependent-pa-120 {
-  ::v-deep .ant-form-item-label > label {
+  ::v-deep .ant-form-item-label>label {
     width: 135px;
     padding-left: 10px;
   }
@@ -324,6 +284,7 @@ export default defineComponent({
     align-items: center;
     margin-bottom: 5px;
   }
+
   .roadAddress {
     margin-bottom: 5px;
   }
