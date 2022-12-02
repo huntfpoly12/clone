@@ -131,9 +131,7 @@ export default defineComponent({
         let formState2 = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
             emit('closePopup', false);
-
         }
-
         const women = ref(formState.women == true ? 1 : 0);
         watch(women, (newValue) => {
             if (newValue == 1) {
@@ -230,6 +228,7 @@ export default defineComponent({
                 formState.descendant = formState2[props.idRowIndex - 1].descendant
                 formState.consignmentRelationship = formState2[props.idRowIndex - 1].consignmentRelationship
                 ageCount.value = convertAge(formState.residentId)
+
             }
         });
         const {
@@ -273,9 +272,9 @@ export default defineComponent({
             trigger.value = true
             refetchValueDetail()
         })
-        watch(() => ref(props.idRowEdit).value, (value) => {
-            originDataDetail.value.employeeId = value
-        })
+        // watch(() => ref(props.idRowEdit).value, (value) => {
+        //     originDataDetail.value.employeeId = value
+        // })
         // delete
         const {
             mutate: actionDelete,
@@ -305,9 +304,10 @@ export default defineComponent({
                 })
 
         }
-        //     onMounted(() => {
-        //   console.log(ref(ref(props.idRowEdit).value).value, 'idRowEdit');
-        // });
+        watch(() => props.modalStatus, (value) => {
+            trigger.value = true
+            refetchValueDetail()
+        })
         return {
             women,
             singleParent, loading,
@@ -319,7 +319,7 @@ export default defineComponent({
             foreigner,
             residentId, disabledButton,
             setModalVisible, actionUpdated, statusComfirm, contentDelete,
-            labelResidebId, actionDeleteFuc, modalStatusDelete
+            labelResidebId, actionDeleteFuc, modalStatusDelete,
         };
     },
 });

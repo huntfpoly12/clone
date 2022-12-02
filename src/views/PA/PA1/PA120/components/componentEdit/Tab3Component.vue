@@ -243,11 +243,9 @@ export default defineComponent({
         const actionEdit = (val: any) => {
             idRowIndex.value = val
             modalEditStatus.value = true
-        }
-        const modalHistory = (data: any) => {
+            refetchData()
 
         }
-
 
         const onSubmit = (e: any) => {
         };
@@ -345,8 +343,6 @@ export default defineComponent({
             modalAddNewDependent,
             openAddDependent,
             actionEdit,
-            modalHistory,
-
             hasStatus, updateData,
             onSubmit, contentDelete,
             per_page, move_column, colomn_resize, relationSummary,
