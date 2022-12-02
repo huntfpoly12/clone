@@ -124,7 +124,7 @@ export default defineComponent({
                         use: formState.use,
                         sort: 0,
                         formula: formState.formula,
-                        tax: true,
+                        tax: formState.taxPayCode[0] === "비과세" ? false : true,
                         taxfreePayItemCode:
                             formState.taxPayCode[0] === "비과세" ? formState.taxPayCode[1] : null,
                         taxPayItemCode:
