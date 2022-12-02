@@ -88,7 +88,7 @@
                   :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="150px" :required="true" :spinButtons="false">
+                <number-box-money width="100px" :required="true" :spinButtons="false">
                 </number-box-money>
                 <span class="pl-5">원</span>
               </div>
@@ -112,7 +112,7 @@
                   :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="150px" :required="true" :spinButtons="false">
+                <number-box-money width="100px" :required="true" :spinButtons="false">
                 </number-box-money>
                 <span class="pl-5">원</span>
               </div>
@@ -335,7 +335,7 @@ export default defineComponent({
 
     >span {
       margin-right: 10px;
-      min-width: 150px;
+      min-width: 117px;
     }
 
     >div {

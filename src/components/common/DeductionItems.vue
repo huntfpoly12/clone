@@ -66,7 +66,7 @@ export default defineComponent({
     cursor: pointer;
 
     >span {
-        margin-right: 10px;
+        margin-right: 5px;
     }
 
     .deduction-tag {
