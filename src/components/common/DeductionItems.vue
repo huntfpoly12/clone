@@ -1,6 +1,10 @@
 <template>
     <div class="deduction">
-        <span>{{ name }}</span>
+        <a-tooltip placement="top" v-if="name.split('').length > 4">
+            <template #title>{{ name }}</template>
+            <span class="deducation-name">{{ name }}</span>
+        </a-tooltip>
+        <span class="deducation-name" v-else>{{ name }}</span>
         <a-tooltip placement="top" v-if="type == 1">
             <template #title>{{ subName }}</template>
             <div class="deduction-tag deduction-tag-1">
@@ -66,9 +70,9 @@ export default defineComponent({
     }
 
     .deduction-tag {
-        width: 50px;
+        width: 40px;
         text-align: center;
-        padding: 5px 0;
+        padding: 3px 0;
         border-radius: 5px;
     }
 
@@ -92,6 +96,13 @@ export default defineComponent({
         border: 1px solid #7F7F7F;
         background-color: #7F7F7F;
         color: white;
+    }
+
+    .deducation-name {
+        width: 70px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 </style>
