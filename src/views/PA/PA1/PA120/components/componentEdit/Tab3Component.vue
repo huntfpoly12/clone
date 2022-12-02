@@ -46,7 +46,7 @@
                                         <template #title>편집</template>
                                         <EditOutlined @click="actionEdit(data.data.index)" />
                                     </a-tooltip>
-                                    <!-- <DeleteOutlined @click="actionDeleteFuc(data.data.index)" /> -->
+
                                 </a-space>
                             </div>
                         </template>
@@ -164,9 +164,6 @@
         <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
             :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
         </PopupUpdateDependent>
-
-        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-            :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     </div>
 </template>
 <script lang="ts">
@@ -250,20 +247,8 @@ export default defineComponent({
         const modalHistory = (data: any) => {
 
         }
-        const actionDeleteFuc = (data: any) => {
-            idAction.value = data
-            modalStatus.value = true
-        }
-        const statusComfirm = (res: any) => {
-            if (res == true)
-                actionDelete({
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    employeeId: props.idRowEdit,
-                    index: idAction.value
-                })
 
-        }
+
         const onSubmit = (e: any) => {
         };
         watch(() => props.idRowEdit, (value) => {
@@ -340,20 +325,7 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         })
-        // delete
-        const {
-            mutate: actionDelete,
-            onError: errorDelete,
-            onDone: successDelete,
-        } = useMutation(mutations.deleteEmployeeWageDependent)
-        errorDelete(e => {
-            notification('error', e.message)
-        })
-        successDelete(e => {
-            notification('success', `업데이트 완료!`)
-            trigger.value = true
-            refetchData()
-        })
+
         const updateData = (emit: Boolean) => {
             trigger.value = true
             refetchData();
@@ -372,12 +344,11 @@ export default defineComponent({
             modalStatus, formStateTab3,
             modalAddNewDependent,
             openAddDependent,
-            actionDeleteFuc,
             actionEdit,
             modalHistory,
-            actionDelete,
+
             hasStatus, updateData,
-            onSubmit, statusComfirm, contentDelete,
+            onSubmit, contentDelete,
             per_page, move_column, colomn_resize, relationSummary,
             womenSummary,
             basicDeductionSummary,
