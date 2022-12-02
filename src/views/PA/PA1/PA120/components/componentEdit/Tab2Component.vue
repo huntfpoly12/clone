@@ -76,7 +76,7 @@
         <div class="header-text-2">수당 항목 {50000}원 = 과세 + 비과세 </div>
         <a-spin :spinning="loading1" size="large">
           <div class="deduction-main">
-            <div v-for="(item, index) in datagConfigPayItems" class="custom-deduction">
+            <div v-for="(item, index) in datagConfigPayItems" :key="item.name" class="custom-deduction">
               <span>
                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1"
                   subName="과세" />
@@ -100,7 +100,7 @@
         <div class="header-text-2">공제 항목 ${50000}원 </div>
         <a-spin :spinning="loading1" size="large">
           <div class="deduction-main">
-            <div v-for="(item, index) in dataConfigDeduction" class="custom-deduction">
+            <div v-for="(item, index) in dataConfigDeduction" :key="item.name" class="custom-deduction">
               <span>
                 <deduction-items v-if="item.itemCode && item.itemCode != 1002" :name="item.name" :type="1"
                   subName="과세" />
@@ -207,6 +207,7 @@ export default defineComponent({
       if (value) {
         dataConfigDeduction.value = value.getWithholdingConfigDeductionItems;
         trigger.value = false;
+        console.log('dataConfigDeduction.value ', dataConfigDeduction.value)
       }
     });
     return {
