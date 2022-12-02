@@ -161,9 +161,9 @@
         <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
             :employeeId="employeeId" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
         </PopupAddNewDependent>
-        <PopupEditUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+        <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
             :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
-        </PopupEditUpdateDependent>
+        </PopupUpdateDependent>
 
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
@@ -181,7 +181,7 @@ import { companyId } from "@/helpers/commonFunction";
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
-import PopupAddNewDependent from './tab3EditDependent/PopupEditAddNewDependent.vue'
+import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue'
 import PopupUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue'
 import { Message } from "@/configs/enum"
 import BtnCheck from '../btnCheck/BtnCheck.vue';
