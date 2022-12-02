@@ -1,6 +1,6 @@
 import getEmployeeWages from "./getEmployeeWages";
 import getEmployeeWage from "./getEmployeeWage";
-import getWithholdingConfigPayItem from "./getWithholdingConfigPayItem";
+import getWithholdingConfigPayItems from "./getWithholdingConfigPayItems";
 import getWithholdingConfigDeductionItems from "./getWithholdingConfigDeductionItems";
 import getDepartments from "../../../common/getDepartments";
 import getResponsibilities from "../../../common/getResponsibilities";
@@ -9,7 +9,7 @@ const queries = {
   getEmployeeWage: getEmployeeWage,
   getDepartments: getDepartments,
   getResponsibilities: getResponsibilities,
-  getWithholdingConfigPayItem: getWithholdingConfigPayItem,
+  getWithholdingConfigPayItems: getWithholdingConfigPayItems,
   getWithholdingConfigDeductionItems: getWithholdingConfigDeductionItems,
 };
 export default queries;
