@@ -77,7 +77,7 @@ import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { initialState } from "../data"
+import { initialState } from "../utils/data"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import queries from "@/graphql/queries/CM/CM130/index";
