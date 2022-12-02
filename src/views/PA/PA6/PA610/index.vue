@@ -191,7 +191,7 @@ export default defineComponent({
         HistoryPopup
     },
     setup() {
-        const arrEdit = Array()
+        let arrEdit: any = []
         const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
@@ -312,25 +312,24 @@ export default defineComponent({
         })
 
         // ================WATCHING============================================
-        watch(() => dataAction, (xxx, old) => {
+        watch(() => JSON.parse(JSON.stringify(dataAction)), (newValue, old) => {
             if (disabledInput.value == true) {
-                console.log('------------',xxx);
-                
-                arrEdit.push(xxx) 
-                console.log(arrEdit);
-               
+                arrEdit?.map((e: any, index: any) => {
+                    if (e.employeeId == newValue.employeeId)
+                        arrEdit.splice(index, 1);
+                })
+                arrEdit.push(newValue)
 
-
-                // dataSource.value.map((e: any) => {
-                //     if (e.employeeId == newValue.employeeId) {
-                //         let newID = newValue.input.residentId.replace('-', '')
-                //         e.foreigner = newValue.input.foreigner
-                //         e.incomeTypeCode = newValue.incomeTypeCode
-                //         e.incomeTypeName = newValue.input.incomeTypeName
-                //         e.name = newValue.input.name
-                //         e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
-                //     }
-                // })
+                dataSource.value.map((e: any) => {
+                    if (e.employeeId == newValue.employeeId) {
+                        let newID = newValue.input.residentId.replace('-', '')
+                        e.foreigner = newValue.input.foreigner
+                        e.incomeTypeCode = newValue.incomeTypeCode
+                        e.incomeTypeName = newValue.input.incomeTypeName
+                        e.name = newValue.input.name
+                        e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
+                    }
+                })
             }
         }, { deep: true });
 
@@ -369,23 +368,26 @@ export default defineComponent({
             } else {
                 // if form disabled => action edit 
                 if (disabledInput.value == true) {
-                    let dataActionedit = {
-                        companyId: companyId,
-                        imputedYear: parseInt(dayjs().format('YYYY')),
-                        employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
-                        incomeTypeCode: dataAction.incomeTypeCode,
-                        input: {
-                            name: dataAction.input.name,
-                            foreigner: dataAction.input.foreigner,
-                            nationality: dataAction.input.nationality,
-                            nationalityCode: dataAction.input.nationalityCode,
-                            stayQualification: dataAction.input.stayQualification,
-                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(6, 13),
-                            email: dataAction.input.email,
-                            incomeTypeName: dataAction.input.incomeTypeName,
+                    arrEdit.map((item: any) => {
+                        let residentId = item.input.residentId.replace('-', '')
+                        let dataActionedit = {
+                            companyId: companyId,
+                            imputedYear: parseInt(dayjs().format('YYYY')),
+                            employeeId: parseInt(item.employeeId ? item.employeeId : ''),
+                            incomeTypeCode: item.incomeTypeCode,
+                            input: {
+                                name: item.input.name,
+                                foreigner: item.input.foreigner,
+                                nationality: item.input.nationality,
+                                nationalityCode: item.input.nationalityCode,
+                                stayQualification: item.input.stayQualification,
+                                residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
+                                email: item.input.email,
+                                incomeTypeName: item.input.incomeTypeName,
+                            }
                         }
-                    }
-                    actionUpdate(dataActionedit)
+                        actionUpdate(dataActionedit)
+                    })
                 } else { // if form disabled => action add 
                     let dataCreat = {
                         companyId: companyId,

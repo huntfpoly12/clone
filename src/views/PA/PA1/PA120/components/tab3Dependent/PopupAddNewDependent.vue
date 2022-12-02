@@ -159,7 +159,7 @@ export default defineComponent({
     const ageCount = ref();
     const labelResidebId = ref('주민(외국인)번호');
     const initialFormState = {
-      relation: 1,
+      relation: null,
       name: '',
       foreigner: false,
       residentId: '',
@@ -274,8 +274,6 @@ export default defineComponent({
             index: ref(props.dataSourceLen).value + 1,
           },
         };
-        initialFormState.relation++;
-        console.log(dataNew);
         await createEmployeeWageDependent(dataNew);
         setModalVisible();
         emit('upDateData');

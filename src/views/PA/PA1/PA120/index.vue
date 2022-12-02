@@ -46,7 +46,8 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                        <DxPaging :page-size="20"/>
+                        <DxPaging :page-size="15" />
+
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -86,8 +87,8 @@
                 </a-spin>
             </a-col>
             <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-                <PA120PopupAddNewVue :modalStatus="modalAddNewStatus" @closePopup="eventCLoseAddPopup"
-                    v-if="actionChangeComponent == 1" />
+                <PA120PopupAddNewVue :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
+                    @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" />
                 <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
                     v-if="actionChangeComponent == 2" />
             </a-col>
@@ -118,7 +119,7 @@ export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn,
-        DxToolbar,
+        DxToolbar, DxPaging,
         DxItem,
         DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,DxPaging,
         PA120PopupAddNewVue, PA120PopupEdit
@@ -252,19 +253,4 @@ export default defineComponent({
     },
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style lang="scss" scoped src="./style/style.scss" />

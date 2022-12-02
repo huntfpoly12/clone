@@ -55,7 +55,7 @@ export default defineComponent({
                 return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
             else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
                 return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
-        } 
+        }
         return {
             convertBirthDay
         }
