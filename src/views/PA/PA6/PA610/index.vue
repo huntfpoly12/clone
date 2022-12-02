@@ -348,11 +348,36 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const actionEdit = (data: any) => {
-            disabledInput.value = true
-            triggerDetail.value = true
-            valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
-            valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
-            refetchDataDetail()
+            //Add class row choose
+            let a = document.body.querySelectorAll('[aria-rowindex]')
+            a[data.rowIndex].classList.add("active-row-key");
+
+            let count = 0
+            let arr: any = []
+            arrEdit?.map((e: any) => {
+                if (e.employeeId == data.data.employeeId) {
+                    count++
+                    arr = e
+                }
+            })
+            if (count == 0) { // If this line has not been selected before
+                disabledInput.value = true
+                triggerDetail.value = true
+                valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
+                valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
+                refetchDataDetail()
+            } else {
+                dataAction.employeeId = arr.employeeId
+                dataAction.incomeTypeCode = arr.incomeTypeCode
+                dataAction.input.residentId = arr.input.residentId
+                dataAction.input.name = arr.input.name
+                dataAction.input.foreigner = arr.input.foreigner
+                dataAction.input.nationality = arr.input.nationality
+                dataAction.input.nationalityCode = arr.input.nationalityCode
+                dataAction.input.stayQualification = arr.input.stayQualification
+                dataAction.input.incomeTypeName = arr.input.incomeTypeName
+                dataAction.input.email = arr.input.email
+            }
         }
 
         const changeTextCountry = (text: any) => {
