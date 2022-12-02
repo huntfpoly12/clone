@@ -58,5 +58,73 @@ const convertAge = (idCart: any)=>{
     }
 }
 
-export { companyId, userType, userId, infoUser, onExportingCommon ,convertAge}
+//국민연금 사용자 부담금 계산
+const calculateNationalPensionEmployee = (totalTaxPay : any,insuranceSupportPercent:number = 0) => {
+    const nationalPensionEmloyeePercent = 0.045 //국민연금 근로자 부담율
+    const nationalPensionUpperLimit = 248850 // 국민연금 상한액
+    const nationalPensionLowerLimit = 15750 // 국민연금 하한액
+    let nationalPensionEmployee = Math.floor(totalTaxPay/1000) * 1000 * nationalPensionEmloyeePercent;
+    if(insuranceSupportPercent != 0){
+        nationalPensionEmployee = nationalPensionEmployee * (100 - insuranceSupportPercent)/100;
+        nationalPensionEmployee = Math.floor(nationalPensionEmployee/10) * 10
+    }
+    // 상한액 적용
+    if(nationalPensionEmployee > nationalPensionUpperLimit){
+        nationalPensionEmployee = nationalPensionUpperLimit;
+    }
+    // 하한액 적용
+    if(nationalPensionEmployee < nationalPensionLowerLimit){
+        nationalPensionEmployee = nationalPensionLowerLimit;
+    }
+    return nationalPensionEmployee
+}
+
+/** 건강보험 근로자 부담금 계산 **/
+const calculateHealthInsuranceEmployee = (totaltaxpay : any) => {
+    const healthInsuranceEmployeePercent = 0.03495 //건강보험 근로자 부담율
+    const healthInsuranceUpperLimit = 3653550
+    const healthInsuranceLowerLimit = 9750
+    let healthinsuranceemployee = Math.floor(totaltaxpay * healthInsuranceEmployeePercent /10 ) * 10 //계산후 원단위 절사
+    // 상한액 적용
+    if(healthinsuranceemployee > healthInsuranceUpperLimit){
+        healthinsuranceemployee = healthInsuranceUpperLimit
+    }
+    // 하한액 적용
+    if(healthinsuranceemployee < healthInsuranceLowerLimit){
+        healthinsuranceemployee = healthInsuranceLowerLimit
+    }
+    return healthinsuranceemployee
+}
+
+/**장기요양보험 근로자 부담금 계산**/
+const calculateLongTermCareInsurance = (totaltaxpay : any) => {
+    const longTermCareInsurancePercent = 0.1227
+    let longtermcareinsurance = calculateHealthInsuranceEmployee(totaltaxpay) // 건강보험료 계산결과 가져옴
+    longtermcareinsurance  = Math.floor( longtermcareinsurance * longTermCareInsurancePercent / 10 ) * 10 // 계산 후 원단위 절사
+    return longtermcareinsurance
+}
+
+/** 고용보험 근로자 부담금 계산 **/
+const calculateEmployeementInsuranceEmployee = (totalTaxPay : any,insurancesupportpercent:number = 0) => {
+    const employeementInsuranceEmployeePercent = 0.009 //고용보험 근로자 부담율
+    let employeementinsuranceemployee = Math.floor(totalTaxPay * employeementInsuranceEmployeePercent / 10 ) * 10  // 계산후 원단위 절사
+    if(insurancesupportpercent != 0){
+        employeementinsuranceemployee = employeementinsuranceemployee * (100 - insurancesupportpercent) / 100 //두루누리적용
+        employeementinsuranceemployee = Math.floor(employeementinsuranceemployee / 10) * 10 //원단위 절사
+    }
+    return employeementinsuranceemployee
+}
+
+export { 
+            companyId, 
+            userType, 
+            userId, 
+            infoUser, 
+            onExportingCommon ,
+            convertAge,
+            calculateNationalPensionEmployee,
+            calculateHealthInsuranceEmployee,
+            calculateLongTermCareInsurance,
+            calculateEmployeementInsuranceEmployee
+        }
 
