@@ -120,6 +120,7 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
+        let arrEdit: any = []
         const labelResident = ref('외국인번호 유효성')
         const activeLabel = ref(true)
         const disabledSelectBox = ref(true)
@@ -195,7 +196,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
         getValueDefault(res => {
-            if (res.data.getEmployeeWageDaily) {
+            if (res.data) {
                 dataEdited.name = res.data.getEmployeeWageDaily.name
                 dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
                 dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
@@ -231,11 +232,47 @@ export default defineComponent({
 
         // ============ WATCH ================================
         watch(() => props.idRowEdit, (value) => {
-            originDataDetail.value.employeeId = value
+            let checked = 0
+            let arr: any = []
+            arrEdit.map((e: any) => {
+                if (e.employeeId == value) {
+                    checked++
+                    arr = e
+                }
+            })
+
+            if (checked == 0) {
+                originDataDetail.value.employeeId = value
+                refetchValueDetail()
+            } else {
+                dataEdited.name = arr.name
+                dataEdited.foreigner = arr.foreigner
+                dataEdited.nationality = arr.nationality
+                dataEdited.nationalityCode = arr.nationalityCode
+                dataEdited.stayQualification = arr.stayQualification
+                dataEdited.residentId = arr.residentId.replace("-", "")
+                dataEdited.zipcode = ''
+                dataEdited.roadAddress = arr.roadAddress
+                dataEdited.addressExtend = arr.addressExtend
+                dataEdited.email = arr.email
+                dataEdited.employeeId = arr.employeeId
+                dataEdited.joinedAt = arr.joinedAt ? dayjs(arr.joinedAt.toString()).format('YYYY-MM-DD') : ''
+                dataEdited.leavedAt = arr.leavedAt ? dayjs(arr.leavedAt.toString()).format('YYYY-MM-DD') : ''
+                dataEdited.retirementIncome = arr.retirementIncome
+                dataEdited.weeklyWorkingHours = arr.weeklyWorkingHours
+                dataEdited.department = arr.department
+                dataEdited.responsibility = arr.responsibility
+            }
         })
-        watch(() => props.openPopup, (value) => {
-            refetchValueDetail()
-        })
+
+        watch(() => JSON.parse(JSON.stringify(dataEdited)), (newVal, oldVal) => {
+            arrEdit.map((e: any, index: any) => {
+                if (e.employeeId == newVal.employeeId) {
+                    arrEdit.splice(index, 1);
+                }
+            }) 
+            arrEdit.push(newVal) 
+        }, { deep: true })
 
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
@@ -252,7 +289,6 @@ export default defineComponent({
             }
         })
 
-
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataEdited.zipcode = data.zonecode;
@@ -268,21 +304,24 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let newValDataEdit = {
-                    ...dataEdited,
-                    joinedAt: typeof dataEdited.joinedAt == "string" ? parseInt(dataEdited.joinedAt.replaceAll('-', '')) : dataEdited.joinedAt,
-                    leavedAt: typeof dataEdited.leavedAt == "string" ? parseInt(dataEdited.leavedAt.replaceAll('-', '')) : dataEdited.leavedAt,
-                    residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
-                };
-                delete newValDataEdit.employeeId;
-                delete newValDataEdit.zipcode;  
-                let dataCallCreat = {
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    employeeId: props.idRowEdit,
-                    input: newValDataEdit
-                };
-                mutate(dataCallCreat)
+                arrEdit.map((e: any) => {
+                    let newValDataEdit = {
+                        ...e,
+                        joinedAt: typeof e.joinedAt == "string" ? parseInt(e.joinedAt.replaceAll('-', '')) : e.joinedAt,
+                        leavedAt: typeof e.leavedAt == "string" ? parseInt(e.leavedAt.replaceAll('-', '')) : e.leavedAt,
+                        residentId: e.residentId.slice(0, 6) + '-' + e.residentId.slice(6, 14)
+                    };
+                    delete newValDataEdit.employeeId;
+                    delete newValDataEdit.zipcode;
+                    let dataCallCreat = {
+                        companyId: companyId,
+                        imputedYear: globalYear.value,
+                        employeeId: e.employeeId,
+                        input: newValDataEdit
+                    };
+
+                    mutate(dataCallCreat)
+                })
             }
         }
         return {

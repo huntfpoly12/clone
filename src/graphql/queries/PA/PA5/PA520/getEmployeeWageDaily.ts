@@ -45,6 +45,8 @@ export default gql`
       totalDeduction
       deletable
       nationalPensionSupportPercent
+      joinedAt
+      leavedAt
       deductionItems{
         itemCode
         amount
