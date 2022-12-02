@@ -9,8 +9,6 @@ export default gql`
       companyId: $companyId
       input: $input
       employeeKeys: $employeeKeys
-    ) {
-      scalar
-    }
+    )
   }
 `;

@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-  query sendIncomeExtraWithholdingReceiptReportEmail(
+  mutation sendIncomeExtraWithholdingReceiptReportEmail(
     $companyId: Int!
     $input: IncomeExtraWithholdingReceiptInput!
     $employeeInputs: [EmployeeExtraSendEmailRequestInput!]!
@@ -9,8 +9,6 @@ export default gql`
       companyId: $companyId
       input: $input
       employeeInputs: $employeeInputs
-    ) {
-      scalar
-    }
+    )
   }
 `;

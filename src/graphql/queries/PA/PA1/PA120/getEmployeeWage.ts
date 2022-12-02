@@ -80,7 +80,7 @@ export default gql`
         descendant
         consignmentRelationship
         householder
-        # residentId
+        residentId
       }
     }
   }
