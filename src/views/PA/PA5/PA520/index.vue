@@ -213,6 +213,10 @@ export default defineComponent({
             modalAddNewStatus.value = true
         }
         const openEditModal = (val: any) => {
+            //Add class row choose
+            let a = document.body.querySelectorAll('[aria-rowindex]') 
+            a[val.rowIndex].classList.add("active-row-key");
+
             actionChangeComponent.value = 2
             idRowEdit.value = val.data.employeeId
             modalEditStatus.value = true

@@ -22,7 +22,7 @@
                             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                            <DxExport :enabled="true" :allow-export-selected-data="true" /> 
+                            <DxExport :enabled="true" :allow-export-selected-data="true" />
                             <DxToolbar>
                                 <DxItem location="after" template="pagination-table" />
                                 <DxItem name="searchPanel" />
@@ -348,23 +348,25 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const actionEdit = (data: any) => {
-            console.log(data);
-            
+            //Add class row choose
+            let a = document.body.querySelectorAll('[aria-rowindex]')
+            a[data.rowIndex].classList.add("active-row-key");
+
             let count = 0
-            let arr:any = []
+            let arr: any = []
             arrEdit?.map((e: any) => {
                 if (e.employeeId == data.data.employeeId) {
                     count++
                     arr = e
                 }
-            }) 
-            if (count == 0) {
+            })
+            if (count == 0) { // If this line has not been selected before
                 disabledInput.value = true
                 triggerDetail.value = true
                 valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
                 valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
                 refetchDataDetail()
-            } else { 
+            } else {
                 dataAction.employeeId = arr.employeeId
                 dataAction.incomeTypeCode = arr.incomeTypeCode
                 dataAction.input.residentId = arr.input.residentId
@@ -375,8 +377,6 @@ export default defineComponent({
                 dataAction.input.stayQualification = arr.input.stayQualification
                 dataAction.input.incomeTypeName = arr.input.incomeTypeName
                 dataAction.input.email = arr.input.email
-                console.log(dataAction);
-                
             }
         }
 
