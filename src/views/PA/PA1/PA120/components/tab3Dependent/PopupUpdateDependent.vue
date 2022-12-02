@@ -225,7 +225,7 @@ export default defineComponent({
                 formState.maternityAdoption = formState2[props.idRowIndex - 1].maternityAdoption
                 formState.descendant = formState2[props.idRowIndex - 1].descendant
                 formState.consignmentRelationship = formState2[props.idRowIndex - 1].consignmentRelationship
-
+                ageCount.value = convertAge(formState.residentId)
             }
         });
         const {
