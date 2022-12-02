@@ -79,10 +79,10 @@
 import { defineComponent, reactive, ref, computed, watch, onMounted } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
-import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120";
-import queries from "../../../../../../graphql/queries/PA/PA1/PA120";
-import notification from "../../../../../../utils/notification";
-import { companyId, convertAge } from "../../../../../../helpers/commonFunction";
+import mutations from "@/graphql/mutations/PA/PA1/PA120";
+import queries from "@/graphql/queries/PA/PA1/PA120";
+import notification from "@/utils/notification";
+import { companyId, convertAge } from "@/helpers/commonFunction";
 const contentDelete = Message.getMessage('PA120', '002').message
 import { Message } from "@/configs/enum"
 
