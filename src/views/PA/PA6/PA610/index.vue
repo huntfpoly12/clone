@@ -22,7 +22,7 @@
                             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                            <DxExport :enabled="true" :allow-export-selected-data="true" />
+                            <DxExport :enabled="true" :allow-export-selected-data="true" /> 
                             <DxToolbar>
                                 <DxItem location="after" template="pagination-table" />
                                 <DxItem name="searchPanel" />
@@ -348,11 +348,36 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const actionEdit = (data: any) => {
-            disabledInput.value = true
-            triggerDetail.value = true
-            valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
-            valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
-            refetchDataDetail()
+            console.log(data);
+            
+            let count = 0
+            let arr:any = []
+            arrEdit?.map((e: any) => {
+                if (e.employeeId == data.data.employeeId) {
+                    count++
+                    arr = e
+                }
+            }) 
+            if (count == 0) {
+                disabledInput.value = true
+                triggerDetail.value = true
+                valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
+                valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
+                refetchDataDetail()
+            } else { 
+                dataAction.employeeId = arr.employeeId
+                dataAction.incomeTypeCode = arr.incomeTypeCode
+                dataAction.input.residentId = arr.input.residentId
+                dataAction.input.name = arr.input.name
+                dataAction.input.foreigner = arr.input.foreigner
+                dataAction.input.nationality = arr.input.nationality
+                dataAction.input.nationalityCode = arr.input.nationalityCode
+                dataAction.input.stayQualification = arr.input.stayQualification
+                dataAction.input.incomeTypeName = arr.input.incomeTypeName
+                dataAction.input.email = arr.input.email
+                console.log(dataAction);
+                
+            }
         }
 
         const changeTextCountry = (text: any) => {
