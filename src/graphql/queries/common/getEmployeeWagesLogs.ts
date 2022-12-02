@@ -32,13 +32,24 @@ export default gql`
       leavedAt
       president
       householder
+      nationalPensionDeduction
+      healthInsuranceDeduction
+      longTermCareInsuranceDeduction
+      employeementInsuranceDeduction
+      insuranceSupport
+      nationalPensionSupportPercent
+      employeementInsuranceSupportPercent
+      employeementReduction
+      employeementReductionStartDate
+      employeementReductionFinishDate
+      employeementReductionRatePercent
+      employeementReductionInput
       weeklyWorkingHours
       deductionDependentCount
       incomeTaxMagnification
       incomePayment
       totalPay
       totalDeduction
-      totalReduction
       payItems
       deductionItems
       reductionItems

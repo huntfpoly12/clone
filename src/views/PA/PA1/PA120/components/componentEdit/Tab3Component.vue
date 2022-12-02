@@ -46,7 +46,7 @@
                                         <template #title>편집</template>
                                         <EditOutlined @click="actionEdit(data.data.index)" />
                                     </a-tooltip>
-                                    <!-- <DeleteOutlined @click="actionDeleteFuc(data.data.index)" /> -->
+
                                 </a-space>
                             </div>
                         </template>
@@ -161,12 +161,9 @@
         <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
             :employeeId="employeeId" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
         </PopupAddNewDependent>
-        <PopupEditUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+        <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
             :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
-        </PopupEditUpdateDependent>
-
-        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-            :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+        </PopupUpdateDependent>
     </div>
 </template>
 <script lang="ts">
@@ -181,7 +178,7 @@ import { companyId } from "@/helpers/commonFunction";
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
-import PopupAddNewDependent from './tab3EditDependent/PopupEditAddNewDependent.vue'
+import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue'
 import PopupUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue'
 import { Message } from "@/configs/enum"
 import BtnCheck from '../btnCheck/BtnCheck.vue';
@@ -246,24 +243,10 @@ export default defineComponent({
         const actionEdit = (val: any) => {
             idRowIndex.value = val
             modalEditStatus.value = true
-        }
-        const modalHistory = (data: any) => {
+            refetchData()
 
         }
-        const actionDeleteFuc = (data: any) => {
-            idAction.value = data
-            modalStatus.value = true
-        }
-        const statusComfirm = (res: any) => {
-            if (res == true)
-                actionDelete({
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    employeeId: props.idRowEdit,
-                    index: idAction.value
-                })
 
-        }
         const onSubmit = (e: any) => {
         };
         watch(() => props.idRowEdit, (value) => {
@@ -340,20 +323,7 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         })
-        // delete
-        const {
-            mutate: actionDelete,
-            onError: errorDelete,
-            onDone: successDelete,
-        } = useMutation(mutations.deleteEmployeeWageDependent)
-        errorDelete(e => {
-            notification('error', e.message)
-        })
-        successDelete(e => {
-            notification('success', `업데이트 완료!`)
-            trigger.value = true
-            refetchData()
-        })
+
         const updateData = (emit: Boolean) => {
             trigger.value = true
             refetchData();
@@ -372,12 +342,9 @@ export default defineComponent({
             modalStatus, formStateTab3,
             modalAddNewDependent,
             openAddDependent,
-            actionDeleteFuc,
             actionEdit,
-            modalHistory,
-            actionDelete,
             hasStatus, updateData,
-            onSubmit, statusComfirm, contentDelete,
+            onSubmit, contentDelete,
             per_page, move_column, colomn_resize, relationSummary,
             womenSummary,
             basicDeductionSummary,

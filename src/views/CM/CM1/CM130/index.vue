@@ -273,7 +273,7 @@
                 </a-tab-pane>
                 <a-tab-pane key="3" tab="공제항목">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
-                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
+                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column" :focused-row-enabled="true"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="editData">
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -393,11 +393,11 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
 import dayjs, { Dayjs } from "dayjs";
-import { optionsRadioReportType, optionsRadioPaymentType } from "./data";
+import { optionsRadioReportType, optionsRadioPaymentType } from "./utils/data";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
-import { initialFormState, initialFormStateDeduction } from "./data";
+import { initialFormState, initialFormStateDeduction } from "./utils/data";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
@@ -448,6 +448,8 @@ export default defineComponent({
             isShow.value = true;
         };
         const handleSuccsess = (e: MouseEvent) => {
+            formState.competentTaxOfficeCode = dataPublicInstitution.value.taxOfficeName
+            formState.localIncomeTaxArea = dataPublicInstitution.value.localIncomeTaxArea
             isShow.value = false;
         };
         const trigger = ref(false)
