@@ -10,6 +10,7 @@
       :footer="null"
       :bodyStyle="{ padding: '0px', height: '478px' }"
     >
+    <a-spin :spinning="loading" size="large">
       <div class="page-content" id="add-new-dependent-pa-120">
         <a-row>
           <a-col :span="12">
@@ -125,6 +126,7 @@
           />
         </a-col>
       </a-row>
+      </a-spin>
     </a-modal>
   </div>
 </template>
@@ -279,6 +281,7 @@ export default defineComponent({
     };
     return {
       women,
+      loading,
       singleParent,
       householder,
       senior,
