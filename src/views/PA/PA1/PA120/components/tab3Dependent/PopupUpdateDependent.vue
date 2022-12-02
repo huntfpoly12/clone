@@ -64,7 +64,7 @@
             <a-row style="margin-top: 40px">
                 <a-col :span="8" :offset="8" style="text-align: center;">
                     <button-basic style="margin-right: 20px" text="삭제" mode="contained" :width="90"
-                        @onClick="actionDeleteFuc($event)" />
+                        :disabled="disabledButton" @onClick="actionDeleteFuc($event)" />
                     <button-basic text="저장" type="default" mode="contained" :width="90"
                         @onClick="actionUpdated($event)" />
                 </a-col>
@@ -76,13 +76,13 @@
 </template>
 <script lang="ts">
 
-import { defineComponent, reactive, ref, computed, watch } from "vue";
+import { defineComponent, reactive, ref, computed, watch, onMounted } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
-import mutations from "../../../../../../../graphql/mutations/PA/PA1/PA120";
-import queries from "../../../../../../../graphql/queries/PA/PA1/PA120";
-import notification from "../../../../../../../utils/notification";
-import { companyId, convertAge } from "../../../../../../../helpers/commonFunction";
+import mutations from "@/graphql/mutations/PA/PA1/PA120";
+import queries from "@/graphql/queries/PA/PA1/PA120";
+import notification from "@/utils/notification";
+import { companyId, convertAge } from "@/helpers/commonFunction";
 const contentDelete = Message.getMessage('PA120', '002').message
 import { Message } from "@/configs/enum"
 
@@ -106,7 +106,7 @@ export default defineComponent({
         const ageCount = ref();
         const modalStatusDelete = ref(false)
         const idAction = ref()
-
+        let disabledButton = ref<boolean>(false);
         const labelResidebId = ref("주민(외국인)번호 ");
         let initialFormState = {
             relation: null,
@@ -197,7 +197,7 @@ export default defineComponent({
         const originDataDetail = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
-            employeeId: props.idRowEdit
+            employeeId: ref(props.idRowEdit).value
         })
         const {
             refetch: refetchValueDetail,
@@ -224,8 +224,8 @@ export default defineComponent({
                 formState.disabled = formState2[props.idRowIndex - 1].disabled
                 formState.maternityAdoption = formState2[props.idRowIndex - 1].maternityAdoption
                 formState.descendant = formState2[props.idRowIndex - 1].descendant
-                formState.index = formState2[props.idRowIndex - 1].index
                 formState.consignmentRelationship = formState2[props.idRowIndex - 1].consignmentRelationship
+
             }
         });
         const {
@@ -239,6 +239,7 @@ export default defineComponent({
         onDone(res => {
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
+            emit('upDateData');
         })
         const actionUpdated = (e: any) => {
             var res = e.validationGroup.validate();
@@ -251,18 +252,23 @@ export default defineComponent({
                 let dataCallUpdate = {
                     companyId: companyId,
                     imputedYear: globalYear.value,
-                    employeeId: props.idRowEdit,
+                    employeeId: ref(props.idRowEdit).value,
                     index: props.idRowIndex,
                     input: newValDataEdit,
                 };
                 mutate(dataCallUpdate)
             }
         }
+        watch(() => formState.relation, (value) => {
+            if (value == 0) {
+                disabledButton.value = true
+            } else disabledButton.value = false
+        })
         watch(() => props.idRowIndex, (value) => {
             trigger.value = true
             refetchValueDetail()
         })
-        watch(() => props.idRowEdit, (value) => {
+        watch(() => ref(props.idRowEdit).value, (value) => {
             originDataDetail.value.employeeId = value
         })
         // delete
@@ -289,12 +295,14 @@ export default defineComponent({
                 actionDelete({
                     companyId: companyId,
                     imputedYear: globalYear.value,
-                    employeeId: props.idRowEdit,
+                    employeeId: ref(props.idRowEdit).value,
                     index: props.idRowIndex
                 })
 
         }
-
+    //     onMounted(() => {
+    //   console.log(ref(ref(props.idRowEdit).value).value, 'idRowEdit');
+    // });
         return {
             women,
             singleParent,
@@ -304,7 +312,7 @@ export default defineComponent({
             formState,
             ageCount,
             foreigner,
-            residentId,
+            residentId, disabledButton,
             setModalVisible, actionUpdated, statusComfirm, contentDelete,
             labelResidebId, actionDeleteFuc, modalStatusDelete
         };
