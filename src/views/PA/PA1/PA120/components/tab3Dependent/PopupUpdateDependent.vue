@@ -76,7 +76,7 @@
 </template>
 <script lang="ts">
 
-import { defineComponent, reactive, ref, computed, watch } from "vue";
+import { defineComponent, reactive, ref, computed, watch, onMounted } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120";
@@ -197,7 +197,7 @@ export default defineComponent({
         const originDataDetail = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
-            employeeId: props.idRowEdit
+            employeeId: ref(props.idRowEdit).value
         })
         const {
             refetch: refetchValueDetail,
@@ -239,6 +239,7 @@ export default defineComponent({
         onDone(res => {
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
+            emit('upDateData');
         })
         const actionUpdated = (e: any) => {
             var res = e.validationGroup.validate();
@@ -251,7 +252,7 @@ export default defineComponent({
                 let dataCallUpdate = {
                     companyId: companyId,
                     imputedYear: globalYear.value,
-                    employeeId: props.idRowEdit,
+                    employeeId: ref(props.idRowEdit).value,
                     index: props.idRowIndex,
                     input: newValDataEdit,
                 };
@@ -267,7 +268,7 @@ export default defineComponent({
             trigger.value = true
             refetchValueDetail()
         })
-        watch(() => props.idRowEdit, (value) => {
+        watch(() => ref(props.idRowEdit).value, (value) => {
             originDataDetail.value.employeeId = value
         })
         // delete
@@ -294,12 +295,14 @@ export default defineComponent({
                 actionDelete({
                     companyId: companyId,
                     imputedYear: globalYear.value,
-                    employeeId: props.idRowEdit,
+                    employeeId: ref(props.idRowEdit).value,
                     index: props.idRowIndex
                 })
 
         }
-
+    //     onMounted(() => {
+    //   console.log(ref(ref(props.idRowEdit).value).value, 'idRowEdit');
+    // });
         return {
             women,
             singleParent,
