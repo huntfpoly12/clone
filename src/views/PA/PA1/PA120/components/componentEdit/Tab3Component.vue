@@ -182,7 +182,7 @@ import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
 import PopupAddNewDependent from './tab3EditDependent/PopupEditAddNewDependent.vue'
-import PopupEditUpdateDependent from './tab3EditDependent/PopupEditUpdateDependent.vue'
+import PopupEditUpdateDependent from '../tab3Dependent/PopupEditUpdateDependent.vue'
 import { Message } from "@/configs/enum"
 import BtnCheck from '../btnCheck/BtnCheck.vue';
 import {
