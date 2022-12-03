@@ -270,8 +270,8 @@ export default defineComponent({
                 if (e.employeeId == newVal.employeeId) {
                     arrEdit.splice(index, 1);
                 }
-            }) 
-            arrEdit.push(newVal) 
+            })
+            arrEdit.push(newVal)
         }, { deep: true })
 
         watch(() => dataEdited.foreigner, (value: any) => {
@@ -334,7 +334,7 @@ export default defineComponent({
             dataEdited,
             funcAddress,
             radioCheckForeigner,
-            activeKey: ref("1"),
+            activeKey: 1,
             customItemCreating,
             selectBoxData1,
             selectBoxData2

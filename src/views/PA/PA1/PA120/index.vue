@@ -41,7 +41,7 @@
             </a-col>
         </a-row>
         <a-row>
-            <a-col :span="12" class="custom-layout">
+            <a-col :span="10" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
@@ -54,13 +54,13 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <DxColumn caption="성명" cell-template="company-name" width="350px" />
+                        <DxColumn caption="성명" cell-template="company-name" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" width="130"/>
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{}" class="custom-action">
                             <div class="custom-grade-cell">
@@ -86,7 +86,7 @@
                     </DxDataGrid>
                 </a-spin>
             </a-col>
-            <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+            <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
                 <PA120PopupAddNewVue :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
                     @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" />
                 <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
