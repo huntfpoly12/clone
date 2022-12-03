@@ -219,7 +219,6 @@ export default defineComponent({
       }
     });
     // get employee Information
-
     const originDataDetail = ref({
       companyId: companyId,
       imputedYear: globalYear.value,

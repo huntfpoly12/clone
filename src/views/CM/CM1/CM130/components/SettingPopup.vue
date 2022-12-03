@@ -47,7 +47,7 @@
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { employees } from "../data.js";
+import { employees } from "../utils/data";
 import { DxSelectBox } from "devextreme-vue/select-box";
 import queries from "@/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";

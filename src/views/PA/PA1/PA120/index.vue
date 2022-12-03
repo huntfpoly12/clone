@@ -41,7 +41,7 @@
             </a-col>
         </a-row>
         <a-row>
-            <a-col :span="12" class="custom-layout">
+            <a-col :span="10" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
@@ -54,7 +54,7 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <DxColumn caption="성명" cell-template="company-name" width="350px" />
+                        <DxColumn caption="성명" cell-template="company-name" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
@@ -62,7 +62,7 @@
                         </template>
                         <DxColumn caption="주민등록번호" data-field="residentId" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{ }" class="custom-action">
+                        <template #grade-cell="{}" class="custom-action">
                             <div class="custom-grade-cell">
                                 <four-major-insurance :typeTag="1" :typeValue="1" />
                             </div>
@@ -86,7 +86,7 @@
                     </DxDataGrid>
                 </a-spin>
             </a-col>
-            <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+            <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
                 <PA120PopupAddNewVue :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
                     @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" />
                 <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
@@ -101,7 +101,7 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { DxDataGrid, DxColumn, DxToolbar, DxItem ,DxPaging } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -113,13 +113,13 @@ import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
 import { Message } from "@/configs/enum"
 
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
+import { EditOutlined, HistoryOutlined, DeleteOutlined, } from "@ant-design/icons-vue"
 
 export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn,
-        DxToolbar,DxPaging,
+        DxToolbar, DxPaging,
         DxItem,
         DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,
         PA120PopupAddNewVue, PA120PopupEdit
@@ -182,6 +182,8 @@ export default defineComponent({
             actionChangeComponent.value = 2
             idRowEdit.value = val
             modalEditStatus.value = true
+            trigger.value = true
+            refetchData()
 
         }
         const eventCLoseAddPopup = () => {
@@ -199,13 +201,14 @@ export default defineComponent({
             modalStatus.value = true
         }
         const statusComfirm = (res: any) => {
-            if (res == true)
+            if (res == true) {
                 actionDelete({
                     companyId: companyId,
                     imputedYear: globalYear.value,
                     employeeId: idAction.value
                 })
-
+                actionChangeComponent.value = 1
+            }
         }
         watch(result, (value) => {
             if (value) {
@@ -230,6 +233,7 @@ export default defineComponent({
                 refetchData()
             }
         })
+
         return {
             loading,
             idRowEdit,
@@ -253,4 +257,20 @@ export default defineComponent({
     },
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style lang="scss" scoped src="./style/style.scss" />

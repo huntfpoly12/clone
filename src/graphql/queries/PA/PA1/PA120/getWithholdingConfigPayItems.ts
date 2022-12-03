@@ -1,14 +1,10 @@
 import gql from "graphql-tag";
 export default gql`
-  query getWithholdingConfigPayItem(
-    $companyId: Int!
-    $imputedYear: Int!
-    $itemCode: Int!
-  ) {
-    getWithholdingConfigPayItem(
+  query getWithholdingConfigPayItems($companyId: Int!, $imputedYear: Int!) {
+    getWithholdingConfigPayItems(
       companyId: $companyId
       imputedYear: $imputedYear
-      itemCode: $itemCode
+      useOnly: true
     ) {
       itemCode
       name

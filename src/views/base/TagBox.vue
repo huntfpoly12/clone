@@ -91,18 +91,48 @@
                     </pre>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <p><b>Colorful Badge</b></p>
+                    <colorful-badge :value="40"/>
+                </td>
+                <td>
+                    <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
+                </td>
+                <td>
+                    <pre class="mycode"> &lt;colorful-badge :value="40"/&gt;
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p><b>Colorful Badge</b></p>
+                    {{ status }}
+                    <process-status v-model:valueStatus="status"  style="margin-left: 150px;"/>
+                </td>
+                <td>
+                    <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
+                </td>
+                <td>
+                    <pre class="mycode"> &lt;colorful-badge v-model:valueStatus="status"/&gt;
+                    </pre>
+                </td>
+            </tr>
         </table>
     </form>
 </template>
 
 <script lang="ts">
+import ProcessStatus from "@/components/common/ProcessStatus.vue";
 import { defineComponent, ref } from "vue";
 export default defineComponent({
+  components: { ProcessStatus },
     data() {
         return {
             styles: {
                 main: this.$config_styles.Main,
             },
+            status: 10,
         };
     },
 });
