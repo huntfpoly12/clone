@@ -18,7 +18,8 @@ import getResponsibilities from "./getResponsibilities";
 import getDepartments from "./getDepartments";
 import getEmployeeExtrasLogs from "./getEmployeeExtrasLogs";
 import getEmployeeWagesLogs from "./getEmployeeWagesLogs";
-import getWithholdingConfigDeductionItemsLogs from "./getWithholdingConfigDeductionItemsLogs"
+import getWithholdingConfigDeductionItemsLogs from "./getWithholdingConfigDeductionItemsLogs";
+import getIncomeWageDailiesLogs from "./getIncomeWageDailiesLogs";
 const queries = {
   getListSale: getListSale,
   getUserLogs: getUserLogs,
@@ -41,6 +42,7 @@ const queries = {
   getDepartments: getDepartments,
   getEmployeeWagesLogs: getEmployeeWagesLogs,
   getWithholdingConfigDeductionItemsLogs: getWithholdingConfigDeductionItemsLogs,
+  getIncomeWageDailiesLogs: getIncomeWageDailiesLogs,
 };
 
 export default queries;

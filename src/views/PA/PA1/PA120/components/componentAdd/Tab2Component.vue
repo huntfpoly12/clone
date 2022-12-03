@@ -58,11 +58,11 @@
       <a-col :span="8">
         <div class="header-text-2">요약</div>
         <div class="summary">
-          <div class="text0">소득수당 합계</div>
-          <div class="text1">수당 과세 합계 {50000}원</div>
-          <div class="text2">수당 비과세 합계 {50000}원</div>
-          <div class="text3">공제 합계 {50000}원 </div>
-          <div class="text4">차인지급액 {50000}원 </div>
+          <div class="text0">소득수당 합계 {{$filters.formatCurrency(totalPayItem)}}원</div>
+          <div class="text1">수당 과세 합계 {{$filters.formatCurrency(totalPayItemTaxFree)}} 원</div>
+          <div class="text2">수당 비과세 합계 {{$filters.formatCurrency(totalPayItemTax)}}원</div>
+          <div class="text3">공제 합계 {{$filters.formatCurrency(totalDeduction)}}원 </div>
+          <div class="text4">차인지급액 {{$filters.formatCurrency(subPayment)}}원 </div>
           <div class="text5">
             <span>
               <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
@@ -73,7 +73,7 @@
 
       </a-col>
       <a-col :span="8">
-        <div class="header-text-2">수당 항목 {50000}원 = 과세 + 비과세 </div>
+        <div class="header-text-2">수당 항목 {{$filters.formatCurrency(totalPayItem)}} 원 = 과세 + 비과세 </div>
         <a-spin :spinning="loading1" size="large">
           <div class="deduction-main">
             <div v-for="(item, index) in datagConfigPayItems" :key="item.name" class="custom-deduction">
@@ -88,7 +88,9 @@
                   :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="100px" :required="true" :spinButtons="false">
+                <number-box-money v-if="item.tax == true" width="130px" :spinButtons="false" :rtlEnabled="true"  v-model:valueInput="amountTaxFree[index]">
+                </number-box-money>
+                <number-box-money v-if="(item.tax == false)" width="130px" :spinButtons="false" :rtlEnabled="true"  v-model:valueInput="amountTax[index]">
                 </number-box-money>
                 <span class="pl-5">원</span>
               </div>
@@ -97,7 +99,7 @@
         </a-spin>
       </a-col>
       <a-col :span="8">
-        <div class="header-text-2">공제 항목 ${50000}원 </div>
+        <div class="header-text-2">공제 항목 {{$filters.formatCurrency(totalDeduction)}}원 </div>
         <a-spin :spinning="loading1" size="large">
           <div class="deduction-main">
             <div v-for="(item, index) in dataConfigDeduction" :key="item.name" class="custom-deduction">
@@ -112,7 +114,7 @@
                   :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="100px" :required="true" :spinButtons="false">
+                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="amountDeduction[index]">
                 </number-box-money>
                 <span class="pl-5">원</span>
               </div>
@@ -120,7 +122,6 @@
           </div>
         </a-spin>
       </a-col>
-
     </a-row>
     <a-row style="margin-top: 40px">
       <a-col :span="8" :offset="8" style="text-align: center;">
@@ -160,6 +161,18 @@ export default defineComponent({
     modalStatus: Boolean,
   },
   setup(props, { emit }) {
+
+    const amountTaxFree =  ref([]);
+    const totalPayItemTaxFree = computed(() => amountTaxFree.value.reduce((totalAmount, amount) => totalAmount + amount, 0));
+    const amountTax =  ref([]);
+    const totalPayItemTax = computed(() => amountTax.value.reduce((totalAmount, amount) => totalAmount + amount, 0));
+    const amountPaymentItem = ref([]);
+    const totalPayItem = computed(()=> totalPayItemTaxFree.value + totalPayItemTax.value);
+
+    const amountDeduction = ref([]);
+    const totalDeduction= computed(() => amountDeduction.value.reduce((totalAmount, amount) => totalAmount + amount, 0));
+    const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
+
     const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
     const store = useStore();
     const datagConfigPayItems = ref();
@@ -212,6 +225,9 @@ export default defineComponent({
     return {
       formStateTab2, loading1, loading2,
       rangeDate,
+      amountPaymentItem,totalPayItem,amountTaxFree,amountTax,totalPayItemTaxFree,totalPayItemTax,
+      amountDeduction,totalDeduction,
+      subPayment,
       radioCheckPersenPension,
       radioCheckReductioRate,
       radioCheckReductionInput,
