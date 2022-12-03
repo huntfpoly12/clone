@@ -1,100 +1,63 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
     <div id="pa-510" class="page-content">
         <a-row>
-            <a-col :span="3" style="padding-right: 10px">
-                <div class="total-user">
-                    <div>
-                        <span>{{ dataSource.length }}</span>
-                        <br>
-                        <span>전체</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
-                    </div>
-                </div>
-            </a-col>
-            <a-col :span="3" style="padding-right: 10px">
-                <div class="current-user">
-                    <div>
-                        <span>{{ totalUserOnl }}</span>
-                        <br>
-                        <span>재직</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
-                    </div>
-                </div>
-            </a-col>
-            <a-col :span="3" style="padding-right: 10px">
-                <div class="leave-user">
-                    <div>
-                        <span>{{ totalUserOff }}</span>
-                        <br>
-                        <span>퇴사</span>
-                    </div>
-                    <div>
-                        <img src="../../../../assets/images/user.svg" alt="" style="width: 70px">
-                    </div>
-                </div>
-            </a-col>
-        </a-row>
-        <a-row>
-            <a-col :span="12" class="custom-layout">
-                <a-spin :spinning="loading" size="large">
-                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                        :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                        <DxToolbar>
-                            <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                        </DxToolbar>
-                        <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
-                        </template>
-                        <DxColumn caption="성명" cell-template="company-name" width="350px" />
-                        <template #company-name="{ data }">
-                            <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                :idCardNumber="data.data.residentId" :status="data.data.status"
-                                :foreigner="data.data.foreigner" :checkStatus="false" />
-                        </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" />
-                        <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{ data }" class="custom-action">
-                            <div class="custom-grade-cell">
-                                <four-major-insurance :typeTag="1" :typeValue="1" />
-                            </div>
-                        </template>
-                        <DxColumn cell-template="pupop" width="100" />
-                        <template #pupop="{ data }" class="custom-action">
-                            <div class="custom-action">
-                                <a-space :size="10">
-                                    <a-tooltip placement="top">
-                                        <template #title>편집</template>
-                                        <EditOutlined @click="openEditModal(data.data.employeeId)" />
-                                    </a-tooltip>
-                                    <a-tooltip placement="top">
-                                        <template #title>변경이력</template>
-                                        <HistoryOutlined @click="modalHistory(data)" />
-                                    </a-tooltip>
-                                    <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
-                                </a-space>
-                            </div>
-                        </template>
-                    </DxDataGrid>
-                </a-spin>
-            </a-col>
+            <a-spin :spinning="loading" size="large">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxColumn caption="귀속월" cell-template="imputed-year" width="350px" />
+                    <template #imputed-year="{ data }">
+                        <span>지급연월 {{ data.data.paymentYear }}-{{ data.data.paymentMonth }}</span>
+                    </template>
+                    <DxColumn caption="{{ imputedMonth }}" cell-template="imputed-month" />
+                    <template #imputed-month="{ data }">
+                        <span>{{ data.data.paymentYear }}-{{ data.data.paymentMonth }}</span>
+                    </template>
+                </DxDataGrid>
+            </a-spin>
+
+            <!-- <div style="border: 1px solid #ddd; margin-top: 20px; padding: 10px;">
+                <h2 style="font-weight: 600; color: gray" class="title_modal">
+                    급여상세항목
+                </h2>
+            </div> -->
+            <!-- </a-col>
             <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
                 <PA510PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" />
                 <PA510PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 2" />
+            </a-col> -->
+        </a-row>
+        <a-row>
+            <a-col :span="11" class="">
+                <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                <DxButton :text="'지'" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'blue' }" :height="'33px'" />
+            </a-col>
+            <a-col :span="13" class="">
+                <DxButton @click="deleteItem">
+                    <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
+                </DxButton>
+                <DxButton icon="plus" />
+                <DxButton icon="edit" @click="editItem"/>
+
+                <DxDropDownButton :items="arrDropDown" text="급여대장"
+                    @item-click="onItemClick" item-template="item-field">
+                    <template #item-field="{ data }">
+                        <div style="text-align: center;"><img :src="'../../../../../src/assets/images/'+data.img" alt="" style="width: 25px; height: 25px;"/></div>
+                    </template>
+                </DxDropDownButton>
+
             </a-col>
         </a-row>
-        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-            :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-        <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-            :idRowEdit="idRowEdit" typeHistory="pa-510" />
+        <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister" @closePopup="modalPrintPayrollRegister = false"
+                    :data="popupDataPayrollRegister"/>
+        <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false"
+        :data="popupDataDelete"/>
+        <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false"
+        :data="popupDataEdit" />
     </div>
 </template>
 <script lang="ts">
@@ -106,154 +69,120 @@ import { companyId } from "../../../../helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import notification from "../../../../utils/notification"
+import PrintPayrollRegisterPopup from "./components/Popup/PrintPayrollRegisterPopup.vue"
 import queries from "../../../../graphql/queries/PA/PA5/PA510/index"
-import PA510PopupAddNew from "./components/PA510PopupAddNew.vue"
-import PA510PopupEdit from "./components/PA510PopupEdit.vue"
 import mutations from "../../../../graphql/mutations/PA/PA5/PA510/index"
 import { Message } from "../../../../configs/enum"
+import DxDropDownButton from 'devextreme-vue/drop-down-button';
+import DeletePopup from "./components/Popup/DeletePopup.vue"
+import EditPopup from "./components/Popup/EditPopup.vue"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
-        EditOutlined,
-        HistoryOutlined,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
-        PA510PopupAddNew,
-        PA510PopupEdit
-    },
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxSelection,
+    DxExport,
+    DxSearchPanel,
+    DxScrolling,
+    DxToolbar,
+    DxEditing,
+    DxGrouping,
+    DxItem,
+    DxButton,
+    DxSummary,
+    DxTotalItem,
+    EditOutlined,
+    HistoryOutlined,
+    SearchOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeleteOutlined,
+    SaveOutlined,
+    DxDropDownButton,
+    PrintPayrollRegisterPopup,
+    DeletePopup,
+    EditPopup
+},
     setup() {
-        const actionChangeComponent = ref(1)
-        const contentDelete = Message.getMessage('PA120', '002').message
-        const modalStatus = ref(false)
         const dataSource = ref([])
         const store = useStore()
-        const totalUserOnl = ref(0)
-        const totalUserOff = ref(0)
         const globalYear = computed(() => store.state.settings.globalYear)
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
         const trigger = ref<boolean>(true)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
+        const modalPrintPayrollRegister = ref<boolean>(false)
+        const modalDelete = ref<boolean>(false)
+        const modalEdit = ref<boolean>(false)
+        const popupDataPayrollRegister = ref({})
+        const popupDataDelete = ref({})
+        const popupDataEdit = ref({})
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
+            // imputedMonth: 10,
         })
-        const idAction = ref()
-        const modalAddNewStatus = ref<boolean>(false)
-        const modalEditStatus = ref<boolean>(false)
-        const modalHistoryStatus = ref<boolean>(false)
-        const modalDeleteStatus = ref<boolean>(false)
-        const idRowEdit = ref()
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
             result,
             loading,
-        } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
+        } = useQuery(queries.getIncomeProcessWageDailies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
-        const {
-            mutate: actionDelete,
-            onError: errorDelete,
-            onDone: successDelete,
-        } = useMutation(mutations.deleteEmployeeWageDaily)
-        errorDelete(e => {
-            notification('error', e.message)
-        })
-        successDelete(e => {
-            notification('success', `업데이트 완료!`)
-            trigger.value = true
-            refetchData()
-        })
         // ======================= WATCH ==================================
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.getEmployeeWageDailies
-                totalUserOnl.value = 0
-                totalUserOff.value = 0
-                dataSource.value.map((val: any) => {
-                    if (val.status != 0) {
-                        totalUserOnl.value++
-                    } else {
-                        totalUserOff.value++
-                    }
-                })
+                dataSource.value = value.getIncomeProcessWageDailies
                 trigger.value = false
             }
+            console.log(dataSource.value);
+
         })
-        watch(() => modalAddNewStatus.value, (value) => {
-            if (value == false) {
-                trigger.value = true
-                refetchData()
-            }
-        })
-        watch(() => modalEditStatus.value, (value) => {
-            if (value == false) {
-                trigger.value = true
-                refetchData()
-            }
-        })
+
+        const deleteItem = (value: any) => {
+            modalDelete.value = true;
+            popupDataDelete.value = value
+        };
+        const editItem = (value: any) => {
+            modalEdit.value = true;
+            popupDataEdit.value = value
+        };
         // ======================= FUNCTION ================================
-        const openAddNewModal = () => {
-            actionChangeComponent.value = 1
-            modalAddNewStatus.value = true
-        }
-        const openEditModal = (val: any) => {
-            actionChangeComponent.value = 2
-            idRowEdit.value = val
-            modalEditStatus.value = true
-        }
-        const modalHistory = (data: any) => {
-            idRowEdit.value = data.data.id
-            modalHistoryStatus.value = companyId
-        }
-        const actionDeleteFuc = (data: any) => {
-            idAction.value = data
-            modalStatus.value = true
-        }
         const onSubmit = (e: any) => {
         }
-        const statusComfirm = (res: any) => {
-            if (res == true)
-                actionDelete({
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    employeeId: idAction.value
-                })
+
+        const arrDropDown = [
+            { id: 1, img: 'print.svg', api: '' },
+            { id: 2, img: 'email.png', api: '' },
+        ];
+        const onItemClick = (value: any) => {
+            modalPrintPayrollRegister.value = true;
+            popupDataPayrollRegister.value = value
         }
-        const closeAction = () => {
-            trigger.value = true
-            refetchData()
-        }
+
         return {
-            actionChangeComponent,
-            idRowEdit,
-            totalUserOff,
-            totalUserOnl,
-            modalStatus,
             loading,
-            modalEditStatus,
-            modalDeleteStatus,
             dataSource,
-            modalHistoryStatus,
-            modalAddNewStatus,
             per_page, move_column, colomn_resize,
-            contentDelete,
-            closeAction,
             refetchData,
             onSubmit,
-            actionDeleteFuc,
-            modalHistory,
-            openAddNewModal,
-            openEditModal,
-            statusComfirm,
+            onItemClick,
+            arrDropDown,
+            modalPrintPayrollRegister,
+            popupDataPayrollRegister,
+            deleteItem,
+            modalDelete,
+            popupDataDelete,
+            editItem,
+            modalEdit,
+            popupDataEdit,
         }
+
     },
 })
 </script> 
