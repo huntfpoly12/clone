@@ -60,7 +60,7 @@
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" width="130"/>
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{}" class="custom-action">
                             <div class="custom-grade-cell">
