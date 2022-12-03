@@ -120,7 +120,7 @@ import { useStore } from 'vuex';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
-import notification from "@/utils/notification"; 
+import notification from "@/utils/notification";
 
 export default defineComponent({
 	props: {
@@ -241,18 +241,18 @@ export default defineComponent({
 		watch(() => props.idRowEdit, (res) => {
 			let countArr = 0
 			let arr: any = []
-			arrEdit.map((e: any) => { 
+			arrEdit.map((e: any) => {
 				if (res == e.employeeId) {
 					countArr = 1
 					arr = e
 				}
-			}) 
+			})
 			if (countArr == 0) {
 				originDataDetail.value.employeeId = res
 				originDataUpdate.value.employeeId = res
 				refectchDetail()
-			} else {    
-				originDataUpdate.value.employeeId = arr.employeeId 
+			} else {
+				originDataUpdate.value.employeeId = arr.employeeId
 				originDataUpdate.value.input.nationalPensionDeduction = arr.input.nationalPensionDeduction
 				originDataUpdate.value.input.healthInsuranceDeduction = arr.input.healthInsuranceDeduction
 				originDataUpdate.value.input.longTermCareInsuranceDeduction = arr.input.longTermCareInsuranceDeduction
@@ -264,15 +264,15 @@ export default defineComponent({
 				originDataUpdate.value.input.workingDays = arr.input.workingDays
 				originDataUpdate.value.input.dailyWage = arr.input.dailyWage
 				originDataUpdate.value.input.monthlyWage = arr.input.monthlyWage
-				originDataUpdate.value.input.deductionItems = arr.input.deductionItems 
+				originDataUpdate.value.input.deductionItems = arr.input.deductionItems
 
 				formDifferencePayment.status = arr.input.monthlyPaycheck
 				formDifferencePayment.wage = arr.input.monthlyPaycheck == false ? arr.input.dailyWage : arr.input.monthlyWage
-				formDifferencePayment.working = arr.input.workingDays 
-				
-				arrDeduction.value?.map((e: any) => { 
+				formDifferencePayment.working = arr.input.workingDays
+
+				arrDeduction.value?.map((e: any) => {
 					e.price = funcCheckPrice(e.itemCode)
-				}) 
+				})
 			}
 		}, { deep: true })
 
@@ -293,7 +293,7 @@ export default defineComponent({
 				}
 			})
 			arrEdit.push(newVal)
-			
+
 		}, { deep: true })
 
 		watch(() => formDifferencePayment, (res) => {
@@ -313,29 +313,14 @@ export default defineComponent({
 		}, { deep: true })
 
 		// ================== FUNCTION ==================================
-		const updateDeduction = () => {
-			let arrDeductionNew: any = []
-			arrDeduction.value?.map((e: any) => {
-				if (e.deductionItemCode == 1001 || e.deductionItemCode == 1002 || e.deductionItemCode == 1003 || e.deductionItemCode == 1004) {
-					arrDeductionNew.push({
-						itemCode: e.deductionItemCode,
-						amount: e.price
-					})
-				}
-			})
+		const updateDeduction = () => {  
+			arrEdit.map((val: any) => { 
+				val.input.deductionItems.map((e:any) => {
+					delete e.__typename
+				})
 
-			let dataUpdate = {
-				...originDataUpdate.value,
-				input: {
-					...originDataUpdate.value.input,
-					monthlyPaycheck: formDifferencePayment.status,
-					dailyWage: formDifferencePayment.status == false ? formDifferencePayment.wage : 0,
-					monthlyWage: formDifferencePayment.status == true ? formDifferencePayment.wage : 0,
-					workingDays: formDifferencePayment.working,
-					deductionItems: arrDeductionNew
-				}
-			}
-			mutate(dataUpdate)
+				mutate(val)
+			}) 
 		}
 
 		const callFuncCalculate = () => {
@@ -362,12 +347,12 @@ export default defineComponent({
 					originDataUpdate.value.input.deductionItems[3].amount = total4
 				}
 			})
- 
+
 
 		}
 
 		const funcCheckPrice = (id: any) => {
-			let price = 0 
+			let price = 0
 			originDataUpdate.value.input.deductionItems.map((e: any) => {
 				if (e.itemCode == id)
 					price = e.amount
