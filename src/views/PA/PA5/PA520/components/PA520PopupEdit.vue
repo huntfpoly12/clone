@@ -1,5 +1,4 @@
 <template>
-
     <a-spin :spinning="false" size="large">
         <div id="pa-520" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">

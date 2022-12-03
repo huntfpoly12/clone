@@ -37,7 +37,6 @@
 				</a-form-item>
 			</a-col>
 		</a-row>
-
 		<div class="header-text-3">급여 (기본값)
 			<span>
 				<img src="@/assets/images/iconInfoWrite.png" style="width: 16px;">
@@ -109,11 +108,10 @@
 			<button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction" />
 		</div>
 	</div>
-
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
-import { radioCheckPersenPension } from "../../utils/index";
+import { radioCheckPersenPension, originDataInputUpdate } from "../../utils/index";
 import dayjs from 'dayjs';
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { useStore } from 'vuex';
@@ -121,7 +119,6 @@ import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
-
 export default defineComponent({
 	props: {
 		modalStatus: Boolean,
@@ -136,7 +133,6 @@ export default defineComponent({
 		const totalDeduction = ref('0')
 		const arrDeduction: any = ref()
 		const totalPayDifferen = ref()
-
 		const originData = ref({
 			companyId: companyId,
 			imputedYear: globalYear.value,
@@ -146,34 +142,20 @@ export default defineComponent({
 			imputedYear: globalYear.value,
 			employeeId: props.idRowEdit
 		})
-
 		const formDifferencePayment: any = reactive({
 			totalAmount: '0',
 			status: true,
 			wage: null,
 			working: null
 		})
-
 		let originDataUpdate: any = ref({
 			companyId: companyId,
 			imputedYear: globalYear.value,
 			employeeId: props.idRowEdit,
 			input: {
-				nationalPensionDeduction: false,
-				healthInsuranceDeduction: false,
-				longTermCareInsuranceDeduction: false,
-				employeementInsuranceDeduction: false,
-				insuranceSupport: false,
-				nationalPensionSupportPercent: 0,
-				employeementInsuranceSupportPercent: 0,
-				monthlyPaycheck: false,
-				workingDays: 0,
-				dailyWage: 0,
-				monthlyWage: 0,
-				deductionItems: []
+				...originDataInputUpdate
 			}
 		})
-
 		// ================== GRAPQL ====================================
 		const {
 			refetch: refectchDetail,
@@ -183,7 +165,7 @@ export default defineComponent({
 		}))
 		resApiGetEmployeeWageDaily(e => {
 			if (e.data) {
-				let res = e.data.getEmployeeWageDaily
+				let res = e.data.getEmployeeWageDaily 
 				originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
 				originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
 				originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
@@ -196,11 +178,9 @@ export default defineComponent({
 				originDataUpdate.value.input.dailyWage = res.dailyWage
 				originDataUpdate.value.input.monthlyWage = res.monthlyWage
 				originDataUpdate.value.input.deductionItems = res.deductionItems
-
 				formDifferencePayment.status = res.monthlyPaycheck
 				formDifferencePayment.wage = res.monthlyPaycheck == false ? res.dailyWage : res.monthlyWage
 				formDifferencePayment.working = res.workingDays
-
 				arrDeduction.value?.map((e: any) => {
 					e.price = funcCheckPrice(e.deductionItemCode)
 				})
@@ -212,7 +192,6 @@ export default defineComponent({
 		} = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
 			fetchPolicy: "no-cache",
 		}))
-
 		resWithholdingConfigPayItems(res => {
 			arrDeduction.value = []
 			res.data.getWithholdingConfigDeductionItems.map((val: any) => {
@@ -223,7 +202,6 @@ export default defineComponent({
 				})
 			})
 		})
-
 		const {
 			mutate,
 			onError,
@@ -236,7 +214,6 @@ export default defineComponent({
 			emit('closePopup', false)
 			notification('success', '업데이트 완료!')
 		})
-
 		// ================== WATCH ====================================
 		watch(() => props.idRowEdit, (res) => {
 			let countArr = 0
@@ -265,18 +242,14 @@ export default defineComponent({
 				originDataUpdate.value.input.dailyWage = arr.input.dailyWage
 				originDataUpdate.value.input.monthlyWage = arr.input.monthlyWage
 				originDataUpdate.value.input.deductionItems = arr.input.deductionItems
-
 				formDifferencePayment.status = arr.input.monthlyPaycheck
 				formDifferencePayment.wage = arr.input.monthlyPaycheck == false ? arr.input.dailyWage : arr.input.monthlyWage
 				formDifferencePayment.working = arr.input.workingDays
-
 				arrDeduction.value?.map((e: any) => {
 					e.price = funcCheckPrice(e.itemCode)
 				})
 			}
 		}, { deep: true })
-
-
 		watch(() => arrDeduction, (res) => {
 			let total = 0
 			res.value.map((val: any) => {
@@ -285,7 +258,6 @@ export default defineComponent({
 			totalPayDifferen.value = (total + parseInt(formDifferencePayment.totalAmount.replace(',', ''))).toLocaleString('en-US', { currency: 'VND' })
 			totalDeduction.value = total.toLocaleString('en-US', { currency: 'VND' })
 		}, { deep: true })
-
 		watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
 			arrEdit.map((e: any, index: any) => {
 				if (e.employeeId == newVal.employeeId) {
@@ -293,9 +265,7 @@ export default defineComponent({
 				}
 			})
 			arrEdit.push(newVal)
-
 		}, { deep: true })
-
 		watch(() => formDifferencePayment, (res) => {
 			if (res.status == false) {
 				res.totalAmount = res.wage * res.working
@@ -311,46 +281,41 @@ export default defineComponent({
 			totalPayDifferen.value = (res.totalAmount + parseInt(totalDeduction.value.replace(',', ''))).toLocaleString('en-US', { currency: 'VND' })
 			formDifferencePayment.totalAmount = res.totalAmount.toLocaleString('en-US', { currency: 'VND' })
 		}, { deep: true })
-
 		// ================== FUNCTION ==================================
-		const updateDeduction = () => {  
-			arrEdit.map((val: any) => { 
-				val.input.deductionItems.map((e:any) => {
+		const updateDeduction = () => {
+			arrEdit.map((val: any) => {
+				val.input.deductionItems.map((e: any) => {
 					delete e.__typename
 				})
-
 				mutate(val)
-			}) 
+			})
 		}
-
 		const callFuncCalculate = () => {
-			let total1 = originDataUpdate.value.input.nationalPensionDeduction == true ? calculateNationalPensionEmployee(parseInt(formDifferencePayment.totalAmount.replace(',', '')), originDataUpdate.value.input.nationalPensionSupportPercent) : 0
-			let total2 = calculateHealthInsuranceEmployee(parseInt(formDifferencePayment.totalAmount.replace(',', '')))
-			let total3 = calculateLongTermCareInsurance(parseInt(formDifferencePayment.totalAmount.replace(',', '')))
-			let total4 = originDataUpdate.value.input.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(parseInt(formDifferencePayment.totalAmount.replace(',', '')), originDataUpdate.value.input.employeementInsuranceSupportPercent) : 0
-
+			let dataDefault = originDataUpdate.value.input
+			let totalPrices = parseInt(formDifferencePayment.totalAmount.replace(',', '')) 
+			let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
+			let total2 = calculateHealthInsuranceEmployee(totalPrices)
+			let total3 = calculateLongTermCareInsurance(totalPrices)
+			let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
 			arrDeduction.value?.map((e: any) => {
 				if (e.deductionItemCode == 1001) {
 					e.price = total1
-					originDataUpdate.value.input.deductionItems[0].amount = total1
+					dataDefault.deductionItems[0].amount = total1
 				}
 				if (e.deductionItemCode == 1002) {
 					e.price = total2
-					originDataUpdate.value.input.deductionItems[1].amount = total2
+					dataDefault.deductionItems[1].amount = total2
 				}
 				if (e.deductionItemCode == 1003) {
 					e.price = total3
-					originDataUpdate.value.input.deductionItems[2].amount = total3
+					dataDefault.deductionItems[2].amount = total3
 				}
 				if (e.deductionItemCode == 1004) {
 					e.price = total4
-					originDataUpdate.value.input.deductionItems[3].amount = total4
+					dataDefault.deductionItems[3].amount = total4
 				}
 			})
-
-
 		}
-
 		const funcCheckPrice = (id: any) => {
 			let price = 0
 			originDataUpdate.value.input.deductionItems.map((e: any) => {
@@ -359,7 +324,6 @@ export default defineComponent({
 			})
 			return price
 		}
-
 		return {
 			originDataUpdate,
 			messageMonthlySalary,
@@ -377,5 +341,4 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/tab2.scss">
-
 </style>

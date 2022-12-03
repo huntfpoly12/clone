@@ -31,25 +31,20 @@
                     </span>
                 </div>
             </a-form-item>
-
             <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
                 <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataEdited.foreigner"
                     layoutCustom="horizontal" />
             </a-form-item>
-
-
             <a-form-item label="외국인 국적" label-align="right"
                 :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
                 <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
                     @textCountry="(res: any) => { dataEdited.nationality = res }" :disabled="disabledSelectBox" />
             </a-form-item>
-
             <a-form-item label="외국인 체류자격" label-align="right"
                 :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
                 <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
                     :disabled="disabledSelectBox" />
             </a-form-item>
-
             <a-form-item :label="labelResident" label-align="right" class="label-red">
                 <id-number-text-box width="150px" v-model:valueInput="dataEdited.residentId" :required="true" />
             </a-form-item>
@@ -57,7 +52,6 @@
                 <text-number-box width="200px" v-model:valueInput="dataEdited.weeklyWorkingHours" :required="true"
                     placeholder="숫자만 입력 가능" />
             </a-form-item>
-
             <a-form-item label="주소" class="clr" label-align="left">
                 <a-row>
                     <a-col :span="5">
@@ -85,7 +79,6 @@
                     </span>
                 </div>
             </a-form-item>
-
             <a-form-item label="부서" label-align="right">
                 <custom-item-select-box v-model:valueInput="dataEdited.department" :arrSelect="selectBoxData1"
                     width="200px" />
@@ -101,8 +94,8 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, computed, watch } from "vue";
-import { radioCheckForeigner } from "../../utils/index";
+import { defineComponent, ref, computed, watch } from "vue";
+import { radioCheckForeigner, DataEdit } from "../../utils/index";
 import dayjs from 'dayjs';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
@@ -124,33 +117,14 @@ export default defineComponent({
         const labelResident = ref('외국인번호 유효성')
         const activeLabel = ref(true)
         const disabledSelectBox = ref(true)
-        const countryInfo = ref()
         const selectBoxData1 = ref()
         const selectBoxData2 = ref()
-        let dataEdited: any = reactive({
-            name: '',
-            foreigner: false,
-            nationality: '대한민국',
-            nationalityCode: 'KR',
-            stayQualification: 'C-4',
-            residentId: '',
-            // zipcode: '',
-            roadAddress: '',
-            addressExtend: '',
-            email: '',
-            employeeId: null,
-            joinedAt: "",
-            leavedAt: "",
-            retirementIncome: false,
-            weeklyWorkingHours: 0,
-            department: '',
-            responsibility: '',
-        })
+        let dataEdited: any = DataEdit
+        const store = useStore();
+        const globalYear: any = computed(() => store.state.settings.globalYear);
         const originData = ref({
             companyId: companyId,
         })
-        const store = useStore();
-        const globalYear: any = computed(() => store.state.settings.globalYear);
         const originDataDetail = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -216,7 +190,6 @@ export default defineComponent({
                 dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
             }
         })
-
         const {
             mutate,
             onError,
@@ -229,7 +202,6 @@ export default defineComponent({
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
-
         // ============ WATCH ================================
         watch(() => props.idRowEdit, (value) => {
             let checked = 0
@@ -240,7 +212,6 @@ export default defineComponent({
                     arr = e
                 }
             })
-
             if (checked == 0) {
                 originDataDetail.value.employeeId = value
                 refetchValueDetail()
@@ -264,7 +235,6 @@ export default defineComponent({
                 dataEdited.responsibility = arr.responsibility
             }
         })
-
         watch(() => JSON.parse(JSON.stringify(dataEdited)), (newVal, oldVal) => {
             arrEdit.map((e: any, index: any) => {
                 if (e.employeeId == newVal.employeeId) {
@@ -273,7 +243,6 @@ export default defineComponent({
             })
             arrEdit.push(newVal)
         }, { deep: true })
-
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
@@ -288,17 +257,11 @@ export default defineComponent({
                 dataEdited.stayQualification = 'C-4'
             }
         })
-
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataEdited.zipcode = data.zonecode;
             dataEdited.roadAddress = data.roadAddress;
         }
-
-        const customItemCreating = (e: any) => {
-
-        }
-
         const actionUpdated = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -319,7 +282,6 @@ export default defineComponent({
                         employeeId: e.employeeId,
                         input: newValDataEdit
                     };
-
                     mutate(dataCallCreat)
                 })
             }
@@ -330,19 +292,15 @@ export default defineComponent({
             disabledSelectBox,
             loading,
             actionUpdated,
-            countryInfo,
             dataEdited,
             funcAddress,
             radioCheckForeigner,
             activeKey: 1,
-            customItemCreating,
             selectBoxData1,
             selectBoxData2
         };
     },
 });
 </script>
- 
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
-
 </style>
