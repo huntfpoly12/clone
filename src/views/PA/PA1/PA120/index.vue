@@ -176,7 +176,7 @@ export default defineComponent({
         });
         const openAddNewModal = () => {
             actionChangeComponent.value = 1
-            modalAddNewStatus.value = true;
+            modalAddNewStatus.value = !modalAddNewStatus.value;
         };
         const actionEdit = (val: any) => {
             actionChangeComponent.value = 2

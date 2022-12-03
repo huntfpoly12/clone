@@ -137,12 +137,10 @@ export default defineComponent({
     };
 
     watch(() => props.popupStatus, (newValue) => {
-      if (!newValue) {
-        employeeId.value = null;
-        residentId.value = '';
-        foreigner.value = 0;
-        Object.assign(formStateTab1, initFormStateTab1);
-      }
+      Object.assign(formStateTab1, initFormStateTab1);
+      employeeId.value = null;
+      residentId.value = '';
+      foreigner.value = 0;
     })
     const foreigner = ref(formStateTab1.foreigner == true ? 1 : 0);
     watch(foreigner, (newValue) => {
