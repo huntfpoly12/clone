@@ -113,7 +113,7 @@ import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
 import { Message } from "@/configs/enum"
 
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
+import { EditOutlined, HistoryOutlined, DeleteOutlined, } from "@ant-design/icons-vue"
 
 export default defineComponent({
     components: {
@@ -184,6 +184,7 @@ export default defineComponent({
             modalEditStatus.value = true
             trigger.value = true
             refetchData()
+
         }
         const eventCLoseAddPopup = () => {
             trigger.value = true
@@ -232,6 +233,7 @@ export default defineComponent({
                 refetchData()
             }
         })
+
         return {
             loading,
             idRowEdit,
@@ -255,6 +257,18 @@ export default defineComponent({
     },
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -393,11 +393,11 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
 import dayjs, { Dayjs } from "dayjs";
-import { optionsRadioReportType, optionsRadioPaymentType } from "./data";
+import { optionsRadioReportType, optionsRadioPaymentType } from "./utils/data";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
-import { initialFormState, initialFormStateDeduction } from "./data";
+import { initialFormState, initialFormStateDeduction } from "./utils/data";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 export default defineComponent({
