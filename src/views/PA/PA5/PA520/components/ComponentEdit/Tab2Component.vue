@@ -120,8 +120,7 @@ import { useStore } from 'vuex';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
-import notification from "@/utils/notification";
-import { count } from "console";
+import notification from "@/utils/notification"; 
 
 export default defineComponent({
 	props: {
@@ -252,25 +251,24 @@ export default defineComponent({
 				originDataDetail.value.employeeId = res
 				originDataUpdate.value.employeeId = res
 				refectchDetail()
-			} else {   
+			} else {    
+				originDataUpdate.value.employeeId = arr.employeeId 
+				originDataUpdate.value.input.nationalPensionDeduction = arr.input.nationalPensionDeduction
+				originDataUpdate.value.input.healthInsuranceDeduction = arr.input.healthInsuranceDeduction
+				originDataUpdate.value.input.longTermCareInsuranceDeduction = arr.input.longTermCareInsuranceDeduction
+				originDataUpdate.value.input.employeementInsuranceDeduction = arr.input.employeementInsuranceDeduction
+				originDataUpdate.value.input.insuranceSupport = arr.input.insuranceSupport
+				originDataUpdate.value.input.nationalPensionSupportPercent = arr.input.nationalPensionSupportPercent ? arr.input.nationalPensionSupportPercent : 0
+				originDataUpdate.value.input.employeementInsuranceSupportPercent = arr.input.employeementInsuranceSupportPercent ? arr.input.employeementInsuranceSupportPercent : 0
+				originDataUpdate.value.input.monthlyPaycheck = arr.input.monthlyPaycheck
+				originDataUpdate.value.input.workingDays = arr.input.workingDays
+				originDataUpdate.value.input.dailyWage = arr.input.dailyWage
+				originDataUpdate.value.input.monthlyWage = arr.input.monthlyWage
+				originDataUpdate.value.input.deductionItems = arr.input.deductionItems 
 
-				console.log(arr);
-				
-				originDataUpdate.value.input.nationalPensionDeduction = arr.nationalPensionDeduction
-				originDataUpdate.value.input.healthInsuranceDeduction = arr.healthInsuranceDeduction
-				originDataUpdate.value.input.longTermCareInsuranceDeduction = arr.longTermCareInsuranceDeduction
-				originDataUpdate.value.input.employeementInsuranceDeduction = arr.employeementInsuranceDeduction
-				originDataUpdate.value.input.insuranceSupport = arr.insuranceSupport
-				originDataUpdate.value.input.nationalPensionSupportPercent = arr.nationalPensionSupportPercent ? arr.nationalPensionSupportPercent : 0
-				originDataUpdate.value.input.employeementInsuranceSupportPercent = arr.employeementInsuranceSupportPercent ? arr.employeementInsuranceSupportPercent : 0
-				originDataUpdate.value.input.monthlyPaycheck = arr.monthlyPaycheck
-				originDataUpdate.value.input.workingDays = arr.workingDays
-				originDataUpdate.value.input.dailyWage = arr.dailyWage
-				originDataUpdate.value.input.monthlyWage = arr.monthlyWage
-				originDataUpdate.value.input.deductionItems = arr.deductionItems 
-				formDifferencePayment.status = arr.monthlyPaycheck
-				formDifferencePayment.wage = arr.monthlyPaycheck == false ? arr.dailyWage : arr.monthlyWage
-				formDifferencePayment.working = arr.workingDays
+				formDifferencePayment.status = arr.input.monthlyPaycheck
+				formDifferencePayment.wage = arr.input.monthlyPaycheck == false ? arr.input.dailyWage : arr.input.monthlyWage
+				formDifferencePayment.working = arr.input.workingDays 
 				
 				arrDeduction.value?.map((e: any) => { 
 					e.price = funcCheckPrice(e.itemCode)
