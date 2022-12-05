@@ -38,13 +38,8 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const tabStatus = ref(true);
+        const activeKey = ref("1");
         const employeeId = ref('');
-        const demoData = reactive({
-            tab1: {
-                a1: "5345345",
-                a2: "45345345"
-            }
-        });
         const setModalVisible = () => {
             emit('closePopup', false);
         }
@@ -67,8 +62,7 @@ export default defineComponent({
             employeeId,
             radioCheckForeigner,
             radioCheckHouseholder,
-            activeKey: ref("1"),
-            demoData,
+            activeKey,
             tabStatus,
             setTabsStatus,
             tab1,

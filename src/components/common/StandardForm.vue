@@ -1,12 +1,12 @@
 <template>
   <form :action="formAction" :name="formName">
-    <DxValidationGroup :name="formName"> 
+    <DxValidationGroup :name="formName" :onDisposing="resetValidate()" ref="textBoxRefKey"> 
         <slot></slot>
     </DxValidationGroup>
   </form>
 </template>
 <script lang="ts">
-import { defineComponent} from "vue";
+import { computed, defineComponent,ref} from "vue";
 import DxValidationGroup from "devextreme-vue/validation-group";
 export default defineComponent({
   props: {
@@ -21,7 +21,19 @@ export default defineComponent({
   components: {
     DxValidationGroup,
   },
-  setup() {}
+
+  setup() {
+    let textBoxRefKey = <any>ref(null);
+    const $this = computed(()=> textBoxRefKey.value);
+    const resetValidate = ()=>{
+      $this.value?.instance.reset();
+       
+    }
+    return{
+      resetValidate,
+      textBoxRefKey
+    }
+  }
 });
 </script>
 
