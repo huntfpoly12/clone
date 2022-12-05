@@ -30,34 +30,28 @@
                 </span>
             </div>
         </a-form-item>
-
         <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
             <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataCreated.foreigner"
                 layoutCustom="horizontal" />
         </a-form-item>
-
         <a-form-item label="외국인 국적" label-align="right"
             :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
             <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
                 @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
                 width="200px" />
         </a-form-item>
-
         <a-form-item label="외국인 체류자격" label-align="right"
             :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
             <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification" width="200px"
                 :disabled="disabledSelectBox" />
         </a-form-item>
-
         <a-form-item :label="labelResident" label-align="right" class="label-red">
             <id-number-text-box width="150px" v-model:valueInput="dataCreated.residentId" :required="true" />
         </a-form-item>
-
         <a-form-item label="주소정근무시간" label-align="right" class="label-red">
             <text-number-box width="200px" v-model:valueInput="dataCreated.weeklyWorkingHours" :required="true"
                 placeholder="숫자만 입력 가능" />
         </a-form-item>
-
         <a-form-item label="주소" class="clr" label-align="left">
             <a-row>
                 <a-col :span="5">
@@ -99,9 +93,8 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, computed, watch } from "vue";
-import { radioCheckForeigner } from "../../utils/index";
-import dayjs from 'dayjs';
+import { defineComponent, ref, computed, watch, reactive } from "vue";
+import { radioCheckForeigner, DataCreated } from "../../utils/index"; 
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -117,23 +110,7 @@ export default defineComponent({
         const selectBoxData1 = ref()
         const selectBoxData2 = ref()
         let dataCreated: any = reactive({
-            name: '',
-            foreigner: false,
-            nationality: '대한민국',
-            nationalityCode: 'KR',
-            stayQualification: 'C-4',
-            residentId: '',
-            zipcode: '',
-            roadAddress: '',
-            addressExtend: '',
-            email: '',
-            employeeId: null,
-            joinedAt: dayjs().format('YYYY-MM-DD'),
-            leavedAt: dayjs().format('YYYY-MM-DD'),
-            retirementIncome: false,
-            weeklyWorkingHours: null,
-            department: '',
-            responsibility: '',
+            ...DataCreated 
         })
         const originData = ref({
             companyId: companyId,
@@ -185,7 +162,6 @@ export default defineComponent({
             notification('success', '업데이트 완료!')
         })
         //============ WATCH =================================
-
         watch(() => dataCreated.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
@@ -200,8 +176,6 @@ export default defineComponent({
                 dataCreated.stayQualification = 'C-4'
             }
         })
-
-
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataCreated.zipcode = data.zonecode;
@@ -225,7 +199,6 @@ export default defineComponent({
                     imputedYear: globalYear.value,
                     input: newValDataCreat
                 }
-
                 mutate(dataCallCreat)
             }
         }
@@ -246,5 +219,4 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
-
 </style>

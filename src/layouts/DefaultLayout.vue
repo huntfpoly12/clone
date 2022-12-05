@@ -140,6 +140,9 @@ const PA430 = defineAsyncComponent(() =>
 const PA610 = defineAsyncComponent(() =>
 	import("../views/PA/PA6/PA610/index.vue")
 );
+const PA620 = defineAsyncComponent(() =>
+	import("../views/PA/PA6/PA620/index.vue")
+);
 const PA630 = defineAsyncComponent(() =>
 	import("../views/PA/PA6/PA630/index.vue")
 );
@@ -214,6 +217,7 @@ export default defineComponent({
 		PA230,
 		PA430,
 		PA610,
+		PA620,
 		PA630,
 		PA530,
 		PA520,
@@ -337,6 +341,7 @@ export default defineComponent({
 			if (this.activeTab.id === "pa-230") return PA230;
 			if (this.activeTab.id === "pa-430") return PA430;
 			if (this.activeTab.id === "pa-610") return PA610;
+			if (this.activeTab.id === "pa-620") return PA620;
 			if (this.activeTab.id === "pa-630") return PA630;
 			if (this.activeTab.id === "pa-530") return PA530;
 			if (this.activeTab.id === "pa-520") return PA520;

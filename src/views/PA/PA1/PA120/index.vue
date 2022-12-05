@@ -188,7 +188,7 @@ export default defineComponent({
         }
         const openAddNewModal = async() => {
             actionChangeComponent.value = 1
-            modalAddNewStatus.value = true;
+            modalAddNewStatus.value = !modalAddNewStatus.value;
             addNew.value.compareData()
             if(!addNew.value.compareData()){
                 popupStatus.value = true;
