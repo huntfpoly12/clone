@@ -93,7 +93,7 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from "vue";
+import { defineComponent, ref, computed, watch, reactive } from "vue";
 import { radioCheckForeigner, DataCreated } from "../../utils/index"; 
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
@@ -109,7 +109,9 @@ export default defineComponent({
         const countryInfo = ref()
         const selectBoxData1 = ref()
         const selectBoxData2 = ref()
-        let dataCreated: any = DataCreated 
+        let dataCreated: any = reactive({
+            ...DataCreated 
+        })
         const originData = ref({
             companyId: companyId,
         })

@@ -41,7 +41,7 @@ export const DataCreated = {
     employeeId: null,
     joinedAt: dayjs().format('YYYY-MM-DD'),
     leavedAt: dayjs().format('YYYY-MM-DD'),
-    retirementIncome: false,
+    retirementIncome: true,
     weeklyWorkingHours: null,
     department: '',
     responsibility: '',

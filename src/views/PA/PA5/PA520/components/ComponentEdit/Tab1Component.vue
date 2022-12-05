@@ -94,7 +94,7 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from "vue";
+import { defineComponent, ref, computed, watch, reactive } from "vue";
 import { radioCheckForeigner, DataEdit } from "../../utils/index";
 import dayjs from 'dayjs';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
@@ -119,7 +119,9 @@ export default defineComponent({
         const disabledSelectBox = ref(true)
         const selectBoxData1 = ref()
         const selectBoxData2 = ref()
-        let dataEdited: any = DataEdit
+        let dataEdited: any = reactive({
+            ...DataEdit
+        })
         const store = useStore();
         const globalYear: any = computed(() => store.state.settings.globalYear);
         const originData = ref({
