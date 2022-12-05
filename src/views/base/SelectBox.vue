@@ -9,6 +9,34 @@
             <tr>
                 <td>
                     <div class="dx-field">
+                        <div class="dx-field-label">Employ Select </div>
+                    </div>
+                    <employ-select :arrayValue="arrayEmploySelect" width="350px" :required="true" />
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li><strong>required:</strong> Boolean (option)</li>
+                        <li>
+                            <strong>valueInput:</strong> {type: Object}
+                        </li>
+                        <li><strong>arrayValue:</strong> {type: Array}</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
+                &lt;employ-select :arrayValue="arrayEmploySelect" :required="true" /&gt;
+        </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
                         <div class="dx-field-label">List country select box</div>
                         <div class="dx-field-value">
                             <country-code-select-box v-model:valueCountry="valueCountry" />
@@ -554,6 +582,11 @@ export default defineComponent({
             { id: 2, name: "Urgent" },
             { id: 3, name: "High" },
         ]);
+        const arrayEmploySelect = ref([
+            { employeeId: 'JTU342378', name: 'khiem', idCardNumber: '800101-1100123', status: 0, foreigner: true },
+            { employeeId: 'KHU342378', name: 'khiem 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
+            { employeeId: 'JHK342378', name: 'khiem 3', idCardNumber: '800101-1100123', status: 1, foreigner: true },
+        ])
         const valueTagSelectBox = ref([1, 2]);
         const saleStatus = ref(10);
         const valTest = ref('Nancy');
@@ -565,6 +598,7 @@ export default defineComponent({
             valueTagSelectBox,
             valueCountry,
             valueTypeCodeSelectSelectBox,
+            arrayEmploySelect,
         };
     },
 });

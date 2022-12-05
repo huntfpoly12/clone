@@ -57,7 +57,7 @@ export default defineComponent({
             onDone: onDonePrint,
             onError: errorSendPrint,
             error,
-        } = useMutation(query.getIncomeWageDailyPayrollRegisterViewUrl);
+        } = useMutation(query.getIncomeWageDailySalaryStatementViewUrl);
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {

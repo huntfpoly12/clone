@@ -94,13 +94,15 @@
             <tr>
                 <td>
                     <p><b>Colorful Badge</b></p>
-                    <colorful-badge :value="40"/>
+                    <colorful-badge :value="40" :year="2022" :month="12"/>
                 </td>
                 <td>
                     <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
+                    <b>- year (Number):</b><br />
+                    <b>- month (Number):</b><br />
                 </td>
                 <td>
-                    <pre class="mycode"> &lt;colorful-badge :value="40"/&gt;
+                    <pre class="mycode"> &lt;colorful-badge :value="40" :year="2022" :month="12"/&gt;
                     </pre>
                 </td>
             </tr>
