@@ -162,7 +162,7 @@ export default defineComponent({
         newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
     });
     const employeeId = ref(null);
-    watch(employeeId, (newValue: any) => {
+    watch(employeeId, (newValue: any, oldvalue) => {
       formStateTab1.employeeId = parseInt(newValue);
     });
 
@@ -228,10 +228,10 @@ export default defineComponent({
     });
 
     const createNewEmployeeWage = (e: any) => {
-      var res = e.validationGroup.validate();
-      if (!res.isValid) {
-        res.brokenRules[0].validator.focus();
-      } else {
+    //   var res = e.validationGroup.validate();
+    //   if (!res.isValid) {
+    //     res.brokenRules[0].validator.focus();
+    //   } else {
         emit('employeeId', employeeId);
         let dataNew = {
           companyId: companyId,
@@ -241,10 +241,25 @@ export default defineComponent({
           },
         };
         createEmployeeWage(dataNew);
-      }
+    //   }
 
     };
-
+// compare data
+    const compareData = () => {
+      var formStateTab1Copy = reactive(formStateTab1);
+      initFormStateTab1.joinedAt = dayjs().format("YYYY-MM-DD");
+      initFormStateTab1.leavedAt = dayjs().format("YYYY-MM-DD");
+      if(JSON.stringify(formStateTab1Copy)!==JSON.stringify(initFormStateTab1)){
+          return false;
+        }
+      if(residentId.value !== ''){
+          return false;
+        }
+      if(employeeId.value == false){
+        return false;
+      }
+      return true;
+    }
     return {
       companyId,
       loading,
@@ -262,7 +277,8 @@ export default defineComponent({
       activeKey: ref("1"),
       createNewEmployeeWage,
       arrDepartments,
-      arrResponsibility
+      arrResponsibility,
+      compareData
     };
   },
 });
