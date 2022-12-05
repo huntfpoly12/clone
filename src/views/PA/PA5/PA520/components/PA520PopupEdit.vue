@@ -3,7 +3,7 @@
         <div id="pa-520" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1">
-                    <Tab1Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" />
+                    <Tab1Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" @editRowKey="activeRowKey"/>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여/공제">
                     <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" />
@@ -43,7 +43,11 @@ export default defineComponent({
                 activeKey.value = '1'
             }
         })
+        const activeRowKey = (id:any)=>{ 
+            emit("editRowKey", id)
+        }
         return { 
+            activeRowKey,
             setModalVisible,
             activeKey
         };

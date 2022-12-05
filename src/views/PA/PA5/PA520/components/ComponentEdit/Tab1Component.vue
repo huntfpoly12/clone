@@ -243,6 +243,12 @@ export default defineComponent({
                     arrEdit.splice(index, 1);
                 }
             })
+
+            if (newVal.employeeId == oldVal.employeeId) { 
+                emit("editRowKey", newVal.employeeId)
+            }
+
+
             arrEdit.push(newVal)
         }, { deep: true })
         watch(() => dataEdited.foreigner, (value: any) => {
@@ -305,4 +311,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
+
 </style>
