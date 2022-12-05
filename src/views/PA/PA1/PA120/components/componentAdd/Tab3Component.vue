@@ -3,7 +3,7 @@
   <div id="tab23-pa120">
     <a-row>
       <a-col :span="24">
-        <a-spin :spinning="false" size="large">
+        <a-spin :spinning="loading" size="large">
           <DxDataGrid
             :show-row-lines="true"
             :hoverStateEnabled="true"
@@ -28,6 +28,7 @@
               alignment="left"
               caption="연말 관계"
               data-field="relation"
+              cell-template="relationChange"
             />
             <DxColumn alignment="left" caption="성명" data-field="name" />
             <DxColumn
@@ -139,6 +140,9 @@
             <template #consignmentRelationshipChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
             </template>
+            <template #relationChange="{ data: cellData }">
+                {{relationFormat(cellData.value)}}
+            </template>
           </DxDataGrid>
         </a-spin>
         <div>
@@ -171,7 +175,7 @@
                 <div class="display-flex">
                   <text-number-box
                     width="200px"
-                    :value="basicDeductionSummary"
+                    :value="basicDeductionSummary == 0 ?'': basicDeductionSummary"
                     :readOnly="true"
                     :required="false"
                   />
@@ -181,7 +185,7 @@
                 <div class="display-flex">
                   <text-number-box
                     width="200px"
-                    :value="basicDeductionSummary2"
+                    :value="basicDeductionSummary2 == 0 ?'': basicDeductionSummary2"
                     :readOnly="true"
                     :required="false"
                   />
@@ -192,7 +196,7 @@
                 <div class="display-flex">
                   <text-number-box
                     width="200px"
-                    :value="descendantSummary"
+                    :value="descendantSummary == 0 ?'': descendantSummary"
                     :readOnly="true"
                     :required="false"
                   />
@@ -210,7 +214,7 @@
                 <div class="display-flex">
                   <text-number-box
                     width="200px"
-                    :value="seniorSummary"
+                    :value="seniorSummary == 0 ?'': seniorSummary"
                     :readOnly="true"
                     :required="false"
                   />
@@ -220,7 +224,7 @@
                 <div class="display-flex">
                   <text-number-box
                     width="200px"
-                    :value="disabledSummary"
+                    :value="disabledSummary == 0 ?'': disabledSummary"
                     :readOnly="true"
                     :required="false"
                   />
@@ -230,7 +234,7 @@
                 <div class="display-flex">
                   <text-number-box
                     width="200px"
-                    :value="womenSummary2"
+                    :value="womenSummary2 == 0 ?'': womenSummary2"
                     :readOnly="true"
                     :required="false"
                   />
@@ -240,7 +244,7 @@
                 <div class="display-flex">
                   <text-number-box
                     width="200px"
-                    :value="singleParentSummary"
+                    :value="singleParentSummary == 0 ?'': singleParentSummary"
                     :readOnly="true"
                     :required="false"
                   />
@@ -250,7 +254,7 @@
                 <div class="display-flex">
                   <text-number-box
                     width="200px"
-                    :value="maternityAdoptionSummary"
+                    :value="maternityAdoptionSummary == 0 ?'': maternityAdoptionSummary"
                     :readOnly="true"
                     :required="false"
                   />
@@ -265,13 +269,10 @@
       :modalStatus="modalAddNewDependent"
       @closePopup="
         modalAddNewDependent = false;
-        isEdit = false;
       "
       :employeeId="employeeId"
       :dataSourceLen="dataSource.length"
       @upDateData="updateData"
-      :isEdit="isEdit"
-      ref="editForm"
     ></popup-add-new-dependent>
     <PopupEditUpdateDependent
       :modalStatus="modalEditStatus"
@@ -305,10 +306,10 @@ import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue';
 import PopupEditUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue';
 import { EditOutlined } from '@ant-design/icons-vue';
 
-import { useMutation, useQuery } from '@vue/apollo-composable';
+import { useQuery } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import { companyId } from '@/helpers/commonFunction';
-import BtnCheck from '../btnCheck/BtnCheck.vue';
+import BtnCheck from '@/views/PA/PA1/PA120/components/btnCheck/BtnCheck.vue';
 export default defineComponent({
   components: {
     PopupAddNewDependent,
@@ -339,17 +340,16 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const modalAddNewDependent = ref<boolean>(false);
     const modalEditStatus = ref<boolean>(false);
-    const modalHistoryStatus = ref<boolean>(false);
     const globalYear = computed(() => store.state.settings.globalYear);
     const idRowIndex = ref();
 
-    const common = computed(() => store.state.common.user);
+    const dependantsRelation = computed(() => store.state.common.dependantsRelation);
     const originDataDetail = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
       employeeId: ref(props.employeeId).value,
     });
-    const { refetch, result } = useQuery(
+    const { refetch, result, loading } = useQuery(
       queries.getEmployeeWage,
       originDataDetail
     );
@@ -363,7 +363,6 @@ export default defineComponent({
     const womenSummary2 = ref();
     const singleParentSummary = ref();
     const maternityAdoptionSummary = ref();
-    const isEdit = ref(false);
     const editForm = ref();
     const idRowEdit = ref(props.employeeId);
     watch(result, (value) => {
@@ -444,8 +443,15 @@ export default defineComponent({
     const updateData = () => {
       refetch();
     };
+    const relationFormat = (idRelation: number) => {
+        const obj = dependantsRelation.value.filter((item:any) => {
+            let check = item.label.charAt(0) == idRelation;
+            return check;
+        })
+        return obj[0].label;
+    }
     // onMounted(() => {
-    //   console.log(idRowEdit, 'idRowEdit');
+    //   console.log(globalYear,dependantsRelation , 'idRowEdit');
     // });
     return {
       dataSource,
@@ -474,15 +480,14 @@ export default defineComponent({
       womenSummary2,
       singleParentSummary,
       maternityAdoptionSummary,
-      isEdit,
       editForm,
       idRowIndex,
       idRowEdit,
+      dependantsRelation,
+      relationFormat,
+      loading,
     };
   },
-  //   mounted() {
-  //     this.$store.commit('increment');
-  //   }
 });
 </script>
 <style scoped lang="scss">
