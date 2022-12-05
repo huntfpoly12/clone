@@ -27,13 +27,17 @@
                                 <DxItem location="after" template="pagination-table" />
                                 <DxItem name="searchPanel" />
                                 <DxItem name="exportButton" />
-                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                                <DxItem name="groupPanel" />
-                                <DxItem name="addRowButton" show-text="always" />
-                                <DxItem name="columnChooserButton" />
+                                <DxItem location="after" template="button-history" css-class="cell-button-add" />
+                                <DxItem location="after" template="button-template" css-class="cell-button-add" /> 
+                                <DxItem name="addRowButton" show-text="always" /> 
                             </DxToolbar>
                             <template #button-template>
                                 <DxButton icon="plus" @click="addRow" />
+                            </template>
+                            <template #button-history style="border-color: #ddd;">
+                                <DxButton icon="plus">
+                                    <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
+                                </DxButton>
                             </template>
                             <template #pagination-table>
                                 <div v-if="rowTable > originData.rows">
@@ -71,12 +75,7 @@
 
                             <DxColumn :width="70" cell-template="pupop" />
                             <template #pupop="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center;">
-                                    <a-tooltip placement="top" @click="modalHistory(data.data.employeeId)"
-                                        class="mr-10">
-                                        <template #title>변경이력</template>
-                                        <HistoryOutlined />
-                                    </a-tooltip>
+                                <div class="custom-action" style="text-align: center;"> 
                                     <a-tooltip placement="top" v-if="data.data.deletable == true"
                                         @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
                                         <template #title>변경이력</template>
@@ -461,7 +460,7 @@ export default defineComponent({
 
         }
 
-        const modalHistory = (data: any) => {
+        const modalHistory = () => {
             modalHistoryStatus.value = true;
         }
 
