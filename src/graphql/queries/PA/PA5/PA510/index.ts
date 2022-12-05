@@ -1,14 +1,10 @@
-import getEmployeeWageDailies from "./getEmployeeWageDailies";
-import getDepartments from "../../../common/getDepartments";
-import getResponsibilities from "../../../common/getResponsibilities";
-import getEmployeeWageDaily from "./getEmployeeWageDaily";
-import getWithholdingConfigPayItems from "./getWithholdingConfigPayItems";
-
+import getIncomeProcessWageDailies from "./getIncomeProcessWageDailies";
+import getIncomeWageDailyPayrollRegisterViewUrl from "./getIncomeWageDailyPayrollRegisterViewUrl";
+import getIncomeWageDailySalaryStatementViewUrl from "./getIncomeWageDailySalaryStatementViewUrl";
 const queries = {
-    getEmployeeWageDailies: getEmployeeWageDailies,
-    getDepartments: getDepartments,
-    getResponsibilities: getResponsibilities,
-    getEmployeeWageDaily: getEmployeeWageDaily,
-    getWithholdingConfigPayItems: getWithholdingConfigPayItems,
+    getIncomeProcessWageDailies: getIncomeProcessWageDailies,
+    getIncomeWageDailyPayrollRegisterViewUrl: getIncomeWageDailyPayrollRegisterViewUrl,
+    getIncomeWageDailySalaryStatementViewUrl: getIncomeWageDailySalaryStatementViewUrl,
+
 };
 export default queries;

@@ -21,12 +21,60 @@ export const IncomeTaxAppRate = [
     { id: 2, text: '180%' },
     { id: 3, text: '520%' },
 ];
-
 export const dataDemo = [
     { id: 1, text: '100%' },
     { id: 2, text: '180%' },
     { id: 3, text: '520%' },
 ];
-
-
-
+import dayjs from 'dayjs';
+export const DataCreated = {
+    name: '',
+    foreigner: false,
+    nationality: '대한민국',
+    nationalityCode: 'KR',
+    stayQualification: 'C-4',
+    residentId: '',
+    zipcode: '',
+    roadAddress: '',
+    addressExtend: '',
+    email: '',
+    employeeId: null,
+    joinedAt: dayjs().format('YYYY-MM-DD'),
+    leavedAt: dayjs().format('YYYY-MM-DD'),
+    retirementIncome: true,
+    weeklyWorkingHours: null,
+    department: '',
+    responsibility: '',
+};
+export const DataEdit = {
+    name: '',
+    foreigner: false,
+    nationality: '대한민국',
+    nationalityCode: 'KR',
+    stayQualification: 'C-4',
+    residentId: '',
+    roadAddress: '',
+    addressExtend: '',
+    email: '',
+    employeeId: null,
+    joinedAt: "",
+    leavedAt: "",
+    retirementIncome: false,
+    weeklyWorkingHours: 0,
+    department: '',
+    responsibility: '',
+}
+export const originDataInputUpdate = {
+    nationalPensionDeduction: false,
+    healthInsuranceDeduction: false,
+    longTermCareInsuranceDeduction: false,
+    employeementInsuranceDeduction: false,
+    insuranceSupport: false,
+    nationalPensionSupportPercent: 0,
+    employeementInsuranceSupportPercent: 0,
+    monthlyPaycheck: false,
+    workingDays: 0,
+    dailyWage: 0,
+    monthlyWage: 0,
+    deductionItems: []
+}

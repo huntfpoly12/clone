@@ -106,7 +106,7 @@
             </tr>
             <tr>
                 <td>
-                    <p><b>Colorful Badge</b></p>
+                    <p><b>Process Status</b></p>
                     {{ status }}
                     <process-status v-model:valueStatus="status"  style="margin-left: 150px;"/>
                 </td>
@@ -114,7 +114,7 @@
                     <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
                 </td>
                 <td>
-                    <pre class="mycode"> &lt;colorful-badge v-model:valueStatus="status"/&gt;
+                    <pre class="mycode"> &lt;process-status v-model:valueStatus="status"/&gt;
                     </pre>
                 </td>
             </tr>

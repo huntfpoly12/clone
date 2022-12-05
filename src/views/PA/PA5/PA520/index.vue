@@ -96,7 +96,7 @@
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" />
                 <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
-                    v-if="actionChangeComponent == 2" />
+                    @editRowKey="activeRowKey" v-if="actionChangeComponent == 2" />
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
@@ -208,15 +208,11 @@ export default defineComponent({
             }
         })
         // ======================= FUNCTION ================================
-        const openAddNewModal = () => {
+        const openAddNewModal = () => { 
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
         }
         const openEditModal = (val: any) => {
-            //Add class row choose
-            let a = document.body.querySelectorAll('[aria-rowindex]') 
-            a[val.rowIndex].classList.add("active-row-key");
-
             actionChangeComponent.value = 2
             idRowEdit.value = val.data.employeeId
             modalEditStatus.value = true
@@ -243,6 +239,18 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         }
+
+        const activeRowKey = (id: any) => {
+            let indexActive = 0
+            dataSource.value.map((val: any, index: any) => {
+                if (val.employeeId == id)
+                    indexActive = index 
+            })
+            //Add class row choose
+            let a = document.body.querySelectorAll('#id-index [aria-rowindex]')
+            a[indexActive].classList.add("active-row-key");
+        }
+
         return {
             actionChangeComponent,
             idRowEdit,
@@ -265,6 +273,7 @@ export default defineComponent({
             openAddNewModal,
             openEditModal,
             statusComfirm,
+            activeRowKey
         }
     },
 })

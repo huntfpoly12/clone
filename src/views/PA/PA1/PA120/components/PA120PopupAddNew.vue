@@ -4,7 +4,7 @@
             <div id="pa-120">
                 <a-tabs v-model:activeKey="activeKey" type="card">
                     <a-tab-pane key="1" tab="기본">
-                        <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId" @setTabsStatus="setTabsStatus($event)"></Tab1Component>
+                        <Tab1Component ref="tab1" :popupStatus="modalStatus" @employeeId="setEmployeeId" @setTabsStatus="setTabsStatus($event)"></Tab1Component>
                     </a-tab-pane>
                     <a-tab-pane key="2" tab="급여" :disabled="tabStatus">
                         <Tab2Component :employeeId="employeeId"></Tab2Component>
@@ -18,7 +18,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive, ref, watch } from "vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import Tab1Component from "./componentAdd/Tab1Component.vue";
 import Tab2Component from "./componentAdd/Tab2Component.vue";
@@ -34,16 +34,12 @@ export default defineComponent({
     },
     props: {
         modalStatus: Boolean,
+        isDestoy: Boolean,
     },
     setup(props, { emit }) {
         const tabStatus = ref(true);
+        const activeKey = ref("1");
         const employeeId = ref('');
-        const demoData = reactive({
-            tab1: {
-                a1: "5345345",
-                a2: "45345345"
-            }
-        });
         const setModalVisible = () => {
             emit('closePopup', false);
         }
@@ -53,16 +49,24 @@ export default defineComponent({
         const setTabsStatus = (data : any) => {
             tabStatus.value = data;
         }
+        const tab1 = ref();
+        const compareData = () => {
+            if(tab1.value.compareData()){
+                return true;
+            }
+            return false;
+        }
         return {
             setModalVisible,
             setEmployeeId,
             employeeId,
             radioCheckForeigner,
             radioCheckHouseholder,
-            activeKey: ref("1"),
-            demoData,
+            activeKey,
             tabStatus,
             setTabsStatus,
+            tab1,
+            compareData,
         };
     },
 });

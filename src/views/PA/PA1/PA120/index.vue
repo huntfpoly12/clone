@@ -60,7 +60,7 @@
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" width="130"/>
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{}" class="custom-action">
                             <div class="custom-grade-cell">
@@ -86,9 +86,9 @@
                     </DxDataGrid>
                 </a-spin>
             </a-col>
-            <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
-                <PA120PopupAddNewVue :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
-                    @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" />
+            <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+                <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
+                    @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" :key = "addComponentKey" />
                 <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
                     v-if="actionChangeComponent == 2" />
             </a-col>
@@ -97,11 +97,14 @@
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
             :idRowEdit="idRowEdit" typeHistory="pa-120" />
+        <PopupMessage :modalStatus="popupStatus" @closePopup="popupStatus = false" :typeModal="'confirm'"
+            :title="'ban co muon xoa khong'" :content="'Content notification'" :keyAccept="'1234'" :okText="'확인'"
+            @checkConfirm="onPopupComfirm" />
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging } from "devextreme-vue/data-grid";
+import { ref, defineComponent, watch, computed, nextTick } from "vue";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem ,DxPaging } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -113,7 +116,7 @@ import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
 import { Message } from "@/configs/enum"
 
-import { EditOutlined, HistoryOutlined, DeleteOutlined, } from "@ant-design/icons-vue"
+import { EditOutlined, HistoryOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
 export default defineComponent({
     components: {
@@ -145,7 +148,7 @@ export default defineComponent({
         const idAction = ref()
         const modalAddNewStatus = ref<boolean>(false);
         const modalEditStatus = ref<boolean>(false)
-        const modalHistoryStatus = ref<boolean>(false)
+        const modalHistoryStatus = ref<boolean>(false);
         const idRowEdit = ref()
         const {
             refetch: refetchData,
@@ -174,9 +177,22 @@ export default defineComponent({
                 trigger.value = false;
             }
         });
-        const openAddNewModal = () => {
+        // addcomponent
+        const addComponentKey = ref(1);
+        const popupStatus = ref(false);
+        const onPopupComfirm = (params: Boolean) => {
+            if(params){
+                popupStatus.value = false;
+                addComponentKey.value++;
+            }
+        }
+        const openAddNewModal = async() => {
             actionChangeComponent.value = 1
-            modalAddNewStatus.value = true;
+            modalAddNewStatus.value = !modalAddNewStatus.value;
+            addNew.value.compareData()
+            if(!addNew.value.compareData()){
+                popupStatus.value = true;
+            }
         };
         const actionEdit = (val: any) => {
             actionChangeComponent.value = 2
@@ -233,7 +249,8 @@ export default defineComponent({
                 refetchData()
             }
         })
-
+        //ref
+        const addNew = ref();
         return {
             loading,
             idRowEdit,
@@ -253,6 +270,10 @@ export default defineComponent({
             openAddNewModal, eventCLoseAddPopup,
             modalAddNewStatus, statusComfirm,
             per_page, move_column, colomn_resize,
+            addComponentKey,
+            onPopupComfirm,
+            popupStatus,
+            addNew,
         }
     },
 });
