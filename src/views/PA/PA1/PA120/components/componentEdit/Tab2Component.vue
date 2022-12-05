@@ -124,7 +124,7 @@
     </a-row>
     <a-row style="margin-top: 40px">
       <a-col :span="8" :offset="8" style="text-align: center;">
-        <button-basic style="margin-right: 20px" text="공제계산" type="default" mode="contained" :width="120" @onClick="calculateTax" :disabled="calculateStatus"/>
+        <button-basic style="margin-right: 20px" text="공제계산" type="default" mode="contained" :width="120" @onClick="calculateTax"/>
         <button-basic text="저장" type="default" mode="contained" :width="90" />
       </a-col>
     </a-row>
@@ -158,15 +158,10 @@ export default defineComponent({
     modalStatus: Boolean,
   },
   setup(props, { emit }) {
-    const calculateStatus = ref(true);
-    const amountTaxFree =  ref([]);
-    const totalPayItemTaxFree = computed(() => amountTaxFree.value.reduce((totalAmount, amount) => totalAmount + amount, 0));
-    const amountTax =  ref([]);
-    const totalPayItemTax = computed(() => amountTax.value.reduce((totalAmount, amount) => totalAmount + amount, 0));
-    const amountPaymentItem = ref([]);
-    const totalPayItem = computed(()=> totalPayItemTaxFree.value + totalPayItemTax.value);
+    const totalPayItemTaxFree = ref(0);
+    const totalPayItemTax = ref(0);
+    const totalPayItem = ref(0);
 
-    const amountDeduction = ref([]);
     const totalDeduction=  ref(0);
     const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
 
@@ -200,18 +195,23 @@ export default defineComponent({
     }))
     watch(resConfigPayItems, (value) => {
       if (value) {
-        datagConfigPayItems.value = value.getWithholdingConfigPayItems;
+        datagConfigPayItems.value = value.getWithholdingConfigPayItems.map((item :any) => {
+              return { 
+                        itemCode:item.itemCode ,
+                        name :item.name,
+                        tax: item.tax,
+                        taxPayItemCode:item.taxPayItemCode, 
+                        taxfreePayItemCode:item.taxfreePayItemCode,
+                        taxfreePayItemName:item.taxfreePayItemName,
+                        taxFreeIncludeSubmission:item.taxFreeIncludeSubmission,
+                        value: 0
+                      }
+          });;
         trigger.value = false;
       }
     });
 
-    watch(totalPayItem, (value) => {
-      if (value > 0) {
-        calculateStatus.value = false;
-      }else{
-        calculateStatus.value = true;
-      }
-    });
+
 
 
     // get WithouthouldingConfigdeduction
@@ -266,16 +266,36 @@ export default defineComponent({
           }
 				}
 			})
-      totalDeduction.value =   dataConfigDeduction.value.reduce((accumulator : any, object : any) => {
+      formStateTab2.payItems = datagConfigPayItems.value?.map((item: any) => {
+            return { 
+              itemCode: item.itemCode,
+              amount: item.value
+            }
+      });
+      totalPayItem.value = datagConfigPayItems.value.reduce((accumulator : any, object : any) => {
+        return accumulator + object.value;
+      }, 0);
+      totalPayItemTax.value = datagConfigPayItems.value.reduce((accumulator : any, object : any) => {
+        if(object.tax){
+          accumulator += object.value
+        }
+        return accumulator;
+      }, 0);
+      totalPayItemTaxFree.value = datagConfigPayItems.value.reduce((accumulator : any, object : any) => {
+        if(!object.tax){
+          accumulator += object.value
+        }
+        return accumulator;
+      }, 0);
+      totalDeduction.value = dataConfigDeduction.value.reduce((accumulator : any, object : any) => {
         return accumulator + object.value;
         }, 0);
     }
     return {
       formStateTab2, loading1, loading2,
-      calculateStatus,
       rangeDate,
-      amountPaymentItem,totalPayItem,amountTaxFree,amountTax,totalPayItemTaxFree,totalPayItemTax,
-      amountDeduction,totalDeduction,
+      totalPayItem,totalPayItemTaxFree,totalPayItemTax,
+      totalDeduction,
       subPayment,
       calculateTax,
       radioCheckPersenPension,
