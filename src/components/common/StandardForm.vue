@@ -23,7 +23,7 @@ export default defineComponent({
   },
 
   setup() {
-    let textBoxRefKey = <any>ref(null);
+    let textBoxRefKey: any = ref(null);
     const $this = computed(()=> textBoxRefKey.value);
     const resetValidate = ()=>{
       $this.value?.instance.reset();
