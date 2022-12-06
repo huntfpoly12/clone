@@ -52,120 +52,121 @@
                                 <b>지급연월</b><br>
                                 <span>{{ data.data.imputedYear }}-{{ data.data.imputedMonth }}</span>
                             </template>
-                            <DxColumn caption="1" cell-template="month-1" />
+                            <DxColumn caption="1" width="100px" cell-template="month-1" />
                             <template #month-1="{ data }">
                                 <div v-if="(data.data.imputedMonth == 1)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="2" cell-template="month-2" />
+                            <DxColumn caption="2" width="100px" cell-template="month-2" />
                             <template #month-2="{ data }">
                                 <div v-if="(data.data.imputedMonth == 2)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="3" cell-template="month-3" />
+                            <DxColumn caption="3" width="100px" cell-template="month-3" />
                             <template #month-3="{ data }">
                                 <div v-if="(data.data.imputedMonth == 3)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="4" cell-template="month-4" />
+                            <DxColumn caption="4" width="100px" cell-template="month-4" />
                             <template #month-4="{ data }">
                                 <div v-if="(data.data.imputedMonth == 4)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="5" cell-template="month-5" />
+                            <DxColumn caption="5" width="100px" cell-template="month-5" />
                             <template #month-5="{ data }">
                                 <div v-if="(data.data.imputedMonth == 5)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="6" cell-template="month-6" />
+                            <DxColumn caption="6" width="100px" cell-template="month-6" />
                             <template #month-6="{ data }">
                                 <div v-if="(data.data.imputedMonth == 6)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="7" cell-template="month-7" />
+                            <DxColumn caption="7" width="100px" cell-template="month-7" />
                             <template #month-7="{ data }">
                                 <div v-if="(data.data.imputedMonth == 7)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="8" cell-template="month-8" />
+                            <DxColumn caption="8" width="100px" cell-template="month-8" />
                             <template #month-8="{ data }">
                                 <div v-if="(data.data.imputedMonth == 8)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="9" cell-template="month-9" />
+                            <DxColumn caption="9" width="100px" cell-template="month-9" />
                             <template #month-9="{ data }">
                                 <div v-if="(data.data.imputedMonth == 9)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="10" cell-template="month-10" />
+                            <DxColumn caption="10" width="100px" cell-template="month-10" />
                             <template #month-10="{ data }">
                                 <div v-if="(data.data.imputedMonth == 10)">
                                     <colorful-badge :value="data.data.status" :year="data.data.imputedYear"
                                         :month="data.data.imputedMonth" />
                                 </div>
                             </template>
-                            <DxColumn caption="11" cell-template="month-11" />
+                            <DxColumn caption="11" width="100px" cell-template="month-11" />
                             <template #month-11="{ data }">
                                 <div v-if="(data.data.imputedMonth == 11)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="12" cell-template="month-12" />
+                            <DxColumn caption="12" width="100px" cell-template="month-12" />
                             <template #month-12="{ data }">
                                 <div v-if="(data.data.imputedMonth == 12)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxMasterDetail :enabled="true" template="detailRow" />
+                            <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
                             <template #detailRow="{ data }">
-
-                                <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="true"
-                                    :column-auto-width="true">
-                                    <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first"
-                                        data-type="string" />
-                                    <template #col-first="{ data }">
-                                        <b>{{ data.data.name }}</b><br>
-
-                                    </template>
-                                    <DxColumn caption="1" cell-template="month-1" />
-                                    <template #month-1="{ data }">
-                                        <div v-if="(data.data.month == 1)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="2" cell-template="month-2" />
-                                    <template #month-2="{ data }">
-                                        <div v-if="(data.data.month == 2)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="3" cell-template="month-3" />
-                                    <template #month-3="{ data }">
-                                        <div v-if="(data.data.month == 3)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="4" cell-template="month-4" />
-                                    <template #month-4="{ data }">
-                                        <div v-if="(data.data.month == 4)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="5" cell-template="month-5" />
-                                    <template #month-5="{ data }">
-                                        <div v-if="(data.data.month == 5)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="6" cell-template="month-6" />
-                                    <template #month-6="{ data }">
-                                        <div v-if="(data.data.month == 6)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="7" cell-template="month-7" />
-                                    <template #month-7="{ data }">
-                                        <div v-if="(data.data.month == 7)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="8" cell-template="month-8" />
-                                    <template #month-8="{ data }">
-                                        <div v-if="(data.data.month == 8)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="9" cell-template="month-9" />
-                                    <template #month-9="{ data }">
-                                        <div v-if="(data.data.month == 9)">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="10" cell-template="month-10" />
-                                    <template #month-10="{ data }">
-                                        <div v-if="data.data.month == 10">{{ data.data.value }}</div>
-                                    </template>
-                                    <DxColumn caption="11" cell-template="month-11" />
-                                    <template #month-11="{ data }">
-                                        <div v-if="(data.data.month == 11)">{{ data.data.value }}
-                                        </div>
-                                    </template>
-                                    <DxColumn caption="12" cell-template="month-12" />
-                                    <template #month-12="{ data }">
-                                        <div v-if="(data.data.month == 12)">{{ data.data.value }}
-                                        </div>
-                                    </template>
-                                </DxDataGrid>
-
+                                <div class="table-detail">
+                                    <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="false"
+                                        :column-auto-width="true" :allow-column-reordering="move_column"
+                                        :show-column-headers="false" :allow-column-resizing="colomn_resize"
+                                        :focused-row-enabled="true">
+                                        <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first"
+                                            data-type="string" />
+                                        <template #col-first="{ data }">
+                                            <b>{{ data.data.name }}</b><br> 
+                                        </template>
+                                        <DxColumn caption="1" width="100px" cell-template="month-1" />
+                                        <template #month-1="{ data }">
+                                            <div v-if="(data.data.month == 1)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="2" width="100px" cell-template="month-2" />
+                                        <template #month-2="{ data }">
+                                            <div v-if="(data.data.month == 2)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="3" width="100px" cell-template="month-3" />
+                                        <template #month-3="{ data }">
+                                            <div v-if="(data.data.month == 3)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="4" width="100px" cell-template="month-4" />
+                                        <template #month-4="{ data }">
+                                            <div v-if="(data.data.month == 4)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="5" width="100px" cell-template="month-5" />
+                                        <template #month-5="{ data }">
+                                            <div v-if="(data.data.month == 5)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="6" width="100px" cell-template="month-6" />
+                                        <template #month-6="{ data }">
+                                            <div v-if="(data.data.month == 6)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="7" width="100px" cell-template="month-7" />
+                                        <template #month-7="{ data }">
+                                            <div v-if="(data.data.month == 7)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="8" width="100px" cell-template="month-8" />
+                                        <template #month-8="{ data }">
+                                            <div v-if="(data.data.month == 8)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="9" width="100px" cell-template="month-9" />
+                                        <template #month-9="{ data }">
+                                            <div v-if="(data.data.month == 9)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="10" width="100px" cell-template="month-10" />
+                                        <template #month-10="{ data }">
+                                            <div v-if="data.data.month == 10">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="11" width="100px" cell-template="month-11" />
+                                        <template #month-11="{ data }">
+                                            <div v-if="(data.data.month == 11)">{{ data.data.value }}
+                                            </div>
+                                        </template>
+                                        <DxColumn caption="12" width="100px" cell-template="month-12" />
+                                        <template #month-12="{ data }">
+                                            <div v-if="(data.data.month == 12)">{{ data.data.value }}
+                                            </div>
+                                        </template>
+                                    </DxDataGrid>
+                                </div>
                             </template>
                         </DxDataGrid>
                         <div class="pagination-table" v-if="rowTable > originData.rows">
@@ -173,6 +174,16 @@
                                 :total="rowTable" show-less-items style="margin-top: 10px" />
                         </div>
                     </a-spin>
+                </a-col>
+
+                <a-col :span="24">
+                    <div class="header-detail-main">
+                        <div class="table-detail-left">
+                            <DxButton text="귀 {yyyy-mm}" />
+                            <DxButton text="귀 {yyyy-mm}" />
+                            <process-status v-model:valueStatus="status" />
+                        </div>
+                    </div>
                 </a-col>
 
                 <!-- <a-col :span="16" class="custom-layout">
@@ -332,6 +343,7 @@ export default defineComponent({
     },
     setup() {
         let arrEdit: any = []
+        let status = 30
         const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
@@ -432,10 +444,6 @@ export default defineComponent({
                     },
                 )
             })
-
-            console.log(dataCustomRes);
-
-
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
@@ -536,6 +544,7 @@ export default defineComponent({
         }
 
         return {
+            status,
             dataCustomRes,
             globalYear,
             textResidentId,
