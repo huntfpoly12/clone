@@ -103,7 +103,70 @@
                             <template #month-12="{ data }">
                                 <div v-if="(data.data.imputedMonth == 12)">{{ data.data.imputedMonth }}</div>
                             </template>
+                            <DxMasterDetail :enabled="true" template="detailRow" />
+                            <template #detailRow="{ data }">
 
+                                <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="true"
+                                    :column-auto-width="true">
+                                    <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first"
+                                        data-type="string" />
+                                    <template #col-first="{ data }">
+                                        <b>{{ data.data.name }}</b><br>
+
+                                    </template>
+                                    <DxColumn caption="1" cell-template="month-1" />
+                                    <template #month-1="{ data }">
+                                        <div v-if="(data.data.month == 1)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="2" cell-template="month-2" />
+                                    <template #month-2="{ data }">
+                                        <div v-if="(data.data.month == 2)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="3" cell-template="month-3" />
+                                    <template #month-3="{ data }">
+                                        <div v-if="(data.data.month == 3)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="4" cell-template="month-4" />
+                                    <template #month-4="{ data }">
+                                        <div v-if="(data.data.month == 4)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="5" cell-template="month-5" />
+                                    <template #month-5="{ data }">
+                                        <div v-if="(data.data.month == 5)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="6" cell-template="month-6" />
+                                    <template #month-6="{ data }">
+                                        <div v-if="(data.data.month == 6)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="7" cell-template="month-7" />
+                                    <template #month-7="{ data }">
+                                        <div v-if="(data.data.month == 7)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="8" cell-template="month-8" />
+                                    <template #month-8="{ data }">
+                                        <div v-if="(data.data.month == 8)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="9" cell-template="month-9" />
+                                    <template #month-9="{ data }">
+                                        <div v-if="(data.data.month == 9)">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="10" cell-template="month-10" />
+                                    <template #month-10="{ data }">
+                                        <div v-if="data.data.month == 10">{{ data.data.value }}</div>
+                                    </template>
+                                    <DxColumn caption="11" cell-template="month-11" />
+                                    <template #month-11="{ data }">
+                                        <div v-if="(data.data.month == 11)">{{ data.data.value }}
+                                        </div>
+                                    </template>
+                                    <DxColumn caption="12" cell-template="month-12" />
+                                    <template #month-12="{ data }">
+                                        <div v-if="(data.data.month == 12)">{{ data.data.value }}
+                                        </div>
+                                    </template>
+                                </DxDataGrid>
+
+                            </template>
                         </DxDataGrid>
                         <div class="pagination-table" v-if="rowTable > originData.rows">
                             <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
@@ -250,10 +313,10 @@ import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA6/PA620/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { onExportingCommon } from "@/helpers/commonFunction"
-import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
+import { origindata, ArrForeigner } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
@@ -262,7 +325,7 @@ import { Message } from "@/configs/enum"
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
         EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
         MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, ArrForeigner,
         HistoryPopup
@@ -294,6 +357,7 @@ export default defineComponent({
             incomeTypeCode: '',
             employeeId: null
         })
+        let dataCustomRes: any = reactive([])
         let dataAction = reactive({
             companyId: companyId,
             imputedYear: globalYear,
@@ -320,7 +384,58 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            dataSource.value = res.data.getIncomeProcessBusinesses
+            let respon = res.data.getIncomeProcessBusinesses
+            dataSource.value = respon
+            respon.map((val: any) => {
+                dataCustomRes.push(
+                    {
+                        id: 1,
+                        name: "인원",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 2,
+                        name: "지급액",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 3,
+                        name: "소득세",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 4,
+                        name: "지방소득세",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 5,
+                        name: "공제총액",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.withholdingIncomeTax + val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 6,
+                        name: "차인지급액",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                )
+            })
+
+            console.log(dataCustomRes);
+
+
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
@@ -331,18 +446,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinessesDetail(res => {
-            if (res.data) {
-                dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
-                dataAction.input.name = res.data.getEmployeeBusiness.name
-                dataAction.input.foreigner = res.data.getEmployeeBusiness.foreigner
-                dataAction.input.nationality = res.data.getEmployeeBusiness.nationality
-                dataAction.input.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
-                dataAction.input.stayQualification = res.data.getEmployeeBusiness.stayQualification
-                dataAction.input.residentId = res.data.getEmployeeBusiness.residentId
-                dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
-                dataAction.input.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
-                dataAction.input.email = res.data.getEmployeeBusiness.email
-            }
+
         })
         errorGetEmployeeBusinessesDetail(res => {
             notification('error', res.message)
@@ -391,72 +495,14 @@ export default defineComponent({
         })
 
         // ================WATCHING============================================
-        watch(() => JSON.parse(JSON.stringify(dataAction)), (newValue, old) => {
-            if (disabledInput.value == true) {
-                arrEdit?.map((e: any, index: any) => {
-                    if (e.employeeId == newValue.employeeId)
-                        arrEdit.splice(index, 1);
-                })
-                arrEdit.push(newValue)
 
-                dataSource.value.map((e: any) => {
-                    if (e.employeeId == newValue.employeeId) {
-                        let newID = newValue.input.residentId.replace('-', '')
-                        e.foreigner = newValue.input.foreigner
-                        e.incomeTypeCode = newValue.incomeTypeCode
-                        e.incomeTypeName = newValue.input.incomeTypeName
-                        e.name = newValue.input.name
-                        e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
-                    }
-                })
-            }
-        }, { deep: true });
-
-        watch(() => dataAction.input.foreigner, (newValue, old) => {
-            if (newValue == false) {
-                disabledInput2.value = true
-                textResidentId.value = '주민등록번호'
-            } else {
-                disabledInput2.value = false
-                textResidentId.value = '외국인번호 유효성'
-            }
-        },);
 
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const actionEdit = (data: any) => {
-            //Add class row choose
-            let a = document.body.querySelectorAll('[aria-rowindex]')
-            a[data.rowIndex].classList.add("active-row-key");
 
-            let count = 0
-            let arr: any = []
-            arrEdit?.map((e: any) => {
-                if (e.employeeId == data.data.employeeId) {
-                    count++
-                    arr = e
-                }
-            })
-            if (count == 0) { // If this line has not been selected before
-                disabledInput.value = true
-                triggerDetail.value = true
-                valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
-                valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
-                refetchDataDetail()
-            } else {
-                dataAction.employeeId = arr.employeeId
-                dataAction.incomeTypeCode = arr.incomeTypeCode
-                dataAction.input.residentId = arr.input.residentId
-                dataAction.input.name = arr.input.name
-                dataAction.input.foreigner = arr.input.foreigner
-                dataAction.input.nationality = arr.input.nationality
-                dataAction.input.nationalityCode = arr.input.nationalityCode
-                dataAction.input.stayQualification = arr.input.stayQualification
-                dataAction.input.incomeTypeName = arr.input.incomeTypeName
-                dataAction.input.email = arr.input.email
-            }
         }
 
         const changeTextCountry = (text: any) => {
@@ -466,66 +512,11 @@ export default defineComponent({
             dataAction.input.incomeTypeName = text
         }
         const saving = (e: any) => {
-            var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
-                // if form disabled => action edit 
-                if (disabledInput.value == true) {
-                    arrEdit.map((item: any) => {
-                        let residentId = item.input.residentId.replace('-', '')
-                        let dataActionedit = {
-                            companyId: companyId,
-                            imputedYear: globalYear,
-                            employeeId: parseInt(item.employeeId ? item.employeeId : ''),
-                            incomeTypeCode: item.incomeTypeCode,
-                            input: {
-                                name: item.input.name,
-                                foreigner: item.input.foreigner,
-                                nationality: item.input.nationality,
-                                nationalityCode: item.input.nationalityCode,
-                                stayQualification: item.input.stayQualification,
-                                residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                                email: item.input.email,
-                                incomeTypeName: item.input.incomeTypeName,
-                            }
-                        }
-                        actionUpdate(dataActionedit)
-                    })
-                } else { // if form disabled => action add 
-                    let dataCreat = {
-                        companyId: companyId,
-                        imputedYear: globalYear,
-                        input: {
-                            name: dataAction.input.name,
-                            foreigner: dataAction.input.foreigner,
-                            nationality: dataAction.input.nationality,
-                            nationalityCode: dataAction.input.nationalityCode,
-                            stayQualification: dataAction.input.stayQualification,
-                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(6, 13),
-                            email: dataAction.input.email,
-                            employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
-                            incomeTypeCode: dataAction.incomeTypeCode,
-                            incomeTypeName: dataAction.input.incomeTypeName,
-                        }
-                    }
-                    actionCreated(dataCreat)
-                }
-            }
+
         }
 
         const addRow = () => {
-            disabledInput.value = false
-            dataAction.employeeId = valueDefaultAction.employeeId
-            dataAction.input.name = valueDefaultAction.name
-            dataAction.input.foreigner = valueDefaultAction.foreigner
-            dataAction.input.nationality = valueDefaultAction.nationality
-            dataAction.input.nationalityCode = valueDefaultAction.nationalityCode
-            dataAction.input.stayQualification = valueDefaultAction.stayQualification
-            dataAction.input.residentId = valueDefaultAction.residentId
-            dataAction.incomeTypeCode = valueDefaultAction.incomeTypeCode
-            dataAction.input.incomeTypeName = valueDefaultAction.incomeTypeName
-            dataAction.input.email = valueDefaultAction.email
+
         }
 
         const actionDelete = (employeeId: any, incomeTypeCode: any) => {
@@ -545,6 +536,7 @@ export default defineComponent({
         }
 
         return {
+            dataCustomRes,
             globalYear,
             textResidentId,
             disabledInput2,
