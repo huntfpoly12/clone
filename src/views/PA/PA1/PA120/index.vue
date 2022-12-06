@@ -85,7 +85,7 @@
                     </DxDataGrid>
                 </a-spin>
             </a-col>
-            <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+            <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
                 <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
                     @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" :key="addComponentKey" />
                 <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
