@@ -281,8 +281,7 @@
                             <DxColumn :width="70" cell-template="pupop" />
                             <template #pupop="{ data }" class="custom-action">
                                 <div class="custom-action" style="text-align: center;">
-                                    <a-tooltip placement="top" v-if="data.data.deletable == true"
-                                        @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
+                                    <a-tooltip placement="top" v-if="data.data.deletable == true">
                                         <template #title>변경이력</template>
                                         <DeleteOutlined />
                                     </a-tooltip>
@@ -366,7 +365,7 @@ import { companyId } from "@/helpers/commonFunction";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import { Message } from "@/configs/enum"
-
+import dayjs, { Dayjs } from 'dayjs';
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
@@ -397,9 +396,12 @@ export default defineComponent({
         })
         let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
-            imputedYear: globalYear,
-            incomeTypeCode: '',
-            employeeId: null
+            processKey: {
+                imputedYear: 2022,
+                imputedMonth: 10,
+                paymentYear: 2022,
+                paymentMonth: 1
+            }
         })
         let dataCustomRes: any = ref([])
         let dataAction = reactive({
@@ -500,14 +502,22 @@ export default defineComponent({
                     value: val.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' }),
                     ...dataAdd
                 }
+
+                if (val.imputedMonth == dayjs().month()) {
+                    console.log(val);
+                    
+                }
+
             })
+
+
 
         })
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
         })
 
-        const { refetch: refetchDataDetail, loading: loadingGetIncomeProcessBusinessesDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
+        const { refetch: refetchDataDetail, loading: loadingGetIncomeProcessBusinessesDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusiness, valueCallApiGetEmployeeBusiness, () => ({
             enabled: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
@@ -583,11 +593,7 @@ export default defineComponent({
 
         }
 
-        const actionDelete = (employeeId: any, incomeTypeCode: any) => {
-            valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
-            valueCallApiGetEmployeeBusiness.employeeId = employeeId
-            modalStatus.value = true
-        }
+
         const statusComfirm = (res: any) => {
             if (res == true)
                 actionDeleteApi(valueCallApiGetEmployeeBusiness)
@@ -627,7 +633,6 @@ export default defineComponent({
             contentDelete,
             showDetailSelected,
             statusComfirm,
-            actionDelete,
             addRow,
             changeTextTypeCode,
             actionEdit,
