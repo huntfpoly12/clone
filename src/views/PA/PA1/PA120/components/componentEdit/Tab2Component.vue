@@ -151,6 +151,7 @@ import {
   calculateLongTermCareInsurance, 
   calculateEmployeementInsuranceEmployee 
 } from "@/helpers/commonFunction"
+import filters from "@/helpers/filters"
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
@@ -269,8 +270,6 @@ export default defineComponent({
     }))
     watch(result,(value)=>{
       if (value) {
-        console.log(value.getEmployeeWage);
-        console.log('tab2',employeeId.value);
         formStateTab2.nationalPensionDeduction = value.getEmployeeWage.nationalPensionDeduction;
         formStateTab2.healthInsuranceDeduction = value.getEmployeeWage.healthInsuranceDeduction;
         formStateTab2.employeementInsuranceDeduction = value.getEmployeeWage.employeementInsuranceDeduction;
@@ -297,6 +296,7 @@ export default defineComponent({
               }            
           });
         })
+        rangeDate.value = [dayjs(value.getEmployeeWage.employeementReductionStartDate),dayjs(value.getEmployeeWage.employeementReductionFinishDate)]
         calculateTax();
       }
     })
@@ -380,6 +380,8 @@ export default defineComponent({
 		})
 
 		const updateDeduction = () => {
+      formStateTab2.employeementReductionStartDate = filters.formatDate(rangeDate.value[0]);
+      formStateTab2.employeementReductionFinishDate = filters.formatDate(rangeDate.value[1]);
         const variables = {
           companyId: companyId,
           imputedYear: globalYear.value,
