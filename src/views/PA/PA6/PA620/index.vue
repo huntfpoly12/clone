@@ -18,9 +18,9 @@
                 <a-col :span="24">
                     <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                            :show-borders="true" key-expr="employeeId" @exporting="onExporting"
+                            :show-borders="true" key-expr="companyId" @exporting="onExporting"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
+                            :column-auto-width="true" :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -29,8 +29,8 @@
                                 <DxItem name="searchPanel" />
                                 <DxItem name="exportButton" />
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
-                                <DxItem location="after" template="button-template" css-class="cell-button-add" /> 
-                                <DxItem name="addRowButton" show-text="always" /> 
+                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                                <DxItem name="addRowButton" show-text="always" />
                             </DxToolbar>
                             <template #button-template>
                                 <DxButton icon="plus" @click="addRow" />
@@ -46,42 +46,126 @@
                                         :total="rowTable" show-less-items />
                                 </div>
                             </template>
-                            <DxColumn caption="성명 (상호)" cell-template="tag" />
-                            <template #tag="{ data }" class="custom-action">
-                                <div class="custom-action">
-                                    <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                        :idCardNumber="data.data.residentId" :status="data.data.status"
-                                        :foreigner="data.data.foreigner" :checkStatus="false" />
+
+                            <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
+                            <template #col-first="{ data }">
+                                <b>지급연월</b><br>
+                                <span>{{ data.data.imputedYear }}-{{ data.data.imputedMonth }}</span>
+                            </template>
+                            <DxColumn caption="1" width="100px" cell-template="month-1" />
+                            <template #month-1="{ data }">
+                                <div v-if="(data.data.imputedMonth == 1)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="2" width="100px" cell-template="month-2" />
+                            <template #month-2="{ data }">
+                                <div v-if="(data.data.imputedMonth == 2)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="3" width="100px" cell-template="month-3" />
+                            <template #month-3="{ data }">
+                                <div v-if="(data.data.imputedMonth == 3)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="4" width="100px" cell-template="month-4" />
+                            <template #month-4="{ data }">
+                                <div v-if="(data.data.imputedMonth == 4)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="5" width="100px" cell-template="month-5" />
+                            <template #month-5="{ data }">
+                                <div v-if="(data.data.imputedMonth == 5)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="6" width="100px" cell-template="month-6" />
+                            <template #month-6="{ data }">
+                                <div v-if="(data.data.imputedMonth == 6)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="7" width="100px" cell-template="month-7" />
+                            <template #month-7="{ data }">
+                                <div v-if="(data.data.imputedMonth == 7)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="8" width="100px" cell-template="month-8" />
+                            <template #month-8="{ data }">
+                                <div v-if="(data.data.imputedMonth == 8)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="9" width="100px" cell-template="month-9" />
+                            <template #month-9="{ data }">
+                                <div v-if="(data.data.imputedMonth == 9)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="10" width="100px" cell-template="month-10" />
+                            <template #month-10="{ data }">
+                                <div v-if="(data.data.imputedMonth == 10)">
+                                    <colorful-badge :value="data.data.status" :year="data.data.imputedYear"
+                                        :month="data.data.imputedMonth" />
                                 </div>
                             </template>
-
-                            <DxColumn caption="주민등록번호" cell-template="resident-id" width="200px" />
-                            <template #resident-id="{ data }" class="custom-action">
-                                <a-tooltip placement="top"
-                                    v-if="data.data.residentId?.length == 14
-                                    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                                    key="black">
-                                    {{ data.data.residentId }}
-                                </a-tooltip>
-                                <a-tooltip placement="top" v-else title="ERROR" color="red">
-                                    {{ data.data.residentId }}
-                                </a-tooltip>
-
+                            <DxColumn caption="11" width="100px" cell-template="month-11" />
+                            <template #month-11="{ data }">
+                                <div v-if="(data.data.imputedMonth == 11)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
-                            <template #grade-cell="{ data }" class="custom-action">
-                                <income-type :typeCode="data.data.incomeTypeCode"
-                                    :typeName="data.data.incomeTypeName" />
+                            <DxColumn caption="12" width="100px" cell-template="month-12" />
+                            <template #month-12="{ data }">
+                                <div v-if="(data.data.imputedMonth == 12)">{{ data.data.imputedMonth }}</div>
                             </template>
-
-                            <DxColumn :width="70" cell-template="pupop" />
-                            <template #pupop="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center;"> 
-                                    <a-tooltip placement="top" v-if="data.data.deletable == true"
-                                        @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
-                                        <template #title>변경이력</template>
-                                        <DeleteOutlined />
-                                    </a-tooltip>
+                            <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
+                            <template #detailRow="{ data }">
+                                <div class="table-detail">
+                                    <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="false"
+                                        :column-auto-width="true" :allow-column-reordering="move_column"
+                                        :show-column-headers="false" :allow-column-resizing="colomn_resize"
+                                        :focused-row-enabled="true">
+                                        <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first"
+                                            data-type="string" />
+                                        <template #col-first="{ data }">
+                                            <b>{{ data.data.name }}</b><br> 
+                                        </template>
+                                        <DxColumn caption="1" width="100px" cell-template="month-1" />
+                                        <template #month-1="{ data }">
+                                            <div v-if="(data.data.month == 1)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="2" width="100px" cell-template="month-2" />
+                                        <template #month-2="{ data }">
+                                            <div v-if="(data.data.month == 2)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="3" width="100px" cell-template="month-3" />
+                                        <template #month-3="{ data }">
+                                            <div v-if="(data.data.month == 3)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="4" width="100px" cell-template="month-4" />
+                                        <template #month-4="{ data }">
+                                            <div v-if="(data.data.month == 4)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="5" width="100px" cell-template="month-5" />
+                                        <template #month-5="{ data }">
+                                            <div v-if="(data.data.month == 5)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="6" width="100px" cell-template="month-6" />
+                                        <template #month-6="{ data }">
+                                            <div v-if="(data.data.month == 6)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="7" width="100px" cell-template="month-7" />
+                                        <template #month-7="{ data }">
+                                            <div v-if="(data.data.month == 7)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="8" width="100px" cell-template="month-8" />
+                                        <template #month-8="{ data }">
+                                            <div v-if="(data.data.month == 8)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="9" width="100px" cell-template="month-9" />
+                                        <template #month-9="{ data }">
+                                            <div v-if="(data.data.month == 9)">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="10" width="100px" cell-template="month-10" />
+                                        <template #month-10="{ data }">
+                                            <div v-if="data.data.month == 10">{{ data.data.value }}</div>
+                                        </template>
+                                        <DxColumn caption="11" width="100px" cell-template="month-11" />
+                                        <template #month-11="{ data }">
+                                            <div v-if="(data.data.month == 11)">{{ data.data.value }}
+                                            </div>
+                                        </template>
+                                        <DxColumn caption="12" width="100px" cell-template="month-12" />
+                                        <template #month-12="{ data }">
+                                            <div v-if="(data.data.month == 12)">{{ data.data.value }}
+                                            </div>
+                                        </template>
+                                    </DxDataGrid>
                                 </div>
                             </template>
                         </DxDataGrid>
@@ -90,6 +174,16 @@
                                 :total="rowTable" show-less-items style="margin-top: 10px" />
                         </div>
                     </a-spin>
+                </a-col>
+
+                <a-col :span="24">
+                    <div class="header-detail-main">
+                        <div class="table-detail-left">
+                            <DxButton text="귀 {yyyy-mm}" />
+                            <DxButton text="귀 {yyyy-mm}" />
+                            <process-status v-model:valueStatus="status" />
+                        </div>
+                    </div>
                 </a-col>
 
                 <!-- <a-col :span="16" class="custom-layout">
@@ -230,45 +324,26 @@ import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA6/PA620/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { onExportingCommon } from "@/helpers/commonFunction"
-import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
+import { origindata, ArrForeigner } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
-import dayjs from 'dayjs';
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import { Message } from "@/configs/enum"
 
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        DxScrolling,
-        EditOutlined,
-        HistoryOutlined,
-        DxToolbar,
-        DxEditing,
-        DxGrouping,
-        DxItem,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
-        ArrForeigner,
-        DxButton,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
+        EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
+        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, ArrForeigner,
         HistoryPopup
     },
     setup() {
         let arrEdit: any = []
+        let status = 30
         const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
@@ -282,19 +357,22 @@ export default defineComponent({
         const arrForeigner = ArrForeigner
         const trigger = ref<boolean>(true);
         const triggerDetail = ref<boolean>(false);
+        const globalYear = computed(() => store.state.settings.globalYear)
         const valueCallApiGetEmployeeBusinesses = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
+            // imputedMonth: dayjs().month(),
         })
         let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
             incomeTypeCode: '',
             employeeId: null
         })
+        let dataCustomRes: any = reactive([])
         let dataAction = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
             employeeId: null,
             incomeTypeCode: '940100',
             input: {
@@ -313,12 +391,59 @@ export default defineComponent({
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
         // ================GRAPQL==============================================
-        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
+        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getIncomeProcessBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            dataSource.value = res.data.getEmployeeBusinesses
+            let respon = res.data.getIncomeProcessBusinesses
+            dataSource.value = respon
+            respon.map((val: any) => {
+                dataCustomRes.push(
+                    {
+                        id: 1,
+                        name: "인원",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 2,
+                        name: "지급액",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 3,
+                        name: "소득세",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 4,
+                        name: "지방소득세",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 5,
+                        name: "공제총액",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.withholdingIncomeTax + val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                    {
+                        id: 6,
+                        name: "차인지급액",
+                        imputedYear: val.imputedYear,
+                        month: val.imputedMonth,
+                        value: val.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' })
+                    },
+                )
+            })
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
@@ -329,18 +454,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinessesDetail(res => {
-            if (res.data) {
-                dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
-                dataAction.input.name = res.data.getEmployeeBusiness.name
-                dataAction.input.foreigner = res.data.getEmployeeBusiness.foreigner
-                dataAction.input.nationality = res.data.getEmployeeBusiness.nationality
-                dataAction.input.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
-                dataAction.input.stayQualification = res.data.getEmployeeBusiness.stayQualification
-                dataAction.input.residentId = res.data.getEmployeeBusiness.residentId
-                dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
-                dataAction.input.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
-                dataAction.input.email = res.data.getEmployeeBusiness.email
-            }
+
         })
         errorGetEmployeeBusinessesDetail(res => {
             notification('error', res.message)
@@ -389,72 +503,14 @@ export default defineComponent({
         })
 
         // ================WATCHING============================================
-        watch(() => JSON.parse(JSON.stringify(dataAction)), (newValue, old) => {
-            if (disabledInput.value == true) {
-                arrEdit?.map((e: any, index: any) => {
-                    if (e.employeeId == newValue.employeeId)
-                        arrEdit.splice(index, 1);
-                })
-                arrEdit.push(newValue)
 
-                dataSource.value.map((e: any) => {
-                    if (e.employeeId == newValue.employeeId) {
-                        let newID = newValue.input.residentId.replace('-', '')
-                        e.foreigner = newValue.input.foreigner
-                        e.incomeTypeCode = newValue.incomeTypeCode
-                        e.incomeTypeName = newValue.input.incomeTypeName
-                        e.name = newValue.input.name
-                        e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
-                    }
-                })
-            }
-        }, { deep: true });
-
-        watch(() => dataAction.input.foreigner, (newValue, old) => {
-            if (newValue == false) {
-                disabledInput2.value = true
-                textResidentId.value = '주민등록번호'
-            } else {
-                disabledInput2.value = false
-                textResidentId.value = '외국인번호 유효성'
-            }
-        },);
 
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const actionEdit = (data: any) => {
-            //Add class row choose
-            let a = document.body.querySelectorAll('[aria-rowindex]')
-            a[data.rowIndex].classList.add("active-row-key");
 
-            let count = 0
-            let arr: any = []
-            arrEdit?.map((e: any) => {
-                if (e.employeeId == data.data.employeeId) {
-                    count++
-                    arr = e
-                }
-            })
-            if (count == 0) { // If this line has not been selected before
-                disabledInput.value = true
-                triggerDetail.value = true
-                valueCallApiGetEmployeeBusiness.incomeTypeCode = data.data.incomeTypeCode
-                valueCallApiGetEmployeeBusiness.employeeId = data.data.employeeId
-                refetchDataDetail()
-            } else {
-                dataAction.employeeId = arr.employeeId
-                dataAction.incomeTypeCode = arr.incomeTypeCode
-                dataAction.input.residentId = arr.input.residentId
-                dataAction.input.name = arr.input.name
-                dataAction.input.foreigner = arr.input.foreigner
-                dataAction.input.nationality = arr.input.nationality
-                dataAction.input.nationalityCode = arr.input.nationalityCode
-                dataAction.input.stayQualification = arr.input.stayQualification
-                dataAction.input.incomeTypeName = arr.input.incomeTypeName
-                dataAction.input.email = arr.input.email
-            }
         }
 
         const changeTextCountry = (text: any) => {
@@ -464,66 +520,11 @@ export default defineComponent({
             dataAction.input.incomeTypeName = text
         }
         const saving = (e: any) => {
-            var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
-                // if form disabled => action edit 
-                if (disabledInput.value == true) {
-                    arrEdit.map((item: any) => {
-                        let residentId = item.input.residentId.replace('-', '')
-                        let dataActionedit = {
-                            companyId: companyId,
-                            imputedYear: parseInt(dayjs().format('YYYY')),
-                            employeeId: parseInt(item.employeeId ? item.employeeId : ''),
-                            incomeTypeCode: item.incomeTypeCode,
-                            input: {
-                                name: item.input.name,
-                                foreigner: item.input.foreigner,
-                                nationality: item.input.nationality,
-                                nationalityCode: item.input.nationalityCode,
-                                stayQualification: item.input.stayQualification,
-                                residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                                email: item.input.email,
-                                incomeTypeName: item.input.incomeTypeName,
-                            }
-                        }
-                        actionUpdate(dataActionedit)
-                    })
-                } else { // if form disabled => action add 
-                    let dataCreat = {
-                        companyId: companyId,
-                        imputedYear: parseInt(dayjs().format('YYYY')),
-                        input: {
-                            name: dataAction.input.name,
-                            foreigner: dataAction.input.foreigner,
-                            nationality: dataAction.input.nationality,
-                            nationalityCode: dataAction.input.nationalityCode,
-                            stayQualification: dataAction.input.stayQualification,
-                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(6, 13),
-                            email: dataAction.input.email,
-                            employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
-                            incomeTypeCode: dataAction.incomeTypeCode,
-                            incomeTypeName: dataAction.input.incomeTypeName,
-                        }
-                    }
-                    actionCreated(dataCreat)
-                }
-            }
+
         }
 
         const addRow = () => {
-            disabledInput.value = false
-            dataAction.employeeId = valueDefaultAction.employeeId
-            dataAction.input.name = valueDefaultAction.name
-            dataAction.input.foreigner = valueDefaultAction.foreigner
-            dataAction.input.nationality = valueDefaultAction.nationality
-            dataAction.input.nationalityCode = valueDefaultAction.nationalityCode
-            dataAction.input.stayQualification = valueDefaultAction.stayQualification
-            dataAction.input.residentId = valueDefaultAction.residentId
-            dataAction.incomeTypeCode = valueDefaultAction.incomeTypeCode
-            dataAction.input.incomeTypeName = valueDefaultAction.incomeTypeName
-            dataAction.input.email = valueDefaultAction.email
+
         }
 
         const actionDelete = (employeeId: any, incomeTypeCode: any) => {
@@ -543,10 +544,12 @@ export default defineComponent({
         }
 
         return {
+            status,
+            dataCustomRes,
+            globalYear,
             textResidentId,
             disabledInput2,
             popupData,
-            modalHistory,
             modalHistoryStatus,
             loadingCreated,
             disabledInput,
@@ -562,6 +565,7 @@ export default defineComponent({
             loadingDelete,
             modalStatus,
             contentDelete,
+            modalHistory,
             statusComfirm,
             actionDelete,
             addRow,
