@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
+    <action-header title="기타소득자등록" @actionSave="onSubmit($event)" :buttonDelete="false" />
     <div id="pa-120" class="page-content">
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
@@ -45,14 +45,21 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
+                        :focused-row-enabled="true">
                         <DxPaging :page-size="15" />
 
                         <DxToolbar>
+                            <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
+                        </template>
+                        <template #button-history="{ data }" style="border-color: #ddd;">
+                            <DxButton icon="plus">
+                                <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
+                            </DxButton>
                         </template>
                         <DxColumn caption="성명" cell-template="company-name" />
                         <template #company-name="{ data }">
@@ -60,7 +67,7 @@
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" width="130"/>
+                        <DxColumn caption="주민등록번호" data-field="residentId" width="130" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{}" class="custom-action">
                             <div class="custom-grade-cell">
@@ -69,16 +76,8 @@
                         </template>
                         <DxColumn cell-template="pupop" width="100" />
                         <template #pupop="{ data }" class="custom-action">
-                            <div class="custom-action">
+                            <div class="custom-action" style="text-align: center;">
                                 <a-space :size="10">
-                                    <a-tooltip placement="top">
-                                        <template #title>편집</template>
-                                        <EditOutlined @click="actionEdit(data.data.employeeId)" />
-                                    </a-tooltip>
-                                    <a-tooltip placement="top">
-                                        <template #title>변경이력</template>
-                                        <HistoryOutlined @click="modalHistory(data)" />
-                                    </a-tooltip>
                                     <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                                 </a-space>
                             </div>
@@ -86,9 +85,9 @@
                     </DxDataGrid>
                 </a-spin>
             </a-col>
-            <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+            <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
                 <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
-                    @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" :key = "addComponentKey" />
+                    @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" :key="addComponentKey" />
                 <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
                     v-if="actionChangeComponent == 2" />
             </a-col>
@@ -103,8 +102,8 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed, nextTick } from "vue";
-import { DxDataGrid, DxColumn, DxToolbar, DxItem ,DxPaging } from "devextreme-vue/data-grid";
+import { ref, defineComponent, watch, computed } from "vue";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -181,37 +180,32 @@ export default defineComponent({
         const addComponentKey = ref(1);
         const popupStatus = ref(false);
         const onPopupComfirm = (params: Boolean) => {
-            if(params){
+            if (params) {
                 popupStatus.value = false;
                 addComponentKey.value++;
             }
         }
-        const openAddNewModal = async() => {
+        const openAddNewModal = async () => {
             actionChangeComponent.value = 1
             modalAddNewStatus.value = !modalAddNewStatus.value;
             addNew.value.compareData()
-            if(!addNew.value.compareData()){
+            if (!addNew.value.compareData()) {
                 popupStatus.value = true;
             }
         };
-        const actionEdit = (val: any) => {
+        const actionEdit = (data: any) => {
             actionChangeComponent.value = 2
-            idRowEdit.value = val
+            idRowEdit.value = data.data.employeeId
             modalEditStatus.value = true
-            trigger.value = true
-            refetchData()
-
         }
         const eventCLoseAddPopup = () => {
             trigger.value = true
             refetchData()
 
         }
-        const modalHistory = (data: any) => {
-            idRowEdit.value = data.data.id
-            modalHistoryStatus.value = companyId
+        const modalHistory = () => {
+            modalHistoryStatus.value = true;
         }
-
         const actionDeleteFuc = (data: any) => {
             idAction.value = data
             modalStatus.value = true
@@ -278,6 +272,32 @@ export default defineComponent({
     },
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

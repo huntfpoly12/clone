@@ -52,31 +52,31 @@ export default defineComponent({
         ])
          const valueSelect = ref('')
 
-        // const {
-        //     mutate: sendEmail,
-        //     onDone: onDoneAdd,
-        //     onError: errorSendEmail,
-        //     error,
-        // } = useMutation(query.getIncomeWageDailyPayrollRegisterViewUrl);
+        const {
+            mutate: sendPrint,
+            onDone: onDonePrint,
+            onError: errorSendPrint,
+            error,
+        } = useMutation(query.getIncomeWageDailyPayrollRegisterViewUrl);
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                // props.data.employeeInputs.map((value: any) => {
+                props.data.employeeInputs.map((value: any) => {
                     
-                // })
-                // let variables = props.data
-                // sendEmail(variables);
+                })
+                let variables = props.data
+                sendPrint(variables);
             }
         };
-        // onDoneAdd(() => {
-        //     notification('success', `업데이트 완료!`)
-        //     emit("closePopup", false)
-        // })
-        // errorSendEmail((e: any) => {
-        //     notification('error', e.message)
-        // })
+        onDonePrint(() => {
+            notification('success', `업데이트 완료!`)
+            emit("closePopup", false)
+        })
+        errorSendPrint((e: any) => {
+            notification('error', e.message)
+        })
 
         return {
             setModalVisible,

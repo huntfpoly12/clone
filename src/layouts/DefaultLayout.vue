@@ -128,6 +128,9 @@ const CM110 = defineAsyncComponent(() =>
 const CM130 = defineAsyncComponent(() =>
 	import("../views/CM/CM1/CM130/index.vue")
 );
+const PA110 = defineAsyncComponent(() =>
+	import("../views/PA/PA1/PA110/index.vue")
+);
 const PA120 = defineAsyncComponent(() =>
 	import("../views/PA/PA1/PA120/index.vue")
 );
@@ -139,6 +142,9 @@ const PA430 = defineAsyncComponent(() =>
 );
 const PA610 = defineAsyncComponent(() =>
 	import("../views/PA/PA6/PA610/index.vue")
+);
+const PA620 = defineAsyncComponent(() =>
+	import("../views/PA/PA6/PA620/index.vue")
 );
 const PA630 = defineAsyncComponent(() =>
 	import("../views/PA/PA6/PA630/index.vue")
@@ -209,11 +215,13 @@ export default defineComponent({
 		BF220,
 		CM110,
 		CM130,
+		PA110,
 		PA120,
 		PA220,
 		PA230,
 		PA430,
 		PA610,
+		PA620,
 		PA630,
 		PA530,
 		PA520,
@@ -332,11 +340,13 @@ export default defineComponent({
 			if (this.activeTab.id === "bf-220") return BF220;
 			if (this.activeTab.id === "cm-110") return CM110;
 			if (this.activeTab.id === "cm-130") return CM130;
+			if (this.activeTab.id === "pa-110") return PA110;
 			if (this.activeTab.id === "pa-120") return PA120;
 			if (this.activeTab.id === "pa-220") return PA220;
 			if (this.activeTab.id === "pa-230") return PA230;
 			if (this.activeTab.id === "pa-430") return PA430;
 			if (this.activeTab.id === "pa-610") return PA610;
+			if (this.activeTab.id === "pa-620") return PA620;
 			if (this.activeTab.id === "pa-630") return PA630;
 			if (this.activeTab.id === "pa-530") return PA530;
 			if (this.activeTab.id === "pa-520") return PA520;
@@ -456,6 +466,7 @@ export default defineComponent({
 .header-content {
 	background: v-bind('styles.sub');
 }
+
 .ant-layout-header {
 	background: v-bind('styles.main');
 }

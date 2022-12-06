@@ -180,6 +180,19 @@ export default defineComponent({
                             trigger520.value = true;
                             refetchPA520();
                             break;
+                        case 'pa-510':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            trigger510.value = true;
+                            refetchPA510();
+                            break;
                         default:
                             break;
                     }
@@ -370,9 +383,9 @@ export default defineComponent({
                 dataTableShow.value = value.getEmployeeWageDailiesLogs;
             }
         });
-        // get getEmployeeWageDailiesLogs pa-510
+        // get getIncomeWageDailiesLogs pa-510
         const { result: resultPA510, loading: loadingPA510, refetch: refetchPA510 } = useQuery(
-            queries.getEmployeeWageDailiesLogs,
+            queries.getIncomeWageDailiesLogs,
             dataQuery,
             () => ({
                 enabled: trigger510.value,
@@ -380,8 +393,8 @@ export default defineComponent({
             })
         );
         watch(resultPA510, (value) => {
-            if (value && value.getEmployeeWageDailiesLogs) {
-                dataTableShow.value = value.getEmployeeWageDailiesLogs;
+            if (value && value.getIncomeWageDailiesLogs) {
+                dataTableShow.value = value.getIncomeWageDailiesLogs;
             }
         });
         // get getEmployeeWagesLogs pa-120
