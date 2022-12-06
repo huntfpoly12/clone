@@ -10,6 +10,8 @@ export default gql`
                 imputedMonth
                 imputedYear
                 status
+                paymentYear
+                paymentMonth
                 employeeStat{
                     employeeCount
                 }
