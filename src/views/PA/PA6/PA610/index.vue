@@ -28,8 +28,8 @@
                                 <DxItem name="searchPanel" />
                                 <DxItem name="exportButton" />
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
-                                <DxItem location="after" template="button-template" css-class="cell-button-add" /> 
-                                <DxItem name="addRowButton" show-text="always" /> 
+                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                                <DxItem name="addRowButton" show-text="always" />
                             </DxToolbar>
                             <template #button-template>
                                 <DxButton icon="plus" @click="addRow" />
@@ -75,7 +75,7 @@
 
                             <DxColumn :width="70" cell-template="pupop" />
                             <template #pupop="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center;"> 
+                                <div class="custom-action" style="text-align: center;">
                                     <a-tooltip placement="top" v-if="data.data.deletable == true"
                                         @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
                                         <template #title>변경이력</template>
@@ -157,8 +157,7 @@ import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUn
 import { onExportingCommon } from "@/helpers/commonFunction"
 import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
 import DxButton from "devextreme-vue/button";
-import { companyId } from "@/helpers/commonFunction";
-import dayjs from 'dayjs';
+import { companyId } from "@/helpers/commonFunction"; 
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import { Message } from "@/configs/enum"
@@ -204,19 +203,20 @@ export default defineComponent({
         const arrForeigner = ArrForeigner
         const trigger = ref<boolean>(true);
         const triggerDetail = ref<boolean>(false);
+        const globalYear = computed(() => store.state.settings.globalYear)
         const valueCallApiGetEmployeeBusinesses = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
         })
         let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
             incomeTypeCode: '',
             employeeId: null
         })
         let dataAction = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
             employeeId: null,
             incomeTypeCode: '940100',
             input: {
@@ -396,7 +396,7 @@ export default defineComponent({
                         let residentId = item.input.residentId.replace('-', '')
                         let dataActionedit = {
                             companyId: companyId,
-                            imputedYear: parseInt(dayjs().format('YYYY')),
+                            imputedYear: globalYear,
                             employeeId: parseInt(item.employeeId ? item.employeeId : ''),
                             incomeTypeCode: item.incomeTypeCode,
                             input: {
@@ -415,7 +415,7 @@ export default defineComponent({
                 } else { // if form disabled => action add 
                     let dataCreat = {
                         companyId: companyId,
-                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        imputedYear: globalYear,
                         input: {
                             name: dataAction.input.name,
                             foreigner: dataAction.input.foreigner,
