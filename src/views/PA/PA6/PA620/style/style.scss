@@ -51,4 +51,22 @@
         background-color: #337AB7;
         color: white;
     }
+
+
+    // ::v-deep .table-detail .dx-datagrid-headers {
+    //     display: none;
+    // }
+
+    ::v-deep .dx-master-detail-cell {
+        padding: 0px;
+    }
+
+    .header-detail-main {
+        margin-top: 10px;
+        .table-detail-left {
+            >div {
+                margin-right: 5px;
+            }
+        }
+    }
 }
