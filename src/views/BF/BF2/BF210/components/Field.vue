@@ -1,7 +1,9 @@
 <template>
-    <div class="custom-item"
-        :style="{ background: stydefault.background, padding: '0px 12px', borderRadius: '5px', border: stydefault.border, height: '25px', margin: '4px 0px 0 4px' }">
-        <DxTextBox :value="stydefault && stydefault.name" :read-only="true" class="product-name" />
+    <div>
+        <div class="custom-item"
+            :style="{ width: '100px', background: stydefault.background, padding: '0px 0 0 12px', borderRadius: '5px', border: stydefault.border, height: '25px', margin: '4px 0px 0 4px' }">
+            <DxTextBox :value="stydefault && stydefault.name" :read-only="true" class="product-name" />
+        </div>
     </div>
 </template>
 <script script lang ="ts">

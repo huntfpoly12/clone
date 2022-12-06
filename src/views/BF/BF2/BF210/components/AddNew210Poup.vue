@@ -1,15 +1,16 @@
 <template>
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" centered okText="저장하고 나가기" cancelText="그냥 나가기" @cancel="setModalVisible"
-            width="50%" :mask-closable="false">
+            width="50%" :mask-closable="false" footer="">
             <h2 class="title_modal">회원정보</h2>
-            <form action="" @submit.prevent="creactUserNew">
+            <standard-form action="" name="add-page-210">
                 <a-row :gutter="24">
                     <a-col :span="12">
                         <a-form-item label="회원ID" class="red dflex">
                             <div class="dflex">
                                 <default-text-box v-model:valueInput="formState.username"
-                                    style="width: 190px; margin-right: 10px" required mess-required="이항목은 필수 입력사항입니다!">
+                                    style="width: 190px; margin-right: 10px" :required="true"
+                                    mess-required="이항목은 필수 입력사항입니다!">
                                 </default-text-box>
                                 <button-basic :text="'중복체크'" :type="'default'" :mode="'contained'"
                                     @onClick="checkDuplicateUsername" :disabled="disabledBtn" />
@@ -21,8 +22,8 @@
                         </a-form-item>
                         <a-form-item label="소속" class="red">
                             <DxSelectBox v-model:value="formState.groupCode" style="width: 190px" placeholder="선택"
-                                :data-source="selectSearch" @value-changed="handleChange" display-expr="label"
-                                value-expr="value" :height="$config_styles.HeightInput">
+                                :data-source="selectSearch" display-expr="label" value-expr="value"
+                                :height="$config_styles.HeightInput">
                             </DxSelectBox>
                         </a-form-item>
                     </a-col>
@@ -33,8 +34,8 @@
                         </a-form-item>
                         <a-form-item label="회원종류2" class="red">
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
-                                value-expr="id" item-template="item" :height="$config_styles.HeightInput"
-                                style="width:170px" field-template="field" @value-changed="changeValueType">
+                                value-expr="id" item-template="item" :height="$config_styles.HeightInput" width="140px"
+                                field-template="field" @value-changed="changeValueType">
                                 <template #field="{ data }">
                                     <Field :fieldData="data" />
                                 </template>
@@ -49,8 +50,7 @@
                             </DxSelectBox>
                         </a-form-item>
                     </a-col>
-                </a-row>
-                <a-row :gutter="24">
+
                     <a-col :span="12">
                         <a-form-item label="휴대폰" class="red">
                             <tel-text-box @keypress="onlyNumber" type="text" v-model:valueInput="formState.mobilePhone"
@@ -62,38 +62,38 @@
                                 messRequired="이항목은 필수 입력사항입니다!" />
                         </a-form-item>
                     </a-col>
-                </a-row>
-                <div class="page-content">
-                    <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
-                    <div style="position: relative">
-                        <DxDataGrid :data-source="arrData" :show-borders="true" :allow-column-reordering="move_column"
-                            :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
-                            @selection-changed="onSelectionChanged">
-                            <DxPaging :page-size="0" />
-                            <DxSelection data-field="active" mode="multiple" />
-                            <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
-                            <DxColumn data-field="name" caption="권한그룹명" />
-                            <DxColumn data-field="memo" caption="권한그룹설명" />
-                        </DxDataGrid>
-                    </div>
-                </div>
-                <a-row>
+
+                    <a-col :span="24">
+                        <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
+                        <div style="position: relative">
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrData" :show-borders="true"
+                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                                :column-auto-width="true" class="table-scroll" @selection-changed="onSelectionChanged">
+                                <DxPaging :page-size="0" />
+                                <DxSelection data-field="active" mode="multiple" />
+                                <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
+                                <DxColumn data-field="name" caption="권한그룹명" />
+                                <DxColumn data-field="memo" caption="권한그룹설명" />
+                            </DxDataGrid>
+                        </div>
+                    </a-col>
+
                     <a-col :offset="8" style="text-align: center">
-                        <DxButton :width="120" text="취소" type="default" styling-mode="outlined" @click="setModalVisible"
+                        <button-basic text="취소" type="default" mode="outlined" @onClick="setModalVisible" :width="120"
                             style="margin-right: 10px;" />
-                        <DxButton id="button" :use-submit-behavior="true" text="저장하고 나가기" type="default" />
+                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="creactUserNew($event)"
+                            :width="150" />
                     </a-col>
                 </a-row>
-            </form>
-            <template #footer>
-            </template>
+            </standard-form>
+
         </a-modal>
     </div>
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import mutations from "../../../../../graphql/mutations/BF/BF2/BF210/index";
+import mutations from "@/graphql/mutations/BF/BF2/BF210/index";
 import { initialFormState } from '../utils';
 import {
     DxDataGrid,
@@ -113,12 +113,13 @@ import {
     MailOutlined,
     MenuOutlined,
 } from "@ant-design/icons-vue";
-import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
+import queries from "@/graphql/queries/BF/BF2/BF210/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DxSelectBox from 'devextreme-vue/select-box';
 import DxButton from 'devextreme-vue/button';
 import Field from './Field.vue';
-import notification from '../../../../../utils/notification';
+import notification from '@/utils/notification';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: ["modalStatus", "data"],
     components: {
@@ -140,22 +141,50 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const selectSearch = ref([{}]);
-        const handleChange = (value: any) => {
-        };
+        let products = ref([
+            {
+                id: 1,
+                color: 'white',
+                name: "중간메니저",
+                type: "m",
+                grade: "2",
+                background: 'black',
+                border: "1px solid black",
+            },
+            {
+                id: 2,
+                color: 'white',
+                name: "당당메니저",
+                type: "m",
+                grade: "3",
+                background: 'black',
+                border: "1px solid black",
+            },
+            {
+                id: 3,
+                color: 'white',
+                name: "영업자회원",
+                type: "r",
+                grade: "",
+                background: 'grey',
+                border: "1px solid grey",
+            },
+            {
+                id: 4,
+                color: 'white',
+                name: "파트너회원",
+                type: "p",
+                grade: "",
+                background: 'goldenrod',
+                border: "1px solid goldenrod",
+            }
+        ])
         const isShow = ref<boolean>(false);
         const visible = ref<boolean>(false);
-        const showModal = () => {
-            isShow.value = true;
-        };
-        const handleSuccsess = (e: MouseEvent) => {
-            isShow.value = false;
-        };
         let disabledBtn = ref(true);
-        let confirm = ref<string>("");
 
         // config grid
         const store = useStore();
-
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -177,7 +206,8 @@ export default defineComponent({
                 dataCallGroup.value = dataCall
             }, 100);
         }
-        const formState = reactive<any>({ ...initialFormState });
+        const formState = reactive({ ...initialFormState });
+        let objDataDefault = reactive({ ...initialFormState });
         const createUser = reactive({
             type: "",
             username: "",
@@ -243,6 +273,10 @@ export default defineComponent({
             })
             if (e.data.findGroups) {
                 formState.groupCode = e.data.findGroups[0].groupId
+                objDataDefault = {
+                    ...objDataDefault,
+                    groupCode: e.data.findGroups[0].groupId
+                }
             }
             selectSearch.value = option
         })
@@ -299,23 +333,30 @@ export default defineComponent({
         const onSelectionChanged = (selectedRows: any) => {
             idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
         };
-        const creactUserNew = () => {
-            var RoleGroup = idRoleGroup.map((row: any) => {
-                return row.id;
-            })
-            let dataCallApiCreate = {
-                input: {
-                    type: (formState.type == '2' || formState.type == '3') ? 'm' : formState.type,
-                    name: formState.name,
-                    username: formState.username,
-                    screenRoleGroupIds: RoleGroup,
-                    mobilePhone: formState.mobilePhone,
-                    email: formState.email,
-                    groupId: formState.groupCode,
-                    managerGrade: (formState.type == '2' || formState.type == '3') ? parseInt(formState.type) : null,
+       
+        const creactUserNew = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus(); 
+            } else {
+                var RoleGroup = idRoleGroup.map((row: any) => {
+                    return row.id;
+                })
+                let dataCallApiCreate = {
+                    input: {
+                        type: (formState.type == '2' || formState.type == '3') ? 'm' : formState.type,
+                        name: formState.name,
+                        username: formState.username,
+                        screenRoleGroupIds: RoleGroup,
+                        mobilePhone: formState.mobilePhone,
+                        email: formState.email,
+                        groupId: formState.groupCode,
+                        managerGrade: (formState.type == '2' || formState.type == '3') ? parseInt(formState.type) : null,
+                    }
                 }
+                creactUser(dataCallApiCreate)
             }
-            creactUser(dataCallApiCreate)
+
         }
         const onlyNumber = (e: any) => {
             let keyCode = e.keyCode ? e.keyCode : e.which;
@@ -324,80 +365,25 @@ export default defineComponent({
             }
         }
         const setModalVisible = () => {
-            emit("closePopup", false);
+            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == true)
+                emit("closePopup", false)
+            else
+                comfirmClosePopup(() => emit("closePopup", false))
         }
-        const getColorTag = (data: string) => {
-            if (data === "중간매니저") {
-                return "#4a4848";
-            } else if (data === "담당매니저") {
-                return "#4a4848";
-            } else if (data === "영업자") {
-                return "grey";
-            } else if (data === "파트너") {
-                return "#efe70b";
-            }
-        }
-        const closeModal = () => {
-            isShow.value = false;
-        }
-        let products = ref([
-            {
-                id: 1,
-                color: 'white',
-                name: "중간메니저",
-                type: "m",
-                grade: "2",
-                background: 'black',
-                border: "1px solid black",
-            },
-            {
-                id: 2,
-                color: 'white',
-                name: "당당메니저",
-                type: "m",
-                grade: "3",
-                background: 'black',
-                border: "1px solid black",
-            },
-            {
-                id: 3,
-                color: 'white',
-                name: "영업자회원",
-                type: "r",
-                grade: "",
-                background: 'grey',
-                border: "1px solid grey",
-            },
-            {
-                id: 4,
-                color: 'white',
-                name: "파트너회원",
-                type: "p",
-                grade: "",
-                background: 'goldenrod',
-                border: "1px solid goldenrod",
-            }
-        ])
         return {
+            creactUserNew,
             products,
             move_column,
             colomn_resize,
             onlyNumber,
             setModalVisible,
-            getColorTag,
-            closeModal,
             arrData,
-            confirm,
             formState,
             isShow,
-            showModal,
-            handleSuccsess,
             selectSearch,
-            handleChange,
             createUser,
             changeValueType,
             checkDuplicateUsername,
-            creactUserNew,
             onSelectionChanged,
             disabledBtn,
         };
@@ -405,25 +391,10 @@ export default defineComponent({
     methods: {
     },
 });
-</script>
-<style lang="scss" scoped>
-::v-deep .red {
-    label {
-        color: red;
-    }
-}
+</script>  
 
-::v-deep .element.style {
-    max-width: none;
-    width: 200px;
-    height: auto;
-    left: 0px;
-    top: 0px;
-    transform: none;
-    z-index: 1504;
-    transition: all 0s ease 0s;
-}
 
+<<<<<<< HEAD
 ::v-deep .ant-modal-footer {
     padding-top: 0;
     border: node;
@@ -553,3 +524,6 @@ export default defineComponent({
 //   transform: unset!important;
 // }
 </style>
+=======
+<style lang="scss" scoped src="../style/styleAdd.scss" />
+>>>>>>> develop

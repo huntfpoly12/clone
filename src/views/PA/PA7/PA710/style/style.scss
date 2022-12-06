@@ -1,0 +1,54 @@
+#pa-710 {
+    margin-top: 10px;
+
+    .total-user {
+        background-color: #17375E;
+        color: white;
+        display: flex;
+        align-items: center;
+
+        >div {
+            font-size: 16px;
+            width: 50%;
+            text-align: center;
+            line-height: 16px;
+
+            .dx-icon-user {
+                font-size: 55px;
+            }
+        }
+    }
+
+    .text-align-center {
+        text-align: center;
+    }
+
+    ::v-deep .ant-form-item-label>label {
+        width: 180px;
+        padding-left: 10px;
+        color: red;
+    }
+
+    .ant-form-item {
+        margin-bottom: 10px;
+    }
+
+    ::v-deep .custom-layout {
+        padding: 10px 10px 10px 0;
+
+        >div {
+            border: 1px solid #d7d7d7;
+            padding: 10px;
+            min-height: 500px;
+        }
+    }
+
+    .custom-note {
+        >span {
+            font-size: 11px;
+            color: #666666;
+            padding-left: 5px;
+        }
+    }
+
+}

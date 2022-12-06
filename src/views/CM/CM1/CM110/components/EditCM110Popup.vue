@@ -104,12 +104,13 @@
 <script lang="ts">
 import { ref, defineComponent, watch, reactive } from "vue";
 import { MailOutlined } from "@ant-design/icons-vue";
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import type { SelectProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import queries from "../../../../../graphql/queries/CM/CM110/index";
-import mutations from "../../../../../graphql/mutations/CM/CM110/index";
-import notification from "../../../../../utils/notification";
-import { initialOptionsRadio } from "../utils/index";
+import queries from "@/graphql/queries/CM/CM110/index";
+import mutations from "@/graphql/mutations/CM/CM110/index";
+import notification from "@/utils/notification";
+import { initialOptionsRadio, initialState } from "../utils/index";
 
 export default defineComponent({
     props: {
@@ -130,6 +131,7 @@ export default defineComponent({
         const options = ref<SelectProps["options"]>([]);
         let formState: any = ref({});
         let valueFacilyti = ref([]);
+        let arrValueFacilytiDefault = ref([]);
         let trigger = ref<boolean>(false);
         let dataCall = ref();
         let dataUser = ref();
@@ -141,6 +143,7 @@ export default defineComponent({
                 value,
             });
         }
+        let objDataDefault = ref({ ...initialState });
         // Get detail user
         const {
             refetch: refetchData,
@@ -204,8 +207,10 @@ export default defineComponent({
                 newFaci.push(e.facilityBusinessId);
             });
             valueFacilyti.value = newFaci;
+            arrValueFacilytiDefault.value = newFaci;
+            
             formState.value = res.data.getMyCompanyUser;
-
+            objDataDefault.value = { ...res.data.getMyCompanyUser }
             if (formState.value.withholdingRole == true) {
                 returnRadio.value = 0;
             } else {
@@ -291,7 +296,14 @@ export default defineComponent({
         };
 
         const setModalVisible = () => {
-            emit("closePopup", false);
+            console.log(JSON.stringify(arrValueFacilytiDefault.value), JSON.stringify(valueFacilyti.value));
+            
+            arrValueFacilytiDefault.value
+            if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState.value) == true
+                && JSON.stringify(arrValueFacilytiDefault.value) === JSON.stringify(valueFacilyti.value) == true)
+                emit("closePopup", false)
+            else
+                comfirmClosePopup(() => emit("closePopup", false))
         };
 
         watch(

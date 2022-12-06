@@ -115,6 +115,9 @@
 .custom-footer-modal {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 15px;
+}
+::v-deep .ant-form-item-label {
+  width: 150px;
 }

@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal :mask-closable="false" footer="" :visible="modalStatus" title="권한그룹관리" centered width="1000px"
             @cancel="setModalVisible">
-            <form action="your-action">
+            <standard-form action="your-action">
                 <a-spin :spinning="spinning" size="large">
                     <a-row :gutter="24">
                         <a-col :span="24" class="title-modal">
@@ -47,8 +47,9 @@
                             <span>권한그룹메뉴별 권한</span>
                         </a-col>
                         <a-col :span="24">
-                            <DxDataGrid :data-source="dataSource" :selected-row-keys="keyChecked" :show-borders="true"
-                                key-expr="enumKey" class="table-sevice" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :selected-row-keys="keyChecked" :show-borders="true"
+                                key-expr="enumKey" class="table-sevice" :allow-column-reordering="move_column"
+                                :allow-column-resizing="colomn_resize">
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{ data }">
@@ -64,14 +65,14 @@
                                 </template>
                             </DxDataGrid>
                         </a-col>
-                    </a-row>
-                    <a-row class="footer"> 
-                        <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible"
-                            style="margin-right: 10px;" />
-                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="updateScreenRole" />
+                        <a-col :span="24" class="footer">
+                            <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible"
+                                style="margin-right: 10px;" />
+                            <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="updateScreenRole" />
+                        </a-col>
                     </a-row>
                 </a-spin>
-            </form>
+            </standard-form>
         </a-modal>
     </div>
 </template>
@@ -87,11 +88,12 @@ import {
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import queries from "../../../../../graphql/queries/BF/BF2/BF220/index";
-import mutations from "../../../../../graphql/mutations/BF/BF2/BF220/index";
+import queries from "@/graphql/queries/BF/BF2/BF220/index";
+import mutations from "@/graphql/mutations/BF/BF2/BF220/index";
 import { AdminScreenRole } from '@bankda/jangbuda-common';
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import notification from '../../../../../utils/notification';
+import notification from '@/utils/notification';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
@@ -107,7 +109,7 @@ export default defineComponent({
     setup(props, { emit }) {
         // config grid
         const store = useStore();
-        
+
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const dataSource = ref(AdminScreenRole.all())
@@ -128,6 +130,7 @@ export default defineComponent({
             screenRoles: "",
             memo: ""
         });
+        let objDataDefault = ref()
         let readAdminScreenRoles: any = ref([])
         let writeAdminScreenRoles: any = ref([])
         const confirmPopup = (value: any) => {
@@ -189,6 +192,10 @@ export default defineComponent({
                 readAdminScreenRoles.value = value.getScreenRoleGroup.readAdminScreenRoles
                 writeAdminScreenRoles.value = value.getScreenRoleGroup.writeAdminScreenRoles
                 spinning.value = false
+
+                objDataDefault.value = {
+                    ...dataRes.value
+                }
             }
         }, { deep: true });
         const setReadWrite = (data: any, type: string) => {
@@ -242,7 +249,12 @@ export default defineComponent({
             }
         }
         const setModalVisible = () => {
-            emit("closePopupEdit", false)
+            console.log(objDataDefault.value)
+            console.log(dataRes.value)
+            if (JSON.stringify(objDataDefault.value) === JSON.stringify(dataRes.value) == true)
+                emit("closePopupEdit", false)
+            else
+                comfirmClosePopup(() => emit("closePopupEdit", false))
         }
         return {
             changeValRoles,
@@ -266,6 +278,10 @@ export default defineComponent({
     },
 })
 </script>
-<style lang="scss" scoped src="../style/popupEdit/index.scss">
 
-</style>
+
+
+
+
+
+<style lang="scss" scoped src="../style/popupEdit/index.scss"/>

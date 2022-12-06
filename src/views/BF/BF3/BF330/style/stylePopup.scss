@@ -26,6 +26,10 @@
     text-align: left;
 }
 
+::v-deep .cusstom-label-padding .ant-form-item-control-input-content {
+    padding-left: 50px;
+}
+
 ::v-deep .text-area-box-custom .dx-texteditor-input {
     text-align: left !important;
 }
@@ -59,6 +63,16 @@
 
 .ant-collapse-item.ant-collapse-item-active.popup-scroll {
     background-color: white;
+}
+
+.ant-collapse-borderless {
+    border-top: 1px solid #d9d9d9;
+}
+
+.ant-collapse-item.ant-collapse-item-active {
+    background: white;
+    border: 1px solid #d9d9d9;
+    border-top: none;
 }
 
 .input-form {
@@ -102,6 +116,11 @@
     text-align: right;
 }
 
+.cusstom-label-padding .ant-form-item-control-input-content {
+    width: 270px;
+    float: right;
+}
+
 .title-note {
     display: flex;
     justify-content: space-between;
@@ -130,6 +149,7 @@
 }
 
 ::v-deep .dx-texteditor-input {
+    margin-right: 10px;
     text-align: right;
 }
 
@@ -155,9 +175,25 @@
     width: 100%;
     display: flex;
     margin-top: 10px;
-    justify-content: flex-end;
+    justify-content: center;
 
     >div {
         margin-left: 10px;
     }
+}
+
+::v-deep .custom-label-select label {
+    width: 150px;
+}
+
+::v-deep .dx-datagrid-group-opened::before,
+::v-deep .dx-datagrid-group-closed::before {
+    color: black;
+    font-size: 25px;
+    margin-left: 7px;
+}
+
+.disabled-div {
+    pointer-events: none;
+    opacity: 0.7;
 }

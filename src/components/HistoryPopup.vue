@@ -2,10 +2,12 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingCM110 || loadingCM130 || loadingBF220">
-                <DxDataGrid :data-source="dataTableShow" :show-borders="true" key-expr="ts"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+            <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
+            loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 ||
+            loadingPA120 || loadingCMDeduction130">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
+                    :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxColumn caption="기록일시" data-field="loggedAt" data-type="text" />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
@@ -29,7 +31,7 @@
                             </a-tooltip>
                         </a-space>
                     </template>
-                </DxDataGrid> 
+                </DxDataGrid>
             </a-spin>
             <template #footer>
             </template>
@@ -72,13 +74,19 @@ export default defineComponent({
         let trigger340 = ref<boolean>(false);
         let trigger210 = ref<boolean>(false);
         let trigger130 = ref<boolean>(false);
+        let triggerDeduction130 = ref<boolean>(false);
         let trigger110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
+        let trigger610 = ref<boolean>(false);
+        let trigger710 = ref<boolean>(false);
+        let trigger520 = ref<boolean>(false);
+        let trigger510 = ref<boolean>(false);
+        let trigger120 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
         const store = useStore();
-        
+
         // const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -124,6 +132,14 @@ export default defineComponent({
                             trigger220.value = true;
                             refetchCM220();
                             break;
+                        case 'pa-610':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger610.value = true;
+                            refetchPA610();
+                            break;
                         case 'cm-130':
                             dataQuery.value = {
                                 imputedYear: parseInt(dayjs().format('YYYY')),
@@ -131,6 +147,51 @@ export default defineComponent({
                             };
                             trigger130.value = true;
                             refetchCM130();
+                            break;
+                        case 'cm-deduction-130':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            triggerDeduction130.value = true;
+                            refetchCMDeduction130();
+                            break;
+                        case 'pa-710':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger710.value = true;
+                            refetchPA710();
+                            break;
+                        case 'pa-120':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger120.value = true;
+                            refetchPA120();
+                            break;
+                        case 'pa-520':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            trigger520.value = true;
+                            refetchPA520();
+                            break;
+                        case 'pa-510':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            trigger510.value = true;
+                            refetchPA510();
                             break;
                         default:
                             break;
@@ -141,8 +202,16 @@ export default defineComponent({
                     trigger340.value = false;
                     trigger210.value = false;
                     trigger130.value = false;
+                    triggerDeduction130.value = false;
                     trigger110.value = false;
                     trigger220.value = false;
+
+                    trigger610.value = false;
+
+                    trigger710.value = false;
+                    trigger520.value = false;
+                    trigger120.value = false;
+
                 }
             }
         );
@@ -239,18 +308,107 @@ export default defineComponent({
             }
         });
 
+        // get getScreenRoleGroupLogs  610
+        const { result: resultPA610, loading: loadingPA610, refetch: refetchPA610 } = useQuery(
+            queries.getEmployeeBusinessesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger610.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        watch(resultPA610, (value) => {
+            if (value && value.getEmployeeBusinessesLogs) {
+                dataTableShow.value = value.getEmployeeBusinessesLogs;
+            }
+        });
+
         // get getWithholdingConfigPayItemsLogs cm-130
-        const { result: resultCM130, loading: loadingCM130, refetch: refetchCM130 } = useQuery(
+        const { result: resultCM130, loading: loadingCM130, refetch: refetchCMDeduction130 } = useQuery(
             queries.getWithholdingConfigPayItemsLogs,
             dataQuery,
             () => ({
-                enabled: trigger130.value,
+                enabled: triggerDeduction130.value,
                 fetchPolicy: "no-cache",
             })
         );
         watch(resultCM130, (value) => {
             if (value && value.getWithholdingConfigPayItemsLogs) {
                 dataTableShow.value = value.getWithholdingConfigPayItemsLogs;
+            }
+        });
+
+        // get getWithholdingConfigDeductionItemsLogs cm-130
+        const { result: resultCMDeduction130, loading: loadingCMDeduction130, refetch: refetchCM130 } = useQuery(
+            queries.getWithholdingConfigDeductionItemsLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger130.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultCMDeduction130, (value) => {
+            if (value && value.getWithholdingConfigDeductionItemsLogs) {
+                dataTableShow.value = value.getWithholdingConfigDeductionItemsLogs;
+            }
+        });
+
+        // get getEmployeeExtrasLogs pa-710
+        const { result: resultPA710, loading: loadingPA710, refetch: refetchPA710 } = useQuery(
+            queries.getEmployeeExtrasLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger710.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA710, (value) => {
+            if (value && value.getEmployeeExtrasLogs) {
+                dataTableShow.value = value.getEmployeeExtrasLogs;
+            }
+        });
+
+        // get getEmployeeWageDailiesLogs pa-520
+        const { result: resultPA520, loading: loadingPA520, refetch: refetchPA520 } = useQuery(
+            queries.getEmployeeWageDailiesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger520.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA520, (value) => {
+            if (value && value.getEmployeeWageDailiesLogs) {
+                dataTableShow.value = value.getEmployeeWageDailiesLogs;
+            }
+        });
+        // get getIncomeWageDailiesLogs pa-510
+        const { result: resultPA510, loading: loadingPA510, refetch: refetchPA510 } = useQuery(
+            queries.getIncomeWageDailiesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger510.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA510, (value) => {
+            if (value && value.getIncomeWageDailiesLogs) {
+                dataTableShow.value = value.getIncomeWageDailiesLogs;
+            }
+        });
+        // get getEmployeeWagesLogs pa-120
+        const { result: resultPA120, loading: loadingPA120, refetch: refetchPA120 } = useQuery(
+            queries.getEmployeeWagesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger120.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA120, (value) => {
+            if (value && value.getEmployeeWagesLogs) {
+                dataTableShow.value = value.getEmployeeWagesLogs;
             }
         });
 
@@ -273,9 +431,15 @@ export default defineComponent({
             loadingBf210,
             loadingCM110,
             loadingCM130,
+            loadingCMDeduction130,
             loadingBF220,
+            loadingPA710,
+            loadingPA520,
+            loadingPA510,
+            loadingPA120,
             formarDate,
-            dataQuery
+            dataQuery,
+            loadingPA610
         }
     },
 

@@ -63,7 +63,7 @@
                                                         <button-basic :text="'직인자동생성'" :width="130" :type="'default'" :mode="'contained'" @onClick="stampReview"/>
                                                     </a-col>
                                                     <a-col :span="16">
-                                                        <InfoCircleFilled />
+                                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                                         <a-typography-text>
                                                             직인 이미지를 자동으로 생성하여 등록합니다.
                                                         </a-typography-text>
@@ -85,7 +85,7 @@
                                             </a-upload>
                                         </a-col>
                                         <a-col :span="14" :xl="14">
-                                            <InfoCircleFilled />
+                                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                             <a-typography-text>
                                                 이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 /
                                                 종류 : GIF, JPG, PNG
@@ -146,12 +146,14 @@
                         :data="fileImage" :previewImageCall="previewImage" @urlSeal="changeSealUrl" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="이용자">
-                    <DxDataGrid :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true"
+                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true"
                         key-expr="id" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" style="width: 100%;">
+                        <DxPager :visible="false"/>
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
+                            <DxItem location="after" template="pagination-table"/>
                             <DxItem name="searchPanel" />
                             <DxItem name="exportButton" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -161,6 +163,12 @@
                         </DxToolbar>
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
+                        </template>
+                        <template #pagination-table>
+                            <div v-if="rowTable > dataGetListUsers.filter.rows">
+                                <a-pagination v-model:current="dataGetListUsers.filter.page"
+                                    v-model:page-size="dataGetListUsers.filter.rows" :total="rowTable" show-less-items />
+                            </div>
                         </template>
                         <DxColumn caption="이용자ID" data-field="username" :width="200" />
                         <DxColumn caption="상태" data-field="active" cell-template="tag-status" css-class="cell-center"
@@ -227,6 +235,7 @@ import {
     DxColumn,
     DxPaging,
     DxExport,
+    DxPager,
     DxSelection,
     DxSearchPanel,
     DxToolbar,
@@ -238,22 +247,22 @@ import {
 import DxButton from "devextreme-vue/button";
 import AddNewCM110Poup from "./components/AddNewCM110Poup.vue";
 import EditCM110Popup from "./components/EditCM110Popup.vue"
-import HistoryPopup from "../../../../components/HistoryPopup.vue";
-import inputFormat from '../../../../components/inputBoxFormat.vue';
+import HistoryPopup from "@/components/HistoryPopup.vue";
+import inputFormat from '@/components/inputBoxFormat.vue';
 import { defineComponent, ref, computed } from "vue";
 import { useStore } from 'vuex';
-import { InfoCircleFilled, EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import ReviewStampImage from "./components/ReviewStampImage.vue";
-import ListLoginPopup from "../../../../components/ListLoginPopup.vue";
+import ListLoginPopup from "@/components/ListLoginPopup.vue";
 import type { UploadProps } from 'ant-design-vue';
 import { initialFormState } from "./utils/index";
-import notification from "../../../../utils/notification";
-import mutations from "../../../../graphql/mutations/CM/CM110/index";
+import notification from "@/utils/notification";
+import mutations from "@/graphql/mutations/CM/CM110/index";
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../graphql/queries/CM/CM110/index"
+import queries from "@/graphql/queries/CM/CM110/index"
 import { useMutation } from "@vue/apollo-composable";
 import { getJwtObject } from "@bankda/jangbuda-common";
-import { companyId } from "../../../../helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 function getBase64(file: File) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -264,7 +273,6 @@ function getBase64(file: File) {
 }
 export default defineComponent({
     components: {
-        InfoCircleFilled,
         LoginOutlined,
         EditOutlined,
         HistoryOutlined,
@@ -273,6 +281,7 @@ export default defineComponent({
         DxColumn,
         DxPaging,
         DxExport,
+        DxPager,
         DxSelection,
         DxSearchPanel,
         DxToolbar,

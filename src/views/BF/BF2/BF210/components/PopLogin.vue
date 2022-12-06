@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" :title="title" centered @cancel="setModalVisible()" width="50%"
             :mask-closable="false">
-            <DxDataGrid :data-source="arrayLog" :show-borders="true"
+            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrayLog" :show-borders="true"
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
                 <DxPaging :page-size="rowTable" />
                 <DxColumn data-field="createdAt" caption="기록일시" />
@@ -30,7 +30,7 @@ import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxPaging } from "devextreme-vue/data-grid";
 import { ZoomInOutlined } from "@ant-design/icons-vue";
 import { useQuery } from "@vue/apollo-composable";
-import queries from "../../../../../graphql/queries/BF/BF2/BF210/index";
+import queries from "@/graphql/queries/BF/BF2/BF210/index";
 export default defineComponent({
     props: ['modalStatus', 'data', 'title', 'idRow']
 

@@ -5,7 +5,7 @@
                 <div class="stamp-child">
                     <div class="stamp-text-note">
                         <div style="font-size: 16px;margin-right: 5px;">
-                            <InfoCircleFilled />
+                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                         </div>
                         <div>
                             <a-typography-text>
@@ -36,15 +36,13 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch } from "vue";
-import { InfoCircleFilled } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import mutations from "../../../../../graphql/mutations/CM/CM110/index";
-import queries from "../../../../../graphql/queries/CM/CM110/index"
+import mutations from "@/graphql/mutations/CM/CM110/index";
+import queries from "@/graphql/queries/CM/CM110/index"
 
 export default defineComponent({
     props: ["modalStatus", "data"],
     components: {
-        InfoCircleFilled,
     },
     setup(props, { emit }) {
         let previewImage: any = ref("");

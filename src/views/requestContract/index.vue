@@ -156,7 +156,7 @@
                             </div>
                             <div style="position: relative;">
                                 <div class="overlay" v-if="disableFormVal2 == true"></div>
-                                <DxDataGrid disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
+                                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
                                     :show-borders="true" :allow-column-reordering="move_column"
                                     :allow-column-resizing="colomn_resize" :selected-row-keys="selectedItemKeys"
                                     :column-auto-width="true" :repaint-changes-only="true">
@@ -255,7 +255,7 @@
                                 <default-text-box width="170px" :required="true"
                                     v-model:valueInput="contractCreacted.ownerBizNumber" />
                                 <p>
-                                    <InfoCircleFilled /> : 예금주의 사업자등록번호 또는 주민등록번호입니다
+                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> : 예금주의 사업자등록번호 또는 주민등록번호입니다
                                 </p>
                             </div>
                             <div class="form-item">
@@ -316,7 +316,6 @@ import {
     CheckOutlined,
     EditOutlined,
     DeleteOutlined,
-    InfoCircleFilled
 } from "@ant-design/icons-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import {
@@ -372,7 +371,6 @@ export default {
         DxTextBox,
         DxStringLengthRule,
         DeleteOutlined,
-        InfoCircleFilled,
         DxAsyncRule
     },
     setup() {
@@ -691,9 +689,8 @@ export default {
                         notification('error', '계속하려면 모든 조건을 수락하십시오!')
                     }
                 } else if (step.value == 2) {
-                    if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                        // message.success('Vui lòng chọn sử dụng ít nhất 1 dịch vụ')
-                        notification('error', '계속하려면 모든 조건을 수락하십시오!')
+                    if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) { 
+                        notification('error', '서비스를 최소 하나 이상 선택해야합니다!')
                     } else {
                         let count = 0
                         if (dataInputCallApi.dossier == 1) {

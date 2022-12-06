@@ -1,11 +1,11 @@
-<template> 
+<template>
   <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" v-model:value="value"
     :disabled="disabled" :readOnly="readOnly" @input="updateValue(value)" :mask="mask" :mask-invalid-message="maskMess"
-    :height="$config_styles.HeightInput">
-    <DxValidator>
+    :height="$config_styles.HeightInput" :name="nameInput">
+    <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
     </DxValidator>
-  </DxTextBox> 
+  </DxTextBox>
 </template>
 
 <script lang="ts">
@@ -33,6 +33,10 @@ export default defineComponent({
       default: "",
     },
     readOnly: Boolean,
+    nameInput: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     DxTextBox,
@@ -50,8 +54,8 @@ export default defineComponent({
     }
     const value = ref(props.valueInput);
 
-    const updateValue = (value: any) => {
-      emit("update:valueInput", value);
+    const updateValue = (value: any) => {    
+      emit("update:valueInput", value); 
     };
 
     watch(

@@ -139,17 +139,12 @@
               <birth-day-box
                 width="300px"
                 :required="true"
-                label="Birth day box"
               ></birth-day-box>
             </div>
           </div>
         </td>
         <td>
           <ul>
-            <li>
-              <strong>label:</strong> label: {type: String,required: true}
-              (required)
-            </li>
             <li>
               <strong>required:</strong> {type: Boolean,default: false,}
               (option)

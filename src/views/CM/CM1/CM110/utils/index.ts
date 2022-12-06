@@ -28,7 +28,15 @@ export const initialFormState = {
     },
     sealFileStorageId: null
 }
-
+export const initialState = {
+    username: "",
+    name: "",
+    accountingRole: true,
+    facilityBusinessIds: [],
+    withholdingRole: true,
+    mobilePhone: "",
+    email: "",
+};
 export const initialOptionsRadio = [
     { id: 0, text: "있음" },
     { id: 1, text: "없음" },

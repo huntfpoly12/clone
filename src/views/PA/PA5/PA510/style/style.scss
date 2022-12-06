@@ -1,0 +1,75 @@
+#pa-510 {
+    margin-top: 10px;
+    
+    
+    ::v-deep .ant-form-item-label {
+        >label {
+            width: 100px;
+        }
+    }
+    .top-content {
+        margin-bottom: 10px;
+        padding: 2px 4px;
+        
+    }
+    .input-text {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        >button {
+            margin: 0px 10px 0 0px;
+        }
+    }
+    .header-text-3 {
+		background-color: #558ED5;
+		padding: 5px;
+		font-weight: bold;
+		font-size: 12px;
+		margin-bottom: 10px;
+    }
+
+
+    .ant-form-item {
+        margin-bottom: 10px;
+    }
+
+    ::v-deep .custom-layout {
+        padding: 10px 10px 10px 0;
+ 
+        >div {
+            border: 1px solid #d7d7d7;
+            padding: 10px;
+            min-height: 770px;
+        }
+    }
+
+    .custom-note {
+        >span {
+            font-size: 11px;
+            color: #666666;
+            padding-left: 5px;
+        }
+    }
+
+    .custom-grade-cell {
+        display: flex;
+        align-items: center;
+
+        .custom-grade-cell-tag {
+            padding: 3px 10px;
+            border: 1px solid #304967;
+            margin-right: 10px;
+            border-radius: 5px;
+            min-width: 50px;
+            text-align: center;
+        }
+    }
+}
+.button-open-tab {
+    color: white;
+    background-color: blue;
+    font-size: 10px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;;
+}

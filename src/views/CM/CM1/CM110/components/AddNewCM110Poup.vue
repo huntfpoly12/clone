@@ -3,7 +3,7 @@
 		<a-modal :visible="modalStatus" :mask-closable="false" centered cancelText="그냥 나가기" @cancel="setModalVisible()"
 			width="700px" :footer="null">
 			<h2 class="title-h2">이용자정보</h2>
-			<standard-form formName="add-cm110" >
+			<standard-form formName="add-cm110">
 				<a-row :gutter="24" class="cm-100-popup-add">
 					<a-col :span="12">
 						<a-form-item label="이용자ID" :label-col="labelCol" class="red">
@@ -51,9 +51,7 @@
 						<a-row>
 							<a-col :span="14">
 								<a-form-item label="이메일" class="red" :label-col="labelCol">
-									<mail-text-box v-model:valueInput="formState.email" :required="true"
-										:style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email">
-									</mail-text-box>
+									<mail-text-box v-model:valueInput="formState.email" :required="true" />
 								</a-form-item>
 							</a-col>
 							<a-col>
@@ -62,7 +60,7 @@
 						</a-row>
 					</a-col>
 				</a-row>
-			
+
 				<div class="text-align-center mt-20">
 					<button-basic class="button-form-modal" text="그냥 나가기" :type="'default'" :mode="'outlined'"
 						@onClick="setModalVisible()" />
@@ -77,14 +75,13 @@
 import { ref, defineComponent, reactive, watch } from "vue";
 import DxButton from 'devextreme-vue/button';
 import { MailOutlined } from '@ant-design/icons-vue';
-import type { SelectProps } from 'ant-design-vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import mutations from "../../../../../graphql/mutations/CM/CM110/index";
-import notification from "../../../../../utils/notification";
-import comfirmClosePopup from "../../../../../utils/comfirmClosePopup";
-import queries from "../../../../../graphql/queries/CM/CM110/index"
+import mutations from "@/graphql/mutations/CM/CM110/index";
+import notification from "@/utils/notification";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import queries from "@/graphql/queries/CM/CM110/index"
 import DxValidationGroup from 'devextreme-vue/validation-group';
-import { initialOptionsRadio } from "../utils/index";
+import { initialOptionsRadio, initialState } from "../utils/index";
 export default defineComponent({
 	props: {
 		modalStatus: {
@@ -100,11 +97,9 @@ export default defineComponent({
 
 	},
 	setup(props, { emit }) {
-		const optionsRadio = reactive([...initialOptionsRadio]);
-		const visible = ref<boolean>(false);
-		const statusMailValidate = ref<boolean>(false);
-		const disabledCheckUserName = ref<boolean>(false);
-		const options = ref<SelectProps['options']>([]);
+		const optionsRadio = reactive([...initialOptionsRadio]); 
+		const statusMailValidate = ref<boolean>(true);
+		const disabledCheckUserName = ref<boolean>(false); 
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
 		let dataQuery = ref()
@@ -116,27 +111,10 @@ export default defineComponent({
 				refetchData()
 			}
 			Object.assign(formState, initialState);
-		})
-		for (let i = 10; i < 36; i++) {
-			const value = i.toString(36) + i;
-			options?.value?.push({
-				label: `Long Label: ${value}`,
-				value,
-			});
-		}
-		const initialState = {
-			username: "",
-			name: "",
-			accountingRole: true,
-			facilityBusinessIds: [],
-			withholdingRole: true,
-			mobilePhone: "",
-			email: "",
-		};
+		}) 
+
 		const formState = reactive({ ...initialState });
-		const confirmPopup = () => {
-			visible.value = true;
-		}
+		let objDataDefault = ref({ ...initialState }); 
 		watch(() => formState.email, (value) => {
 			let checkMail = value.match(
 				/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -191,25 +169,19 @@ export default defineComponent({
 			if (!res.isValid) {
 				res.brokenRules[0].validator.focus();
 			} else {
-				if (statusMailValidate.value == true) {
-					let dataCallApiCreate = {
-						companyId: props.data.companyId,
-						input: {
-							username: formState.username,
-							name: formState.name,
-							accountingRole: false,
-							facilityBusinessIds: formState.facilityBusinessIds,
-							withholdingRole: formState.withholdingRole,
-							mobilePhone: formState.mobilePhone,
-							email: formState.email,
-						}
+				let dataCallApiCreate = {
+					companyId: props.data.companyId,
+					input: {
+						username: formState.username,
+						name: formState.name,
+						accountingRole: false,
+						facilityBusinessIds: formState.facilityBusinessIds,
+						withholdingRole: formState.withholdingRole,
+						mobilePhone: formState.mobilePhone,
+						email: formState.email,
 					}
-					creactUser(dataCallApiCreate)
-				} else {
-					notification('error', `이메일형식이 정확하지 않습니다.`)
-					var Url = document.getElementById("email") as HTMLInputElement;
-					Url.select()
 				}
+				creactUser(dataCallApiCreate)
 			}
 		}
 
@@ -237,8 +209,7 @@ export default defineComponent({
 			}
 		})
 
-		watch(() => formState.mobilePhone, (value) => {
-			let e = formState.mobilePhone
+		watch(() => formState.mobilePhone, (value) => { 
 			formState.mobilePhone = value.replace(/\D/g, '');
 		})
 		watch(() => returnRadio.value, (value) => {
@@ -248,31 +219,19 @@ export default defineComponent({
 				formState.withholdingRole = false;
 			}
 		}
-		);
-
-		const {
-			mutate: sendEmailUser,
-			onDone: doneSendEmail,
-			onError: errorSendEmail
-		} = useMutation(mutations.sendEmail);
+		); 
 
 		const setModalVisible = () => {
-			comfirmClosePopup(() => emit('closePopup', false))
-		}
-
-		doneSendEmail(e => {
-			console.log(e);
-
-		})
-
+			if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
+				emit("closePopup", false)
+			else
+				comfirmClosePopup(() => emit('closePopup', false))
+		} 
 		return {
 			dataCallApiCheck,
 			labelCol: { style: { width: "150px" } },
-			formState,
-			options,
-			visible,
-			optionsRadio,
-			confirmPopup,
+			formState,  
+			optionsRadio, 
 			statusMailValidate,
 			disabledCheckUserName,
 			bizTypeList,

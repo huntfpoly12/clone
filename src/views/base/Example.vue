@@ -7,6 +7,7 @@
       drag-direction="horizontal"
     >
       <div>
+
         <DxTabPanel
           v-model:data-source="allTab"
           :defer-rendering="false"
@@ -17,12 +18,11 @@
           item-template="itemTemplate"
         >
           <template #title="{ data: employee }">
-
             <div>
               <span>{{ employee.TabName }}</span>
             </div>
           </template>
-          <template #itemTemplate="{ data: employee }">
+          <template #itemTemplate="{ data: employee }"> 
             <component v-bind:is="employee.layoutName" />
           </template>
         </DxTabPanel>
@@ -37,8 +37,8 @@ import DxTabPanel from "devextreme-vue/tab-panel";
 import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
 import { defineComponent, ref, defineAsyncComponent } from "vue";
-import notify from "devextreme/ui/notify";
 import service from "./listTab.ts";
+import CountryCodeSelectBox from "../../components/CountryCodeSelectBox.vue";
 const TextBoxFrom = defineAsyncComponent(() =>
   import("../base/TextBoxFrom.vue")
 );
@@ -48,9 +48,7 @@ const NumberBoxForm = defineAsyncComponent(() =>
 const DateTimeBoxForm = defineAsyncComponent(() =>
   import("../base/DateTimeBoxForm.vue")
 );
-const CommonJangbudaForm = defineAsyncComponent(() =>
-  import("../base/CommonJangbudaForm.vue")
-);
+
 const ModalMessage = defineAsyncComponent(() =>
   import("../base/PopupMessageMain.vue")
 );
@@ -62,8 +60,19 @@ const ButtonBasic = defineAsyncComponent(() =>
   import("../base/ButtonBasic.vue")
 );
 
+const CheckBoxFrom = defineAsyncComponent(() =>
+  import("../base/CheckBoxFrom.vue")
+);
+
 const SelectBox = defineAsyncComponent(() =>
   import("../base/SelectBox.vue")
+);
+
+const TagBox = defineAsyncComponent(() =>
+  import("../base/TagBox.vue")
+);
+const ActionHeader = defineAsyncComponent(() =>
+  import("../base/ActionHeader.vue")
 );
 
 const allListTab = service.getListTab();
@@ -72,7 +81,6 @@ export default defineComponent({
     TextBoxFrom,
     NumberBoxForm,
     DateTimeBoxForm,
-    CommonJangbudaForm,
     DxTabPanel,
     DxSortable,
     DxButton,
@@ -80,7 +88,10 @@ export default defineComponent({
     ModalMessage,
     PreviewImage,
     ButtonBasic,
-    SelectBox
+    SelectBox,
+    CheckBoxFrom,
+    TagBox,
+    ActionHeader
   },
   setup() {
     const allTab = ref(allListTab);

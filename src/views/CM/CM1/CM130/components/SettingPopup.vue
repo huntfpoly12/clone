@@ -18,7 +18,7 @@
 			</div>
 			<a-spin tip="Loading..." :spinning="loading">
 				<div style="margin: 48px 0">
-					<DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="bcode"
+					<DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="bcode"
 					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
 						<DxColumn data-field="" :width="30" cell-template="grid-cell" />
 						<template #grid-cell="{ data }">
@@ -47,39 +47,21 @@
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { employees } from "../data.js";
+import { employees } from "../utils/data";
 import { DxSelectBox } from "devextreme-vue/select-box";
-import queries from "../../../../../graphql/queries/common/index";
+import queries from "@/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 import {
 	DxDataGrid,
 	DxColumn,
-	DxPaging,
-	DxExport,
-	DxSelection,
-	DxSearchPanel,
 } from "devextreme-vue/data-grid";
-import {
-	SearchOutlined,
-	WarningOutlined,
-	MailOutlined,
-	MenuOutlined,
-} from "@ant-design/icons-vue";
 
 export default defineComponent({
 	props: ["modalStatus", "data", "title"],
 
 	components: {
-		MenuOutlined,
-		SearchOutlined,
-		WarningOutlined,
-		MailOutlined,
 		DxDataGrid,
 		DxColumn,
-		DxPaging,
-		DxSelection,
-		DxExport,
-		DxSearchPanel,
 		DxSelectBox,
 	},
 	created() { },
@@ -94,19 +76,13 @@ export default defineComponent({
 	setup(props, { emit }) {
 		// config grid
 		const store = useStore();
-    
-		// const per_page = computed(() => store.state.settings.per_page);
 		const move_column = computed(() => store.state.settings.move_column);
 		const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
 		let showEmployeeInfo = ref(false);
-		let selectedRowNotes = ref('');
-		let selectedRowPicture = ref('');
 		let dataQuery = ref();
 		let trigger = ref<boolean>(false);
 		const dataSource = ref([]);
-		const data = props.data;
-		const visible = ref<boolean>(false);
 		const search = ref<string>("");
 		let dataEmit = ref()
 		const onSearch = () => {
@@ -134,10 +110,6 @@ export default defineComponent({
 		const setModalVisible = () => {
 			emit("closePopup", false);
 		};
-		const onSelectionChanged = ({ selectedRowsData }: any) => {
-			const data = selectedRowsData[0];
-			showEmployeeInfo.value = !!data;
-		}
 
 		const changeOption = (data: any) => {
 			(document.getElementById("data-" + data.data.bcode) as HTMLInputElement).click();  
@@ -153,8 +125,6 @@ export default defineComponent({
 
 
 		return {
-			data,
-			visible,
 			move_column,
       		colomn_resize,
 			search,
@@ -162,13 +132,9 @@ export default defineComponent({
 			onSearch,
 			setModalVisible,
 			showEmployeeInfo,
-			selectedRowNotes,
-			selectedRowPicture,
 			changeOption,
-			onSelectionChanged,
 			dataSource,
 			onSubmit,
-			dataEmit
 		};
 	},
 });

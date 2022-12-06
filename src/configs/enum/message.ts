@@ -24,6 +24,10 @@ export class Message extends BaseType {
       // CANCEL Button Click
         '301': { "message" : "변경사항을 저장하지 않은채 종료하시겠습니까?", "icon": "iconWarning"}, // [Modal-confirm] "Are you sure you want to exit without saving changes?
         '302': { "message" : "취소되었습니다.", "icon":"iconInfo"}, // Canceled!
+      // Delete Button Click
+        '401': { "message" : "정말로 삭제하시겠습니까?", "icon": "iconWarning"}, // Do you really want to delete this data?
+        '402': { "message" : "삭제되었습니다", "icon": "iconInfo"}, // Deleted!
+        '403': { "message" : "삭제가 불가능합니다. 관리자에게 문의하세요", "icon": "iconError"}, // Not possible to delete this data. Contact the manager.
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
@@ -56,6 +60,29 @@ export class Message extends BaseType {
         '002': { "message" : "해지(또는 숨김)하면 본 영업자와 연계된 모든 사업자는 본사로 이관됩니다. 해지(또는 숨김)하려면 <확인>을 입력한 후 완료를 누르세요.", "icon":""},
     });
 
+    //사원등록
+    public static PA120 = new Message({
+        '001': { "message" : "선택된 사원의 해당 원천년도에 급여등록 / 중간정산 / 퇴직소득 내역들이 있기에 삭제 불가합니다. 해당 내역들을 먼저 삭제하신 후 사원을 삭제하시기 바랍니다.", "icon": "iconError"}, // Cannot delete.
+        '002': { "message" : "선택된 사원의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?", "icon": "iconWarning"}, //Do you really want to delele this data?
+        '003': { "message" : "삭제되었습니다.", "icon": "iconInfo"}, // Deleted!
+    });
+   
+      //기초정보설정
+    public static CM110 = new Message({
+        '001': { "message" : "비밀번호 설정 이메일",}, // subject modal : Send email to my company user
+        '002': { "message" : "비밀번호 설정 링크가 이메일로 발송됩니다. 계속 진행하시겠습니까?", "icon": "iconWarning"}, //Contents modal : Send email to my company user
+    });
+
+        //원천설정
+    public static CM130 = new Message({
+        '001': { "message" : "이용 가능한 급여항목은 최대 20개입니다. 기존항목을 삭제한 후 새로 추가하세요", "icon": "iconError"},
+              //Contents modal : There is a maximum of 20 payroll items available. Delete the old one and add the new one
+        '002': { "message" : "이미 사용중인 항목명입니다. 사용불가능", "icon": "iconError"},
+              // Item name already in use. unavailable
+        '003': { "message" : "수정하거나 삭제할 수 없는 항목입니다.", "icon": "iconError"}, 
+              // This item cannot be edited or deleted.
+    });
+  
     private static _ = Message.closeEnum();
 
     private constructor(

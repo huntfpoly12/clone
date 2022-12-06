@@ -11,6 +11,7 @@
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@bankda/jangbuda-common": "^0.7.3",
+    "@trandung1291/common-tsv": "^0.0.4",
     "@types/file-saver-es": "^2.0.1",
     "@vue/apollo-composable": "^4.0.0-alpha.19",
     "@vuepic/vue-datepicker": "^3.4.8",
@@ -29,7 +30,6 @@
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "node-sass": "^7.0.1",
     "sass": "^1.54.8",
     "sass-loader": "^13.0.2",
     "ts-enum-util": "^4.0.2",

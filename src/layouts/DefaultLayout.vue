@@ -1,8 +1,10 @@
 <template>
 	<a-layout>
 		<a-layout-header class="header">
-			<div class="nav-logo"><img src="../assets/images/logo.png" /></div>
+			<div class="nav-logo"><a :href="'/dashboard/'"><img src="../assets/images/logo.png" /></a></div>
+
 			<div class="user-info" v-if="username">
+				<year-header />
 				<a-dropdown>
 					<a class="ant-dropdown-link" @click.prevent>
 						{{ username }}
@@ -33,16 +35,18 @@
 						<a-select v-model:value="selectedItems" :options="menuData.map(item => ({
 							value: item.id + ' | ' + item.name
 						}))" show-search placeholder="메뉴를 입력해보세요" style="width: 180px;" @change="addMenuTab" />
-					</div>  
+					</div>
 				</div>
-
 				<div class="right">
+
 					<nav class="nav-tabs" v-if="menuTab.length > 0">
 						<ul class="list-menu-tab">
+
 							<li v-for="(item, index) in menuTab" :class="activeTab.id === item.id ? 'active' : ''"
 								:key="index" @click="changeActiveTab(item)">
 								{{ item.name }}
-								<close-circle-filled @click="removeItemTab(index)" :style="{ marginLeft: '2px' , color:activeTab.id === item.id ? 'red' : '#888'}"/>
+								<close-circle-filled @click="removeItemTab(index)"
+									:style="{ marginLeft: '2px', color: activeTab.id === item.id ? 'red' : '#888' }" />
 							</li>
 						</ul>
 					</nav>
@@ -52,7 +56,7 @@
 			<a-layout>
 				<a-layout-sider width="250" v-model:collapsed="collapsed" :trigger="null" collapsible>
 					<a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :open-keys="openKeys"
-						@openChange="onOpenChange" >
+						@openChange="onOpenChange">
 						<a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
 							<template #icon>
 								<MailOutlined />
@@ -73,8 +77,8 @@
 				<a-layout>
 					<a-layout-content :style="{ background: '#fff', margin: 0, minHeight: '280px' }">
 						<div class="main-content">
-							
 							<template v-if="activeTab">
+
 								<keep-alive>
 									<component v-bind:is="currentComponent" />
 								</keep-alive>
@@ -124,11 +128,47 @@ const CM110 = defineAsyncComponent(() =>
 const CM130 = defineAsyncComponent(() =>
 	import("../views/CM/CM1/CM130/index.vue")
 );
+const PA120 = defineAsyncComponent(() =>
+	import("../views/PA/PA1/PA120/index.vue")
+);
+const PA230 = defineAsyncComponent(() =>
+	import("../views/PA/PA2/PA230/index.vue")
+);
+const PA430 = defineAsyncComponent(() =>
+	import("../views/PA/PA4/PA430/index.vue")
+);
+const PA610 = defineAsyncComponent(() =>
+	import("../views/PA/PA6/PA610/index.vue")
+);
+const PA620 = defineAsyncComponent(() =>
+	import("../views/PA/PA6/PA620/index.vue")
+);
+const PA630 = defineAsyncComponent(() =>
+	import("../views/PA/PA6/PA630/index.vue")
+);
+const PA530 = defineAsyncComponent(() =>
+	import("../views/PA/PA5/PA530/index.vue")
+);
+const PA520 = defineAsyncComponent(() =>
+	import("../views/PA/PA5/PA520/index.vue")
+);
+const PA510 = defineAsyncComponent(() =>
+	import("../views/PA/PA5/PA510/index.vue")
+);
+const PA710 = defineAsyncComponent(() =>
+	import("../views/PA/PA7/PA710/index.vue")
+);
 const Test = defineAsyncComponent(() =>
 	import("../views/DefaultComponent.vue")
 );
 const Example = defineAsyncComponent(() =>
 	import("../views/base/Example.vue")
+);
+const PA730 = defineAsyncComponent(() =>
+	import("../views/PA/PA7/PA730/index.vue")
+);
+const PA220 = defineAsyncComponent(() =>
+	import("../views/PA/PA2/PA220/index.vue")
 );
 import {
 	MenuFoldOutlined,
@@ -146,8 +186,8 @@ export default defineComponent({
 	data() {
 		return {
 			styles: {
-				main : this.$config_styles.Main,
-				sub : this.$config_styles.Sub,
+				main: this.$config_styles.Main,
+				sub: this.$config_styles.Sub,
 			},
 			user: null,
 			inputSearchText: "",
@@ -172,6 +212,18 @@ export default defineComponent({
 		BF220,
 		CM110,
 		CM130,
+		PA120,
+		PA220,
+		PA230,
+		PA430,
+		PA610,
+		PA620,
+		PA630,
+		PA530,
+		PA520,
+		PA510,
+		PA710,
+		PA730,
 		Test,
 		Example,
 		MenuFoldOutlined,
@@ -187,16 +239,23 @@ export default defineComponent({
 		menuData.forEach((item) => {
 			if (this.$route.fullPath.includes(item.id)) {
 				this.activeTab = item;
+				this.menuTab.push(item);
 				return;
-			}else if(this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard'){
+			} else if (this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard') {
 
-				this.activeTab = { name: "example", url: "/dashboard", id: "" };
+				this.activeTab = { name: "dashboard", url: "/dashboard", id: "" };
 			}
 		});
+
+		if (this.$route.fullPath === '/dashboard/' || this.$route.fullPath === '/dashboard') {
+			this.activeTab = { name: "Dashboard", url: "/dashboard", id: "" };
+			this.menuTab.push({ name: "Dashboard", url: "/dashboard", id: "" });
+		}
+
 	},
 	watch: {
 		activeTab: {
-			handler(newValue,oldVal) {
+			handler(newValue, oldVal) {
 				if (newValue) {
 					if (newValue.id.includes("bf-1")) {
 						this.openKeys = ["bf-000", "bf-100"];
@@ -243,6 +302,12 @@ export default defineComponent({
 					if (newValue.id.includes("pa-5")) {
 						this.openKeys = ["pa-000", "pa-500"];
 					}
+					if (newValue.id.includes("pa-6")) {
+						this.openKeys = ["pa-000", "pa-600"];
+					}
+					if (newValue.id.includes("pa-7")) {
+						this.openKeys = ["pa-000", "pa-700"];
+					}
 					if (newValue.id !== '#') {
 						this.$router.push(`/dashboard/${newValue.id}`);
 					}
@@ -271,6 +336,18 @@ export default defineComponent({
 			if (this.activeTab.id === "bf-220") return BF220;
 			if (this.activeTab.id === "cm-110") return CM110;
 			if (this.activeTab.id === "cm-130") return CM130;
+			if (this.activeTab.id === "pa-120") return PA120;
+			if (this.activeTab.id === "pa-220") return PA220;
+			if (this.activeTab.id === "pa-230") return PA230;
+			if (this.activeTab.id === "pa-430") return PA430;
+			if (this.activeTab.id === "pa-610") return PA610;
+			if (this.activeTab.id === "pa-620") return PA620;
+			if (this.activeTab.id === "pa-630") return PA630;
+			if (this.activeTab.id === "pa-530") return PA530;
+			if (this.activeTab.id === "pa-520") return PA520;
+			if (this.activeTab.id === "pa-510") return PA510;
+			if (this.activeTab.id === "pa-710") return PA710;
+			if (this.activeTab.id === "pa-730") return PA730;
 			if (this.activeTab.id === "example") return Example;
 			return Test;
 		},
@@ -326,28 +403,14 @@ export default defineComponent({
 				this.menuTab.push(obj[key]);
 			}
 			this.activeTab = tabAc;
-
-			// if (this.menuTab.length < 20) {
-			// 	this.menuTab.push(item);
-			// }
-			// const obj = {};
-			// for (let i = 0, len = this.menuTab.length; i < len; i++) {
-			// 	obj[this.menuTab[i]["id"]] = this.menuTab[i];
-			// }
-
-			// this.menuTab = new Array();
-			// for (const key in obj) {
-			// 	this.menuTab.push(obj[key]);
-			// }
-			// this.activeTab = item;
 		},
 		removeItemTab(item) {
 			this.menuTab.splice(item, 1);
 			if (this.menuTab.length === 0) {
-				
-				this.$router.push('/dashboard');
 				this.activeTab = { name: "example", url: "/dashboard", id: "" };
-				
+				this.$router.push('/dashboard');
+
+
 			}
 		},
 		changeActiveTab(item) {
@@ -394,206 +457,11 @@ export default defineComponent({
 	},
 });
 </script>
-<style lang="scss">
-.list-menu-tab {
-	margin-top: 0px;
-	margin-bottom: 2px !important;
-}
-.ant-layout.ant-layout-has-sider {
-	min-height: calc(100vh - 64px);
-}
-
-.components-grid-demo-flex .ant-col {
-	display: flex;
-	align-items: center;
-}
-
-.ant-layout-header {
-	display: flex;
-	justify-content: space-between;
-	background: v-bind('styles.main');
-	color: #fff;
-	height: 50px;
-	line-height: 50px;
-}
-
-.ant-layout-header a {
-	color: #fff;
-}
-
-.list-action ::v-deep .ant-btn svg {
-	width: 20px;
-	height: 20px;
-}
-
+<style lang="scss" src="./style/style.scss">
 .header-content {
-	display: block;
 	background: v-bind('styles.sub');
-	align-items: center;
-	position: relative;
-	height: 40px;
-
-	.left {
-		width: 250px;
-		float: left;
-		align-items: center;
-		padding-left: 15px;
-		height: 40px;
-		display: flex;
-	}
-
-	.right {
-		// padding-left: 24px;
-		 padding-top: 3px;
-		float: left;
-		width: calc(100% - 324px);
-	}
-
-	&::after {
-		content: "";
-		clear: both;
-		display: table;
-	}
 }
-
-.top-content {
-	background: #e6f7ff;
-	padding: 10px 24px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	.list-action {
-		button {
-			margin: 0 2px;
-		}
-	}
-}
-
-::v-deep .ant-layout-content {
-	text-align: left;
-}
-
-.wrap-search {
-	padding-left: 5px;
-	width: calc(100% - 35px);
-}
-
-.search-no-data {
-	padding: 10px;
-}
-
-.search-height {
-	max-height: 150px;
-}
-
-.ant-layout {
-	overflow-x: hidden;
-}
-
-.box-search {
-	overflow-y: auto;
-	position: absolute;
-	z-index: 9;
-	width: 233px;
-	background: #fff;
-	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-
-.item-search {
-	padding: 5px 10px;
-	display: flex;
-	text-align: left;
-}
-
-.item-search a {
-	color: #000;
-	display: block;
-	overflow: hidden;
-	max-width: 100%;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-::v-deep .ant-layout-header {
-	background-color: #096dd9;
-}
-
-::v-deep .ant-menu-dark .ant-menu-item-selected>span>a {
-	color: rgba(255, 255, 255, 0.65);
-}
-
-::v-deep h3.ant-typography {
-	margin-bottom: 0;
-}
-
-::v-deep .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
-	background: none;
-}
-
-.ant-menu-item-selected-active {
-	background-color: #1890ff !important;
-}
-
-.ant-menu-item-selected-active a {
-	color: #fff !important;
-}
-
-::v-deep .page-content {
-	padding: 10px;
-}
-
-.nav-logo img {
-	max-width: 100px;
-}
-
-.nav-tabs {
-	display: block;
-	box-shadow: inset 0 -1px 0 #888;
-	height:35px;
-	// margin-bottom: 5px;
-
-	ul {
-		display: block;
-		text-align: left;
-		padding-left: 0;
-		white-space: nowrap;
-		overflow-x: auto;
-		overflow-y: hidden;
-		max-width: 100%;
-
-		li {
-			display: inline-block;
-			width: auto;
-			text-align: center;
-			height: 33px;
-			line-height: 33px;
-			padding: 0 5px 0 10px;
-			background-color: #fafafa;
-			border: 1px solid #888;
-			margin: 0 2px;
-			// border-radius: 8px 8px 0 0;
-
-			button {
-				background: none;
-				border: none;
-				height: 100%;
-				float: right;
-				cursor: pointer;
-			}
-
-			cursor: pointer;
-
-			&:first-of-type {
-				margin-left: 0;
-			}
-
-			&.active {
-				background-color: #fff;
-				border-bottom: 1px solid #fff;
-				color: #1890ff;
-			}
-		}
-	}
+.ant-layout-header {
+	background: v-bind('styles.main');
 }
 </style>

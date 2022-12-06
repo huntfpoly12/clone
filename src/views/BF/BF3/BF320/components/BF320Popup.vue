@@ -3,22 +3,22 @@
         <a-modal :mask-closable="false" footer="" v-model:visible="visible" title="사업자관리 " width="1000px"
             @cancel="setModalVisible()">
             <a-spin tip="Loading..." :spinning="loading">
-                <form action="your-action">
+                <standard-form action="your-action" name="edit-page-320">
                     <a-collapse v-model:activeKey="activeKey" accordion>
                         <a-collapse-panel key="1" header="사업자정보">
                             <a-form :label-col="labelCol">
                                 <a-row>
                                     <a-col :span="18">
                                         <a-form-item label="상 호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.name" :required="true">
-                                            </default-text-box>
+                                            <default-text-box v-model:valueInput="formState.name" :required="true"
+                                                nameInput="formState-name" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="6"></a-col>
                                     <a-col :span="8">
                                         <a-form-item label="사업자등록번호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.bizNumber" :required="true">
-                                            </default-text-box>
+                                            <default-text-box v-model:valueInput="formState.bizNumber" :required="true"
+                                                nameInput="formState-bizNumber" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="16"></a-col>
@@ -41,7 +41,8 @@
                                                 <a-col :span="17" style="display: flex; margin-bottom: 5px;">
                                                     <default-text-box style="width: 100%;"
                                                         v-model:valueInput="formState.extendInfoDetailZipcode"
-                                                        autocomplete="off" :required="true" :disabled="true">
+                                                        autocomplete="off" :required="true" :disabled="true"
+                                                        nameInput="formState-extendInfoDetailZipcode">
                                                     </default-text-box>
                                                     <post-code-button @dataAddress="funcAddress" />
                                                 </a-col>
@@ -51,6 +52,7 @@
                                                             <default-text-box
                                                                 v-model:valueInput="formState.extendInfoDetailRoadAddress"
                                                                 autocomplete="off" width="100%" :required="true"
+                                                                nameInput="formState-extendInfoDetailRoadAddress"
                                                                 :disabled="true">
                                                             </default-text-box>
                                                         </a-col>
@@ -68,7 +70,8 @@
                                     <a-col :span="8">
                                         <a-form-item label="연락처" class="clr">
                                             <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
-                                                :required="true" placeholder="‘-’없이 숫자만 입력">
+                                                nameInput="formState-extendInfoDetailPhone" :required="true"
+                                                placeholder="‘-’없이 숫자만 입력">
                                             </default-text-box>
                                         </a-form-item>
                                     </a-col>
@@ -99,23 +102,25 @@
                             <a-form :label-col="labelCol" ref="formRef" name="custom-validation">
                                 <a-form-item has-feedback label="대표자명" class="clr">
                                     <default-text-box v-model:valueInput="formState.extendInfoPresidentName"
-                                        style="width: 200px" autocomplete="off" required>
+                                        style="width: 200px" autocomplete="off" :required="true"
+                                        nameInput="formState-extendInfoPresidentName">
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item has-feedback label="생년월일" class="clr">
                                     <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
-                                        style="width: 200px" :required="true" dateFormat="YYYY-MM-DD">
-                                    </date-time-box>
+                                        style="width: 200px" :required="true" dateFormat="YYYY-MM-DD"
+                                        nameInput="formState-extendInfoPresidentBirthday" />
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr">
                                     <tel-text-box width="200px"
                                         v-model:valueInput="formState.extendInfoPresidentMobilePhone"
-                                        placeholder="‘-’없이 숫자만 입력" :required="true" />
+                                        placeholder="‘-’없이 숫자만 입력" :required="true"
+                                        nameInput="formState-extendInfoPresidentMobilePhone" />
                                 </a-form-item>
                                 <a-form-item has-feedback label="이메일" class="clr">
                                     <mail-text-box style="width: 400px"
-                                        v-model:valueInput="formState.extendInfoPresidentEmail" :required="true">
-                                    </mail-text-box>
+                                        v-model:valueInput="formState.extendInfoPresidentEmail" :required="true"
+                                        nameInput="formState-extendInfoPresidentEmail" />
                                 </a-form-item>
                             </a-form>
                         </a-collapse-panel>
@@ -128,20 +133,23 @@
                                 <a-form-item label="출금계좌번호" class="clr">
                                     <text-number-box text-number-box
                                         v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
-                                        placeholder="‘-’없이 숫자만 입력" width="250px" :required="true">
+                                        placeholder="‘-’없이 숫자만 입력" width="250px" :required="true"
+                                        nameInput="formState-extendInfoCmsBankAccountNumber">
                                     </text-number-box>
                                 </a-form-item>
                                 <a-form-item label="예금주명" class="clr">
                                     <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" :required="true">
+                                        v-model:valueInput="formState.extendInfoCmsBankOwnerName" :required="true"
+                                        nameInput="formState-extendInfoCmsBankOwnerName">
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item label="사업자(주민)등록번호:" class="custom-flex clr">
                                     <default-text-box width="250px"
-                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" :required="true">
+                                        v-model:valueInput="formState.extendInfoCmsBankOwnerBizNumber" :required="true"
+                                        nameInput="formState-extendInfoCmsBankOwnerBizNumber">
                                     </default-text-box>
                                     <div class="warring-bank">
-                                        <InfoCircleFilled />
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px; margin-top: 0px;" />
                                         <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>
                                     </div>
                                 </a-form-item>
@@ -184,7 +192,7 @@
                         <button-basic :text="'저장하고 나가기'" :type="'default'" :mode="'contained'"
                             @onClick="updateCompany" />
                     </div>
-                </form>
+                </standard-form>
             </a-spin>
         </a-modal>
     </div>
@@ -192,10 +200,10 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
 import DxDropDownBox from "devextreme-vue/drop-down-box";
-import imgUpload from "../../../../../components/UploadImage.vue";
-import queries from "../../../../../graphql/queries/BF/BF3/BF320/index";
-import mutations from "../../../../../graphql/mutations/BF/BF3/BF320/index";
-import notification from '../../../../../utils/notification';
+import imgUpload from "@/components/UploadImage.vue";
+import queries from "@/graphql/queries/BF/BF3/BF320/index";
+import mutations from "@/graphql/mutations/BF/BF3/BF320/index";
+import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
@@ -215,10 +223,10 @@ import {
     DeleteOutlined,
     PlusSquareOutlined,
     WarningFilled,
-    InfoCircleFilled
 } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -242,13 +250,18 @@ export default defineComponent({
         PlusSquareOutlined,
         WarningFilled,
         imgUpload,
-        InfoCircleFilled
     },
     setup(props, { emit }) {
+        const inputInCollapse = [
+            { key: 1, input_name: ['formState-name', 'formState-bizNumber', 'formState-extendInfoDetailZipcode', 'formState-extendInfoDetailRoadAddress', 'formState-extendInfoDetailPhone'] },
+            { key: 2, input_name: ['formState-extendInfoPresidentBirthday', 'formState-extendInfoPresidentMobilePhone', 'formState-extendInfoPresidentEmail', 'formState-extendInfoPresidentName'] },
+            { key: 3, input_name: ['formState-extendInfoCmsBankAccountNumber', 'formState-extendInfoCmsBankOwnerName', 'formState-extendInfoCmsBankOwnerBizNumber'] },
+            { key: 4, input_name: ['withholding-capacity'] },
+        ]
         const arrRadioType = reactive([
             { id: 1, text: '법인사업자' },
             { id: 2, text: '개인사업자' }
-        ]) 
+        ])
         const arrayRadioWithdrawDay = reactive([
             { id: '매월 5일', text: '매월 5일' },
             { id: '매월 12일', text: '매월 12일' },
@@ -311,8 +324,9 @@ export default defineComponent({
             seal: null,
             canceledAt: null,
             unpaidMonths: 0
-        }); 
+        });
         let dataImg = ref()
+        let objDataDefault = reactive({});
         const formStateMomes = ref([
             {
                 memoId: null,
@@ -515,6 +529,9 @@ export default defineComponent({
                 formState.seal = value.getCompany.seal;
                 formState.canceledAt = value.getCompany.canceledAt;
                 formState.unpaidMonths = value.getCompany.unpaidMonths;
+                objDataDefault = {
+                    ...formState
+                }
             }
         });
         const changeTypeCompany = (bizType: number) => {
@@ -550,6 +567,11 @@ export default defineComponent({
             if (!res.isValid) {
                 notification('error', "필수 항목 다 입력해주세요")
                 res.brokenRules[0].validator.focus();
+                inputInCollapse.map((value: any) => {
+                    if (value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1) {
+                        activeKey.value = value.key;
+                    }
+                })
             }
             else {
                 let extendInfoDetail = {
@@ -598,13 +620,16 @@ export default defineComponent({
         }
         updateDone((res) => {
             notification('success', "업데이트 완료!")
-            setModalVisible();
+            emit("closePopup", false)
         });
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
         const setModalVisible = () => {
-            emit("closePopup", false);
+            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
+                comfirmClosePopup(() => emit("closePopup", false))
+            else
+                emit("closePopup", false)
         }
         const getImgUrl = (img: any) => {
             let resImg = {
@@ -645,6 +670,5 @@ export default defineComponent({
         };
     },
 });
-</script>
-<style lang="scss" scoped src="../style/popup/index.scss">
-</style> 
+</script> 
+<style lang="scss" scoped src="../style/popup/index.scss"/> 

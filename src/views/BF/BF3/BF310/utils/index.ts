@@ -1,4 +1,4 @@
-
+// Data Popup
 export const bizTypeItems = [{ id: 1, text: '법인사업자' }, { id: 2, text: '개인사업자' }];
 export const initialFormState = {
     id: null,
@@ -59,7 +59,7 @@ export const initialFormState = {
         },
         accounting: {
             facilityBusinesses: [],
-            accountingServiceTypes: [], 
+            accountingServiceTypes: [],
         },
         withholding: {
             startYearMonth: "",
@@ -104,3 +104,34 @@ export const initialDataStatus = [
     { name: "심사중", date: "2022-08-25", color: "blue", value: 20 },
     { name: "반려", date: "2022-08-25", color: "grey", value: 99 },
 ];
+
+export const inputInCollapse = [
+    { key: 2, input_name: ['companyName', 'companyBizNumber', 'residentId', 'company-phone'] },
+    { key: 3, input_name: ['president-name', 'president-mobilePhone', 'president-email'] },
+    { key: 4, input_name: ['longTermCareInstitutionNumber'] },
+    { key: 5, input_name: ['withholding-capacity'] },
+    { key: 6, input_name: ['cmsBank-accountNumber', 'cmsBank-ownerName', 'cmsBank-ownerBizNumber'] },
+]
+
+
+// Data index
+
+
+// Data searching default
+export const dataSearchIndex = {
+    page: 1,
+    salesRepresentativeId: 0,
+    startDate: '',
+    finishDate: '',
+    accounting: true,
+    withholding: true,
+    companyName: "",
+    presidentName: "",
+    statuses: [10, 20, 30, 99]
+}
+
+export const initialArrayRadioWithdrawDay = [
+    { id: '매월 5일', text: '매월 5일' },
+    { id: '매월 12일', text: '매월 12일' },
+    { id: '매월 19일', text: '매월 19일' },
+]
