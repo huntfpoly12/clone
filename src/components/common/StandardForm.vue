@@ -1,6 +1,6 @@
 <template>
   <form :action="formAction" :name="formName">
-    <DxValidationGroup :name="formName" ref="textBoxRefKey"> 
+    <DxValidationGroup :name="formName"  ref="textBoxRefKey"> 
         <slot></slot>
     </DxValidationGroup>
   </form>

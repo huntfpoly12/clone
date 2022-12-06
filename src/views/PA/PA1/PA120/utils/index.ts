@@ -7,22 +7,22 @@ export const radioCheckHouseholder = [
   { id: 2, text: "O" },
 ];
 export const radioCheckPersenPension = [
-  { id: 1, text: "0%" },
-  { id: 2, text: "80%" },
+  { id: 0, text: "0%" },
+  { id: 80, text: "80%" },
 ];
 export const radioCheckReductioRate = [
-  { id: 1, text: "50%" },
-  { id: 2, text: "70%" },
-  { id: 3, text: "90%" },
+  { id: 50, text: "50%" },
+  { id: 70, text: "70%" },
+  { id: 90, text: "90%" },
 ];
 export const radioCheckReductionInput = [
   { id: 1, text: "급여입력" },
   { id: 2, text: "연말입력" },
 ];
 export const IncomeTaxAppRate = [
-  { id: 1, text: "100%" },
-  { id: 2, text: "180%" },
-  { id: 3, text: "120%" },
+  { id: 100, text: "100%" },
+  { id: 180, text: "180%" },
+  { id: 120, text: "120%" },
 ];
 
 export const initFormStateTab1 = {
@@ -46,23 +46,21 @@ export const initFormStateTab1 = {
 };
 
 export const initFormStateTab2 = {
-  incomeTaxMagnification: null,
-  payItems: {
-    itemCode: null,
-    amount: null,
-  },
-  deductionItems: {
-    itemCode: null,
-    amount: null,
-    supportAmount: null,
-  },
-  reductionItems: {
-    temCode: null,
-    reductionRate: null,
-    reductionStartDate: "",
-    reductionFinishDate: "",
-    reductionInput: null,
-  },
+  nationalPensionDeduction: false,
+  healthInsuranceDeduction: false,
+  longTermCareInsuranceDeduction: false,
+  employeementInsuranceDeduction: false,
+  insuranceSupport: false,
+  nationalPensionSupportPercent: 0,
+  employeementInsuranceSupportPercent: 0,
+  employeementReduction: false,
+  employeementReductionStartDate: "",
+  employeementReductionFinishDate: "",
+  employeementReductionRatePercent: 50,
+  employeementReductionInput: 1,
+  incomeTaxMagnification: 100,
+  payItems: [],
+  deductionItems: [],
 };
 export const initFormStateTab3 = {
   employeeId: 0,
