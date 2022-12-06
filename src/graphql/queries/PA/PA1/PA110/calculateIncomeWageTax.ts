@@ -6,12 +6,11 @@ export default gql`
     $totalTaxPay: Int!
     $dependentCount: Int!
   ) {
-    calculateIncomeWageTax(  
-        companyId: $companyId
-        imputedYear: $imputedYear
-        totalTaxPay: $totalTaxPay
-        dependentCount: $dependentCount) {
-
-    }
+    calculateIncomeWageTax(
+      companyId: $companyId
+      imputedYear: $imputedYear
+      totalTaxPay: $totalTaxPay
+      dependentCount: $dependentCount
+    )
   }
 `;

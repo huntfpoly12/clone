@@ -1,14 +1,14 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation changeIncomeProcessWageDailyStatus(
+  query getIncomeProcessWages(
     $companyId: Int!
-    $processKey: IncomeProcessKeyInput!
-    $status: ProcessStatusScalar!
+    $imputedYear: Int!
+    $imputedMonth: Int
   ) {
-    changeIncomeProcessWageDailyStatus(
+    getIncomeProcessWages(
       companyId: $companyId
-      processKey: $processKey
-      status: $status
+      imputedYear: $imputedYear
+      imputedMonth: $imputedMonth
     ) {
       companyId
       type
@@ -50,6 +50,9 @@ export default gql`
         withholdingIncomeTax
         withholdingLocalIncomeTax
         withholdingRuralSpecialTax
+        totalPay
+        totalTaxPay
+        totalTaxfreePay
         totalDeduction
         actualPayment
       }

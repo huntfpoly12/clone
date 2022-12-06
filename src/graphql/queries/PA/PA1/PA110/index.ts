@@ -1,19 +1,19 @@
-import getEmployeeWageDailies from "./getEmployeeWageDailies";
-import getIncomeWageDaily from "./getIncomeWageDaily";
 import getWithholdingConfigDeductionItems from "./getWithholdingConfigDeductionItems";
-import getIncomeProcessWageDailies from "./getIncomeProcessWageDailies";
-import getIncomeWageDailyPayrollRegisterViewUrl from "./getIncomeWageDailyPayrollRegisterViewUrl";
-import getIncomeWageDailySalaryStatementViewUrl from "./getIncomeWageDailySalaryStatementViewUrl";
+import getIncomeWagePayrollRegisterViewUrl from "./getIncomeWagePayrollRegisterViewUrl";
+import getIncomeWageSalaryStatementViewUrl from "./getIncomeWageSalaryStatementViewUrl";
 import calculateIncomeWageTax from "./calculateIncomeWageTax";
+import getIncomeProcessWages from "./getIncomeProcessWages";
+import getIncomeWages from "./getIncomeWages";
+import getIncomeWage from "./getIncomeWage";
+import getWithholdingConfigPayItems from "./getWithholdingConfigPayItems";
 const queries = {
-  getIncomeProcessWageDailies: getIncomeProcessWageDailies,
   getWithholdingConfigDeductionItems: getWithholdingConfigDeductionItems,
-  getIncomeWageDaily: getIncomeWageDaily,
-  getEmployeeWageDailies: getEmployeeWageDailies,
-  getIncomeWageDailyPayrollRegisterViewUrl:
-    getIncomeWageDailyPayrollRegisterViewUrl,
-  getIncomeWageDailySalaryStatementViewUrl:
-    getIncomeWageDailySalaryStatementViewUrl,
+  getIncomeWagePayrollRegisterViewUrl: getIncomeWagePayrollRegisterViewUrl,
+  getIncomeWageSalaryStatementViewUrl: getIncomeWageSalaryStatementViewUrl,
   calculateIncomeWageTax: calculateIncomeWageTax,
+  getIncomeProcessWages: getIncomeProcessWages,
+  getIncomeWages: getIncomeWages,
+  getIncomeWage: getIncomeWage,
+  getWithholdingConfigPayItems: getWithholdingConfigPayItems,
 };
 export default queries;

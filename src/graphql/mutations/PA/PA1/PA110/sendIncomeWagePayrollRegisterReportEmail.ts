@@ -1,12 +1,14 @@
 import gql from "graphql-tag";
 export default gql`
-  query getIncomeWageDailyPayrollRegisterViewUrl(
+  mutation sendIncomeWagePayrollRegisterReportEmail(
     $companyId: Int!
     $input: PayrollRegisterInput!
+    $emailInput: SendEmailRequestInput!
   ) {
-    getIncomeWageDailyPayrollRegisterViewUrl(
+    sendIncomeWagePayrollRegisterReportEmail(
       companyId: $companyId
       input: $input
+      emailInput: $emailInput
     )
   }
 `;

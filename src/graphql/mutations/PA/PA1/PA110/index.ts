@@ -1,23 +1,25 @@
-import findIncomeProcessWageDailyStatViews from "./findIncomeProcessWageDailyStatViews";
-import changeIncomeProcessWageDailyStatus from "./changeIncomeProcessWageDailyStatus";
-import deleteIncomeWageDailies from "./deleteIncomeWageDailies";
-import createIncomeWageDaily from "./createIncomeWageDaily";
+import changeIncomeProcessWageStatus from "./changeIncomeProcessWageStatus";
+import deleteIncomeWages from "./deleteIncomeWages";
+import createIncomeWage from "./createIncomeWage";
 import changeIncomeWagePaymentDay from "./changeIncomeWagePaymentDay";
-import sendIncomeWageDailyPayrollRegisterReportEmail from "./sendIncomeWageDailyPayrollRegisterReportEmail";
-import sendIncomeWageDailySalaryStatementReportEmail from "./sendIncomeWageDailySalaryStatementReportEmail";
-import updateIncomeWageDaily from "./updateIncomeWageDaily";
+import sendIncomeWagePayrollRegisterReportEmail from "./sendIncomeWagePayrollRegisterReportEmail";
+import sendIncomeWageSalaryStatementReportEmail from "./sendIncomeWageSalaryStatementReportEmail";
+import updateIncomeWage from "./updateIncomeWage";
+import copyIncomeWages from "./copyIncomeWages";
+import findIncomeProcessWageStatViews from "./findIncomeProcessWageStatViews";
 
 const mutations = {
-  findIncomeProcessWageDailyStatViews: findIncomeProcessWageDailyStatViews,
-  changeIncomeProcessWageDailyStatus: changeIncomeProcessWageDailyStatus,
-  deleteIncomeWageDailies: deleteIncomeWageDailies,
-  createIncomeWageDaily: createIncomeWageDaily,
+  changeIncomeProcessWageStatus: changeIncomeProcessWageStatus,
+  deleteIncomeWages: deleteIncomeWages,
+  createIncomeWage: createIncomeWage,
   changeIncomeWagePaymentDay: changeIncomeWagePaymentDay,
-  sendIncomeWageDailyPayrollRegisterReportEmail:
-    sendIncomeWageDailyPayrollRegisterReportEmail,
-  sendIncomeWageDailySalaryStatementReportEmail:
-    sendIncomeWageDailySalaryStatementReportEmail,
-  updateIncomeWageDaily: updateIncomeWageDaily,
+  sendIncomeWagePayrollRegisterReportEmail:
+    sendIncomeWagePayrollRegisterReportEmail,
+  sendIncomeWageSalaryStatementReportEmail:
+    sendIncomeWageSalaryStatementReportEmail,
+  updateIncomeWage: updateIncomeWage,
+  copyIncomeWages: copyIncomeWages,
+  findIncomeProcessWageStatViews: findIncomeProcessWageStatViews,
 };
 
 export default mutations;

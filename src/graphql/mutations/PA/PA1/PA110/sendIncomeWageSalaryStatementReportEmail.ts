@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation sendIncomeWageDailySalaryStatementReportEmail(
+  mutation sendIncomeWageSalaryStatementReportEmail(
     $companyId: Int!
     $imputedYear: Int!
     $incomeInputs: [IncomeSendEmailRequestInput!]!
   ) {
-    sendIncomeWageDailySalaryStatementReportEmail(
+    sendIncomeWageSalaryStatementReportEmail(
       companyId: $companyId
       imputedYear: $imputedYear
       incomeInputs: $incomeInputs

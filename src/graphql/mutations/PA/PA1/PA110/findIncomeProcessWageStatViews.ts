@@ -1,13 +1,10 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation findIncomeProcessWageDailyStatViews(
+  mutation findIncomeProcessWageStatViews(
     $companyId: Int!
     $filter: FindIncomeProcessStatFilter!
   ) {
-    findIncomeProcessWageDailyStatViews(
-      companyId: $companyId
-      filter: $filter
-    ) {
+    findIncomeProcessWageStatViews(companyId: $companyId, filter: $filter) {
       imputedYear
       imputedMonth
       imputedYearMonth

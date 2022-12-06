@@ -1,14 +1,14 @@
 import gql from "graphql-tag";
 export default gql`
-  query getIncomeProcessWageDailies(
+  mutation changeIncomeProcessWageStatus(
     $companyId: Int!
-    $imputedYear: Int!
-    $imputedMonth: Int
+    $processKey: IncomeProcessKeyInput!
+    $status: ProcessStatusScalar!
   ) {
-    getIncomeProcessWageDailies(
+    changeIncomeProcessWageStatus(
       companyId: $companyId
-      imputedYear: $imputedYear
-      imputedMonth: $imputedMonth
+      processKey: $processKey
+      status: $status
     ) {
       companyId
       type

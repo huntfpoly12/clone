@@ -1,13 +1,13 @@
 import gql from "graphql-tag";
 export default gql`
-  query getIncomeWageDailySalaryStatementViewUrl(
+  mutation deleteIncomeWages(
     $companyId: Int!
-    $imputedYear: Int!
+    $processKey: IncomeProcessKeyInput!
     $incomeIds: [Int!]!
   ) {
-    getIncomeWageDailySalaryStatementViewUrl(
+    deleteIncomeWages(
       companyId: $companyId
-      imputedYear: $imputedYear
+      processKey: $processKey
       incomeIds: $incomeIds
     )
   }

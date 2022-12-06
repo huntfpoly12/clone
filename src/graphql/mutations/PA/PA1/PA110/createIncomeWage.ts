@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation createIncomeWageDaily(
+  mutation createIncomeWage(
     $companyId: Int!
     $processKey: IncomeProcessKeyInput!
-    $input: IncomeWageDailyCreateInput!
+    $input: IncomeWageCreateInput!
   ) {
-    createIncomeWageDaily(
+    createIncomeWage(
       companyId: $companyId
       processKey: $processKey
       input: $input
