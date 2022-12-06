@@ -3,7 +3,6 @@
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-row :gutter="16">
       <a-col :span="12">
-        {{formStateTab2}}
         <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
           <checkbox-basic size="18px" label="국민연금" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
           <checkbox-basic size="18px" label="건강보험" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
@@ -125,7 +124,7 @@
     <a-row style="margin-top: 40px">
       <a-col :span="8" :offset="8" style="text-align: center;">
         <button-basic style="margin-right: 20px" text="공제계산" type="default" mode="contained" :width="120" @onClick="calculateTax"/>
-        <button-basic text="저장" type="default" mode="contained" :width="90" />
+        <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="updateDeduction"/>
       </a-col>
     </a-row>
   </div>
@@ -133,7 +132,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref, watch, computed } from "vue";
-
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   radioCheckPersenPension,
@@ -147,6 +145,7 @@ import { useStore } from "vuex";
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
+import notification from "@/utils/notification";
 export default defineComponent({
   components: {
   },
@@ -173,10 +172,9 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear);
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,
-      reductionItems: {
-        reductionStartDate: dayjs().format("YYYY-MM-DD"),
-        reductionFinishDate: dayjs().format("YYYY-MM-DD")
-      }
+      employeementReductionStartDate : dayjs().format("YYYY-MM-DD"),
+      employeementReductionFinishDate: dayjs().format("YYYY-MM-DD")
+      
     });
     // get WithholdingConfigPayItems
     const originData = ref({
@@ -186,13 +184,14 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear.value,
     })
+
     const {
-      refetch: refreshResConfigPayItems,
       result: resConfigPayItems,
       loading: loading1
     } = useQuery(queries.getWithholdingConfigPayItems, originDataDetail, () => ({
       fetchPolicy: "no-cache",
     }))
+
     watch(resConfigPayItems, (value) => {
       if (value) {
         datagConfigPayItems.value = value.getWithholdingConfigPayItems.map((item :any) => {
@@ -211,12 +210,39 @@ export default defineComponent({
       }
     });
 
-
-
+    const {
+      refetch: refetchValueDetail,
+      result,
+      loading
+    } = useQuery(queries.getEmployeeWage, {
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      employeeId: props.employeeId
+    }, () => ({
+      fetchPolicy: "no-cache",
+    }))
+    watch(result,(value)=>{
+      if (value) {
+        formStateTab2.nationalPensionDeduction = value.getEmployeeWage;
+        formStateTab2.healthInsuranceDeduction = value.getEmployeeWage;
+        formStateTab2.longTermCareInsuranceDeduction = value.getEmployeeWage;
+        formStateTab2.employeementInsuranceDeduction = value.getEmployeeWage;
+        formStateTab2.insuranceSupport = value.getEmployeeWage;
+        formStateTab2.nationalPensionSupportPercent = value.getEmployeeWage;
+        formStateTab2.employeementInsuranceSupportPercent = value.getEmployeeWage;
+        formStateTab2.employeementReduction = value.getEmployeeWage;
+        formStateTab2.employeementReductionStartDate = value.getEmployeeWage;
+        formStateTab2.employeementReductionFinishDate = value.getEmployeeWage;
+        formStateTab2.employeementReductionRatePercent = value.getEmployeeWage;
+        formStateTab2.employeementReductionInput = value.getEmployeeWage;
+        formStateTab2.incomeTaxMagnification = value.getEmployeeWage;
+        formStateTab2.payItems = value.getEmployeeWage;
+        formStateTab2.deductionItems = value.getEmployeeWage;
+      }
+    })
 
     // get WithouthouldingConfigdeduction
     const {
-      refetch: refreshResConfigDeduction,
       result: resConfigDeduction,
       loading: loading2
 
@@ -231,6 +257,8 @@ export default defineComponent({
         trigger.value = false;
       }
     });
+
+    //  Calculate Pension Employee 
     const calculateTax = ()=>{
 			dataConfigDeduction.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
@@ -291,6 +319,34 @@ export default defineComponent({
         return accumulator + object.value;
         }, 0);
     }
+
+    // Save form 
+    const {
+			mutate,
+			onError,
+			onDone,
+		} = useMutation(mutations.saveEmployeeWagePayDeductionReduction);
+
+		onError(e => {
+			notification('error', e.message)
+		})
+
+		onDone(res => {
+			emit('closePopup', false)
+			notification('success', '업데이트 완료!')
+		})
+
+		const updateDeduction = () => {
+        const variables = {
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          employeeId: props.employeeId,
+          input: formStateTab2
+        };
+				mutate(variables)
+		}
+	
+
     return {
       formStateTab2, loading1, loading2,
       rangeDate,
@@ -298,6 +354,7 @@ export default defineComponent({
       totalDeduction,
       subPayment,
       calculateTax,
+      updateDeduction,
       radioCheckPersenPension,
       radioCheckReductioRate,
       radioCheckReductionInput,
