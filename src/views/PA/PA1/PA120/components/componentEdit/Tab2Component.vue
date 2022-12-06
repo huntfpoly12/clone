@@ -1,6 +1,7 @@
 <template>
   <div id="tab2-pa120">
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
+    <a-spin :spinning="loading" size="large">
     <a-row :gutter="16">
       <a-col :span="12">
         <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -127,11 +128,12 @@
         <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="updateDeduction"/>
       </a-col>
     </a-row>
+  </a-spin>
   </div>
 
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed } from "vue";
+import { defineComponent, reactive, ref, watch, computed ,onMounted} from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   radioCheckPersenPension,
@@ -142,7 +144,14 @@ import {
 } from "../../utils/index";
 import dayjs from 'dayjs';
 import { useStore } from "vuex";
-import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
+import { 
+  companyId, 
+  calculateNationalPensionEmployee, 
+  calculateHealthInsuranceEmployee, 
+  calculateLongTermCareInsurance, 
+  calculateEmployeementInsuranceEmployee 
+} from "@/helpers/commonFunction"
+import filters from "@/helpers/filters"
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
@@ -150,13 +159,23 @@ export default defineComponent({
   components: {
   },
   props: {
-    employeeId: {
-      type: String,
-      default: 0
+    idRowEdit: {
+      type: Number
+    },
+    isTabchange: {
+      type: Boolean
     },
     modalStatus: Boolean,
   },
   setup(props, { emit }) {
+    const employeeId =  ref(props.idRowEdit);
+
+    watch(
+      () => props.idRowEdit,
+        (newValue) => {
+              employeeId.value = newValue;
+        }
+      );
     const totalPayItemTaxFree = ref(0);
     const totalPayItemTax = ref(0);
     const totalPayItem = ref(0);
@@ -168,7 +187,7 @@ export default defineComponent({
     const store = useStore();
     const datagConfigPayItems = ref();
     const dataConfigDeduction = ref();
-    const trigger = ref<boolean>(true);
+    const triggerDetail = ref<boolean>(false);
     const globalYear = computed(() => store.state.settings.globalYear);
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,
@@ -176,6 +195,7 @@ export default defineComponent({
       employeementReductionFinishDate: dayjs().format("YYYY-MM-DD")
       
     });
+
     // get WithholdingConfigPayItems
     const originData = ref({
       companyId: companyId,
@@ -184,14 +204,19 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear.value,
     })
+ 
+    watch(()=>props.idRowEdit,()=>{
 
+      refetchConfigPayItems()
+      refetchConfigDeduction()
+    })
     const {
+      refetch: refetchConfigPayItems,
       result: resConfigPayItems,
       loading: loading1
     } = useQuery(queries.getWithholdingConfigPayItems, originDataDetail, () => ({
       fetchPolicy: "no-cache",
     }))
-
     watch(resConfigPayItems, (value) => {
       if (value) {
         datagConfigPayItems.value = value.getWithholdingConfigPayItems.map((item :any) => {
@@ -205,8 +230,29 @@ export default defineComponent({
                         taxFreeIncludeSubmission:item.taxFreeIncludeSubmission,
                         value: 0
                       }
-          });;
-        trigger.value = false;
+          });
+        triggerDetail.value = true;
+        refetchValueDetail( {
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      employeeId: employeeId.value
+    });
+      }
+    });
+    
+    // get WithouthouldingConfigdeduction
+    const {
+      result: resConfigDeduction,
+      loading: loading2,
+      refetch: refetchConfigDeduction,
+    } = useQuery(queries.getWithholdingConfigDeductionItems, originDataDetail, () => ({
+      fetchPolicy: "no-cache",
+    }))
+    watch(resConfigDeduction, (value) => {
+      if (value) {
+          dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.map((item :any) => {
+              return {itemCode:item.itemCode ,name :item.name, value: 0}
+          });
       }
     });
 
@@ -217,46 +263,43 @@ export default defineComponent({
     } = useQuery(queries.getEmployeeWage, {
       companyId: companyId,
       imputedYear: globalYear.value,
-      employeeId: props.employeeId
+      employeeId: employeeId.value
     }, () => ({
       fetchPolicy: "no-cache",
+      enabled: triggerDetail.value,
     }))
     watch(result,(value)=>{
       if (value) {
-        formStateTab2.nationalPensionDeduction = value.getEmployeeWage;
-        formStateTab2.healthInsuranceDeduction = value.getEmployeeWage;
-        formStateTab2.longTermCareInsuranceDeduction = value.getEmployeeWage;
-        formStateTab2.employeementInsuranceDeduction = value.getEmployeeWage;
-        formStateTab2.insuranceSupport = value.getEmployeeWage;
-        formStateTab2.nationalPensionSupportPercent = value.getEmployeeWage;
-        formStateTab2.employeementInsuranceSupportPercent = value.getEmployeeWage;
-        formStateTab2.employeementReduction = value.getEmployeeWage;
-        formStateTab2.employeementReductionStartDate = value.getEmployeeWage;
-        formStateTab2.employeementReductionFinishDate = value.getEmployeeWage;
-        formStateTab2.employeementReductionRatePercent = value.getEmployeeWage;
-        formStateTab2.employeementReductionInput = value.getEmployeeWage;
-        formStateTab2.incomeTaxMagnification = value.getEmployeeWage;
-        formStateTab2.payItems = value.getEmployeeWage;
-        formStateTab2.deductionItems = value.getEmployeeWage;
+        formStateTab2.nationalPensionDeduction = value.getEmployeeWage.nationalPensionDeduction;
+        formStateTab2.healthInsuranceDeduction = value.getEmployeeWage.healthInsuranceDeduction;
+        formStateTab2.employeementInsuranceDeduction = value.getEmployeeWage.employeementInsuranceDeduction;
+        formStateTab2.insuranceSupport = value.getEmployeeWage.insuranceSupport;
+        formStateTab2.nationalPensionSupportPercent = value.getEmployeeWage.nationalPensionSupportPercent;
+        formStateTab2.employeementInsuranceSupportPercent = value.getEmployeeWage.employeementInsuranceSupportPercent;
+        formStateTab2.employeementReduction = value.getEmployeeWage.employeementReduction;
+        formStateTab2.employeementReductionStartDate = value.getEmployeeWage.employeementReductionStartDate;
+        formStateTab2.employeementReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate;
+        formStateTab2.employeementReductionRatePercent = value.getEmployeeWage.employeementReductionRatePercent;
+        formStateTab2.employeementReductionInput = value.getEmployeeWage.employeementReductionInput;
+        formStateTab2.incomeTaxMagnification = value.getEmployeeWage.incomeTaxMagnification;
+        value.getEmployeeWage.payItems.map((item :any) => {
+          datagConfigPayItems.value.find((Obj : any) => {
+              if(item.itemCode == Obj.itemCode){
+                Obj.value = item.amount ;
+              }            
+          });
+          })
+        value.getEmployeeWage.deductionItems.map((item :any) => {
+          dataConfigDeduction.value.find((Obj : any) => {
+              if(item.itemCode == Obj.itemCode){
+                Obj.value = item.amount ;
+              }            
+          });
+        })
+        rangeDate.value = [dayjs(value.getEmployeeWage.employeementReductionStartDate),dayjs(value.getEmployeeWage.employeementReductionFinishDate)]
+        calculateTax();
       }
     })
-
-    // get WithouthouldingConfigdeduction
-    const {
-      result: resConfigDeduction,
-      loading: loading2
-
-    } = useQuery(queries.getWithholdingConfigDeductionItems, originDataDetail, () => ({
-      fetchPolicy: "no-cache",
-    }))
-    watch(resConfigDeduction, (value) => {
-      if (value) {
-          dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.map((item :any) => {
-              return {itemCode:item.itemCode ,name :item.name, value: 0}
-          });
-        trigger.value = false;
-      }
-    });
 
     //  Calculate Pension Employee 
     const calculateTax = ()=>{
@@ -337,10 +380,12 @@ export default defineComponent({
 		})
 
 		const updateDeduction = () => {
+      formStateTab2.employeementReductionStartDate = filters.formatDate(rangeDate.value[0]);
+      formStateTab2.employeementReductionFinishDate = filters.formatDate(rangeDate.value[1]);
         const variables = {
           companyId: companyId,
           imputedYear: globalYear.value,
-          employeeId: props.employeeId,
+          employeeId: employeeId.value,
           input: formStateTab2
         };
 				mutate(variables)
@@ -348,7 +393,7 @@ export default defineComponent({
 	
 
     return {
-      formStateTab2, loading1, loading2,
+      formStateTab2, loading1, loading2,loading,
       rangeDate,
       totalPayItem,totalPayItemTaxFree,totalPayItemTax,
       totalDeduction,

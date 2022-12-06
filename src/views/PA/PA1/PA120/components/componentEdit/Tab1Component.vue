@@ -150,7 +150,7 @@ export default defineComponent({
         employeeId.value = null;
         residentId.value = '';
         foreigner.value = 0;
-        //Object.assign(formStateTab1, initFormStateTab1);
+        Object.assign(formStateTab1, initFormStateTab1);
       }
     })
     const foreigner = ref(formStateTab1.foreigner == true ? 1 : 0);
@@ -226,30 +226,32 @@ export default defineComponent({
     })
     const {
       refetch: refetchValueDetail,
-      onResult: getValueDefault,
+      result: getValueDefault,
       loading
     } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
       fetchPolicy: "no-cache",
     }))
-    getValueDefault(res => {
-      if (res.data.getEmployeeWage) {
-        formStateTab1.name = res.data.getEmployeeWage.name
-        formStateTab1.foreigner = res.data.getEmployeeWage.foreigner
-        formStateTab1.nationality = res.data.getEmployeeWage.nationality
-        formStateTab1.nationalityCode = res.data.getEmployeeWage.nationalityCode
-        formStateTab1.stayQualification = res.data.getEmployeeWage.stayQualification
-        formStateTab1.residentId = res.data.getEmployeeWage.residentId.replace("-", "")
+    watch(getValueDefault,value => {
+      if (value) {
+        console.log('tab1',props.idRowEdit);
+        
+        formStateTab1.name = value.getEmployeeWage.name
+        formStateTab1.foreigner = value.getEmployeeWage.foreigner
+        formStateTab1.nationality = value.getEmployeeWage.nationality
+        formStateTab1.nationalityCode = value.getEmployeeWage.nationalityCode
+        formStateTab1.stayQualification = value.getEmployeeWage.stayQualification
+        formStateTab1.residentId = value.getEmployeeWage.residentId.replace("-", "")
         formStateTab1.zipcode = ''
-        formStateTab1.roadAddress = res.data.getEmployeeWage.roadAddress
-        formStateTab1.addressExtend = res.data.getEmployeeWage.addressExtend
-        formStateTab1.email = res.data.getEmployeeWage.email
-        formStateTab1.employeeId = res.data.getEmployeeWage.employeeId
-        formStateTab1.joinedAt = res.data.getEmployeeWage.joinedAt ? dayjs(res.data.getEmployeeWage.joinedAt.toString()).format('YYYY-MM-DD') : ''
-        formStateTab1.leavedAt = res.data.getEmployeeWage.leavedAt ? dayjs(res.data.getEmployeeWage.leavedAt.toString()).format('YYYY-MM-DD') : ''
-        formStateTab1.retirementIncome = res.data.getEmployeeWage.retirementIncome
-        formStateTab1.weeklyWorkingHours = res.data.getEmployeeWage.weeklyWorkingHours
-        formStateTab1.department = res.data.getEmployeeWage.department
-        formStateTab1.responsibility = res.data.getEmployeeWage.responsibility
+        formStateTab1.roadAddress = value.getEmployeeWage.roadAddress
+        formStateTab1.addressExtend = value.getEmployeeWage.addressExtend
+        formStateTab1.email = value.getEmployeeWage.email
+        formStateTab1.employeeId = value.getEmployeeWage.employeeId
+        formStateTab1.joinedAt = value.getEmployeeWage.joinedAt ? dayjs(value.getEmployeeWage.joinedAt.toString()).format('YYYY-MM-DD') : ''
+        formStateTab1.leavedAt = value.getEmployeeWage.leavedAt ? dayjs(value.getEmployeeWage.leavedAt.toString()).format('YYYY-MM-DD') : ''
+        formStateTab1.retirementIncome = value.getEmployeeWage.retirementIncome
+        formStateTab1.weeklyWorkingHours = value.getEmployeeWage.weeklyWorkingHours
+        formStateTab1.department = value.getEmployeeWage.department
+        formStateTab1.responsibility = value.getEmployeeWage.responsibility
       }
     })
     const {
