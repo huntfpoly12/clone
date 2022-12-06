@@ -247,8 +247,8 @@ export default defineComponent({
                     indexActive = index 
             })
             //Add class row choose
-            let a = document.body.querySelectorAll('#id-index [aria-rowindex]')
-            a[indexActive].classList.add("active-row-key");
+            // let a = document.body.querySelectorAll('#id-index [aria-rowindex]')
+            // a[indexActive].classList.add("active-row-key");
         }
 
         return {

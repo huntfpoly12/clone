@@ -18,9 +18,9 @@
                 <a-col :span="24">
                     <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                            :show-borders="true" key-expr="employeeId" @exporting="onExporting"
+                            :show-borders="true" key-expr="companyId" @exporting="onExporting"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
+                            :column-auto-width="true" :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -29,8 +29,8 @@
                                 <DxItem name="searchPanel" />
                                 <DxItem name="exportButton" />
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
-                                <DxItem location="after" template="button-template" css-class="cell-button-add" /> 
-                                <DxItem name="addRowButton" show-text="always" /> 
+                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                                <DxItem name="addRowButton" show-text="always" />
                             </DxToolbar>
                             <template #button-template>
                                 <DxButton icon="plus" @click="addRow" />
@@ -46,44 +46,64 @@
                                         :total="rowTable" show-less-items />
                                 </div>
                             </template>
-                            <DxColumn caption="성명 (상호)" cell-template="tag" />
-                            <template #tag="{ data }" class="custom-action">
-                                <div class="custom-action">
-                                    <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                        :idCardNumber="data.data.residentId" :status="data.data.status"
-                                        :foreigner="data.data.foreigner" :checkStatus="false" />
+
+                            <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
+                            <template #col-first="{ data }">
+                                <b>지급연월</b><br>
+                                <span>{{ data.data.imputedYear }}-{{ data.data.imputedMonth }}</span>
+                            </template>
+                            <DxColumn caption="1" cell-template="month-1" />
+                            <template #month-1="{ data }">
+                                <div v-if="(data.data.imputedMonth == 1)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="2" cell-template="month-2" />
+                            <template #month-2="{ data }">
+                                <div v-if="(data.data.imputedMonth == 2)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="3" cell-template="month-3" />
+                            <template #month-3="{ data }">
+                                <div v-if="(data.data.imputedMonth == 3)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="4" cell-template="month-4" />
+                            <template #month-4="{ data }">
+                                <div v-if="(data.data.imputedMonth == 4)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="5" cell-template="month-5" />
+                            <template #month-5="{ data }">
+                                <div v-if="(data.data.imputedMonth == 5)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="6" cell-template="month-6" />
+                            <template #month-6="{ data }">
+                                <div v-if="(data.data.imputedMonth == 6)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="7" cell-template="month-7" />
+                            <template #month-7="{ data }">
+                                <div v-if="(data.data.imputedMonth == 7)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="8" cell-template="month-8" />
+                            <template #month-8="{ data }">
+                                <div v-if="(data.data.imputedMonth == 8)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="9" cell-template="month-9" />
+                            <template #month-9="{ data }">
+                                <div v-if="(data.data.imputedMonth == 9)">{{ data.data.imputedMonth }}</div>
+                            </template>
+                            <DxColumn caption="10" cell-template="month-10" />
+                            <template #month-10="{ data }">
+                                <div v-if="(data.data.imputedMonth == 10)">
+                                    <colorful-badge :value="data.data.status" :year="data.data.imputedYear"
+                                        :month="data.data.imputedMonth" />
                                 </div>
                             </template>
-
-                            <DxColumn caption="주민등록번호" cell-template="resident-id" width="200px" />
-                            <template #resident-id="{ data }" class="custom-action">
-                                <a-tooltip placement="top"
-                                    v-if="data.data.residentId?.length == 14
-                                    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                                    key="black">
-                                    {{ data.data.residentId }}
-                                </a-tooltip>
-                                <a-tooltip placement="top" v-else title="ERROR" color="red">
-                                    {{ data.data.residentId }}
-                                </a-tooltip>
-
+                            <DxColumn caption="11" cell-template="month-11" />
+                            <template #month-11="{ data }">
+                                <div v-if="(data.data.imputedMonth == 11)">{{ data.data.imputedMonth }}</div>
                             </template>
-                            <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
-                            <template #grade-cell="{ data }" class="custom-action">
-                                <income-type :typeCode="data.data.incomeTypeCode"
-                                    :typeName="data.data.incomeTypeName" />
+                            <DxColumn caption="12" cell-template="month-12" />
+                            <template #month-12="{ data }">
+                                <div v-if="(data.data.imputedMonth == 12)">{{ data.data.imputedMonth }}</div>
                             </template>
 
-                            <DxColumn :width="70" cell-template="pupop" />
-                            <template #pupop="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center;"> 
-                                    <a-tooltip placement="top" v-if="data.data.deletable == true"
-                                        @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
-                                        <template #title>변경이력</template>
-                                        <DeleteOutlined />
-                                    </a-tooltip>
-                                </div>
-                            </template>
                         </DxDataGrid>
                         <div class="pagination-table" v-if="rowTable > originData.rows">
                             <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
@@ -236,35 +256,15 @@ import { onExportingCommon } from "@/helpers/commonFunction"
 import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
-import dayjs from 'dayjs';
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import { Message } from "@/configs/enum"
 
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        DxScrolling,
-        EditOutlined,
-        HistoryOutlined,
-        DxToolbar,
-        DxEditing,
-        DxGrouping,
-        DxItem,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
-        ArrForeigner,
-        DxButton,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton,
+        EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
+        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, ArrForeigner,
         HistoryPopup
     },
     setup() {
@@ -282,19 +282,21 @@ export default defineComponent({
         const arrForeigner = ArrForeigner
         const trigger = ref<boolean>(true);
         const triggerDetail = ref<boolean>(false);
+        const globalYear = computed(() => store.state.settings.globalYear)
         const valueCallApiGetEmployeeBusinesses = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
+            // imputedMonth: dayjs().month(),
         })
         let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
             incomeTypeCode: '',
             employeeId: null
         })
         let dataAction = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
             employeeId: null,
             incomeTypeCode: '940100',
             input: {
@@ -313,12 +315,12 @@ export default defineComponent({
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
         // ================GRAPQL==============================================
-        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
+        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getIncomeProcessBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            dataSource.value = res.data.getEmployeeBusinesses
+            dataSource.value = res.data.getIncomeProcessBusinesses
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
@@ -474,7 +476,7 @@ export default defineComponent({
                         let residentId = item.input.residentId.replace('-', '')
                         let dataActionedit = {
                             companyId: companyId,
-                            imputedYear: parseInt(dayjs().format('YYYY')),
+                            imputedYear: globalYear,
                             employeeId: parseInt(item.employeeId ? item.employeeId : ''),
                             incomeTypeCode: item.incomeTypeCode,
                             input: {
@@ -493,7 +495,7 @@ export default defineComponent({
                 } else { // if form disabled => action add 
                     let dataCreat = {
                         companyId: companyId,
-                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        imputedYear: globalYear,
                         input: {
                             name: dataAction.input.name,
                             foreigner: dataAction.input.foreigner,
@@ -543,10 +545,10 @@ export default defineComponent({
         }
 
         return {
+            globalYear,
             textResidentId,
             disabledInput2,
             popupData,
-            modalHistory,
             modalHistoryStatus,
             loadingCreated,
             disabledInput,
@@ -562,6 +564,7 @@ export default defineComponent({
             loadingDelete,
             modalStatus,
             contentDelete,
+            modalHistory,
             statusComfirm,
             actionDelete,
             addRow,
