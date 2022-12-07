@@ -2,17 +2,14 @@
   <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
   <div id="pa-110" class="page-content">
     <a-row>
-      <a-spin :spinning="loading" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+      <a-spin :spinning="loadingIncomeProcessWages" size="large">
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataIncomeProcessWages"
+          :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true">
           <DxColumn :caption="imputedYear + '귀속월'" cell-template="imputed-year" width="350px" />
           <template #imputed-year="{ data }">
             <span>지급연월 {{ data.data.paymentYear }}-{{ data.data.paymentMonth }}</span>
           </template>
-          <!-- <DxColumn :caption="imputedMonth" cell-template="imputed-month" />
-                  <template #imputed-month="{ data }">
-                      <span>{{ data.data.paymentYear }}-{{ data.data.paymentMonth }}</span>
-                  </template> -->
           <DxColumn caption="01" cell-template="imputed-month1" />
           <template #imputed-month1="{ data }">
             <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
@@ -74,13 +71,13 @@
       </a-spin>
     </a-row>
     <a-row>
-      <a-col :span="11" class="">
+      <a-col :span="12" class="">
         <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
         <DxButton :text="'지'" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
         <ProcessStatus v-model:valueStatus="price" />
         <!-- <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'blue' }" :height="'33px'" /> -->
       </a-col>
-      <a-col :span="13" class="">
+      <a-col :span="12" class="">
         <DxButton @click="deleteItem">
           <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
         </DxButton>
@@ -106,18 +103,18 @@
           <template #item-field="{ data }">
             <div style="text-align: center;">
               <HistoryOutlined v-if="data.img" class="mr-5" style="font-size: 18px" />
-              <button v-else-if="data.url" class="button-open-tab">일용직사원등록</button>
+              <button v-else-if="data.url" class="button-open-tab">사원등록 </button>
             </div>
           </template>
         </DxDropDownButton>
       </a-col>
     </a-row>
     <a-row>
-      <a-col :span="13" class="custom-layout">
-        <a-spin :spinning="loading" size="large">
-          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-            :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-            @selection-changed="selectionChanged">
+      <a-col :span="12" class="custom-layout">
+        <a-spin :spinning="loadingIncomeWage" size="large">
+          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataIncomeWage"
+            :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+            :column-auto-width="true" @selection-changed="selectionChanged">
             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
             <DxColumn caption="일용직사원" cell-template="tag" />
             <template #tag="{ data }" class="custom-action">
@@ -143,8 +140,8 @@
           </DxDataGrid>
         </a-spin>
       </a-col>
-      <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
-        <standard-form action="" name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px;">
+      <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+        <standard-form action="" name="add-page-110" style="border: 1px solid #d7d7d7; padding: 10px;">
           <a-row>
             <a-col :span="12">
               <a-form-item label="근무일수">
@@ -266,6 +263,7 @@ import EmailSinglePopup from "./components/Popup/EmailSinglePopup.vue"
 import PrintSalaryStatementPopup from "./components/Popup/PrintSalaryStatementPopup.vue"
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
+import { initialFormState2 } from "./utils/index"
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -305,25 +303,22 @@ export default defineComponent({
   },
   setup() {
     const price = ref(40)
-    const dataSource = ref([])
+    let dataIncomeProcessWages = ref([])
+    const dataIncomeWage = ref([])
     const store = useStore()
     const globalYear = computed(() => store.state.settings.globalYear)
     const per_page = computed(() => store.state.settings.per_page)
     const move_column = computed(() => store.state.settings.move_column)
     const trigger = ref<boolean>(true)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
-
     const modalEmailSingle = ref(false)
     const modalEmailSinglePayrollRegister = ref(false)
     const modalEmailMulti = ref(false)
-
     const popupDataEmailSingle = ref({})
     const popupDataEmailSinglePayrollRegister = ref({})
     const popupDataEmailMulti = ref({})
-
     const imputedYear = ref('')
     const imputedMonth = ref('')
-
     const modalPrintPayrollRegister = ref<boolean>(false)
     const modalPrintSalaryStatement = ref<boolean>(false)
     const modalDeductions = ref<boolean>(false)
@@ -335,25 +330,47 @@ export default defineComponent({
     const popupDataSalaryStatement = ref({})
     const popupDataDelete = ref({})
     const popupDataEdit = ref({})
-    const originData = ref({
+    const originIncomeProcessWages = ref({
       companyId: companyId,
       imputedYear: globalYear,
-      // imputedMonth: dayjs().month(),
+      imputedMonth: dayjs().month(),
+    })
+    const originIncomeWages = ref({
+      companyId: companyId,
+      processKey: '',
+      incomeId: 1
     })
     let popupData = ref([])
     // ======================= GRAPQL ================================
+    // get Income process Wages
     const {
-      refetch: refetchData,
-      result,
-      loading,
-    } = useQuery(queries.getIncomeProcessWages, originData, () => ({
+      refetch: refetchDataIncomeProcessWages,
+      result: resIncomeProcessWages,
+      loading: loadingIncomeProcessWages,
+    } = useQuery(queries.getIncomeProcessWages, originIncomeProcessWages, () => ({
+      enabled: trigger.value,
+      fetchPolicy: "no-cache",
+    }))
+    // get getIncome Wage
+    const {
+      refetch: refetchDataIncomeWage,
+      result: resIncomeWage,
+      loading: loadingIncomeWage,
+    } = useQuery(queries.getIncomeWage, originIncomeWages, () => ({
       enabled: trigger.value,
       fetchPolicy: "no-cache",
     }))
     // ======================= WATCH ==================================
-    watch(result, (value) => {
+    watch(resIncomeProcessWages, (value) => {
       if (value) {
-        dataSource.value = value.getIncomeProcessWages
+        dataIncomeProcessWages.value = value.resIncomeProcessWages
+        trigger.value = false
+      }
+
+    })
+    watch(resIncomeWage, (value) => {
+      if (value) {
+        dataIncomeWage.value = value.resIncomeWage
         trigger.value = false
       }
 
@@ -381,7 +398,7 @@ export default defineComponent({
       { id: 3, img: 'group_email.png', event: 'EmailMultiSalaryStatement' },
     ];
     const arrDropDown = [
-      { id: 1, url: '520', event: '520' },
+      { id: 1, url: 'pa-120', event: '120' },
       { id: 2, img: 'email.png', event: 'History' },
     ]
     const onItemClick = (value: any) => {
@@ -424,18 +441,20 @@ export default defineComponent({
     }
 
     const arrayEmploySelect = ref([
-      { employeeId: 'JTU342378', name: 'khiem', idCardNumber: '800101-1100123', status: 0, foreigner: true },
-      { employeeId: 'KHU342378', name: 'khiem 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
-      { employeeId: 'JHK342378', name: 'khiem 3', idCardNumber: '800101-1100123', status: 1, foreigner: true },
+      { employeeId: '1312qwe', name: 'qwew', idCardNumber: '31234-1100123', status: 0, foreigner: true },
+      { employeeId: '4123', name: 'eqrqwe 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
+      { employeeId: 'eqwe', name: 'tqwe 3', idCardNumber: '800101-12323', status: 1, foreigner: true },
     ])
 
 
     return {
       price,
-      loading,
-      dataSource,
+      loadingIncomeProcessWages,
+      loadingIncomeWage,
+      dataIncomeProcessWages, dataIncomeWage,
       per_page, move_column, colomn_resize,
-      refetchData,
+      refetchDataIncomeProcessWages,
+      refetchDataIncomeWage,
       onSubmit,
       onItemClick,
       arrDropDownPayrollRegister,
