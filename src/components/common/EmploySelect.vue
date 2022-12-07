@@ -1,24 +1,48 @@
 <template>
-        <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" display-expr="label" value-expr="value"
-            item-template="item-data" @value-changed="updateValue(value)" :height="$config_styles.HeightInput"
-            :disabled="disabled">
-            <template #item-data="{ data }">
+    <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
+        value-expr="employeeId" display-expr="employeeId"
+        :value="valueEmploy"
+        field-template="field-data" @value-changed="updateValue"
+        :height="$config_styles.HeightInput" :disabled="disabled">
+        <template #field-data="{ data }">
+            <div v-if="data" style="padding: 4px">
                 <span :class="[{ 'display-none': !data.employeeId }, 'style-Id']">
                     {{ data.employeeId }}
                 </span>
                 <span>{{ data.name }}</span>
-                <span v-if="data.idCardNumber?.length == 14
+                <span
+                    v-if="data.idCardNumber?.length == 14
                     && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
                     {{ convertBirthDay(data.idCardNumber) }}
                 </span>
                 <span class="tag-status" v-if="data.status == 0">퇴</span>
                 <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-            </template>
-        </DxSelectBox>
+                <DxTextBox style="display: none;" />
+            </div>
+            <div v-else style="padding: 4px">
+                <span>선택</span>
+                <DxTextBox style="display: none;" />
+            </div>
+        </template>
+        <template #item-data="{ data }">
+            <span :class="[{ 'display-none': !data.employeeId }, 'style-Id']">
+                {{ data.employeeId }}
+            </span>
+            <span>{{ data.name }}</span>
+            <span
+                v-if="data.idCardNumber?.length == 14
+                && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
+                {{ convertBirthDay(data.idCardNumber) }}
+            </span>
+            <span class="tag-status" v-if="data.status == 0">퇴</span>
+            <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
+        </template>
+    </DxSelectBox>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
+import DxTextBox from "devextreme-vue/text-box";
 
 export default defineComponent({
     props: {
@@ -32,9 +56,9 @@ export default defineComponent({
         },
         width: String,
         disabled: Boolean,
-        valueInput: {
+        valueEmploy: {
             type: Number,
-            default: 0,
+            default: "",
         },
         arrayValue: {
             type: Array,
@@ -43,12 +67,13 @@ export default defineComponent({
     },
     components: {
         DxSelectBox,
+        DxTextBox
     },
     setup(props, { emit }) {
-        const value = ref(props.valueInput);
+        const valueEmploy = ref(props.valueEmploy);
 
         const updateValue = (value: any) => {
-            emit("update:valueInput", value);
+            emit("update:valueEmploy", value.value);
         };
         const convertBirthDay = (birthDay: any) => {
             let newBirthDay = birthDay.split("-")[0]
@@ -59,14 +84,14 @@ export default defineComponent({
                 return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
         }
         watch(
-            () => props.valueInput,
+            () => props.valueEmploy,
             (newValue) => {
-                value.value = newValue;
+                valueEmploy.value = newValue;
             }
         );
         return {
             updateValue,
-            value,
+            valueEmploy,
             convertBirthDay
         };
     },
