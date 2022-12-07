@@ -290,8 +290,8 @@ export default defineComponent({
     };
     const check = (val: any) => {
       let value = 0;
-      selectedItemKeys.value.map((e: any) => {
-        if (val.employeeId == e) value = 1;
+      selectedItemKeys.value.map((val: any) => {
+        if (val.employeeId == val) value = 1;
       });
       return value;
     };

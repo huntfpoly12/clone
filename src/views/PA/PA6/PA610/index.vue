@@ -28,8 +28,8 @@
                                 <DxItem name="searchPanel" />
                                 <DxItem name="exportButton" />
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
-                                <DxItem location="after" template="button-template" css-class="cell-button-add" /> 
-                                <DxItem name="addRowButton" show-text="always" /> 
+                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                                <DxItem name="addRowButton" show-text="always" />
                             </DxToolbar>
                             <template #button-template>
                                 <DxButton icon="plus" @click="addRow" />
@@ -75,7 +75,7 @@
 
                             <DxColumn :width="70" cell-template="pupop" />
                             <template #pupop="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center;"> 
+                                <div class="custom-action" style="text-align: center;">
                                     <a-tooltip placement="top" v-if="data.data.deletable == true"
                                         @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
                                         <template #title>변경이력</template>
@@ -157,8 +157,7 @@ import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUn
 import { onExportingCommon } from "@/helpers/commonFunction"
 import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
 import DxButton from "devextreme-vue/button";
-import { companyId } from "@/helpers/commonFunction";
-import dayjs from 'dayjs';
+import { companyId } from "@/helpers/commonFunction"; 
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import { Message } from "@/configs/enum"
@@ -204,19 +203,20 @@ export default defineComponent({
         const arrForeigner = ArrForeigner
         const trigger = ref<boolean>(true);
         const triggerDetail = ref<boolean>(false);
+        const globalYear = computed(() => store.state.settings.globalYear)
         const valueCallApiGetEmployeeBusinesses = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
         })
         let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
             incomeTypeCode: '',
             employeeId: null
         })
         let dataAction = reactive({
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear,
             employeeId: null,
             incomeTypeCode: '940100',
             input: {
@@ -313,20 +313,20 @@ export default defineComponent({
         // ================WATCHING============================================
         watch(() => JSON.parse(JSON.stringify(dataAction)), (newValue, old) => {
             if (disabledInput.value == true) {
-                arrEdit?.map((e: any, index: any) => {
-                    if (e.employeeId == newValue.employeeId)
+                arrEdit?.map((val: any, index: any) => {
+                    if (val.employeeId == newValue.employeeId)
                         arrEdit.splice(index, 1);
                 })
                 arrEdit.push(newValue)
 
-                dataSource.value.map((e: any) => {
-                    if (e.employeeId == newValue.employeeId) {
+                dataSource.value.map((val: any) => {
+                    if (val.employeeId == newValue.employeeId) {
                         let newID = newValue.input.residentId.replace('-', '')
-                        e.foreigner = newValue.input.foreigner
-                        e.incomeTypeCode = newValue.incomeTypeCode
-                        e.incomeTypeName = newValue.input.incomeTypeName
-                        e.name = newValue.input.name
-                        e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
+                        val.foreigner = newValue.input.foreigner
+                        val.incomeTypeCode = newValue.incomeTypeCode
+                        val.incomeTypeName = newValue.input.incomeTypeName
+                        val.name = newValue.input.name
+                        val.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
                     }
                 })
             }
@@ -353,10 +353,10 @@ export default defineComponent({
 
             let count = 0
             let arr: any = []
-            arrEdit?.map((e: any) => {
-                if (e.employeeId == data.data.employeeId) {
+            arrEdit?.map((val: any) => {
+                if (val.employeeId == data.data.employeeId) {
                     count++
-                    arr = e
+                    arr = val
                 }
             })
             if (count == 0) { // If this line has not been selected before
@@ -396,7 +396,7 @@ export default defineComponent({
                         let residentId = item.input.residentId.replace('-', '')
                         let dataActionedit = {
                             companyId: companyId,
-                            imputedYear: parseInt(dayjs().format('YYYY')),
+                            imputedYear: globalYear,
                             employeeId: parseInt(item.employeeId ? item.employeeId : ''),
                             incomeTypeCode: item.incomeTypeCode,
                             input: {
@@ -415,7 +415,7 @@ export default defineComponent({
                 } else { // if form disabled => action add 
                     let dataCreat = {
                         companyId: companyId,
-                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        imputedYear: globalYear,
                         input: {
                             name: dataAction.input.name,
                             foreigner: dataAction.input.foreigner,

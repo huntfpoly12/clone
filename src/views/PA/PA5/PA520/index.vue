@@ -246,8 +246,10 @@ export default defineComponent({
                 if (val.employeeId == id)
                     indexActive = index 
             })
+            console.log('12312');
+            
             //Add class row choose
-            let a = document.body.querySelectorAll('#id-index [aria-rowindex]')
+            let a = document.body.querySelectorAll('[aria-rowindex]')
             a[indexActive].classList.add("active-row-key");
         }
 
