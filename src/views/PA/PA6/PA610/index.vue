@@ -313,20 +313,20 @@ export default defineComponent({
         // ================WATCHING============================================
         watch(() => JSON.parse(JSON.stringify(dataAction)), (newValue, old) => {
             if (disabledInput.value == true) {
-                arrEdit?.map((e: any, index: any) => {
-                    if (e.employeeId == newValue.employeeId)
+                arrEdit?.map((val: any, index: any) => {
+                    if (val.employeeId == newValue.employeeId)
                         arrEdit.splice(index, 1);
                 })
                 arrEdit.push(newValue)
 
-                dataSource.value.map((e: any) => {
-                    if (e.employeeId == newValue.employeeId) {
+                dataSource.value.map((val: any) => {
+                    if (val.employeeId == newValue.employeeId) {
                         let newID = newValue.input.residentId.replace('-', '')
-                        e.foreigner = newValue.input.foreigner
-                        e.incomeTypeCode = newValue.incomeTypeCode
-                        e.incomeTypeName = newValue.input.incomeTypeName
-                        e.name = newValue.input.name
-                        e.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
+                        val.foreigner = newValue.input.foreigner
+                        val.incomeTypeCode = newValue.incomeTypeCode
+                        val.incomeTypeName = newValue.input.incomeTypeName
+                        val.name = newValue.input.name
+                        val.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
                     }
                 })
             }
@@ -353,10 +353,10 @@ export default defineComponent({
 
             let count = 0
             let arr: any = []
-            arrEdit?.map((e: any) => {
-                if (e.employeeId == data.data.employeeId) {
+            arrEdit?.map((val: any) => {
+                if (val.employeeId == data.data.employeeId) {
                     count++
-                    arr = e
+                    arr = val
                 }
             })
             if (count == 0) { // If this line has not been selected before
