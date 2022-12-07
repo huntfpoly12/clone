@@ -1,5 +1,5 @@
 <template>
-    <action-header title="사업소득자등록" @actionSave="saving($event)" :buttonDelete="false" />
+    <action-header title="사업소득자등록" />
     <div id="pa-620">
         <div class="page-content">
             <a-row>
@@ -13,95 +13,114 @@
                         <img src="@/assets/images/user.svg" style="width: 70px" />
                     </div>
                 </a-col>
-                <a-col :span="21"></a-col>
 
-                <a-col :span="24">
-                    <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete" size="large">
+                <a-col :span="24" class="mt-10">
+                    <a-spin :spinning="loadingGetIncomeProcessBusinesses || loadingUpdate || loadingDelete"
+                        size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                             :show-borders="true" key-expr="companyId" @exporting="onExporting"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
-                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                            <DxExport :enabled="true" :allow-export-selected-data="true" />
-                            <DxToolbar>
-                                <DxItem location="after" template="pagination-table" />
-                                <DxItem name="searchPanel" />
-                                <DxItem name="exportButton" />
-                                <DxItem location="after" template="button-history" css-class="cell-button-add" />
-                                <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                                <DxItem name="addRowButton" show-text="always" />
-                            </DxToolbar>
-                            <template #button-template>
-                                <DxButton icon="plus" @click="addRow" />
-                            </template>
-                            <template #button-history style="border-color: #ddd;">
-                                <DxButton icon="plus">
-                                    <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
-                                </DxButton>
-                            </template>
-                            <template #pagination-table>
-                                <div v-if="rowTable > originData.rows">
-                                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                        :total="rowTable" show-less-items />
-                                </div>
-                            </template>
-
                             <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
                             <template #col-first="{ data }">
-                                <b>지급연월</b><br>
-                                <span>{{ data.data.imputedYear }}-{{ data.data.imputedMonth }}</span>
+                                <b>지급연월</b>
                             </template>
                             <DxColumn caption="1" width="100px" cell-template="month-1" />
                             <template #month-1="{ data }">
-                                <div v-if="(data.data.imputedMonth == 1)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month1"
+                                    @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth)">
+                                    <colorful-badge :value="data.data.month1.status"
+                                        :year="data.data.month1.imputedYear" :month="data.data.month1.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="2" width="100px" cell-template="month-2" />
                             <template #month-2="{ data }">
-                                <div v-if="(data.data.imputedMonth == 2)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month2"
+                                    @click="showDetailSelected(data.data.month2.imputedMonth, data.data.month2.imputedYear, data.data.month2.paymentYear, data.data.month2.paymentMonth)">
+                                    <colorful-badge :value="data.data.month2.status"
+                                        :year="data.data.month2.imputedYear" :month="data.data.month2.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="3" width="100px" cell-template="month-3" />
                             <template #month-3="{ data }">
-                                <div v-if="(data.data.imputedMonth == 3)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month3"
+                                    @click="showDetailSelected(data.data.month3.imputedMonth, data.data.month3.imputedYear, data.data.month3.paymentYear, data.data.month3.paymentMonth)">
+                                    <colorful-badge :value="data.data.month3.status"
+                                        :year="data.data.month3.imputedYear" :month="data.data.month3.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="4" width="100px" cell-template="month-4" />
                             <template #month-4="{ data }">
-                                <div v-if="(data.data.imputedMonth == 4)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month4"
+                                    @click="showDetailSelected(data.data.month4.imputedMonth, data.data.month4.imputedYear, data.data.month4.paymentYear, data.data.month4.paymentMonth)">
+                                    <colorful-badge :value="data.data.month4.status"
+                                        :year="data.data.month4.imputedYear" :month="data.data.month4.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="5" width="100px" cell-template="month-5" />
                             <template #month-5="{ data }">
-                                <div v-if="(data.data.imputedMonth == 5)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month5"
+                                    @click="showDetailSelected(data.data.month5.imputedMonth, data.data.month5.imputedYear, data.data.month5.paymentYear, data.data.month5.paymentMonth)">
+                                    <colorful-badge :value="data.data.month5.status"
+                                        :year="data.data.month5.imputedYear" :month="data.data.month5.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="6" width="100px" cell-template="month-6" />
                             <template #month-6="{ data }">
-                                <div v-if="(data.data.imputedMonth == 6)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month6"
+                                    @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth)">
+                                    <colorful-badge :value="data.data.month6.status"
+                                        :year="data.data.month6.imputedYear" :month="data.data.month6.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="7" width="100px" cell-template="month-7" />
                             <template #month-7="{ data }">
-                                <div v-if="(data.data.imputedMonth == 7)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month7"
+                                    @click="showDetailSelected(data.data.month7.imputedMonth, data.data.month7.imputedYear, data.data.month7.paymentYear, data.data.month7.paymentMonth)">
+                                    <colorful-badge :value="data.data.month7.status"
+                                        :year="data.data.month7.imputedYear" :month="data.data.month7.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="8" width="100px" cell-template="month-8" />
                             <template #month-8="{ data }">
-                                <div v-if="(data.data.imputedMonth == 8)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month8"
+                                    @click="showDetailSelected(data.data.month8.imputedMonth, data.data.month8.imputedYear, data.data.month8.paymentYear, data.data.month8.paymentMonth)">
+                                    <colorful-badge :value="data.data.month8.status"
+                                        :year="data.data.month8.imputedYear" :month="data.data.month8.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="9" width="100px" cell-template="month-9" />
                             <template #month-9="{ data }">
-                                <div v-if="(data.data.imputedMonth == 9)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month9"
+                                    @click="showDetailSelected(data.data.month9.imputedMonth, data.data.month9.imputedYear, data.data.month9.paymentYear, data.data.month9.paymentMonth)">
+                                    <colorful-badge :value="data.data.month9.status"
+                                        :year="data.data.month9.imputedYear" :month="data.data.month9.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="10" width="100px" cell-template="month-10" />
                             <template #month-10="{ data }">
-                                <div v-if="(data.data.imputedMonth == 10)">
-                                    <colorful-badge :value="data.data.status" :year="data.data.imputedYear"
-                                        :month="data.data.imputedMonth" />
+                                <div class="hover-underlined" v-if="data.data.month10"
+                                    @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth)">
+                                    <colorful-badge :value="data.data.month10.status"
+                                        :year="data.data.month10.imputedYear" :month="data.data.month10.imputedMonth" />
                                 </div>
                             </template>
                             <DxColumn caption="11" width="100px" cell-template="month-11" />
                             <template #month-11="{ data }">
-                                <div v-if="(data.data.imputedMonth == 11)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month11"
+                                    @click="showDetailSelected(data.data.month11.imputedMonth, data.data.month11.imputedYear, data.data.month11.paymentYear, data.data.month11.paymentMonth)">
+                                    <colorful-badge :value="data.data.month11.status"
+                                        :year="data.data.month11.imputedYear" :month="data.data.month11.imputedMonth" />
+                                </div>
                             </template>
                             <DxColumn caption="12" width="100px" cell-template="month-12" />
                             <template #month-12="{ data }">
-                                <div v-if="(data.data.imputedMonth == 12)">{{ data.data.imputedMonth }}</div>
+                                <div class="hover-underlined" v-if="data.data.month12"
+                                    @click="showDetailSelected(data.data.month12.imputedMonth, data.data.month12.imputedYear, data.data.month12.paymentYear, data.data.month12.paymentMonth)">
+                                    <colorful-badge :value="data.data.month12.status"
+                                        :year="data.data.month12.imputedYear" :month="data.data.month12.imputedMonth" />
+                                </div>
                             </template>
                             <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
                             <template #detailRow="{ data }">
@@ -113,56 +132,84 @@
                                         <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first"
                                             data-type="string" />
                                         <template #col-first="{ data }">
-                                            <b>{{ data.data.name }}</b><br> 
+                                            <b>{{ data.data.name }}</b><br>
                                         </template>
                                         <DxColumn caption="1" width="100px" cell-template="month-1" />
                                         <template #month-1="{ data }">
-                                            <div v-if="(data.data.month == 1)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth)"
+                                                v-if="data.data.month1"> {{ data.data.month1.value }}</div>
                                         </template>
                                         <DxColumn caption="2" width="100px" cell-template="month-2" />
                                         <template #month-2="{ data }">
-                                            <div v-if="(data.data.month == 2)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month2.imputedMonth, data.data.month2.imputedYear, data.data.month2.paymentYear, data.data.month2.paymentMonth)"
+                                                v-if="(data.data.month2)"> {{ data.data.month2.value }}</div>
                                         </template>
                                         <DxColumn caption="3" width="100px" cell-template="month-3" />
                                         <template #month-3="{ data }">
-                                            <div v-if="(data.data.month == 3)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month3.imputedMonth, data.data.month3.imputedYear, data.data.month3.paymentYear, data.data.month3.paymentMonth)"
+                                                v-if="(data.data.month3)"> {{ data.data.month3.value }}</div>
                                         </template>
                                         <DxColumn caption="4" width="100px" cell-template="month-4" />
                                         <template #month-4="{ data }">
-                                            <div v-if="(data.data.month == 4)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month4.imputedMonth, data.data.month4.imputedYear, data.data.month4.paymentYear, data.data.month4.paymentMonth)"
+                                                v-if="(data.data.month4)"> {{ data.data.month4.value }}</div>
                                         </template>
                                         <DxColumn caption="5" width="100px" cell-template="month-5" />
                                         <template #month-5="{ data }">
-                                            <div v-if="(data.data.month == 5)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month5.imputedMonth, data.data.month5.imputedYear, data.data.month5.paymentYear, data.data.month5.paymentMonth)"
+                                                v-if="(data.data.month5)"> {{ data.data.month5.value }}</div>
                                         </template>
                                         <DxColumn caption="6" width="100px" cell-template="month-6" />
                                         <template #month-6="{ data }">
-                                            <div v-if="(data.data.month == 6)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth)"
+                                                v-if="(data.data.month6)"> {{ data.data.month6.value }}</div>
                                         </template>
                                         <DxColumn caption="7" width="100px" cell-template="month-7" />
                                         <template #month-7="{ data }">
-                                            <div v-if="(data.data.month == 7)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month7.imputedMonth, data.data.month7.imputedYear, data.data.month7.paymentYear, data.data.month7.paymentMonth)"
+                                                v-if="(data.data.month7)"> {{ data.data.month7.value }}</div>
                                         </template>
                                         <DxColumn caption="8" width="100px" cell-template="month-8" />
                                         <template #month-8="{ data }">
-                                            <div v-if="(data.data.month == 8)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month8.imputedMonth, data.data.month8.imputedYear, data.data.month8.paymentYear, data.data.month8.paymentMonth)"
+                                                v-if="(data.data.month8)"> {{ data.data.month8.value }}</div>
                                         </template>
                                         <DxColumn caption="9" width="100px" cell-template="month-9" />
                                         <template #month-9="{ data }">
-                                            <div v-if="(data.data.month == 9)">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month9.imputedMonth, data.data.month9.imputedYear, data.data.month9.paymentYear, data.data.month9.paymentMonth)"
+                                                v-if="(data.data.month9)"> {{ data.data.month9.value }}</div>
                                         </template>
                                         <DxColumn caption="10" width="100px" cell-template="month-10" />
                                         <template #month-10="{ data }">
-                                            <div v-if="data.data.month == 10">{{ data.data.value }}</div>
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth)"
+                                                v-if="data.data.month10">
+                                                {{ data.data.month10.value }}
+                                            </div>
                                         </template>
                                         <DxColumn caption="11" width="100px" cell-template="month-11" />
                                         <template #month-11="{ data }">
-                                            <div v-if="(data.data.month == 11)">{{ data.data.value }}
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month11.imputedMonth, data.data.month11.imputedYear, data.data.month11.paymentYear, data.data.month11.paymentMonth)"
+                                                v-if="(data.data.month11)">
+                                                {{ data.data.month11.value }}
                                             </div>
                                         </template>
                                         <DxColumn caption="12" width="100px" cell-template="month-12" />
                                         <template #month-12="{ data }">
-                                            <div v-if="(data.data.month == 12)">{{ data.data.value }}
+                                            <div class="hover-underlined"
+                                                @click="showDetailSelected(data.data.month12.imputedMonth, data.data.month12.imputedYear, data.data.month12.paymentYear, data.data.month12.paymentMonth)"
+                                                v-if="(data.data.month12)">
+                                                {{ data.data.month12.value }}
                                             </div>
                                         </template>
                                     </DxDataGrid>
@@ -178,45 +225,31 @@
 
                 <a-col :span="24">
                     <div class="header-detail-main">
-                        <div class="table-detail-left">
-                            <DxButton text="귀 {yyyy-mm}" />
-                            <DxButton text="귀 {yyyy-mm}" />
+                        <div class="table-detail-left d-flex-center">
+                            <div class="text-box-1">귀 {yyyy-mm}</div>
+                            <div class="text-box-2">귀 {yyyy-mm}</div>
                             <process-status v-model:valueStatus="status" />
+                        </div>
+                        <div class="table-detail-right">
+                            <DxButton>
+                                <DeleteOutlined style="font-size: 18px;" />
+                            </DxButton>
+                            <DxButton icon="plus" @click="addRow" />
+                            <DxButton icon="plus">
+                                <EditOutlined style="font-size: 18px;" />
+                            </DxButton>
                         </div>
                     </div>
                 </a-col>
 
-                <!-- <a-col :span="16" class="custom-layout">
-                    <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete" size="large">
+                <a-col :span="16" class="custom-layout">
+                    <a-spin :spinning="loadingGetIncomeProcessBusinesses || loadingUpdate || loadingDelete"
+                        size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                             :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
-                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                            <DxExport :enabled="true" :allow-export-selected-data="true" />
-                            <DxToolbar>
-                                <DxItem location="after" template="pagination-table" />
-                                <DxItem name="searchPanel" />
-                                <DxItem name="exportButton" />
-                                <DxItem location="after" template="button-history" css-class="cell-button-add" />
-                                <DxItem location="after" template="button-template" css-class="cell-button-add" /> 
-                                <DxItem name="addRowButton" show-text="always" /> 
-                            </DxToolbar>
-                            <template #button-template>
-                                <DxButton icon="plus" @click="addRow" />
-                            </template>
-                            <template #button-history style="border-color: #ddd;">
-                                <DxButton icon="plus">
-                                    <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
-                                </DxButton>
-                            </template>
-                            <template #pagination-table>
-                                <div v-if="rowTable > originData.rows">
-                                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                        :total="rowTable" show-less-items />
-                                </div>
-                            </template>
                             <DxColumn caption="성명 (상호)" cell-template="tag" />
                             <template #tag="{ data }" class="custom-action">
                                 <div class="custom-action">
@@ -247,7 +280,7 @@
 
                             <DxColumn :width="70" cell-template="pupop" />
                             <template #pupop="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center;"> 
+                                <div class="custom-action" style="text-align: center;">
                                     <a-tooltip placement="top" v-if="data.data.deletable == true"
                                         @click="actionDelete(data.data.employeeId, data.data.incomeTypeCode)">
                                         <template #title>변경이력</template>
@@ -263,7 +296,7 @@
                     </a-spin>
                 </a-col>
                 <a-col :span="8" class="custom-layout">
-                    <a-spin :spinning="loadingGetEmployeeBusinessesDetail || loadingUpdate" size="large">
+                    <a-spin :spinning="loadingGetIncomeProcessBusinessesDetail || loadingUpdate" size="large">
                         <a-form-item label="영업자코드" label-align="right">
                             <div class="custom-note">
                                 <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
@@ -309,7 +342,7 @@
                             </div>
                         </a-form-item>
                     </a-spin>
-                </a-col> -->
+                </a-col>
             </a-row>
         </div>
     </div>
@@ -342,12 +375,11 @@ export default defineComponent({
         HistoryPopup
     },
     setup() {
-        let arrEdit: any = []
         let status = 30
         const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
-        const dataSource = ref([]);
+        const dataSource: any = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -358,7 +390,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const triggerDetail = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear)
-        const valueCallApiGetEmployeeBusinesses = reactive({
+        const valueCallApiGetIncomeProcessBusinesses = reactive({
             companyId: companyId,
             imputedYear: globalYear,
             // imputedMonth: dayjs().month(),
@@ -369,7 +401,7 @@ export default defineComponent({
             incomeTypeCode: '',
             employeeId: null
         })
-        let dataCustomRes: any = reactive([])
+        let dataCustomRes: any = ref([])
         let dataAction = reactive({
             companyId: companyId,
             imputedYear: globalYear,
@@ -391,72 +423,98 @@ export default defineComponent({
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
         // ================GRAPQL==============================================
-        const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getIncomeProcessBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
+        const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessBusinesses, valueCallApiGetIncomeProcessBusinesses, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-        resEmployeeBusinesses(res => {
+        resIncomeProcessBusinesses(res => {
             let respon = res.data.getIncomeProcessBusinesses
-            dataSource.value = respon
+            dataSource.value = [{
+                companyId: companyId,
+            }]
+
+            dataCustomRes.value = [
+                {
+                    id: 1,
+                    name: "인원",
+                },
+                {
+                    id: 2,
+                    name: "지급액",
+                },
+                {
+                    id: 3,
+                    name: "소득세",
+
+                },
+                {
+                    id: 4,
+                    name: "지방소득세",
+
+                },
+                {
+                    id: 5,
+                    name: "공제총액",
+
+                },
+                {
+                    id: 6,
+                    name: "차인지급액",
+                },
+            ]
+
             respon.map((val: any) => {
-                dataCustomRes.push(
-                    {
-                        id: 1,
-                        name: "인원",
-                        imputedYear: val.imputedYear,
-                        month: val.imputedMonth,
-                        value: val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })
-                    },
-                    {
-                        id: 2,
-                        name: "지급액",
-                        imputedYear: val.imputedYear,
-                        month: val.imputedMonth,
-                        value: val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' })
-                    },
-                    {
-                        id: 3,
-                        name: "소득세",
-                        imputedYear: val.imputedYear,
-                        month: val.imputedMonth,
-                        value: val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' })
-                    },
-                    {
-                        id: 4,
-                        name: "지방소득세",
-                        imputedYear: val.imputedYear,
-                        month: val.imputedMonth,
-                        value: val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' })
-                    },
-                    {
-                        id: 5,
-                        name: "공제총액",
-                        imputedYear: val.imputedYear,
-                        month: val.imputedMonth,
-                        value: val.incomeStat.withholdingIncomeTax + val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' })
-                    },
-                    {
-                        id: 6,
-                        name: "차인지급액",
-                        imputedYear: val.imputedYear,
-                        month: val.imputedMonth,
-                        value: val.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' })
-                    },
-                )
+                // data table minify
+                let dataAdd = {
+                    imputedMonth: val.imputedMonth,
+                    imputedYear: val.imputedYear,
+                    paymentYear: val.paymentYear,
+                    paymentMonth: val.paymentMonth,
+                }
+                dataSource.value[0]['month' + val.imputedMonth] = val
+
+                // data table detail
+                dataCustomRes.value[0]['month' + val.imputedMonth] =
+                {
+                    value: val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' }),
+                    ...dataAdd
+                }
+                dataCustomRes.value[1]['month' + val.imputedMonth] =
+                {
+                    value: val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' }),
+                    ...dataAdd
+                }
+                dataCustomRes.value[2]['month' + val.imputedMonth] = {
+                    value: val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' }),
+                    ...dataAdd
+                }
+                dataCustomRes.value[3]['month' + val.imputedMonth] = {
+                    value: val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' }),
+                    ...dataAdd
+                }
+                dataCustomRes.value[4]['month' + val.imputedMonth] = {
+                    value: (val.incomeStat.withholdingIncomeTax + val.incomeStat.withholdingLocalIncomeTax).toLocaleString('en-US', { currency: 'VND' }),
+                    ...dataAdd
+                }
+                dataCustomRes.value[5]['month' + val.imputedMonth] = {
+                    value: val.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' }),
+                    ...dataAdd
+                }
             })
+
         })
-        errorGetEmployeeBusinesses(res => {
+        errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
         })
 
-        const { refetch: refetchDataDetail, loading: loadingGetEmployeeBusinessesDetail, onError: errorGetEmployeeBusinessesDetail, onResult: resEmployeeBusinessesDetail } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
+        const { refetch: refetchDataDetail, loading: loadingGetIncomeProcessBusinessesDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getEmployeeBusiness, valueCallApiGetEmployeeBusiness, () => ({
             enabled: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
-        resEmployeeBusinessesDetail(res => {
+        resIncomeProcessBusinessesDetail(res => {
 
         })
-        errorGetEmployeeBusinessesDetail(res => {
+        errorGetIncomeProcessBusinessesDetail(res => {
             notification('error', res.message)
         })
 
@@ -519,9 +577,7 @@ export default defineComponent({
         const changeTextTypeCode = (text: any) => {
             dataAction.input.incomeTypeName = text
         }
-        const saving = (e: any) => {
 
-        }
 
         const addRow = () => {
 
@@ -532,15 +588,19 @@ export default defineComponent({
             valueCallApiGetEmployeeBusiness.employeeId = employeeId
             modalStatus.value = true
         }
-
         const statusComfirm = (res: any) => {
             if (res == true)
                 actionDeleteApi(valueCallApiGetEmployeeBusiness)
 
         }
 
-        const modalHistory = () => {
-            modalHistoryStatus.value = true;
+
+        const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
+            console.log(imputedMonth);
+            console.log(imputedYear);
+            console.log(paymentYear);
+            console.log(paymentMonth);
+
         }
 
         return {
@@ -553,8 +613,8 @@ export default defineComponent({
             modalHistoryStatus,
             loadingCreated,
             disabledInput,
-            loadingGetEmployeeBusinessesDetail,
-            loadingGetEmployeeBusinesses,
+            loadingGetIncomeProcessBusinessesDetail,
+            loadingGetIncomeProcessBusinesses,
             arrForeigner,
             rowTable,
             dataSource,
@@ -565,7 +625,7 @@ export default defineComponent({
             loadingDelete,
             modalStatus,
             contentDelete,
-            modalHistory,
+            showDetailSelected,
             statusComfirm,
             actionDelete,
             addRow,
@@ -573,7 +633,6 @@ export default defineComponent({
             actionEdit,
             onExporting,
             changeTextCountry,
-            saving
         };
     },
 });

@@ -16,94 +16,159 @@
                     </template> -->
                     <DxColumn caption="01" cell-template="imputed-month1" />
                     <template #imputed-month1="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 1)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="02" cell-template="imputed-month2" />
                     <template #imputed-month2="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 2)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="03" cell-template="imputed-month3" />
                     <template #imputed-month3="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 3)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="04" cell-template="imputed-month4" />
                     <template #imputed-month4="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 4)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="05" cell-template="imputed-month5" />
                     <template #imputed-month5="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 5)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="06" cell-template="imputed-month6" />
                     <template #imputed-month6="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 6)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="07" cell-template="imputed-month7" />
                     <template #imputed-month7="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 7)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="08" cell-template="imputed-month8" />
                     <template #imputed-month8="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 8)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="09" cell-template="imputed-month9" />
                     <template #imputed-month9="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 9)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="10" cell-template="imputed-month10" />
                     <template #imputed-month10="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 10)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="11" cell-template="imputed-month11" />
                     <template #imputed-month11="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 11)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxColumn caption="12" cell-template="imputed-month12" />
                     <template #imputed-month12="{ data }">
-                        <colorful-badge :value="40" :year="data.data.paymentYear" :month="data.data.paymentMonth" />
+                        <colorful-badge v-if="(data.data.paymentMonth == 12)" :value="40" :year="data.data.paymentYear"
+                            :month="data.data.paymentMonth" />
                     </template>
                     <DxMasterDetail :enabled="true" template="row-detail" />
                     <template #row-detail="{ data }">
-                        hihihihii
-                        <a-form-item label="장기요양기관등록번호" class="clr">
-                        </a-form-item>
-                        <div style="display: flex">
-                          {{ data.data }}
-                        </div>
+                        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
+                            :show-borders="true" :column-auto-width="true" :show-column-headers="false">
+                            <DxColumn cell-template="col-first" data-type="string" />
+                            <template #col-first="{ data }">
+                                <b>{{ data.data.name }}</b><br>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-1" />
+                            <template #month-1="{ data }">
+                                <div v-if="(data.data.month == 1)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-2" />
+                            <template #month-2="{ data }">
+                                <div v-if="(data.data.month == 2)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-3" />
+                            <template #month-3="{ data }">
+                                <div v-if="(data.data.month == 3)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-4" />
+                            <template #month-4="{ data }">
+                                <div v-if="(data.data.month == 4)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-5" />
+                            <template #month-5="{ data }">
+                                <div v-if="(data.data.month == 5)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-6" />
+                            <template #month-6="{ data }">
+                                <div v-if="(data.data.month == 6)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-7" />
+                            <template #month-7="{ data }">
+                                <div v-if="(data.data.month == 7)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-8" />
+                            <template #month-8="{ data }">
+                                <div v-if="(data.data.month == 8)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-9" />
+                            <template #month-9="{ data }">
+                                <div v-if="(data.data.month == 9)">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-10" />
+                            <template #month-10="{ data }">
+                                <div v-if="data.data.month == 10">{{ data.data.value }}</div>
+                            </template>
+                            <DxColumnHeaderFilter width="100px" cell-template="month-11" />
+                            <template #month-11="{ data }">
+                                <div v-if="(data.data.month == 11)">{{ data.data.value }}
+                                </div>
+                            </template>
+                            <DxColumn width="100px" cell-template="month-12" />
+                            <template #month-12="{ data }">
+                                <div v-if="(data.data.month == 12)">{{ data.data.value }}
+                                </div>
+                            </template>
+
+                        </DxDataGrid>
                     </template>
                 </DxDataGrid>
             </a-spin>
         </a-row>
-        <a-row>
-            <a-col :span="11" class="">
-                <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-                <DxButton :text="'지'" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+        <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
+            <a-col>
+                <DxButton :text="'귀' + imputedYear + imputedMonth" :style="{ color: 'white', backgroundColor: 'gray' }"
+                    :height="'33px'" />
+                <DxButton :text="'지' + imputedYear + imputedMonth" :style="{ color: 'white', backgroundColor: 'black' }"
+                    :height="'33px'" />
                 <ProcessStatus v-model:valueStatus="price" />
-                <!-- <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'blue' }" :height="'33px'" /> -->
             </a-col>
-            <a-col :span="13" class="">
-                <DxButton @click="deleteItem">
+            <a-col class="">
+                <DxButton class="ml-3" @click="deleteItem">
                     <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
                 </DxButton>
-                <DxButton icon="plus" />
-                <DxButton icon="edit" @click="editItem" />
+                <DxButton class="ml-3" icon="plus" />
+                <DxButton class="ml-3" icon="edit" @click="editItem" />
 
-                <DxDropDownButton :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
+                <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
                     item-template="item-field">
                     <template #item-field="{ data }">
                         <div style="text-align: center;"><img :src="'../../../../../src/assets/images/' + data.img"
                                 alt="" style="width: 25px; height: 25px;" /></div>
                     </template>
                 </DxDropDownButton>
-                <DxDropDownButton :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
-                    item-template="item-field">
+                <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서"
+                    @item-click="onItemClick" item-template="item-field">
                     <template #item-field="{ data }">
                         <div style="text-align: center;"><img :src="'../../../../../src/assets/images/' + data.img"
                                 alt="" style="width: 25px; height: 25px;" /></div>
                     </template>
                 </DxDropDownButton>
-                <DxDropDownButton :items="arrDropDown" text="선택" style="width: 120px;" @item-click="onItemClick"
-                    item-template="item-field">
+                <DxDropDownButton class="ml-3" :items="arrDropDown" text="선택" style="width: 120px;"
+                    @item-click="onItemClick" item-template="item-field">
                     <template #item-field="{ data }">
                         <div style="text-align: center;">
                             <HistoryOutlined v-if="data.img" class="mr-5" style="font-size: 18px" />
@@ -150,7 +215,12 @@
                     <a-row>
                         <a-col :span="12">
                             <a-form-item label="근무일수">
-                                <EmploySelect :arrayValue="arrayEmploySelect" width="350px" :required="true" />
+                                <EmploySelect :arrayValue="arrayEmploySelect" v-model:valueEmploy="formIncomeWageDaily.input.employeeId"
+                                    width="350px" :required="true" />
+                            </a-form-item>
+                            <a-form-item label="지급일">
+                                <!-- <EmploySelect :arrayValue="arrayEmploySelect" v-model:valueEmploy="formIncomeWageDaily.input.employeeId"
+                                    width="200px" :required="true" /> -->
                             </a-form-item>
                         </a-col>
                         <a-col :span="12">
@@ -158,16 +228,16 @@
                                 <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
                             </div>
                             <a-form-item label="근무일수">
-                                <text-number-box width="200px" :required="true" />
+                                <text-number-box :disabled="true" v-model:valueInput="formIncomeWageDaily.input.workingDays" width="200px" :required="true" />
                             </a-form-item>
                             <a-form-item label="월급여">
-                                <default-text-box width="200px" :required="true" />
+                                <text-number-box :disabled="true" v-model:valueInput="formIncomeWageDaily.input.monthlyWage" width="200px" :required="true" />
                             </a-form-item>
                             <a-form-item label="공제합계">
-                                <default-text-box width="200px" :required="true" />
+                                <text-number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.employee.totalDeduction" width="200px" :required="true" />
                             </a-form-item>
                             <a-form-item label="차인지급액">
-                                <default-text-box width="200px" :required="true" />
+                                <text-number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.actualPayment" width="200px" :required="true" />
                                 <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                                 <span>
                                     급여합계 - 공제합계
@@ -186,29 +256,34 @@
                             </div>
                             <a-form-item label="근무일수" style="display: flex;">
                                 <div class="input-text">
-                                    <switch-basic :textCheck="'일급'" :textUnCheck="'월급'" />
-                                    <text-number-box width="150px" :required="true" />
+                                    <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'일급'" :textUnCheck="'월급'" />
+                                    <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="150px" 
+                                    :required="true" placeholder='월급여' :spinButtons="false"
+                                    v-model:valueInput="dataIncomeWageDaily.monthlyWage"/>
+                                    <number-box-money v-else width="150px" 
+                                    :required="true" placeholder='일급여' :spinButtons="false"
+                                    v-model:valueInput="dataIncomeWageDaily.dailyWage"/>
                                 </div>
                                 <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                                <span>
-                                    급여합계 - 공제합계
-                                </span>
+                                <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 / 근무일수</span>
+                                <span v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                             </a-form-item>
                             <a-form-item label="근무일수">
-                                <number-box width="150px" :required="true" placeholder="Number box" :min="1" :max="30"
-                                    :spinButtons="true"></number-box>
+                                <text-number-box width="150px" :required="true" v-model:valueInput="dataIncomeWageDaily.workingDays" :min="1" :max="30"
+                                    :spinButtons="true"></text-number-box>
                             </a-form-item>
-                            <span>일급여 {50,000}원</span>
+                            <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{ dataIncomeWageDaily.monthlyWage/dataIncomeWageDaily.workingDays }}원</span>
+                            <span v-else>일급여 {{ dataIncomeWageDaily.dailyWage }}원</span>
                             <br>
-                            <span>일급여 {50,000}원</span>
+                            <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{ dataIncomeWageDaily.monthlyWage }}원</span>
+                            <span v-else>일급여 {{ dataIncomeWageDaily.dailyWage*dataIncomeWageDaily.workingDays }}원</span>
                         </a-col>
                         <a-col :span="12" style="padding-left: 5px;">
                             <div class="top-content">
-                                <a-typography-title :level="5" style="margin-bottom: 0;">월급여 {{ price
-                                }}원</a-typography-title>
+                                <a-typography-title :level="5" style="margin-bottom: 0;">월급여 {{ dataIncomeWageDaily.employee.totalDeduction }}원</a-typography-title>
                             </div>
                             <div class="input-text">
-                                <deduction-items name="hihih" :type="1" subName="과세" />
+                                <deduction-items :name="dataIncomeWageDaily.employee.name" :type="1" subName="과세" />
                                 <text-number-box style="margin-left: 20px;width: 150px " :required="true" />
                                 <span>원</span>
                             </div>
@@ -220,8 +295,10 @@
                         </a-col>
                     </a-row>
                     <div class="text-align-center mt-50">
-                        <DxButton  @click="modalDeductions = true" :text="'공제 재계산'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-                        <DxButton  @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                        <DxButton @click="modalDeductions = true" :text="'공제 재계산'"
+                            :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                        <DxButton @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'"
+                            :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                     </div>
                 </standard-form>
             </a-col>
@@ -242,10 +319,12 @@
             :data="popupDataEmailSingle" />
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
             title="변경이력" typeHistory="pa-510" />
+        <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" />
+        <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue"
+import { ref, defineComponent, watch, computed, reactive } from "vue"
 import DxButton from "devextreme-vue/button"
 import dayjs, { Dayjs } from 'dayjs';
 import { useStore } from 'vuex'
@@ -258,6 +337,7 @@ import PrintPayrollRegisterPopup from "./components/Popup/PrintPayrollRegisterPo
 import queries from "../../../../graphql/queries/PA/PA5/PA510/index"
 import mutations from "../../../../graphql/mutations/PA/PA5/PA510/index"
 import { Message } from "../../../../configs/enum"
+import { sampleDataIncomeWageDaily, sampleFormIncomeWageDaily } from "./utils/index"
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import DeletePopup from "./components/Popup/DeletePopup.vue"
 import EditPopup from "./components/Popup/EditPopup.vue"
@@ -267,6 +347,8 @@ import EmailSinglePopup from "./components/Popup/EmailSinglePopup.vue"
 import PrintSalaryStatementPopup from "./components/Popup/PrintSalaryStatementPopup.vue"
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
+import DeductionPopup from "./components/Popup/DeductionPopup.vue"
+import InsurancePopup from "./components/Popup/InsurancePopup.vue"
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -302,17 +384,26 @@ export default defineComponent({
         EmailMultiPopup,
         EmailSinglePopup,
         EmploySelect,
-        ProcessStatus
+        ProcessStatus,
+        DeductionPopup,
+        InsurancePopup,
     },
     setup() {
         const price = ref(40)
-        const dataSource = ref([])
+        
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
-        const trigger = ref<boolean>(true)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
+
+        const trigger = ref<boolean>(true)
+        const triggerIncomeWageDaily = ref<boolean>(false)
+
+        let dataCustomRes: any = reactive([])
+        let dataIncomeWageDaily: any = reactive({...sampleDataIncomeWageDaily})
+        const dataSource:any = ref([])
+        const formIncomeWageDaily = reactive({...sampleFormIncomeWageDaily})
 
         const modalEmailSingle = ref(false)
         const modalEmailSinglePayrollRegister = ref(false)
@@ -341,6 +432,16 @@ export default defineComponent({
             imputedYear: globalYear,
             // imputedMonth: dayjs().month(),
         })
+        const originDataIncomeWageDaily = ref({
+            companyId: companyId,
+            processKey: {
+                imputedYear: 2022,
+                imputedMonth: 12,
+                paymentYear: 2022,
+                paymentMonth: 12,
+            },
+            incomeId: 1,
+        })
         let popupData = ref([])
         // ======================= GRAPQL ================================
         const {
@@ -351,16 +452,69 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
+        const {
+            refetch: refetchDataIncomeWageDaily,
+            result: resultIncomeWageDaily,
+            loading: loadingIncomeWageDaily,
+        } = useQuery(queries.getIncomeWageDaily, originDataIncomeWageDaily, () => ({
+            enabled: triggerIncomeWageDaily.value,
+            fetchPolicy: "no-cache",
+        }))
         // ======================= WATCH ==================================
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.getIncomeProcessWageDailies
+                let respon = value.getIncomeProcessWageDailies[0]
+                dataSource.value = [{...respon}]
+                imputedYear.value = respon.imputedYear
+                imputedMonth.value = respon.imputedMonth
+                dataCustomRes.push(
+                        {
+                            id: 1,
+                            name: "인원",
+                            month: respon.imputedMonth,
+                            value: respon.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })
+                        },
+                        {
+                            id: 2,
+                            name: "지급액",
+                            month: respon.imputedMonth,
+                            value: respon.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' })
+                        },
+                        {
+                            id: 3,
+                            name: "소득세",
+                            month: respon.imputedMonth,
+                            value: respon.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' })
+                        },
+                        {
+                            id: 4,
+                            name: "지방소득세",
+                            month: respon.imputedMonth,
+                            value: respon.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' })
+                        },
+                        {
+                            id: 5,
+                            name: "공제총액",
+                            month: respon.imputedMonth,
+                            value: respon.incomeStat.totalDeduction.toLocaleString('en-US', { currency: 'VND' })
+                        },
+                        {
+                            id: 6,
+                            name: "차인지급액",
+                            month: respon.imputedMonth,
+                            value: respon.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' })
+                        },
+                    )
+                
                 trigger.value = false
             }
-            console.log(dataSource.value);
 
         })
-
+        watch(resultIncomeWageDaily, (value) => {
+            console.log(value.getIncomeWageDaily);
+            
+            dataIncomeWageDaily = value.getIncomeWageDaily
+        })
         const deleteItem = (value: any) => {
             modalDelete.value = true;
             popupDataDelete.value = value
@@ -426,10 +580,11 @@ export default defineComponent({
         }
 
         const arrayEmploySelect = ref([
-            { employeeId: 'JTU342378', name: 'khiem', idCardNumber: '800101-1100123', status: 0, foreigner: true },
-            { employeeId: 'KHU342378', name: 'khiem 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
-            { employeeId: 'JHK342378', name: 'khiem 3', idCardNumber: '800101-1100123', status: 1, foreigner: true },
+            { employeeId: 1234123, name: 'khiem', idCardNumber: '800101-1100123', status: 0, foreigner: true },
+            { employeeId: 567567, name: 'khiem 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
+            { employeeId: 789789, name: 'khiem 3', idCardNumber: '800101-1100123', status: 1, foreigner: true },
         ])
+
 
 
         return {
@@ -467,7 +622,9 @@ export default defineComponent({
             arrayEmploySelect,
             imputedYear,
             imputedMonth,
-           
+            dataCustomRes,
+            formIncomeWageDaily,
+            dataIncomeWageDaily,
         }
 
     },
