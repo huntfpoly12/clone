@@ -251,7 +251,8 @@
                             <DxScrolling column-rendering-mode="virtual" />
                             <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                             <template #tag="{ data }" class="custom-action">
-                                <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.employee.name" />
+                                <income-type :typeCode="data.data.incomeTypeCode"
+                                    :typeName="(data.data.employee.name + data.data.employee.name)" />
                             </template>
                             <DxColumn caption="지급일" data-field="paymentDay" />
                             <DxColumn caption="지급액" data-field="paymentAmount" />
@@ -343,6 +344,8 @@ import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import { Message } from "@/configs/enum"
 import dayjs, { Dayjs } from 'dayjs';
+import filters from "@/helpers/filters";
+
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
@@ -468,28 +471,28 @@ export default defineComponent({
                 // data table detail
                 dataCustomRes.value[0]['month' + val.imputedMonth] =
                 {
-                    value: val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' }),
+                    value: filters.formatCurrency(val.employeeStat.employeeCount),
                     ...dataAdd
                 }
                 dataCustomRes.value[1]['month' + val.imputedMonth] =
                 {
-                    value: val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' }),
+                    value: filters.formatCurrency(val.incomeStat.incomePayment),
                     ...dataAdd
                 }
                 dataCustomRes.value[2]['month' + val.imputedMonth] = {
-                    value: val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' }),
+                    value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
                     ...dataAdd
                 }
                 dataCustomRes.value[3]['month' + val.imputedMonth] = {
-                    value: val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' }),
+                    value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
                     ...dataAdd
                 }
                 dataCustomRes.value[4]['month' + val.imputedMonth] = {
-                    value: (val.incomeStat.withholdingIncomeTax + val.incomeStat.withholdingLocalIncomeTax).toLocaleString('en-US', { currency: 'VND' }),
+                    value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax + val.incomeStat.withholdingLocalIncomeTax),
                     ...dataAdd
                 }
                 dataCustomRes.value[5]['month' + val.imputedMonth] = {
-                    value: val.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' }),
+                    value: filters.formatCurrency(val.incomeStat.actualPayment),
                     ...dataAdd
                 }
 
