@@ -118,8 +118,8 @@ import { useStore } from 'vuex';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
-import notification from "@/utils/notification"; 
-import filters from "@/helpers/filters"; 
+import notification from "@/utils/notification";
+import filters from "@/helpers/filters";
 
 export default defineComponent({
 	props: {
@@ -167,7 +167,7 @@ export default defineComponent({
 		}))
 		resApiGetEmployeeWageDaily(e => {
 			if (e.data) {
-				let res = e.data.getEmployeeWageDaily 
+				let res = e.data.getEmployeeWageDaily
 				originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
 				originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
 				originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
@@ -179,10 +179,12 @@ export default defineComponent({
 				originDataUpdate.value.input.workingDays = res.workingDays
 				originDataUpdate.value.input.dailyWage = res.dailyWage
 				originDataUpdate.value.input.monthlyWage = res.monthlyWage
+				console.log(res.deductionItems);
+				
 				originDataUpdate.value.input.deductionItems = res.deductionItems
 				formDifferencePayment.status = res.monthlyPaycheck
 				formDifferencePayment.wage = res.monthlyPaycheck == false ? res.dailyWage : res.monthlyWage
-				formDifferencePayment.working = res.workingDays
+				formDifferencePayment.working = res.workingDays  
 				arrDeduction.value?.map((val: any) => {
 					val.price = funcCheckPrice(val.deductionItemCode)
 				})
@@ -243,7 +245,7 @@ export default defineComponent({
 				originDataUpdate.value.input.workingDays = arr.input.workingDays
 				originDataUpdate.value.input.dailyWage = arr.input.dailyWage
 				originDataUpdate.value.input.monthlyWage = arr.input.monthlyWage
-				originDataUpdate.value.input.deductionItems = arr.input.deductionItems
+				originDataUpdate.value.input.deductionItems = arr.input.deductionItems  
 				formDifferencePayment.status = arr.input.monthlyPaycheck
 				formDifferencePayment.wage = arr.input.monthlyPaycheck == false ? arr.input.dailyWage : arr.input.monthlyWage
 				formDifferencePayment.working = arr.input.workingDays
@@ -257,8 +259,9 @@ export default defineComponent({
 			res.value.map((val: any) => {
 				total += val.price
 			})
-			totalPayDifferen.value = filters.formatCurrency(total + parseInt(formDifferencePayment.totalAmount.replace(',', ''))),
-			totalDeduction.value = filters.formatCurrency(total)
+			formDifferencePayment.totalAmount
+			totalPayDifferen.value = filters.formatCurrency(total + formDifferencePayment.totalAmount),
+				totalDeduction.value = filters.formatCurrency(total)
 		}, { deep: true })
 		watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
 			arrEdit.map((val: any, index: any) => {
@@ -280,8 +283,9 @@ export default defineComponent({
 					res.totalAmount = 0
 				messageMonthlySalary.value = "월급 선택시, 일급 = 월급 / 근무일수"
 			}
-			totalPayDifferen.value = (res.totalAmount + parseInt(totalDeduction.value.replace(',', '')))
-			formDifferencePayment.totalAmount = res.totalAmount
+
+			totalPayDifferen.value = filters.formatCurrency((res.totalAmount + parseInt(totalDeduction.value.replace(',', ''))))
+			formDifferencePayment.totalAmount = filters.formatCurrency(res.totalAmount)
 		}, { deep: true })
 		// ================== FUNCTION ==================================
 		const updateDeduction = () => {
@@ -293,12 +297,14 @@ export default defineComponent({
 			})
 		}
 		const callFuncCalculate = () => {
-			let dataDefault = originDataUpdate.value.input
-			let totalPrices = parseInt(formDifferencePayment.totalAmount.replace(',', '')) 
+			let dataDefault = originDataUpdate.value.input  
+			let totalPrices = formDifferencePayment.wage
 			let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
 			let total2 = calculateHealthInsuranceEmployee(totalPrices)
 			let total3 = calculateLongTermCareInsurance(totalPrices)
 			let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
+ 
+			
 			arrDeduction.value?.map((val: any) => {
 				if (val.deductionItemCode == 1001) {
 					val.price = total1
@@ -317,6 +323,9 @@ export default defineComponent({
 					dataDefault.deductionItems[3].amount = total4
 				}
 			})
+
+			totalPayDifferen.value = filters.formatCurrency(totalPrices + total1 + total2 + total3 + total4) 
+			
 		}
 		const funcCheckPrice = (id: any) => {
 			let price = 0
@@ -343,4 +352,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/tab2.scss">
+
 </style>

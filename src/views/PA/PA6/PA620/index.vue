@@ -251,8 +251,8 @@
                             <DxScrolling column-rendering-mode="virtual" />
                             <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                             <template #tag="{ data }" class="custom-action">
-                                <income-type :typeCode="data.data.incomeTypeCode"
-                                    :typeName="(data.data.employee.name + data.data.employee.name)" />
+                                <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
+                                    :incomeTypeName="data.data.employee.incomeTypeName" />
                             </template>
                             <DxColumn caption="지급일" data-field="paymentDay" />
                             <DxColumn caption="지급액" data-field="paymentAmount" />
@@ -518,8 +518,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resIncomeProcessBusinessesDetail(res => {
-            dataSourceDetail.value = res.data.getIncomeBusinesses
-            console.log(dataSourceDetail.value);
+            dataSourceDetail.value = res.data.getIncomeBusinesses 
 
         })
         errorGetIncomeProcessBusinessesDetail(res => {
