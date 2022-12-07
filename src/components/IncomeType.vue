@@ -4,10 +4,11 @@
         <span>{{ typeName }} [{{ incomeTypeName }}]</span>
     </div>
     <a-tooltip v-else>
-        <template #title>prompt text</template>
+        <template #title>{{ incomeTypeName }}</template>
         <div class="custom-grade-cell">
             <div class="custom-grade-cell-tag">{{ typeCode }}</div>
-            <span>{{ typeName }} [{{ incomeTypeName }}]</span>
+            <span>{{ typeName }}</span>
+            [<span class="custom-text">{{ incomeTypeName }}</span>]
         </div>
     </a-tooltip>
 </template>
@@ -30,7 +31,7 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
-        let showTooltip = ref(false) 
+        let showTooltip = ref(false)
         if (props.incomeTypeName.length > 2)
             showTooltip.value = true
 
@@ -53,6 +54,12 @@ export default defineComponent({
         min-width: 50px;
         text-align: center;
     }
+}
+.custom-text{
+    width:100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>
     

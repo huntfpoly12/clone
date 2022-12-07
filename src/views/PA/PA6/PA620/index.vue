@@ -15,12 +15,11 @@
                 </a-col>
 
                 <a-col :span="24" class="mt-10">
-                    <a-spin :spinning="loadingGetIncomeProcessBusinesses || loadingUpdate || loadingDelete"
-                        size="large">
+                    <a-spin :spinning="loadingGetIncomeProcessBusinesses" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                            :show-borders="true" key-expr="companyId" @exporting="onExporting"
-                            :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :focused-row-enabled="true">
+                            :show-borders="true" key-expr="companyId" :allow-column-reordering="move_column"
+                            :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                            :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
                             <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
                             <template #col-first="{ data }">
@@ -122,6 +121,10 @@
                                         :year="data.data.month12.imputedYear" :month="data.data.month12.imputedMonth" />
                                 </div>
                             </template>
+                            <DxColumn width="100px" cell-template="open-modal" />
+                            <template #open-modal="{ data }">
+                                <div style="width: 100%;text-align: center;"> [+] </div>
+                            </template>
                             <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
                             <template #detailRow="{ data }">
                                 <div class="table-detail">
@@ -212,6 +215,9 @@
                                                 {{ data.data.month12.value }}
                                             </div>
                                         </template>
+                                        <DxColumn width="100px" cell-template="open-modal" />
+                                        <template #open-modal="{ data }">
+                                        </template>
                                     </DxDataGrid>
                                 </div>
                             </template>
@@ -223,156 +229,43 @@
                     </a-spin>
                 </a-col>
 
-                <a-col :span="24">
-                    <div class="header-detail-main">
-                        <div class="table-detail-left d-flex-center">
-                            <div class="text-box-1">귀 {yyyy-mm}</div>
-                            <div class="text-box-2">귀 {yyyy-mm}</div>
-                            <process-status v-model:valueStatus="status" />
-                        </div>
-                        <div class="table-detail-right">
-                            <DxButton>
-                                <DeleteOutlined style="font-size: 18px;" />
-                            </DxButton>
-                            <DxButton icon="plus" @click="addRow" />
-                            <DxButton icon="plus">
-                                <EditOutlined style="font-size: 18px;" />
-                            </DxButton>
-                        </div>
-                    </div>
-                </a-col>
-
-                <a-col :span="16" class="custom-layout">
-                    <a-spin :spinning="loadingTableDetail" size="large">
-                        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
-                            :show-borders="true" key-expr="employeeId" @exporting="onExporting"
-                            :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
-                            <DxScrolling column-rendering-mode="virtual" />
-                            <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
-                            <template #tag="{ data }" class="custom-action">
-                                <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
-                                    :incomeTypeName="data.data.employee.incomeTypeName" />
-                            </template>
-                            <DxColumn caption="지급일" data-field="paymentDay" />
-                            <DxColumn caption="지급액" data-field="paymentAmount" />
-                            <DxColumn caption="세율" data-field="taxRate" />
-                            <DxColumn caption="공제" cell-template="income-tax" />
-                            <template #income-tax="{ data }" class="custom-action">
-                                <div>
-                                    {{ data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax }}
-                                </div>
-                            </template>
-                            <DxColumn caption="차인지급액" data-field="actualPayment" />
-
-                        </DxDataGrid>
-                        <div class="pagination-table" v-if="rowTable > originData.rows">
-                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                :total="rowTable" show-less-items style="margin-top: 10px" />
-                        </div>
-                    </a-spin>
-                </a-col>
-                <a-col :span="8" class="custom-layout">
-                    <a-spin :spinning="loadingTableDetail" size="large">
-                        <a-form-item label="영업자코드" label-align="right">
-                            <div class="custom-note">
-                                <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
-                                    placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
-                                <span>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후
-                                    수정 불가
-                                </span>
-                            </div>
-                        </a-form-item>
-                        <a-form-item label="성명(상호)" label-align="right">
-                            <default-text-box v-model:valueInput="dataAction.input.name" width="200px"
-                                placeholder="한글,영문(대문자) 입력 가능" :required="true" />
-                        </a-form-item>
-                        <a-form-item label="내/외국인" label-align="right">
-                            <radio-group :arrayValue="arrForeigner" width="200px"
-                                v-model:valueRadioCheck="dataAction.input.foreigner" layoutCustom="horizontal" />
-                        </a-form-item>
-                        <a-form-item label="외국인 국적" label-align="right">
-                            <country-code-select-box v-model:valueCountry="dataAction.input.nationalityCode"
-                                @textCountry="changeTextCountry" width="200px" :disabled="disabledInput2" />
-                        </a-form-item>
-                        <a-form-item label="외국인 체류자격" label-align="right">
-                            <stay-qualification-select-box :disabled="disabledInput2"
-                                v-model:valueStayQualifiction="dataAction.input.stayQualification" width="200px" />
-                        </a-form-item>
-                        <a-form-item :label="textResidentId" label-align="right">
-                            <id-number-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
-                                placeholder="숫자 13자리" :required="true" />
-                        </a-form-item>
-                        <a-form-item label="소득구분" label-align="right">
-                            <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
-                                @textTypeCode="changeTextTypeCode" :disabled="disabledInput" />
-                        </a-form-item>
-                        <a-form-item label="이메일" label-align="right">
-                            <div class="custom-note">
-                                <mail-text-box width="300px" v-model:valueInput="dataAction.input.email"
-                                    placeholder="abc@example.com" :required="true" />
-                                <span>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등
-                                    주요 서류를 메일로 전달 가능합니다.
-                                </span>
-                            </div>
-                        </a-form-item>
-                    </a-spin>
-                </a-col>
+                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" />
             </a-row>
         </div>
     </div>
-    <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-        :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-        title="변경이력" typeHistory="pa-620" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
-import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA6/PA620/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
-import { onExportingCommon } from "@/helpers/commonFunction"
-import { origindata, ArrForeigner } from "./utils";
+import { origindata } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
-import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import HistoryPopup from '@/components/HistoryPopup.vue';
-import { Message } from "@/configs/enum"
 import dayjs, { Dayjs } from 'dayjs';
 import filters from "@/helpers/filters";
-
+import ComponentDetail from "./components/ComponentDetail.vue";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
         EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
-        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, ArrForeigner,
-        HistoryPopup
+        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined,
+        HistoryPopup, ComponentDetail
     },
     setup() {
-        let status = 30
-        let popupData = ref([])
-        let modalHistoryStatus = ref<boolean>(false)
         let dataSource: any = ref([]);
-        let dataSourceDetail = ref([]);
-        let disabledInput = ref(false)
-        let disabledInput2 = ref(true)
-        const contentDelete = Message.getMessage('PA120', '002').message
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(0);
         const originData = reactive({ ...origindata, rows: per_page });
-        const arrForeigner = ArrForeigner
         const trigger = ref<boolean>(true);
-        const triggerDetail = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear)
-
         const valueCallApiGetIncomeProcessBusinesses = reactive({
             companyId: companyId,
             imputedYear: globalYear,
@@ -397,24 +290,6 @@ export default defineComponent({
             }
         })
         let dataCustomRes: any = ref([])
-        let dataAction = reactive({
-            companyId: companyId,
-            imputedYear: globalYear,
-            employeeId: null,
-            incomeTypeCode: '940100',
-            input: {
-                name: '',
-                foreigner: false,
-                nationality: '대한민국',
-                nationalityCode: 'KR',
-                stayQualification: 'C-4',
-                residentId: '',
-                incomeTypeName: '저술가',
-                email: '',
-            }
-        })
-        const modalStatus = ref(false)
-        const textResidentId = ref('주민등록번호')
         // ================GRAPQL==============================================
 
         // API QUERY TABLE BIG
@@ -501,9 +376,6 @@ export default defineComponent({
                     dataCallTableSmall.processKey.imputedYear = val.imputedYear
                     dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
                     dataCallTableSmall.processKey.paymentYear = val.paymentYear
-
-                    triggerDetail.value = true
-                    refetchTableDetail()
                 }
 
             })
@@ -512,130 +384,27 @@ export default defineComponent({
             notification('error', res.message)
         })
 
-        // API QUERY TABLE SMALL LEFT SIDE
-        const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, valueCallApiGetEmployeeBusiness, () => ({
-            enabled: triggerDetail.value,
-            fetchPolicy: "no-cache",
-        }));
-        resIncomeProcessBusinessesDetail(res => {
-            dataSourceDetail.value = res.data.getIncomeBusinesses 
-
-        })
-        errorGetIncomeProcessBusinessesDetail(res => {
-            notification('error', res.message)
-        })
-
-        const {
-            mutate: actionUpdate,
-            onError: upadateErr,
-            loading: loadingUpdate,
-            onDone: updateDone,
-        } = useMutation(mutations.updateEmployeeBusiness);
-        updateDone(res => {
-            refetchData()
-            notification('success', `업데이트 완료!`)
-        })
-        upadateErr(res => {
-            notification('error', res.message)
-        })
-
-        const {
-            mutate: actionCreated,
-            onError: createdErr,
-            loading: loadingCreated,
-            onDone: createdDone,
-        } = useMutation(mutations.createEmployeeBusiness);
-        createdDone(res => {
-            refetchData()
-            notification('success', `업데이트 완료!`)
-        })
-        createdErr(res => {
-            notification('error', res.message)
-        })
-
-        const {
-            mutate: actionDeleteApi,
-            onError: deleteError,
-            loading: loadingDelete,
-            onDone: deleteDone,
-        } = useMutation(mutations.deleteEmployeeBusiness);
-        deleteError(res => {
-            notification('error', res.message)
-        })
-        deleteDone(res => {
-            refetchData()
-            notification('success', `업데이트 완료!`)
-        })
-
         // ================WATCHING============================================
 
 
-        // ================FUNCTION============================================
-        const onExporting = (e: any) => {
-            onExportingCommon(e.component, e.cancel, '영업자관리')
-        };
-        const actionEdit = (data: any) => {
-
-        }
-
-        const changeTextCountry = (text: any) => {
-            dataAction.input.nationality = text
-        }
-        const changeTextTypeCode = (text: any) => {
-            dataAction.input.incomeTypeName = text
-        }
-
-
-        const addRow = () => {
-
-        }
-
-
-        const statusComfirm = (res: any) => {
-            if (res == true)
-                actionDeleteApi(valueCallApiGetEmployeeBusiness)
-
-        }
-
-
+        // ================FUNCTION============================================   
         const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
-            console.log(imputedMonth);
-            console.log(imputedYear);
-            console.log(paymentYear);
-            console.log(paymentMonth);
-
+            valueCallApiGetEmployeeBusiness.processKey.imputedMonth = imputedMonth
+            valueCallApiGetEmployeeBusiness.processKey.imputedYear = imputedYear
+            valueCallApiGetEmployeeBusiness.processKey.paymentYear = paymentYear
+            valueCallApiGetEmployeeBusiness.processKey.paymentMonth = paymentMonth
         }
 
         return {
-            dataSourceDetail,
-            status,
+            valueCallApiGetEmployeeBusiness,
             dataCustomRes,
             globalYear,
-            textResidentId,
-            disabledInput2,
-            popupData,
-            modalHistoryStatus,
-            loadingCreated,
-            disabledInput,
-            loadingTableDetail,
             loadingGetIncomeProcessBusinesses,
-            arrForeigner,
             rowTable,
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
-            dataAction,
-            loadingUpdate,
-            loadingDelete,
-            modalStatus,
-            contentDelete,
             showDetailSelected,
-            statusComfirm,
-            addRow,
-            changeTextTypeCode,
-            actionEdit,
-            onExporting,
-            changeTextCountry,
         };
     },
 });
