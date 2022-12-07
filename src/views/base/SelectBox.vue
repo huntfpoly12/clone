@@ -11,7 +11,7 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Employ Select </div>
                     </div>
-                    <employ-select :arrayValue="arrayEmploySelect" width="350px" :required="true" />
+                    <employ-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="valueEmploy" width="350px" :required="true" />
                 </td>
                 <td>
                     <ul>
@@ -574,6 +574,7 @@ export default defineComponent({
     },
     setup() {
         const valueCountry = ref('KR')
+        const valueEmploy = ref(456)
         const valueStayQualifiction = ref('C-4')
         const valueTypeCodeSelectSelectBox = ref('940908')
         const arrayTagSelectBox = ref([
@@ -583,9 +584,9 @@ export default defineComponent({
             { id: 3, name: "High" },
         ]);
         const arrayEmploySelect = ref([
-            { employeeId: 'JTU342378', name: 'khiem', idCardNumber: '800101-1100123', status: 0, foreigner: true },
-            { employeeId: 'KHU342378', name: 'khiem 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
-            { employeeId: 'JHK342378', name: 'khiem 3', idCardNumber: '800101-1100123', status: 1, foreigner: true },
+            { employeeId: 123, name: 'khiem', idCardNumber: '800101-1100123', status: 0, foreigner: true },
+            { employeeId: 456, name: 'khiem 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
+            { employeeId: 789, name: 'khiem 3', idCardNumber: '800101-1100123', status: 1, foreigner: true },
         ])
         const valueTagSelectBox = ref([1, 2]);
         const saleStatus = ref(10);
@@ -599,6 +600,7 @@ export default defineComponent({
             valueCountry,
             valueTypeCodeSelectSelectBox,
             arrayEmploySelect,
+            valueEmploy,
         };
     },
 });

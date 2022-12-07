@@ -76,20 +76,22 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .entering {
-    background-color: blue;
+    background-color: #346CB0;
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
+    border: 1px solid #4A7EBB;
 }
 .input {
-    background-color: blue;
-    border: 3px solid rgb(89, 89, 209) !important;
+    background-color: #376092;
+    border: 3px solid #558ED5 !important;
 }
 .adjusting {
-    background-color: red;
+    background-color: #BB3835;
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
+    border: 1px solid #BE4B48 !important;
 }
 .adjusted {
-    background-color: red;
-    border: 3px solid rgb(114, 4, 4) !important;
+    background-color: #C00000;
+    border: 3px solid #953735 !important;
 }
 .mytooltip .mytext {
     display: none;
@@ -99,7 +101,7 @@ export default defineComponent({
     left: -130px;
     bottom: 110%;
     text-align: center;
-    border-radius: 6px;
+    border-radius: 10px;
     padding: 10px 5px;
     position: absolute;
 }
@@ -121,6 +123,7 @@ export default defineComponent({
 .buttonModal {
     color: white;
     border: none;
+    border-radius: 6px;
 }
 ::v-deep .dx-button-text {
     line-height: inherit;
