@@ -8,7 +8,7 @@
                 <div class="text-box-2">지 {{ dataTableDetail.processKey.paymentYear }}-{{
                         dataTableDetail.processKey.paymentMonth
                 }}</div>
-                <!-- <process-status v-model:valueStatus="status" /> -->
+                <process-status v-model:valueStatus="statusButton" />
             </div>
             <div class="table-detail-right">
                 <DxButton>
@@ -22,7 +22,7 @@
         </div>
     </a-col>
 
-    <a-col :span="16" class="custom-layout">
+    <a-col :span="12" class="custom-layout ">
         <a-spin :spinning="loadingTableDetail" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                 :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
@@ -48,7 +48,61 @@
             </DxDataGrid>
         </a-spin>
     </a-col>
-    <a-col :span="8" class="custom-layout">
+    <a-col :span="12" class="custom-layout form-action">
+        <div>
+            <a-form-item label="사업소득자" label-align="right">
+                <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="formIncomeWageDaily"
+                    width="350px" :required="true" />
+            </a-form-item>
+            <div class="header-text-1 mb-10">소득내역</div>
+            <div class="income-details">
+                <a-row>
+                    <a-col :span="12">
+                        <a-form-item label="귀속/지급연월" label-align="right">
+                            <div class="d-flex-center">
+                                <div class="month-custom-1 d-flex-center">
+                                    귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" />
+                                </div>
+                                <div class="month-custom-2 d-flex-center">
+                                    지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" />
+                                </div>
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="지급일" label-align="right">
+                            <date-time-box width="150px" />
+                        </a-form-item>
+                        <a-form-item label="지급액" label-align="right">
+                            <number-box-money min="0" width="150px" class="mr-5" />
+                        </a-form-item>
+                        <a-form-item label="세율" label-align="right">
+                            3%
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <div class="header-text-2 mb-10">공제합계 {<b>50,000</b>}원</div>
+                        <div>
+                            <a-form-item label="소득세(공제)" label-align="right">
+                                <div class="d-flex-center">
+                                    <number-box-money min="0" width="150px" class="mr-5" /> 원
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="지방소득세(공제)" label-align="right">
+                                <div class="d-flex-center">
+                                    <number-box-money min="0" width="150px" class="mr-5" /> 원
+                                </div>
+                            </a-form-item>
+                        </div>
+                        <div class="header-text-2 mb-10 d-flex-center">
+                            공제합계 {<b>50,000</b>}원
+                            <span class="d-flex-center fz-11 ml-10" style="color: gray;">
+                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                                지급액 - 공제합계
+                            </span>
+                        </div>
+                    </a-col>
+                </a-row>
+            </div>
+        </div>
     </a-col>
 
 </template>
@@ -72,9 +126,15 @@ export default defineComponent({
     props: {
         dataCallTableDetail: {
             type: Object
+        },
+        statusButton: {
+            type: Number
         }
     },
     setup(props) {
+        let month1 = ref()
+        let month2 = ref()
+        let statusButton = ref(props.statusButton)
         const amountFormat = ref({ currency: 'VND', useGrouping: true })
         let dataSourceDetail = ref([]);
         const triggerDetail = ref<boolean>(true);
@@ -87,6 +147,10 @@ export default defineComponent({
         let dataAction = reactive({
 
         })
+
+        let arrayEmploySelect: any = ref([])
+        let formIncomeWageDaily = ref()
+
         let dataTableDetail: any = ref({ ...props.dataCallTableDetail })
 
         // ================GRAPQL==============================================
@@ -98,17 +162,31 @@ export default defineComponent({
         }));
         resIncomeProcessBusinessesDetail(res => {
             dataSourceDetail.value = res.data.getIncomeBusinesses
+            res.data.getIncomeBusinesses.map((val: any) => {
+                arrayEmploySelect.value.push({
+                    employeeId: val.employeeId,
+                    incomeTypeCode: val.incomeTypeCode,
+                    name: val.employee.name,
+                    incomeTypeName: val.employee.incomeTypeName,
+                })
+            })
+
             triggerDetail.value = false
         })
         errorGetIncomeProcessBusinessesDetail(res => {
             notification('error', res.message)
         })
 
+
         // ================WATCHING============================================
         watch(() => props.dataCallTableDetail, (newValue, old) => {
             dataTableDetail.value = newValue
             triggerDetail.value = true
         }, { deep: true })
+
+        watch(() => props.statusButton, (newValue, old) => {
+            statusButton.value = newValue
+        })
 
         // ================FUNCTION============================================   
         const addRow = () => {
@@ -120,14 +198,18 @@ export default defineComponent({
         }
 
         return {
+            month1, month2,
+            arrayEmploySelect,
+            formIncomeWageDaily,
+            statusButton,
             dataTableDetail,
             dataAction,
             rowTable, per_page, move_column, colomn_resize,
             loadingTableDetail,
             dataSourceDetail,
+            amountFormat,
             addRow,
             actionEdit,
-            amountFormat,
         }
     }
 });

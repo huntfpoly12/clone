@@ -1,14 +1,20 @@
 <template>
-    <div v-if="(showTooltip == false)" class="custom-grade-cell">
-        <div class="custom-grade-cell-tag">{{ typeCode }}</div>
-        <span>{{ typeName }} [{{ incomeTypeName }}]</span>
+    <div v-if="!incomeTypeNameRes" class="custom-grade-cell">
+        <div class="custom-grade-cell-tag">{{ typeCodeRes }}</div>
+        <span>{{ typeNameRes }}</span>
     </div>
+
+    <div v-else-if="incomeTypeNameRes && incomeTypeNameRes.length < 10" class="custom-grade-cell">
+        <div class="custom-grade-cell-tag">{{ typeCode }}</div>
+        <span>{{ typeNameRes }} [{{ incomeTypeNameRes }}]</span>
+    </div>
+
     <a-tooltip v-else>
-        <template #title>{{ incomeTypeName }}</template>
+        <template #title>{{ incomeTypeNameRes }}</template>
         <div class="custom-grade-cell">
-            <div class="custom-grade-cell-tag">{{ typeCode }}</div>
-            <span>{{ typeName }}</span>
-            [<span class="custom-text">{{ incomeTypeName }}</span>]
+            <div class="custom-grade-cell-tag">{{ typeCodeRes }}</div>
+            <span>{{ typeNameRes }}</span>
+            [<span class="custom-text">{{ incomeTypeNameRes }}</span>]
         </div>
     </a-tooltip>
 </template>
@@ -27,18 +33,19 @@ export default defineComponent({
         },
         incomeTypeName: {
             type: String,
-            required: true
         }
     },
-    setup(props, { emit }) {
-        let showTooltip = ref(false)
-        if (props.incomeTypeName.length > 2)
-            showTooltip.value = true
+    setup(props) {  
+        let typeCodeRes = ref(props.typeCode)
+        let typeNameRes = ref(props.typeName)
+        let incomeTypeNameRes = ref(props.incomeTypeName)
 
         return {
-            showTooltip
+            incomeTypeNameRes,
+            typeNameRes,
+            typeCodeRes
         }
-    },
+    }
 });
 </script>
 <style lang="scss" scoped>
@@ -55,8 +62,9 @@ export default defineComponent({
         text-align: center;
     }
 }
-.custom-text{
-    width:100px;
+
+.custom-text {
+    width: 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -229,7 +229,7 @@
                     </a-spin>
                 </a-col>
 
-                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" />
+                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"/>
             </a-row>
         </div>
     </div>
@@ -257,6 +257,7 @@ export default defineComponent({
         HistoryPopup, ComponentDetail
     },
     setup() {
+        let statusButton = ref()
         let dataSource: any = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
@@ -375,7 +376,8 @@ export default defineComponent({
                     dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
                     dataCallTableSmall.processKey.imputedYear = val.imputedYear
                     dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
-                    dataCallTableSmall.processKey.paymentYear = val.paymentYear
+                    dataCallTableSmall.processKey.paymentYear = val.paymentYear  
+                    statusButton.value = val.status
                 }
 
             })
@@ -396,6 +398,7 @@ export default defineComponent({
         }
 
         return {
+            statusButton,
             valueCallApiGetEmployeeBusiness,
             dataCustomRes,
             globalYear,

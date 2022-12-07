@@ -19,12 +19,6 @@
         }
     }
 
-    ::v-deep .ant-form-item-label>label {
-        width: 180px;
-        padding-left: 10px;
-        color: red;
-    }
-
     .ant-form-item {
         margin-bottom: 10px;
     }
@@ -102,4 +96,66 @@
     .hover-underlined:hover {
         text-decoration: underline;
     }
+
+    ::v-deep .form-action {
+        label {
+            width: 120px;
+        }
+    }
+
+    .header-text-1 {
+        background-color: #558ED5;
+        font-size: 18px;
+        padding: 3px 0 3px 10px;
+        color: white;
+    }
+
+    .header-text-2 {
+        background-color: #C6D9F1;
+        font-size: 14px;
+        padding: 3px 0 3px 10px;
+        color: black;
+        line-height: 28px;
+    }
+
+    ::v-deep .month-custom-1 {
+        background-color: #A6A6A6;
+        padding-left: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+
+        .dp__input {
+            color: white;
+            padding: 0px;
+            border: none;
+            height: 30px;
+            background-color: #A6A6A6;
+        }
+
+        .dp__icon {
+            display: none;
+        }
+    }
+
+    ::v-deep .month-custom-2 {
+        background-color: black;
+        padding-left: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+
+        .dp__input {
+            color: white;
+            padding: 0px;
+            border: none;
+            height: 30px;
+            background-color: black;
+        }
+
+        .dp__icon {
+            display: none;
+        }
+    }
+
 }
