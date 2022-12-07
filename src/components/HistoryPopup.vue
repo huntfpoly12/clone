@@ -76,6 +76,7 @@ export default defineComponent({
         let trigger130 = ref<boolean>(false);
         let triggerDeduction130 = ref<boolean>(false);
         let trigger110 = ref<boolean>(false);
+        let triggerPA110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
         let trigger610 = ref<boolean>(false);
         let trigger710 = ref<boolean>(false);
@@ -172,6 +173,14 @@ export default defineComponent({
                             trigger120.value = true;
                             refetchPA120();
                             break;
+                        case 'pa-110':
+                            dataQuery.value = {
+                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                companyId: companyId
+                            };
+                            triggerPA110.value = true;
+                            refetchPA110();
+                            break;
                         case 'pa-520':
                             dataQuery.value = {
                                 imputedYear: parseInt(dayjs().format('YYYY')),
@@ -204,6 +213,7 @@ export default defineComponent({
                     trigger130.value = false;
                     triggerDeduction130.value = false;
                     trigger110.value = false;
+                    triggerPA110.value = false;
                     trigger220.value = false;
 
                     trigger610.value = false;
@@ -397,7 +407,21 @@ export default defineComponent({
                 dataTableShow.value = value.getIncomeWageDailiesLogs;
             }
         });
-        // get getEmployeeWagesLogs pa-120
+        // get getIncomeWagesLogs pa-110
+        const { result: resultPA110, loading: loadingPA110, refetch: refetchPA110 } = useQuery(
+            queries.getIncomeWagesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger120.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA110, (value) => {
+            if (value && value.getIncomeWagesLogs) {
+                dataTableShow.value = value.getIncomeWagesLogs;
+            }
+        });
+        // // get getEmployeeWagesLogs pa-120
         const { result: resultPA120, loading: loadingPA120, refetch: refetchPA120 } = useQuery(
             queries.getEmployeeWagesLogs,
             dataQuery,
@@ -436,6 +460,7 @@ export default defineComponent({
             loadingPA710,
             loadingPA520,
             loadingPA510,
+            loadingPA110,
             loadingPA120,
             formarDate,
             dataQuery,
