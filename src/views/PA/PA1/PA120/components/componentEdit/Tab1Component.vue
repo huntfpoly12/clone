@@ -107,6 +107,7 @@ import {
   initFormStateTab1,
 } from "../../utils/index";
 import { companyId } from "@/helpers/commonFunction";
+import _ from "lodash";
 
 export default defineComponent({
   components: {
@@ -125,6 +126,8 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
+
+    let arrDataEdit = Array();
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     let isForeigner = ref(false);
@@ -132,13 +135,13 @@ export default defineComponent({
     const arrDepartments = ref([]);
     const arrResponsibility = ref([]);
     const labelResidebId = ref("주민(외국인)번호 ");
-    const formStateTab1 = reactive<any>({
+    let formStateTab1 = reactive<any>({
       ...initFormStateTab1,
       joinedAt: dayjs().format("YYYY-MM-DD"),
       leavedAt: dayjs().format("YYYY-MM-DD"),
     });
 
-    const oldFormState = { ...formStateTab1 };
+    let oldFormStateTab1 = {};
     const postCode = ref();
     const funcAddress = (data: any) => {
       postCode.value = data.zonecode;
@@ -232,26 +235,46 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }))
     watch(getValueDefault,value => {
-      if (value) {
-        console.log('tab1',props.idRowEdit);
-        
-        formStateTab1.name = value.getEmployeeWage.name
-        formStateTab1.foreigner = value.getEmployeeWage.foreigner
-        formStateTab1.nationality = value.getEmployeeWage.nationality
-        formStateTab1.nationalityCode = value.getEmployeeWage.nationalityCode
-        formStateTab1.stayQualification = value.getEmployeeWage.stayQualification
-        formStateTab1.residentId = value.getEmployeeWage.residentId.replace("-", "")
-        formStateTab1.zipcode = ''
-        formStateTab1.roadAddress = value.getEmployeeWage.roadAddress
-        formStateTab1.addressExtend = value.getEmployeeWage.addressExtend
-        formStateTab1.email = value.getEmployeeWage.email
-        formStateTab1.employeeId = value.getEmployeeWage.employeeId
-        formStateTab1.joinedAt = value.getEmployeeWage.joinedAt ? dayjs(value.getEmployeeWage.joinedAt.toString()).format('YYYY-MM-DD') : ''
-        formStateTab1.leavedAt = value.getEmployeeWage.leavedAt ? dayjs(value.getEmployeeWage.leavedAt.toString()).format('YYYY-MM-DD') : ''
-        formStateTab1.retirementIncome = value.getEmployeeWage.retirementIncome
-        formStateTab1.weeklyWorkingHours = value.getEmployeeWage.weeklyWorkingHours
-        formStateTab1.department = value.getEmployeeWage.department
-        formStateTab1.responsibility = value.getEmployeeWage.responsibility
+      let rowData = arrDataEdit.find(item => item.employeeId === props.idRowEdit);
+      //If it already exists in arrDataEdit, fill it out in the form
+      if(rowData){
+          formStateTab1.name = rowData.name
+          formStateTab1.foreigner = rowData.foreigner
+          formStateTab1.nationality = rowData.nationality
+          formStateTab1.nationalityCode = rowData.nationalityCode
+          formStateTab1.stayQualification = rowData.stayQualification
+          formStateTab1.residentId = rowData.residentId.replace("-", "")
+          formStateTab1.roadAddress = rowData.roadAddress
+          formStateTab1.addressExtend = rowData.addressExtend
+          formStateTab1.email = rowData.email
+          formStateTab1.employeeId = rowData.employeeId
+          formStateTab1.joinedAt = rowData.joinedAt
+          formStateTab1.leavedAt = rowData.leavedAt
+          formStateTab1.retirementIncome = rowData.retirementIncome
+          formStateTab1.weeklyWorkingHours = rowData.weeklyWorkingHours
+          formStateTab1.department = rowData.department
+          formStateTab1.responsibility = rowData.responsibility
+      }else{
+        if(value){
+          formStateTab1.name = value.getEmployeeWage.name
+          formStateTab1.foreigner = value.getEmployeeWage.foreigner
+          formStateTab1.nationality = value.getEmployeeWage.nationality
+          formStateTab1.nationalityCode = value.getEmployeeWage.nationalityCode
+          formStateTab1.stayQualification = value.getEmployeeWage.stayQualification
+          formStateTab1.residentId = value.getEmployeeWage.residentId.replace("-", "")
+          formStateTab1.roadAddress = value.getEmployeeWage.roadAddress
+          formStateTab1.addressExtend = value.getEmployeeWage.addressExtend
+          formStateTab1.email = value.getEmployeeWage.email
+          formStateTab1.employeeId = value.getEmployeeWage.employeeId
+          formStateTab1.joinedAt = value.getEmployeeWage.joinedAt ? dayjs(value.getEmployeeWage.joinedAt.toString()).format('YYYY-MM-DD') : ''
+          formStateTab1.leavedAt = value.getEmployeeWage.leavedAt ? dayjs(value.getEmployeeWage.leavedAt.toString()).format('YYYY-MM-DD') : ''
+          formStateTab1.retirementIncome = value.getEmployeeWage.retirementIncome
+          formStateTab1.weeklyWorkingHours = value.getEmployeeWage.weeklyWorkingHours
+          formStateTab1.department = value.getEmployeeWage.department
+          formStateTab1.responsibility = value.getEmployeeWage.responsibility
+          oldFormStateTab1 = {...formStateTab1}
+        }
+
       }
     })
     const {
@@ -273,34 +296,50 @@ export default defineComponent({
     watch(() => props.openPopup, (value) => {
       refetchValueDetail()
     })
-    // ============ WATCH ================================
-    watch(() => props.idRowEdit, (value) => {
-      originDataDetail.value.employeeId = value
-    })
+ 
+    //Compare the data after editing, if there is a difference, add it to the array arrEdit
+    watch(()=> JSON.parse(JSON.stringify(formStateTab1)),(newValue)=>{
+      if(JSON.stringify(oldFormStateTab1) !==  JSON.stringify(newValue)){
+        arrDataEdit = arrDataEdit.filter(function(item) { 
+          return item.employeeId !== newValue.employeeId; 
+        });
+        arrDataEdit.push(newValue)
+
+        //push the imployeeID into the arrayRowedited array to identify the changed row 
+        let arrEmployeeRowEdited = store.state.common.arrayRowedited.filter(function(item : any) {
+            return item !== newValue.employeeId;
+        })
+        arrEmployeeRowEdited.push(newValue.employeeId)
+        store.state.common.arrayRowedited = arrEmployeeRowEdited
+        
+      }
+    },{deep:true})
+
     const actionUpdated = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        let newValDataEdit = {
-          ...formStateTab1,
-          joinedAt: typeof formStateTab1.joinedAt == "string" ? parseInt(formStateTab1.joinedAt.replaceAll('-', '')) : formStateTab1.joinedAt,
-          leavedAt: typeof formStateTab1.leavedAt == "string" ? parseInt(formStateTab1.leavedAt.replaceAll('-', '')) : formStateTab1.leavedAt,
-          residentId: formStateTab1.residentId.slice(0, 6) + '-' + formStateTab1.residentId.slice(6, 14)
-        };
-        delete newValDataEdit.employeeId;
-        delete newValDataEdit.zipcode;
-        let dataCallCreat = {
-          companyId: companyId,
-          imputedYear: globalYear.value,
-          employeeId: props.idRowEdit,
-          input: newValDataEdit
-        };
-        mutate(dataCallCreat)
+        arrDataEdit.forEach(rowData => {
+          let newValDataEdit = {
+              ...rowData,
+              joinedAt: typeof rowData.joinedAt == "string" ? parseInt(rowData.joinedAt.replaceAll('-', '')) : rowData.joinedAt,
+              leavedAt: typeof rowData.leavedAt == "string" ? parseInt(rowData.leavedAt.replaceAll('-', '')) : rowData.leavedAt,
+              residentId: rowData.residentId.slice(0, 6) + '-' + rowData.residentId.slice(6, 14)
+            };
+            delete newValDataEdit.employeeId;
+            let dataCallCreat = {
+              companyId: companyId,
+              imputedYear: globalYear.value,
+              employeeId: rowData.employeeId,
+              input: newValDataEdit
+            };
+            mutate(dataCallCreat)
+        })
+
       }
     }
     return {
-      companyId,
       loading,
       formStateTab1,
       isForeigner,
@@ -311,11 +350,9 @@ export default defineComponent({
       employeeId,
       postCode,
       radioCheckForeigner,
-      radioCheckHouseholder,
-      initFormStateTab1,
-      activeKey: ref("1"),
       arrDepartments,
-      arrResponsibility, actionUpdated
+      arrResponsibility, 
+      actionUpdated
     };
   },
 });

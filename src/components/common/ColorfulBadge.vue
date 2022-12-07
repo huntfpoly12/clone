@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;
-    align-items: center;">
+    align-items: center;" :class="{'text_under':isUnder}">
         <span style="margin-right: 5px;">{{year}}-{{month}}</span>
         <div v-if="value == 10" class="badge entering"></div>
         <div v-if="value == 20" class="badge input closing"></div>
@@ -25,6 +25,10 @@ export default defineComponent({
         month: {
             type: Number,
             required: true
+        },
+        isUnder: {
+            type: Boolean,
+            default:false,
         }
     },
 });
@@ -50,6 +54,11 @@ export default defineComponent({
 .adjusted {
     background-color: red;
     border: 3px solid rgb(114, 4, 4);
+}
+.text_under{
+    &:hover{
+        text-decoration: underline;
+    }
 }
 </style>
     
