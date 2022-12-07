@@ -39,6 +39,10 @@
         }
     }
 
+    ::v-deep .custom-layout:last-child {
+        padding-right: 0px;
+    }
+
     .custom-note {
         >span {
             font-size: 11px;
@@ -63,10 +67,39 @@
 
     .header-detail-main {
         margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
         .table-detail-left {
             >div {
                 margin-right: 5px;
             }
+
+            .text-box-1 {
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white;
+                background-color: gray;
+            }
+
+            .text-box-2 {
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white;
+                background-color: black;
+            }
         }
+
+        .table-detail-right {
+            >div {
+                margin-left: 5px;
+            }
+        }
+
+    }
+
+    .hover-underlined:hover {
+        text-decoration: underline;
     }
 }
