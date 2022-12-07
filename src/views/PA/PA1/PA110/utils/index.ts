@@ -1,117 +1,49 @@
-export const radioCheckForeigner = [
+export const sampleFormIncomeWage = {
+  companyId: 29,
+  processKey: {
+    imputedYear: 2022,
+    imputedMonth: 12,
+    paymentYear: 2022,
+    paymentMonth: 12,
+  },
+  input: {
+    paymentDay: 1,
+    employeeId: 567567,
+    dailyWage: 1,
+    monthlyWage: 1,
+    workingDays: 1,
+    deductionItems: [],
+  },
+};
+export const sampleDataIncomeWage = {
+  actualPayment: 0,
+  monthlyWage: 0,
+  dailyWage: 0,
+  workingDays: 0,
+  employee: {
+    name: "",
+    totalDeduction: 0,
+    monthlyPaycheck: true,
+  },
+};
+interface Origindata {
+  page: number;
+  rows: number;
+  statuses: number[];
+  grade: null | number;
+  name: string;
+  code: string;
+}
+export const origindata: Origindata = {
+  page: 1,
+  rows: 10,
+  statuses: [1],
+  grade: null,
+  name: "",
+  code: "",
+};
+
+export const ArrForeigner = [
   { id: false, text: "내국인" },
   { id: true, text: "외국인" },
 ];
-export const radioCheckHouseholder = [
-  { id: 1, text: "X" },
-  { id: 2, text: "O" },
-];
-export const radioCheckPersenPension = [
-  { id: 1, text: "0%" },
-  { id: 2, text: "80%" },
-];
-export const radioCheckReductioRate = [
-  { id: 1, text: "50%" },
-  { id: 2, text: "70%" },
-  { id: 3, text: "90%" },
-];
-export const radioCheckReductionInput = [
-  { id: 1, text: "급여입력" },
-  { id: 2, text: "연말입력" },
-];
-export const IncomeTaxAppRate = [
-  { id: 1, text: "100%" },
-  { id: 2, text: "180%" },
-  { id: 3, text: "510%" },
-];
-
-export const dataDemo = [
-  { id: 1, text: "100%" },
-  { id: 2, text: "180%" },
-  { id: 3, text: "510%" },
-];
-export const initialFormState1 = {
-  incomeId: 1,
-  paymentDay: 5,
-  employeeType: 3,
-  employeeId: 3123512,
-  incomeTypeCode: "",
-  incomePayment: 2,
-  withholdingIncomeTax: 10,
-  withholdingLocalIncomeTax: 3,
-  withholdingRuralSpecialTax: 4,
-  prevPaymentDay: 4,
-  createdAt: "",
-  createdBy: "String!",
-  updatedAt: "",
-  updatedBy: "String!",
-  ip: "String!",
-  active: true,
-  totalPay: 3,
-  totalTaxPay: 3,
-  totalTaxfreePay: 3,
-  totalDeduction: 3,
-  workingDays: 3,
-  totalWorkingHours: 3,
-  overtimeWorkingHours: 3,
-  workingHoursAtNight: 3,
-  workingHoursOnHolidays: 3,
-  intermidiateIncomeTax: 4,
-  intermidiateLocalIncomeTax: 4,
-  yearEndSettlementIncomeTax: 4,
-  yearEndSettlementLocalIncomeTax: 4,
-  yearEndSettlementRuralSpecialTax: 4,
-  actualPayment: 3,
-  employee: {},
-  payItems: [],
-  deductionItems: [],
-  midTermSettlement: true,
-};
-export const initialFormState2 = {
-  companyId: 29,
-  type: 2,
-  imputedYear: 2022,
-  imputedMonth: 2,
-  paymentYear: 2,
-  paymentMonth: 4,
-  status: "",
-  statusUserId: 2,
-  statusUpdatedAt: "",
-  createdAt: "",
-  createdBy: "String,!",
-  updatedAt: "",
-  updatedBy: "String!",
-  ip: "String!",
-  active: true,
-  statusUpdateUser: {
-    id: 311,
-    type: "String",
-    username: "",
-    name: "",
-    active: true,
-  },
-  employeeStat: {
-    type: 2,
-    imputedYear: 2022,
-    imputedMonth: 3,
-    paymentYear: 4,
-    paymentMonth: 5,
-    employeeCount: 12,
-    retireEmployeeCount: 4,
-  },
-  incomeStat: {
-    imputedYear: 2022,
-    imputedMonth: 4,
-    paymentYear: 1,
-    paymentMonth: 3,
-    incomePayment: 4,
-    withholdingIncomeTax: 42,
-    withholdingLocalIncomeTax: 23,
-    withholdingRuralSpecialTax: 12,
-    totalPay: 321,
-    totalTaxPay: 32,
-    totalTaxfreePay: 12,
-    totalDeduction: 31,
-    actualPayment: 32,
-  },
-};
