@@ -150,7 +150,11 @@ const routes = [
         path: "pa-110",
         component: () => import("../views/PA/PA1/PA110/index.vue"),
       },
-    ],
+      {
+        path: "pa-720",
+        component: () => import('../views/PA/PA7/PA720/index.vue'),
+      },
+    ]
   },
   { path: "/:pathMatch(.*)*", name: "not-found", component: NotFound },
 ];

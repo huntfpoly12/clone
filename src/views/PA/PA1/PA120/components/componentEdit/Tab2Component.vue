@@ -23,7 +23,7 @@
       </a-col>
       <a-col :span="12">
         <div class="input-text empl-ins">
-          <checkbox-basic size="18px" label="고용보험" width="120px" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction"></checkbox-basic>
+          <checkbox-basic size="18px" label="고용보험" width="120px" v-model:valueCheckbox="formStateTab2.longTermCareInsuranceDeduction"></checkbox-basic>
           <span>
             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
             <p>본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.</p>
@@ -197,9 +197,6 @@ export default defineComponent({
     });
 
     // get WithholdingConfigPayItems
-    const originData = ref({
-      companyId: companyId,
-    })
     const originDataDetail = ref({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -296,7 +293,9 @@ export default defineComponent({
               }            
           });
         })
-        rangeDate.value = [dayjs(value.getEmployeeWage.employeementReductionStartDate),dayjs(value.getEmployeeWage.employeementReductionFinishDate)]
+        let ReductionStartDate = value.getEmployeeWage.employeementReductionStartDate != null ? dayjs(value.getEmployeeWage.employeementReductionStartDate) : dayjs();
+        let ReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate != null ? dayjs(value.getEmployeeWage.employeementReductionFinishDate) : dayjs();
+        rangeDate.value = [ReductionStartDate,ReductionFinishDate]
         calculateTax();
       }
     })
