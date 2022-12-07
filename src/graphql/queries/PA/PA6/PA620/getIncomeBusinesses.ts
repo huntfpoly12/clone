@@ -18,5 +18,9 @@ export default gql`
                 paymentAmount
                 taxRate
                 actualPayment
+                employee{
+                    name
+                    incomeTypeName 
+                }
             }
         }`

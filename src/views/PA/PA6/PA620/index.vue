@@ -243,50 +243,27 @@
                 </a-col>
 
                 <a-col :span="16" class="custom-layout">
-                    <a-spin :spinning="loadingGetIncomeProcessBusinesses || loadingUpdate || loadingDelete"
-                        size="large">
-                        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    <a-spin :spinning="loadingTableDetail" size="large">
+                        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                             :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
-                            <DxColumn caption="성명 (상호)" cell-template="tag" />
+                            <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                             <template #tag="{ data }" class="custom-action">
-                                <div class="custom-action">
-                                    <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                        :idCardNumber="data.data.residentId" :status="data.data.status"
-                                        :foreigner="data.data.foreigner" :checkStatus="false" />
+                                <income-type :typeCode="data.data.incomeTypeCode" :typeName="data.data.employee.name" />
+                            </template>
+                            <DxColumn caption="지급일" data-field="paymentDay" />
+                            <DxColumn caption="지급액" data-field="paymentAmount" />
+                            <DxColumn caption="세율" data-field="taxRate" />
+                            <DxColumn caption="공제" cell-template="income-tax" />
+                            <template #income-tax="{ data }" class="custom-action">
+                                <div>
+                                    {{ data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax }}
                                 </div>
                             </template>
+                            <DxColumn caption="차인지급액" data-field="actualPayment" />
 
-                            <DxColumn caption="주민등록번호" cell-template="resident-id" width="200px" />
-                            <template #resident-id="{ data }" class="custom-action">
-                                <a-tooltip placement="top"
-                                    v-if="data.data.residentId?.length == 14
-                                    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                                    key="black">
-                                    {{ data.data.residentId }}
-                                </a-tooltip>
-                                <a-tooltip placement="top" v-else title="ERROR" color="red">
-                                    {{ data.data.residentId }}
-                                </a-tooltip>
-
-                            </template>
-                            <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
-                            <template #grade-cell="{ data }" class="custom-action">
-                                <income-type :typeCode="data.data.incomeTypeCode"
-                                    :typeName="data.data.incomeTypeName" />
-                            </template>
-
-                            <DxColumn :width="70" cell-template="pupop" />
-                            <template #pupop="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center;">
-                                    <a-tooltip placement="top" v-if="data.data.deletable == true">
-                                        <template #title>변경이력</template>
-                                        <DeleteOutlined />
-                                    </a-tooltip>
-                                </div>
-                            </template>
                         </DxDataGrid>
                         <div class="pagination-table" v-if="rowTable > originData.rows">
                             <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
@@ -295,7 +272,7 @@
                     </a-spin>
                 </a-col>
                 <a-col :span="8" class="custom-layout">
-                    <a-spin :spinning="loadingGetIncomeProcessBusinessesDetail || loadingUpdate" size="large">
+                    <a-spin :spinning="loadingTableDetail" size="large">
                         <a-form-item label="영업자코드" label-align="right">
                             <div class="custom-note">
                                 <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
@@ -375,10 +352,13 @@ export default defineComponent({
     },
     setup() {
         let status = 30
-        const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
         let dataSource: any = ref([]);
+        let dataSourceDetail = ref([]);
+        let disabledInput = ref(false)
+        let disabledInput2 = ref(true)
+        const contentDelete = Message.getMessage('PA120', '002').message
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -389,6 +369,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const triggerDetail = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear)
+
         const valueCallApiGetIncomeProcessBusinesses = reactive({
             companyId: companyId,
             imputedYear: globalYear,
@@ -429,8 +410,6 @@ export default defineComponent({
                 email: '',
             }
         })
-        let disabledInput = ref(false)
-        let disabledInput2 = ref(true)
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
         // ================GRAPQL==============================================
@@ -514,14 +493,14 @@ export default defineComponent({
                     ...dataAdd
                 }
 
-                if (val.imputedMonth == dayjs().month()) { 
+                if (val.imputedMonth == dayjs().month()) {
                     dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
                     dataCallTableSmall.processKey.imputedYear = val.imputedYear
                     dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
                     dataCallTableSmall.processKey.paymentYear = val.paymentYear
 
                     triggerDetail.value = true
-                    refetchDataDetail()
+                    refetchTableDetail()
                 }
 
             })
@@ -531,13 +510,14 @@ export default defineComponent({
         })
 
         // API QUERY TABLE SMALL LEFT SIDE
-        const { refetch: refetchDataDetail, loading: loadingGetIncomeProcessBusinessesDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, valueCallApiGetEmployeeBusiness, () => ({
+        const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, valueCallApiGetEmployeeBusiness, () => ({
             enabled: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
         resIncomeProcessBusinessesDetail(res => {
-            console.log(res.data.getIncomeBusinesses);
-            
+            dataSourceDetail.value = res.data.getIncomeBusinesses
+            console.log(dataSourceDetail.value);
+
         })
         errorGetIncomeProcessBusinessesDetail(res => {
             notification('error', res.message)
@@ -625,6 +605,7 @@ export default defineComponent({
         }
 
         return {
+            dataSourceDetail,
             status,
             dataCustomRes,
             globalYear,
@@ -634,7 +615,7 @@ export default defineComponent({
             modalHistoryStatus,
             loadingCreated,
             disabledInput,
-            loadingGetIncomeProcessBusinessesDetail,
+            loadingTableDetail,
             loadingGetIncomeProcessBusinesses,
             arrForeigner,
             rowTable,
