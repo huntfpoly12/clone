@@ -208,10 +208,10 @@ export default defineComponent({
         watch(() => props.idRowEdit, (value) => {
             let checked = 0
             let arr: any = []
-            arrEdit.map((e: any) => {
-                if (e.employeeId == value) {
+            arrEdit.map((val: any) => {
+                if (val.employeeId == value) {
                     checked++
-                    arr = e
+                    arr = val
                 }
             })
             if (checked == 0) {
@@ -238,8 +238,8 @@ export default defineComponent({
             }
         })
         watch(() => JSON.parse(JSON.stringify(dataEdited)), (newVal, oldVal) => {
-            arrEdit.map((e: any, index: any) => {
-                if (e.employeeId == newVal.employeeId) {
+            arrEdit.map((val: any, index: any) => {
+                if (val.employeeId == newVal.employeeId) {
                     arrEdit.splice(index, 1);
                 }
             })
@@ -275,9 +275,9 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                arrEdit.map((e: any) => {
+                arrEdit.map((val: any) => {
                     let newValDataEdit = {
-                        ...e,
+                        ...val,
                         joinedAt: typeof e.joinedAt == "string" ? parseInt(e.joinedAt.replaceAll('-', '')) : e.joinedAt,
                         leavedAt: typeof e.leavedAt == "string" ? parseInt(e.leavedAt.replaceAll('-', '')) : e.leavedAt,
                         residentId: e.residentId.slice(0, 6) + '-' + e.residentId.slice(6, 14)
