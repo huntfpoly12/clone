@@ -41,7 +41,7 @@
             </a-col>
         </a-row>
         <a-row>
-            <a-col :span="10" class="custom-layout">{{arrRowEdit}}xx
+            <a-col :span="10" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
