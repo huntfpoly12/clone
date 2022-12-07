@@ -1,8 +1,8 @@
 import getIncomeProcessBusinesses from "./getIncomeProcessBusinesses";
-import getIncomeBusiness from "./getIncomeBusiness";
+import getIncomeBusinesses from "./getIncomeBusinesses";
 
 const queries = {
     getIncomeProcessBusinesses: getIncomeProcessBusinesses,
-    getIncomeBusiness: getIncomeBusiness
+    getIncomeBusinesses: getIncomeBusinesses
 };
 export default queries;

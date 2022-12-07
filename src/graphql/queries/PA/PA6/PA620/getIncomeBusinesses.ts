@@ -1,12 +1,11 @@
 import gql from "graphql-tag";
 export default gql`
     query
-    getIncomeBusiness(
-            $companyId: Int! 
-            $incomeId: Int!
+    getIncomeBusinesses(
+            $companyId: Int!  
             $processKey: IncomeProcessKeyInput!
         ){
-            getIncomeBusiness(companyId: $companyId, processKey: $processKey, incomeId:$incomeId) { 
+            getIncomeBusinesses(companyId: $companyId, processKey: $processKey) { 
                 paymentDay
                 employeeType
                 employeeId
@@ -15,13 +14,7 @@ export default gql`
                 withholdingIncomeTax
                 withholdingLocalIncomeTax
                 withholdingRuralSpecialTax
-                prevPaymentDay
-                createdAt
-                createdBy
-                updatedAt
-                updatedBy
-                ip
-                active
+                prevPaymentDay 
                 paymentAmount
                 taxRate
                 actualPayment

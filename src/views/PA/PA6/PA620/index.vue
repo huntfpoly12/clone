@@ -378,7 +378,7 @@ export default defineComponent({
         const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
-        const dataSource: any = ref([]);
+        let dataSource: any = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -393,6 +393,15 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear,
             // imputedMonth: dayjs().month(),
+        })
+        const dataCallTableSmall = reactive({
+            companyId: companyId,
+            processKey: {
+                imputedYear: null,
+                imputedMonth: null,
+                paymentYear: null,
+                paymentMonth: null,
+            }
         })
         let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
@@ -425,6 +434,8 @@ export default defineComponent({
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
         // ================GRAPQL==============================================
+
+        // API QUERY TABLE BIG
         const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessBusinesses, valueCallApiGetIncomeProcessBusinesses, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
@@ -503,26 +514,30 @@ export default defineComponent({
                     ...dataAdd
                 }
 
-                if (val.imputedMonth == dayjs().month()) {
-                    console.log(val);
-                    
+                if (val.imputedMonth == dayjs().month()) { 
+                    dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
+                    dataCallTableSmall.processKey.imputedYear = val.imputedYear
+                    dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
+                    dataCallTableSmall.processKey.paymentYear = val.paymentYear
+
+                    triggerDetail.value = true
+                    refetchDataDetail()
                 }
 
             })
-
-
-
         })
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
         })
 
-        const { refetch: refetchDataDetail, loading: loadingGetIncomeProcessBusinessesDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusiness, valueCallApiGetEmployeeBusiness, () => ({
+        // API QUERY TABLE SMALL LEFT SIDE
+        const { refetch: refetchDataDetail, loading: loadingGetIncomeProcessBusinessesDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, valueCallApiGetEmployeeBusiness, () => ({
             enabled: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
         resIncomeProcessBusinessesDetail(res => {
-
+            console.log(res.data.getIncomeBusinesses);
+            
         })
         errorGetIncomeProcessBusinessesDetail(res => {
             notification('error', res.message)
