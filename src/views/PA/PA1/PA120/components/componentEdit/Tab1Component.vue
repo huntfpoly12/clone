@@ -307,12 +307,12 @@ export default defineComponent({
         });
         arrDataEdit.push(newValue)
 
-        //push the imployeeID into the arrayRowedited array to identify the changed row 
-        let arrEmployeeRowEdited = store.state.common.arrayRowedited.filter(function(item : any) {
+        //push the imployeeID into the arrayRoweditedPA120 array to identify the changed row 
+        let arrEmployeeRowEdited = store.state.common.arrayRoweditedPA120.filter(function(item : any) {
             return item !== newValue.employeeId;
         })
         arrEmployeeRowEdited.push(newValue.employeeId)
-        store.state.common.arrayRowedited = arrEmployeeRowEdited
+        store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited
         
       }
     },{deep:true})
