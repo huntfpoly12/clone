@@ -1,9 +1,10 @@
 import getters from "./getters";
 import mutations from "./mutations";
+import statesPA120 from "./screenStates/screenStatePA120";
 
 const commonModule = {
     state: () => ({
-        arrayRowedited : []
+        ...statesPA120,
     }),
     getters,
     mutations,
