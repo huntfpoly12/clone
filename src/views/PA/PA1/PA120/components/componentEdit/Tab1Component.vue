@@ -22,12 +22,12 @@
             placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
-          <date-time-box width="150px" v-model:valueDate="formStateTab1.joinedAt" dateFormat="YYYY-MM-DD">
+          <date-time-box width="150px" v-model:valueDate="formStateTab1.joinedAt">
           </date-time-box>
         </a-form-item>
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
-            <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt" dateFormat="YYYY-MM-DD">
+            <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt">
             </date-time-box>
             <span>
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 마지막 근무한 날
@@ -299,18 +299,20 @@ export default defineComponent({
  
     //Compare the data after editing, if there is a difference, add it to the array arrEdit
     watch(()=> JSON.parse(JSON.stringify(formStateTab1)),(newValue)=>{
+      console.log(newValue);
+      
       if(JSON.stringify(oldFormStateTab1) !==  JSON.stringify(newValue)){
         arrDataEdit = arrDataEdit.filter(function(item) { 
           return item.employeeId !== newValue.employeeId; 
         });
         arrDataEdit.push(newValue)
 
-        //push the imployeeID into the arrayRowedited array to identify the changed row 
-        let arrEmployeeRowEdited = store.state.common.arrayRowedited.filter(function(item : any) {
+        //push the imployeeID into the arrayRoweditedPA120 array to identify the changed row 
+        let arrEmployeeRowEdited = store.state.common.arrayRoweditedPA120.filter(function(item : any) {
             return item !== newValue.employeeId;
         })
         arrEmployeeRowEdited.push(newValue.employeeId)
-        store.state.common.arrayRowedited = arrEmployeeRowEdited
+        store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited
         
       }
     },{deep:true})

@@ -45,9 +45,6 @@ export default defineComponent({
         }
         const openPopupValue = ref(0)
         const editRow = ref()
-        watch(() => props.idRowEdit, (value) => {
-            //activeKey.value = '1';
-        })
         watch(() => props.modalStatus, (value) => {
             
             if (value) {
