@@ -185,7 +185,6 @@
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                 <DxButton :text="'지' + imputedYear + '-' + imputedMonth"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
-                    {{ status }}
                 <ProcessStatus v-model:valueStatus="status" />
             </a-col>
             <a-col class="">
@@ -253,21 +252,18 @@ import DxButton from "devextreme-vue/button"
 import dayjs, { Dayjs } from 'dayjs';
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "../../../../helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
-import notification from "../../../../utils/notification"
+import notification from "@/utils/notification"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent.vue"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
-import mutations from "../../../../graphql/mutations/PA/PA5/PA510/index"
-import { Message } from "../../../../configs/enum"
+import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { sampleDataIncomeWageDaily, sampleFormIncomeWageDaily } from "./utils/index"
-
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import DeductionPopup from "./components/Popup/DeductionPopup.vue"
-import InsurancePopup from "./components/Popup/InsurancePopup.vue"
+
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -297,8 +293,6 @@ export default defineComponent({
         SelectActionComponent,
         EmploySelect,
         ProcessStatus,
-        DeductionPopup,
-        InsurancePopup,
         FormDataComponent,
     },
     setup() {

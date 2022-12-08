@@ -43,9 +43,17 @@ export default gql`
       yearEndSettlementLocalIncomeTax
       yearEndSettlementRuralSpecialTax
       actualPayment
-      employee
-      payItems
-      deductionItems
+      employee {
+        type
+      }
+      payItems {
+        itemCode
+        amount
+      }
+      deductionItems {
+        itemCode
+        amount
+      }
       midTermSettlement
     }
   }
