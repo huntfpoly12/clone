@@ -28,4 +28,34 @@ export const valueDefaultAction = {
     incomeTypeCode: '940100',
     incomeTypeName: '저술가',
     email: '',
-} 
+}
+
+import { companyId } from "@/helpers/commonFunction";
+export const dataActionUtils = {
+    companyId: companyId,
+    processKey: {
+        imputedYear: 2022,
+        imputedMonth: 1,
+        paymentYear: 2022,
+        paymentMonth: 1,
+    },
+    input: {
+        paymentDay: 0,
+        employeeId: 0,
+        incomeTypeCode: "",
+        paymentAmount: 0,
+        taxRate: 3,
+        withholdingIncomeTax: 0,
+        withholdingLocalIncomeTax: 0,
+    }
+}
+export const dataGetDetailEdit = {
+    companyId: companyId,
+    processKey: {
+        imputedYear: 2022,
+        imputedMonth: 1,
+        paymentYear: 2022,
+        paymentMonth: 1,
+    },
+    incomeId: 0
+}

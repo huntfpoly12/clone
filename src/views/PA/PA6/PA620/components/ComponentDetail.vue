@@ -34,14 +34,14 @@
                     <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
                         :incomeTypeName="data.data.employee.incomeTypeName" />
                 </template>
-                <DxColumn caption="지급일" data-field="paymentDay" data-type="string" :format="amountFormat" />
+                <DxColumn width="80px" caption="지급일" data-field="paymentDay" data-type="string"
+                    :format="amountFormat" />
                 <DxColumn caption="지급액" data-field="paymentAmount" data-type="string" :format="amountFormat" />
                 <DxColumn caption="세율" data-field="taxRate" data-type="string" :format="amountFormat" />
-                <DxColumn caption="공제" cell-template="income-tax" :format="amountFormat" />
-                <template #income-tax="{ data }" class="custom-action">
-                    <div>
-                        {{ data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax }}
-                    </div>
+                <DxColumn caption="공제" cell-template="income-tax" />
+                <template #income-tax="{ data }" class="custom-action"> 
+                    {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax)
+                    }} 
                 </template>
                 <DxColumn caption="차인지급액" data-field="actualPayment" data-type="string" :format="amountFormat" />
 
@@ -49,7 +49,7 @@
         </a-spin>
     </a-col>
     <a-col :span="12" class="custom-layout form-action">
-        <a-spin :spinning="(loadingTableDetail || loadingCreated)" size="large">
+        <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingDetailEdit)" size="large">
             <a-form-item label="사업소득자" label-align="right">
                 <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
                     width="350px" :required="true" @incomeTypeCode="changeIncomeTypeCode" />
@@ -68,7 +68,7 @@
                                 </div>
                             </div>
                         </a-form-item>
-                        <a-form-item label="지급일" label-align="right"> 
+                        <a-form-item label="지급일" label-align="right">
                             <number-box-money min="0" width="150px" class="mr-5"
                                 v-model:valueInput="dataAction.input.paymentDay" />
                         </a-form-item>
@@ -128,6 +128,7 @@ import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUn
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
+import { dataActionUtils, dataGetDetailEdit } from "../utils/index";
 import dayjs from "dayjs";
 
 export default defineComponent({
@@ -149,44 +150,33 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         let month1: any = ref(dayjs().format("YYYY-MM"))
-        let month2: any = ref(dayjs().format("YYYY-MM")) 
+        let month2: any = ref(dayjs().format("YYYY-MM"))
         let statusButton = ref(props.statusButton)
         const amountFormat = ref({ currency: 'VND', useGrouping: true })
         let dataSourceDetail = ref([]);
         const triggerDetail = ref<boolean>(true);
         const triggerDetailOption = ref<boolean>(true);
+        const triggerDetailDetailEdit = ref<boolean>(false);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(0);
         const globalYear = computed(() => store.state.settings.globalYear)
+        let arrayEmploySelect: any = ref([])
         let dataAction = reactive({
-            companyId: companyId,
-            processKey: {
-                imputedYear: 2022,
-                imputedMonth: 1,
-                paymentYear: 2022,
-                paymentMonth: 1,
-            },
-            input: {
-                paymentDay: 0,
-                employeeId: 0,
-                incomeTypeCode: "",
-                paymentAmount: 0,
-                taxRate: 3,
-                withholdingIncomeTax: 0,
-                withholdingLocalIncomeTax: 0,
-            }
+            ...dataActionUtils
         })
         let dataCallApiGetOption = ref({
             companyId: companyId,
             imputedYear: globalYear,
         })
-        let arrayEmploySelect: any = ref([])
-
-        let dataTableDetail: any = ref({ ...props.dataCallTableDetail })
-
+        let dataTableDetail: any = ref({
+            ...props.dataCallTableDetail
+        })
+        let dataCallApiDetailEdit = reactive({
+            ...dataGetDetailEdit
+        })
         // ================GRAPQL==============================================
 
         // API QUERY TABLE SMALL LEFT SIDE
@@ -197,7 +187,6 @@ export default defineComponent({
         resIncomeProcessBusinessesDetail(res => {
             dataSourceDetail.value = res.data.getIncomeBusinesses
             triggerDetail.value = false
-
             emit("createdDone", true)
         })
         errorGetIncomeProcessBusinessesDetail(res => {
@@ -221,6 +210,19 @@ export default defineComponent({
             })
         }, { deep: true })
 
+        // API QUERY DETAIL VALUE TO EDIT
+        const { refetch: refetchDetailEdit, loading: loadingDetailEdit, onError: errorDetailEdit, result: resDetailEdit } = useQuery(queries.getIncomeBusiness, dataCallApiDetailEdit, () => ({
+            enabled: triggerDetailDetailEdit.value,
+            fetchPolicy: "no-cache",
+        }));
+        watch(() => resDetailEdit, (newValue, old) => {
+            console.log(newValue);
+
+        }, { deep: true })
+        errorDetailEdit(res => {
+            notification('error', res.message)
+        }) 
+
         // API CREATED 
         const {
             mutate: actionCreated,
@@ -236,6 +238,7 @@ export default defineComponent({
         errorCreated(res => {
             notification('error', res.message)
         })
+
 
         // ================WATCHING============================================
         watch(() => props.dataCallTableDetail, (newValue) => {
@@ -253,7 +256,7 @@ export default defineComponent({
             dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1])
             dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0])
             dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1])
-            dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0]) 
+            dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0])
             actionCreated(dataAction)
         })
 
@@ -264,7 +267,11 @@ export default defineComponent({
 
         }
         const actionEdit = (data: any) => {
-
+            dataCallApiDetailEdit.processKey = dataTableDetail.value.processKey
+            dataCallApiDetailEdit.incomeId = data.data.employeeId  
+            
+            triggerDetailDetailEdit.value = true
+            refetchDetailEdit()
         }
 
         const changeIncomeTypeCode = (res: string) => {
@@ -281,6 +288,7 @@ export default defineComponent({
             dataSourceDetail,
             amountFormat,
             loadingCreated,
+            loadingDetailEdit,
             addRow,
             actionEdit,
             changeIncomeTypeCode,
