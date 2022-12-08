@@ -398,15 +398,15 @@ import DxButton from "devextreme-vue/button"
 import dayjs, { Dayjs } from 'dayjs';
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "../../../../helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 import { onExportingCommon } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
-import notification from "../../../../utils/notification"
+import notification from "@/utils/notification"
 import PrintPayrollRegisterPopup from "./components/Popup/PrintPayrollRegisterPopup.vue"
-import queries from "../../../../graphql/queries/PA/PA1/PA110/index"
-import mutations from "../../../../graphql/mutations/PA/PA1/PA110/index"
-import { Message } from "../../../../configs/enum"
+import queries from "@/graphql/queries/PA/PA1/PA110/index"
+import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
+import { Message } from "@/configs/enum"
 import { sampleDataIncomeWage, sampleFormIncomeWage, origindata, ArrForeigner } from "./utils/index"
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import DeletePopup from "./components/Popup/DeletePopup.vue"
@@ -514,65 +514,116 @@ export default defineComponent({
         paymentMonth: null,
       }
     })
-    const originDataIncomeWage = ref({
+    let originDataIncomeWage = reactive({
       companyId: companyId,
       processKey: {
         imputedYear: 2022,
-        imputedMonth: 12,
+        imputedMonth: 10,
         paymentYear: 2022,
-        paymentMonth: 12,
+        paymentMonth: 1
       },
       incomeId: 1,
     })
+
     let popupData = ref([])
-    let dataIncomeProcessWages = ref([{
-      companyId: 29,
-      type: 2,
-      imputedYear: 2022,
-      imputedMonth: 6,
-      paymentYear: 123,
-      paymentMonth: 3,
-      status: 0,
-      statusUserId: 321,
-      statusUpdatedAt: "",
-      createdAt: '',
-      createdBy: '',
-      updatedAt: '',
-      updatedBy: '',
-      ip: '',
-      active: true,
-      statusUpdateUser: {
-        id: 1,
-        type: '',
-        username: 'sda',
-        name: 'asdf',
-        active: true,
-      },
-      employeeStat: {
-        type: '',
+    let dataIncomeProcessWages = [
+      {
+        companyId: 29,
+        type: 2,
         imputedYear: 2022,
-        imputedMonth: 4,
-        paymentYear: 201,
-        paymentMonth: 123,
-        employeeCount: 43,
-        retireEmployeeCount: 12,
-      },
-      incomeStat: {
-        imputedYear: 2022,
-        imputedMonth: 12,
-        paymentYear: 12,
+        imputedMonth: 6,
+        paymentYear: 123,
         paymentMonth: 3,
-        incomePayment: 34,
-        withholdingIncomeTax: 23,
-        withholdingLocalIncomeTax: 12,
-        withholdingRuralSpecialTax: 32,
-        totalPay: 123,
-        totalTaxPay: 12,
-        totalTaxfreePay: 3,
-        totalDeduction: 23,
-        actualPayment: 100
+        status: 0,
+        statusUserId: 321,
+        statusUpdatedAt: "",
+        createdAt: '',
+        createdBy: '',
+        updatedAt: '',
+        updatedBy: '',
+        ip: '',
+        active: true,
+        statusUpdateUser: {
+          id: 1,
+          type: '',
+          username: 'sda',
+          name: 'asdf',
+          active: true,
+        },
+        employeeStat: {
+          type: '',
+          imputedYear: 2022,
+          imputedMonth: 4,
+          paymentYear: 201,
+          paymentMonth: 123,
+          employeeCount: 47,
+          retireEmployeeCount: 12,
+        },
+        incomeStat: {
+          imputedYear: 2022,
+          imputedMonth: 12,
+          paymentYear: 12,
+          paymentMonth: 3,
+          incomePayment: 34,
+          withholdingIncomeTax: 23,
+          withholdingLocalIncomeTax: 12,
+          withholdingRuralSpecialTax: 32,
+          totalPay: 123,
+          totalTaxPay: 12,
+          totalTaxfreePay: 3,
+          totalDeduction: 23,
+          actualPayment: 100
+        }
+      },
+      {
+        companyId: 29,
+        type: 2,
+        imputedYear: 2022,
+        imputedMonth: 7,
+        paymentYear: 123,
+        paymentMonth: 3,
+        status: 0,
+        statusUserId: 321,
+        statusUpdatedAt: "",
+        createdAt: '',
+        createdBy: '',
+        updatedAt: '',
+        updatedBy: '',
+        ip: '',
+        active: true,
+        statusUpdateUser: {
+          id: 1,
+          type: '',
+          username: 'sda',
+          name: 'asdf',
+          active: true,
+        },
+        employeeStat: {
+          type: '',
+          imputedYear: 2022,
+          imputedMonth: 4,
+          paymentYear: 201,
+          paymentMonth: 123,
+          employeeCount: 43,
+          retireEmployeeCount: 12,
+        },
+        incomeStat: {
+          imputedYear: 2022,
+          imputedMonth: 12,
+          paymentYear: 12,
+          paymentMonth: 3,
+          incomePayment: 34,
+          withholdingIncomeTax: 23,
+          withholdingLocalIncomeTax: 12,
+          withholdingRuralSpecialTax: 32,
+          totalPay: 123,
+          totalTaxPay: 12,
+          totalTaxfreePay: 3,
+          totalDeduction: 23,
+          actualPayment: 100
+        }
       }
-    }])
+    ]
 
     // ======================= GRAPQL ================================
     // API QUERY Main TABLE 
@@ -582,7 +633,8 @@ export default defineComponent({
     }));
     resIncomeProcessWages(res => {
 
-      let respon = res.data.getIncomeProcessWages
+      // let respon = res.data.getIncomeProcessWages
+      let respon = [...dataIncomeProcessWages]
       dataSource.value = [{
         companyId: companyId,
       }]
@@ -649,7 +701,6 @@ export default defineComponent({
 
         },
       ]
-      console.log('respon', respon)
       respon.map((val: any) => {
         // data table minify
         let dataAdd = {
@@ -720,6 +771,7 @@ export default defineComponent({
           triggerIncomeWage.value = true
           refetchDataIncomeWage()
         }
+        console.log('dataCustomRes', dataCustomRes.value)
       })
     })
     errorGetIncomeProcessWages(res => {
@@ -754,11 +806,10 @@ export default defineComponent({
     };
     // ======================= FUNCTION ================================
     const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
-      console.log(imputedMonth);
-      console.log(imputedYear);
-      console.log(paymentYear);
-      console.log(paymentMonth);
-
+      originDataIncomeWage.processKey.imputedMonth = imputedMonth
+      originDataIncomeWage.processKey.imputedYear = imputedYear
+      originDataIncomeWage.processKey.paymentYear = paymentYear
+      originDataIncomeWage.processKey.paymentMonth = paymentMonth
     }
     const onSubmit = (e: any) => {
     }
