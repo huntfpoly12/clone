@@ -127,7 +127,7 @@
                             </template>
                             <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
                             <template #detailRow="{ data }">
-                                <div class="table-detail">
+                                <div>
                                     <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="false"
                                         :column-auto-width="true" :allow-column-reordering="move_column"
                                         :show-column-headers="false" :allow-column-resizing="colomn_resize"
