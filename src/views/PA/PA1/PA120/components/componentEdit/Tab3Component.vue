@@ -14,7 +14,10 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddDependent" />
                         </template>
-                        <DxColumn alignment="left" caption="연말 관계" data-field="relation" />
+                        <DxColumn alignment="left" caption="연말 관계" data-field="relation" cell-template="relation"/>
+                        <template #relation="{ data }" class="custom-action">
+                            {{$filters.formatRelation(data.value)}}
+                        </template>
                         <DxColumn alignment="left" caption="성명" data-field="name" />
                         <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
                         <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
@@ -33,11 +36,7 @@
                             cell-template="maternityAdoptionChange" />
                         <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
                             cell-template="consignmentRelationshipChange" />
-                        <!-- <DxColumn
-              alignment="left"
-              caption="세대주 여부 "
-              data-field="householder"
-            /> -->
+         
                         <DxColumn :width="80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
