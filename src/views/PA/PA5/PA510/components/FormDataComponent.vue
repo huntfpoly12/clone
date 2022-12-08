@@ -130,15 +130,12 @@ export default defineComponent({
         dataIncomeWageDaily: {
             type: Object
         },
-        arrayEmploySelect: {
-            type: Array,
-            default: []
-        }
     },
     setup(props, { emit }) {
         const modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
         const dataIncomeWageDaily: any = ref({...props.dataIncomeWageDaily})
+        const arrayEmploySelect: any = ref([])
         watch(() => props.dataIncomeWageDaily, (value) => {
             dataIncomeWageDaily.value = value
         })
@@ -156,6 +153,15 @@ export default defineComponent({
         } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
             fetchPolicy: "no-cache",
         }))
+        const {
+            loading: loadingEmployeeWage,
+            onResult: resEmployeeWage,
+        } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
+            fetchPolicy: "no-cache",
+        }))
+        resEmployeeWage(value => {
+            arrayEmploySelect.value = value.data.getEmployeeWageDailies
+        })
         resWithholdingConfigPayItems(res => {
             res.data.getWithholdingConfigDeductionItems.map((val: any) => {
                 let price = funcCheckPrice(val.itemCode)
@@ -207,6 +213,7 @@ export default defineComponent({
             loadingDeductionItem,
             modalDeductions,
             modalInsurance,
+            arrayEmploySelect,
         };
     },
 });
