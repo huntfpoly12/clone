@@ -84,6 +84,9 @@
     ::v-deep .ant-form-item-label > label{
         width: 117px;
     }
+    ::v-deep .dx-master-detail-cell {
+        padding: 0px;
+    }
 }
 
 .button-open-tab {

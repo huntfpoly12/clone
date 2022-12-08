@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-  query changeIncomeProcessExtraStatus(
+mutation changeIncomeProcessExtraStatus(
     $companyId: Int!
     $processKey: IncomeProcessKeyInput!
     $status: ProcessStatusScalar!

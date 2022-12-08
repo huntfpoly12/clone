@@ -1,11 +1,18 @@
 
-import deleteEmployeeExtra from "./deleteIncomeExtras";
-import createEmployeeExtra from "./createIncomeExtra";
-import updateEmployeeExtra from "./updateEmployeeExtra";
+import deleteIncomeExtras from "./deleteIncomeExtras";
+import changeIncomeExtraPaymentDay from "./changeIncomeExtraPaymentDay";
+import createIncomeExtra from "./createIncomeExtra";
+import changeIncomeProcessExtraStatus from "./changeIncomeProcessExtraStatus";
+import copyIncomeExtras from "./copyIncomeExtras";
+import updateIncomeExtra from "./updateIncomeExtra";
+
 const mutations = {
-    deleteEmployeeExtra: deleteEmployeeExtra,
-    createEmployeeExtra: createEmployeeExtra,
-    updateEmployeeExtra: updateEmployeeExtra
+    deleteIncomeExtras: deleteIncomeExtras,
+    createIncomeExtra: createIncomeExtra,
+    changeIncomeExtraPaymentDay: changeIncomeExtraPaymentDay,
+    changeIncomeProcessExtraStatus: changeIncomeProcessExtraStatus,
+    copyIncomeExtras: copyIncomeExtras,
+    updateIncomeExtra: updateIncomeExtra,
 };
 
 export default mutations;
