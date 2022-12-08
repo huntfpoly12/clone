@@ -1,5 +1,5 @@
 const statesPA120 = {
-    arrayRowedited : []
+    arrayRoweditedPA120 : []
 };
   
 export default statesPA120;
