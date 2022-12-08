@@ -26,7 +26,7 @@
 import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
+import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -59,7 +59,7 @@ export default defineComponent({
             onDone: onDoneAdd,
             onError: errorSendEmail,
             error,
-        } = useMutation(mutations.sendIncomeWageSalaryStatementReportEmail);
+        } = useMutation(mutations.sendIncomeWageDailySalaryStatementReportEmail);
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {

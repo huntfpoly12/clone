@@ -1,18 +1,15 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
-        <standard-form action="" name="print-payroll-register-110">
-            <div class="custom-modal-print-payroll-register">
-                <img src="@/assets/images/print.svg" alt="" style="width: 30px;">
-                <span>급여대장을 출력하시겠습니까? </span>
-                <DxSelectBox :data-source="dataSelect" :style="{ width: '100px', display: 'inline-block' }"
-                    v-model:value="valueSelect" value-expr="id" display-expr="name" :required="true">
-                </DxSelectBox>
+        <standard-form action="" name="delete-110">
+            <div class="custom-modal-delete">
+                <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
+                <span>중도퇴사자 연말정산 반영분을 삭제하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" :text="'네. 출력합니다'" :width="140" :type="'default'"
+                <button-basic class="button-form-modal" :text="'네. 삭제합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -21,10 +18,8 @@
 
 <script lang="ts">
 import { defineComponent, watch, ref } from 'vue'
-import DxSelectBox from "devextreme-vue/select-box";
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import query from "@/graphql/queries/PA/PA1/PA110/index";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -37,7 +32,6 @@ export default defineComponent({
         }
     },
     components: {
-        DxSelectBox,
     },
     setup(props, { emit }) {
 
@@ -45,51 +39,25 @@ export default defineComponent({
             emit("closePopup", false)
         };
 
-        const dataSelect = ref([
-            { id: 1, name: '전체' },
-            { id: 2, name: '부서별' },
-            { id: 3, name: '직위별' },
-        ])
-        const valueSelect = ref('')
-
-        const {
-            mutate: sendPrint,
-            onDone: onDonePrint,
-            onError: errorSendPrint,
-            error,
-        } = useMutation(query.getIncomeWagePayrollRegisterViewUrl);
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                props.data.employeeInputs.map((value: any) => {
 
-                })
-                let variables = props.data
-                sendPrint(variables);
             }
         };
-        onDonePrint(() => {
-            notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
-        })
-        errorSendPrint((e: any) => {
-            notification('error', e.message)
-        })
 
         return {
             setModalVisible,
             onSubmit,
-            dataSelect,
-            valueSelect,
         }
     },
 })
 </script>
 
 <style lang="scss">
-.custom-modal-print-payroll-register {
+.custom-modal-delete {
     display: flex;
     align-items: center;
     width: 100%;
