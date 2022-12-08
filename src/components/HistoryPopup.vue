@@ -3,7 +3,7 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
-            loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 ||
+            loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 ||
             loadingPA120 || loadingCMDeduction130">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
@@ -67,6 +67,8 @@ export default defineComponent({
     },
 
     setup(props, { emit }) {
+        console.log(props.data);
+        
         let visible = ref(false);
         const dataQuery = ref();
         let trigger320 = ref<boolean>(false);
@@ -81,6 +83,7 @@ export default defineComponent({
         let trigger710 = ref<boolean>(false);
         let trigger520 = ref<boolean>(false);
         let trigger510 = ref<boolean>(false);
+        let triggerStatus510 = ref<boolean>(false);
         let trigger120 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
@@ -193,6 +196,19 @@ export default defineComponent({
                             trigger510.value = true;
                             refetchPA510();
                             break;
+                        case 'pa-status-510':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            triggerStatus510.value = true;
+                            refetchStatusPA510();
+                            break;
                         default:
                             break;
                     }
@@ -211,6 +227,8 @@ export default defineComponent({
                     trigger710.value = false;
                     trigger520.value = false;
                     trigger120.value = false;
+                    trigger510.value = false;
+                    triggerStatus510.value = false;
 
                 }
             }
@@ -397,6 +415,20 @@ export default defineComponent({
                 dataTableShow.value = value.getIncomeWageDailiesLogs;
             }
         });
+        // get getIncomeProcessWageDailyLogs pa-510
+        const { result: resultStatusPA510, loading: loadingStatusPA510, refetch: refetchStatusPA510 } = useQuery(
+            queries.getIncomeProcessWageDailyLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerStatus510.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultStatusPA510, (value) => {
+            if (value && value.getIncomeProcessWageDailyLogs) {
+                dataTableShow.value = value.getIncomeProcessWageDailyLogs;
+            }
+        });
         // get getEmployeeWagesLogs pa-120
         const { result: resultPA120, loading: loadingPA120, refetch: refetchPA120 } = useQuery(
             queries.getEmployeeWagesLogs,
@@ -436,6 +468,7 @@ export default defineComponent({
             loadingPA710,
             loadingPA520,
             loadingPA510,
+            loadingStatusPA510,
             loadingPA120,
             formarDate,
             dataQuery,
