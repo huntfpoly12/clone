@@ -1,10 +1,10 @@
 
 import deleteEmployeeBusiness from "./deleteEmployeeBusiness";
-import createEmployeeBusiness from "./createEmployeeBusiness";
+import createIncomeBusiness from "././createIncomeBusiness";
 import updateEmployeeBusiness from "./updateEmployeeBusiness";
 const mutations = {
     deleteEmployeeBusiness: deleteEmployeeBusiness,
-    createEmployeeBusiness: createEmployeeBusiness,
+    createIncomeBusiness: createIncomeBusiness,
     updateEmployeeBusiness: updateEmployeeBusiness, 
 };
 

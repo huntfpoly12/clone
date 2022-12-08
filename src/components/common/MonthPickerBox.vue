@@ -66,7 +66,7 @@ export default defineComponent({
     const handleDate = (modelData: any) => {
       let day = modelData.month + 1;
       day = day > 9 ? day : "0" + day.toString();
-      emit("update:value", `${modelData.year}-${day}`);
+      emit("update:valueDate", `${modelData.year}-${day}`);
     };
 
     return {

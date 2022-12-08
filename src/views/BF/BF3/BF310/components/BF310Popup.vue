@@ -277,7 +277,7 @@
                                             :label-col="labelCol">
                                             <div style="width: 200px">
                                                 <month-picker-box
-                                                    v-model:value="formState.content.withholding.startYearMonth"
+                                                    v-model:valueDate="formState.content.withholding.startYearMonth"
                                                     className="0" />
                                             </div>
                                         </a-form-item>

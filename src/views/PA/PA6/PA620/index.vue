@@ -1,5 +1,5 @@
 <template>
-    <action-header title="사업소득자등록" />
+    <action-header title="사업소득자등록" @actionSave="saving" />
     <div id="pa-620">
         <div class="page-content">
             <a-row>
@@ -221,21 +221,18 @@
                                     </DxDataGrid>
                                 </div>
                             </template>
-                        </DxDataGrid>
-                        <div class="pagination-table" v-if="rowTable > originData.rows">
-                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                :total="rowTable" show-less-items style="margin-top: 10px" />
-                        </div>
+                        </DxDataGrid> 
                     </a-spin>
                 </a-col>
 
-                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" />
+                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
+                    :actionSave="actionSave" @createdDone="createdDone"/>
             </a-row>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, computed } from "vue";
+import { defineComponent, ref, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
@@ -257,6 +254,8 @@ export default defineComponent({
         HistoryPopup, ComponentDetail
     },
     setup() {
+        let statusButton = ref()
+        let actionSave = ref(0)
         let dataSource: any = ref([]);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
@@ -334,6 +333,8 @@ export default defineComponent({
             ]
 
             respon.map((val: any) => {
+                console.log(val);
+                
                 // data table minify
                 let dataAdd = {
                     imputedMonth: val.imputedMonth,
@@ -376,6 +377,7 @@ export default defineComponent({
                     dataCallTableSmall.processKey.imputedYear = val.imputedYear
                     dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
                     dataCallTableSmall.processKey.paymentYear = val.paymentYear
+                    statusButton.value = val.status
                 }
 
             })
@@ -395,7 +397,19 @@ export default defineComponent({
             valueCallApiGetEmployeeBusiness.processKey.paymentMonth = paymentMonth
         }
 
+        const saving = () => {
+            actionSave.value++;
+        }
+
+        const createdDone = () =>{ 
+            trigger.value = true
+            refetchData()
+        }
+
         return {
+            createdDone,
+            actionSave,
+            statusButton,
             valueCallApiGetEmployeeBusiness,
             dataCustomRes,
             globalYear,
@@ -404,6 +418,7 @@ export default defineComponent({
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
+            saving,
             showDetailSelected,
         };
     },
