@@ -236,10 +236,10 @@ export default defineComponent({
                 },
                 employeeInputs: {
                     senderName: sessionStorage.getItem("username"),
-                    receiverName: data.employee.name,
-                    receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
-                    incomeTypeCode: data.employee.incomeTypeCode
+                    receiverName: data.name,
+                    receiverAddress: data.email,
+                    employeeId: data.employeeId,
+                    incomeTypeCode: data.incomeTypeCode
                 }
             }
             modalEmailSingle.value = true

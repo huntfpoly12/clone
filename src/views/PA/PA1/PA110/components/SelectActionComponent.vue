@@ -1,4 +1,5 @@
 <template>
+
     <DxButton class="ml-3" @click="deleteItem">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
@@ -24,7 +25,7 @@
         <template #item-field="{ data }">
             <div style="text-align: center;">
                 <HistoryOutlined v-if="data.function == 'History'" class="mr-5" style="font-size: 18px" />
-                <div v-if="data.function == 'HistoryStatus'" style="text-align: center;"><img
+                <div v-if="data.function == 'StatusHistory'" style="text-align: center;"><img
                         :src="'../../../../../../../src/assets/images/icon_status_history.png'" alt=""
                         style="width: 20px; height: 20px;" /></div>
                 <button v-else-if="data.url" class="button-open-tab">일용직사원등록</button>
@@ -34,17 +35,18 @@
 
     <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
-    <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
-        @closePopup="modalPrintPayrollRegister = false" />
+    <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister" @closePopup="modalPrintPayrollRegister = false"
+        :data="popupDataPayrollRegister" />
+    <PrintSalaryStatementPopup :modalStatus="modalPrintSalaryStatement" @closePopup="modalPrintSalaryStatement = false"
+        :data="popupDataSalaryStatement" />
     <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" />
     <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister"
         @closePopup="modalEmailSinglePayrollRegister = false" :data="popupDataEmailSinglePayrollRegister" />
     <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
         :data="popupDataEmailSingle" />
-    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="popupDataHistory" title="변경이력"
-        typeHistory="pa-510" />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-        :data="popupDataHistoryStatus" title="변경이력" typeHistory="pa-status-510" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+        typeHistory="pa-110" :historyData="historyData" />
+
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -56,18 +58,14 @@ import EditPopup from "./Popup/EditPopup.vue"
 import EmailSinglePayrollRegisterPopup from "./Popup/EmailSinglePayrollRegisterPopup.vue"
 import EmailMultiPopup from "./Popup/EmailMultiPopup.vue"
 import EmailSinglePopup from "./Popup/EmailSinglePopup.vue"
+import PrintSalaryStatementPopup from "./Popup/PrintSalaryStatementPopup.vue"
 import { HistoryOutlined } from "@ant-design/icons-vue"
-import { companyId } from "@/helpers/commonFunction"
-import { useStore } from 'vuex'
-import dayjs from "dayjs";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import queries from "@/graphql/queries/PA/PA5/PA510/index";
-import notification from "@/utils/notification";
 export default defineComponent({
     components: {
         DxButton,
         DxDropDownButton,
         PrintPayrollRegisterPopup,
+        PrintSalaryStatementPopup,
         DeletePopup,
         EditPopup,
         EmailSinglePayrollRegisterPopup,
@@ -79,52 +77,35 @@ export default defineComponent({
         modalStatus: {
             type: Boolean
         },
-        dataRows: {
-            type: Array,
-            default: []
-        },
+        historyData: {
+            type: Object
+        }
     },
     setup(props, { emit }) {
-        const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
-        const popupDataHistory: any = ref({})
-        const popupDataHistoryStatus: any = ref({})
         const modalPrintPayrollRegister = ref<boolean>(false)
-        const trigger = ref<boolean>(false)
+        const modalPrintSalaryStatement = ref<boolean>(false)
         const modalDelete = ref<boolean>(false)
         const modalEdit = ref<boolean>(false)
-        const modalHistory = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         const modalEmailSingle = ref(false)
         const modalEmailSinglePayrollRegister = ref(false)
         const modalEmailMulti = ref(false)
-        const popupDataDelete: any = ref([])
-        const popupDataEdit: any = ref({})
-        // const dataPrintSalaryStatement = ref({})
-        const originData: any = ref({
-            companyId: companyId,
-            imputedYear: globalYear.value,
-            incomeIds: [],
-        })
-        const popupDataEmailSingle: any = ref({})
-        const popupDataEmailSinglePayrollRegister: any = ref({})
-        const popupDataEmailMulti: any = ref({})
-        watch(() => props.dataRows, (value) => {
-            if (value) {
-                popupDataDelete.value = value
-            }
-        })
+        const popupDataDelete = ref({})
+        const popupDataEdit = ref({})
+        const popupDataPayrollRegister = ref({})
+        const popupDataSalaryStatement = ref({})
+
+        const popupDataEmailSingle = ref({})
+        const popupDataEmailSinglePayrollRegister = ref({})
+        const popupDataEmailMulti = ref({})
+
         const deleteItem = (value: any) => {
             modalDelete.value = true;
-            // popupDataDelete.value = value
+            popupDataDelete.value = value
         };
         const editItem = (value: any) => {
-            if (props.dataRows.length == 1) {
-                modalEdit.value = true;
-                popupDataEdit.value = props.dataRows[0]
-            } else {
-                notification('error', `항목을 하나만 선택하십시오`)
-            }
+            modalEdit.value = true;
+            popupDataEdit.value = value
         };
         const arrDropDownPayrollRegister = [
             { id: 1, img: 'print.svg', event: 'PrintPayrollRegister' },
@@ -136,87 +117,42 @@ export default defineComponent({
             { id: 3, img: 'group_email.png', event: 'EmailMultiSalaryStatement' },
         ];
         const arrDropDown = [
-            { id: 1, url: '520', event: '520' },
+            { id: 1, url: '120', event: '120' },
             { id: 2, function: 'History', event: 'History' },
-            { id: 2, function: 'HistoryStatus', event: 'HistoryStatus' },
+            { id: 3, function: 'StatusHistory', event: 'StatusHistory' },
         ]
         const onItemClick = (value: any) => {
             switch (value.itemData.event) {
                 case 'PrintPayrollRegister':
                     modalPrintPayrollRegister.value = true;
+                    // popupDataPayrollRegister.value = value
                     break;
                 case 'EmailPayrollRegister':
-                    if (props.dataRows.length == 1) {
-                        popupDataEmailSinglePayrollRegister.value = props.dataRows[0]
-                        modalEmailSinglePayrollRegister.value = true;
-                    } else {
-                        notification('error', `항목을 하나만 선택하십시오`)
-                    }
+                    modalEmailSinglePayrollRegister.value = true;
+                    // popupDataPayrollRegister.value = value
                     break;
                 case 'PrintSalaryStatement':
-                    if (props.dataRows.length) {
-                        originData.value.incomeIds = []
-                        props.dataRows?.forEach((row: any) => {
-                            originData.value.incomeIds.push(row.incomeId);
-                        })
-                        trigger.value = true;
-                    } else {
-                        notification('error', `항목을 최소 하나 이상 선택해야합니다`)
-                    }
+                    modalPrintSalaryStatement.value = true;
+                    // popupDataPayrollRegister.value = value
                     break;
                 case 'EmailSalaryStatement':
-                    if (props.dataRows.length == 1) {
-                        popupDataEmailSingle.value = props.dataRows[0]
-                        modalEmailSingle.value = true;
-                    } else {
-                        notification('error', `항목을 하나만 선택하십시오`)
-                    }
-
+                    modalEmailSingle.value = true;
+                    // popupDataPayrollRegister.value = value
                     break;
                 case 'EmailMultiSalaryStatement':
-                    if (props.dataRows.length) {
-                        popupDataEmailMulti.value = props.dataRows
-                        modalEmailMulti.value = true;
-                    } else {
-                        notification('error', `항목을 최소 하나 이상 선택해야합니다`)
-                    }
+                    modalEmailMulti.value = true;
+                    // popupDataPayrollRegister.value = value
                     break;
                 case 'EmailPayrollRegister':
                     modalPrintPayrollRegister.value = true;
+                    // popupDataPayrollRegister.value = value
                     break;
                 case 'History':
-                    modalHistory.value = true;
-                    popupDataHistory.value = {
-                        imputedYear: globalYear.value,
-                        imputedMonth: dayjs().month() + 1,
-                        paymentYear: globalYear.value,
-                        paymentMonth: dayjs().month() + 1,
-                    }
-                    break;
-                case 'HistoryStatus':
                     modalHistoryStatus.value = true;
-                    popupDataHistoryStatus.value = {
-                        imputedYear: globalYear.value,
-                        imputedMonth: dayjs().month() + 1,
-                        paymentYear: globalYear.value,
-                        paymentMonth: dayjs().month() + 1,
-                    }
+                    // popupDataPayrollRegister.value = value
                     break;
             }
         }
-        const { refetch, result, loading
-        } = useQuery(queries.getIncomeWageDailySalaryStatementViewUrl, originData, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-        }))
-        watch(result, (value) => {
-            trigger.value = false;
-            if (value) {
-                window.open(value.getIncomeWageDailySalaryStatementViewUrl)
-            }
-        })
-
-
         return {
             deleteItem,
             editItem,
@@ -229,14 +165,16 @@ export default defineComponent({
             popupDataEmailSinglePayrollRegister,
             popupDataEmailMulti,
             modalPrintPayrollRegister,
-            modalHistory,
+            modalPrintSalaryStatement,
             modalHistoryStatus,
             onItemClick,
             arrDropDownPayrollRegister,
             arrDropDownSalaryStatement,
             arrDropDown,
-            popupDataHistory,
-            popupDataHistoryStatus,
+
+            popupDataPayrollRegister,
+            popupDataSalaryStatement,
+
             popupDataDelete,
 
             popupDataEdit,

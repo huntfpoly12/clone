@@ -8,7 +8,7 @@ export default gql`
       companyId: $companyId
       filter: $filter
     ) {
-      mputedYear
+      imputedYear
       imputedMonth
       imputedYearMonth
       paymentYear

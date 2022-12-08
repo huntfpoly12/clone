@@ -1,17 +1,11 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation changeIncomeWagePaymentDay(
+  query getIncomeWagesLogs(
     $companyId: Int!
     $processKey: IncomeProcessKeyInput!
-    $incomeId: Int!
-    $day: Int!
   ) {
-    changeIncomeWagePaymentDay(
-      companyId: $companyId
-      processKey: $processKey
-      incomeId: $incomeId
-      day: $day
-    ) {
+    getIncomeWagesLogs(companyId: $companyId, processKey: $processKey) {
+      ts
       incomeId
       paymentDay
       employeeType
@@ -28,6 +22,8 @@ export default gql`
       updatedBy
       ip
       active
+      loggedAt
+      remark
       totalPay
       totalTaxPay
       totalTaxfreePay
@@ -43,18 +39,8 @@ export default gql`
       yearEndSettlementLocalIncomeTax
       yearEndSettlementRuralSpecialTax
       actualPayment
-      employee {
-        type
-      }
-      payItems {
-        itemCode
-        amount
-      }
-      deductionItems {
-        itemCode
-        amount
-      }
-      midTermSettlement
+      payItemsInfo
+      deductionItemsInfo
     }
   }
 `;

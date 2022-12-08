@@ -1,11 +1,11 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
-        <standard-form action="" name="edit-510">
+        <standard-form action="" name="edit-110">
             <div class="custom-modal-edit">
-                    <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
-                    <span>선택된 내역 지급일을</span>
-                    <span>일로 변경하시겠습니까?</span>
+                <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
+                <span>선택된 내역 지급일을</span>
+                <span>일로 변경하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
@@ -45,7 +45,7 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                
+
             }
         };
 
