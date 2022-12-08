@@ -45,9 +45,8 @@
     <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
         :data="popupDataEmailSingle" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-        typeHistory="pa-510" />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-        typeHistory="pa-510" />
+        typeHistory="pa-110" :historyData="historyData" />
+
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -78,6 +77,9 @@ export default defineComponent({
         modalStatus: {
             type: Boolean
         },
+        historyData: {
+            type: Object
+        }
     },
     setup(props, { emit }) {
         const modalPrintPayrollRegister = ref<boolean>(false)
@@ -115,9 +117,9 @@ export default defineComponent({
             { id: 3, img: 'group_email.png', event: 'EmailMultiSalaryStatement' },
         ];
         const arrDropDown = [
-            { id: 1, url: '110', event: '110' },
+            { id: 1, url: '120', event: '120' },
             { id: 2, function: 'History', event: 'History' },
-            { id: 2, function: 'StatusHistory', event: 'StatusHistory' },
+            { id: 3, function: 'StatusHistory', event: 'StatusHistory' },
         ]
         const onItemClick = (value: any) => {
             switch (value.itemData.event) {

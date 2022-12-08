@@ -2,9 +2,9 @@
     <standard-form action="" name="add-page-110" style="border: 1px solid #d7d7d7; padding: 10px;">
         <a-row>
             <a-col :span="12">
-                <a-form-item label="근무일수">
+                <a-form-item label="사원">
                     <EmploySelect :arrayValue="arrayEmploySelect"
-                        v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="316px" :required="true" />
+                        v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="220px" :required="true" />
                 </a-form-item>
                 <a-form-item label="지급일">
                     <!-- <EmploySelect :arrayValue="arrayEmploySelect" v-model:valueEmploy="formIncomeWageDaily.input.employeeId"

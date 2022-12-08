@@ -1,8 +1,9 @@
 <template>
   <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
-  <div id="pa-510" class="page-content">
+  <div id="pa-110" class="page-content">
     <a-row>
-      <a-spin :spinning="(loadingIncomeProcessWages || loadingIncomeWages)" size="large">
+      <a-spin :spinning="(loadingIncomeProcessWages || loadingIncomeWages || loadingTaxPayInfo || loadingIncomeWage)"
+        size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="imputedYear"
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -175,7 +176,7 @@
         <ProcessStatus v-model:valueStatus="status" />
       </a-col>
       <a-col class="">
-        <SelectActionComponent :modalStatus="true" />
+        <SelectActionComponent :modalStatus="true" :historyData="originDataIncomeWages" />
       </a-col>
     </a-row>
     <a-row>
@@ -186,7 +187,7 @@
             :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
             :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged">
             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-            <DxColumn width="200" caption="일용직사원" cell-template="tag" />
+            <DxColumn width="200" caption="사원" cell-template="tag" />
             <template #tag="{ data }" class="custom-action">
               <div class="custom-action">
                 <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -194,8 +195,7 @@
                   :foreigner="data.data.employee.foreigner" :checkStatus="false" />
               </div>
             </template>
-            <DxColumn caption="근무일수" data-field="workingDays" />
-            <DxColumn caption="일급여" data-field="dailyWage" />
+            <DxColumn caption="급여" data-field="totalPay" />
             <DxColumn caption="공제" data-field="totalDeduction" />
             <DxColumn caption="차인지급액" data-field="actualPayment" />
             <DxColumn width="250" caption="비고" cell-template="four-major-insurance" />
@@ -217,7 +217,7 @@
             </template>
             <DxColumn caption="지급일" data-field="paymentDay" />
             <DxSummary>
-              <!-- <DxTotalItem show-in-column="일용직사원" :customize-text="dataTaxPayInfo.length" /> -->
+              <DxTotalItem column="totalPay" summary-type="sum" />
               <DxTotalItem column="totalDeduction" summary-type="sum" />
               <DxTotalItem column="actualPayment" summary-type="sum" />
             </DxSummary>
@@ -236,15 +236,15 @@ import DxButton from "devextreme-vue/button"
 import dayjs, { Dayjs } from 'dayjs';
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "../../../../helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
-import notification from "../../../../utils/notification"
+import notification from "@/utils/notification"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent.vue"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
-import mutations from "../../../../graphql/mutations/PA/PA1/PA110/index"
-import { Message } from "../../../../configs/enum"
+import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
+import { Message } from "@/configs/enum"
 import { sampleDataIncomeWage, sampleFormIncomeWage } from "./utils/index"
 import filters from "@/helpers/filters";
 
@@ -292,7 +292,10 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
 
-    const triggerIncomeWage = ref<boolean>(false)
+    const triggerIncomeWage = ref<boolean>(true)
+    const triggerProcessIncomeWages = ref<boolean>(true)
+    const triggerIncomeWages = ref<boolean>(true)
+    const triggeraxPayInfo = ref<boolean>(true)
 
     let dataCustomRes: any = ref([])
 
@@ -302,14 +305,10 @@ export default defineComponent({
     let status: any = ref()
     const dataTaxPayInfo: any = ref([])
     const formIncomeWageDaily = reactive({ ...sampleFormIncomeWage })
-
-
     const imputedYear = ref('')
     const imputedMonth = ref('')
-
     const arrayEmploySelect: any = ref([])
-
-    const originData = ref({
+    const originDataProcessIncome = ref({
       companyId: companyId,
       imputedYear: globalYear,
       // imputedMonth: dayjs().month(),
@@ -341,6 +340,7 @@ export default defineComponent({
         paymentYear: 2022,
         paymentMonth: 12,
       },
+      incomeId: 1,
     })
     let popupData = ref([])
     // ======================= GRAPQL ================================
@@ -348,7 +348,8 @@ export default defineComponent({
       refetch: refetchDataProcessIncomeWages,
       result: resIncomeProcessWages,
       loading: loadingIncomeProcessWages
-    } = useQuery(queries.getIncomeProcessWages, originData, () => ({
+    } = useQuery(queries.getIncomeProcessWages, originDataProcessIncome, () => ({
+      enabled: triggerProcessIncomeWages.value,
       fetchPolicy: "no-cache",
     }))
     const {
@@ -356,6 +357,7 @@ export default defineComponent({
       result: resIncomeWages,
       loading: loadingIncomeWages
     } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
+      enabled: triggerIncomeWages.value,
       fetchPolicy: "no-cache",
     }))
     const {
@@ -370,7 +372,8 @@ export default defineComponent({
       refetch: refetchDataTaxPayInfo,
       result: resultTaxPayInfo,
       loading: loadingTaxPayInfo,
-    } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
+    } = useQuery(queries.getIncomeWage, originDataTaxPayInfo, () => ({
+      enabled: triggeraxPayInfo.value,
       fetchPolicy: "no-cache",
     }))
 
@@ -378,7 +381,6 @@ export default defineComponent({
     watch(resIncomeProcessWages, (value) => {
       if (value) {
         let respon = value.getIncomeProcessWages
-        console.log('res', respon)
         imputedYear.value = respon[0].imputedYear
         imputedMonth.value = respon[0].imputedMonth
         status.value = respon[0].status
@@ -401,6 +403,9 @@ export default defineComponent({
           { id: 11, name: "공제총액", },
           { id: 12, name: "차인지급액", },
         ]
+        console.log('dataCustomRes2', dataCustomRes.value)
+        console.log('respon', respon)
+
         respon.forEach((val: any, index: any) => {
           let dataAdd = {
             imputedMonth: val.imputedMonth,
@@ -413,26 +418,81 @@ export default defineComponent({
           dataSource.value[0]['month' + val.imputedMonth][index] = val
 
           // data table detail
-
+          dataCustomRes.value[0]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[1]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[2]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[3]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[4]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[5]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[6]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[7]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[8]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[9]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[10]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
+          dataCustomRes.value[11]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val),
+            ...dataAdd
+          }
         })
+
+
       }
     })
 
     watch(resultIncomeWage, (value) => {
-      dataIncomeWage.value = value.getIncomeWage
+      if (value) {
+        dataIncomeWage.value = value.getIncomeWage
+      }
+    })
+    watch(resIncomeWages, (value) => {
     })
     watch(resultTaxPayInfo, (value) => {
-      dataTaxPayInfo.value = value.getIncomeWages
-      dataTaxPayInfo.value.map((value: any) => {
-        arrayEmploySelect.value.push({
-          employeeId: value.employee.employeeId,
-          name: value.employee.name,
-          idCardNumber: value.employee.idCardNumber,
-          status: value.employee.status,
-          foreigner: value.employee.foreigner
-        }
-        )
-      })
+      if (value) {
+        dataTaxPayInfo.value = value.getIncomeWage
+        dataTaxPayInfo.value.map((value: any) => {
+          arrayEmploySelect.value.push({
+            employeeId: value.employee.employeeId,
+            name: value.employee.name,
+            idCardNumber: value.employee.idCardNumber,
+            status: value.employee.status,
+            foreigner: value.employee.foreigner
+          }
+          )
+        })
+      }
     })
 
     // ======================= FUNCTION ================================
@@ -440,8 +500,6 @@ export default defineComponent({
     }
 
     const actionEditTaxPay = (data: any) => {
-
-
       dataIncomeWage.value = data.data
       console.log(dataIncomeWage.value);
     }
@@ -454,9 +512,9 @@ export default defineComponent({
       // dataTaxPayInfo.value = data
     }
     return {
-      loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages,
+      loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
       status,
-      dataSource,
+      dataSource, originDataIncomeWages,
       per_page, move_column, colomn_resize,
       refetchDataProcessIncomeWages, refetchDataIncomeWages,
       onSubmit,

@@ -4,7 +4,7 @@
             :mask-closable="false">
             <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
             loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 ||
-            loadingPA120 || loadingCMDeduction130">
+            loadingPA120 || loadingCMDeduction130 || loadingPA110">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -58,7 +58,7 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 
 export default defineComponent({
-    props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit', 'companyId'],
+    props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit', 'companyId', 'historyData'],
     components: {
         DxDataGrid,
         DxColumn,
@@ -175,8 +175,13 @@ export default defineComponent({
                             break;
                         case 'pa-110':
                             dataQuery.value = {
-                                imputedYear: parseInt(dayjs().format('YYYY')),
-                                companyId: companyId
+                                companyId: props.historyData.companyId,
+                                processKey: {
+                                    imputedYear: props.historyData.imputedYear,
+                                    imputedMonth: props.historyData.imputedMonth,
+                                    paymentYear: props.historyData.paymentYear,
+                                    paymentMonth: props.historyData.paymentMonth,
+                                },
                             };
                             triggerPA110.value = true;
                             refetchPA110();
