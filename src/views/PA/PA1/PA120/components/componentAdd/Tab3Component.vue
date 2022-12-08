@@ -141,7 +141,7 @@
               <BtnCheck :value="cellData.value" />
             </template>
             <template #relationChange="{ data: cellData }">
-                {{relationFormat(cellData.value)}}
+                {{$filters.formatRelation(cellData.value)}}
             </template>
           </DxDataGrid>
         </a-spin>
@@ -343,7 +343,6 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear);
     const idRowIndex = ref();
 
-    const dependantsRelation = computed(() => store.state.common.dependantsRelation);
     const originDataDetail = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -443,16 +442,6 @@ export default defineComponent({
     const updateData = () => {
       refetch();
     };
-    const relationFormat = (idRelation: number) => {
-        const obj = dependantsRelation.value.filter((item:any) => {
-            let check = item.label.charAt(0) == idRelation;
-            return check;
-        })
-        return obj[0].label;
-    }
-    // onMounted(() => {
-    //   console.log(globalYear,dependantsRelation , 'idRowEdit');
-    // });
     return {
       dataSource,
       modalEditStatus,
@@ -483,8 +472,6 @@ export default defineComponent({
       editForm,
       idRowIndex,
       idRowEdit,
-      dependantsRelation,
-      relationFormat,
       loading,
     };
   },
