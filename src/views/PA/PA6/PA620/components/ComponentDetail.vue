@@ -68,8 +68,9 @@
                                 </div>
                             </div>
                         </a-form-item>
-                        <a-form-item label="지급일" label-align="right">
-                            <date-time-box width="150px" v-model:valueDate="month3" />
+                        <a-form-item label="지급일" label-align="right"> 
+                            <number-box-money min="0" width="150px" class="mr-5"
+                                v-model:valueInput="dataAction.input.paymentDay" />
                         </a-form-item>
                         <a-form-item label="지급액" label-align="right">
                             <number-box-money min="0" width="150px" class="mr-5"
@@ -127,7 +128,7 @@ import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUn
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 
 export default defineComponent({
     components: {
@@ -146,10 +147,9 @@ export default defineComponent({
             type: Number
         }
     },
-    setup(props, {emit}) {
+    setup(props, { emit }) {
         let month1: any = ref(dayjs().format("YYYY-MM"))
-        let month2: any = ref(dayjs().format("YYYY-MM"))
-        let month3: any = ref(dayjs().format("YYYY-MM-DD"))
+        let month2: any = ref(dayjs().format("YYYY-MM")) 
         let statusButton = ref(props.statusButton)
         const amountFormat = ref({ currency: 'VND', useGrouping: true })
         let dataSourceDetail = ref([]);
@@ -170,7 +170,7 @@ export default defineComponent({
                 paymentMonth: 1,
             },
             input: {
-                paymentDay: 8,
+                paymentDay: 0,
                 employeeId: 0,
                 incomeTypeCode: "",
                 paymentAmount: 0,
@@ -253,9 +253,8 @@ export default defineComponent({
             dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1])
             dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0])
             dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1])
-            dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0])
-            dataAction.input.paymentDay = parseInt(month3.value.replaceAll("-", '')) 
-            actionCreated(dataAction) 
+            dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0]) 
+            actionCreated(dataAction)
         })
 
         // ================FUNCTION============================================   
@@ -272,7 +271,7 @@ export default defineComponent({
             dataAction.input.incomeTypeCode = res
         }
         return {
-            month1, month2, month3,
+            month1, month2,
             arrayEmploySelect,
             statusButton,
             dataTableDetail,
