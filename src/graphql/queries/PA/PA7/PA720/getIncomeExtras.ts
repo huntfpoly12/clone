@@ -16,7 +16,9 @@ export default gql`
         incomePayment
         withholdingIncomeTax
         withholdingLocalIncomeTax
-        withholdingRuralSpecialTaxprevPaymentDaycreatedAt
+        withholdingRuralSpecialTax
+        prevPaymentDay
+        createdAt
         createdBy
         updatedAt
         updatedBy

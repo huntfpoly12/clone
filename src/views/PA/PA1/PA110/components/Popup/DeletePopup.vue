@@ -1,10 +1,10 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
-        <standard-form action="" name="delete-510">
+        <standard-form action="" name="delete-110">
             <div class="custom-modal-delete">
-                    <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
-                    <span>선택된 내역({{  }}건) 삭제합니다. 그래도 진행하시겠습니까?</span>
+                <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
+                <span>선택된 내역({{ }}건) 삭제합니다. 그래도 진행하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
@@ -44,7 +44,7 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                
+
             }
         };
 

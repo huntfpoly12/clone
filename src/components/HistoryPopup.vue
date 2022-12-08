@@ -4,7 +4,7 @@
             :mask-closable="false">
             <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
             loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 ||
-            loadingPA120 || loadingCMDeduction130">
+            loadingPA120 || loadingPA110 || loadingCMDeduction130">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -58,7 +58,7 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 
 export default defineComponent({
-    props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit', 'companyId'],
+    props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit', 'companyId', 'historyData'],
     components: {
         DxDataGrid,
         DxColumn,
@@ -68,7 +68,7 @@ export default defineComponent({
 
     setup(props, { emit }) {
         console.log(props.data);
-        
+
         let visible = ref(false);
         const dataQuery = ref();
         let trigger320 = ref<boolean>(false);
@@ -78,6 +78,7 @@ export default defineComponent({
         let trigger130 = ref<boolean>(false);
         let triggerDeduction130 = ref<boolean>(false);
         let trigger110 = ref<boolean>(false);
+        let triggerPA110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
         let trigger610 = ref<boolean>(false);
         let trigger710 = ref<boolean>(false);
@@ -175,6 +176,19 @@ export default defineComponent({
                             trigger120.value = true;
                             refetchPA120();
                             break;
+                        case 'pa-110':
+                            dataQuery.value = {
+                                companyId: props.historyData.companyId,
+                                processKey: {
+                                    imputedYear: props.historyData.imputedYear,
+                                    imputedMonth: props.historyData.imputedMonth,
+                                    paymentYear: props.historyData.paymentYear,
+                                    paymentMonth: props.historyData.paymentMonth,
+                                },
+                            };
+                            triggerPA110.value = true;
+                            refetchPA110();
+                            break;
                         case 'pa-520':
                             dataQuery.value = {
                                 imputedYear: parseInt(dayjs().format('YYYY')),
@@ -220,6 +234,7 @@ export default defineComponent({
                     trigger130.value = false;
                     triggerDeduction130.value = false;
                     trigger110.value = false;
+                    triggerPA110.value = false;
                     trigger220.value = false;
 
                     trigger610.value = false;
@@ -443,6 +458,20 @@ export default defineComponent({
                 dataTableShow.value = value.getEmployeeWagesLogs;
             }
         });
+        // get getEmployeeWagesLogs pa-120
+        const { result: resultPA110, loading: loadingPA110, refetch: refetchPA110 } = useQuery(
+            queries.getEmployeeWagesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger120.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA120, (value) => {
+            if (value && value.getEmployeeWagesLogs) {
+                dataTableShow.value = value.getEmployeeWagesLogs;
+            }
+        });
 
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
@@ -469,6 +498,7 @@ export default defineComponent({
             loadingPA520,
             loadingPA510,
             loadingStatusPA510,
+            loadingPA110,
             loadingPA120,
             formarDate,
             dataQuery,
