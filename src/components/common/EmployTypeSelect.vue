@@ -53,9 +53,13 @@ export default defineComponent({
         let arrayValueRes: any = ref(props.arrayValue);
 
         const updateValue = (value: any) => {
-            console.log(value);
+            emit("update:valueEmploy", value.value);  
+            arrayValueRes.value.map((val:any)=>{
+                if(val.employeeId == value.value){
+                    emit("incomeTypeCode", val.incomeTypeCode);
+                }
+            })
 
-            emit("update:valueEmploy", value.value);
         };
 
         watch(
