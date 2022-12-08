@@ -139,7 +139,7 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const arrRowEdit = computed(() => store.state.common.arrayRowedited);
+        const arrRowEdit = computed(() => store.state.common.arrayRoweditedPA120);
         const trigger = ref<boolean>(true);
         const originData = ref({
             companyId: companyId,
