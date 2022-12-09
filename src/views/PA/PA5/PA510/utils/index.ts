@@ -26,6 +26,7 @@ export const sampleDataIncomeWageDaily = {
         totalDeduction: 0,
         monthlyPaycheck: true,
     },
+    paymentDay: 0,
     deductionItems: [{ amount: 0 }]
 }
 
