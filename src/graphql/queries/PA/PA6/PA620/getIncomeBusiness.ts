@@ -1,12 +1,12 @@
 import gql from "graphql-tag";
 export default gql`
     query
-    getIncomeBusinesses(
+    getIncomeBusiness(
             $companyId: Int!  
             $processKey: IncomeProcessKeyInput!
+            $incomeId: Int!
         ){
-            getIncomeBusinesses(companyId: $companyId, processKey: $processKey) { 
-                incomeId
+            getIncomeBusiness(companyId: $companyId, processKey: $processKey,incomeId:$incomeId) { 
                 paymentDay
                 employeeType
                 employeeId
