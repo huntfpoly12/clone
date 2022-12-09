@@ -2,7 +2,7 @@
     <DxButton class="ml-3" @click="deleteItem">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-3" icon="plus" @click="actionAddItem"/>
+    <DxButton class="ml-3" icon="plus" @click="actionAddItem" />
     <DxButton class="ml-3" icon="edit" @click="editItem" />
 
     <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
@@ -19,21 +19,22 @@
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
-    <DxDropDownButton class="ml-3" :items="arrDropDown" display-expr="title" text="선택" style="width: 120px;" @item-click="onItemClick"
-        item-template="item-field">
+    <DxDropDownButton class="ml-3" :items="arrDropDown" display-expr="title" text="선택" style="width: 120px;"
+        @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;">
                 <HistoryOutlined v-if="data.function == 'History'" class="mr-5" style="font-size: 18px" />
                 <div v-if="data.function == 'HistoryStatus'" style="text-align: center;">
-                        <img :src="'../../../../../../../src/assets/images/icon_status_history.png'" alt=""
-                            style="width: 20px; height: 20px;" />
+                    <img src="@/assets/images/icon_status_history.png" alt=""
+                        style="width: 20px; height: 20px;" />
                 </div>
                 <button v-else-if="data.url" class="button-open-tab">일용직사원등록</button>
             </div>
         </template>
     </DxDropDownButton>
 
-    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" @loadingTableInfo="loadingTableInfo" :data="popupDataDelete" />
+    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" @loadingTableInfo="loadingTableInfo"
+        :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
     <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
         @closePopup="modalPrintPayrollRegister = false" />
@@ -60,8 +61,7 @@ import EmailSinglePopup from "./Popup/EmailSinglePopup.vue"
 import { HistoryOutlined } from "@ant-design/icons-vue"
 import { companyId } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
-import dayjs from "dayjs";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA5/PA510/index";
 import notification from "@/utils/notification";
 export default defineComponent({
@@ -88,21 +88,23 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
+        const processKey = computed(() => store.state.common.processKeyPA510)
+        const trigger = ref<boolean>(false)
+
         const popupDataHistory: any = ref({})
         const popupDataHistoryStatus: any = ref({})
+        const popupDataEdit: any = ref({})
+        const popupDataDelete: any = ref([])
+
         const modalPrintPayrollRegister = ref<boolean>(false)
-        const trigger = ref<boolean>(false)
         const modalDelete = ref<boolean>(false)
         const modalEdit = ref<boolean>(false)
         const modalHistory = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         const modalEmailSingle = ref(false)
         const modalEmailSinglePayrollRegister = ref(false)
-        
         const modalEmailMulti = ref(false)
-        const popupDataDelete: any = ref([])
-        const popupDataEdit: any = ref({})
-        // const dataPrintSalaryStatement = ref({})
+        
         const originData: any = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -117,8 +119,12 @@ export default defineComponent({
             }
         })
         const deleteItem = (value: any) => {
-            modalDelete.value = true;
-            // popupDataDelete.value = value
+            if (props.dataRows.length) {
+                modalDelete.value = true;
+                popupDataDelete.value = props.dataRows
+            } else {
+                notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+            }
         };
         const actionAddItem = (value: any) => {
             emit("actionAddItem", true)
@@ -176,7 +182,6 @@ export default defineComponent({
                     } else {
                         notification('error', `항목을 하나만 선택하십시오`)
                     }
-
                     break;
                 case 'EmailMultiSalaryStatement':
                     if (props.dataRows.length) {
@@ -191,21 +196,11 @@ export default defineComponent({
                     break;
                 case 'History':
                     modalHistory.value = true;
-                    popupDataHistory.value = {
-                        imputedYear: globalYear.value,
-                        imputedMonth: dayjs().month() + 1,
-                        paymentYear: globalYear.value,
-                        paymentMonth: dayjs().month() + 1,
-                    }
+                    popupDataHistory.value = {...processKey.value}
                     break;
                 case 'HistoryStatus':
                     modalHistoryStatus.value = true;
-                    popupDataHistoryStatus.value = {
-                        imputedYear: globalYear.value,
-                        imputedMonth: dayjs().month() + 1,
-                        paymentYear: globalYear.value,
-                        paymentMonth: dayjs().month() + 1,
-                    }
+                    popupDataHistoryStatus.value = {...processKey.value}
                     break;
             }
         }
@@ -223,7 +218,6 @@ export default defineComponent({
         const loadingTableInfo = () => {
             emit("loadingTableInfo", true)
         }
-
 
         return {
             deleteItem,
