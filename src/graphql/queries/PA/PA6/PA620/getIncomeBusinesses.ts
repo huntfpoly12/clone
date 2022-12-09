@@ -6,6 +6,7 @@ export default gql`
             $processKey: IncomeProcessKeyInput!
         ){
             getIncomeBusinesses(companyId: $companyId, processKey: $processKey) { 
+                incomeId
                 paymentDay
                 employeeType
                 employeeId

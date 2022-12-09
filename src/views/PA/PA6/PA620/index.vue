@@ -393,8 +393,6 @@ export default defineComponent({
 
         // ================FUNCTION============================================   
         const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
-            console.log(valueCallApiGetEmployeeBusiness);
-            
             valueCallApiGetEmployeeBusiness.processKey.imputedMonth = imputedMonth
             valueCallApiGetEmployeeBusiness.processKey.imputedYear = imputedYear
             valueCallApiGetEmployeeBusiness.processKey.paymentYear = paymentYear

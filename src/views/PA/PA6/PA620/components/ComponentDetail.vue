@@ -18,16 +18,48 @@
                 <DxButton icon="plus">
                     <EditOutlined style="font-size: 18px;" />
                 </DxButton>
+                <template v-for="(placement, index) in placements" :key="placement">
+                    <a-dropdown :placement="placement" class="ml-5">
+                        <a-button class="button-open-tab">선택</a-button>
+                        <template #overlay>
+                            <a-menu>
+                                <a-menu-item>
+                                    <div class="custom-select-tab">
+                                        기타소득자등록
+                                    </div>
+                                </a-menu-item>
+                                <a-menu-item>
+                                    <a-tooltip placement="left">
+                                        <template #title>사업소득자료 변경이력</template>
+                                        <div style="text-align: center;">
+                                            <HistoryOutlined style="font-size: 20px" />
+                                        </div>
+                                    </a-tooltip>
+                                </a-menu-item>
+                                <a-menu-item>
+                                    <a-tooltip placement="left">
+                                        <template #title>사업소득 마감상태 변경이력</template>
+                                        <div style="text-align: center;">
+                                            <img src="../../../../../../../src/assets/images/icon_status_history.png"
+                                                alt="" style="width: 20px; height: 20px;" />
+                                        </div>
+                                    </a-tooltip>
+                                </a-menu-item>
+                            </a-menu>
+                        </template>
+                    </a-dropdown>
+                </template>
             </div>
         </div>
     </a-col>
 
     <a-col :span="12" class="custom-layout ">
-        <a-spin :spinning="(loadingTableDetail || loadingCreated)" size="large">
+        <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit)" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                 :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
-                :focused-row-enabled="true">
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEditFuc"
+                :focused-row-enabled="true" @selection-changed="selectionChanged">
+                <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                 <DxScrolling column-rendering-mode="virtual" />
                 <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                 <template #tag="{ data }" class="custom-action">
@@ -37,22 +69,24 @@
                 <DxColumn width="80px" caption="지급일" data-field="paymentDay" data-type="string"
                     :format="amountFormat" />
                 <DxColumn caption="지급액" data-field="paymentAmount" data-type="string" :format="amountFormat" />
-                <DxColumn caption="세율" data-field="taxRate" data-type="string" :format="amountFormat" />
+                <DxColumn caption="세율" width="80px" data-field="taxRate" data-type="string" :format="amountFormat" />
                 <DxColumn caption="공제" cell-template="income-tax" />
-                <template #income-tax="{ data }" class="custom-action"> 
+                <template #income-tax="{ data }" class="custom-action">
                     {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax)
-                    }} 
+                    }}
                 </template>
-                <DxColumn caption="차인지급액" data-field="actualPayment" data-type="string" :format="amountFormat" />
+                <DxColumn caption="차인지급액" width="100px" data-field="actualPayment" data-type="string"
+                    :format="amountFormat" />
 
             </DxDataGrid>
         </a-spin>
     </a-col>
     <a-col :span="12" class="custom-layout form-action">
-        <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingDetailEdit)" size="large">
+        <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingDetailEdit || loadingEdit)" size="large">
             <a-form-item label="사업소득자" label-align="right">
-                <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
-                    width="350px" :required="true" @incomeTypeCode="changeIncomeTypeCode" />
+                <employ-type-select :disabled="disabledInput" :arrayValue="arrayEmploySelect"
+                    v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
+                    @incomeTypeCode="changeIncomeTypeCode" />
             </a-form-item>
             <div class="header-text-1 mb-10">소득내역</div>
             <div class="income-details">
@@ -69,8 +103,8 @@
                             </div>
                         </a-form-item>
                         <a-form-item label="지급일" label-align="right">
-                            <number-box-money min="0" width="150px" class="mr-5"
-                                v-model:valueInput="dataAction.input.paymentDay" />
+                            <number-box :max="31" :min="1" width="150px" class="mr-5"
+                                v-model:valueInput="dataAction.input.paymentDay" :disabled="disabledInput" />
                         </a-form-item>
                         <a-form-item label="지급액" label-align="right">
                             <number-box-money min="0" width="150px" class="mr-5"
@@ -114,7 +148,6 @@
             </div>
         </a-spin>
     </a-col>
-
 </template>
 
 <script lang="ts">
@@ -130,10 +163,12 @@ import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import { dataActionUtils, dataGetDetailEdit } from "../utils/index";
 import dayjs from "dayjs";
+import DxDropDownButton from 'devextreme-vue/drop-down-button';
+import type { DropdownProps } from "ant-design-vue";
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail,
         EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
         MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined
     },
@@ -149,6 +184,8 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
+        let disabledInput = ref(false)
+        let switchAction = ref<boolean>(true)
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
         let statusButton = ref(props.statusButton)
@@ -164,7 +201,9 @@ export default defineComponent({
         const rowTable = ref(0);
         const globalYear = computed(() => store.state.settings.globalYear)
         let arrayEmploySelect: any = ref([])
-        let dataAction = reactive({
+        let placements = ["bottomRight"] as DropdownProps["placement"][];
+
+        let dataAction: any = reactive({
             ...dataActionUtils
         })
         let dataCallApiGetOption = ref({
@@ -177,6 +216,11 @@ export default defineComponent({
         let dataCallApiDetailEdit = reactive({
             ...dataGetDetailEdit
         })
+        const arrDropDown = [
+            { id: 1, url: '520', event: '520', title: '' },
+            { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
+            { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
+        ]
         // ================GRAPQL==============================================
 
         // API QUERY TABLE SMALL LEFT SIDE
@@ -187,7 +231,6 @@ export default defineComponent({
         resIncomeProcessBusinessesDetail(res => {
             dataSourceDetail.value = res.data.getIncomeBusinesses
             triggerDetail.value = false
-            emit("createdDone", true)
         })
         errorGetIncomeProcessBusinessesDetail(res => {
             notification('error', res.message)
@@ -216,12 +259,19 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         watch(() => resDetailEdit, (newValue, old) => {
-            console.log(newValue);
-
+            if (newValue.value) {
+                let respon = newValue.value.getIncomeBusiness
+                dataAction.input.paymentDay = respon.paymentDay
+                dataAction.input.employeeId = respon.employeeId
+                dataAction.input.incomeTypeCode = respon.incomeTypeCode
+                dataAction.input.paymentAmount = respon.paymentAmount
+                dataAction.input.withholdingIncomeTax = respon.withholdingIncomeTax
+                dataAction.input.withholdingLocalIncomeTax = respon.withholdingLocalIncomeTax
+            }
         }, { deep: true })
         errorDetailEdit(res => {
             notification('error', res.message)
-        }) 
+        })
 
         // API CREATED 
         const {
@@ -231,6 +281,7 @@ export default defineComponent({
             onDone: doneCreated,
         } = useMutation(mutations.createIncomeBusiness);
         doneCreated(res => {
+            emit('createdDone', true)
             notification('success', `업데이트 완료!`)
             triggerDetail.value = true
             refetchTableDetail()
@@ -240,11 +291,35 @@ export default defineComponent({
         })
 
 
+        // API EDIT 
+        const {
+            mutate: actionEdit,
+            onError: errorEdit,
+            loading: loadingEdit,
+            onDone: doneEdit,
+        } = useMutation(mutations.updateIncomeBusiness);
+        doneEdit(() => {
+            emit('createdDone', true)
+            notification('success', `업데이트 완료!`)
+            triggerDetail.value = true
+            refetchTableDetail()
+        })
+        errorEdit(res => {
+            notification('error', res.message)
+        })
+
         // ================WATCHING============================================
         watch(() => props.dataCallTableDetail, (newValue) => {
             dataTableDetail.value = newValue
             triggerDetail.value = true
             refetchTableDetail()
+        }, { deep: true })
+
+        watch(() => dataTableDetail, (newValue) => {
+            let date1 = dataAction.processKey.imputedYear + '-' + dataAction.processKey.imputedMonth
+            let date2 = dataAction.processKey.paymentYear + '-' + dataAction.processKey.paymentMonth
+            month1.value = dayjs(date1).format("YYYY-MM")
+            month2.value = dayjs(date2).format("YYYY-MM")
         }, { deep: true })
 
         watch(() => props.statusButton, (newValue) => {
@@ -257,19 +332,43 @@ export default defineComponent({
             dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0])
             dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1])
             dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0])
-            actionCreated(dataAction)
+
+            if (switchAction.value == true) {
+                actionCreated(dataAction)
+            }
+            else {
+                let inputEdit = {
+                    ...dataAction,
+                    incomeId: dataCallApiDetailEdit.incomeId,
+                    input: {
+                        paymentAmount: dataAction.input.paymentAmount,
+                        taxRate: 3,
+                        withholdingIncomeTax: dataAction.input.withholdingIncomeTax,
+                        withholdingLocalIncomeTax: dataAction.input.withholdingLocalIncomeTax,
+                    }
+                }
+                actionEdit(inputEdit)
+            }
+
         })
 
         // ================FUNCTION============================================   
-
-
         const addRow = (data: any) => {
-
+            disabledInput.value = false
+            dataAction.input.paymentDay = null
+            dataAction.input.employeeId = 0
+            dataAction.input.incomeTypeCode = ""
+            dataAction.input.paymentAmount = 0
+            dataAction.input.withholdingIncomeTax = 0
+            dataAction.input.withholdingLocalIncomeTax = 0
+            switchAction.value = true
         }
-        const actionEdit = (data: any) => {
+
+        const actionEditFuc = (data: any) => {
+            disabledInput.value = true
+            switchAction.value = false
             dataCallApiDetailEdit.processKey = dataTableDetail.value.processKey
-            dataCallApiDetailEdit.incomeId = data.data.employeeId  
-            
+            dataCallApiDetailEdit.incomeId = data.data.incomeId
             triggerDetailDetailEdit.value = true
             refetchDetailEdit()
         }
@@ -277,6 +376,16 @@ export default defineComponent({
         const changeIncomeTypeCode = (res: string) => {
             dataAction.input.incomeTypeCode = res
         }
+
+        const selectionChanged = (event: any) => {
+            console.log(event);
+        }
+
+        const onItemClick = (value: any) => {
+            console.log(value);
+
+        }
+
         return {
             month1, month2,
             arrayEmploySelect,
@@ -289,13 +398,19 @@ export default defineComponent({
             amountFormat,
             loadingCreated,
             loadingDetailEdit,
+            arrDropDown,
+            placements,
+            loadingEdit,
+            disabledInput,
             addRow,
-            actionEdit,
+            actionEditFuc,
             changeIncomeTypeCode,
+            selectionChanged,
+            onItemClick,
         }
     }
 });
 </script>
-<style scoped lang="scss" src="../style/style.scss" >
+<style scoped src="../style/style.scss" >
 
 </style>

@@ -40,7 +40,7 @@ export const dataActionUtils = {
         paymentMonth: 1,
     },
     input: {
-        paymentDay: 0,
+        paymentDay: null,
         employeeId: 0,
         incomeTypeCode: "",
         paymentAmount: 0,
