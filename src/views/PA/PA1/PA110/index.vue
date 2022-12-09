@@ -222,7 +222,7 @@
       </a-col>
     </a-row>
     <a-row>
-      <a-col :span="14" class="custom-layout">
+      <a-col :span="12" class="custom-layout">
         <a-spin :spinning="loadingTaxPayInfo" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
             :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
@@ -266,7 +266,7 @@
           </DxDataGrid>
         </a-spin>
       </a-col>
-      <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
+      <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
         <FormDataComponent :dataIncomeWage="dataIncomeWage" :arrayEmploySelect="arrayEmploySelect" />
       </a-col>
     </a-row>
@@ -363,17 +363,16 @@ export default defineComponent({
         paymentYear: 2022,
         paymentMonth: 12,
       },
-      incomeId: 1,
+      incomeId: 65,
     })
     const originDataTaxPayInfo = ref({
       companyId: companyId,
       processKey: {
         imputedYear: 2022,
-        imputedMonth: 12,
+        imputedMonth: 10,
         paymentYear: 2022,
-        paymentMonth: 12,
-      },
-      incomeId: 1,
+        paymentMonth: 10,
+      }
     })
     let originDataIncomeWages = reactive({
       companyId: companyId,
@@ -414,7 +413,7 @@ export default defineComponent({
       refetch: refetchDataTaxPayInfo,
       result: resultTaxPayInfo,
       loading: loadingTaxPayInfo,
-    } = useQuery(queries.getIncomeWage, originDataTaxPayInfo, () => ({
+    } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
       enabled: triggeraxPayInfo.value,
       fetchPolicy: "no-cache",
     }))
@@ -513,24 +512,21 @@ export default defineComponent({
 
     watch(resultIncomeWage, (value) => {
       if (value) {
-
         dataIncomeWage.value = value.getIncomeWage
       }
     })
     watch(resultTaxPayInfo, (value) => {
-      if (value) {
-        dataTaxPayInfo.value = value.getIncomeWage
-        dataTaxPayInfo.value.map((value: any) => {
-          arrayEmploySelect.value.push({
-            employeeId: value.employee.employeeId,
-            name: value.employee.name,
-            idCardNumber: value.employee.idCardNumber,
-            status: value.employee.status,
-            foreigner: value.employee.foreigner
-          }
-          )
-        })
-      }
+      dataTaxPayInfo.value = value.getIncomeWages
+      dataTaxPayInfo.value.map((value: any) => {
+        arrayEmploySelect.value.push({
+          employeeId: value.employee.employeeId,
+          name: value.employee.name,
+          idCardNumber: value.employee.idCardNumber,
+          status: value.employee.status,
+          foreigner: value.employee.foreigner
+        }
+        )
+      })
     })
 
     // ======================= FUNCTION ================================
