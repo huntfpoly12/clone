@@ -1,23 +1,25 @@
 <template>
-  xxx<button @click="show = !show">Toggle</button>
-<Transition>
-  <p v-if="show">hello</p>
-</Transition>
-  <component v-bind:is="'PA410Page1'"/>
+  <component v-bind:is="currentPage"/>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed ,defineAsyncComponent} from "vue";
+import { ref, defineComponent, watch, computed, defineAsyncComponent } from "vue";
+import { useStore } from 'vuex';
 const PA410Page1 = defineAsyncComponent(() =>
   import("./components/PA410Page1.vue")
 );
+const PA410Page2 = defineAsyncComponent(() =>
+  import("./components/PA410Page2.vue")
+);
 export default defineComponent({
   components: {
-    PA410Page1
+    PA410Page1,
+    PA410Page2
   },
   setup() {
-  
+    const store = useStore();
+    const currentPage = computed(() => store.state.common.currentPagePA410);
     return {
-      show : ref(true)
+      currentPage
     };
   },
 });
