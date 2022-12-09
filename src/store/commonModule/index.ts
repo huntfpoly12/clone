@@ -1,5 +1,6 @@
 import getters from "./getters";
 import mutations from "./mutations";
+import actions from "./actions";
 import statesPA120 from "./screenStates/screenStatePA120";
 import statesPA510 from "./screenStates/screenStatePA510";
 import statesPA410 from "./screenStates/screenStatePA410";
@@ -11,6 +12,7 @@ const commonModule = {
     }),
     getters,
     mutations,
+    actions
 };
 
 export default commonModule;
