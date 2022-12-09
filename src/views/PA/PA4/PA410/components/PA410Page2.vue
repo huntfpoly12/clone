@@ -1,6 +1,7 @@
 <template>
  <div class="page-content">
     <div class="content-page2">
+        <a-spin :spinning="loading" size="large">
         <div class="select-employee">
             <div class="label">
                 사원
@@ -15,7 +16,7 @@
                     <div class="header-text-2">근속기간</div> 
                         <div class="input-employee">
                             <a-form-item label="정산시작(입사)일" label-align="right" class="red">
-                                <date-time-box  width="150px"></date-time-box>
+                                <date-time-box  width="150px"  v-model:valueDate="formState.settlementStartDate"></date-time-box>
                             </a-form-item>
                             <span>
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
@@ -24,7 +25,7 @@
                         </div> 
                         <div class="input-employee">
                             <a-form-item label="정산종료(퇴사)일" label-align="right" class="red">
-                                <date-time-box  width="150px"></date-time-box>
+                                <date-time-box  width="150px" v-model:valueDate="formState.settlementFinishDate"></date-time-box>
                             </a-form-item>  
                             <span>
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
@@ -33,7 +34,7 @@
                         </div>  
                         <div class="input-employee">
                             <a-form-item label="제외일수" label-align="right" >
-                                <number-box-money  width="200px" :spinButtons="false" :rtlEnabled="true" > </number-box-money>
+                                <number-box-money  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays" > </number-box-money>
                             </a-form-item> 
                             <span>
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
@@ -42,7 +43,7 @@
                         </div>
                         <div class="input-employee">
                             <a-form-item label="가산일수" label-align="right" >
-                                <number-box-money  width="200px" :spinButtons="false" :rtlEnabled="true" > </number-box-money>
+                                <number-box-money  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays"> </number-box-money>
                             </a-form-item> 
                             <span>
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
@@ -55,19 +56,19 @@
                     <div class="salary">
                         <div class="input-salary">
                             <a-form-item label="퇴직전 3개월 임금 총액 (세전)" label-align="right" >
-                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" > </number-box-money>
+                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalPay3Month"> </number-box-money>
                             </a-form-item>  
                             <span class="pl-5 pt-4">원</span>
                         </div>
                         <div class="input-salary">
                             <a-form-item label="연간 상여금 총액" label-align="right" >
-                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" > </number-box-money>
+                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalAnualBonus"> </number-box-money>
                             </a-form-item> 
                             <span class="pl-5 pt-4">원</span>
                         </div>
                         <div class="input-salary">
                             <a-form-item label="연차수당" label-align="right" >
-                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" > </number-box-money>
+                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.annualLeaveAllowance"> </number-box-money>
                             </a-form-item> 
                             <span class="pl-5 pt-4">원</span>
                         </div>
@@ -75,6 +76,10 @@
             
                 </a-col>
             </a-row>
+            <div class="time-service">근속연수 / 근속월수 / 근속일수: {{yearsService}}년/{{monthsService}}개월/{{workingDays}}일</div>
+            <div class="button-calculate">
+                <button-basic text="&#129155; 퇴직금 계산 &#129155;" type="default" @onClick="calculateIncomeRetirement"/> 
+            </div>
         </div>
         <div class="retirement-benefit">
             <div class="header-text-2">퇴직급여</div>
@@ -82,11 +87,10 @@
                 <a-col :span="12">
                     <div class="input-benefit">
                         <a-form-item label="퇴직급여(예상)" label-align="right" >
-                            <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" > </number-box-money>
+                            <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" :readOnly="true" v-model:valueInput="caculateValue"> </number-box-money>
                         </a-form-item>
                         <span class="pl-5 pt-4">원</span>
                     </div>
-
                 </a-col>
                 <a-col :span="12">
                     <div class="text-benefit">
@@ -99,24 +103,80 @@
                 </a-col>
             </a-row>
         </div>
-
+        </a-spin>
     </div>
  </div>
 </template>
 
 <script lang="ts">
 import DateTimeBox from '@/components/common/DateTimeBox.vue'
-import { defineComponent, watch, ref } from 'vue'
-
+import { defineComponent, watch, ref, reactive } from 'vue'
+import { useQuery } from "@vue/apollo-composable";
+import notification from "@/utils/notification";
+import { companyId } from "@/helpers/commonFunction"
+import queries from "@/graphql/queries/PA/PA4/PA410/index";
+import { initFormState } from '../utils';
+import dayjs from 'dayjs';
 export default defineComponent({
   
     components: {
         DateTimeBox
     },
     setup(props, { emit }) {
+        const yearsService = ref(0);
+        const monthsService = ref(0);
+        const workingDays = ref(0);
+        const caculateValue = ref(0);
+        const trigger = ref<boolean>(false)
+        const formState = reactive({
+            ...initFormState,
+            settlementStartDate: dayjs().format("YYYY-MM-DD"),
+            settlementFinishDate: dayjs().format("YYYY-MM-DD")
+        })
+        let variables = {
+                companyId: companyId,
+                input: formState
+        }
+        watch(()=> formState.settlementFinishDate, (newFinishDate) => {
+            const finishDate = dayjs(newFinishDate)         
+            workingDays.value = finishDate.diff(formState.settlementStartDate, 'day');
+            if (workingDays.value < 0) {
+                formState.settlementFinishDate = dayjs().add(1, 'day').format("YYYY-MM-DD");
+            } else {
+                monthsService.value = finishDate.diff(formState.settlementStartDate, 'month');
+                yearsService.value = finishDate.diff(formState.settlementStartDate, 'year');
+            }
+                  
+        })
+   
+        const {
+            result, loading, refetch, onError
+        } = useQuery(queries.calculateIncomeRetirement, variables, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }))
+        onError(e => {
+            notification('error', e.message)
+        })
       
-        return {
+        watch(result, (value) => {
+            if (value && value.calculateIncomeRetirement) {
+                caculateValue.value = value.calculateIncomeRetirement;
+             }
+        })
 
+        const calculateIncomeRetirement = () => {
+            trigger.value = true;
+            refetch()
+        }
+        return {
+            loading,
+            formState,
+            caculateValue,
+            yearsService,
+            monthsService,
+            workingDays,
+            calculateIncomeRetirement
         }
     },
 })
@@ -169,6 +229,15 @@ export default defineComponent({
                     color: red;
                     }
                 }
+          
+            }
+            .time-service{
+                font-size: 17px;
+                font-weight: bold;
+            }
+            .button-calculate{
+                    text-align: center;
+                    margin: 25px;
             }
             .salary{
                 ::v-deep .ant-form-item-label>label {
