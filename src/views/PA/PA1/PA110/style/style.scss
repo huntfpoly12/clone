@@ -1,7 +1,9 @@
 #pa-110 {
     margin-top: 10px;
     
-    
+    ::v-deep .dx-master-detail-cell {
+        padding: 0px;
+    }
     ::v-deep .ant-form-item-label {
         >label {
             width: 100px;
