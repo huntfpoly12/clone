@@ -1,14 +1,14 @@
 import gql from "graphql-tag";
 export default gql`
-mutation createIncomeExtra( 
-    $companyId: Int!
-    $processKey: IncomeProcessKeyInput!
-    $input: IncomeExtraCreateInput!
-    ) {
-      createIncomeExtra( 
+mutation copyIncomeExtras( 
+  $companyId: Int!
+  $source: IncomeProcessKeyInput!
+  $target: IncomeProcessKeyInput!
+  ) {
+  copyIncomeExtras( 
       companyId : $companyId,
-      processKey: $processKey, 
-      input: $input,
+      source: $source, 
+      target: $target,
   ){
     incomeId
     imputedMonth
