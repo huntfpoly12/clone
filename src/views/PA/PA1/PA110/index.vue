@@ -340,7 +340,6 @@ export default defineComponent({
     const triggeraxPayInfo = ref<boolean>(true)
 
     let dataCustomRes: any = ref([])
-
     const dataIncomeWage: any = ref({ ...sampleDataIncomeWage })
 
     const dataSource: any = ref([])
@@ -365,24 +364,16 @@ export default defineComponent({
       },
       incomeId: 65,
     })
-    const originDataTaxPayInfo = ref({
-      companyId: companyId,
-      processKey: {
-        imputedYear: 2022,
-        imputedMonth: 10,
-        paymentYear: 2022,
-        paymentMonth: 10,
-      }
-    })
     let originDataIncomeWages = reactive({
       companyId: companyId,
       processKey: {
         imputedYear: 2022,
         imputedMonth: 10,
         paymentYear: 2022,
-        paymentMonth: 1
+        paymentMonth: 10
       }
     })
+
     let popupData = ref([])
     // ======================= GRAPQL ================================
     const {
@@ -413,7 +404,7 @@ export default defineComponent({
       refetch: refetchDataTaxPayInfo,
       result: resultTaxPayInfo,
       loading: loadingTaxPayInfo,
-    } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
+    } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
       enabled: triggeraxPayInfo.value,
       fetchPolicy: "no-cache",
     }))
@@ -421,23 +412,13 @@ export default defineComponent({
     // ======================= WATCH ==================================
     // get data table detail getIncomeProcessWages
     watch(resIncomeProcessWages, (value) => {
-      if (value) {
-        let respon = value.getIncomeProcessWages
-        imputedYear.value = respon[0].imputedYear
-        imputedMonth.value = respon[0].imputedMonth
-        status.value = respon[0].status
-        dataSource.value = [{
-          companyId: respon[0].companyId,
-          imputedYear: respon[0].imputedYear,
-        }]
-        respon?.forEach((val: any, index: any) => {
-          dataSource.value[0]['month' + val.imputedMonth] = val
-        })
-      }
-    })
-    // get data table detail getIncomeWages
-    watch(resIncomeWages, (value) => {
-      let respon = value.getIncomeWages
+      let respon = value.getIncomeProcessWages
+      imputedYear.value = respon[0].imputedYear
+      imputedMonth.value = respon[0].imputedMonth
+      status.value = respon[0].status
+      dataSource.value = [{
+        companyId: companyId,
+      }]
       dataCustomRes.value = [
         { id: 1, name: "재직(퇴사) " },
         { id: 2, name: "과세급여", },
@@ -452,19 +433,24 @@ export default defineComponent({
         { id: 11, name: "공제총액", },
         { id: 12, name: "차인지급액", },
       ]
-      respon?.forEach((val: any, index: any) => {
+      respon.map((val: any) => {
+        // data table minify
         let dataAdd = {
           imputedMonth: val.imputedMonth,
+          imputedYear: val.imputedYear,
           paymentYear: val.paymentYear,
           paymentMonth: val.paymentMonth,
         }
-        // table detail
+        dataSource.value[0]['month' + val.imputedMonth] = val
+
+        // data table detail
+
         dataCustomRes.value[0]['month' + val.imputedMonth] = {
           value: filters.formatCurrency(val),
           ...dataAdd
         }
         dataCustomRes.value[1]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.totalTaxPay),
+          value: filters.formatCurrency(val.incomeStat?.totalTaxPay),
           ...dataAdd
         }
         dataCustomRes.value[2]['month' + val.imputedMonth] = {
@@ -507,9 +493,10 @@ export default defineComponent({
           value: filters.formatCurrency(val.actualPayment),
           ...dataAdd
         }
-      })
-    })
 
+      })
+      console.log('dataares', dataCustomRes.value)
+    })
     watch(resultIncomeWage, (value) => {
       if (value) {
         dataIncomeWage.value = value.getIncomeWage
@@ -528,14 +515,12 @@ export default defineComponent({
         )
       })
     })
-
     // ======================= FUNCTION ================================
     const onSubmit = (e: any) => {
     }
 
     const actionEditTaxPay = (data: any) => {
       dataIncomeWage.value = data.data
-      console.log(dataIncomeWage.value);
     }
 
     const selectionChanged = (data: any) => {
@@ -564,7 +549,7 @@ export default defineComponent({
       formIncomeWageDaily,
       showDetailSelected,
       dataTaxPayInfo,
-      actionEditTaxPay,
+      actionEditTaxPay
     }
 
   },
