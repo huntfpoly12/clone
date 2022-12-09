@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
+    <action-header title="일용직사원등록" @actionSave="onSubmit($event)" />
     <div id="pa-520" class="page-content">
         <a-row>
             <a-col :span="3" style="padding-right: 10px">

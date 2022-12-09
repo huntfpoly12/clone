@@ -3,7 +3,7 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
-            loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 ||
+            loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
             loadingPA120 || loadingPA110 || loadingCMDeduction130">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
@@ -85,6 +85,8 @@ export default defineComponent({
         let trigger520 = ref<boolean>(false);
         let trigger510 = ref<boolean>(false);
         let triggerStatus510 = ref<boolean>(false);
+        let trigger620 = ref<boolean>(false);
+        let triggerStatus620 = ref<boolean>(false);
         let trigger120 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
@@ -109,6 +111,7 @@ export default defineComponent({
                     else {
                         dataQuery.value = { id: props.idRowEdit };
                     }
+
                     switch (props.typeHistory) {
                         case 'bf-320':
                             trigger320.value = true;
@@ -223,6 +226,35 @@ export default defineComponent({
                             triggerStatus510.value = true;
                             refetchStatusPA510();
                             break;
+
+                        case 'pa-620':
+                            trigger620.value = true;
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            if (dataQuery.value.companyId) 
+                                refetchPA620(); 
+                            break;
+                        case 'pa-620-status':
+                            triggerStatus620.value = true;
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            if (dataQuery.value.companyId)
+                                refetchStatusPA620();
+                            break;
                         default:
                             break;
                     }
@@ -236,14 +268,15 @@ export default defineComponent({
                     trigger110.value = false;
                     triggerPA110.value = false;
                     trigger220.value = false;
-
                     trigger610.value = false;
-
+                    trigger620.value = false;
                     trigger710.value = false;
                     trigger520.value = false;
                     trigger120.value = false;
                     trigger510.value = false;
                     triggerStatus510.value = false;
+                    trigger620.value = false;
+                    triggerStatus620.value = false;
 
                 }
             }
@@ -416,6 +449,8 @@ export default defineComponent({
                 dataTableShow.value = value.getEmployeeWageDailiesLogs;
             }
         });
+
+
         // get getIncomeWageDailiesLogs pa-510
         const { result: resultPA510, loading: loadingPA510, refetch: refetchPA510 } = useQuery(
             queries.getIncomeWageDailiesLogs,
@@ -444,6 +479,38 @@ export default defineComponent({
                 dataTableShow.value = value.getIncomeProcessWageDailyLogs;
             }
         });
+
+
+        // get getIncomeWageDailiesLogs pa-620
+        const { result: resultPA620, loading: loadingPA620, refetch: refetchPA620 } = useQuery(
+            queries.getIncomeBusinessesLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger620.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA620, (value) => {
+            if (value && value.getIncomeBusinessesLogs) {
+                dataTableShow.value = value.getIncomeBusinessesLogs;
+            }
+        });
+        // get getIncomeProcessBusinessLogs pa-620
+        const { result: resultStatusPA620, loading: loadingStatusPA620, refetch: refetchStatusPA620 } = useQuery(
+            queries.getIncomeProcessBusinessLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerStatus620.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultStatusPA620, (value) => {
+            if (value && value.getIncomeProcessBusinessLogs) {
+                dataTableShow.value = value.getIncomeProcessBusinessLogs;
+            }
+        });
+
+
         // get getEmployeeWagesLogs pa-120
         const { result: resultPA120, loading: loadingPA120, refetch: refetchPA120 } = useQuery(
             queries.getEmployeeWagesLogs,
@@ -498,6 +565,8 @@ export default defineComponent({
             loadingPA520,
             loadingPA510,
             loadingStatusPA510,
+            loadingPA620,
+            loadingStatusPA620,
             loadingPA110,
             loadingPA120,
             formarDate,
