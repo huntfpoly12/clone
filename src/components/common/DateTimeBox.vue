@@ -11,6 +11,7 @@ import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { ko } from "date-fns/locale";
 import filters from "@/helpers/filters";
+import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     width: {
@@ -19,7 +20,7 @@ export default defineComponent({
     },
     valueDate: {
       type: String,
-      default: new Date(),
+      default: dayjs().format("YYYY-MM-DD"),
     },
     id: {
       type: String,
@@ -36,10 +37,10 @@ export default defineComponent({
   setup(props, { emit }) {
     const date = ref(filters.formatDate(props.valueDate))
     watch(
-            () => props.valueDate,
-            (newValue) => {
-              date.value = filters.formatDate(newValue);
-            }
+        () => props.valueDate,
+        (newValue) => {
+          date.value = filters.formatDate(newValue);
+        }
     );
     const updateValue = (value: any) => {
             emit("update:valueDate", filters.formatDate(value));
