@@ -465,15 +465,15 @@ export default defineComponent({
           ...dataAdd
         }
         dataCustomRes.value[1]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
+          value: filters.formatCurrency(val.totalTaxPay),
           ...dataAdd
         }
         dataCustomRes.value[2]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
+          value: filters.formatCurrency(val.totalTaxfreePay),
           ...dataAdd
         }
         dataCustomRes.value[3]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
+          value: filters.formatCurrency(val.withholdingLocalIncomeTax),
           ...dataAdd
         }
         dataCustomRes.value[4]['month' + val.imputedMonth] = {
@@ -493,19 +493,19 @@ export default defineComponent({
           ...dataAdd
         }
         dataCustomRes.value[8]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
+          value: filters.formatCurrency(val.withholdingIncomeTax),
           ...dataAdd
         }
         dataCustomRes.value[9]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
+          value: filters.formatCurrency(val.withholdingLocalIncomeTax),
           ...dataAdd
         }
         dataCustomRes.value[10]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
+          value: filters.formatCurrency(val.totalDeduction),
           ...dataAdd
         }
         dataCustomRes.value[11]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
+          value: filters.formatCurrency(val.actualPayment),
           ...dataAdd
         }
       })
@@ -513,6 +513,7 @@ export default defineComponent({
 
     watch(resultIncomeWage, (value) => {
       if (value) {
+
         dataIncomeWage.value = value.getIncomeWage
       }
     })
