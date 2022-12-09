@@ -378,6 +378,7 @@ export default defineComponent({
     }))
 
     // ======================= WATCH ==================================
+    // get data table detail getIncomeProcessWages
     watch(resIncomeProcessWages, (value) => {
       if (value) {
         let respon = value.getIncomeProcessWages
@@ -387,97 +388,94 @@ export default defineComponent({
         dataSource.value = [{
           companyId: respon[0].companyId,
           imputedYear: respon[0].imputedYear,
-
         }]
-        dataCustomRes.value = [
-          { id: 1, name: "재직(퇴사) " },
-          { id: 2, name: "과세급여", },
-          { id: 3, name: "비과세급여", },
-          { id: 4, name: "급여총액", },
-          { id: 5, name: "국민연금", },
-          { id: 6, name: "건강보험", },
-          { id: 7, name: "장기요양", },
-          { id: 8, name: "고용보험", },
-          { id: 9, name: "소득세", },
-          { id: 10, name: "지방소득세", },
-          { id: 11, name: "공제총액", },
-          { id: 12, name: "차인지급액", },
-        ]
-        console.log('dataCustomRes2', dataCustomRes.value)
-        console.log('respon', respon)
-
-        respon.forEach((val: any, index: any) => {
-          let dataAdd = {
-            imputedMonth: val.imputedMonth,
-            paymentYear: val.paymentYear,
-            paymentMonth: val.paymentMonth,
-          }
+        respon?.forEach((val: any, index: any) => {
           if (!dataSource.value[0]['month' + val.imputedMonth]) {
             dataSource.value[0]['month' + val.imputedMonth] = []
           }
-          dataSource.value[0]['month' + val.imputedMonth][index] = val
-
-          // data table detail
-          dataCustomRes.value[0]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[1]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[2]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[3]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[4]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[5]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[6]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[7]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[8]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[9]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[10]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
-          dataCustomRes.value[11]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val),
-            ...dataAdd
-          }
+          dataSource.value[0]['month' + val.imputedMonth][dataSource.value[0]['month' + val.imputedMonth].length] = val
         })
-
-
       }
+    })
+    // get data table detail getIncomeWages
+    watch(resIncomeWages, (value) => {
+      let respon = value.getIncomeWages
+      dataCustomRes.value = [
+        { id: 1, name: "재직(퇴사) " },
+        { id: 2, name: "과세급여", },
+        { id: 3, name: "비과세급여", },
+        { id: 4, name: "급여총액", },
+        { id: 5, name: "국민연금", },
+        { id: 6, name: "건강보험", },
+        { id: 7, name: "장기요양", },
+        { id: 8, name: "고용보험", },
+        { id: 9, name: "소득세", },
+        { id: 10, name: "지방소득세", },
+        { id: 11, name: "공제총액", },
+        { id: 12, name: "차인지급액", },
+      ]
+      respon?.forEach((val: any, index: any) => {
+        let dataAdd = {
+          imputedMonth: val.imputedMonth,
+          paymentYear: val.paymentYear,
+          paymentMonth: val.paymentMonth,
+        }
+        // table detail
+        dataCustomRes.value[0]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[1]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[2]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[3]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[4]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[5]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[6]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[7]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[8]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[9]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[10]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[11]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+      })
     })
 
     watch(resultIncomeWage, (value) => {
       if (value) {
         dataIncomeWage.value = value.getIncomeWage
       }
-    })
-    watch(resIncomeWages, (value) => {
     })
     watch(resultTaxPayInfo, (value) => {
       if (value) {
