@@ -20,11 +20,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
+import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -32,9 +32,12 @@ export default defineComponent({
             default: false,
         },
         data: {
+            type: Array,
+            default: []
+        },
+        processKey: {
             type: Object,
-            default: {}
-        }
+        },
     },
     components: {
     },
@@ -47,7 +50,7 @@ export default defineComponent({
             mutate,
             onDone,
             onError,
-        } = useMutation(mutations.changeIncomeWagePaymentDay);
+        } = useMutation(mutations.changeIncomeBusinessPaymentDay);
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
@@ -55,20 +58,19 @@ export default defineComponent({
         onError((e: any) => {
             notification('error', e.message)
         })
-        const onSubmit = (e: any) => {
-            mutate({
-                companyId: companyId,
-                processKey: {
-                    imputedYear: 2022,
-                    imputedMonth: 12,
-                    paymentYear: 2022,
-                    paymentMonth: 12,
-                },
-                incomeId: props.data.incomeId,
-                day: dayValue.value
+
+        const onSubmit = () => {
+            console.log(props.data);
+            
+            props.data.map((val: any) => { 
+                mutate({
+                    companyId: companyId,
+                    processKey: props.processKey,
+                    incomeId: val,
+                    day: dayValue.value
+                })
             })
         };
-
 
         return {
             setModalVisible,
@@ -79,7 +81,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .custom-modal-edit {
     display: flex;
     align-items: center;

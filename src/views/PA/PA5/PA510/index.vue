@@ -1,5 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
+    <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
     <div id="pa-510" class="page-content">
         <a-row>
             <a-spin :spinning="loading" size="large">
@@ -7,14 +7,10 @@
                     key-expr="imputedYear" :focused-row-enabled="true" :show-borders="true"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
-                    <DxColumn :caption="imputedYear + '귀속월'" cell-template="imputed-year" width="350px" />
+                    <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" width="350px" />
                     <template #imputed-year="{ data }">
                         <span>지급연월</span>
                     </template>
-                    <!-- <DxColumn :caption="imputedMonth" cell-template="imputed-month" />
-                    <template #imputed-month="{ data }">
-                        <span>{{ data.data.paymentYear }}-{{ data.data.paymentMonth }}</span>
-                    </template> -->
                     <DxColumn caption="01" cell-template="imputed-month1" />
                     <template #imputed-month1="{ data }">
                         <div v-if="data.data.month1">
@@ -181,19 +177,20 @@
         </a-row>
         <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
-                <DxButton :text="'귀' + imputedYear + '-' + imputedMonth"
+                <DxButton :text="'귀' + paymentYear + '-' + paymentMonth"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-                <DxButton :text="'지' + imputedYear + '-' + imputedMonth"
+                <DxButton :text="'지' + paymentYear + '-' + paymentMonth"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
                 <ProcessStatus v-model:valueStatus="status" />
             </a-col>
             <a-col class="">
-                <SelectActionComponent :modalStatus="true" :dataRows="dataRows" />
+                <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
+                    @loadingTableInfo="loadingTableInfo" />
             </a-col>
         </a-row>
         <a-row>
             <a-col :span="14" class="custom-layout">
-                <a-spin :spinning="loading" size="large">
+                <a-spin :spinning="loadingTaxPayInfo" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
                         :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
@@ -239,9 +236,12 @@
                         </DxSummary>
                     </DxDataGrid>
                 </a-spin>
+
             </a-col>
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
-                <FormDataComponent :dataIncomeWageDaily="dataIncomeWageDaily" />
+                <FormDataComponent :dataIncomeWageDaily="dataIncomeWageDaily" @loadingTableInfo="loadingTableInfo"
+                    :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem"
+                    :actionUpdateItem="actionUpdateItem" />
             </a-col>
         </a-row>
     </div>
@@ -297,6 +297,10 @@ export default defineComponent({
     },
     setup() {
         const store = useStore()
+        const state = computed(() => store.state.common.processKeyPA510)
+
+        console.log(state.value);
+        
         const globalYear = computed(() => store.state.settings.globalYear)
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
@@ -305,7 +309,9 @@ export default defineComponent({
         const triggerIncomeWageDaily = ref<boolean>(false)
 
         const actionDelete: any = ref<boolean>(false)
-
+        const actionAddItem: any = ref<boolean>(true)
+        const actionSaveItem: any = ref<number>(0)
+        const actionUpdateItem: any = ref<number>(0)
         let dataCustomRes: any = ref([])
 
         const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
@@ -315,34 +321,32 @@ export default defineComponent({
         const dataTaxPayInfo: any = ref([])
         const formIncomeWageDaily = reactive({ ...sampleFormIncomeWageDaily })
 
-
-        const imputedYear = ref('')
-        const imputedMonth = ref('')
-
+        const paymentYear = ref(globalYear)
+        const paymentMonth = ref(dayjs().month() + 1)
         const arrayEmploySelect: any = ref([])
-
+        // const processKey: any = ref({
+        //     imputedYear: globalYear.value,
+        //     imputedMonth: dayjs().month() + 1,
+        //     paymentYear: globalYear.value,
+        //     paymentMonth: dayjs().month() + 1,
+        // })
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
             // imputedMonth: dayjs().month(),
         })
-        const originDataIncomeWageDaily = ref({
-            companyId: companyId,
-            processKey: {
-                imputedYear: 2022,
-                imputedMonth: 12,
-                paymentYear: 2022,
-                paymentMonth: 12,
-            },
-            incomeId: 1,
-        })
+        // const originDataIncomeWageDaily = ref({
+        //     companyId: companyId,
+        //     processKey: processKey.value,
+        //     incomeId: 1,
+        // })
         const originDataTaxPayInfo = ref({
             companyId: companyId,
             processKey: {
-                imputedYear: 2022,
-                imputedMonth: 12,
-                paymentYear: 2022,
-                paymentMonth: 12,
+                imputedYear: globalYear,
+                imputedMonth: dayjs().month() + 1,
+                paymentYear: globalYear.value,
+                paymentMonth: dayjs().month() + 1,
             },
         })
         let popupData = ref([])
@@ -354,14 +358,14 @@ export default defineComponent({
         } = useQuery(queries.getIncomeProcessWageDailies, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-        const {
-            refetch: refetchDataIncomeWageDaily,
-            result: resultIncomeWageDaily,
-            loading: loadingIncomeWageDaily,
-        } = useQuery(queries.getIncomeWageDaily, originDataIncomeWageDaily, () => ({
-            enabled: triggerIncomeWageDaily.value,
-            fetchPolicy: "no-cache",
-        }))
+        // const {
+        //     refetch: refetchDataIncomeWageDaily,
+        //     result: resultIncomeWageDaily,
+        //     loading: loadingIncomeWageDaily,
+        // } = useQuery(queries.getIncomeWageDaily, originDataIncomeWageDaily, () => ({
+        //     enabled: triggerIncomeWageDaily.value,
+        //     fetchPolicy: "no-cache",
+        // }))
         const {
             refetch: refetchDataTaxPayInfo,
             result: resultTaxPayInfo,
@@ -386,12 +390,9 @@ export default defineComponent({
             if (value) {
                 let respon = value.getIncomeProcessWageDailies
 
-                imputedYear.value = respon[0].imputedYear
-                imputedMonth.value = respon[0].imputedMonth
-                status.value = respon[0].status
                 dataSource.value = [{
-                    companyId: respon[0].companyId,
-                    imputedYear: respon[0].imputedYear,
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
 
                 }]
 
@@ -404,6 +405,7 @@ export default defineComponent({
                     { id: 6, name: "차인지급액", },
                 ]
                 respon.forEach((val: any, index: any) => {
+                    status.value = respon[0].status
                     let dataAdd = {
                         imputedMonth: val.imputedMonth,
                         paymentYear: val.paymentYear,
@@ -446,10 +448,10 @@ export default defineComponent({
             }
 
         })
-        watch(resultIncomeWageDaily, (value) => {
+        // watch(resultIncomeWageDaily, (value) => {
 
-            dataIncomeWageDaily.value = value.getIncomeWageDaily
-        })
+        //     dataIncomeWageDaily.value = value.getIncomeWageDaily
+        // })
         watch(resultTaxPayInfo, (value) => {
             dataTaxPayInfo.value = value.getIncomeWageDailies
             dataTaxPayInfo.value.map((value: any) => {
@@ -477,21 +479,25 @@ export default defineComponent({
         });
         // ======================= FUNCTION ================================
         const onSubmit = (e: any) => {
+            actionSaveItem.value++
+        }
+        const updateData = (e: any) => {
+            actionUpdateItem.value++
         }
 
         const actionEditTaxPay = (data: any) => {
-
-
-            dataIncomeWageDaily.value = data.data
-            console.log(dataIncomeWageDaily.value);
+            actionAddItem.value = false
+            dataIncomeWageDaily.value = { ...data.data }
         }
 
         const selectionChanged = (data: any) => {
             dataRows.value = data.selectedRowsData
         }
         const showDetailSelected = (data: any) => {
-            console.log(data);
             // dataTaxPayInfo.value = data
+        }
+        const loadingTableInfo = () => {
+            refetchDataTaxPayInfo()
         }
         return {
             loading,
@@ -500,18 +506,25 @@ export default defineComponent({
             per_page, move_column, colomn_resize,
             refetchData,
             onSubmit,
+            updateData,
             dataIncomeWageDaily,
             popupData,
             selectionChanged,
             arrayEmploySelect,
-            imputedYear,
-            imputedMonth,
+            paymentYear,
+            paymentMonth,
             dataCustomRes,
             formIncomeWageDaily,
             showDetailSelected,
             dataTaxPayInfo,
             actionEditTaxPay,
             dataRows,
+            actionAddItem,
+            actionSaveItem,
+            actionUpdateItem,
+            loadingTableInfo,
+            loadingTaxPayInfo,
+            globalYear,
         }
 
     },

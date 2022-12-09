@@ -11,11 +11,11 @@
                 <process-status v-model:valueStatus="statusButton" />
             </div>
             <div class="table-detail-right">
-                <DxButton>
+                <DxButton @click="deleteItem">
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
                 <DxButton icon="plus" @click="addRow" />
-                <DxButton icon="plus">
+                <DxButton @click="editPaymentDate">
                     <EditOutlined style="font-size: 18px;" />
                 </DxButton>
                 <template v-for="(placement, index) in placements" :key="placement">
@@ -25,13 +25,15 @@
                             <a-menu>
                                 <a-menu-item>
                                     <div class="custom-select-tab">
-                                        기타소득자등록
+                                        <a href="/dashboard/pa-610" style="color: white;">
+                                            기타소득자등록
+                                        </a>
                                     </div>
                                 </a-menu-item>
                                 <a-menu-item>
                                     <a-tooltip placement="left">
                                         <template #title>사업소득자료 변경이력</template>
-                                        <div style="text-align: center;">
+                                        <div style="text-align: center;" @click="onItemClick('history')">
                                             <HistoryOutlined style="font-size: 20px" />
                                         </div>
                                     </a-tooltip>
@@ -39,7 +41,7 @@
                                 <a-menu-item>
                                     <a-tooltip placement="left">
                                         <template #title>사업소득 마감상태 변경이력</template>
-                                        <div style="text-align: center;">
+                                        <div style="text-align: center;" @click="onItemClick('historyEdit')">
                                             <img src="@/assets/images/icon_status_history.png" alt=""
                                                 style="width: 20px; height: 20px;" />
                                         </div>
@@ -56,12 +58,12 @@
     <a-col :span="12" class="custom-layout ">
         <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit)" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
-                :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
+                :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEditFuc"
                 :focused-row-enabled="true" @selection-changed="selectionChanged">
-                <DxSelection select-all-mode="allPages"  show-check-boxes-mode="always" mode="multiple" />
+                <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                 <DxScrolling column-rendering-mode="virtual" />
-                <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="300px"/>
+                <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="300px" />
                 <template #tag="{ data }" class="custom-action">
                     <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
                         :incomeTypeName="data.data.employee.incomeTypeName" />
@@ -77,7 +79,11 @@
                 </template>
                 <DxColumn caption="차인지급액" width="100px" data-field="actualPayment" data-type="string"
                     :format="amountFormat" />
-
+                <DxSummary>
+                    <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="{0}" />
+                    <DxTotalItem column="공제" summary-type="sum" display-format="{0}" value-format="#,###" />
+                    <DxTotalItem column="actualPayment" summary-type="sum" display-format="{0}" value-format="#,###" />
+                </DxSummary>
             </DxDataGrid>
         </a-spin>
     </a-col>
@@ -148,6 +154,15 @@
             </div>
         </a-spin>
     </a-col>
+    <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+        :processKey="dataTableDetail.processKey" />
+
+    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="dataTableDetail.processKey"
+        title="변경이력" typeHistory="pa-620" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="actionDeleteSuccess" :data="dataTableDetail.processKey"
+        title="변경이력" typeHistory="pa-620-status" />
+    <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+        :processKey="dataTableDetail.processKey" />
 </template>
 
 <script lang="ts">
@@ -156,7 +171,7 @@ import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA6/PA620/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import DxButton from "devextreme-vue/button";
@@ -165,12 +180,15 @@ import { dataActionUtils, dataGetDetailEdit } from "../utils/index";
 import dayjs from "dayjs";
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import type { DropdownProps } from "ant-design-vue";
+import DeletePopup from "./DeletePopup.vue"
+import EditPopup from "./EditPopup.vue"
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
         EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
-        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined
+        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined,
+        DeletePopup, EditPopup
     },
     props: {
         dataCallTableDetail: {
@@ -184,14 +202,16 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
-        const rowSelectAction = ref([])
         let disabledInput = ref(false)
         let switchAction = ref<boolean>(true)
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
         let statusButton = ref(props.statusButton)
-        const amountFormat = ref({ currency: 'VND', useGrouping: true })
         let dataSourceDetail = ref([]);
+        const modalEdit = ref<boolean>(false)
+        const popupDataDelete: any = ref([])
+        const modalDelete = ref<boolean>(false)
+        const amountFormat = ref({ currency: 'VND', useGrouping: true })
         const triggerDetail = ref<boolean>(true);
         const triggerDetailOption = ref<boolean>(true);
         const triggerDetailDetailEdit = ref<boolean>(false);
@@ -201,6 +221,8 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(0);
         const globalYear = computed(() => store.state.settings.globalYear)
+        const modalHistory = ref<boolean>(false)
+        const modalHistoryStatus = ref<boolean>(false)
         let arrayEmploySelect: any = ref([])
         let placements = ["bottomRight"] as DropdownProps["placement"][];
 
@@ -222,6 +244,8 @@ export default defineComponent({
             { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
             { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
         ]
+
+
         // ================GRAPQL==============================================
 
         // API QUERY TABLE SMALL LEFT SIDE
@@ -291,7 +315,6 @@ export default defineComponent({
             notification('error', res.message)
         })
 
-
         // API EDIT 
         const {
             mutate: actionEdit,
@@ -333,7 +356,6 @@ export default defineComponent({
             dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0])
             dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1])
             dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0])
-
             if (switchAction.value == true) {
                 actionCreated(dataAction)
             }
@@ -353,7 +375,7 @@ export default defineComponent({
         })
 
         // ================FUNCTION============================================   
-        const addRow = (data: any) => {
+        const addRow = () => {
             disabledInput.value = false
             dataAction.input.paymentDay = null
             dataAction.input.employeeId = 0
@@ -378,11 +400,36 @@ export default defineComponent({
         }
 
         const selectionChanged = (event: any) => {
-            console.log(event);
+            popupDataDelete.value = event.selectedRowKeys
         }
 
-        const onItemClick = (value: any) => {
-            rowSelectAction.value = value.selectedRowKeys
+        const deleteItem = () => {
+            if (popupDataDelete.value.length > 0) {
+                modalDelete.value = true;
+            }
+        };
+
+        const actionDeleteSuccess = () => {
+            modalDelete.value = false
+            modalEdit.value = false
+            triggerDetail.value = true
+            refetchTableDetail()
+            addRow()
+            emit('createdDone', true)
+        }
+
+        const onItemClick = (key: String) => {
+            if (key == 'history') {
+                modalHistory.value = true
+            } else {
+                modalHistoryStatus.value = true
+            }
+        }
+
+        const editPaymentDate = () => {
+            if (popupDataDelete.value.length > 0) {
+                modalEdit.value = true
+            }
         }
 
         return {
@@ -401,11 +448,19 @@ export default defineComponent({
             placements,
             loadingEdit,
             disabledInput,
+            modalDelete,
+            popupDataDelete,
+            modalHistory,
+            modalHistoryStatus,
+            modalEdit,
             addRow,
+            deleteItem,
             actionEditFuc,
             changeIncomeTypeCode,
             selectionChanged,
+            actionDeleteSuccess,
             onItemClick,
+            editPaymentDate,
         }
     }
 });
