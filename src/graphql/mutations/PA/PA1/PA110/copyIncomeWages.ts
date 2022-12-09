@@ -86,9 +86,6 @@ export default gql`
         totalPay
         totalDeduction
         deletable
-        payItems
-        deductionItems
-        dependents
       }
       payItems {
         itemCode

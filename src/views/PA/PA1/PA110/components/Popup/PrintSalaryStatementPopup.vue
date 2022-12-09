@@ -1,7 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
-        <standard-form action="" name="print-payroll-register-510">
+        <standard-form action="" name="print-payroll-register-110">
             <div class="custom-modal-print-payroll-register">
                 <img src="@/assets/images/print.svg" alt="" style="width: 30px;">
                 <span>급여대장을 출력하시겠습니까? </span>

@@ -163,7 +163,7 @@
                             <template #month-10="{ data }">
                                 <div v-if="data.data.month10">{{ data.data.month10.value }}</div>
                             </template>
-                            <DxColumnHeaderFilter width="100px" cell-template="month-11" />
+                            <DxColumn width="100px" cell-template="month-11" />
                             <template #month-11="{ data }">
                                 <div v-if="(data.data.month11)">{{ data.data.month11.value }}
                                 </div>
@@ -188,7 +188,7 @@
                 <ProcessStatus v-model:valueStatus="status" />
             </a-col>
             <a-col class="">
-                <SelectActionComponent :modalStatus="true" />
+                <SelectActionComponent :modalStatus="true" :dataRows="dataRows" />
             </a-col>
         </a-row>
         <a-row>
@@ -241,7 +241,7 @@
                 </a-spin>
             </a-col>
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
-                <FormDataComponent :dataIncomeWageDaily="dataIncomeWageDaily" :arrayEmploySelect="arrayEmploySelect" />
+                <FormDataComponent :dataIncomeWageDaily="dataIncomeWageDaily" />
             </a-col>
         </a-row>
     </div>
@@ -252,21 +252,18 @@ import DxButton from "devextreme-vue/button"
 import dayjs, { Dayjs } from 'dayjs';
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "../../../../helpers/commonFunction"
+import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
-import notification from "../../../../utils/notification"
+import notification from "@/utils/notification"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent.vue"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
-import mutations from "../../../../graphql/mutations/PA/PA5/PA510/index"
-import { Message } from "../../../../configs/enum"
+import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { sampleDataIncomeWageDaily, sampleFormIncomeWageDaily } from "./utils/index"
-
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import DeductionPopup from "./components/Popup/DeductionPopup.vue"
-import InsurancePopup from "./components/Popup/InsurancePopup.vue"
+
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -296,8 +293,6 @@ export default defineComponent({
         SelectActionComponent,
         EmploySelect,
         ProcessStatus,
-        DeductionPopup,
-        InsurancePopup,
         FormDataComponent,
     },
     setup() {
@@ -309,12 +304,14 @@ export default defineComponent({
 
         const triggerIncomeWageDaily = ref<boolean>(false)
 
+        const actionDelete: any = ref<boolean>(false)
+
         let dataCustomRes: any = ref([])
 
         const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
-
+        const dataRows: any = ref([])
         const dataSource: any = ref([])
-        let status:any = ref()
+        let status: any = ref()
         const dataTaxPayInfo: any = ref([])
         const formIncomeWageDaily = reactive({ ...sampleFormIncomeWageDaily })
 
@@ -372,6 +369,17 @@ export default defineComponent({
         } = useQuery(queries.getIncomeWageDailies, originDataTaxPayInfo, () => ({
             fetchPolicy: "no-cache",
         }))
+        const {
+            mutate: actionChangeIncomeProcess,
+            onError: errorChangeIncomeProcess,
+            onDone: successChangeIncomeProcess,
+        } = useMutation(mutations.changeIncomeProcessWageDailyStatus)
+        errorChangeIncomeProcess(e => {
+            notification('error', e.message)
+        })
+        successChangeIncomeProcess(e => {
+            notification('success', `업데이트 완료!`)
+        })
 
         // ======================= WATCH ==================================
         watch(result, (value) => {
@@ -384,7 +392,7 @@ export default defineComponent({
                 dataSource.value = [{
                     companyId: respon[0].companyId,
                     imputedYear: respon[0].imputedYear,
-                    
+
                 }]
 
                 dataCustomRes.value = [
@@ -404,7 +412,7 @@ export default defineComponent({
                     if (!dataSource.value[0]['month' + val.imputedMonth]) {
                         dataSource.value[0]['month' + val.imputedMonth] = []
                     }
-                    dataSource.value[0]['month' + val.imputedMonth][index] = val
+                    dataSource.value[0]['month' + val.imputedMonth][dataSource.value[0]['month' + val.imputedMonth].length] = val
 
                     // data table detail
                     dataCustomRes.value[0]['month' + val.imputedMonth] =
@@ -434,6 +442,7 @@ export default defineComponent({
                         ...dataAdd
                     }
                 })
+
             }
 
         })
@@ -454,7 +463,18 @@ export default defineComponent({
                 )
             })
         })
-
+        watch(status, (newValue) => {
+            // actionChangeIncomeProcess({
+            //     companyId: companyId,
+            //     processKey: {
+            //         imputedYear: globalYear.value,
+            //         imputedMonth: dayjs().month() + 1,
+            //         paymentYear: globalYear.value,
+            //         paymentMonth: dayjs().month() + 1,
+            //     },
+            //     status: newValue
+            // })
+        });
         // ======================= FUNCTION ================================
         const onSubmit = (e: any) => {
         }
@@ -467,7 +487,7 @@ export default defineComponent({
         }
 
         const selectionChanged = (data: any) => {
-
+            dataRows.value = data.selectedRowsData
         }
         const showDetailSelected = (data: any) => {
             console.log(data);
@@ -491,6 +511,7 @@ export default defineComponent({
             showDetailSelected,
             dataTaxPayInfo,
             actionEditTaxPay,
+            dataRows,
         }
 
     },

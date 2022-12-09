@@ -22,6 +22,7 @@ import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
+import { companyId } from '@/helpers/commonFunction';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -38,7 +39,7 @@ export default defineComponent({
     setup(props, { emit }) {
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
-            emailAddress.value = val?.employeeInputs.receiverAddress
+            emailAddress.value = val?.employee.email
         });
         
         const setModalVisible = () => {
@@ -55,9 +56,16 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let variables = props.data
-                variables.employeeInputs.receiverAddress = emailAddress.value
-                sendEmail(variables);
+                sendEmail({
+                    companyId: companyId,
+                    imputedYear: 2022,
+                    incomeInputs: {
+                        senderName: sessionStorage.getItem("username"),
+                        receiverName: props.data.employee.name,
+                        receiverAddress: emailAddress.value,
+                        incomeId: props.data.incomeId
+                    }
+                });
             }
         };
         onDoneAdd(() => {
@@ -66,9 +74,6 @@ export default defineComponent({
         })
         errorSendEmail((e: any) => {
             notification('error', e.message)
-        })
-        watch(() => props.modalStatus, (value) => {
-
         })
 
         return {

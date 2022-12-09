@@ -1,7 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="562">
-        <standard-form action="" name="email-single-630">
+        <standard-form action="" name="email-single110">
             <div class="custom-modal-send-email">
                 <img src="@/assets/images/email.svg" alt="" />
                 <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
@@ -21,7 +21,7 @@
 import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA//PA1/PA110/index"
+import mutations from "@/graphql/mutations/PA//PA5/PA510/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -49,7 +49,7 @@ export default defineComponent({
             onDone: onDoneAdd,
             onError: errorSendEmail,
             error,
-        } = useMutation(mutations.sendIncomeWagePayrollRegisterReportEmail);
+        } = useMutation(mutations.sendIncomeWageDailyPayrollRegisterReportEmail);
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {

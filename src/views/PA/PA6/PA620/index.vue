@@ -30,7 +30,7 @@
                                 <div class="hover-underlined" v-if="data.data.month1"
                                     @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth)">
                                     <colorful-badge :value="data.data.month1.status"
-                                        :year="data.data.month1.imputedYear" :month="data.data.month1.imputedMonth" />
+                                        :year="data.data.month1.imputedYear" :month="data.data.month1.imputedMonth" /> 
                                 </div>
                             </template>
                             <DxColumn caption="2" width="100px" cell-template="month-2" />
@@ -127,7 +127,7 @@
                             </template>
                             <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
                             <template #detailRow="{ data }">
-                                <div class="table-detail">
+                                <div>
                                     <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="false"
                                         :column-auto-width="true" :allow-column-reordering="move_column"
                                         :show-column-headers="false" :allow-column-resizing="colomn_resize"
@@ -221,12 +221,12 @@
                                     </DxDataGrid>
                                 </div>
                             </template>
-                        </DxDataGrid> 
+                        </DxDataGrid>
                     </a-spin>
                 </a-col>
 
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
-                    :actionSave="actionSave" @createdDone="createdDone"/>
+                    :actionSave="actionSave" @createdDone="createdDone" />
             </a-row>
         </div>
     </div>
@@ -282,10 +282,10 @@ export default defineComponent({
         let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
             processKey: {
-                imputedYear: 2022,
-                imputedMonth: 10,
-                paymentYear: 2022,
-                paymentMonth: 1
+                imputedYear: globalYear.value,
+                imputedMonth: (dayjs().month() + 1),
+                paymentYear: globalYear.value,
+                paymentMonth: dayjs().month() + 1
             }
         })
         let dataCustomRes: any = ref([])
@@ -332,9 +332,9 @@ export default defineComponent({
                 },
             ]
 
+            let value1 = 0
+
             respon.map((val: any) => {
-                console.log(val);
-                
                 // data table minify
                 let dataAdd = {
                     imputedMonth: val.imputedMonth,
@@ -342,6 +342,7 @@ export default defineComponent({
                     paymentYear: val.paymentYear,
                     paymentMonth: val.paymentMonth,
                 }
+
                 dataSource.value[0]['month' + val.imputedMonth] = val
 
                 // data table detail
@@ -372,7 +373,7 @@ export default defineComponent({
                     ...dataAdd
                 }
 
-                if (val.imputedMonth == dayjs().month()) {
+                if (val.imputedMonth == (dayjs().month() + 1)) {
                     dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
                     dataCallTableSmall.processKey.imputedYear = val.imputedYear
                     dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
@@ -380,7 +381,8 @@ export default defineComponent({
                     statusButton.value = val.status
                 }
 
-            })
+            }) 
+            
         })
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
@@ -401,7 +403,7 @@ export default defineComponent({
             actionSave.value++;
         }
 
-        const createdDone = () =>{ 
+        const createdDone = () => {
             trigger.value = true
             refetchData()
         }

@@ -3,7 +3,7 @@ export default gql`
   query getIncomeProcessExtras(
     $companyId: Int!
     $imputedYear: Int!
-    $imputedMonth: Int!
+    $imputedMonth: Int
   ) {
     getIncomeProcessExtras(
       companyId: $companyId

@@ -23,7 +23,7 @@
                         <li><strong>disabled:</strong> Boolean (option)</li>
                         <li><strong>required:</strong> Boolean (option)</li>
                         <li>
-                            <strong>valueInput:</strong> {type: Object}
+                            <strong>valueEmploy:</strong> {type: Number}
                         </li>
                         <li><strong>arrayValue:</strong> {type: Array}</li>
                     </ul>
