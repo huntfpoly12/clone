@@ -3,13 +3,15 @@ export default gql`
 mutation updateIncomeWageDaily( 
     $companyId: Int!
     $processKey: IncomeProcessKeyInput!
-    $incomeIds: Int!
+    $incomeId: Int!
     $input: IncomeWageDailyUpdateInput!
     ) {
         updateIncomeWageDaily( 
             companyId : $companyId
             processKey: $processKey
-            incomeIds: $incomeIds
+            incomeId: $incomeId
             input: $input
-        )
+        ) {
+            incomeId
+        }
     }`

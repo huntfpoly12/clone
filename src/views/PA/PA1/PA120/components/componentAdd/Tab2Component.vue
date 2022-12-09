@@ -242,7 +242,6 @@ export default defineComponent({
     width: 130px;
     padding-left: 10px;
   }
-
   .input-text {
     display: flex;
     align-items: center;

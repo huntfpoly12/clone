@@ -88,7 +88,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-modal-print-payroll-register {
     display: flex;
     align-items: center;

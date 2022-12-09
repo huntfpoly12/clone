@@ -40,8 +40,8 @@
                                     <a-tooltip placement="left">
                                         <template #title>사업소득 마감상태 변경이력</template>
                                         <div style="text-align: center;">
-                                            <img src="../../../../../../../src/assets/images/icon_status_history.png"
-                                                alt="" style="width: 20px; height: 20px;" />
+                                            <img src="@/assets/images/icon_status_history.png" alt=""
+                                                style="width: 20px; height: 20px;" />
                                         </div>
                                     </a-tooltip>
                                 </a-menu-item>
@@ -59,9 +59,9 @@
                 :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEditFuc"
                 :focused-row-enabled="true" @selection-changed="selectionChanged">
-                <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+                <DxSelection select-all-mode="allPages"  show-check-boxes-mode="always" mode="multiple" />
                 <DxScrolling column-rendering-mode="virtual" />
-                <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
+                <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="300px"/>
                 <template #tag="{ data }" class="custom-action">
                     <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
                         :incomeTypeName="data.data.employee.incomeTypeName" />
@@ -184,6 +184,7 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
+        const rowSelectAction = ref([])
         let disabledInput = ref(false)
         let switchAction = ref<boolean>(true)
         let month1: any = ref(dayjs().format("YYYY-MM"))
@@ -349,7 +350,6 @@ export default defineComponent({
                 }
                 actionEdit(inputEdit)
             }
-
         })
 
         // ================FUNCTION============================================   
@@ -382,8 +382,7 @@ export default defineComponent({
         }
 
         const onItemClick = (value: any) => {
-            console.log(value);
-
+            rowSelectAction.value = value.selectedRowKeys
         }
 
         return {
