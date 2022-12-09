@@ -40,20 +40,12 @@
     </DxSelectBox>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, computed, getCurrentInstance } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 
 export default defineComponent({
     props: {
-        required: {
-            type: Boolean,
-            default: true,
-        },
-        messRequired: {
-            type: String,
-            default: "",
-        },
         width: String,
         disabled: Boolean,
         valueEmploy: {

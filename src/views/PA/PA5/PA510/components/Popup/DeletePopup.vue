@@ -65,8 +65,6 @@ export default defineComponent({
                 },
                 incomeIds: ids
             })
-            
-
         };
         const {
             mutate: actionDelete,
@@ -78,6 +76,8 @@ export default defineComponent({
         })
         successDelete(e => {
             notification('success', `업데이트 완료!`)
+            emit("closePopup", false)
+            emit("loadingTableInfo", true)
         })
 
         return {
@@ -88,7 +88,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-modal-delete {
     display: flex;
     align-items: center;
