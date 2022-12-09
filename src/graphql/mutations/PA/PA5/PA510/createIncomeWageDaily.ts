@@ -9,5 +9,7 @@ mutation createIncomeWageDaily(
             companyId: $companyId
             processKey: $processKey
             input: $input
-        )
+        ) {
+            incomeId
+        }
     }`

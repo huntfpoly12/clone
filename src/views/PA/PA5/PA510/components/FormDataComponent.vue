@@ -3,12 +3,12 @@
         <a-row>
             <a-col :span="12">
                 <a-form-item label="근무일수">
-                    <EmploySelect :arrayValue="arrayEmploySelect"
+                    <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
                         v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" width="316px" :required="true" />
                 </a-form-item>
                 <a-form-item label="지급일">
-                    <!-- <EmploySelect :arrayValue="arrayEmploySelect" v-model:valueEmploy="formIncomeWageDaily.input.employeeId"
-                                    width="200px" :required="true" /> -->
+                    <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWageDaily.paymentDay"
+                        :max="31" :spinButtons="true" :disabled="!actionAddItem" />
                 </a-form-item>
             </a-col>
             <a-col :span="12">
@@ -103,10 +103,21 @@
             </a-col>
         </a-row>
         <div class="text-align-center mt-50">
-            <DxButton @click="actionDedution" :text="'공제 재계산'"
+            <a-tooltip placement="top">
+                <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
+                <span>
+                    <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal"
+                    :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                </span>
+            </a-tooltip>
+            <a-tooltip placement="top">
+                <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
+                <span>
+                    <DxButton @click="actionInsurance" text="4대보험 EDI 조회/적용" class="button-form-modal"
                 :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-            <DxButton @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'"
-                :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                </span>
+            </a-tooltip>
+            
         </div>
     </standard-form>
     <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" />
@@ -123,6 +134,7 @@ import { companyId } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
+import { sampleDataIncomeWageDaily, sampleFormIncomeWageDaily } from "../utils/index"
 export default defineComponent({
     components: {
         DxButton,
@@ -133,16 +145,83 @@ export default defineComponent({
         dataIncomeWageDaily: {
             type: Object
         },
+        actionAddItem: {
+            type: Boolean,
+            default: false
+        },
+        actionSaveItem: {
+            type: Number,
+            default: 0
+        },
+        actionUpdateItem: {
+            type: Number,
+            default: 0
+        },
     },
     setup(props, { emit }) {
         const modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
-        const dataIncomeWageDaily: any = ref({...props.dataIncomeWageDaily})
+        const dataIncomeWageDaily: any = ref({ ...props.dataIncomeWageDaily })
         const arrayEmploySelect: any = ref([])
         watch(() => props.dataIncomeWageDaily, (value) => {
             dataIncomeWageDaily.value = value
         })
-
+        watch(() => props.actionAddItem, (value) => {
+            if (value) {
+                dataIncomeWageDaily.value = { ...sampleDataIncomeWageDaily }
+            }
+        })
+        watch(() => props.actionSaveItem, (value) => {
+            let arrDeductionItems: any = []
+            arrDeduction.value.forEach((value: any) => {
+                arrDeductionItems.push({
+                    itemCode: value.itemCode,
+                    amount: value.price,
+                })
+            })
+            mutateAdd({
+                companyId: companyId,
+                processKey: {
+                    imputedYear: 2022,
+                    imputedMonth: 12,
+                    paymentYear: 2022,
+                    paymentMonth: 12,
+                },
+                input: {
+                    paymentDay: dataIncomeWageDaily.value.paymentDay,
+                    employeeId: dataIncomeWageDaily.value.employee.employeeId,
+                    dailyWage: dataIncomeWageDaily.value.dailyWage,
+                    monthlyWage: dataIncomeWageDaily.value.monthlyWage,
+                    workingDays: dataIncomeWageDaily.value.workingDays,
+                    deductionItems: arrDeductionItems,
+                },
+            })
+        })
+        watch(() => props.actionUpdateItem, (value) => {
+            let arrDeductionItems: any = []
+            arrDeduction.value.forEach((value: any) => {
+                arrDeductionItems.push({
+                    itemCode: value.itemCode,
+                    amount: value.price,
+                })
+            })
+            mutateUpdate({
+                companyId: companyId,
+                processKey: {
+                    imputedYear: 2022,
+                    imputedMonth: 12,
+                    paymentYear: 2022,
+                    paymentMonth: 12,
+                },
+                incomeId: dataIncomeWageDaily.value.incomeId,
+                input: {
+                    dailyWage: dataIncomeWageDaily.value.dailyWage,
+                    monthlyWage: dataIncomeWageDaily.value.monthlyWage,
+                    workingDays: dataIncomeWageDaily.value.workingDays,
+                    deductionItems: arrDeductionItems,
+                },
+            })
+        })
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const originData = ref({
@@ -150,6 +229,7 @@ export default defineComponent({
             imputedYear: globalYear,
         })
         const arrDeduction: any = ref([])
+
         const {
             loading: loadingDeductionItem,
             onResult: resWithholdingConfigPayItems,
@@ -162,6 +242,31 @@ export default defineComponent({
         } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
             fetchPolicy: "no-cache",
         }))
+        const {
+            mutate: mutateAdd,
+            onDone: onDoneAdd,
+            onError: onerrorAdd,
+        } = useMutation(mutations.createIncomeWageDaily);
+        const {
+            mutate: mutateUpdate,
+            onDone: onDoneUpdate,
+            onError: onerrorUpdate,
+        } = useMutation(mutations.updateIncomeWageDaily);
+        onDoneAdd(() => {
+            emit("loadingTableInfo", true)
+            notification('success', `업데이트 완료!`)
+        })
+        onerrorAdd((e: any) => {
+            notification('error', e.message)
+        })
+        onDoneUpdate(() => {
+            emit("loadingTableInfo", true)
+            notification('success', `업데이트 완료!`)
+        })
+        onerrorUpdate((e: any) => {
+            notification('error', e.message)
+        })
+
         resEmployeeWage(value => {
             arrayEmploySelect.value = value.data.getEmployeeWageDailies
         })
@@ -183,7 +288,7 @@ export default defineComponent({
         onDoneUpdated(() => {
             notification('success', `업데이트 성공되었습니다!`)
         });
-        
+
         const funcCheckPrice = (id: any) => {
             let price = 0
             dataIncomeWageDaily.value.deductionItems.map((e: any) => {
@@ -195,6 +300,9 @@ export default defineComponent({
         const actionDedution = () => {
             modalDeductions.value = true;
         }
+        const actionInsurance = () => {
+            modalInsurance.value = true;
+        }
         return {
             dataIncomeWageDaily,
             arrDeduction,
@@ -203,6 +311,7 @@ export default defineComponent({
             modalInsurance,
             arrayEmploySelect,
             actionDedution,
+            actionInsurance,
         };
     },
 });

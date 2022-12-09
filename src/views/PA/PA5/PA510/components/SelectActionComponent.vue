@@ -2,7 +2,7 @@
     <DxButton class="ml-3" @click="deleteItem">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-3" icon="plus" />
+    <DxButton class="ml-3" icon="plus" @click="actionAddItem"/>
     <DxButton class="ml-3" icon="edit" @click="editItem" />
 
     <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
@@ -19,20 +19,21 @@
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
-    <DxDropDownButton class="ml-3" :items="arrDropDown" text="선택" style="width: 120px;" @item-click="onItemClick"
+    <DxDropDownButton class="ml-3" :items="arrDropDown" display-expr="title" text="선택" style="width: 120px;" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;">
                 <HistoryOutlined v-if="data.function == 'History'" class="mr-5" style="font-size: 18px" />
-                <div v-if="data.function == 'HistoryStatus'" style="text-align: center;"><img
-                        :src="'../../../../../../../src/assets/images/icon_status_history.png'" alt=""
-                        style="width: 20px; height: 20px;" /></div>
+                <div v-if="data.function == 'HistoryStatus'" style="text-align: center;">
+                        <img :src="'../../../../../../../src/assets/images/icon_status_history.png'" alt=""
+                            style="width: 20px; height: 20px;" />
+                </div>
                 <button v-else-if="data.url" class="button-open-tab">일용직사원등록</button>
             </div>
         </template>
     </DxDropDownButton>
 
-    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
+    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" @loadingTableInfo="loadingTableInfo" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
     <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
         @closePopup="modalPrintPayrollRegister = false" />
@@ -44,7 +45,7 @@
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="popupDataHistory" title="변경이력"
         typeHistory="pa-510" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-        :data="popupDataHistoryStatus" title="변경이력" typeHistory="pa-status-510" />
+        :data="popupDataHistoryStatus" title="업무상태 변경이력" typeHistory="pa-status-510" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -97,6 +98,7 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false)
         const modalEmailSingle = ref(false)
         const modalEmailSinglePayrollRegister = ref(false)
+        
         const modalEmailMulti = ref(false)
         const popupDataDelete: any = ref([])
         const popupDataEdit: any = ref({})
@@ -118,6 +120,9 @@ export default defineComponent({
             modalDelete.value = true;
             // popupDataDelete.value = value
         };
+        const actionAddItem = (value: any) => {
+            emit("actionAddItem", true)
+        }
         const editItem = (value: any) => {
             if (props.dataRows.length == 1) {
                 modalEdit.value = true;
@@ -136,9 +141,9 @@ export default defineComponent({
             { id: 3, img: 'group_email.png', event: 'EmailMultiSalaryStatement' },
         ];
         const arrDropDown = [
-            { id: 1, url: '520', event: '520' },
-            { id: 2, function: 'History', event: 'History' },
-            { id: 2, function: 'HistoryStatus', event: 'HistoryStatus' },
+            { id: 1, url: '520', event: '520', title: '' },
+            { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
+            { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
         ]
         const onItemClick = (value: any) => {
             switch (value.itemData.event) {
@@ -215,6 +220,9 @@ export default defineComponent({
                 window.open(value.getIncomeWageDailySalaryStatementViewUrl)
             }
         })
+        const loadingTableInfo = () => {
+            emit("loadingTableInfo", true)
+        }
 
 
         return {
@@ -238,8 +246,9 @@ export default defineComponent({
             popupDataHistory,
             popupDataHistoryStatus,
             popupDataDelete,
-
+            actionAddItem,
             popupDataEdit,
+            loadingTableInfo,
         };
     },
 });
