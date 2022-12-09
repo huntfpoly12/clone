@@ -18,7 +18,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA//PA5/PA510/index"
@@ -37,6 +38,8 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const processKey = computed(() => store.state.common.processKeyPA510)
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
             emailAddress.value = val?.employee.email
@@ -59,10 +62,10 @@ export default defineComponent({
                 sendEmail({
                     companyId: companyId,
                     input: {
-                        imputedYear: 2022,
-                        imputedMonth: 12,
-                        paymentYear: 2022,
-                        paymentMonth: 12,
+                        imputedYear: processKey.value.imputedYear,
+                        imputedMonth: processKey.value.imputedMonth,
+                        paymentYear: processKey.value.paymentYear,
+                        paymentMonth: processKey.value.paymentMonth,
                         sortType: "부서별"
                     },
                     emailInput: {
