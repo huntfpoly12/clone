@@ -103,7 +103,7 @@
             </a-col>
         </a-row>
         <div class="text-align-center mt-50">
-            <DxButton @click="modalDeductions = true" :text="'공제 재계산'"
+            <DxButton @click="actionDedution" :text="'공제 재계산'"
                 :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
             <DxButton @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'"
                 :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
@@ -116,29 +116,29 @@
 import { defineComponent, ref, computed, watch, reactive } from "vue";
 import DxButton from "devextreme-vue/button"
 import notification from "@/utils/notification";
-import { sampleDataIncomeWageDaily } from "../utils/index"
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { companyId } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
+import DeductionPopup from "./Popup/DeductionPopup.vue"
+import InsurancePopup from "./Popup/InsurancePopup.vue"
 export default defineComponent({
     components: {
-        DxButton
+        DxButton,
+        DeductionPopup,
+        InsurancePopup,
     },
     props: {
         dataIncomeWageDaily: {
             type: Object
         },
-        arrayEmploySelect: {
-            type: Array,
-            default: []
-        }
     },
     setup(props, { emit }) {
         const modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
         const dataIncomeWageDaily: any = ref({...props.dataIncomeWageDaily})
+        const arrayEmploySelect: any = ref([])
         watch(() => props.dataIncomeWageDaily, (value) => {
             dataIncomeWageDaily.value = value
         })
@@ -156,6 +156,15 @@ export default defineComponent({
         } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
             fetchPolicy: "no-cache",
         }))
+        const {
+            loading: loadingEmployeeWage,
+            onResult: resEmployeeWage,
+        } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
+            fetchPolicy: "no-cache",
+        }))
+        resEmployeeWage(value => {
+            arrayEmploySelect.value = value.data.getEmployeeWageDailies
+        })
         resWithholdingConfigPayItems(res => {
             res.data.getWithholdingConfigDeductionItems.map((val: any) => {
                 let price = funcCheckPrice(val.itemCode)
@@ -174,25 +183,7 @@ export default defineComponent({
         onDoneUpdated(() => {
             notification('success', `업데이트 성공되었습니다!`)
         });
-        const onSubmit = () => {
-            let variables = {
-                companyId: companyId,
-                incomeId: dataIncomeWageDaily,
-                processKey: {
-                    imputedYear: dataIncomeWageDaily,
-                    imputedMonth: dataIncomeWageDaily,
-                    paymentYear: dataIncomeWageDaily,
-                    paymentMonth: dataIncomeWageDaily,
-                },
-                input: {
-                    // dailyWage: 
-                    // monthlyWage: 
-                    // workingDays: 
-                    // deductionItems: 
-                }
-            };
-            actionUpdateIncomeWageDaily(variables)
-        };
+        
         const funcCheckPrice = (id: any) => {
             let price = 0
             dataIncomeWageDaily.value.deductionItems.map((e: any) => {
@@ -201,12 +192,17 @@ export default defineComponent({
             })
             return price
         }
+        const actionDedution = () => {
+            modalDeductions.value = true;
+        }
         return {
             dataIncomeWageDaily,
             arrDeduction,
             loadingDeductionItem,
             modalDeductions,
             modalInsurance,
+            arrayEmploySelect,
+            actionDedution,
         };
     },
 });

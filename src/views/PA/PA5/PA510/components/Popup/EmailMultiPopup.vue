@@ -25,8 +25,11 @@
 <script lang="ts">
 import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
-import { useMutation } from "@vue/apollo-composable";
+import { userId } from "@/helpers/commonFunction";
+import { companyId } from '@/helpers/commonFunction';
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
+import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -36,23 +39,24 @@ export default defineComponent({
         data: {
             type: Object,
             default: {}
-        },
-        emailUserLogin: {
-            type: String,
-            default: ""
         }
     },
     components: {
     },
     setup(props, { emit }) {
         let emailAddress = ref('');
-        watch(() => props.data, (val) => {
-            emailAddress.value = props.emailUserLogin
-        });
 
         const setModalVisible = () => {
             emit("closePopup", false)
         };
+        const {
+            onResult: onResultUserInf
+        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+            fetchPolicy: "no-cache",
+        }));
+        onResultUserInf(e => {
+            emailAddress.value = e.data.getUser.email
+        })
 
         const {
             mutate: sendEmail,
@@ -65,13 +69,20 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                props.data.employeeInputs.map((value: any) => {
-                    if (value.receiverAddress == "") {
-                        value.receiverAddress = emailAddress.value
-                    }
+                let variables:any = []
+                props.data.map((value: any) => {
+                    variables.push({
+                        senderName: sessionStorage.getItem("username"),
+                        receiverName: value.employee.name,
+                        receiverAddress: emailAddress.value,
+                        incomeId: value.incomeId
+                    })
                 })
-                let variables = props.data
-                sendEmail(variables);
+                sendEmail({
+                    companyId: companyId,
+                    imputedYear: 2022,
+                    incomeInputs: variables,
+                });
             }
         };
         onDoneAdd(() => {

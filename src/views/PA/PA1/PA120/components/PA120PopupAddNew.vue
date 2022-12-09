@@ -24,7 +24,6 @@ import Tab1Component from "./componentAdd/Tab1Component.vue";
 import Tab2Component from "./componentAdd/Tab2Component.vue";
 import Tab3Component from "./componentAdd/Tab3Component.vue";
 import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
-import comfirmClosePopup from '../../../../../utils/comfirmClosePopup';
 export default defineComponent({
     components: {
         DxSelectBox,
@@ -71,8 +70,4 @@ export default defineComponent({
     },
 });
 </script>
-
-
-
-
 <style lang="scss" scoped src="../style/popupAddNew.scss" />

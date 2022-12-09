@@ -4,6 +4,7 @@ import getIncomeWageDailySalaryStatementViewUrl from "./getIncomeWageDailySalary
 import getIncomeWageDaily from "./getIncomeWageDaily";
 import getIncomeWageDailies from "./getIncomeWageDailies";
 import getWithholdingConfigDeductionItems from "./getWithholdingConfigDeductionItems";
+import getEmployeeWageDailies from "../PA520/getEmployeeWageDailies";
 const queries = {
     getIncomeProcessWageDailies: getIncomeProcessWageDailies,
     getIncomeWageDailyPayrollRegisterViewUrl: getIncomeWageDailyPayrollRegisterViewUrl,
@@ -11,5 +12,6 @@ const queries = {
     getIncomeWageDaily: getIncomeWageDaily,
     getIncomeWageDailies: getIncomeWageDailies,
     getWithholdingConfigDeductionItems: getWithholdingConfigDeductionItems,
+    getEmployeeWageDailies: getEmployeeWageDailies,
 };
 export default queries;
