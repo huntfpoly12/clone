@@ -67,7 +67,7 @@ export default defineComponent({
     },
 
     setup(props, { emit }) {
-        console.log(props.data);
+        // console.log(props.data);
 
         let visible = ref(false);
         const dataQuery = ref();
