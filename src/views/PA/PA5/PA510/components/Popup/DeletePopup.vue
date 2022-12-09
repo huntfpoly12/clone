@@ -40,29 +40,19 @@ export default defineComponent({
     setup(props, { emit }) {
 
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const processKey = computed(() => store.state.common.processKeyPA510)
         const setModalVisible = () => {
             emit("closePopup", false)
         };
 
         const onSubmit = (e: any) => {
-            // console.log(JSON.parse(globalYear));
-            
-            let data: any = ref(props.data[0])
-            let paymentYear = data.value.paymentYear
-            let paymentMonth = data.value.paymentMonth
             let ids: any = [];
             props.data.forEach((val: any) => {
                 ids.push(val.incomeId)
             });
             actionDelete({
                 companyId: companyId,
-                processKey: {
-                    imputedYear: globalYear.value,
-                    imputedMonth: 12,
-                    paymentYear: paymentYear,
-                    paymentMonth: paymentMonth,
-                },
+                processKey: {...processKey.value},
                 incomeIds: ids
             })
         };
