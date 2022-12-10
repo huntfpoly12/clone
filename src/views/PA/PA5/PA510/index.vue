@@ -7,7 +7,7 @@
                     key-expr="imputedYear" :focused-row-enabled="true" :show-borders="true"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
-                    <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" width="350px" />
+                    <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" width="350px" />
                     <template #imputed-year="{ data }">
                         <span>지급연월</span>
                     </template>
@@ -177,9 +177,9 @@
         </a-row>
         <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
-                <DxButton :text="'귀' + paymentYear + '-' + paymentMonth"
+                <DxButton :text="'귀' + processKey.paymentYear + '-' + processKey.paymentMonth"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-                <DxButton :text="'지' + paymentYear + '-' + paymentMonth"
+                <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
                 <ProcessStatus v-model:valueStatus="status" />
             </a-col>
@@ -207,7 +207,17 @@
                         </template>
                         <DxColumn caption="근무일수" data-field="workingDays" />
                         <DxColumn caption="일급여" data-field="dailyWage" />
-                        <DxColumn caption="공제" data-field="totalDeduction" />
+                        <DxColumn caption="공제" data-field="totalDeduction" cell-template="total-deduction" />
+                        <template #total-deduction="{ data }">
+                            <a-tooltip placement="top">
+                                <template #title>소득세 {{ data.data.incomePayment }} / 지방소득세
+                                    {{ data.data.withholdingLocalIncomeTax }}
+                                </template>
+                                <span>
+                                    {{ data.data.totalDeduction }}
+                                </span>
+                            </a-tooltip>
+                        </template>
                         <DxColumn caption="차인지급액" data-field="actualPayment" />
                         <DxColumn width="250" caption="비고" cell-template="four-major-insurance" />
                         <template #four-major-insurance="{ data }" class="custom-action">
@@ -230,9 +240,12 @@
                         </template>
                         <DxColumn caption="지급일" data-field="paymentDay" />
                         <DxSummary>
-                            <!-- <DxTotalItem show-in-column="일용직사원" :customize-text="dataTaxPayInfo.length" /> -->
-                            <DxTotalItem column="totalDeduction" summary-type="sum" />
-                            <DxTotalItem column="actualPayment" summary-type="sum" />
+                            <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />
+                            <DxTotalItem column="일급여" :customize-text="customizeTotalMonthly" value-format="#,###" />
+                            <DxTotalItem column="공제" summary-type="sum" display-format="공제합계: {0}"
+                                value-format="#,###" />
+                            <DxTotalItem column="차인지급액" summary-type="sum" display-format="차인지급액합계: {0}"
+                                value-format="#,###" />
                         </DxSummary>
                     </DxDataGrid>
                 </a-spin>
@@ -253,14 +266,13 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
+import { DxDataGrid, DxColumn, DxSelection, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
 import notification from "@/utils/notification"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent.vue"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
-import { sampleDataIncomeWageDaily, sampleFormIncomeWageDaily } from "./utils/index"
+import { sampleDataIncomeWageDaily } from "./utils/index"
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 
@@ -269,27 +281,10 @@ export default defineComponent({
         DxMasterDetail,
         DxDataGrid,
         DxColumn,
-        DxPaging,
         DxSelection,
-        DxExport,
-        DxSearchPanel,
-        DxScrolling,
-        DxToolbar,
-        DxEditing,
-        DxGrouping,
-        DxItem,
         DxButton,
         DxSummary,
         DxTotalItem,
-        EditOutlined,
-        HistoryOutlined,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
         SelectActionComponent,
         EmploySelect,
         ProcessStatus,
@@ -297,18 +292,17 @@ export default defineComponent({
     },
     setup() {
         const store = useStore()
-        const state = computed(() => store.state.common.processKeyPA510)
-
-        console.log(state.value);
-        
         const globalYear = computed(() => store.state.settings.globalYear)
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
-
-        const triggerIncomeWageDaily = ref<boolean>(false)
-
-        const actionDelete: any = ref<boolean>(false)
+        store.state.common.processKeyPA510 = {
+            imputedYear: globalYear,
+            imputedMonth: dayjs().month() + 1,
+            paymentYear: globalYear.value,
+            paymentMonth: dayjs().month() + 1,
+        }
+        const processKey = computed(() => store.state.common.processKeyPA510)
         const actionAddItem: any = ref<boolean>(true)
         const actionSaveItem: any = ref<number>(0)
         const actionUpdateItem: any = ref<number>(0)
@@ -319,37 +313,17 @@ export default defineComponent({
         const dataSource: any = ref([])
         let status: any = ref()
         const dataTaxPayInfo: any = ref([])
-        const formIncomeWageDaily = reactive({ ...sampleFormIncomeWageDaily })
 
-        const paymentYear = ref(globalYear)
-        const paymentMonth = ref(dayjs().month() + 1)
         const arrayEmploySelect: any = ref([])
-        // const processKey: any = ref({
-        //     imputedYear: globalYear.value,
-        //     imputedMonth: dayjs().month() + 1,
-        //     paymentYear: globalYear.value,
-        //     paymentMonth: dayjs().month() + 1,
-        // })
+
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
-            // imputedMonth: dayjs().month(),
         })
-        // const originDataIncomeWageDaily = ref({
-        //     companyId: companyId,
-        //     processKey: processKey.value,
-        //     incomeId: 1,
-        // })
         const originDataTaxPayInfo = ref({
             companyId: companyId,
-            processKey: {
-                imputedYear: globalYear,
-                imputedMonth: dayjs().month() + 1,
-                paymentYear: globalYear.value,
-                paymentMonth: dayjs().month() + 1,
-            },
+            processKey: processKey.value,
         })
-        let popupData = ref([])
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -358,14 +332,6 @@ export default defineComponent({
         } = useQuery(queries.getIncomeProcessWageDailies, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-        // const {
-        //     refetch: refetchDataIncomeWageDaily,
-        //     result: resultIncomeWageDaily,
-        //     loading: loadingIncomeWageDaily,
-        // } = useQuery(queries.getIncomeWageDaily, originDataIncomeWageDaily, () => ({
-        //     enabled: triggerIncomeWageDaily.value,
-        //     fetchPolicy: "no-cache",
-        // }))
         const {
             refetch: refetchDataTaxPayInfo,
             result: resultTaxPayInfo,
@@ -389,13 +355,10 @@ export default defineComponent({
         watch(result, (value) => {
             if (value) {
                 let respon = value.getIncomeProcessWageDailies
-
                 dataSource.value = [{
                     companyId: companyId,
                     imputedYear: globalYear.value,
-
                 }]
-
                 dataCustomRes.value = [
                     { id: 1, name: "인원" },
                     { id: 2, name: "지급액", },
@@ -415,11 +378,10 @@ export default defineComponent({
                         dataSource.value[0]['month' + val.imputedMonth] = []
                     }
                     dataSource.value[0]['month' + val.imputedMonth][dataSource.value[0]['month' + val.imputedMonth].length] = val
-
                     // data table detail
                     dataCustomRes.value[0]['month' + val.imputedMonth] =
                     {
-                        value: (val.employeeStat.employeeCount + val.employeeStat.retireEmployeeCount).toLocaleString('en-US', { currency: 'VND' }),
+                        value: `${val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })}(${val.employeeStat.retireEmployeeCount})`,
                         ...dataAdd
                     }
                     dataCustomRes.value[1]['month' + val.imputedMonth] =
@@ -444,14 +406,9 @@ export default defineComponent({
                         ...dataAdd
                     }
                 })
-
             }
-
         })
-        // watch(resultIncomeWageDaily, (value) => {
 
-        //     dataIncomeWageDaily.value = value.getIncomeWageDaily
-        // })
         watch(resultTaxPayInfo, (value) => {
             dataTaxPayInfo.value = value.getIncomeWageDailies
             dataTaxPayInfo.value.map((value: any) => {
@@ -461,19 +418,13 @@ export default defineComponent({
                     idCardNumber: value.employee.idCardNumber,
                     status: value.employee.status,
                     foreigner: value.employee.foreigner
-                }
-                )
+                })
             })
         })
         watch(status, (newValue) => {
             // actionChangeIncomeProcess({
             //     companyId: companyId,
-            //     processKey: {
-            //         imputedYear: globalYear.value,
-            //         imputedMonth: dayjs().month() + 1,
-            //         paymentYear: globalYear.value,
-            //         paymentMonth: dayjs().month() + 1,
-            //     },
+            //     processKey: {...processKey.value},
             //     status: newValue
             // })
         });
@@ -494,12 +445,22 @@ export default defineComponent({
             dataRows.value = data.selectedRowsData
         }
         const showDetailSelected = (data: any) => {
-            // dataTaxPayInfo.value = data
+            status.value = data.status
+            store.state.common.processKeyPA510.paymentYear = data.paymentYear
+            store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
         }
         const loadingTableInfo = () => {
             refetchDataTaxPayInfo()
         }
+        const customizeTotalMonthly = (data: any) => {
+            let total: any = 0
+            dataTaxPayInfo.value.map((val: any) => {
+                total += val.workingDays * val.dailyWage
+            })
+            return `월급여합계: ${total}`;
+        }
         return {
+            processKey,
             loading,
             status,
             dataSource,
@@ -508,13 +469,9 @@ export default defineComponent({
             onSubmit,
             updateData,
             dataIncomeWageDaily,
-            popupData,
             selectionChanged,
             arrayEmploySelect,
-            paymentYear,
-            paymentMonth,
             dataCustomRes,
-            formIncomeWageDaily,
             showDetailSelected,
             dataTaxPayInfo,
             actionEditTaxPay,
@@ -524,7 +481,7 @@ export default defineComponent({
             actionUpdateItem,
             loadingTableInfo,
             loadingTaxPayInfo,
-            globalYear,
+            customizeTotalMonthly,
         }
 
     },

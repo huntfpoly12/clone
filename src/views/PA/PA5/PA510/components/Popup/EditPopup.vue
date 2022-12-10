@@ -20,11 +20,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, computed } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
+import { useStore } from 'vuex'
 export default defineComponent({
     props: {
         modalStatus: {
@@ -39,6 +40,8 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const processKey = computed(() => store.state.common.processKeyPA510)
         const dayValue = ref(1)
         const setModalVisible = () => {
             emit("closePopup", false)
@@ -58,17 +61,11 @@ export default defineComponent({
         const onSubmit = (e: any) => {
             mutate({
                 companyId: companyId,
-                processKey: {
-                    imputedYear: 2022,
-                    imputedMonth: 12,
-                    paymentYear: 2022,
-                    paymentMonth: 12,
-                },
+                processKey: processKey.value,
                 incomeId: props.data.incomeId,
                 day: dayValue.value
             })
         };
-
 
         return {
             setModalVisible,

@@ -134,7 +134,7 @@ import { companyId } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
-import { sampleDataIncomeWageDaily, sampleFormIncomeWageDaily } from "../utils/index"
+import { sampleDataIncomeWageDaily } from "../utils/index"
 export default defineComponent({
     components: {
         DxButton,
@@ -159,6 +159,9 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const globalYear = computed(() => store.state.settings.globalYear)
+        const processKey = computed(() => store.state.common.processKeyPA510)
         const modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
         const dataIncomeWageDaily: any = ref({ ...props.dataIncomeWageDaily })
@@ -181,12 +184,7 @@ export default defineComponent({
             })
             mutateAdd({
                 companyId: companyId,
-                processKey: {
-                    imputedYear: 2022,
-                    imputedMonth: 12,
-                    paymentYear: 2022,
-                    paymentMonth: 12,
-                },
+                processKey: {...processKey.value},
                 input: {
                     paymentDay: dataIncomeWageDaily.value.paymentDay,
                     employeeId: dataIncomeWageDaily.value.employee.employeeId,
@@ -207,12 +205,7 @@ export default defineComponent({
             })
             mutateUpdate({
                 companyId: companyId,
-                processKey: {
-                    imputedYear: 2022,
-                    imputedMonth: 12,
-                    paymentYear: 2022,
-                    paymentMonth: 12,
-                },
+                processKey: {...processKey.value},
                 incomeId: dataIncomeWageDaily.value.incomeId,
                 input: {
                     dailyWage: dataIncomeWageDaily.value.dailyWage,
@@ -222,11 +215,11 @@ export default defineComponent({
                 },
             })
         })
-        const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        
+        
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
         })
         const arrDeduction: any = ref([])
 

@@ -1,15 +1,18 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
-        <standard-form action="" name="delete-510">
-            <div class="custom-modal-delete">
-                <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
-                <span>선택된 내역({{ data.length }}건) 삭제합니다. 그래도 진행하시겠습니까?</span>
+        <standard-form action="" name="edit-510">
+            <div class="custom-modal-edit">
+                <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
+                <span>선택된 내역 지급일을</span>
+                <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
+                    :spinButtons="true" />
+                <span>일로 변경하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" :text="'네. 삭제합니다'" :width="140" :type="'default'"
+                <button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -17,13 +20,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref, computed, reactive } from 'vue'
-import { useStore } from 'vuex'
-import dayjs, { Dayjs } from 'dayjs';
-import { companyId } from "@/helpers/commonFunction"
+import { defineComponent, ref } from 'vue'
 import notification from "@/utils/notification";
+import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
+import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -33,53 +34,55 @@ export default defineComponent({
         data: {
             type: Array,
             default: []
-        }
+        },
+        processKey: {
+            type: Object,
+        },
     },
     components: {
     },
     setup(props, { emit }) {
-
-        const store = useStore()
-        const processKey = computed(() => store.state.common.processKeyPA510)
+        const dayValue = ref(1)
         const setModalVisible = () => {
             emit("closePopup", false)
         };
-
-        const onSubmit = (e: any) => {
-            let ids: any = [];
-            props.data.forEach((val: any) => {
-                ids.push(val.incomeId)
-            });
-            actionDelete({
-                companyId: companyId,
-                processKey: {...processKey.value},
-                incomeIds: ids
-            })
-        };
         const {
-            mutate: actionDelete,
-            onError: errorDelete,
-            onDone: successDelete,
-        } = useMutation(mutations.deleteIncomeWageDailies)
-        errorDelete(e => {
-            notification('error', e.message)
-        })
-        successDelete(e => {
+            mutate,
+            onDone,
+            onError,
+        } = useMutation(mutations.changeIncomeBusinessPaymentDay);
+        onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
-            emit("loadingTableInfo", true)
         })
+        onError((e: any) => {
+            notification('error', e.message)
+        })
+
+        const onSubmit = () => {
+            console.log(props.data);
+
+            props.data.map((val: any) => {
+                mutate({
+                    companyId: companyId,
+                    processKey: props.processKey,
+                    incomeId: val,
+                    day: dayValue.value
+                })
+            })
+        };
 
         return {
             setModalVisible,
             onSubmit,
+            dayValue,
         }
     },
 })
 </script>
 
 <style lang="scss" scoped>
-.custom-modal-delete {
+.custom-modal-edit {
     display: flex;
     align-items: center;
     width: 100%;
