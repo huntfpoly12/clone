@@ -4,7 +4,7 @@
         <a-row>
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    key-expr="imputedYear" :focused-row-enabled="true" :show-borders="true"
+                    key-expr="companyId" :focused-row-enabled="true" :show-borders="true"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
                     <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" width="350px" />
@@ -18,6 +18,7 @@
                                 v-for="(month, index) in data.data.month1" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
                     </template>
                     <DxColumn caption="02" cell-template="imputed-month2" />
                     <template #imputed-month2="{ data }">
@@ -26,6 +27,7 @@
                                 v-for="(month, index) in data.data.month2" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
                     </template>
                     <DxColumn caption="03" cell-template="imputed-month3" />
                     <template #imputed-month3="{ data }">
@@ -34,6 +36,7 @@
                                 v-for="(month, index) in data.data.month3" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
                     </template>
                     <DxColumn caption="04" cell-template="imputed-month4" />
                     <template #imputed-month4="{ data }">
@@ -42,6 +45,7 @@
                                 v-for="(month, index) in data.data.month4" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
                     </template>
                     <DxColumn caption="05" cell-template="imputed-month5" />
                     <template #imputed-month5="{ data }">
@@ -50,6 +54,7 @@
                                 v-for="(month, index) in data.data.month5" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
                     </template>
                     <DxColumn caption="06" cell-template="imputed-month6" />
                     <template #imputed-month6="{ data }">
@@ -58,6 +63,7 @@
                                 v-for="(month, index) in data.data.month6" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
                     </template>
                     <DxColumn caption="07" cell-template="imputed-month7" />
                     <template #imputed-month7="{ data }">
@@ -66,6 +72,7 @@
                                 v-for="(month, index) in data.data.month7" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
                     </template>
                     <DxColumn caption="08" cell-template="imputed-month8" />
                     <template #imputed-month8="{ data }">
@@ -74,6 +81,7 @@
                                 v-for="(month, index) in data.data.month8" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
                     </template>
                     <DxColumn caption="09" cell-template="imputed-month9" />
                     <template #imputed-month9="{ data }">
@@ -82,6 +90,7 @@
                                 v-for="(month, index) in data.data.month9" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
                     </template>
                     <DxColumn caption="10" cell-template="imputed-month10" />
                     <template #imputed-month10="{ data }">
@@ -90,6 +99,7 @@
                                 v-for="(month, index) in data.data.month10" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
                     </template>
                     <DxColumn caption="11" cell-template="imputed-month11" />
                     <template #imputed-month11="{ data }">
@@ -98,6 +108,7 @@
                                 v-for="(month, index) in data.data.month11" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
                     </template>
                     <DxColumn caption="12" cell-template="imputed-month12" />
                     <template #imputed-month12="{ data }">
@@ -106,10 +117,7 @@
                                 v-for="(month, index) in data.data.month12" :key="index" :value="month.status"
                                 :year="month.paymentYear" :month="month.paymentMonth" />
                         </div>
-                    </template>
-                    <DxColumn cell-template="button-add" />
-                    <template #button-add>
-                        <DxButton class="ml-3" icon="plus" />
+                        <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
                     </template>
                     <DxMasterDetail :enabled="true" template="row-detail" />
                     <template #row-detail="{ data }">
@@ -257,6 +265,7 @@
                     :actionUpdateItem="actionUpdateItem" />
             </a-col>
         </a-row>
+        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint" @closePopup="modalCopy = false" />
     </div>
 </template>
 <script lang="ts">
@@ -275,6 +284,7 @@ import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { sampleDataIncomeWageDaily } from "./utils/index"
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
+import CopyMonth from "./components/Popup/CopyMonth.vue";
 
 export default defineComponent({
     components: {
@@ -289,6 +299,7 @@ export default defineComponent({
         EmploySelect,
         ProcessStatus,
         FormDataComponent,
+        CopyMonth,
     },
     setup() {
         const store = useStore()
@@ -303,16 +314,19 @@ export default defineComponent({
             paymentMonth: dayjs().month() + 1,
         }
         const processKey = computed(() => store.state.common.processKeyPA510)
+        const modalCopy = ref<boolean>(false);
+        
         const actionAddItem: any = ref<boolean>(true)
         const actionSaveItem: any = ref<number>(0)
         const actionUpdateItem: any = ref<number>(0)
         let dataCustomRes: any = ref([])
-
+        const arrDataPoint: any = ref([])
         const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
         const dataRows: any = ref([])
         const dataSource: any = ref([])
         let status: any = ref()
         const dataTaxPayInfo: any = ref([])
+        const dataModalCopy: any = ref()
 
         const arrayEmploySelect: any = ref([])
 
@@ -353,11 +367,11 @@ export default defineComponent({
 
         // ======================= WATCH ==================================
         watch(result, (value) => {
+            arrDataPoint.value = [];
             if (value) {
                 let respon = value.getIncomeProcessWageDailies
                 dataSource.value = [{
                     companyId: companyId,
-                    imputedYear: globalYear.value,
                 }]
                 dataCustomRes.value = [
                     { id: 1, name: "인원" },
@@ -368,8 +382,16 @@ export default defineComponent({
                     { id: 6, name: "차인지급액", },
                 ]
                 respon.forEach((val: any, index: any) => {
+                    arrDataPoint.value.push({
+                        imputedYear: val.imputedYear,
+                        imputedMonth: val.imputedMonth,
+                        paymentYear: val.paymentYear,
+                        paymentMonth: val.paymentMonth,
+                    })
+
                     status.value = respon[0].status
                     let dataAdd = {
+                        imputedYear: val.imputedYear,
                         imputedMonth: val.imputedMonth,
                         paymentYear: val.paymentYear,
                         paymentMonth: val.paymentMonth,
@@ -459,6 +481,12 @@ export default defineComponent({
             })
             return `월급여합계: ${total}`;
         }
+        
+        const copyMonth = (month: number) => {
+            dataModalCopy.value = month
+            modalCopy.value = true 
+            
+        }
         return {
             processKey,
             loading,
@@ -482,6 +510,10 @@ export default defineComponent({
             loadingTableInfo,
             loadingTaxPayInfo,
             customizeTotalMonthly,
+            copyMonth,
+            modalCopy,
+            dataModalCopy,
+            arrDataPoint,
         }
 
     },

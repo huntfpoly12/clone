@@ -34,7 +34,12 @@ mutation copyIncomeWageDailies(
             totalDeduction
             workingDays
             actualPayment
-            employee
-            deductionItems
+            employee {
+                type
+            }
+            deductionItems {
+                itemCode
+                amount
+            }
         }
     }`
