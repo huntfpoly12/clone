@@ -7,7 +7,7 @@
                     사원
                 </div>
                 <div class="input-select">
-                    <employ-select   width="300px"/>
+                    <employ-select  :arrayValue="arrayEmployeeSelect"  v-model:valueEmploy="valueSelected" width="300px" :disabled="true"/>
                 </div>
             </div>
             <div class="info-employee">
@@ -97,7 +97,7 @@
                             <span>
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" class="img-note"/>
                                 <p>상기 급여(수당)으로 계산된 퇴직금으로 실제 지급된 퇴직금과는 상이할 수 있습니다.</p>
-                                <img src="@/assets/images/email.svg" alt="" style="width: 40px;" class="img-email"/>
+                                <img src="@/assets/images/email.svg" alt="" style="width: 40px;" class="img-email" @click="openMailPopup"/>
                             </span>
                         </div>
                     </a-col>
@@ -105,29 +105,34 @@
             </div>
         </a-spin>
     </div>
+    <email-single-popup :modalStatus="modalMailStatus" @closePopup="modalMailStatus = false" :data="formState"></email-single-popup>
  </div>
 </template>
 
 <script lang="ts">
-import DateTimeBox from '@/components/common/DateTimeBox.vue'
 import { defineComponent, watch, ref, reactive } from 'vue'
+import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import { companyId } from "@/helpers/commonFunction"
 import queries from "@/graphql/queries/PA/PA4/PA410/index";
 import { initFormState } from '../utils';
+import EmailSinglePopup from './EmailSinglePopup.vue';
 import dayjs from 'dayjs';
 export default defineComponent({
-  
     components: {
-        DateTimeBox
+        EmailSinglePopup
     },
     setup(props, { emit }) {
+        const store = useStore();
+  
         const yearsService = ref(0);
         const monthsService = ref(0);
         const workingDays = ref(0);
         const caculateValue = ref(0);
         const trigger = ref<boolean>(false)
+        const modalMailStatus = ref<boolean>(false)
+        const valueSelected = ref(store.state.common.employeeIdPA410)
         const formState = reactive({
             ...initFormState,
             settlementStartDate: dayjs().format("YYYY-MM-DD"),
@@ -137,6 +142,7 @@ export default defineComponent({
                 companyId: companyId,
                 input: formState
         }
+        const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
         watch(()=> formState.settlementFinishDate, (newFinishDate) => {
             const finishDate = dayjs(newFinishDate)         
             workingDays.value = finishDate.diff(formState.settlementStartDate, 'day');
@@ -169,6 +175,11 @@ export default defineComponent({
             trigger.value = true;
             refetch()
         }
+
+        const openMailPopup = () => {
+            modalMailStatus.value = true
+        }
+
         return {
             loading,
             formState,
@@ -176,7 +187,11 @@ export default defineComponent({
             yearsService,
             monthsService,
             workingDays,
-            calculateIncomeRetirement
+            calculateIncomeRetirement,
+            arrayEmployeeSelect,
+            valueSelected,
+            openMailPopup,
+            modalMailStatus
         }
     },
 })

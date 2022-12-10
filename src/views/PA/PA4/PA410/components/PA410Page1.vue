@@ -1,18 +1,17 @@
 <template>
  <div class="page-content">
-    <a-spin :spinning="loading" size="large">
+    <a-spin :spinning="false" size="large">
         <div class="content-page1">
-            
                 <div class="select-employee">
                     <div class="label">
                         퇴직금 대상 사원
                     </div>
                     <div class="input-select">
-                        <employ-select :arrayValue="arrayEmployeeSelect" :required="true" width="300px"/>
+                        <employ-select :arrayValue="arrayEmployeeSelect" :required="true" width="300px" v-model:valueEmploy="valueSelected"/>
                     </div>
                 </div>
                 <div class="button-next">
-                    <button-basic text="다음" type="default" @onClick="nextPage"/> 
+                    <button-basic text="다음" type="default" @onClick="nextPage" :disabled="isSelected"/> 
                 </div>
         
         </div>
@@ -22,51 +21,35 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue'
-import { useQuery, useMutation } from "@vue/apollo-composable";
+
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
-import queries from "@/graphql/queries/PA/PA1/PA120/index";
-import notification from "@/utils/notification";
 export default defineComponent({
     components: {
     },
     setup() {
         const store = useStore();
+        store.dispatch('auth/getUserInfor')
+        const valueSelected = ref(0);
+        const isSelected = ref(true);
         const globalYear = computed(() => store.state.settings.globalYear);
         const nextPage = () => {
             store.state.common.currentPagePA410 = 'PA410Page2';
+            store.state.common.employeeIdPA410 = valueSelected.value;
         }
-        const originData = ref({
+        watch(valueSelected, (newValue) => {
+            isSelected.value = newValue !== 0 ? false : true;
+        })
+        store.dispatch('common/getListEmployee', {
             companyId: companyId,
             imputedYear: globalYear,
-        });
-        const {
-            refetch: refetchData,
-            onError: errorEmployeeWages,
-            result,
-            loading,
-        } = useQuery(queries.getEmployeeWages, originData, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        errorEmployeeWages(e => {
-            notification('error', e.message)
         })
- 
-        watch(result, (value) => {
-            if (value) {
-     
-           
-            }
-        });
-        const arrayEmployeeSelect = ref([
-            { employeeId: 123, name: 'khiem', idCardNumber: '800101-1100123', status: 0, foreigner: true },
-            { employeeId: 456, name: 'khiem 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
-            { employeeId: 789, name: 'khiem 3', idCardNumber: '800101-1100123', status: 1, foreigner: true },
-        ])
+        const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
         return {
             nextPage,
-            loading,
-            arrayEmployeeSelect
+            arrayEmployeeSelect,
+            valueSelected,
+            isSelected
         }
     },
 })

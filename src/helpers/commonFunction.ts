@@ -3,13 +3,13 @@ import dayjs from 'dayjs';
 let companyId: any = null
 let userType: any = null
 let userId: any = null
-let infoUser: any = null
+let screenRoleInfo: any = null
 const token = sessionStorage.getItem("token");
 if (token) {
     const jwtObject = getJwtObject(token);
     userType = jwtObject.userType
     userId = jwtObject.userId
-    infoUser = jwtObject.screenRoleInfo
+    screenRoleInfo = jwtObject.screenRoleInfo
     if (userType === 'c') {
         companyId = jwtObject.companyId
     }
@@ -119,7 +119,7 @@ export {
     companyId,
     userType,
     userId,
-    infoUser,
+    screenRoleInfo,
     onExportingCommon,
     convertAge,
     calculateNationalPensionEmployee,

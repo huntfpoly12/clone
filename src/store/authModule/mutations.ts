@@ -8,6 +8,11 @@ const mutations = {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('username');
   },
+  loadUserInfor(state: any, dataInfor: any) {
+    console.log(dataInfor);
+    
+    state.userInfor = dataInfor
+  }
 };
 
 export default mutations;
