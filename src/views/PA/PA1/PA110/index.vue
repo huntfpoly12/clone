@@ -500,7 +500,6 @@ export default defineComponent({
         // }
 
       })
-      console.log('datares', dataCustomRes)
     })
 
 
