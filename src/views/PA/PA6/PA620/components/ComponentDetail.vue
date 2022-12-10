@@ -55,7 +55,7 @@
         </div>
     </a-col>
 
-    <a-col :span="12" class="custom-layout ">
+    <a-col :span="14" class="custom-layout ">
         <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit)" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                 :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
@@ -63,31 +63,35 @@
                 :focused-row-enabled="true" @selection-changed="selectionChanged">
                 <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                 <DxScrolling column-rendering-mode="virtual" />
-                <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="300px" />
+                <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                 <template #tag="{ data }" class="custom-action">
                     <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
                         :incomeTypeName="data.data.employee.incomeTypeName" />
                 </template>
                 <DxColumn width="80px" caption="지급일" data-field="paymentDay" data-type="string"
                     :format="amountFormat" />
-                <DxColumn caption="지급액" data-field="paymentAmount" data-type="string" :format="amountFormat" />
+                <DxColumn caption="지급액" width="100px" data-field="paymentAmount" data-type="string"
+                    :format="amountFormat" />
                 <DxColumn caption="세율" width="80px" data-field="taxRate" data-type="string" :format="amountFormat" />
-                <DxColumn caption="공제" cell-template="income-tax" />
+                <DxColumn caption="공제" cell-template="income-tax" width="100px" />
                 <template #income-tax="{ data }" class="custom-action">
                     {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax)
                     }}
                 </template>
-                <DxColumn caption="차인지급액" width="100px" data-field="actualPayment" data-type="string"
+                <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string"
                     :format="amountFormat" />
                 <DxSummary>
-                    <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="{0}" />
-                    <DxTotalItem column="공제" summary-type="sum" display-format="{0}" value-format="#,###" />
-                    <DxTotalItem column="actualPayment" summary-type="sum" display-format="{0}" value-format="#,###" />
+                    <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수:{0}" />
+                    <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
+                        value-format="#,###" />
+                    <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
+                    <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum"
+                        display-format="차인지급액합계: {0}" value-format="#,###" />
                 </DxSummary>
             </DxDataGrid>
         </a-spin>
     </a-col>
-    <a-col :span="12" class="custom-layout form-action">
+    <a-col :span="10" class="custom-layout form-action">
         <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingDetailEdit || loadingEdit)" size="large">
             <a-form-item label="사업소득자" label-align="right">
                 <employ-type-select :disabled="disabledInput" :arrayValue="arrayEmploySelect"
@@ -97,7 +101,7 @@
             <div class="header-text-1 mb-10">소득내역</div>
             <div class="income-details">
                 <a-row>
-                    <a-col :span="12">
+                    <a-col :span="13">
                         <a-form-item label="귀속/지급연월" label-align="right">
                             <div class="d-flex-center">
                                 <div class="month-custom-1 d-flex-center">
@@ -120,7 +124,7 @@
                             3%
                         </a-form-item>
                     </a-col>
-                    <a-col :span="12">
+                    <a-col :span="11">
                         <div class="header-text-2 mb-10">공제합계 <b>{{
                                 ($filters.formatCurrency(dataAction.input.withholdingIncomeTax +
                                     dataAction.input.withholdingLocalIncomeTax))
@@ -182,6 +186,7 @@ import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import type { DropdownProps } from "ant-design-vue";
 import DeletePopup from "./DeletePopup.vue"
 import EditPopup from "./EditPopup.vue"
+import filters from "@/helpers/filters";
 
 export default defineComponent({
     components: {
@@ -432,6 +437,15 @@ export default defineComponent({
             }
         }
 
+        const customTextSummary = () => { 
+            let total = 0
+            dataSourceDetail.value.map((val: any) => {
+                total += val.withholdingIncomeTax + val.withholdingLocalIncomeTax
+            })
+            return '공제합계: ' + filters.formatCurrency(total)
+        }
+
+
         return {
             month1, month2,
             arrayEmploySelect,
@@ -461,6 +475,7 @@ export default defineComponent({
             actionDeleteSuccess,
             onItemClick,
             editPaymentDate,
+            customTextSummary
         }
     }
 });

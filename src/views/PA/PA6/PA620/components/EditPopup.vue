@@ -61,8 +61,8 @@ export default defineComponent({
 
         const onSubmit = () => {
             console.log(props.data);
-            
-            props.data.map((val: any) => { 
+
+            props.data.map((val: any) => {
                 mutate({
                     companyId: companyId,
                     processKey: props.processKey,
@@ -81,7 +81,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-modal-edit {
     display: flex;
     align-items: center;
