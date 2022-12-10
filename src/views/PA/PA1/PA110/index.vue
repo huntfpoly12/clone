@@ -283,7 +283,7 @@ import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, D
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import notification from "@/utils/notification"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
-import FormDataComponent from "./components/FormDataComponent.vue"
+import FormDataComponent from "./components/FormDataComponent2.vue"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import { Message } from "@/configs/enum"
@@ -362,7 +362,7 @@ export default defineComponent({
         paymentYear: 2022,
         paymentMonth: 12,
       },
-      incomeId: 65,
+      incomeId: 66,
     })
     let originDataIncomeWages = reactive({
       companyId: companyId,
@@ -435,7 +435,6 @@ export default defineComponent({
       ]
 
       respon.map((val: any) => {
-        console.log('res', val)
         // data table minify
         let dataAdd = {
           imputedMonth: val.imputedMonth,
@@ -447,58 +446,58 @@ export default defineComponent({
         dataSource.value[0]['month' + val.imputedMonth] = val
         // data table detail
 
-        dataCustomRes.value[0]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
-          ...dataAdd
-        }
-        dataCustomRes.value[1]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.incomeStat.totalTaxPay),
-          ...dataAdd
-        }
-        dataCustomRes.value[2]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.incomeStat.totalTaxfreePay),
-          ...dataAdd
-        }
-        dataCustomRes.value[3]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
-          ...dataAdd
-        }
-        dataCustomRes.value[4]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
-          ...dataAdd
-        }
-        dataCustomRes.value[5]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
-          ...dataAdd
-        }
-        dataCustomRes.value[6]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
-          ...dataAdd
-        }
-        dataCustomRes.value[7]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val),
-          ...dataAdd
-        }
-        dataCustomRes.value[8]['month' + val.imputedMonth] = {
+        // dataCustomRes.value[0]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[1]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val.incomeStat.totalTaxPay),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[2]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val.incomeStat.totalTaxfreePay),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[3]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[4]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[5]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[6]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[7]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[8]['month' + val.imputedMonth] = {
 
-          value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
-          ...dataAdd
-        }
-        dataCustomRes.value[9]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[9]['month' + val.imputedMonth] = {
 
-          value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
-          ...dataAdd
-        }
-        dataCustomRes.value[10]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[10]['month' + val.imputedMonth] = {
 
-          value: filters.formatCurrency(val.incomeStat.totalDeduction),
-          ...dataAdd
-        }
-        dataCustomRes.value[11]['month' + val.imputedMonth] = {
+        //   value: filters.formatCurrency(val.incomeStat.totalDeduction),
+        //   ...dataAdd
+        // }
+        // dataCustomRes.value[11]['month' + val.imputedMonth] = {
 
-          value: filters.formatCurrency(val.incomeStat.actualPayment),
-          ...dataAdd
-        }
+        //   value: filters.formatCurrency(val.incomeStat.actualPayment),
+        //   ...dataAdd
+        // }
 
       })
       console.log('datares', dataCustomRes)
@@ -511,6 +510,7 @@ export default defineComponent({
       }
     })
     watch(resultTaxPayInfo, (value) => {
+
       dataTaxPayInfo.value = value.getIncomeWages
       dataTaxPayInfo.value.map((value: any) => {
         arrayEmploySelect.value.push({

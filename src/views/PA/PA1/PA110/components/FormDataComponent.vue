@@ -7,31 +7,39 @@
                         v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="290px" :required="true" />
                 </a-form-item>
                 <a-form-item label="지급일">
-
+                    <a-form-item label="지급일">
+                        <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWage.paymentDay"
+                            :max="31" :spinButtons="true" />
+                    </a-form-item>
                 </a-form-item>
             </a-col>
             <a-col :span="12">
                 <div class="top-content">
                     <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
                 </div>
-                <a-form-item label="근무일수">
-                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWage.employee.workingDays"
-                        width="200px" :required="true" />
+                <a-form-item label="소득수당 합계  ">
+                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWage.workingDays" width="200px"
+                        :required="true" />
                 </a-form-item>
-                <a-form-item label="월급여">
-                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWage.employee.monthlyWage"
-                        width="200px" :required="true" />
+                <a-form-item label="수당 과세 합계  ">
+                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWage.totalTaxPay" width="200px"
+                        :required="true" />
                 </a-form-item>
-                <a-form-item label="공제합계">
-                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWage.employee.totalDeduction"
-                        width="200px" :required="true" />
+                <a-form-item label="수당 비과세 합계  ">
+                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWage.totalTaxfreePay" width="200px"
+                        :required="true" />
                 </a-form-item>
-                <a-form-item label="차인지급액">
+                <a-form-item label="공제 합계   ">
+                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWage.totalDeduction" width="200px"
+                        :required="true" />
+                </a-form-item>
+                <a-form-item label="차인지급액 ">
                     <text-number-box :disabled="true" v-model:valueInput="dataIncomeWage.actualPayment" width="200px"
                         :required="true" />
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                     <span>
-                        급여합계 - 공제합계
+                        차인지급액 = 수당 합계 - 공제 합계
+
                     </span>
                 </a-form-item>
             </a-col>
@@ -40,37 +48,33 @@
                     <a-typography-title :level="5" style="margin-bottom: 0;">급여 / 공제</a-typography-title>
                 </div>
             </a-col>
-            <a-col :span="12" style="padding-right: 5px;">
+
+            <a-col :span="12" style="padding-leftt: 5px;">
                 <div class="top-content">
                     <a-typography-title :level="5" style="margin-bottom: 0;">월급여 원</a-typography-title>
                 </div>
-                <a-form-item label="근무일수" style="display: flex;">
-                    <div class="input-text">
-                        <switch-basic v-model:valueSwitch="dataIncomeWage.employee.monthlyPaycheck" :textCheck="'일급'"
-                            :textUnCheck="'월급'" />
-                        <number-box-money v-if="dataIncomeWage.employee.monthlyPaycheck" width="150px" :required="true"
-                            placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWage.monthlyWage" />
-                        <number-box-money v-else width="150px" :required="true" placeholder='일급여' :spinButtons="false"
-                            v-model:valueInput="dataIncomeWage.dailyWage" />
+                <a-spin :spinning="loadingPayItem" size="large">
+                    <div class="deduction-main">
+                        <div v-for="(item, index) in arrPayItem" :key="index" class="custom-deduction">
+                            <span>
+                                <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                                    :name="item.name" :type="1" subName="과세" />
+                                <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                                    :name="item.name" :type="2" subName="상여(과세)" />
+                                <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                                    :name="item.name" :type="3"
+                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                                    :name="item.name" :type="4" subName="과세" />
+                            </span>
+                            <div>
+                                <number-box-money min="0" width="150px" :spinButtons="false"
+                                    v-model:valueInput="item.price" />
+                                <span class="pl-5">원</span>
+                            </div>
+                        </div>
                     </div>
-                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span v-if="dataIncomeWage.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 / 근무일수</span>
-                    <span v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
-                </a-form-item>
-                <a-form-item label="근무일수">
-                    <text-number-box width="150px" :required="true" v-model:valueInput="dataIncomeWage.workingDays"
-                        :min="1" :max="30" :spinButtons="true"></text-number-box>
-                </a-form-item>
-                <span v-if="dataIncomeWage.employee.monthlyPaycheck">일급여 {{
-                        dataIncomeWage.monthlyWage / dataIncomeWage.workingDays
-                }}원</span>
-                <span v-else>일급여 {{ dataIncomeWage.dailyWage }}원</span>
-                <br>
-                <span v-if="dataIncomeWage.employee.monthlyPaycheck">일급여 {{
-                        dataIncomeWage.monthlyWage
-                }}원</span>
-                <span v-else>일급여 {{ dataIncomeWage.dailyWage * dataIncomeWage.workingDays
-                }}원</span>
+                </a-spin>
             </a-col>
             <a-col :span="12" style="padding-leftt: 5px;">
                 <div class="top-content">
@@ -92,7 +96,7 @@
                             </span>
                             <div>
                                 <number-box-money min="0" width="150px" :spinButtons="false"
-                                    v-model:valueInput="item.price" :disabled="true" />
+                                    v-model:valueInput="item.price" />
                                 <span class="pl-5">원</span>
                             </div>
                         </div>
@@ -154,16 +158,32 @@ export default defineComponent({
             imputedYear: globalYear,
         })
         const arrDeduction: any = ref([])
+        const arrPayItem: any = ref([])
         const {
             loading: loadingDeductionItem,
-            onResult: resWithholdingConfigPayItems,
+            onResult: resWithholdingConfigDeduction,
         } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-        resWithholdingConfigPayItems(res => {
+        resWithholdingConfigDeduction(res => {
             res.data.getWithholdingConfigDeductionItems.map((val: any) => {
                 let price = funcCheckPrice(val.itemCode)
                 arrDeduction.value.push({
+                    ...val,
+                    price: price
+                })
+            })
+        })
+        const {
+            loading: loadingPayItem,
+            onResult: resWithholdingConfigPayItems,
+        } = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
+            fetchPolicy: "no-cache",
+        }))
+        resWithholdingConfigPayItems(res => {
+            res.data.getWithholdingConfigPayItems.map((val: any) => {
+                let price = funcCheckPrice(val.itemCode)
+                arrPayItem.value.push({
                     ...val,
                     price: price
                 })
@@ -207,8 +227,8 @@ export default defineComponent({
         }
         return {
             dataIncomeWage,
-            arrDeduction,
-            loadingDeductionItem,
+            arrDeduction, arrPayItem,
+            loadingDeductionItem, loadingPayItem,
             modalDeductions,
             modalInsurance, modalDeteleTaxpay
         };
