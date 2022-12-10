@@ -259,9 +259,10 @@
             </template>
             <DxColumn caption="지급일" data-field="paymentDay" />
             <DxSummary>
-              <DxTotalItem column="totalPay" summary-type="sum" />
-              <DxTotalItem column="totalDeduction" summary-type="sum" />
-              <DxTotalItem column="actualPayment" summary-type="sum" />
+              <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
+              <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}" />
+              <DxTotalItem column="totalDeduction" summary-type="sum" display-format="공제합계: {0}" />
+              <DxTotalItem column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" />
             </DxSummary>
           </DxDataGrid>
         </a-spin>
@@ -446,58 +447,58 @@ export default defineComponent({
         dataSource.value[0]['month' + val.imputedMonth] = val
         // data table detail
 
-        // dataCustomRes.value[0]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[1]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val.incomeStat.totalTaxPay),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[2]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val.incomeStat.totalTaxfreePay),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[3]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[4]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[5]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[6]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[7]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[8]['month' + val.imputedMonth] = {
+        dataCustomRes.value[0]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[1]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.totalTaxPay),
+          ...dataAdd
+        }
+        dataCustomRes.value[2]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.totalTaxfreePay),
+          ...dataAdd
+        }
+        dataCustomRes.value[3]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
+          ...dataAdd
+        }
+        dataCustomRes.value[4]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[5]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[6]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[7]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[8]['month' + val.imputedMonth] = {
 
-        //   value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[9]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
+          ...dataAdd
+        }
+        dataCustomRes.value[9]['month' + val.imputedMonth] = {
 
-        //   value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[10]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
+          ...dataAdd
+        }
+        dataCustomRes.value[10]['month' + val.imputedMonth] = {
 
-        //   value: filters.formatCurrency(val.incomeStat.totalDeduction),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[11]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.totalDeduction),
+          ...dataAdd
+        }
+        dataCustomRes.value[11]['month' + val.imputedMonth] = {
 
-        //   value: filters.formatCurrency(val.incomeStat.actualPayment),
-        //   ...dataAdd
-        // }
+          value: filters.formatCurrency(val.incomeStat.actualPayment),
+          ...dataAdd
+        }
 
       })
     })
