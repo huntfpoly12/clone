@@ -20,36 +20,38 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 
-import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 export default defineComponent({
     components: {
     },
     setup() {
         const store = useStore();
-        store.dispatch('auth/getUserInfor')
+        const router = useRouter()
+      
         const valueSelected = ref(0);
         const isSelected = ref(true);
-        const globalYear = computed(() => store.state.settings.globalYear);
+ ;
         const nextPage = () => {
             store.state.common.currentPagePA410 = 'PA410Page2';
             store.state.common.employeeIdPA410 = valueSelected.value;
+            // store.state.common.activeTab = { name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" }
+            // store.state.common.menuTab.push({ name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" })
+            // router.push("/dashboard/pa-520");
         }
         watch(valueSelected, (newValue) => {
             isSelected.value = newValue !== 0 ? false : true;
         })
-        store.dispatch('common/getListEmployee', {
-            companyId: companyId,
-            imputedYear: globalYear,
-        })
+   
         const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
         return {
             nextPage,
             arrayEmployeeSelect,
             valueSelected,
             isSelected
+
         }
     },
 })
