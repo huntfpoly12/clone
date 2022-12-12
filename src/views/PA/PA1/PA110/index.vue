@@ -363,7 +363,13 @@ export default defineComponent({
     const dataRows: any = ref([])
     const actionAddItem: any = ref<boolean>(true)
     const actionUpdateItem: any = ref<number>(0)
-
+    store.state.common.processKeyPA110 = {
+      imputedYear: globalYear,
+      imputedMonth: dayjs().month() + 1,
+      paymentYear: globalYear.value,
+      paymentMonth: dayjs().month() + 1,
+    }
+    const processKey = computed(() => store.state.common.processKeyPA510)
     let dataCustomRes: any = ref([])
     const dataIncomeWage: any = ref({ ...sampleDataIncomeWage })
 
@@ -381,22 +387,12 @@ export default defineComponent({
     })
     const originDataIncomeWage = ref({
       companyId: companyId,
-      processKey: {
-        imputedYear: 2022,
-        imputedMonth: 12,
-        paymentYear: 2022,
-        paymentMonth: 12,
-      },
-      incomeId: 66,
+      processKey: processKey.value,
+      incomeId: 0,
     })
     let originDataIncomeWages = reactive({
       companyId: companyId,
-      processKey: {
-        imputedYear: 2022,
-        imputedMonth: 10,
-        paymentYear: 2022,
-        paymentMonth: 10
-      }
+      processKey: processKey.value,
     })
 
     let popupData = ref([])
@@ -437,10 +433,9 @@ export default defineComponent({
     // ======================= WATCH ==================================
     // get data table detail getIncomeProcessWages
     resIncomeProcessWages(res => {
+      console.log('processKey.value', processKey.value)
       let respon = res.data.getIncomeProcessWages
-      imputedYear.value = respon[0].imputedYear
-      imputedMonth.value = respon[0].imputedMonth
-      status.value = respon[0].status
+
       dataSource.value = [{
         companyId: companyId,
       }]
@@ -471,58 +466,58 @@ export default defineComponent({
         dataSource.value[0]['month' + val.imputedMonth] = val
         // data table detail
 
-        // dataCustomRes.value[0]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[1]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val.incomeStat.totalTaxPay),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[2]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val.incomeStat.totalTaxfreePay),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[3]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[4]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[5]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[6]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[7]['month' + val.imputedMonth] = {
-        //   value: filters.formatCurrency(val),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[8]['month' + val.imputedMonth] = {
+        dataCustomRes.value[0]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[1]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.totalTaxPay),
+          ...dataAdd
+        }
+        dataCustomRes.value[2]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.totalTaxfreePay),
+          ...dataAdd
+        }
+        dataCustomRes.value[3]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
+          ...dataAdd
+        }
+        dataCustomRes.value[4]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[5]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[6]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[7]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val),
+          ...dataAdd
+        }
+        dataCustomRes.value[8]['month' + val.imputedMonth] = {
 
-        //   value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[9]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
+          ...dataAdd
+        }
+        dataCustomRes.value[9]['month' + val.imputedMonth] = {
 
-        //   value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[10]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
+          ...dataAdd
+        }
+        dataCustomRes.value[10]['month' + val.imputedMonth] = {
 
-        //   value: filters.formatCurrency(val.incomeStat.totalDeduction),
-        //   ...dataAdd
-        // }
-        // dataCustomRes.value[11]['month' + val.imputedMonth] = {
+          value: filters.formatCurrency(val.incomeStat.totalDeduction),
+          ...dataAdd
+        }
+        dataCustomRes.value[11]['month' + val.imputedMonth] = {
 
-        //   value: filters.formatCurrency(val.incomeStat.actualPayment),
-        //   ...dataAdd
-        // }
+          value: filters.formatCurrency(val.incomeStat.actualPayment),
+          ...dataAdd
+        }
 
       })
     })
@@ -531,7 +526,6 @@ export default defineComponent({
     watch(resultIncomeWage, (value) => {
       if (value) {
         dataIncomeWage.value = value.getIncomeWage
-        console.log('valuearra', value)
       }
     })
     watch(resultTaxPayInfo, (value) => {
@@ -571,10 +565,11 @@ export default defineComponent({
       dataRows.value = data.selectedRowsData
     }
     const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
-      // originDataIncomeWages.processKey.imputedMonth = imputedMonth
-      // originDataIncomeWages.processKey.imputedYear = imputedYear
-      // originDataIncomeWages.processKey.paymentYear = paymentYear
-      // originDataIncomeWages.processKey.paymentMonth = paymentMonth
+      status.value = status
+      store.state.common.processKeyPA110.paymentYear = paymentYear
+      store.state.common.processKeyPA110.paymentMonth = paymentMonth
+      store.state.common.processKeyPA110.imputedMonth = imputedMonth
+      store.state.common.processKeyPA110.imputedYear = imputedYear
     }
     return {
       loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
