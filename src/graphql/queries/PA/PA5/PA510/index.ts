@@ -5,7 +5,7 @@ import getIncomeWageDaily from "./getIncomeWageDaily";
 import getIncomeWageDailies from "./getIncomeWageDailies";
 import getWithholdingConfigDeductionItems from "./getWithholdingConfigDeductionItems";
 import getEmployeeWageDailies from "../PA520/getEmployeeWageDailies";
-import calculateIncomeWageTax from "../../PA1/PA110/calculateIncomeWageTax";
+import calculateIncomeWageTax from "@/graphql/queries/common/calculateIncomeWageTax";
 const queries = {
     getIncomeProcessWageDailies: getIncomeProcessWageDailies,
     getIncomeWageDailyPayrollRegisterViewUrl: getIncomeWageDailyPayrollRegisterViewUrl,

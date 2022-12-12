@@ -226,10 +226,10 @@ export default defineComponent({
     });
 
     const createNewEmployeeWage = (e: any) => {
-    //   var res = e.validationGroup.validate();
-    //   if (!res.isValid) {
-    //     res.brokenRules[0].validator.focus();
-    //   } else {
+      var res = e.validationGroup.validate();
+      if (!res.isValid) {
+        res.brokenRules[0].validator.focus();
+      } else {
         emit('employeeId', employeeId);
         let dataNew = {
           companyId: companyId,
@@ -239,7 +239,7 @@ export default defineComponent({
           },
         };
         createEmployeeWage(dataNew);
-    //   }
+      }
 
     };
 // compare data
