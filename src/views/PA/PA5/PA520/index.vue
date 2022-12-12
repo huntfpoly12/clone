@@ -208,7 +208,7 @@ export default defineComponent({
             }
         })
         // ======================= FUNCTION ================================
-        const openAddNewModal = () => { 
+        const openAddNewModal = () => {
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
         }
@@ -244,13 +244,14 @@ export default defineComponent({
             let indexActive = 0
             dataSource.value.map((val: any, index: any) => {
                 if (val.employeeId == id)
-                    indexActive = index 
-            })  
+                    indexActive = index
+            })
             //Add class row choose
             let a = document.body.querySelectorAll('[aria-rowindex]')
             a[indexActive].classList.add("active-row-key");
         }
 
+        
         return {
             actionChangeComponent,
             idRowEdit,
@@ -273,7 +274,7 @@ export default defineComponent({
             openAddNewModal,
             openEditModal,
             statusComfirm,
-            activeRowKey
+            activeRowKey, 
         }
     },
 })

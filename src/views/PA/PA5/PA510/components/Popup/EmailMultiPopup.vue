@@ -23,8 +23,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, computed } from 'vue'
 import notification from "@/utils/notification";
+import { useStore } from 'vuex'
 import { userId } from "@/helpers/commonFunction";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -44,6 +45,8 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const globalYear = computed(() => store.state.settings.globalYear)
         let emailAddress = ref('');
 
         const setModalVisible = () => {
@@ -80,7 +83,7 @@ export default defineComponent({
                 })
                 sendEmail({
                     companyId: companyId,
-                    imputedYear: 2022,
+                    imputedYear: globalYear.value,
                     incomeInputs: variables,
                 });
             }

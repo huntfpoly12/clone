@@ -30,7 +30,9 @@
                                 <div class="hover-underlined" v-if="data.data.month1"
                                     @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth)">
                                     <colorful-badge :value="data.data.month1.status"
-                                        :year="data.data.month1.imputedYear" :month="data.data.month1.imputedMonth" /> 
+                                        :year="data.data.month1.imputedYear" :month="data.data.month1.imputedMonth" />
+                                </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
                                 </div>
                             </template>
                             <DxColumn caption="2" width="100px" cell-template="month-2" />
@@ -40,6 +42,8 @@
                                     <colorful-badge :value="data.data.month2.status"
                                         :year="data.data.month2.imputedYear" :month="data.data.month2.imputedMonth" />
                                 </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
+                                </div>
                             </template>
                             <DxColumn caption="3" width="100px" cell-template="month-3" />
                             <template #month-3="{ data }">
@@ -47,6 +51,8 @@
                                     @click="showDetailSelected(data.data.month3.imputedMonth, data.data.month3.imputedYear, data.data.month3.paymentYear, data.data.month3.paymentMonth)">
                                     <colorful-badge :value="data.data.month3.status"
                                         :year="data.data.month3.imputedYear" :month="data.data.month3.imputedMonth" />
+                                </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
                                 </div>
                             </template>
                             <DxColumn caption="4" width="100px" cell-template="month-4" />
@@ -56,6 +62,8 @@
                                     <colorful-badge :value="data.data.month4.status"
                                         :year="data.data.month4.imputedYear" :month="data.data.month4.imputedMonth" />
                                 </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
+                                </div>
                             </template>
                             <DxColumn caption="5" width="100px" cell-template="month-5" />
                             <template #month-5="{ data }">
@@ -63,6 +71,8 @@
                                     @click="showDetailSelected(data.data.month5.imputedMonth, data.data.month5.imputedYear, data.data.month5.paymentYear, data.data.month5.paymentMonth)">
                                     <colorful-badge :value="data.data.month5.status"
                                         :year="data.data.month5.imputedYear" :month="data.data.month5.imputedMonth" />
+                                </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
                                 </div>
                             </template>
                             <DxColumn caption="6" width="100px" cell-template="month-6" />
@@ -72,6 +82,8 @@
                                     <colorful-badge :value="data.data.month6.status"
                                         :year="data.data.month6.imputedYear" :month="data.data.month6.imputedMonth" />
                                 </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
+                                </div>
                             </template>
                             <DxColumn caption="7" width="100px" cell-template="month-7" />
                             <template #month-7="{ data }">
@@ -79,6 +91,8 @@
                                     @click="showDetailSelected(data.data.month7.imputedMonth, data.data.month7.imputedYear, data.data.month7.paymentYear, data.data.month7.paymentMonth)">
                                     <colorful-badge :value="data.data.month7.status"
                                         :year="data.data.month7.imputedYear" :month="data.data.month7.imputedMonth" />
+                                </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
                                 </div>
                             </template>
                             <DxColumn caption="8" width="100px" cell-template="month-8" />
@@ -88,6 +102,8 @@
                                     <colorful-badge :value="data.data.month8.status"
                                         :year="data.data.month8.imputedYear" :month="data.data.month8.imputedMonth" />
                                 </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
+                                </div>
                             </template>
                             <DxColumn caption="9" width="100px" cell-template="month-9" />
                             <template #month-9="{ data }">
@@ -95,6 +111,8 @@
                                     @click="showDetailSelected(data.data.month9.imputedMonth, data.data.month9.imputedYear, data.data.month9.paymentYear, data.data.month9.paymentMonth)">
                                     <colorful-badge :value="data.data.month9.status"
                                         :year="data.data.month9.imputedYear" :month="data.data.month9.imputedMonth" />
+                                </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(9)"> [+]
                                 </div>
                             </template>
                             <DxColumn caption="10" width="100px" cell-template="month-10" />
@@ -104,6 +122,8 @@
                                     <colorful-badge :value="data.data.month10.status"
                                         :year="data.data.month10.imputedYear" :month="data.data.month10.imputedMonth" />
                                 </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
+                                </div>
                             </template>
                             <DxColumn caption="11" width="100px" cell-template="month-11" />
                             <template #month-11="{ data }">
@@ -111,6 +131,8 @@
                                     @click="showDetailSelected(data.data.month11.imputedMonth, data.data.month11.imputedYear, data.data.month11.paymentYear, data.data.month11.paymentMonth)">
                                     <colorful-badge :value="data.data.month11.status"
                                         :year="data.data.month11.imputedYear" :month="data.data.month11.imputedMonth" />
+                                </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(11)"> [+]
                                 </div>
                             </template>
                             <DxColumn caption="12" width="100px" cell-template="month-12" />
@@ -120,10 +142,8 @@
                                     <colorful-badge :value="data.data.month12.status"
                                         :year="data.data.month12.imputedYear" :month="data.data.month12.imputedMonth" />
                                 </div>
-                            </template>
-                            <DxColumn width="100px" cell-template="open-modal" />
-                            <template #open-modal="{ data }">
-                                <div style="width: 100%;text-align: center;"> [+] </div>
+                                <div v-else style="width: 100%;text-align: center;" @click="addMonth(12)"> [+]
+                                </div>
                             </template>
                             <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
                             <template #detailRow="{ data }">
@@ -215,9 +235,6 @@
                                                 {{ data.data.month12.value }}
                                             </div>
                                         </template>
-                                        <DxColumn width="100px" cell-template="open-modal" />
-                                        <template #open-modal="{ data }">
-                                        </template>
                                     </DxDataGrid>
                                 </div>
                             </template>
@@ -227,6 +244,8 @@
 
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
+
+                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" />
             </a-row>
         </div>
     </div>
@@ -243,15 +262,18 @@ import { origindata } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import HistoryPopup from '@/components/HistoryPopup.vue';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import filters from "@/helpers/filters";
 import ComponentDetail from "./components/ComponentDetail.vue";
+import CopyMonth from "./components/CopyMonth.vue";
+
+
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
         EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
         MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined,
-        HistoryPopup, ComponentDetail
+        HistoryPopup, ComponentDetail, CopyMonth
     },
     setup() {
         let statusButton = ref()
@@ -264,6 +286,7 @@ export default defineComponent({
         const rowTable = ref(0);
         const originData = reactive({ ...origindata, rows: per_page });
         const trigger = ref<boolean>(true);
+        const modalCopy = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear)
         const valueCallApiGetIncomeProcessBusinesses = reactive({
             companyId: companyId,
@@ -332,8 +355,6 @@ export default defineComponent({
                 },
             ]
 
-            let value1 = 0
-
             respon.map((val: any) => {
                 // data table minify
                 let dataAdd = {
@@ -348,28 +369,28 @@ export default defineComponent({
                 // data table detail
                 dataCustomRes.value[0]['month' + val.imputedMonth] =
                 {
-                    value: filters.formatCurrency(val.employeeStat.employeeCount),
+                    value: filters.formatCurrency(val.employeeStat?.employeeCount),
                     ...dataAdd
                 }
                 dataCustomRes.value[1]['month' + val.imputedMonth] =
                 {
-                    value: filters.formatCurrency(val.incomeStat.incomePayment),
+                    value: filters.formatCurrency(val.incomeStat?.incomePayment),
                     ...dataAdd
                 }
                 dataCustomRes.value[2]['month' + val.imputedMonth] = {
-                    value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
+                    value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
                     ...dataAdd
                 }
                 dataCustomRes.value[3]['month' + val.imputedMonth] = {
-                    value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
+                    value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
                     ...dataAdd
                 }
                 dataCustomRes.value[4]['month' + val.imputedMonth] = {
-                    value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax + val.incomeStat.withholdingLocalIncomeTax),
+                    value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax + val.incomeStat?.withholdingLocalIncomeTax),
                     ...dataAdd
                 }
                 dataCustomRes.value[5]['month' + val.imputedMonth] = {
-                    value: filters.formatCurrency(val.incomeStat.actualPayment),
+                    value: filters.formatCurrency(val.incomeStat?.actualPayment),
                     ...dataAdd
                 }
 
@@ -380,16 +401,12 @@ export default defineComponent({
                     dataCallTableSmall.processKey.paymentYear = val.paymentYear
                     statusButton.value = val.status
                 }
+            })
 
-            }) 
-            
         })
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
         })
-
-        // ================WATCHING============================================
-
 
         // ================FUNCTION============================================   
         const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
@@ -408,8 +425,17 @@ export default defineComponent({
             refetchData()
         }
 
+
+        const addMonth = (month: number) => {
+            modalCopy.value = true
+        }
+
+
+        const actionCopySuccess = () => {
+            modalCopy.value = false
+        }
         return {
-            createdDone,
+            modalCopy,
             actionSave,
             statusButton,
             valueCallApiGetEmployeeBusiness,
@@ -420,8 +446,11 @@ export default defineComponent({
             dataSource,
             per_page, move_column, colomn_resize,
             originData,
+            createdDone,
+            addMonth,
             saving,
             showDetailSelected,
+            actionCopySuccess
         };
     },
 });

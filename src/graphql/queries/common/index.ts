@@ -4,6 +4,7 @@ import getListPartner from "./getListPartner";
 import isUserRegistable from "./isUserRegistable";
 import getCompanyLogs from "./getCompanyLogs";
 import getUserLogs from "./getUserLogs";
+import getUser from "./getUser";
 import getIncomeWagesLogs from "./getIncomeWagesLogs";
 import getSalesRepresentativeLogs from "./getSalesRepresentativeLogs";
 import getServiceContractLogs from "./getServiceContractLogs";
@@ -24,7 +25,9 @@ import getIncomeWageDailiesLogs from "./getIncomeWageDailiesLogs";
 import getIncomeProcessWageDailyLogs from "./getIncomeProcessWageDailyLogs";
 import getIncomeBusinessesLogs from "./getIncomeBusinessesLogs";
 import getIncomeProcessBusinessLogs from "./getIncomeProcessBusinessLogs";
+import getIncomeProcessWageLogs from "./getIncomeProcessWageLogs";
 const queries = {
+  getUser: getUser,
   getListSale: getListSale,
   getUserLogs: getUserLogs,
   getIncomeWagesLogs: getIncomeWagesLogs,
@@ -46,9 +49,11 @@ const queries = {
   getResponsibilities: getResponsibilities,
   getDepartments: getDepartments,
   getEmployeeWagesLogs: getEmployeeWagesLogs,
-  getWithholdingConfigDeductionItemsLogs: getWithholdingConfigDeductionItemsLogs,
+  getWithholdingConfigDeductionItemsLogs:
+    getWithholdingConfigDeductionItemsLogs,
   getIncomeWageDailiesLogs: getIncomeWageDailiesLogs,
   getIncomeProcessWageDailyLogs: getIncomeProcessWageDailyLogs,
+  getIncomeProcessWageLogs: getIncomeProcessWageLogs,
 
   getIncomeBusinessesLogs: getIncomeBusinessesLogs,
   getIncomeProcessBusinessLogs: getIncomeProcessBusinessLogs,

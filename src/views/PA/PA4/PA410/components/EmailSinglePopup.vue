@@ -6,6 +6,7 @@
                 <img src="@/assets/images/email.svg" alt="" />
                 <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
                 <span>로 메일을 발송하시겠습니까?</span>
+                {{empployeeDetail}}
             </div>
             <div class="text-align-center mt-50">
                 <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
@@ -18,10 +19,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
-import notification from "../../../../../utils/notification";
+import { defineComponent, watch, ref, reactive } from 'vue'
+import { useStore } from 'vuex';
+import { companyId } from "@/helpers/commonFunction"
+import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "../../../../../graphql/mutations/PA/PA6/PA630/index"
+import mutations from "@/graphql/mutations/PA/PA4/PA410/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -36,6 +39,13 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
+        const store = useStore();
+        const userInfor = reactive(store.state.auth.userInfor)
+        const empployeeDetail = reactive(
+            store.state.common.arrayEmployeePA410.filter(function(item : any) { 
+                return item.employeeId ==  store.state.common.employeeIdPA410; 
+            })
+        )
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
             emailAddress.value = val?.employeeInputs.receiverAddress
@@ -49,15 +59,24 @@ export default defineComponent({
             onDone: onDoneAdd,
             onError: errorSendEmail,
             error,
-        } = useMutation(mutations.sendIncomeBusinessWithholdingReceiptReportEmail);
+        } = useMutation(mutations.sendCalculateIncomeRetirementEmail);
+
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let variables = props.data
-                variables.employeeInputs.receiverAddress = emailAddress.value
-                sendEmail(variables);
+                let variables = {
+                    companyId: companyId,
+                    input: props.data,
+                    emailInput: {
+                        senderName: userInfor.username,
+                        receiverName: empployeeDetail.name,
+                        receiverAddress: empployeeDetail
+                    }
+                }
+                // variables.employeeInputs.receiverAddress = emailAddress.value
+                // sendEmail(variables);
             }
         };
         onDoneAdd(() => {
@@ -75,6 +94,8 @@ export default defineComponent({
             setModalVisible,
             onSubmit,
             emailAddress,
+            empployeeDetail,
+            userInfor
         }
     },
 })
