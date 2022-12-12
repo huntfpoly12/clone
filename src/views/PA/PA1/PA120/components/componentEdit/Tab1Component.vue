@@ -4,7 +4,7 @@
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <text-number-box width="200px" :required="true" v-model:valueInput="formStateTab1.employeeId"
-            placeholder="숫자만 입력 가능" />
+            placeholder="숫자만 입력 가능" :disabled="true"/>
         </a-form-item>
 
         <a-form-item label="영업자코드" label-align="right">
@@ -103,7 +103,6 @@ import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
 import {
   radioCheckForeigner,
-  radioCheckHouseholder,
   initFormStateTab1,
 } from "../../utils/index";
 import { companyId } from "@/helpers/commonFunction";
@@ -266,8 +265,8 @@ export default defineComponent({
           formStateTab1.addressExtend = value.getEmployeeWage.addressExtend
           formStateTab1.email = value.getEmployeeWage.email
           formStateTab1.employeeId = value.getEmployeeWage.employeeId
-          formStateTab1.joinedAt = value.getEmployeeWage.joinedAt ? dayjs(value.getEmployeeWage.joinedAt.toString()).format('YYYY-MM-DD') : ''
-          formStateTab1.leavedAt = value.getEmployeeWage.leavedAt ? dayjs(value.getEmployeeWage.leavedAt.toString()).format('YYYY-MM-DD') : ''
+          formStateTab1.joinedAt = value.getEmployeeWage.joinedAt ? dayjs(value.getEmployeeWage.joinedAt).format('YYYY-MM-DD') : ''
+          formStateTab1.leavedAt = value.getEmployeeWage.leavedAt ? dayjs(value.getEmployeeWage.leavedAt).format('YYYY-MM-DD') : ''
           formStateTab1.retirementIncome = value.getEmployeeWage.retirementIncome
           formStateTab1.weeklyWorkingHours = value.getEmployeeWage.weeklyWorkingHours
           formStateTab1.department = value.getEmployeeWage.department
@@ -286,7 +285,7 @@ export default defineComponent({
       notification('error', e.message)
     })
     onDone(res => {
-      emit('closePopup', false)
+      store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList
       notification('success', '업데이트 완료!')
     })
 
@@ -298,10 +297,9 @@ export default defineComponent({
     })
  
     //Compare the data after editing, if there is a difference, add it to the array arrEdit
-    watch(()=> JSON.parse(JSON.stringify(formStateTab1)),(newValue)=>{
-      console.log(newValue);
-      
-      if(JSON.stringify(oldFormStateTab1) !==  JSON.stringify(newValue)){
+    watch(() => JSON.parse(JSON.stringify(formStateTab1)), (newValue) => {   
+      if (JSON.stringify(oldFormStateTab1) !== JSON.stringify(newValue)) {
+        
         arrDataEdit = arrDataEdit.filter(function(item) { 
           return item.employeeId !== newValue.employeeId; 
         });
@@ -313,7 +311,6 @@ export default defineComponent({
         })
         arrEmployeeRowEdited.push(newValue.employeeId)
         store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited
-        
       }
     },{deep:true})
 

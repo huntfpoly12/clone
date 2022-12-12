@@ -88,9 +88,9 @@
                   :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money v-if="item.tax == true" width="130px" :spinButtons="false" :rtlEnabled="true"  v-model:valueInput="amountTaxFree[index]">
+                <number-box-money v-if="item.tax == true" width="130px" :spinButtons="false" :rtlEnabled="true"  v-model:valueInput="amountTaxFree[index]" :min="0">
                 </number-box-money>
-                <number-box-money v-if="(item.tax == false)" width="130px" :spinButtons="false" :rtlEnabled="true"  v-model:valueInput="amountTax[index]">
+                <number-box-money v-if="(item.tax == false)" width="130px" :spinButtons="false" :rtlEnabled="true"  v-model:valueInput="amountTax[index]" :min="0">
                 </number-box-money>
                 <span class="pl-5">원</span>
               </div>
@@ -114,7 +114,7 @@
                   :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="amountDeduction[index]">
+                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="amountDeduction[index]" :min="0">
                 </number-box-money>
                 <span class="pl-5">원</span>
               </div>
@@ -136,7 +136,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, watch, computed } from "vue";
 
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import {
   radioCheckPersenPension,
   radioCheckReductioRate,
@@ -148,7 +148,6 @@ import dayjs from 'dayjs';
 import { useStore } from "vuex";
 
 import { companyId } from "@/helpers/commonFunction";
-import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 export default defineComponent({
   components: {

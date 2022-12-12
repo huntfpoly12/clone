@@ -87,8 +87,8 @@
             </a-col>
             <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
                 <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
-                    @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" :key="addComponentKey" />
-                <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
+                     v-if="actionChangeComponent == 1" :key="addComponentKey" />
+                <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
                     v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit"/>
             </a-col>
         </a-row>
@@ -199,11 +199,10 @@ export default defineComponent({
             idRowEdit.value = data.data.employeeId
             modalEditStatus.value = true
         }
-        const eventCLoseAddPopup = () => {
+        watch(()=> store.state.common.reloadEmployeeList,() => {
             trigger.value = true
             refetchData()
-
-        }
+        })
         const modalHistory = () => {
             modalHistoryStatus.value = true;
         }
@@ -269,7 +268,7 @@ export default defineComponent({
             totalUserOnl,
             totalUserOff,
             modalHistoryStatus,
-            openAddNewModal, eventCLoseAddPopup,
+            openAddNewModal,
             modalAddNewStatus, statusComfirm,
             per_page, move_column, colomn_resize,
             addComponentKey,

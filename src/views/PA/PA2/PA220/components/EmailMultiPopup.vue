@@ -24,9 +24,9 @@
 
 <script lang="ts">
 import { defineComponent, watch, ref } from 'vue'
-import notification from "../../../../../utils/notification";
+import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "../../../../../graphql/mutations/PA/PA6/PA630/index"
+import mutations from "@/graphql/mutations/PA/PA6/PA630/index"
 export default defineComponent({
     props: {
         modalStatus: {
