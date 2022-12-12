@@ -1,0 +1,183 @@
+#pa-620 {
+    margin-top: 10px;
+
+
+
+    .total-user {
+        background-color: #17375E;
+        color: white;
+        display: flex;
+        align-items: center;
+
+        >div {
+            font-size: 16px;
+            width: 50%;
+            text-align: center;
+            line-height: 16px;
+
+            .dx-icon-user {
+                font-size: 55px;
+            }
+        }
+    }
+
+    .ant-form-item {
+        margin-bottom: 10px;
+    }
+
+    ::v-deep .custom-layout {
+        padding: 10px 10px 10px 0;
+
+        >div {
+            border: 1px solid #d7d7d7;
+            padding: 10px;
+            min-height: 300px;
+        }
+    }
+
+    ::v-deep .custom-layout:last-child {
+        padding-right: 0px;
+    }
+
+    .custom-note {
+        >span {
+            font-size: 11px;
+            color: #666666;
+            padding-left: 5px;
+        }
+    }
+
+    ::v-deep .active-row-key {
+        background-color: #337AB7;
+        color: white;
+    }
+
+
+    // ::v-deep .table-detail .dx-datagrid-headers {
+    //     display: none;
+    // }
+
+    ::v-deep .dx-master-detail-cell {
+        padding: 0px;
+    }
+
+    .header-detail-main {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .table-detail-left {
+            >div {
+                margin-right: 5px;
+            }
+
+            .text-box-1 {
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white;
+                background-color: gray;
+            }
+
+            .text-box-2 {
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white;
+                background-color: black;
+            }
+        }
+
+        .table-detail-right {
+            >div {
+                margin-left: 5px;
+            }
+        }
+
+    }
+
+    .hover-underlined:hover {
+        text-decoration: underline;
+    }
+
+    ::v-deep .form-action {
+        label {
+            width: 120px;
+        }
+    }
+
+    .header-text-1 {
+        background-color: #558ED5;
+        font-size: 18px;
+        padding: 3px 0 3px 10px;
+        color: white;
+    }
+
+    .header-text-2 {
+        background-color: #C6D9F1;
+        font-size: 14px;
+        padding: 3px 0 3px 10px;
+        color: black;
+        line-height: 28px;
+    }
+
+    ::v-deep .month-custom-1 {
+        background-color: #A6A6A6;
+        padding-left: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+
+        .dp__input {
+            color: white;
+            padding: 0px;
+            border: none;
+            height: 30px;
+            background-color: #A6A6A6;
+        }
+
+        .dp__icon {
+            display: none;
+        }
+    }
+
+    ::v-deep .month-custom-2 {
+        background-color: black;
+        padding-left: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+
+        .dp__input {
+            color: white;
+            padding: 0px;
+            border: none;
+            height: 30px;
+            background-color: black;
+        }
+
+        .dp__icon {
+            display: none;
+        }
+    }
+
+
+}
+
+.button-open-tab {
+    height: 100%;
+    padding-bottom: 7px;
+    width: 100px;
+}
+
+.custom-select-tab {
+    color: white;
+    background-color: blue;
+    font-size: 10px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+::v-deep .dx-datagrid-text-content {
+    white-space: pre-wrap;
+}
