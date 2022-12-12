@@ -6,7 +6,6 @@
                 <img src="@/assets/images/email.svg" alt="" />
                 <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
                 <span>로 메일을 발송하시겠습니까?</span>
-                {{empployeeDetail}}
             </div>
             <div class="text-align-center mt-50">
                 <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
@@ -46,11 +45,7 @@ export default defineComponent({
                 return item.employeeId ==  store.state.common.employeeIdPA410; 
             })
         )
-        let emailAddress = ref('');
-        watch(() => props.data, (val) => {
-            emailAddress.value = val?.employeeInputs.receiverAddress
-        });
-
+        let emailAddress = ref(empployeeDetail[0].email);
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -71,12 +66,12 @@ export default defineComponent({
                     input: props.data,
                     emailInput: {
                         senderName: userInfor.username,
-                        receiverName: empployeeDetail.name,
-                        receiverAddress: empployeeDetail
+                        receiverName: empployeeDetail[0].name,
+                        receiverAddress: empployeeDetail[0].email
                     }
                 }
                 // variables.employeeInputs.receiverAddress = emailAddress.value
-                // sendEmail(variables);
+                sendEmail(variables);
             }
         };
         onDoneAdd(() => {
