@@ -4,7 +4,7 @@
             :mask-closable="false">
             <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
             loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
-            loadingPA120 || loadingPA110 || loadingCMDeduction130">
+            loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -78,6 +78,7 @@ export default defineComponent({
         let trigger130 = ref<boolean>(false);
         let triggerDeduction130 = ref<boolean>(false);
         let trigger110 = ref<boolean>(false);
+        let triggerStatus110 = ref<boolean>(false);
         let triggerPA110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
         let trigger610 = ref<boolean>(false);
@@ -181,16 +182,29 @@ export default defineComponent({
                             break;
                         case 'pa-110':
                             dataQuery.value = {
-                                companyId: props.historyData.companyId,
+                                companyId: companyId,
                                 processKey: {
-                                    imputedYear: props.historyData.imputedYear,
-                                    imputedMonth: props.historyData.imputedMonth,
-                                    paymentYear: props.historyData.paymentYear,
-                                    paymentMonth: props.historyData.paymentMonth,
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
                                 },
                             };
                             triggerPA110.value = true;
                             refetchPA110();
+                            break;
+                        case 'pa-status-110':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            triggerStatus110.value = true;
+                            refetchStatusPA110();
                             break;
                         case 'pa-520':
                             dataQuery.value = {
@@ -238,8 +252,8 @@ export default defineComponent({
                                     paymentMonth: props.data.paymentMonth,
                                 },
                             };
-                            if (dataQuery.value.companyId) 
-                                refetchPA620(); 
+                            if (dataQuery.value.companyId)
+                                refetchPA620();
                             break;
                         case 'pa-620-status':
                             triggerStatus620.value = true;
@@ -266,6 +280,7 @@ export default defineComponent({
                     trigger130.value = false;
                     triggerDeduction130.value = false;
                     trigger110.value = false;
+                    triggerStatus110.value = false;
                     triggerPA110.value = false;
                     trigger220.value = false;
                     trigger610.value = false;
@@ -525,20 +540,35 @@ export default defineComponent({
                 dataTableShow.value = value.getEmployeeWagesLogs;
             }
         });
-        // get getEmployeeWagesLogs pa-120
+        // get getIncomeWageLogs pa-110
         const { result: resultPA110, loading: loadingPA110, refetch: refetchPA110 } = useQuery(
-            queries.getEmployeeWagesLogs,
+            queries.getIncomeWagesLogs,
             dataQuery,
             () => ({
-                enabled: trigger120.value,
+                enabled: triggerPA110.value,
                 fetchPolicy: "no-cache",
             })
         );
-        watch(resultPA120, (value) => {
-            if (value && value.getEmployeeWagesLogs) {
-                dataTableShow.value = value.getEmployeeWagesLogs;
+        watch(resultPA110, (value) => {
+            if (value && value.getIncomeWagesLogs) {
+                dataTableShow.value = value.getIncomeWagesLogs;
             }
         });
+        // get getIncomeProcessWagesLogs pa-110
+        const { result: resultStatusPA110, loading: loadingStatusPA110, refetch: refetchStatusPA110 } = useQuery(
+            queries.getIncomeProcessWageLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerStatus110.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultStatusPA110, (value) => {
+            if (value && value.getIncomeProcessWageLogs) {
+                dataTableShow.value = value.getIncomeProcessWageLogs;
+            }
+        });
+
 
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
@@ -568,6 +598,7 @@ export default defineComponent({
             loadingPA620,
             loadingStatusPA620,
             loadingPA110,
+            loadingStatusPA110,
             loadingPA120,
             formarDate,
             dataQuery,

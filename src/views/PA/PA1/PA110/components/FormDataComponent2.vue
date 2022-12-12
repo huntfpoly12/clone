@@ -249,13 +249,12 @@ export default defineComponent({
                 paymentYear: 2022,
                 paymentMonth: 10
             },
-            incomeId: props.dataIncomeWage.incomeId,
+            incomeId: 0,
         }, () => ({
             fetchPolicy: "no-cache",
             enabled: triggerDetail.value,
         }))
         watch(result, (value) => {
-            console.log('value', value.getIncomeWage)
             if (value) {
                 formState1.workingDays = value.getIncomeWage.workingDays;
                 formState1.totalWorkingHours = value.getIncomeWage.totalWorkingHours;
