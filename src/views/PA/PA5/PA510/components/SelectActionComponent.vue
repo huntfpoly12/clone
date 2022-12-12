@@ -59,7 +59,7 @@ import EmailSinglePayrollRegisterPopup from "./Popup/EmailSinglePayrollRegisterP
 import EmailMultiPopup from "./Popup/EmailMultiPopup.vue"
 import EmailSinglePopup from "./Popup/EmailSinglePopup.vue"
 import { HistoryOutlined } from "@ant-design/icons-vue"
-import { companyId } from "@/helpers/commonFunction"
+import { companyId, openTab } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA5/PA510/index";
@@ -147,7 +147,7 @@ export default defineComponent({
             { id: 3, img: 'group_email.png', event: 'EmailMultiSalaryStatement' },
         ];
         const arrDropDown = [
-            { id: 1, url: '520', event: '520', title: '' },
+            { id: 1, url: '520', event: 'open-tab-520', title: '' },
             { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
             { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
         ]
@@ -201,6 +201,9 @@ export default defineComponent({
                 case 'HistoryStatus':
                     modalHistoryStatus.value = true;
                     popupDataHistoryStatus.value = {...processKey.value}
+                    break;
+                case 'open-tab-520':
+                    openTab({ name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" })
                     break;
             }
         }

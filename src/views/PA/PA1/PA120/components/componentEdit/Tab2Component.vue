@@ -89,7 +89,7 @@
                   :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money  width="130px" :spinButtons="false" :rtlEnabled="true"  v-model:valueInput="item.value">
+                <number-box-money  width="130px" :spinButtons="false" :rtlEnabled="true"  v-model:valueInput="item.value" :min="0">
                 </number-box-money>
                 <span class="pl-5">원</span>
               </div>
@@ -99,7 +99,7 @@
       </a-col>
       <a-col :span="8">
         <div class="header-text-2">공제 항목 {{$filters.formatCurrency(totalDeduction)}}원 </div>
-        <a-spin :spinning="loading1" size="large">
+        <a-spin :spinning="loading1 || loading3" size="large">
           <div class="deduction-main">
             <div v-for="(item) in dataConfigDeduction" :key="item.name" class="custom-deduction">
               <span>
@@ -113,7 +113,7 @@
                   :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :readOnly="true">
+                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :readOnly="true" :min="0">
                 </number-box-money>
                 <span class="pl-5">원</span>
               </div>
@@ -133,7 +133,7 @@
 
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed ,onMounted} from "vue";
+import { defineComponent, reactive, ref, watch, computed } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   radioCheckPersenPension,
@@ -169,7 +169,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const employeeId =  ref(props.idRowEdit);
-
     watch(
       () => props.idRowEdit,
         (newValue) => {
@@ -179,7 +178,7 @@ export default defineComponent({
     const totalPayItemTaxFree = ref(0);
     const totalPayItemTax = ref(0);
     const totalPayItem = ref(0);
-
+    const dependentCount = ref(0);
     const totalDeduction=  ref(0);
     const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
 
@@ -188,6 +187,7 @@ export default defineComponent({
     const datagConfigPayItems = ref();
     const dataConfigDeduction = ref();
     const triggerDetail = ref<boolean>(false);
+    const triggerCalcIncome = ref<boolean>(false);
     const globalYear = computed(() => store.state.settings.globalYear);
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,
@@ -195,7 +195,12 @@ export default defineComponent({
       employeementReductionFinishDate: dayjs().format("YYYY-MM-DD")
       
     });
-
+    const calculateVariables = {
+        companyId: companyId,
+        imputedYear: globalYear.value,
+        totalTaxPay: totalPayItem.value,
+        dependentCount: 1
+    }
     // get WithholdingConfigPayItems
     const originDataDetail = ref({
       companyId: companyId,
@@ -203,7 +208,6 @@ export default defineComponent({
     })
  
     watch(()=>props.idRowEdit,()=>{
-
       refetchConfigPayItems()
       refetchConfigDeduction()
     })
@@ -252,7 +256,9 @@ export default defineComponent({
           });
       }
     });
-
+    /**
+     * get Employee Wage
+     */
     const {
       refetch: refetchValueDetail,
       result,
@@ -295,13 +301,23 @@ export default defineComponent({
         })
         let ReductionStartDate = value.getEmployeeWage.employeementReductionStartDate != null ? dayjs(value.getEmployeeWage.employeementReductionStartDate) : dayjs();
         let ReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate != null ? dayjs(value.getEmployeeWage.employeementReductionFinishDate) : dayjs();
-        rangeDate.value = [ReductionStartDate,ReductionFinishDate]
+        rangeDate.value = [ReductionStartDate, ReductionFinishDate]
+        dependentCount.value = value.getEmployeeWage.dependents.length > 0 ? value.getEmployeeWage.dependents.length : 0;
         calculateTax();
       }
     })
 
-    //  Calculate Pension Employee 
-    const calculateTax = ()=>{
+    /**
+     * Calculate Pension Employee 
+     * */  
+    const calculateTax = () => {
+      triggerCalcIncome.value = true;
+      refetchCalcIncomeWageTax({
+        companyId: companyId,
+        imputedYear: globalYear.value,
+        totalTaxPay: totalPayItem.value,
+        dependentCount: dependentCount.value
+      })
 			dataConfigDeduction.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
           let total1 = formStateTab2.nationalPensionDeduction ? calculateNationalPensionEmployee(totalPayItem.value, formStateTab2.nationalPensionSupportPercent) : 0
@@ -362,7 +378,42 @@ export default defineComponent({
         }, 0);
     }
 
-    // Save form 
+    /**
+     * Calculate Income Wage Tax API
+     */
+    const {
+      result : resCalcIncomeWageTax,
+      loading : loading3,
+      refetch : refetchCalcIncomeWageTax,
+      onError : onIncomeWageTaxError
+    } = useQuery(queries.calculateIncomeWageTax, calculateVariables, () => ({
+            enabled: triggerCalcIncome.value,
+            fetchPolicy: "no-cache",
+        }))
+    onIncomeWageTaxError(e => {
+            notification('error', e.message)
+    })
+      
+    watch(resCalcIncomeWageTax, (value) => {
+        if (value) {
+          dataConfigDeduction.value?.map((item: any) => {
+            if (item.itemCode == 1011) {
+              item.value = value.calculateIncomeWageTax
+              formStateTab2.deductionItems[4] = {
+                itemCode: 1001,
+                amount: value.calculateIncomeWageTax
+              }
+            }
+
+          })
+        }
+
+      }
+    )
+
+    /**
+     *  Save form 
+     */
     const {
 			mutate,
 			onError,
@@ -397,7 +448,7 @@ export default defineComponent({
       totalPayItem,totalPayItemTaxFree,totalPayItemTax,
       totalDeduction,
       subPayment,
-      calculateTax,
+      calculateTax,loading3,
       updateDeduction,
       radioCheckPersenPension,
       radioCheckReductioRate,

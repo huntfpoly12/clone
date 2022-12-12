@@ -20,27 +20,19 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
-import { companyId,openTab } from "@/helpers/commonFunction";
+import { defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import dayjs from 'dayjs';
+
 export default defineComponent({
     components: {
     },
     setup() {
         const store = useStore();
-        const router = useRouter()
         const valueSelected = ref(0);
         const isSelected = ref(true);
- ;
         const nextPage = () => {
-            // store.state.common.currentPagePA410 = 'PA410Page2';
-            // store.state.common.employeeIdPA410 = valueSelected.value;
-            openTab({ name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" })
-            // store.state.common.activeTab = { name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" }
-            // store.state.common.menuTab.push({ name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" })
-            // router.push("/dashboard/pa-520");
+            store.state.common.currentPagePA410 = 'PA410Page2';
+            store.state.common.employeeIdPA410 = valueSelected.value;
         }
         watch(valueSelected, (newValue) => {
             isSelected.value = newValue !== 0 ? false : true;
@@ -52,7 +44,6 @@ export default defineComponent({
             arrayEmployeeSelect,
             valueSelected,
             isSelected
-
         }
     },
 })

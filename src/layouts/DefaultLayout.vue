@@ -88,7 +88,9 @@
           >
             <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
               <template #icon>
-                <MailOutlined />
+                <div id="icon-menu">
+                  <i :class="iconClass(menuItem.id)" class="dx-icon"></i>
+                </div>
               </template>
               <template #title>{{ menuItem.title }}</template>
               <a-sub-menu
@@ -135,7 +137,7 @@
     </a-layout-content>
   </a-layout>
 </template>
-<script>
+<script >
 import { defineComponent, ref, watch, computed } from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
@@ -321,8 +323,7 @@ export default defineComponent({
       immediate: true,
     },
   },
-  computed: {
-    
+  computed: { 
     username() {
       if (sessionStorage.getItem("username")) {
         return sessionStorage.getItem("username");
@@ -332,7 +333,6 @@ export default defineComponent({
     },
 
     currentComponent() {
-      if (this.activeTab.id === "") return Example;
       if (this.activeTab.id === "bf-310") return BF310;
       if (this.activeTab.id === "bf-320") return BF320;
       if (this.activeTab.id === "bf-330") return BF330;
@@ -357,7 +357,7 @@ export default defineComponent({
       if (this.activeTab.id === "pa-710") return PA710;
       if (this.activeTab.id === "pa-720") return PA720;
       if (this.activeTab.id === "pa-730") return PA730;
-      if (this.activeTab.id === "example") return Example;
+      if (this.activeTab.id === "example" || this.activeTab.id === "") return Example;
       return Test;
     },
   },
@@ -427,8 +427,7 @@ export default defineComponent({
       this.state = false;
     }
 
-    watch(()=>store.state.common.activeTab, (newValue)=>{
-      
+    watch(()=>store.state.common.activeTab, (newValue)=>{     
         activeTab.value = newValue;
     },{deep:true})
     const onOpenChange  = (openKeys)=>{
@@ -449,7 +448,34 @@ export default defineComponent({
       //   this.openKeys = latestOpenKey ? [latestOpenKey] : [];
       // }
     }
+
+    /**
+     * List icon in sidebar menu
+     * @param {*} id 
+     */
+    const iconClass = (id) => {
+      let classIcon = ''
+      switch (id) {
+        case 'bf-000':
+          classIcon = "dx-icon-card";
+          break;
+        case 'cm-000':
+          classIcon = "dx-icon-inactivefolder";
+          break;
+        case 'ac-000':
+          classIcon = "dx-icon-columnchooser";
+          break;
+        case 'pa-000':
+          classIcon = "dx-icon-box";
+          break;
+        default:
+          classIcon = "dx-icon-box";
+          break;
+      }
+      return classIcon;
+    }
     return {
+      iconClass,
       logout,
       onSearch,
       toggleDropdown,
@@ -470,7 +496,6 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" src="./style/style.scss">
-
 .header-content {
   background: v-bind('styles.sub');
 }

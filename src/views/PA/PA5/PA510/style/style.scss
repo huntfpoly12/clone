@@ -99,6 +99,9 @@
         width: 50%;
     }
 }
+::v-deep .dx-master-detail-cell {
+    padding: 0 !important;
+}
 .text-align-center {
     text-align: center;
 }
