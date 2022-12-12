@@ -153,11 +153,11 @@ import {
   companyId,
   onExportingCommon,
   userId,
-} from "../../../../helpers/commonFunction";
-import queries from "../../../../graphql/queries/PA/PA4/PA430/index";
+} from "@/helpers/commonFunction";
+import queries from "@/graphql/queries/PA/PA4/PA430/index";
 import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 import EmailMultiPopup from "./components/EmailMultiPopup.vue";
-import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
+import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 
 export default defineComponent({
   components: {
