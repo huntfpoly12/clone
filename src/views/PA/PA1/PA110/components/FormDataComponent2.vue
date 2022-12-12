@@ -186,6 +186,10 @@ export default defineComponent({
             type: Number,
             default: 0
         },
+        actionAddItem: {
+            type: Boolean,
+            default: false
+        },
         modalStatus: Boolean,
     },
     setup(props, { emit }) {
@@ -404,23 +408,32 @@ export default defineComponent({
 
         watch(() => props.dataIncomeWage, (newValue) => {
             switchAction.value = false
-
             dataIncomeWage.value = newValue
 
             triggerDetail.value = true
         }, { deep: true })
         // action add new
-
+        watch(() => props.actionAddItem, (value) => {
+            if (value) {
+                addRow()
+                console.log('formState1', dataIncomeWage)
+            }
+        })
         const addRow = () => {
-            formState1.input.paymentDay = null
-            formState1.input.employeeId = 0
-            formState1.input.incomeTypeCode = ""
-            formState1.input.paymentAmount = 0
-            formState1.input.withholdingIncomeTax = 0
-            formState1.input.withholdingLocalIncomeTax = 0
+            dataIncomeWage.paymentDay = 0;
+            dataIncomeWage.employeeId = 0
+            dataIncomeWage.workingDays = 0
+            dataIncomeWage.totalWorkingHours = 0
+            dataIncomeWage.overtimeWorkingHours = 0
+            dataIncomeWage.workingHoursAtNight = 0
+            dataIncomeWage.workingHoursOnHolidays = 0
+            dataIncomeWage.payItems = [{ itemCode: 0, amount: 0 }]
+            dataIncomeWage.deductionItems = [
+                { itemCode: 0, amount: 0 }
+            ]
+
             switchAction.value = true
         }
-
         // action update
         const updateIncomeWage = () => {
             const variables = {
