@@ -47,3 +47,30 @@ export const ArrForeigner = [
   { id: false, text: "내국인" },
   { id: true, text: "외국인" },
 ];
+
+export const initFormState2 = {
+  nationalPensionDeduction: false,
+  healthInsuranceDeduction: false,
+  longTermCareInsuranceDeduction: false,
+  employeementInsuranceDeduction: false,
+  insuranceSupport: false,
+  nationalPensionSupportPercent: 0,
+  employeementInsuranceSupportPercent: 0,
+  employeementReduction: false,
+  employeementReductionStartDate: "",
+  employeementReductionFinishDate: "",
+  employeementReductionRatePercent: 50,
+  employeementReductionInput: 1,
+  incomeTaxMagnification: 100,
+  payItems: [],
+  deductionItems: [],
+};
+export const initFormState1 = {
+  workingDays: 0,
+  totalWorkingHours: 0,
+  overtimeWorkingHours: 0,
+  workingHoursAtNight: 0,
+  workingHoursOnHolidays: 0,
+  payItems: [],
+  deductionItems: [],
+};
