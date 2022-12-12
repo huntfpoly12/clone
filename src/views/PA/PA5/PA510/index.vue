@@ -7,11 +7,11 @@
                     key-expr="companyId" :focused-row-enabled="true" :show-borders="true"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
-                    <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" width="350px" />
+                    <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
                     <template #imputed-year="{ data }">
                         <span>지급연월</span>
                     </template>
-                    <DxColumn caption="01" cell-template="imputed-month1" />
+                    <DxColumn  width="100px" caption="01" cell-template="imputed-month1" />
                     <template #imputed-month1="{ data }">
                         <div v-if="data.data.month1">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -20,7 +20,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
                     </template>
-                    <DxColumn caption="02" cell-template="imputed-month2" />
+                    <DxColumn  width="100px" caption="02" cell-template="imputed-month2" />
                     <template #imputed-month2="{ data }">
                         <div v-if="data.data.month2">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -29,7 +29,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
                     </template>
-                    <DxColumn caption="03" cell-template="imputed-month3" />
+                    <DxColumn  width="100px" caption="03" cell-template="imputed-month3" />
                     <template #imputed-month3="{ data }">
                         <div v-if="data.data.month3">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -38,7 +38,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
                     </template>
-                    <DxColumn caption="04" cell-template="imputed-month4" />
+                    <DxColumn  width="100px" caption="04" cell-template="imputed-month4" />
                     <template #imputed-month4="{ data }">
                         <div v-if="data.data.month4">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -47,7 +47,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
                     </template>
-                    <DxColumn caption="05" cell-template="imputed-month5" />
+                    <DxColumn  width="100px" caption="05" cell-template="imputed-month5" />
                     <template #imputed-month5="{ data }">
                         <div v-if="data.data.month5">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -56,7 +56,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
                     </template>
-                    <DxColumn caption="06" cell-template="imputed-month6" />
+                    <DxColumn  width="100px" caption="06" cell-template="imputed-month6" />
                     <template #imputed-month6="{ data }">
                         <div v-if="data.data.month6">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -65,7 +65,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
                     </template>
-                    <DxColumn caption="07" cell-template="imputed-month7" />
+                    <DxColumn  width="100px" caption="07" cell-template="imputed-month7" />
                     <template #imputed-month7="{ data }">
                         <div v-if="data.data.month7">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -74,7 +74,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
                     </template>
-                    <DxColumn caption="08" cell-template="imputed-month8" />
+                    <DxColumn  width="100px" caption="08" cell-template="imputed-month8" />
                     <template #imputed-month8="{ data }">
                         <div v-if="data.data.month8">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -83,7 +83,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
                     </template>
-                    <DxColumn caption="09" cell-template="imputed-month9" />
+                    <DxColumn  width="100px" caption="09" cell-template="imputed-month9" />
                     <template #imputed-month9="{ data }">
                         <div v-if="data.data.month9">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -92,7 +92,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
                     </template>
-                    <DxColumn caption="10" cell-template="imputed-month10" />
+                    <DxColumn  width="100px" caption="10" cell-template="imputed-month10" />
                     <template #imputed-month10="{ data }">
                         <div v-if="data.data.month10">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -101,7 +101,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
                     </template>
-                    <DxColumn caption="11" cell-template="imputed-month11" />
+                    <DxColumn  width="100px" caption="11" cell-template="imputed-month11" />
                     <template #imputed-month11="{ data }">
                         <div v-if="data.data.month11">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -110,7 +110,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
                     </template>
-                    <DxColumn caption="12" cell-template="imputed-month12" />
+                    <DxColumn  width="100px" caption="12" cell-template="imputed-month12" />
                     <template #imputed-month12="{ data }">
                         <div v-if="data.data.month12">
                             <colorful-badge @click="showDetailSelected(month)"
@@ -119,7 +119,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
                     </template>
-                    <DxMasterDetail :enabled="true" template="row-detail" />
+                    <DxMasterDetail class="table-detail" :enabled="true" template="row-detail" />
                     <template #row-detail="{ data }">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
                             :show-borders="true" :column-auto-width="true" :show-column-headers="false">
@@ -260,7 +260,7 @@
 
             </a-col>
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
-                <FormDataComponent :dataIncomeWageDaily="dataIncomeWageDaily" @loadingTableInfo="loadingTableInfo"
+                <FormDataComponent :data="dataIncomeWageDaily" @loadingTableInfo="loadingTableInfo"
                     :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem"
                     :actionUpdateItem="actionUpdateItem" />
             </a-col>

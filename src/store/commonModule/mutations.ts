@@ -1,6 +1,6 @@
 const mutations = {
-    setDependantCommon(state: any) {
-        console.log(state);
+    loadDataEmployee(state: any,dataEmployee :  any) {
+        state.arrayEmployeePA410 = dataEmployee
     }
 };
 

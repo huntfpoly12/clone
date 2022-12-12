@@ -111,6 +111,10 @@ const routes = [
         component: () => import("../views/PA/PA4/PA410/index.vue"),
       },
       {
+        path: "pa-420",
+        component: () => import("../views/PA/PA4/PA420/index.vue"),
+      },
+      {
         path: "pa-430",
         component: () => import("../views/PA/PA4/PA430/index.vue"),
       },
