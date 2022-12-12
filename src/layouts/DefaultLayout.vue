@@ -427,8 +427,7 @@ export default defineComponent({
       this.state = false;
     }
 
-    watch(()=>store.state.common.activeTab, (newValue)=>{
-      
+    watch(()=>store.state.common.activeTab, (newValue)=>{     
         activeTab.value = newValue;
     },{deep:true})
     const onOpenChange  = (openKeys)=>{

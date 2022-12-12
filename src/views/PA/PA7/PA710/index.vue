@@ -138,12 +138,12 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, createVNode, computed } from "vue";
-import HistoryPopup from "../../../../components/HistoryPopup.vue";
+import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, ExclamationCircleOutlined, SaveOutlined } from "@ant-design/icons-vue";
-import notification from "../../../../utils/notification";
+import notification from "@/utils/notification";
 import { Modal } from 'ant-design-vue';
 import dayjs, { Dayjs } from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -151,10 +151,10 @@ import localeData from "dayjs/plugin/localeData";
 import { initialState, initialOptionsRadio } from "./utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-import mutations from "../../../../graphql/mutations/PA/PA7/PA710/index";
-import queries from "../../../../graphql/queries/PA/PA7/PA710/index";
+import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
+import queries from "@/graphql/queries/PA/PA7/PA710/index";
 import DxButton from "devextreme-vue/button";
-import { companyId } from "../../../../../src/helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
         DxDataGrid,
