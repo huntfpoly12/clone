@@ -39,8 +39,6 @@
                         <text-number-box width="200px" :required="true"
                             v-model:valueInput="dataIncomeWage.workingHoursOnHolidays" placeholder="휴일근로시간" />
                     </a-form-item>
-
-
                 </a-col>
                 <a-col :span="12">
                     <div class="header-text-2">요약</div>
@@ -200,9 +198,12 @@ export default defineComponent({
         const modalDeteleTaxpay = ref<boolean>(false)
         const modalDeteleMidTerm = ref<boolean>(false)
         const totalDeduction = ref(0);
+        let switchAction = ref<boolean>(true)
+        let month1: any = ref(dayjs().format("YYYY-MM"))
+        let month2: any = ref(dayjs().format("YYYY-MM"))
         const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
         const dataIncomeWage: any = ref({ ...props.dataIncomeWage })
-
+        const processKey = computed(() => store.state.common.processKeyPA110)
         const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
         const store = useStore();
         const datagConfigPayItems = ref();
@@ -215,7 +216,6 @@ export default defineComponent({
         const formState1 = reactive<any>({
             ...initFormState1,
         });
-
         // get WithholdingConfigPayItems
         const originDataDetail = ref({
             companyId: companyId,
@@ -251,12 +251,7 @@ export default defineComponent({
                 triggerDetail.value = true;
                 refetchValueDetail({
                     companyId: companyId,
-                    processKey: {
-                        imputedYear: globalYear.value,
-                        imputedMonth: 10,
-                        paymentYear: 2022,
-                        paymentMonth: 10
-                    }, incomeId: props.dataIncomeWage.incomeId,
+                    processKey: { ...processKey.value }, incomeId: props.dataIncomeWage.incomeId,
                 });
             }
         });
@@ -276,19 +271,14 @@ export default defineComponent({
                 });
             }
         });
-
+        // get IncomeWage value
         const {
             refetch: refetchValueDetail,
             result,
             loading
         } = useQuery(queries.getIncomeWage, {
             companyId: companyId,
-            processKey: {
-                imputedYear: globalYear.value,
-                imputedMonth: 10,
-                paymentYear: 2022,
-                paymentMonth: 10
-            },
+            processKey: { ...processKey.value },
             incomeId: 0,
         }, () => ({
             fetchPolicy: "no-cache",
@@ -315,11 +305,9 @@ export default defineComponent({
                         }
                     });
                 })
-
                 calculateTax();
             }
         })
-
         //  Calculate Pension Employee 
         const calculateTax = () => {
             dataConfigDeduction.value?.map((item: any) => {
@@ -382,40 +370,88 @@ export default defineComponent({
             }, 0);
         }
 
-        // Save form 
+        // API EDIT
         const {
-            mutate,
-            onError,
-            onDone,
+            mutate: actionUpdate,
+            onError: actionUpdateErr,
+            onDone: actionUpdateDone,
         } = useMutation(mutations.updateIncomeWage);
 
-        onError(e => {
+        actionUpdateErr(e => {
             notification('error', e.message)
         })
 
-        onDone(res => {
+        actionUpdateDone(res => {
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
+        // API CREATED 
+        const {
+            mutate: actionCreated,
+            onError: errorCreated,
+            loading: loadingCreated,
+            onDone: doneCreated,
+        } = useMutation(mutations.createIncomeWage);
+        doneCreated(res => {
+            emit('createdDone', true)
+            notification('success', `업데이트 완료!`)
+            triggerDetail.value = true
+            refetchValueDetail()
+        })
+        errorCreated(res => {
+            notification('error', res.message)
+        })
 
+        watch(() => props.dataIncomeWage, (newValue) => {
+            switchAction.value = false
+
+            dataIncomeWage.value = newValue
+
+            triggerDetail.value = true
+        }, { deep: true })
+        // action add new
+
+        const addRow = () => {
+            formState1.input.paymentDay = null
+            formState1.input.employeeId = 0
+            formState1.input.incomeTypeCode = ""
+            formState1.input.paymentAmount = 0
+            formState1.input.withholdingIncomeTax = 0
+            formState1.input.withholdingLocalIncomeTax = 0
+            switchAction.value = true
+        }
+
+        // action update
         const updateIncomeWage = () => {
             const variables = {
+                ...formState1,
                 companyId: companyId,
-                processKey: {
-                    imputedYear: globalYear.value,
-                    imputedMonth: 10,
-                    paymentYear: 2022,
-                    paymentMonth: 10
-                },
+                processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
-                input: formState1
-            };
-            mutate(variables)
-        }
-        watch(() => props.actionUpdateItem, (value) => {
-            updateIncomeWage()
+                input: {
+                    workingDays: dataIncomeWage.value.workingDays,
+                    totalWorkingHours: dataIncomeWage.value.totalWorkingHours,
+                    overtimeWorkingHours: dataIncomeWage.value.overtimeWorkingHours,
+                    workingHoursAtNight: dataIncomeWage.value.workingHoursAtNight,
+                    workingHoursOnHolidays: dataIncomeWage.value.workingHoursOnHolidays,
+                    payItems: [],
+                    deductionItems: [],
 
+                }
+            };
+            actionUpdate(variables)
+        }
+        // switch action
+        watch(() => props.actionUpdateItem, () => {
+            if (switchAction.value == true) {
+                actionCreated(formState1)
+            }
+            else {
+
+                updateIncomeWage()
+            }
         })
+
         return {
             formState2, loading1, loading2, loading,
             rangeDate, modalDeductions,
@@ -424,8 +460,8 @@ export default defineComponent({
             totalDeduction, dataIncomeWage,
             subPayment,
             calculateTax,
-            updateIncomeWage,
-            companyId, datagConfigPayItems, dataConfigDeduction
+            updateIncomeWage, actionUpdate,
+            companyId, datagConfigPayItems, dataConfigDeduction, month1, month2,
         };
     },
 });
