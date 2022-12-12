@@ -368,6 +368,7 @@ export default defineComponent({
       imputedMonth: dayjs().month() + 1,
       paymentYear: globalYear.value,
       paymentMonth: dayjs().month() + 1,
+
     }
     const processKey = computed(() => store.state.common.processKeyPA510)
     let dataCustomRes: any = ref([])
@@ -429,13 +430,10 @@ export default defineComponent({
       enabled: triggeraxPayInfo.value,
       fetchPolicy: "no-cache",
     }))
-
     // ======================= WATCH ==================================
     // get data table detail getIncomeProcessWages
     resIncomeProcessWages(res => {
-      console.log('processKey.value', processKey.value)
       let respon = res.data.getIncomeProcessWages
-
       dataSource.value = [{
         companyId: companyId,
       }]
@@ -453,7 +451,6 @@ export default defineComponent({
         { id: 11, name: "공제총액", },
         { id: 12, name: "차인지급액", },
       ]
-
       respon.map((val: any) => {
         // data table minify
         let dataAdd = {
@@ -529,7 +526,7 @@ export default defineComponent({
       }
     })
     watch(resultTaxPayInfo, (value) => {
-      console.log('valuearraaaaaaaa', value)
+
       dataTaxPayInfo.value = value.getIncomeWages
       dataTaxPayInfo.value.map((value: any) => {
         arrayEmploySelect.value.push({

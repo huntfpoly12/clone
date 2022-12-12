@@ -2,15 +2,45 @@
     <div id="pa-110">
         <a-spin :spinning="loading" size="large">
             <a-row>
-                <a-col :span="12" style="margin-top: 30px">
-                    <a-form-item label="사원">
-                        <EmploySelect :arrayValue="arrayEmploySelect"
-                            v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="290px" :required="true" />
+                <a-col :span="24">
+                    <a-col :span="12">
+                        <a-form-item label="사원">
+                            <EmploySelect :arrayValue="arrayEmploySelect"
+                                v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="270px"
+                                :required="true" />
+                        </a-form-item>
+                        <a-form-item label="지급일">
+                            <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWage.paymentDay"
+                                :max="31" :spinButtons="true" />
+                        </a-form-item>
+                    </a-col>
+                </a-col>
+            </a-row>
+
+            <a-row :gutter="16">
+                <a-col :span="12" class="input-items">
+                    <div class="header-text-2">근로시간
+                        <span>
+                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+                            <p>사원별 급여명세서에 표시 됩니다. </p>
+                        </span>
+                    </div>
+
+                    <a-form-item label="총근로시간" label-align="right" class="red">
+                        <text-number-box width="200px" :required="true"
+                            v-model:valueInput="dataIncomeWage.totalWorkingHours" placeholder="총근로시간" />
+                    </a-form-item> <a-form-item label="연장근로시간" label-align="right" class="red">
+                        <text-number-box width="200px" :required="true"
+                            v-model:valueInput="dataIncomeWage.overtimeWorkingHours" placeholder="연장근로시간" />
+                    </a-form-item> <a-form-item label="야간근로시간" label-align="right" class="red">
+                        <text-number-box width="200px" :required="true"
+                            v-model:valueInput="dataIncomeWage.workingHoursAtNight" placeholder="야간근로시간" />
+                    </a-form-item> <a-form-item label="휴일근로시간" label-align="right" class="red">
+                        <text-number-box width="200px" :required="true"
+                            v-model:valueInput="dataIncomeWage.workingHoursOnHolidays" placeholder="휴일근로시간" />
                     </a-form-item>
-                    <a-form-item label="지급일">
-                        <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWage.paymentDay"
-                            :max="31" :spinButtons="true" />
-                    </a-form-item>
+
+
                 </a-col>
                 <a-col :span="12">
                     <div class="header-text-2">요약</div>
@@ -29,11 +59,12 @@
 
                 </a-col>
             </a-row>
+
+
             <div class="header-text-3">급여 / 공제
 
             </div>
             <a-row :gutter="16">
-
                 <a-col :span="12">
                     <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 + 비과세 </div>
                     <a-spin :spinning="loading1" size="large">
@@ -90,24 +121,27 @@
             </a-row>
             <a-row style="margin-top: 40px">
 
-                <a-col :offset="6" style="text-align: center;">
-                    <button-basic style="margin-right: 20px" text="공제계산/caculate" type="default" mode="contained"
-                        :width="120" @onClick="calculateTax" />
-                    <button-basic text="저장/ update" type="default" mode="contained" :width="90"
-                        @onClick="updateIncomeWage" />
-                    <div class="text-align-center mt-50">
+                <a-col :offset="4" style="text-align: center;">
+                    <!-- <button-basic style="margin-right: 20px" text="공제계산/caculate" type="default" mode="contained"
+                        :width="120" @onClick="calculateTax" /> -->
+                    <div class="text-align-center ">
                         <DxButton @click="modalDeductions = true" :text="'공제 재계산'"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                         <DxButton @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'"
                             :style="{ color: 'white', backgroundColor: 'gray', margin: '0px 10px' }" :height="'33px'" />
-                        <DxButton @click="modalDeteleTaxpay = true" :text="'중도정산 삭제'"
+                        <DxButton @click="modalDeteleMidTerm = true" :text="'중도정산 삭제'"
+                            :style="{ color: 'white', backgroundColor: 'gray', margin: '0px 10px 0px 0px' }"
+                            :height="'33px'" />
+                        <DxButton @click="modalDeteleTaxpay = true" :text="'중도정산 반영'"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+
                     </div>
                 </a-col>
             </a-row>
             <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" />
             <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
             <DeletePopupTaxPay :modalStatus="modalDeteleTaxpay" @closePopup="modalDeteleTaxpay = false" />
+            <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false" />
         </a-spin>
     </div>
 
@@ -136,9 +170,10 @@ import DxButton from "devextreme-vue/button"
 import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
 import DeletePopupTaxPay from "./Popup/DeletePopupTaxPay.vue"
+import DeletePopupMidTerm from "./Popup/DeletePopupMidTerm.vue"
 export default defineComponent({
     components: {
-        DxButton, DeductionPopup, InsurancePopup, DeletePopupTaxPay
+        DxButton, DeductionPopup, InsurancePopup, DeletePopupTaxPay, DeletePopupMidTerm
     },
     props: {
         arrayEmploySelect: {
@@ -148,6 +183,10 @@ export default defineComponent({
         dataIncomeWage: {
             type: Object,
             default: []
+        },
+        actionUpdateItem: {
+            type: Number,
+            default: 0
         },
         modalStatus: Boolean,
     },
@@ -159,6 +198,7 @@ export default defineComponent({
         const modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
         const modalDeteleTaxpay = ref<boolean>(false)
+        const modalDeteleMidTerm = ref<boolean>(false)
         const totalDeduction = ref(0);
         const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
         const dataIncomeWage: any = ref({ ...props.dataIncomeWage })
@@ -359,7 +399,6 @@ export default defineComponent({
         })
 
         const updateIncomeWage = () => {
-
             const variables = {
                 companyId: companyId,
                 processKey: {
@@ -373,12 +412,14 @@ export default defineComponent({
             };
             mutate(variables)
         }
+        watch(() => props.actionUpdateItem, (value) => {
+            updateIncomeWage()
 
-
+        })
         return {
             formState2, loading1, loading2, loading,
             rangeDate, modalDeductions,
-            modalInsurance, modalDeteleTaxpay,
+            modalInsurance, modalDeteleTaxpay, modalDeteleMidTerm,
             totalPayItem, totalPayItemTaxFree, totalPayItemTax,
             totalDeduction, dataIncomeWage,
             subPayment,
@@ -394,6 +435,7 @@ export default defineComponent({
     ::v-deep .ant-form-item-label>label {
         width: 130px;
         padding-left: 10px;
+        margin-right: 20px;
     }
 
     .input-text {
@@ -419,6 +461,18 @@ export default defineComponent({
         font-weight: bold;
         font-size: 14px;
         margin-bottom: 10px;
+
+        span {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            float: right;
+            margin: 0px 50px 0px 0px;
+
+            p {
+                margin: 0px 0px 3px 10px;
+            }
+        }
     }
 
     .header-text-3 {
@@ -485,6 +539,12 @@ export default defineComponent({
     .income-tax-app-rate {
         ::v-deep .dx-radiobutton {
             margin: 0px 0px 0px 50px;
+        }
+    }
+
+    ::v-deep .red {
+        label {
+            color: red;
         }
     }
 
