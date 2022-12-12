@@ -18,10 +18,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
-import notification from "../../../../../utils/notification";
+import { defineComponent, watch, ref, reactive } from 'vue'
+import { useStore } from 'vuex';
+import { companyId } from "@/helpers/commonFunction"
+import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "../../../../../graphql/mutations/PA/PA6/PA630/index"
+import mutations from "@/graphql/mutations/PA/PA4/PA410/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -36,11 +38,14 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
-        let emailAddress = ref('');
-        watch(() => props.data, (val) => {
-            emailAddress.value = val?.employeeInputs.receiverAddress
-        });
-
+        const store = useStore();
+        const userInfor = reactive(store.state.auth.userInfor)
+        const empployeeDetail = reactive(
+            store.state.common.arrayEmployeePA410.filter(function(item : any) { 
+                return item.employeeId ==  store.state.common.employeeIdPA410; 
+            })
+        )
+        let emailAddress = ref(empployeeDetail[0].email);
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -49,14 +54,23 @@ export default defineComponent({
             onDone: onDoneAdd,
             onError: errorSendEmail,
             error,
-        } = useMutation(mutations.sendIncomeBusinessWithholdingReceiptReportEmail);
+        } = useMutation(mutations.sendCalculateIncomeRetirementEmail);
+
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let variables = props.data
-                variables.employeeInputs.receiverAddress = emailAddress.value
+                let variables = {
+                    companyId: companyId,
+                    input: props.data,
+                    emailInput: {
+                        senderName: userInfor.username,
+                        receiverName: empployeeDetail[0].name,
+                        receiverAddress: empployeeDetail[0].email
+                    }
+                }
+                // variables.employeeInputs.receiverAddress = emailAddress.value
                 sendEmail(variables);
             }
         };
@@ -75,6 +89,8 @@ export default defineComponent({
             setModalVisible,
             onSubmit,
             emailAddress,
+            empployeeDetail,
+            userInfor
         }
     },
 })

@@ -24,9 +24,11 @@
         </a-dropdown>
       </div>
     </a-layout-header>
+
     <a-layout-content>
       <div class="header-content">
         <div class="left">
+    
           <a-button type="primary" @click="() => (collapsed = !collapsed)">
             <menu-unfold-outlined v-if="collapsed" class="trigger" />
             <menu-fold-outlined v-else class="trigger" />
@@ -35,11 +37,10 @@
           <div class="wrap-search">
             <a-select
               v-model:value="selectedItems"
-              :options="
-                menuData.map((item) => ({
-                  value: item.id + ' | ' + item.name,
-                }))
-              "
+              :options=" menuDatas.map((item) => ({
+                  value: item.id,
+                  label: item.id + ' | ' + item.name,
+                }))"
               show-search
               placeholder="메뉴를 입력해보세요"
               style="width: 180px"
@@ -47,6 +48,7 @@
             />
           </div>
         </div>
+
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
             <ul class="list-menu-tab">
@@ -54,7 +56,7 @@
                 v-for="(item, index) in menuTab"
                 :class="activeTab.id === item.id ? 'active' : ''"
                 :key="index"
-                @click="changeActiveTab(item)"
+                @click.self="changeActiveTab(item)"
               >
                 {{ item.name }}
                 <close-circle-filled
@@ -86,7 +88,9 @@
           >
             <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
               <template #icon>
-                <MailOutlined />
+                <div id="icon-menu">
+                  <i :class="iconClass(menuItem.id)" class="dx-icon"></i>
+                </div>
               </template>
               <template #title>{{ menuItem.title }}</template>
               <a-sub-menu
@@ -102,7 +106,7 @@
                       ? 'ant-menu-item-selected-active'
                       : ''
                   "
-                  @click.enter="addMenuTab(item.id + ' | ' + item.name)"
+                  @click.enter="addMenuTab(item.id)"
                 >
                   <router-link :to="item.url">{{ item.name }}</router-link>
                 </a-menu-item>
@@ -116,6 +120,7 @@
           >
             <div class="main-content">
               <template v-if="activeTab">
+                
                 <keep-alive>
                   <component v-bind:is="currentComponent" />
                 </keep-alive>
@@ -132,8 +137,10 @@
     </a-layout-content>
   </a-layout>
 </template>
-<script>
-import { defineComponent, ref, defineAsyncComponent, computed } from "vue";
+<script >
+import { defineComponent, ref, watch, computed } from "vue";
+import {  useRouter } from 'vue-router'
+import { useStore } from 'vuex';
 import menuTree from "./menuTree";
 import menuData from "./menuData";
 import {
@@ -149,6 +156,7 @@ import {
   PA120,
   PA230,
   PA430,
+  PA420,
   PA410,
   PA610,
   PA620,
@@ -179,6 +187,7 @@ export default defineComponent({
   name: `LayoutDefault`,
   data() {
     return {
+ 
       styles: {
         main: this.$config_styles.Main,
         sub: this.$config_styles.Sub,
@@ -187,11 +196,7 @@ export default defineComponent({
       inputSearchText: "",
       filteredResult: [],
       state: false,
-      menuData: menuData,
-      menuItems: menuTree,
       activeKey: 1,
-      menuTab: [],
-      activeTab: "",
       openKeys: ["bf-000"],
       rootSubmenuKeys: ["bf-000", "cm-000", "ac-000", "pa-000"],
       selectedKeys: [],
@@ -211,6 +216,7 @@ export default defineComponent({
     PA220,
     PA230,
     PA430,
+    PA420,
     PA410,
     PA610,
     PA620,
@@ -255,7 +261,7 @@ export default defineComponent({
     }
   },
   watch: {
-    activeTab: {
+     activeTab: {
       handler(newValue, oldVal) {
         if (newValue) {
           if (newValue.id.includes("bf-1")) {
@@ -317,7 +323,7 @@ export default defineComponent({
       immediate: true,
     },
   },
-  computed: {
+  computed: { 
     username() {
       if (sessionStorage.getItem("username")) {
         return sessionStorage.getItem("username");
@@ -327,7 +333,6 @@ export default defineComponent({
     },
 
     currentComponent() {
-      if (this.activeTab.id === "") return Example;
       if (this.activeTab.id === "bf-310") return BF310;
       if (this.activeTab.id === "bf-320") return BF320;
       if (this.activeTab.id === "bf-330") return BF330;
@@ -341,6 +346,7 @@ export default defineComponent({
       if (this.activeTab.id === "pa-220") return PA220;
       if (this.activeTab.id === "pa-230") return PA230;
       if (this.activeTab.id === "pa-410") return PA410;
+      if (this.activeTab.id === "pa-420") return PA420;
       if (this.activeTab.id === "pa-430") return PA430;
       if (this.activeTab.id === "pa-610") return PA610;
       if (this.activeTab.id === "pa-620") return PA620;
@@ -351,121 +357,151 @@ export default defineComponent({
       if (this.activeTab.id === "pa-710") return PA710;
       if (this.activeTab.id === "pa-720") return PA720;
       if (this.activeTab.id === "pa-730") return PA730;
-      if (this.activeTab.id === "example") return Example;
+      if (this.activeTab.id === "example" || this.activeTab.id === "") return Example;
       return Test;
     },
   },
-  methods: {
-    logout() {
-      this.$router.push("/login");
-      location.reload();
-      this.$store.commit("auth/logout");
-    },
+  setup() {
+    let menuDatas = menuData;
+    let menuItems = menuTree;
+    const store = useStore();
+    const router = useRouter()
+    const collapsed = ref(false);
+    const selectedItems = ref([]);
+    const   activeTab = ref();
+    let menuTab = ref(store.state.common.menuTab);
+    const filteredOptions = computed(() =>
+    menuDatas.filter((o) => !selectedItems.value.includes(o))
+    );
 
-    onSearch(key) {
+    const logout = ()=>{
+      router.push("/login");
+      location.reload();
+      store.commit("auth/logout");
+    }
+
+    const onSearch  = (key)=>{
       this.state = true;
       this.filteredResult = [];
       this.inputSearchText = key;
-      if (this.menuData?.length > 0) {
-        this.menuData.forEach((val) => {
+      if (menuDatas?.length > 0) {
+        menuDatas.forEach((val) => {
           const searchId = val.name.includes(key) || val.id.includes(key);
           if (searchId) {
             this.filteredResult.push(val);
           }
         });
       }
-    },
-    toggleDropdown() {
+    }
+    const toggleDropdown  = ()=>{
       this.state = !this.state;
-    },
+    }
 
-    close(e) {
-      if (!this.$el.contains(e.target)) {
-        this.state = false;
-      }
-    },
-    addMenuTab(item) {
+    const addMenuTab  = (itemId)=>{
       let itemNew = [];
-      let id = item.split(" | ");
-      let tabAc = {};
-      this.menuData.map((e) => {
-        if (e.id == id[0]) {
-          tabAc = e;
-          itemNew = e;
-        }
-      });
-      if (this.menuTab.length < 20) {
-        this.menuTab.push(itemNew);
+      itemNew = menuDatas.find(item => item.id === itemId);
+      activeTab.value = menuDatas.find(item => item.id === itemId);
+      if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
+        menuTab.value.push(itemNew);
+        selectedItems.value = [];
       }
-      const obj = {};
-      for (let i = 0, len = this.menuTab.length; i < len; i++) {
-        obj[this.menuTab[i]["id"]] = this.menuTab[i];
+    }
+    const removeItemTab  = (item)=>{
+      menuTab.value.splice(item, 1);
+      activeTab.value = menuTab.value.slice(-1)[0];
+      selectedItems.value = [];
+      if (menuTab.value.length === 0) {
+        activeTab.value = { name: "example", url: "/dashboard", id: "" };
+        router.push("/dashboard");
+        menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
       }
-      this.menuTab = new Array();
-      for (const key in obj) {
-        this.menuTab.push(obj[key]);
+    }
+    const changeActiveTab  = (item)=>{
+      activeTab.value = item;
+      if (menuTab.value.length === 0) {
+        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
+        menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
       }
-      this.activeTab = tabAc;
-    },
-    removeItemTab(item) {
-      this.menuTab.splice(item, 1);
-      if (this.menuTab.length === 0) {
-        this.activeTab = { name: "example", url: "/dashboard", id: "" };
-        this.$router.push("/dashboard");
-      }
-    },
-    changeActiveTab(item) {
-      this.activeTab = item;
-      if (this.menuTab.length === 0) {
-        this.activeTab = "";
-      }
-    },
-    focusInput() {
+    }
+    const focusInput  = ()=>{
       this.state = false;
-    },
-    onOpenChange(openKeys) {
-      const latestOpenKey = openKeys.find(
-        (key) => this.openKeys.indexOf(key) === -1
-      );
-      if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-        if (latestOpenKey && latestOpenKey.includes("bf")) {
-          this.openKeys = ["bf-000", latestOpenKey];
-        } else if (latestOpenKey && latestOpenKey.includes("cm")) {
-          this.openKeys = ["cm-000", latestOpenKey];
-        } else if (latestOpenKey && latestOpenKey.includes("ac")) {
-          this.openKeys = ["ac-000", latestOpenKey];
-        } else if (latestOpenKey && latestOpenKey.includes("pa")) {
-          this.openKeys = ["pa-000", latestOpenKey];
-        }
-      } else {
-        this.openKeys = latestOpenKey ? [latestOpenKey] : [];
-      }
-    },
-  },
-  mounted() {
-    document.addEventListener("click", this.close);
-  },
-  setup() {
-    const collapsed = ref(false);
-    const selectedItems = ref([]);
+    }
 
-    const filteredOptions = computed(() =>
-      menuData.filter((o) => !selectedItems.value.includes(o))
-    );
+    watch(()=>store.state.common.activeTab, (newValue)=>{
+      
+        activeTab.value = newValue;
+    },{deep:true})
+    const onOpenChange  = (openKeys)=>{
+      // const latestOpenKey = openKeys.find(
+      //   (key) => this.openKeys.indexOf(key) === -1
+      // );
+      // if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+      //   if (latestOpenKey && latestOpenKey.includes("bf")) {
+      //     this.openKeys = ["bf-000", latestOpenKey];
+      //   } else if (latestOpenKey && latestOpenKey.includes("cm")) {
+      //     this.openKeys = ["cm-000", latestOpenKey];
+      //   } else if (latestOpenKey && latestOpenKey.includes("ac")) {
+      //     this.openKeys = ["ac-000", latestOpenKey];
+      //   } else if (latestOpenKey && latestOpenKey.includes("pa")) {
+      //     this.openKeys = ["pa-000", latestOpenKey];
+      //   }
+      // } else {
+      //   this.openKeys = latestOpenKey ? [latestOpenKey] : [];
+      // }
+    }
+
+    /**
+     * List icon in sidebar menu
+     * @param {*} id 
+     */
+    const iconClass = (id) => {
+      let classIcon = ''
+      switch (id) {
+        case 'bf-000':
+          classIcon = "dx-icon-card";
+          break;
+        case 'cm-000':
+          classIcon = "dx-icon-inactivefolder";
+          break;
+        case 'ac-000':
+          classIcon = "dx-icon-columnchooser";
+          break;
+        case 'pa-000':
+          classIcon = "dx-icon-box";
+          break;
+        default:
+          classIcon = "dx-icon-box";
+          break;
+      }
+      return classIcon;
+    }
     return {
+      iconClass,
+      logout,
+      onSearch,
+      toggleDropdown,
+      addMenuTab,
+      removeItemTab,
+      changeActiveTab,
+      focusInput,
+      onOpenChange,
+      menuItems,
+      menuDatas,
+      activeTab,
+      menuTab,
       collapsed,
       selectedItems,
       filteredOptions,
-    };
+    }
   },
 });
 </script>
 <style lang="scss" src="./style/style.scss">
 .header-content {
-  background: v-bind("styles.sub");
+  background: v-bind('styles.sub');
 }
 
 .ant-layout-header {
-  background: v-bind("styles.main");
+  background: v-bind('styles.main');
 }
 </style>

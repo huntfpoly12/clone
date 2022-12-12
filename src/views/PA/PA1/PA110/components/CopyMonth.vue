@@ -43,8 +43,7 @@ import { defineComponent, reactive, ref, watch } from 'vue'
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
-import dayjs from "dayjs";
+import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -62,8 +61,8 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
-        let month1: any = ref(dayjs().format("YYYY-MM"))
-        let month2: any = ref(dayjs().format("YYYY-MM"))
+        const month1 = ref()
+        const month2 = ref()
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const dataAction = reactive({
@@ -86,13 +85,13 @@ export default defineComponent({
             mutate,
             onError,
             onDone,
-        } = useMutation(mutations.copyIncomeBusinesses)
+        } = useMutation(mutations.copyIncomeWages)
         onError(res => {
             notification('error', res.message)
         })
         onDone(res => {
             setModalVisible()
-            notification('success', `완료!`)
+            notification('success', ` 완료!`)
         })
 
         const setModalVisible = () => {
@@ -112,9 +111,6 @@ export default defineComponent({
             dataAction.target.imputedYear = parseInt(month1.value.split('-')[0])
             dataAction.target.paymentMonth = parseInt(month2.value.split('-')[1])
             dataAction.target.paymentYear = parseInt(month2.value.split('-')[0])
-
-            mutate(dataAction)
-
         };
 
         const openModalCopy = () => {
