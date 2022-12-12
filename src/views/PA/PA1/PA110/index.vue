@@ -228,10 +228,10 @@
     </a-row>
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
       <a-col>
-        <DxButton :text="'귀' + imputedYear + '-' + imputedMonth" :style="{ color: 'white', backgroundColor: 'gray' }"
-          :height="'33px'" />
-        <DxButton :text="'지' + imputedYear + '-' + imputedMonth" :style="{ color: 'white', backgroundColor: 'black' }"
-          :height="'33px'" />
+        <DxButton :text="'귀' + processKey.paymentYear + '-' + processKey.paymentMonth"
+          :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+        <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
+          :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
         <ProcessStatus v-model:valueStatus="status" />
       </a-col>
       <a-col class="">
@@ -573,7 +573,7 @@ export default defineComponent({
     }
     return {
       loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
-      status,
+      status, processKey,
       dataSource, originDataIncomeWages, globalYear,
       per_page, move_column, colomn_resize,
       refetchDataProcessIncomeWages, refetchDataIncomeWages,
