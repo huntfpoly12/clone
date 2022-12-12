@@ -16,15 +16,15 @@
                     <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
                 </div>
                 <a-form-item label="근무일수">
-                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.employee.workingDays"
+                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
                         width="200px" :required="true" />
                 </a-form-item>
                 <a-form-item label="월급여">
-                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.employee.monthlyWage"
+                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.monthlyWage"
                         width="200px" :required="true" />
                 </a-form-item>
                 <a-form-item label="공제합계">
-                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.employee.totalDeduction"
+                    <text-number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.totalDeduction"
                         width="200px" :required="true" />
                 </a-form-item>
                 <a-form-item label="차인지급액">
@@ -43,7 +43,10 @@
             </a-col>
             <a-col :span="12" style="padding-right: 5px;">
                 <div class="top-content">
-                    <a-typography-title :level="5" style="margin-bottom: 0;">월급여 원</a-typography-title>
+                    <a-typography-title :level="5" style="margin-bottom: 0;">
+                        월급여 {{ dataIncomeWageDaily.employee.monthlyPaycheck ? 
+                        $filters.formatCurrency(dataIncomeWageDaily.monthlyWage) : 
+                        $filters.formatCurrency(dataIncomeWageDaily.dailyWage*dataIncomeWageDaily.workingDays) }} 원</a-typography-title>
                 </div>
                 <a-form-item label="근무일수" style="display: flex;">
                     <div class="input-text">
@@ -64,19 +67,19 @@
                         :min="1" :max="30" :spinButtons="true"></text-number-box>
                 </a-form-item>
                 <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
-                        dataIncomeWageDaily.monthlyWage / dataIncomeWageDaily.workingDays
+                        $filters.formatCurrency(dataIncomeWageDaily.monthlyWage / dataIncomeWageDaily.workingDays)
                 }}원</span>
-                <span v-else>일급여 {{ dataIncomeWageDaily.dailyWage }}원</span>
+                <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
                 <br>
                 <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
-                        dataIncomeWageDaily.monthlyWage
+                        $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
                 }}원</span>
-                <span v-else>일급여 {{ dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays
+                <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays)
                 }}원</span>
             </a-col>
             <a-col :span="12" style="padding-leftt: 5px;">
                 <div class="top-content">
-                    <a-typography-title :level="5" style="margin-bottom: 0;">월급여 원</a-typography-title>
+                    <a-typography-title :level="5" style="margin-bottom: 0;">월급여 {{  }} 원</a-typography-title>
                 </div>
                 <a-spin :spinning="loadingDeductionItem" size="large">
                     <div class="deduction-main">
@@ -117,7 +120,6 @@
                 :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                 </span>
             </a-tooltip>
-            
         </div>
     </standard-form>
     <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" />
@@ -134,7 +136,7 @@ import { companyId } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
-import { sampleDataIncomeWageDaily, sampleFormIncomeWageDaily } from "../utils/index"
+import { sampleDataIncomeWageDaily } from "../utils/index"
 export default defineComponent({
     components: {
         DxButton,
@@ -159,6 +161,9 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const globalYear = computed(() => store.state.settings.globalYear)
+        const processKey = computed(() => store.state.common.processKeyPA510)
         const modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
         const dataIncomeWageDaily: any = ref({ ...props.dataIncomeWageDaily })
@@ -181,17 +186,12 @@ export default defineComponent({
             })
             mutateAdd({
                 companyId: companyId,
-                processKey: {
-                    imputedYear: 2022,
-                    imputedMonth: 12,
-                    paymentYear: 2022,
-                    paymentMonth: 12,
-                },
+                processKey: {...processKey.value},
                 input: {
                     paymentDay: dataIncomeWageDaily.value.paymentDay,
                     employeeId: dataIncomeWageDaily.value.employee.employeeId,
-                    dailyWage: dataIncomeWageDaily.value.dailyWage,
-                    monthlyWage: dataIncomeWageDaily.value.monthlyWage,
+                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays : dataIncomeWageDaily.value.dailyWage,
+                    monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
                     workingDays: dataIncomeWageDaily.value.workingDays,
                     deductionItems: arrDeductionItems,
                 },
@@ -207,26 +207,21 @@ export default defineComponent({
             })
             mutateUpdate({
                 companyId: companyId,
-                processKey: {
-                    imputedYear: 2022,
-                    imputedMonth: 12,
-                    paymentYear: 2022,
-                    paymentMonth: 12,
-                },
+                processKey: {...processKey.value},
                 incomeId: dataIncomeWageDaily.value.incomeId,
                 input: {
-                    dailyWage: dataIncomeWageDaily.value.dailyWage,
-                    monthlyWage: dataIncomeWageDaily.value.monthlyWage,
+                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays : dataIncomeWageDaily.value.dailyWage,
+                    monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
                     workingDays: dataIncomeWageDaily.value.workingDays,
                     deductionItems: arrDeductionItems,
                 },
             })
         })
-        const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        
+        
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
         })
         const arrDeduction: any = ref([])
 

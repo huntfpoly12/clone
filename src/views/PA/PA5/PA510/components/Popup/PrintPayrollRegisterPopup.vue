@@ -13,14 +13,15 @@
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible" />
                 <button-basic class="button-form-modal" :text="'네. 출력합니다'" :width="140" :type="'default'"
-                    :mode="'contained'" @onClick="onSubmit" />
+                    :mode="'contained'" @onClick="onSubmitPrint" />
             </div>
         </standard-form>
     </a-modal>
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import DxSelectBox from "devextreme-vue/select-box";
 import notification from "@/utils/notification";
 import { useQuery } from "@vue/apollo-composable";
@@ -37,6 +38,8 @@ export default defineComponent({
         DxSelectBox,
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const processKey = computed(() => store.state.common.processKeyPA510)
         const trigger = ref<boolean>(false)
         const setModalVisible = () => {
             emit("closePopup", false)
@@ -50,13 +53,7 @@ export default defineComponent({
         const valueSelect = ref('전체')
         const originData: any = ref({
             companyId: companyId,
-            input: {
-                imputedYear: 2022,
-                imputedMonth: 12,
-                paymentYear: 2022,
-                paymentMonth: 12,
-                sortType: ""
-            }
+            input: {...processKey.value}
         })
         const {
             refetch: refetchData,
@@ -69,10 +66,11 @@ export default defineComponent({
         watch(result, (value) => {
             trigger.value = false;
             if (value) {
+                emit("closePopup", false)
                 window.open(value.getIncomeWageDailyPayrollRegisterViewUrl)
             }
         })
-        const onSubmit = (e: any) => {
+        const onSubmitPrint = (e: any) => {
             originData.value.input.sortType = valueSelect.value
             trigger.value = true
         };
@@ -80,7 +78,7 @@ export default defineComponent({
 
         return {
             setModalVisible,
-            onSubmit,
+            onSubmitPrint,
             dataSelect,
             valueSelect,
         }

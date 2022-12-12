@@ -1,5 +1,5 @@
 <template>
-  <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
+  <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
   <div id="pa-110" class="page-content">
     <a-row>
       <a-spin :spinning="(loadingIncomeProcessWages || loadingIncomeWages || loadingTaxPayInfo || loadingIncomeWage)"
@@ -19,6 +19,8 @@
               <colorful-badge :value="data.data.month1.status" :year="data.data.month1.imputedYear"
                 :month="data.data.month1.imputedMonth" />
             </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
+            </div>
           </template>
           <DxColumn caption="2" width="100px" cell-template="month-2" />
           <template #month-2="{ data }">
@@ -26,6 +28,8 @@
               @click="showDetailSelected(data.data.month2.imputedMonth, data.data.month2.imputedYear, data.data.month2.paymentYear, data.data.month2.paymentMonth)">
               <colorful-badge :value="data.data.month2.status" :year="data.data.month2.imputedYear"
                 :month="data.data.month2.imputedMonth" />
+            </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
             </div>
           </template>
           <DxColumn caption="3" width="100px" cell-template="month-3" />
@@ -35,6 +39,8 @@
               <colorful-badge :value="data.data.month3.status" :year="data.data.month3.imputedYear"
                 :month="data.data.month3.imputedMonth" />
             </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
+            </div>
           </template>
           <DxColumn caption="4" width="100px" cell-template="month-4" />
           <template #month-4="{ data }">
@@ -42,6 +48,8 @@
               @click="showDetailSelected(data.data.month4.imputedMonth, data.data.month4.imputedYear, data.data.month4.paymentYear, data.data.month4.paymentMonth)">
               <colorful-badge :value="data.data.month4.status" :year="data.data.month4.imputedYear"
                 :month="data.data.month4.imputedMonth" />
+            </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
             </div>
           </template>
           <DxColumn caption="5" width="100px" cell-template="month-5" />
@@ -51,6 +59,8 @@
               <colorful-badge :value="data.data.month5.status" :year="data.data.month5.imputedYear"
                 :month="data.data.month5.imputedMonth" />
             </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
+            </div>
           </template>
           <DxColumn caption="6" width="100px" cell-template="month-6" />
           <template #month-6="{ data }">
@@ -58,6 +68,8 @@
               @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth)">
               <colorful-badge :value="data.data.month6.status" :year="data.data.month6.imputedYear"
                 :month="data.data.month6.imputedMonth" />
+            </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
             </div>
           </template>
           <DxColumn caption="7" width="100px" cell-template="month-7" />
@@ -67,6 +79,8 @@
               <colorful-badge :value="data.data.month7.status" :year="data.data.month7.imputedYear"
                 :month="data.data.month7.imputedMonth" />
             </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
+            </div>
           </template>
           <DxColumn caption="8" width="100px" cell-template="month-8" />
           <template #month-8="{ data }">
@@ -74,6 +88,8 @@
               @click="showDetailSelected(data.data.month8.imputedMonth, data.data.month8.imputedYear, data.data.month8.paymentYear, data.data.month8.paymentMonth)">
               <colorful-badge :value="data.data.month8.status" :year="data.data.month8.imputedYear"
                 :month="data.data.month8.imputedMonth" />
+            </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
             </div>
           </template>
           <DxColumn caption="9" width="100px" cell-template="month-9" />
@@ -83,6 +99,8 @@
               <colorful-badge :value="data.data.month9.status" :year="data.data.month9.imputedYear"
                 :month="data.data.month9.imputedMonth" />
             </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(9)"> [+]
+            </div>
           </template>
           <DxColumn caption="10" width="100px" cell-template="month-10" />
           <template #month-10="{ data }">
@@ -90,6 +108,8 @@
               @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth)">
               <colorful-badge :value="data.data.month10.status" :year="data.data.month10.imputedYear"
                 :month="data.data.month10.imputedMonth" />
+            </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
             </div>
           </template>
           <DxColumn caption="11" width="100px" cell-template="month-11" />
@@ -99,6 +119,8 @@
               <colorful-badge :value="data.data.month11.status" :year="data.data.month11.imputedYear"
                 :month="data.data.month11.imputedMonth" />
             </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(11)"> [+]
+            </div>
           </template>
           <DxColumn caption="12" width="100px" cell-template="month-12" />
           <template #month-12="{ data }">
@@ -107,10 +129,8 @@
               <colorful-badge :value="data.data.month12.status" :year="data.data.month12.imputedYear"
                 :month="data.data.month12.imputedMonth" />
             </div>
-          </template>
-          <DxColumn width="100px" cell-template="open-modal" />
-          <template #open-modal="{ data }">
-            <div style="width: 100%;text-align: center;"> [+] </div>
+            <div v-else style="width: 100%;text-align: center;" @click="addMonth(12)"> [+]
+            </div>
           </template>
           <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
           <template #detailRow="{ data }">
@@ -200,9 +220,6 @@
                     {{ data.data.month12.value }}
                   </div>
                 </template>
-                <DxColumn width="100px" cell-template="open-modal" />
-                <template #open-modal="{ data }">
-                </template>
               </DxDataGrid>
             </div>
           </template>
@@ -211,14 +228,15 @@
     </a-row>
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
       <a-col>
-        <DxButton :text="'귀' + imputedYear + '-' + imputedMonth" :style="{ color: 'white', backgroundColor: 'gray' }"
-          :height="'33px'" />
-        <DxButton :text="'지' + imputedYear + '-' + imputedMonth" :style="{ color: 'white', backgroundColor: 'black' }"
-          :height="'33px'" />
+        <DxButton :text="'귀' + processKey.paymentYear + '-' + processKey.paymentMonth"
+          :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+        <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
+          :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
         <ProcessStatus v-model:valueStatus="status" />
       </a-col>
       <a-col class="">
-        <SelectActionComponent :modalStatus="true" :historyData="originDataIncomeWages" />
+        <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
+          @loadingTableInfo="loadingTableInfo" />
       </a-col>
     </a-row>
     <a-row>
@@ -259,16 +277,19 @@
             </template>
             <DxColumn caption="지급일" data-field="paymentDay" />
             <DxSummary>
-              <DxTotalItem column="totalPay" summary-type="sum" />
-              <DxTotalItem column="totalDeduction" summary-type="sum" />
-              <DxTotalItem column="actualPayment" summary-type="sum" />
+              <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
+              <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}" />
+              <DxTotalItem column="totalDeduction" summary-type="sum" display-format="공제합계: {0}" />
+              <DxTotalItem column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" />
             </DxSummary>
           </DxDataGrid>
         </a-spin>
       </a-col>
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-        <FormDataComponent :dataIncomeWage="dataIncomeWage" :arrayEmploySelect="arrayEmploySelect" />
+        <FormDataComponent :dataIncomeWage="dataIncomeWage" :arrayEmploySelect="arrayEmploySelect"
+          :actionUpdateItem="actionUpdateItem" />
       </a-col>
+      <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" />
     </a-row>
   </div>
 </template>
@@ -283,7 +304,7 @@ import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, D
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import notification from "@/utils/notification"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
-import FormDataComponent from "./components/FormDataComponent.vue"
+import FormDataComponent from "./components/FormDataComponent2.vue"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import { Message } from "@/configs/enum"
@@ -294,6 +315,7 @@ import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import DeductionPopup from "./components/Popup/DeductionPopup.vue"
 import InsurancePopup from "./components/Popup/InsurancePopup.vue"
+import CopyMonth from "./components/CopyMonth.vue";
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -325,7 +347,7 @@ export default defineComponent({
     ProcessStatus,
     DeductionPopup,
     InsurancePopup,
-    FormDataComponent,
+    FormDataComponent, CopyMonth
   },
   setup() {
     const store = useStore()
@@ -333,14 +355,22 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page)
     const move_column = computed(() => store.state.settings.move_column)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
-
+    const modalCopy = ref<boolean>(false);
     const triggerIncomeWage = ref<boolean>(true)
     const triggerProcessIncomeWages = ref<boolean>(true)
     const triggerIncomeWages = ref<boolean>(true)
     const triggeraxPayInfo = ref<boolean>(true)
-
+    const dataRows: any = ref([])
+    const actionAddItem: any = ref<boolean>(true)
+    const actionUpdateItem: any = ref<number>(0)
+    store.state.common.processKeyPA110 = {
+      imputedYear: globalYear,
+      imputedMonth: dayjs().month() + 1,
+      paymentYear: globalYear.value,
+      paymentMonth: dayjs().month() + 1,
+    }
+    const processKey = computed(() => store.state.common.processKeyPA510)
     let dataCustomRes: any = ref([])
-
     const dataIncomeWage: any = ref({ ...sampleDataIncomeWage })
 
     const dataSource: any = ref([])
@@ -357,37 +387,19 @@ export default defineComponent({
     })
     const originDataIncomeWage = ref({
       companyId: companyId,
-      processKey: {
-        imputedYear: 2022,
-        imputedMonth: 12,
-        paymentYear: 2022,
-        paymentMonth: 12,
-      },
-      incomeId: 65,
-    })
-    const originDataTaxPayInfo = ref({
-      companyId: companyId,
-      processKey: {
-        imputedYear: 2022,
-        imputedMonth: 10,
-        paymentYear: 2022,
-        paymentMonth: 10,
-      }
+      processKey: processKey.value,
+      incomeId: 0,
     })
     let originDataIncomeWages = reactive({
       companyId: companyId,
-      processKey: {
-        imputedYear: 2022,
-        imputedMonth: 10,
-        paymentYear: 2022,
-        paymentMonth: 1
-      }
+      processKey: processKey.value,
     })
+
     let popupData = ref([])
     // ======================= GRAPQL ================================
     const {
       refetch: refetchDataProcessIncomeWages,
-      result: resIncomeProcessWages,
+      onResult: resIncomeProcessWages,
       loading: loadingIncomeProcessWages
     } = useQuery(queries.getIncomeProcessWages, originDataProcessIncome, () => ({
       enabled: triggerProcessIncomeWages.value,
@@ -395,7 +407,7 @@ export default defineComponent({
     }))
     const {
       refetch: refetchDataIncomeWages,
-      result: resIncomeWages,
+      onResult: resIncomeWages,
       loading: loadingIncomeWages
     } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
       enabled: triggerIncomeWages.value,
@@ -413,31 +425,20 @@ export default defineComponent({
       refetch: refetchDataTaxPayInfo,
       result: resultTaxPayInfo,
       loading: loadingTaxPayInfo,
-    } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
+    } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
       enabled: triggeraxPayInfo.value,
       fetchPolicy: "no-cache",
     }))
 
     // ======================= WATCH ==================================
     // get data table detail getIncomeProcessWages
-    watch(resIncomeProcessWages, (value) => {
-      if (value) {
-        let respon = value.getIncomeProcessWages
-        imputedYear.value = respon[0].imputedYear
-        imputedMonth.value = respon[0].imputedMonth
-        status.value = respon[0].status
-        dataSource.value = [{
-          companyId: respon[0].companyId,
-          imputedYear: respon[0].imputedYear,
-        }]
-        respon?.forEach((val: any, index: any) => {
-          dataSource.value[0]['month' + val.imputedMonth] = val
-        })
-      }
-    })
-    // get data table detail getIncomeWages
-    watch(resIncomeWages, (value) => {
-      let respon = value.getIncomeWages
+    resIncomeProcessWages(res => {
+      console.log('processKey.value', processKey.value)
+      let respon = res.data.getIncomeProcessWages
+
+      dataSource.value = [{
+        companyId: companyId,
+      }]
       dataCustomRes.value = [
         { id: 1, name: "재직(퇴사) " },
         { id: 2, name: "과세급여", },
@@ -452,27 +453,33 @@ export default defineComponent({
         { id: 11, name: "공제총액", },
         { id: 12, name: "차인지급액", },
       ]
-      respon?.forEach((val: any, index: any) => {
+
+      respon.map((val: any) => {
+        // data table minify
         let dataAdd = {
           imputedMonth: val.imputedMonth,
+          imputedYear: val.imputedYear,
           paymentYear: val.paymentYear,
           paymentMonth: val.paymentMonth,
         }
-        // table detail
+
+        dataSource.value[0]['month' + val.imputedMonth] = val
+        // data table detail
+
         dataCustomRes.value[0]['month' + val.imputedMonth] = {
           value: filters.formatCurrency(val),
           ...dataAdd
         }
         dataCustomRes.value[1]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.totalTaxPay),
+          value: filters.formatCurrency(val.incomeStat.totalTaxPay),
           ...dataAdd
         }
         dataCustomRes.value[2]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.totalTaxfreePay),
+          value: filters.formatCurrency(val.incomeStat.totalTaxfreePay),
           ...dataAdd
         }
         dataCustomRes.value[3]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.withholdingLocalIncomeTax),
+          value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
           ...dataAdd
         }
         dataCustomRes.value[4]['month' + val.imputedMonth] = {
@@ -492,23 +499,29 @@ export default defineComponent({
           ...dataAdd
         }
         dataCustomRes.value[8]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.withholdingIncomeTax),
+
+          value: filters.formatCurrency(val.incomeStat.withholdingIncomeTax),
           ...dataAdd
         }
         dataCustomRes.value[9]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.withholdingLocalIncomeTax),
+
+          value: filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax),
           ...dataAdd
         }
         dataCustomRes.value[10]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.totalDeduction),
+
+          value: filters.formatCurrency(val.incomeStat.totalDeduction),
           ...dataAdd
         }
         dataCustomRes.value[11]['month' + val.imputedMonth] = {
-          value: filters.formatCurrency(val.actualPayment),
+
+          value: filters.formatCurrency(val.incomeStat.actualPayment),
           ...dataAdd
         }
+
       })
     })
+
 
     watch(resultIncomeWage, (value) => {
       if (value) {
@@ -516,6 +529,7 @@ export default defineComponent({
       }
     })
     watch(resultTaxPayInfo, (value) => {
+      console.log('valuearraaaaaaaa', value)
       dataTaxPayInfo.value = value.getIncomeWages
       dataTaxPayInfo.value.map((value: any) => {
         arrayEmploySelect.value.push({
@@ -528,28 +542,38 @@ export default defineComponent({
         )
       })
     })
-
+    const loadingTableInfo = () => {
+      refetchDataTaxPayInfo()
+    }
     // ======================= FUNCTION ================================
     const onSubmit = (e: any) => {
     }
-
+    const updateData = (e: any) => {
+      actionUpdateItem.value++
+    }
     const actionEditTaxPay = (data: any) => {
       dataIncomeWage.value = data.data
-      console.log(dataIncomeWage.value);
+      actionAddItem.value = false
     }
-
+    const addMonth = (month: number) => {
+      modalCopy.value = true
+    }
+    const actionCopySuccess = () => {
+      modalCopy.value = false
+    }
     const selectionChanged = (data: any) => {
-
+      dataRows.value = data.selectedRowsData
     }
     const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
-      originDataIncomeWages.processKey.imputedMonth = imputedMonth
-      originDataIncomeWages.processKey.imputedYear = imputedYear
-      originDataIncomeWages.processKey.paymentYear = paymentYear
-      originDataIncomeWages.processKey.paymentMonth = paymentMonth
+      status.value = status
+      store.state.common.processKeyPA110.paymentYear = paymentYear
+      store.state.common.processKeyPA110.paymentMonth = paymentMonth
+      store.state.common.processKeyPA110.imputedMonth = imputedMonth
+      store.state.common.processKeyPA110.imputedYear = imputedYear
     }
     return {
       loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
-      status,
+      status, processKey,
       dataSource, originDataIncomeWages, globalYear,
       per_page, move_column, colomn_resize,
       refetchDataProcessIncomeWages, refetchDataIncomeWages,
@@ -563,8 +587,8 @@ export default defineComponent({
       dataCustomRes,
       formIncomeWageDaily,
       showDetailSelected,
-      dataTaxPayInfo,
-      actionEditTaxPay,
+      dataTaxPayInfo, dataRows, actionAddItem, loadingTableInfo, updateData, actionUpdateItem,
+      actionEditTaxPay, modalCopy, actionCopySuccess, addMonth
     }
 
   },
