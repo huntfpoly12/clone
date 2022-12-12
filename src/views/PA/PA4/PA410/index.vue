@@ -2,7 +2,7 @@
   <component v-bind:is="currentPage"/>
 </template>
 <script lang="ts">
-import { defineComponent, computed, defineAsyncComponent } from "vue";
+import { defineComponent, computed, defineAsyncComponent, onActivated } from "vue";
 import { useStore } from 'vuex';
 import { companyId } from "@/helpers/commonFunction";
 const PA410Page1 = defineAsyncComponent(() =>
@@ -16,14 +16,20 @@ export default defineComponent({
     PA410Page1,
     PA410Page2
   },
+  computed: {
+    
+  },
   setup() {
     const store = useStore();
-      const globalYear = computed(() => store.state.settings.globalYear)
+    const globalYear = computed(() => store.state.settings.globalYear)
+    onActivated(() => {
       store.dispatch('auth/getUserInfor')
       store.dispatch('common/getListEmployee', {
             companyId: companyId,
             imputedYear: globalYear,
         })
+    })
+  
     const currentPage = computed(() => store.state.common.currentPagePA410);
     return {
       currentPage

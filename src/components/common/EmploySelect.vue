@@ -2,7 +2,7 @@
     <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
         value-expr="employeeId" display-expr="employeeId"
         :value="valueEmploy"
-        field-template="field-data" @value-changed="updateValue"
+        field-template="field-data" @value-changed="updateValue" @change="eventItemClick"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
             <div v-if="data" style="padding: 4px">
@@ -83,10 +83,16 @@ export default defineComponent({
                 valueEmploy.value = newValue;
             }
         );
+
+        const eventItemClick = () => {
+            console.log('xxxxxxxx');
+            
+        }
         return {
             updateValue,
             valueEmploy,
-            convertBirthDay
+            convertBirthDay,
+            eventItemClick
         };
     },
 });

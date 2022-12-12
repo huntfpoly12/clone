@@ -1,5 +1,12 @@
 import { getJwtObject } from "@bankda/jangbuda-common";
 import dayjs from 'dayjs';
+// common export data 
+import { Workbook } from "exceljs";
+import { exportDataGrid } from "devextreme/excel_exporter";
+import { saveAs } from "file-saver-es";
+import store from "@/store";
+import Router from '../router'; 
+
 let companyId: any = null
 let userType: any = null
 let userId: any = null
@@ -15,11 +22,12 @@ if (token) {
     }
 }
 
+const openTab = (objTab :  any) => {
+    store.state.common.activeTab= objTab
+    store.state.common.menuTab.push(objTab)
+    Router.push(objTab.url);
+}
 
-// common export data 
-import { Workbook } from "exceljs";
-import { exportDataGrid } from "devextreme/excel_exporter";
-import { saveAs } from "file-saver-es";
 
 const onExportingCommon = (component: any, cancel: boolean, name: String) => {
     const workbook = new Workbook();
@@ -117,6 +125,7 @@ const calculateEmployeementInsuranceEmployee = (totalTaxPay: any, insurancesuppo
 
 export {
     companyId,
+    openTab,
     userType,
     userId,
     screenRoleInfo,
