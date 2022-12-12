@@ -260,7 +260,7 @@
 
             </a-col>
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
-                <FormDataComponent :dataIncomeWageDaily="dataIncomeWageDaily" @loadingTableInfo="loadingTableInfo"
+                <FormDataComponent :data="dataIncomeWageDaily" @loadingTableInfo="loadingTableInfo"
                     :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem"
                     :actionUpdateItem="actionUpdateItem" />
             </a-col>
