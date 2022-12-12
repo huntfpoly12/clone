@@ -324,18 +324,6 @@ export default defineComponent({
 			let total3 = calculateLongTermCareInsurance(totalPrices)
 			let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
 
-
-			dataDefault.deductionItems.map((val: any) => {
-				if (val.itemCode == 1001)
-					val.amount = total1
-				if (val.itemCode == 1002)
-					val.amount = total2
-				if (val.itemCode == 1003)
-					val.amount = total3
-				if (val.itemCode == 1004)
-					val.amount = total4
-			})
-
 			arrDeduction.value?.map((val: any) => {
 				if (val.deductionItemCode == 1001)
 					val.price = total1
