@@ -2,7 +2,7 @@
     <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
         value-expr="employeeId" display-expr="employeeId"
         :value="valueEmploy"
-        field-template="field-data" @value-changed="updateValue"
+        field-template="field-data" @value-changed="updateValue" @change="eventItemClick"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
             <div v-if="data" style="padding: 4px">
@@ -17,6 +17,7 @@
                 </span>
                 <span class="tag-status" v-if="data.status == 0">퇴</span>
                 <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
+                <span class="tag-type-20" v-if="data.type == 20">일용</span>
                 <DxTextBox style="display: none;" />
             </div>
             <div v-else style="padding: 4px">
@@ -36,6 +37,7 @@
             </span>
             <span class="tag-status" v-if="data.status == 0">퇴</span>
             <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
+            <span class="tag-type-20" v-if="data.type == 20">일용</span>
         </template>
     </DxSelectBox>
 </template>
@@ -81,10 +83,16 @@ export default defineComponent({
                 valueEmploy.value = newValue;
             }
         );
+
+        const eventItemClick = () => {
+            console.log('xxxxxxxx');
+            
+        }
         return {
             updateValue,
             valueEmploy,
-            convertBirthDay
+            convertBirthDay,
+            eventItemClick
         };
     },
 });
@@ -107,24 +115,23 @@ export default defineComponent({
 .tag-status {
     background-color: red;
     color: white;
-    padding: 4px 10px;
+    padding: 2px 10px;
     border-radius: 5px;
     margin: 0 5px;
 }
-
-
-.tag-status {
-    background-color: red;
-    color: white;
-    padding: 4px 10px;
+.tag-type-20 {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    padding: 2px 10px;
     border-radius: 5px;
     margin: 0 5px;
+    border: solid 1px;
 }
 
 .tag-foreigner {
     background-color: orange;
     color: white;
-    padding: 4px 10px;
+    padding: 2px 10px;
     border-radius: 5px;
     margin: 0 5px;
 }
