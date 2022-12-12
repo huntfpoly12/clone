@@ -119,8 +119,8 @@ import {
 import {
   companyId,
   onExportingCommon,
-} from "../../../../helpers/commonFunction";
-import queries from "../../../../graphql/queries/PA/PA2/PA230/index";
+} from "@/helpers/commonFunction";
+import queries from "@/graphql/queries/PA/PA2/PA230/index";
 
 export default defineComponent({
   components: {
