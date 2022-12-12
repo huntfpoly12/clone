@@ -162,9 +162,9 @@
         :processKey="dataTableDetail.processKey" />
 
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="dataTableDetail.processKey"
-        title="변경이력" typeHistory="pa-620" />
+        title="변경이력" typeHistory="pa-420" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="actionDeleteSuccess" :data="dataTableDetail.processKey"
-        title="변경이력" typeHistory="pa-620-status" />
+        title="변경이력" typeHistory="pa-420-status" />
     <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
 </template>
@@ -174,10 +174,10 @@ import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
-import queries from "@/graphql/queries/PA/PA6/PA620/index";
+import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
-import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
+import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import { dataActionUtils, dataGetDetailEdit } from "../utils/index";

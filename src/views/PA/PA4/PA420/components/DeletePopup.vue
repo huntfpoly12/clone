@@ -22,7 +22,7 @@ import { useStore } from 'vuex'
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
+import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
 export default defineComponent({
     props: {
         modalStatus: {
