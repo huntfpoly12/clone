@@ -21,7 +21,8 @@
             </a-col>
             <a-col :span="12">
                 <a-form-item label="사원" class="label-required">
-                    antu
+                    <employ-select :arrayValue="arrayEmploySelect" :required="true" v-model:valueEmploy="valueSelected"
+                        width="300px" />
                 </a-form-item>
                 <a-form-item label="임원여부">
                     <switch-basic textCheck="X" textUnCheck="O" width="60px" />
@@ -162,7 +163,6 @@
                     근속연수 / 근속월수 / 근속일수: {근속연수}년/{근속월수}개월/{근속일수}일
                 </div>
             </a-col>
-
             <a-col :span="12" class="mt-10 custom-label">
                 <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
                 <a-form-item label="중간지급 퇴직급여">
@@ -185,7 +185,7 @@
                 </a-form-item>
 
             </a-col>
-            <a-col :span="12" class="mt-10 custom-label">
+            <a-col :span="12" class="mt-10">
                 <div class="header-text-2 mb-10">정산 근속연수</div>
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
@@ -224,22 +224,72 @@
             </a-col>
         </a-row>
     </standard-form>
-    <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
-        <button-basic text="다음" type="default" mode="contained" />
-    </div>
 </template>
 
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import dayjs from "dayjs";
+import { useStore } from 'vuex';
+import { useQuery } from "@vue/apollo-composable";
+import queries from "@/graphql/queries/PA/PA4/PA420/index";
+import { companyId } from '@/helpers/commonFunction';
 export default defineComponent({
     setup(props, { emit }) {
-
+        let valueSelected = ref()
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
+        const store = useStore();
+        const globalYear = computed(() => store.state.settings.globalYear)
+        const arrayEmploySelect: any = reactive([])
+        const dataGetOption = reactive({
+            companyId: companyId,
+            imputedYear: globalYear,
+        })
+        const trigger = ref(true)
 
+
+        // =============== GRAPQL ==================================
+        const { result: resultOption } = useQuery(queries.getEmployeeWages, dataGetOption, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }));
+        watch(resultOption, (value) => {
+            if (value) {
+                let respon = value.getEmployeeWages
+                respon.map((val: any) => {
+                    arrayEmploySelect.push(val)
+                })
+            }
+        });
+
+        const { result: resultOption2 } = useQuery(queries.getEmployeeWageDailies, dataGetOption, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+        }));
+        watch(resultOption2, (value) => {
+            if (value) {
+                console.log(value);
+
+                let respon = value.getEmployeeWageDailies
+                respon.map((val: any) => {
+                    if (val.retirementIncome == true)
+                        arrayEmploySelect.push(val)
+                })
+            }
+        });
+
+        watch(valueSelected, (value) => {
+            console.log(value);
+
+        });
+
+
+
+        // =============== FUNCTION ================================
         return {
+            valueSelected,
+            arrayEmploySelect,
             month1, month2,
         }
     }

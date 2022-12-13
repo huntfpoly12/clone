@@ -31,6 +31,7 @@ export default gql`
       employeementInsuranceDeduction
       nationalPensionSupportPercent
       employeementInsuranceSupportPercent 
+      retirementIncome
       deductionItems {
         itemCode
         amount

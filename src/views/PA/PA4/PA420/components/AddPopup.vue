@@ -20,6 +20,11 @@
                 </template>
             </form>
         </div>
+        <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
+            <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
+            <button-basic text="다음" type="default" mode="contained" @onClick="nextStep" v-if="step < 2" />
+            <button-basic text="저장" type="default" mode="contained" @onClick="created" v-if="step === 2" />
+        </div>
     </a-modal>
 </template>
 
@@ -129,16 +134,19 @@ export default defineComponent({
             step.value--;
         }
 
+        const created = () => {
+
+        }
         return {
             setModalVisible,
             onSubmit,
             changeStep,
+            nextStep, prevStep,created,
             checkStepTwo,
             checkStepThree,
             checkStepFour,
             step,
             dayValue,
-            nextStep, prevStep,
         }
     },
 })
