@@ -118,8 +118,8 @@ import { useStore } from 'vuex';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
-import notification from "@/utils/notification"; 
-import filters from "@/helpers/filters"; 
+import notification from "@/utils/notification";
+import filters from "@/helpers/filters";
 
 export default defineComponent({
 	props: {
@@ -165,9 +165,11 @@ export default defineComponent({
 		} = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
 			fetchPolicy: "no-cache",
 		}))
+
+		let dataReturn = ref()
 		resApiGetEmployeeWageDaily(e => {
 			if (e.data) {
-				let res = e.data.getEmployeeWageDaily 
+				let res = e.data.getEmployeeWageDaily
 				originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
 				originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
 				originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
@@ -179,15 +181,40 @@ export default defineComponent({
 				originDataUpdate.value.input.workingDays = res.workingDays
 				originDataUpdate.value.input.dailyWage = res.dailyWage
 				originDataUpdate.value.input.monthlyWage = res.monthlyWage
-				originDataUpdate.value.input.deductionItems = res.deductionItems
+				dataReturn.value = res.deductionItems
+
+
+				let dataAddDedution: any = []
+				arrDeduction.value?.map((val: any) => {
+					let arrReturn = addDedution(val.itemCode)
+					if (arrReturn.itemCode) {
+						val.price = arrReturn.amount
+						dataAddDedution.push(addDedution(val.itemCode))
+					}
+					else {
+						dataAddDedution.push({ itemCode: val.itemCode, amount: 0 })
+					}
+				})
+
+				originDataUpdate.value.input.deductionItems = dataAddDedution
 				formDifferencePayment.status = res.monthlyPaycheck
 				formDifferencePayment.wage = res.monthlyPaycheck == false ? res.dailyWage : res.monthlyWage
 				formDifferencePayment.working = res.workingDays
-				arrDeduction.value?.map((val: any) => {
-					val.price = funcCheckPrice(val.deductionItemCode)
-				})
+
+
 			}
 		})
+
+		const addDedution = (id: any) => {
+			let arrReturn: any = []
+			dataReturn.value.map((val: any) => {
+				if (id == val.itemCode) {
+					arrReturn = val
+					delete val.__typename
+				}
+			})
+			return arrReturn
+		}
 		const {
 			loading: loading,
 			onResult: resWithholdingConfigPayItems,
@@ -257,7 +284,7 @@ export default defineComponent({
 			res.value.map((val: any) => {
 				total += val.price
 			})
-			totalPayDifferen.value = filters.formatCurrency(total + parseInt(formDifferencePayment.totalAmount.replace(',', ''))),
+			totalPayDifferen.value = filters.formatCurrency((total + parseInt(formDifferencePayment.totalAmount.replace(',', ''))))
 			totalDeduction.value = filters.formatCurrency(total)
 		}, { deep: true })
 		watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
@@ -280,42 +307,36 @@ export default defineComponent({
 					res.totalAmount = 0
 				messageMonthlySalary.value = "월급 선택시, 일급 = 월급 / 근무일수"
 			}
-			totalPayDifferen.value = (res.totalAmount + parseInt(totalDeduction.value.replace(',', '')))
-			formDifferencePayment.totalAmount = res.totalAmount
+			totalPayDifferen.value = filters.formatCurrency(res.totalAmount + parseInt(totalDeduction.value.replace(',', '')))
+			formDifferencePayment.totalAmount = filters.formatCurrency(res.totalAmount)
 		}, { deep: true })
 		// ================== FUNCTION ==================================
 		const updateDeduction = () => {
 			arrEdit.map((val: any) => {
-				val.input.deductionItems.map((val: any) => {
-					delete val.__typename
-				})
 				mutate(val)
 			})
 		}
 		const callFuncCalculate = () => {
 			let dataDefault = originDataUpdate.value.input
-			let totalPrices = parseInt(formDifferencePayment.totalAmount.replace(',', '')) 
+			let totalPrices = parseInt(formDifferencePayment.totalAmount.replace(',', ''))
 			let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
 			let total2 = calculateHealthInsuranceEmployee(totalPrices)
 			let total3 = calculateLongTermCareInsurance(totalPrices)
 			let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
+
 			arrDeduction.value?.map((val: any) => {
-				if (val.deductionItemCode == 1001) {
+				if (val.deductionItemCode == 1001)
 					val.price = total1
-					dataDefault.deductionItems[0].amount = total1
-				}
-				if (val.deductionItemCode == 1002) {
+
+				if (val.deductionItemCode == 1002)
 					val.price = total2
-					dataDefault.deductionItems[1].amount = total2
-				}
-				if (val.deductionItemCode == 1003) {
+
+				if (val.deductionItemCode == 1003)
 					val.price = total3
-					dataDefault.deductionItems[2].amount = total3
-				}
-				if (val.deductionItemCode == 1004) {
+
+				if (val.deductionItemCode == 1004)
 					val.price = total4
-					dataDefault.deductionItems[3].amount = total4
-				}
+
 			})
 		}
 		const funcCheckPrice = (id: any) => {
@@ -343,4 +364,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/tab2.scss">
+
 </style>

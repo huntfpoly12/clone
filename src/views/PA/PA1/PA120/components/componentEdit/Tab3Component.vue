@@ -14,7 +14,10 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddDependent" />
                         </template>
-                        <DxColumn alignment="left" caption="연말 관계" data-field="relation" />
+                        <DxColumn alignment="left" caption="연말 관계" data-field="relation" cell-template="relation"/>
+                        <template #relation="{ data }" class="custom-action">
+                            {{$filters.formatRelation(data.value)}}
+                        </template>
                         <DxColumn alignment="left" caption="성명" data-field="name" />
                         <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
                         <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
@@ -33,11 +36,7 @@
                             cell-template="maternityAdoptionChange" />
                         <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
                             cell-template="consignmentRelationshipChange" />
-                        <!-- <DxColumn
-              alignment="left"
-              caption="세대주 여부 "
-              data-field="householder"
-            /> -->
+         
                         <DxColumn :width="80" cell-template="pupop" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
@@ -173,11 +172,9 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
-import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
-import notification from "@/utils/notification";
 import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue'
 import PopupUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue'
 import { Message } from "@/configs/enum"
@@ -217,12 +214,10 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalAddNewDependent = ref<boolean>(false);
         const modalEditStatus = ref<boolean>(false);
-        const modalHistoryStatus = ref<boolean>(false)
         const modalStatus = ref(false)
         const contentDelete = Message.getMessage('PA120', '002').message
         const idAction = ref()
         const globalYear = computed(() => store.state.settings.globalYear);
-        const actionChangeComponent = ref(0)
         const idRowIndex = ref()
         const relationSummary = ref();
         const womenSummary = ref();

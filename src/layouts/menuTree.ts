@@ -164,8 +164,8 @@ export default [
         title: "퇴직소득관리",
         id: "pa-400",
         items: [
-          { name: "퇴직금시뮬레이션", url: "#", id: "pa-410" },
-          { name: "퇴직소득자료입력", url: "#", id: "pa-420" },
+          { name: "퇴직금시뮬레이션", url: "/dashboard/pa-410", id: "pa-410" },
+          { name: "퇴직소득자료입력", url: "/dashboard/pa-420", id: "pa-420" },
           {
             name: "퇴직소득원천징수영수증",
             url: "/dashboard/pa-430",
@@ -208,7 +208,7 @@ export default [
         id: "pa-700",
         items: [
           { name: "기타소득자등록", url: "/dashboard/pa-710", id: "pa-710" },
-          { name: "기타소득자등록", url: "#", id: "pa-720" },
+          { name: "기타소득자등록", url: '/dashboard/pa-720', id: "pa-720" },
           { name: "기타소득자료입력", url: "/dashboard/pa-730", id: "pa-730" },
           { name: "기타소득원천징수영수증", url: "#", id: "pa-740" },
         ],

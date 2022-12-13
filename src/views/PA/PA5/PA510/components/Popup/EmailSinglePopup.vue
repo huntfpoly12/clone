@@ -18,10 +18,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
+import { companyId } from '@/helpers/commonFunction';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -36,9 +38,11 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const globalYear = computed(() => store.state.settings.globalYear)
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
-            emailAddress.value = val?.employeeInputs.receiverAddress
+            emailAddress.value = val?.employee.email
         });
         
         const setModalVisible = () => {
@@ -55,9 +59,16 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let variables = props.data
-                variables.employeeInputs.receiverAddress = emailAddress.value
-                sendEmail(variables);
+                sendEmail({
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    incomeInputs: {
+                        senderName: sessionStorage.getItem("username"),
+                        receiverName: props.data.employee.name,
+                        receiverAddress: emailAddress.value,
+                        incomeId: props.data.incomeId
+                    }
+                });
             }
         };
         onDoneAdd(() => {
@@ -66,9 +77,6 @@ export default defineComponent({
         })
         errorSendEmail((e: any) => {
             notification('error', e.message)
-        })
-        watch(() => props.modalStatus, (value) => {
-
         })
 
         return {
@@ -80,7 +88,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-modal-send-email {
     display: flex;
     align-items: center;

@@ -1,6 +1,8 @@
 #pa-620 {
     margin-top: 10px;
 
+
+
     .total-user {
         background-color: #17375E;
         color: white;
@@ -19,12 +21,6 @@
         }
     }
 
-    ::v-deep .ant-form-item-label>label {
-        width: 180px;
-        padding-left: 10px;
-        color: red;
-    }
-
     .ant-form-item {
         margin-bottom: 10px;
     }
@@ -35,7 +31,7 @@
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            min-height: 500px;
+            min-height: 300px;
         }
     }
 
@@ -102,4 +98,86 @@
     .hover-underlined:hover {
         text-decoration: underline;
     }
+
+    ::v-deep .form-action {
+        label {
+            width: 120px;
+        }
+    }
+
+    .header-text-1 {
+        background-color: #558ED5;
+        font-size: 18px;
+        padding: 3px 0 3px 10px;
+        color: white;
+    }
+
+    .header-text-2 {
+        background-color: #C6D9F1;
+        font-size: 14px;
+        padding: 3px 0 3px 10px;
+        color: black;
+        line-height: 28px;
+    }
+
+    ::v-deep .month-custom-1 {
+        background-color: #A6A6A6;
+        padding-left: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+
+        .dp__input {
+            color: white;
+            padding: 0px;
+            border: none;
+            height: 30px;
+            background-color: #A6A6A6;
+        }
+
+        .dp__icon {
+            display: none;
+        }
+    }
+
+    ::v-deep .month-custom-2 {
+        background-color: black;
+        padding-left: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+
+        .dp__input {
+            color: white;
+            padding: 0px;
+            border: none;
+            height: 30px;
+            background-color: black;
+        }
+
+        .dp__icon {
+            display: none;
+        }
+    }
+
+
+}
+
+.button-open-tab {
+    height: 100%;
+    padding-bottom: 7px;
+    width: 100px;
+}
+
+.custom-select-tab {
+    color: white;
+    background-color: blue;
+    font-size: 10px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+::v-deep .dx-datagrid-text-content {
+    white-space: pre-wrap;
 }

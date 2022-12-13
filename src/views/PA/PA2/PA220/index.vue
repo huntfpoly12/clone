@@ -99,16 +99,15 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, computed } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
-import notification from "../../../../utils/notification";
-import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
+import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
-import { onExportingCommon } from "../../../../helpers/commonFunction"
+import { onExportingCommon } from "@/helpers/commonFunction"
 import DxButton from "devextreme-vue/button";
 import { radioDivision, radioType } from "./utils/index"
-import { companyId, userId } from "../../../../../src/helpers/commonFunction";
+import {  userId } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton,

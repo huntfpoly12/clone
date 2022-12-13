@@ -69,8 +69,6 @@
         margin-bottom: 10px;
     }
 
-
-
     .custom-note {
         >span {
             font-size: 11px;
@@ -91,5 +89,9 @@
             min-width: 50px;
             text-align: center;
         }
+    }
+    ::v-deep .active-row-key {
+        background-color: #337AB7;
+        color: white;
     }
 }

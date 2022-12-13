@@ -96,15 +96,15 @@ import { useStore } from "vuex";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 
-import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
-import queries from "../../../../../../graphql/queries/common/index";
-import notification from "../../../../../../utils/notification";
+import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
+import queries from "@/graphql/queries/common/index";
+import notification from "@/utils/notification";
 import {
   radioCheckForeigner,
   radioCheckHouseholder,
   initFormStateTab1,
 } from "../../utils/index";
-import { companyId } from "../../../../../../helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 
 export default defineComponent({
   components: {
@@ -126,7 +126,7 @@ export default defineComponent({
     const formStateTab1 = reactive<any>({
       ...initFormStateTab1,
       joinedAt: dayjs().format("YYYY-MM-DD"),
-      leavedAt: dayjs().format("YYYY-MM-DD"),
+      leavedAt: null,
     });
 
     const oldFormState = { ...formStateTab1 };
@@ -154,6 +154,10 @@ export default defineComponent({
         labelResidebId.value = "주민등록번호";
       }
     });
+
+    /**
+     *  
+     */
     const residentId = ref("");
     watch(residentId, (newValue: any) => {
       formStateTab1.residentId =
@@ -226,11 +230,11 @@ export default defineComponent({
     });
 
     const createNewEmployeeWage = (e: any) => {
-    //   var res = e.validationGroup.validate();
-    //   if (!res.isValid) {
-    //     res.brokenRules[0].validator.focus();
-    //   } else {
-        emit('employeeId', employeeId);
+      var res = e.validationGroup.validate();
+      if (!res.isValid) {
+        res.brokenRules[0].validator.focus();
+      } else {
+        emit('employeeId', employeeId.value);
         let dataNew = {
           companyId: companyId,
           imputedYear: globalYear.value,
@@ -239,7 +243,7 @@ export default defineComponent({
           },
         };
         createEmployeeWage(dataNew);
-    //   }
+      }
 
     };
 // compare data

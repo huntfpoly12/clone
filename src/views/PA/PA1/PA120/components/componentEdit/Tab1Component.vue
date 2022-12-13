@@ -4,7 +4,7 @@
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <text-number-box width="200px" :required="true" v-model:valueInput="formStateTab1.employeeId"
-            placeholder="숫자만 입력 가능" />
+            placeholder="숫자만 입력 가능" :disabled="true"/>
         </a-form-item>
 
         <a-form-item label="영업자코드" label-align="right">
@@ -22,12 +22,12 @@
             placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
-          <date-time-box width="150px" v-model:valueDate="formStateTab1.joinedAt" dateFormat="YYYY-MM-DD">
+          <date-time-box width="150px" v-model:valueDate="formStateTab1.joinedAt">
           </date-time-box>
         </a-form-item>
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
-            <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt" dateFormat="YYYY-MM-DD">
+            <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt">
             </date-time-box>
             <span>
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 마지막 근무한 날
@@ -97,17 +97,15 @@ import { defineComponent, reactive, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
 import {
   radioCheckForeigner,
-  radioCheckHouseholder,
   initFormStateTab1,
 } from "../../utils/index";
 import { companyId } from "@/helpers/commonFunction";
-
+import _ from "lodash";
 export default defineComponent({
   components: {
 
@@ -125,6 +123,8 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
+
+    let arrDataEdit = Array();
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     let isForeigner = ref(false);
@@ -132,13 +132,13 @@ export default defineComponent({
     const arrDepartments = ref([]);
     const arrResponsibility = ref([]);
     const labelResidebId = ref("주민(외국인)번호 ");
-    const formStateTab1 = reactive<any>({
+    let formStateTab1 = reactive<any>({
       ...initFormStateTab1,
       joinedAt: dayjs().format("YYYY-MM-DD"),
       leavedAt: dayjs().format("YYYY-MM-DD"),
     });
 
-    const oldFormState = { ...formStateTab1 };
+    let oldFormStateTab1 = {};
     const postCode = ref();
     const funcAddress = (data: any) => {
       postCode.value = data.zonecode;
@@ -232,26 +232,47 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }))
     watch(getValueDefault,value => {
-      if (value) {
-        console.log('tab1',props.idRowEdit);
-        
-        formStateTab1.name = value.getEmployeeWage.name
-        formStateTab1.foreigner = value.getEmployeeWage.foreigner
-        formStateTab1.nationality = value.getEmployeeWage.nationality
-        formStateTab1.nationalityCode = value.getEmployeeWage.nationalityCode
-        formStateTab1.stayQualification = value.getEmployeeWage.stayQualification
-        formStateTab1.residentId = value.getEmployeeWage.residentId.replace("-", "")
-        formStateTab1.zipcode = ''
-        formStateTab1.roadAddress = value.getEmployeeWage.roadAddress
-        formStateTab1.addressExtend = value.getEmployeeWage.addressExtend
-        formStateTab1.email = value.getEmployeeWage.email
-        formStateTab1.employeeId = value.getEmployeeWage.employeeId
-        formStateTab1.joinedAt = value.getEmployeeWage.joinedAt ? dayjs(value.getEmployeeWage.joinedAt.toString()).format('YYYY-MM-DD') : ''
-        formStateTab1.leavedAt = value.getEmployeeWage.leavedAt ? dayjs(value.getEmployeeWage.leavedAt.toString()).format('YYYY-MM-DD') : ''
-        formStateTab1.retirementIncome = value.getEmployeeWage.retirementIncome
-        formStateTab1.weeklyWorkingHours = value.getEmployeeWage.weeklyWorkingHours
-        formStateTab1.department = value.getEmployeeWage.department
-        formStateTab1.responsibility = value.getEmployeeWage.responsibility
+      let rowData = arrDataEdit.find(item => item.employeeId === props.idRowEdit);
+      //If it already exists in arrDataEdit, fill it out in the form
+      if (rowData) {
+        console.log(rowData)
+          formStateTab1.name = rowData.name
+          formStateTab1.foreigner = rowData.foreigner
+          formStateTab1.nationality = rowData.nationality
+          formStateTab1.nationalityCode = rowData.nationalityCode
+          formStateTab1.stayQualification = rowData.stayQualification
+          formStateTab1.residentId = rowData.residentId.replace("-", "")
+          formStateTab1.roadAddress = rowData.roadAddress
+          formStateTab1.addressExtend = rowData.addressExtend
+          formStateTab1.email = rowData.email
+          formStateTab1.employeeId = rowData.employeeId
+          formStateTab1.joinedAt = rowData.joinedAt
+          formStateTab1.leavedAt = rowData.leavedAt
+          formStateTab1.retirementIncome = rowData.retirementIncome
+          formStateTab1.weeklyWorkingHours = rowData.weeklyWorkingHours
+          formStateTab1.department = rowData.department
+          formStateTab1.responsibility = rowData.responsibility
+      }else{
+        if(value){
+          formStateTab1.name = value.getEmployeeWage.name
+          formStateTab1.foreigner = value.getEmployeeWage.foreigner
+          formStateTab1.nationality = value.getEmployeeWage.nationality
+          formStateTab1.nationalityCode = value.getEmployeeWage.nationalityCode
+          formStateTab1.stayQualification = value.getEmployeeWage.stayQualification
+          formStateTab1.residentId = value.getEmployeeWage.residentId.replace("-", "")
+          formStateTab1.roadAddress = value.getEmployeeWage.roadAddress
+          formStateTab1.addressExtend = value.getEmployeeWage.addressExtend
+          formStateTab1.email = value.getEmployeeWage.email
+          formStateTab1.employeeId = value.getEmployeeWage.employeeId
+          formStateTab1.joinedAt = value.getEmployeeWage.joinedAt ? dayjs(value.getEmployeeWage.joinedAt).format('YYYY-MM-DD') : ''
+          formStateTab1.leavedAt = value.getEmployeeWage.leavedAt ? dayjs(value.getEmployeeWage.leavedAt).format('YYYY-MM-DD') : ''
+          formStateTab1.retirementIncome = value.getEmployeeWage.retirementIncome
+          formStateTab1.weeklyWorkingHours = value.getEmployeeWage.weeklyWorkingHours
+          formStateTab1.department = value.getEmployeeWage.department
+          formStateTab1.responsibility = value.getEmployeeWage.responsibility
+          oldFormStateTab1 = {...formStateTab1}
+        }
+
       }
     })
     const {
@@ -263,7 +284,7 @@ export default defineComponent({
       notification('error', e.message)
     })
     onDone(res => {
-      emit('closePopup', false)
+      store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList
       notification('success', '업데이트 완료!')
     })
 
@@ -273,34 +294,50 @@ export default defineComponent({
     watch(() => props.openPopup, (value) => {
       refetchValueDetail()
     })
-    // ============ WATCH ================================
-    watch(() => props.idRowEdit, (value) => {
-      originDataDetail.value.employeeId = value
-    })
+ 
+    //Compare the data after editing, if there is a difference, add it to the array arrEdit
+    watch(() => JSON.parse(JSON.stringify(formStateTab1)), (newValue) => {   
+      if (JSON.stringify(oldFormStateTab1) !== JSON.stringify(newValue)) {
+        
+        arrDataEdit = arrDataEdit.filter(function(item) { 
+          return item.employeeId !== newValue.employeeId; 
+        });
+        arrDataEdit.push(newValue)
+
+        //push the imployeeID into the arrayRoweditedPA120 array to identify the changed row 
+        let arrEmployeeRowEdited = store.state.common.arrayRoweditedPA120.filter(function(item : any) {
+            return item !== newValue.employeeId;
+        })
+        arrEmployeeRowEdited.push(newValue.employeeId)
+        store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited
+      }
+    },{deep:true})
+
     const actionUpdated = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        let newValDataEdit = {
-          ...formStateTab1,
-          joinedAt: typeof formStateTab1.joinedAt == "string" ? parseInt(formStateTab1.joinedAt.replaceAll('-', '')) : formStateTab1.joinedAt,
-          leavedAt: typeof formStateTab1.leavedAt == "string" ? parseInt(formStateTab1.leavedAt.replaceAll('-', '')) : formStateTab1.leavedAt,
-          residentId: formStateTab1.residentId.slice(0, 6) + '-' + formStateTab1.residentId.slice(6, 14)
-        };
-        delete newValDataEdit.employeeId;
-        delete newValDataEdit.zipcode;
-        let dataCallCreat = {
-          companyId: companyId,
-          imputedYear: globalYear.value,
-          employeeId: props.idRowEdit,
-          input: newValDataEdit
-        };
-        mutate(dataCallCreat)
+        arrDataEdit.forEach(rowData => {
+          let newValDataEdit = {
+              ...rowData,
+              joinedAt: rowData.joinedAt,
+              leavedAt: rowData.leavedAt,
+              residentId: rowData.residentId.slice(0, 6) + '-' + rowData.residentId.slice(6, 14)
+            };
+            delete newValDataEdit.employeeId;
+            let dataCallCreat = {
+              companyId: companyId,
+              imputedYear: globalYear.value,
+              employeeId: rowData.employeeId,
+              input: newValDataEdit
+            };
+            mutate(dataCallCreat)
+        })
+
       }
     }
     return {
-      companyId,
       loading,
       formStateTab1,
       isForeigner,
@@ -311,11 +348,9 @@ export default defineComponent({
       employeeId,
       postCode,
       radioCheckForeigner,
-      radioCheckHouseholder,
-      initFormStateTab1,
-      activeKey: ref("1"),
       arrDepartments,
-      arrResponsibility, actionUpdated
+      arrResponsibility, 
+      actionUpdated
     };
   },
 });

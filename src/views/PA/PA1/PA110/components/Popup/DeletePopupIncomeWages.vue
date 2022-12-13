@@ -3,8 +3,8 @@
         :width="500">
         <standard-form action="" name="delete-510">
             <div class="custom-modal-delete">
-                    <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
-                    <span>선택된 내역({{  }}건) 삭제합니다. 그래도 진행하시겠습니까?</span>
+                <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
+                <span>선택된 내역({{ data.length }}건) 삭제합니다. 그래도 진행하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
@@ -17,9 +17,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, computed, reactive } from 'vue'
+import { useStore } from 'vuex'
+import dayjs, { Dayjs } from 'dayjs';
+import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
+import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -27,26 +31,44 @@ export default defineComponent({
             default: false,
         },
         data: {
-            type: Object,
-            default: {}
+            type: Array,
+            default: []
         }
     },
     components: {
     },
     setup(props, { emit }) {
 
+        const store = useStore()
+        const processKey = computed(() => store.state.common.processKeyPA110)
         const setModalVisible = () => {
             emit("closePopup", false)
         };
 
         const onSubmit = (e: any) => {
-            var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
-                
-            }
+            let ids: any = [];
+            props.data.forEach((val: any) => {
+                ids.push(val.incomeId)
+            });
+            actionDelete({
+                companyId: companyId,
+                processKey: { ...processKey.value },
+                incomeIds: ids
+            })
         };
+        const {
+            mutate: actionDelete,
+            onError: errorDelete,
+            onDone: successDelete,
+        } = useMutation(mutations.deleteIncomeWages)
+        errorDelete(e => {
+            notification('error', e.message)
+        })
+        successDelete(e => {
+            notification('success', `업데이트 완료!`)
+            emit("closePopup", false)
+            emit("loadingTableInfo", true)
+        })
 
         return {
             setModalVisible,
@@ -56,7 +78,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-modal-delete {
     display: flex;
     align-items: center;

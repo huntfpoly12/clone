@@ -76,3 +76,42 @@
     border-radius: 5px;
     padding: 5px 10px;;
 }
+.deduction-main {
+    max-height: 200px;
+    overflow: scroll;
+    border: 1px solid #ddd;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+::v-deep .custom-deduction {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    >span {
+        margin-right: 10px; 
+    }
+
+    >div {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        width: 50%;
+    }
+}
+::v-deep .dx-master-detail-cell {
+    padding: 0 !important;
+}
+.text-align-center {
+    text-align: center;
+}
+
+.button-form-modal {
+    margin: 0px 5px;
+}
+.hover-underlined:hover {
+    text-decoration: underline;
+}
+::v-deep .dx-datagrid-text-content {
+   white-space: pre-wrap;
+}

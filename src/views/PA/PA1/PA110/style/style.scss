@@ -1,7 +1,8 @@
 #pa-110 {
-    margin-top: 10px;
     
-    
+    ::v-deep .dx-master-detail-cell {
+        padding: 0px;
+    }
     ::v-deep .ant-form-item-label {
         >label {
             width: 100px;
@@ -39,8 +40,11 @@
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            min-height: 770px;
+            min-height: 700px;
         }
+    }
+    .ml-3 {
+        margin-left: 3px;
     }
 
     .custom-note {
@@ -72,4 +76,27 @@
     border: none;
     border-radius: 5px;
     padding: 5px 10px;;
+}
+.deduction-main {
+    max-height: 200px;
+    overflow: scroll;
+    border: 1px solid #ddd;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+::v-deep .custom-deduction {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    >span {
+        margin-right: 10px; 
+    }
+
+    >div {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        width: 50%;
+    }
 }

@@ -1,19 +1,20 @@
 import getters from "./getters";
 import mutations from "./mutations";
-import {
-    DependantsRelation,
-    enum2Entries,
-} from "@bankda/jangbuda-common";
-var dependantsRelation = enum2Entries(DependantsRelation).map((value) => ({
-    value: value[1],
-    label: value[0],
-}));
+import actions from "./actions";
+import statesPA120 from "./screenStates/screenStatePA120";
+import statesPA510 from "./screenStates/screenStatePA510";
+import statesPA410 from "./screenStates/screenStatePA410";
+import layputState from "./screenStates/layoutState";
 const commonModule = {
     state: () => ({
-        dependantsRelation
+        ...layputState,
+        ...statesPA120,
+        ...statesPA510,
+        ...statesPA410
     }),
     getters,
     mutations,
+    actions
 };
 
 export default commonModule;

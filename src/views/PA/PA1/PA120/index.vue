@@ -56,7 +56,7 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <template #button-history="{ data }" style="border-color: #ddd;">
+                        <template #button-history="{ }" style="border-color: #ddd;">
                             <DxButton icon="plus">
                                 <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
                             </DxButton>
@@ -87,9 +87,9 @@
             </a-col>
             <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
                 <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
-                    @closePopup="eventCLoseAddPopup" v-if="actionChangeComponent == 1" :key="addComponentKey" />
-                <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="eventCLoseAddPopup"
-                    v-if="actionChangeComponent == 2" />
+                     v-if="actionChangeComponent == 1" :key="addComponentKey" />
+                <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
+                    v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit"/>
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
@@ -128,7 +128,7 @@ export default defineComponent({
     },
     setup() {
         const actionChangeComponent = ref(1)
-
+        const addNew = ref();
         const contentDelete = Message.getMessage('PA120', '002').message
         const modalStatus = ref(false)
         const dataSource = ref([]);
@@ -138,8 +138,9 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear);
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
-        const trigger = ref<boolean>(true);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const arrRowEdit = computed(() => store.state.common.arrayRoweditedPA120);
+        const trigger = ref<boolean>(true);
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
@@ -198,11 +199,10 @@ export default defineComponent({
             idRowEdit.value = data.data.employeeId
             modalEditStatus.value = true
         }
-        const eventCLoseAddPopup = () => {
+        watch(()=> store.state.common.reloadEmployeeList,() => {
             trigger.value = true
             refetchData()
-
-        }
+        })
         const modalHistory = () => {
             modalHistoryStatus.value = true;
         }
@@ -237,14 +237,21 @@ export default defineComponent({
         })
         const onSubmit = (e: any) => {
         };
+
         watch(() => modalEditStatus.value, (value) => {
             if (value == false) {
                 trigger.value = true
                 refetchData()
             }
         })
-        //ref
-        const addNew = ref();
+
+        watch(()=>arrRowEdit.value,()=>{
+            let listElementRow = document.body.querySelectorAll('[aria-rowindex]')
+            dataSource.value.map((val: any, index: any) => {
+                if (arrRowEdit.value.includes(val.employeeId))
+                    listElementRow[index].classList.add("active-row-key");
+            })   
+        })
         return {
             loading,
             idRowEdit,
@@ -261,13 +268,14 @@ export default defineComponent({
             totalUserOnl,
             totalUserOff,
             modalHistoryStatus,
-            openAddNewModal, eventCLoseAddPopup,
+            openAddNewModal,
             modalAddNewStatus, statusComfirm,
             per_page, move_column, colomn_resize,
             addComponentKey,
             onPopupComfirm,
             popupStatus,
             addNew,
+            arrRowEdit
         }
     },
 });

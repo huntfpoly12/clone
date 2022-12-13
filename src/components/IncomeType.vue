@@ -1,8 +1,22 @@
 <template>
-    <div class="custom-grade-cell">
-        <div class="custom-grade-cell-tag">{{ incomeTypeCode }}</div>
-        <span>{{ incomeTypeName }}</span>
+    <div v-if="!incomeTypeNameRes" class="custom-grade-cell">
+        <div class="custom-grade-cell-tag">{{ typeCodeRes }}</div>
+        <span>{{ typeNameRes }}</span>
     </div>
+
+    <div v-else-if="incomeTypeNameRes && incomeTypeNameRes.length < 10" class="custom-grade-cell">
+        <div class="custom-grade-cell-tag">{{ typeCode }}</div>
+        <span>{{ typeNameRes }} [{{ incomeTypeNameRes }}]</span>
+    </div>
+
+    <a-tooltip v-else>
+        <template #title>{{ incomeTypeNameRes }}</template>
+        <div class="custom-grade-cell">
+            <div class="custom-grade-cell-tag">{{ typeCodeRes }}</div>
+            <span>{{ typeNameRes }}</span>
+            [<span class="custom-text">{{ incomeTypeNameRes }}</span>]
+        </div>
+    </a-tooltip>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
@@ -16,16 +30,22 @@ export default defineComponent({
         typeName: {
             type: String,
             required: true
+        },
+        incomeTypeName: {
+            type: String,
         }
     },
-    setup(props, { emit }) {
-        const incomeTypeCode = ref(props.typeCode);
-        const incomeTypeName = ref(props.typeName);
+    setup(props) {  
+        let typeCodeRes = ref(props.typeCode)
+        let typeNameRes = ref(props.typeName)
+        let incomeTypeNameRes = ref(props.incomeTypeName)
+
         return {
-            incomeTypeCode,
-            incomeTypeName
-        };
-    },
+            incomeTypeNameRes,
+            typeNameRes,
+            typeCodeRes
+        }
+    }
 });
 </script>
 <style lang="scss" scoped>
@@ -41,6 +61,13 @@ export default defineComponent({
         min-width: 50px;
         text-align: center;
     }
+}
+
+.custom-text {
+    width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>
     

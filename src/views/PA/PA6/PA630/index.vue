@@ -59,7 +59,7 @@
                     <template #send-group-mail>
                         <div class="custom-mail-group">
                             <DxButton @click="actionOpenPopupEmailMulti">
-                                <img src="../../../../assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
                             </DxButton>
                         </div>
                     </template>
@@ -93,9 +93,9 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action" style="text-align: center;">
                             <img @click="actionOpenPopupEmailSingle(data.data)"
-                                src="../../../../assets/images/email.svg" alt=""
+                                src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px;" />
-                            <img @click="actionPrint(data.data)" src="../../../../assets/images/print.svg" alt="" style="width: 25px;" />
+                            <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt="" style="width: 25px;" />
                         </div>
                     </template>
                 </DxDataGrid>
@@ -127,11 +127,11 @@ import {
     companyId,
     onExportingCommon,
     userId,
-} from "../../../../helpers/commonFunction";
-import queries from "../../../../graphql/queries/PA/PA6/PA630/index";
+} from "@/helpers/commonFunction";
+import queries from "@/graphql/queries/PA/PA6/PA630/index";
 import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 import EmailMultiPopup from "./components/EmailMultiPopup.vue";
-import queriesGetUser from "../../../../graphql/queries/BF/BF2/BF210/index";
+import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 
 export default defineComponent({
     components: {
@@ -236,10 +236,10 @@ export default defineComponent({
                 },
                 employeeInputs: {
                     senderName: sessionStorage.getItem("username"),
-                    receiverName: data.employee.name,
-                    receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
-                    incomeTypeCode: data.employee.incomeTypeCode
+                    receiverName: data.name,
+                    receiverAddress: data.email,
+                    employeeId: data.employeeId,
+                    incomeTypeCode: data.incomeTypeCode
                 }
             }
             modalEmailSingle.value = true
