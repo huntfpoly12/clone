@@ -1,38 +1,26 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="600">
-            <div class="custom-modal">
-                <div class="text-align-center">
-                    <h3>공제 재계산 결과</h3>
-                    <div>
-                        <table class="table text-align-left">
-                            <tr class="title">
-                                <th>항목</th>
-                                <th>계산후</th>
-                                <th>원본</th>
-                            </tr>
-                            <tr>
-                                <td>국민연금</td>
-                                <td>new-value</td>
-                                <td>old-value</td>
-                            </tr>
-                            <tr>
-                                <td>건강보험</td>
-                                <td>new-value</td>
-                                <td>old-value</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
+        <div class="custom-modal">
+            <div class="text-align-center">
+                <h3>공제 재계산 결과</h3>
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
+                    :column-auto-width="true">
+                    <DxColumn caption="항목" data-field="name" />
+                    <DxColumn caption="계산후" data-field="priceNew" />
+                    <DxColumn caption="원본" data-field="price" />
+                </DxDataGrid>
             </div>
-            <div class="text-align-center mt-40">
-                <button-basic class="button-form-modal" :text="'적용'" :width="140" :type="'default'"
-                    :mode="'contained'" @onClick="onSubmit" />
-            </div>
+        </div>
+        <div class="text-align-center mt-40">
+            <button-basic class="button-form-modal" :text="'적용'" :width="140" :type="'default'" :mode="'contained'"
+                @onClick="onSubmit" />
+        </div>
     </a-modal>
 </template>
 
 <script lang="ts">
+import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid"
 import { defineComponent, watch, ref } from 'vue'
 export default defineComponent({
     props: {
@@ -41,25 +29,24 @@ export default defineComponent({
             default: false,
         },
         data: {
-            type: Object,
-            default: {}
+            type: Array,
+            default: []
         },
-        emailUserLogin: {
-            type: String,
-            default: ""
-        }
+
     },
     components: {
+        DxDataGrid,
+        DxColumn
     },
-    setup(props, { emit }) {;
-
+    setup(props, { emit }) {
         const setModalVisible = () => {
             emit("closePopup", false)
         };
         const onSubmit = (e: any) => {
-            
+            emit("updateDate", true)
+            emit("closePopup", false)
         };
-    
+
 
         return {
             setModalVisible,
@@ -69,17 +56,13 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-modal {
     display: flex;
     width: 100%;
     justify-content: center;
     margin-top: 20px;
-    .table, th, td {
-        border: 1px solid gray;
-        padding: 5px 10px;
-        width: 500px;
-    }
+
     .title {
         background-color: #e6f7ff;
     }
@@ -92,6 +75,7 @@ export default defineComponent({
 .text-align-center {
     text-align: center;
 }
+
 .text-align-left {
     text-align: left;
 }

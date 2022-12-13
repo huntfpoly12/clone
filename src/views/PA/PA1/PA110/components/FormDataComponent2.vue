@@ -134,7 +134,8 @@
                     </div>
                 </a-col>
             </a-row>
-            <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" />
+            <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" :data="arrDeduction"
+                @updateDate="updateDataDeduction" />
             <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
             <DeletePopupTaxPay :modalStatus="modalDeteleTaxpay" @closePopup="modalDeteleTaxpay = false" />
             <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false" />
@@ -221,6 +222,7 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear,
         });
+        const arrDeduction: any = ref([])
 
         // get WithholdingConfigPayItems
         const originDataDetail = ref({
@@ -384,6 +386,7 @@ export default defineComponent({
             totalDeduction.value = dataConfigDeduction.value.reduce((accumulator: any, object: any) => {
                 return accumulator + object.value;
             }, 0);
+            console.log('formState2.deductionItems', formState2.deductionItems)
         }
 
         // API EDIT
@@ -483,7 +486,13 @@ export default defineComponent({
                 updateIncomeWage()
             }
         })
-
+        // update data deduction
+        const updateDataDeduction = () => {
+            arrDeduction.value?.map((val: any) => {
+                if ([1001, 1002, 1003, 1004, 1011].includes(val.deductionItemCode))
+                    val.price = val.priceNew
+            })
+        }
         return {
             formState2, loading1, loading2, loading,
             rangeDate, modalDeductions,
@@ -491,8 +500,8 @@ export default defineComponent({
             totalPayItem, totalPayItemTaxFree, totalPayItemTax,
             totalDeduction, dataIncomeWage,
             subPayment, arrayEmploySelect,
-            calculateTax, loadingEmployeeWage,
-            updateIncomeWage, actionUpdate,
+            calculateTax, loadingEmployeeWage, arrDeduction,
+            updateIncomeWage, actionUpdate, updateDataDeduction,
             companyId, datagConfigPayItems, dataConfigDeduction, month1, month2,
         };
     },
