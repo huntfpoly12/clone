@@ -287,7 +287,7 @@
       </a-col>
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
         <FormDataComponent :dataIncomeWage="dataIncomeWage" :arrayEmploySelect="arrayEmploySelect"
-          :actionUpdateItem="actionUpdateItem" :actionAddItem="actionAddItem" />
+          :actionUpdateItem="actionUpdateItem" :actionAddItem="actionAddItem" :statusButton="statusButton" />
       </a-col>
       <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" />
     </a-row>
@@ -355,6 +355,7 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page)
     const move_column = computed(() => store.state.settings.move_column)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
+    let statusButton = ref()
     const modalCopy = ref<boolean>(false);
     const triggerIncomeWage = ref<boolean>(true)
     const triggerProcessIncomeWages = ref<boolean>(true)
@@ -395,7 +396,15 @@ export default defineComponent({
       companyId: companyId,
       processKey: processKey.value,
     })
-
+    const dataCallTableSmall = reactive({
+      companyId: companyId,
+      processKey: {
+        imputedYear: null,
+        imputedMonth: null,
+        paymentYear: null,
+        paymentMonth: null,
+      }
+    })
     let popupData = ref([])
     // ======================= GRAPQL ================================
     const {
@@ -459,7 +468,7 @@ export default defineComponent({
           paymentYear: val.paymentYear,
           paymentMonth: val.paymentMonth,
         }
-
+        status.value = respon[0].status
         dataSource.value[0]['month' + val.imputedMonth] = val
         // data table detail
 
@@ -515,7 +524,13 @@ export default defineComponent({
         //   value: filters.formatCurrency(val.incomeStat.actualPayment),
         //   ...dataAdd
         // }
-
+        if (val.imputedMonth == (dayjs().month() + 1)) {
+          dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
+          dataCallTableSmall.processKey.imputedYear = val.imputedYear
+          dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
+          dataCallTableSmall.processKey.paymentYear = val.paymentYear
+          statusButton.value = val.status
+        }
       })
     })
 
@@ -571,7 +586,7 @@ export default defineComponent({
     return {
       loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
       status, processKey,
-      dataSource, originDataIncomeWages, globalYear,
+      dataSource, originDataIncomeWages, globalYear, statusButton,
       per_page, move_column, colomn_resize,
       refetchDataProcessIncomeWages, refetchDataIncomeWages,
       onSubmit,

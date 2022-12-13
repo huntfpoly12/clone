@@ -5,6 +5,7 @@ import calculateIncomeWageTax from "./calculateIncomeWageTax";
 import getIncomeProcessWages from "./getIncomeProcessWages";
 import getIncomeWages from "./getIncomeWages";
 import getIncomeWage from "./getIncomeWage";
+import getEmployeeWages from "./getEmployeeWages";
 import getWithholdingConfigPayItems from "./getWithholdingConfigPayItems";
 const queries = {
   getWithholdingConfigDeductionItems: getWithholdingConfigDeductionItems,
@@ -14,6 +15,7 @@ const queries = {
   getIncomeProcessWages: getIncomeProcessWages,
   getIncomeWages: getIncomeWages,
   getIncomeWage: getIncomeWage,
+  getEmployeeWages: getEmployeeWages,
   getWithholdingConfigPayItems: getWithholdingConfigPayItems,
 };
 export default queries;

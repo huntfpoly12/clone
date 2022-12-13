@@ -3,20 +3,21 @@
         <a-spin :spinning="loading" size="large">
             <a-row>
                 <a-col :span="24">
-                    <a-col :span="12">
-                        <a-form-item label="사원">
-                            <EmploySelect :arrayValue="arrayEmploySelect"
-                                v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="270px"
-                                :required="true" />
-                        </a-form-item>
-                        <a-form-item label="지급일">
-                            <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWage.paymentDay"
-                                :max="31" :spinButtons="true" />
-                        </a-form-item>
-                    </a-col>
+                    <a-spin :spinning="loadingEmployeeWage" size="large">
+                        <a-col :span="12">
+                            <a-form-item label="근무일수">
+                                <EmploySelect :arrayValue="arrayEmploySelect"
+                                    v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="316px"
+                                    :required="true" />
+                            </a-form-item>
+                            <a-form-item label="지급일">
+                                <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWage.paymentDay"
+                                    :max="31" :spinButtons="true" />
+                            </a-form-item>
+                        </a-col>
+                    </a-spin>
                 </a-col>
             </a-row>
-
             <a-row :gutter="16">
                 <a-col :span="12" class="input-items">
                     <div class="header-text-2">근로시간
@@ -92,7 +93,7 @@
                 </a-col>
                 <a-col :span="12">
                     <div class="header-text-2">공제 항목 {{ $filters.formatCurrency(totalDeduction) }}원 </div>
-                    <a-spin :spinning="loading1" size="large">
+                    <a-spin :spinning="loading2" size="large">
                         <div class="deduction-main">
                             <div v-for="(item) in dataConfigDeduction" :key="item.name" class="custom-deduction">
                                 <span>
@@ -174,10 +175,10 @@ export default defineComponent({
         DxButton, DeductionPopup, InsurancePopup, DeletePopupTaxPay, DeletePopupMidTerm
     },
     props: {
-        arrayEmploySelect: {
-            type: Array,
-            default: []
-        },
+        // arrayEmploySelect: {
+        //     type: Array,
+        //     default: []
+        // },
         dataIncomeWage: {
             type: Object,
             default: []
@@ -193,6 +194,7 @@ export default defineComponent({
         modalStatus: Boolean,
     },
     setup(props, { emit }) {
+        const arrayEmploySelect: any = ref([])
 
         const totalPayItemTaxFree = ref(0);
         const totalPayItemTax = ref(0);
@@ -213,6 +215,7 @@ export default defineComponent({
         const datagConfigPayItems = ref();
         const dataConfigDeduction = ref();
         const triggerDetail = ref<boolean>(false);
+        const trigger = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear);
         const formState2 = reactive<any>({
             ...initFormState2,
@@ -220,6 +223,11 @@ export default defineComponent({
         const formState1 = reactive<any>({
             ...initFormState1,
         });
+        const originData = ref({
+            companyId: companyId,
+            imputedYear: globalYear,
+        });
+
         // get WithholdingConfigPayItems
         const originDataDetail = ref({
             companyId: companyId,
@@ -275,6 +283,16 @@ export default defineComponent({
                 });
             }
         });
+        // get employeewage
+        const {
+            loading: loadingEmployeeWage,
+            onResult: resEmployeeWage,
+        } = useQuery(queries.getEmployeeWages, originData, () => ({
+            fetchPolicy: "no-cache",
+        }))
+        resEmployeeWage(value => {
+            arrayEmploySelect.value = value.data.getEmployeeWages
+        })
         // get IncomeWage value
         const {
             refetch: refetchValueDetail,
@@ -405,7 +423,6 @@ export default defineComponent({
         errorCreated(res => {
             notification('error', res.message)
         })
-
         watch(() => props.dataIncomeWage, (newValue) => {
             switchAction.value = false
             dataIncomeWage.value = newValue
@@ -416,24 +433,13 @@ export default defineComponent({
         watch(() => props.actionAddItem, (value) => {
             if (value) {
                 addRow()
-                console.log('formState1', dataIncomeWage)
             }
         })
         const addRow = () => {
-            dataIncomeWage.paymentDay = 0;
-            dataIncomeWage.employeeId = 0
-            dataIncomeWage.workingDays = 0
-            dataIncomeWage.totalWorkingHours = 0
-            dataIncomeWage.overtimeWorkingHours = 0
-            dataIncomeWage.workingHoursAtNight = 0
-            dataIncomeWage.workingHoursOnHolidays = 0
-            dataIncomeWage.payItems = [{ itemCode: 0, amount: 0 }]
-            dataIncomeWage.deductionItems = [
-                { itemCode: 0, amount: 0 }
-            ]
+            dataIncomeWage.value = { ...initFormState1, paymentDay: 1 }
 
-            switchAction.value = true
         }
+
         // action update
         const updateIncomeWage = () => {
             const variables = {
@@ -471,8 +477,8 @@ export default defineComponent({
             modalInsurance, modalDeteleTaxpay, modalDeteleMidTerm,
             totalPayItem, totalPayItemTaxFree, totalPayItemTax,
             totalDeduction, dataIncomeWage,
-            subPayment,
-            calculateTax,
+            subPayment, arrayEmploySelect,
+            calculateTax, loadingEmployeeWage,
             updateIncomeWage, actionUpdate,
             companyId, datagConfigPayItems, dataConfigDeduction, month1, month2,
         };

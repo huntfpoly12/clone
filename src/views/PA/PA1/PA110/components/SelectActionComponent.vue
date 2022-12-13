@@ -61,7 +61,7 @@ import { HistoryOutlined } from "@ant-design/icons-vue"
 import { companyId } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import { useQuery } from "@vue/apollo-composable";
-import queries from "@/graphql/queries/PA/PA5/PA510/index";
+import queries from "@/graphql/queries/PA/PA1/PA110/index";
 import notification from "@/utils/notification";
 export default defineComponent({
     components: {
@@ -97,6 +97,7 @@ export default defineComponent({
 
         const modalPrintPayrollRegister = ref<boolean>(false)
         const modalDelete = ref<boolean>(false)
+
         const modalEdit = ref<boolean>(false)
         const modalHistory = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
@@ -204,14 +205,14 @@ export default defineComponent({
             }
         }
         const { refetch, result, loading
-        } = useQuery(queries.getIncomeWageDailySalaryStatementViewUrl, originData, () => ({
+        } = useQuery(queries.getIncomeWageSalaryStatementViewUrl, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
         watch(result, (value) => {
             trigger.value = false;
             if (value) {
-                window.open(value.getIncomeWageDailySalaryStatementViewUrl)
+                window.open(value.getIncomeWageSalaryStatementViewUrl)
             }
         })
         const loadingTableInfo = () => {
