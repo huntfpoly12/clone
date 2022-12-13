@@ -126,7 +126,7 @@ export default defineComponent({
     const formStateTab1 = reactive<any>({
       ...initFormStateTab1,
       joinedAt: dayjs().format("YYYY-MM-DD"),
-      leavedAt: dayjs().format("YYYY-MM-DD"),
+      leavedAt: null,
     });
 
     const oldFormState = { ...formStateTab1 };
@@ -154,6 +154,10 @@ export default defineComponent({
         labelResidebId.value = "주민등록번호";
       }
     });
+
+    /**
+     *  
+     */
     const residentId = ref("");
     watch(residentId, (newValue: any) => {
       formStateTab1.residentId =
