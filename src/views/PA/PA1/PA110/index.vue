@@ -510,7 +510,6 @@ export default defineComponent({
     })
     watch(resultTaxPayInfo, (value) => {
       dataTaxPayInfo.value = value.getIncomeWages
-      console.log('dataTaxPayInfo.value', dataTaxPayInfo.value)
       dataTaxPayInfo.value.map((value: any) => {
         arrayEmploySelect.value.push({
           employeeId: value.employee.employeeId,
@@ -518,7 +517,7 @@ export default defineComponent({
           idCardNumber: value.employee.idCardNumber,
           status: value.employee.status,
           foreigner: value.employee.foreigner,
-          midTermSettlement: value.employee.midTermSettlement
+          midTermSettlement: value.midTermSettlement
         }
         )
       })

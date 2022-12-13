@@ -384,7 +384,6 @@ export default defineComponent({
             totalDeduction.value = dataConfigDeduction.value.reduce((accumulator: any, object: any) => {
                 return accumulator + object.value;
             }, 0);
-            console.log('formState2.dataConfigDeduction', formState2.payItems)
         }
 
         // API EDIT
@@ -434,7 +433,6 @@ export default defineComponent({
         })
         const addRow = () => {
             dataIncomeWage.value = { ...initFormState1 }
-            console.log('formstate', formState2 = { ...initFormState2 })
             refetchValueDetail()
         }
 
@@ -475,8 +473,8 @@ export default defineComponent({
                         workingHoursOnHolidays: dataIncomeWage.value.workingHoursOnHolidays,
                         paymentDay: dataIncomeWage.paymentDay,
                         employeeId: dataIncomeWage.employee.employeeId,
-                        payItems: [],
-                        deductionItems: []
+                        payItems: formState2.payItems,
+                        deductionItems: formState2.deductionItems
                     }
                 };
                 actionCreated(variables)
