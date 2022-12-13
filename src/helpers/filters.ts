@@ -6,6 +6,7 @@ import {
     DependantsRelation,
     enum2Entries,
 } from "@bankda/jangbuda-common";
+import moment from 'moment';
 var dependantsRelation = enum2Entries(DependantsRelation).map((value) => ({
     value: value[1],
     label: value[0],
@@ -22,6 +23,10 @@ const filters = {
     },
     formatDate(date: any) {
         return dayjs(date).format('YYYY-MM-DD')
+    },
+
+    formatDateScalar(date : any) {
+        return moment(date, "YYYYMMDD").format('YYYY-MM-DD');
     },
     formatRelation(idRelation: number) {
         const obj = dependantsRelation.filter((item: any) => {
