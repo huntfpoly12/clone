@@ -13,8 +13,7 @@
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
             <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" />
-        </a-form-item>
-
+        </a-form-item> 
         <div class="text-align-center mt-30">
             <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
                 @onClick="onSubmit" />

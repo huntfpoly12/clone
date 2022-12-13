@@ -24,7 +24,7 @@ import { defineComponent, ref } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
+import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 export default defineComponent({
     props: {
         modalStatus: {

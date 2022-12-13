@@ -1,7 +1,7 @@
 <template>
     <div style="display: flex;
     align-items: center;" :class="{'text_under':isUnder}">
-        <span style="margin-right: 5px;">{{year}}-{{month}}</span>
+        <span style="margin-right: 5px;">{{year}}-{{month > 9 ? month : '0'+month}}</span>
         <div v-if="value == 10" class="badge entering"></div>
         <div v-if="value == 20" class="badge input closing"></div>
         <div v-if="value == 30" class="badge adjusting"></div>
