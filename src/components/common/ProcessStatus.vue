@@ -50,8 +50,10 @@ export default defineComponent({
         }
 
         const submit = () => {
-            emit("update:valueStatus", value.value);
             showModal.value = false;
+            emit("update:valueStatus", value.value);
+            emit("checkConfirm", true)
+            
         }
         watch(
             () => props.valueStatus,

@@ -109,3 +109,9 @@
 .button-form-modal {
     margin: 0px 5px;
 }
+.hover-underlined:hover {
+    text-decoration: underline;
+}
+::v-deep .dx-datagrid-text-content {
+   white-space: pre-wrap;
+}
