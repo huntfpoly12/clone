@@ -63,7 +63,7 @@
   margin-bottom: 5px;
 }
 
-$lenght: 100;
+$lenght: 50;
 
 @for $i from 1 through $lenght {
   .pl-#{$i} {
@@ -99,6 +99,10 @@ $lenght: 100;
   }
 }
 
+.wf-100 {
+  width: 100%;
+}
+
 @for $i from 1 through 50 {
   .fz-#{$i} {
     font-size: $i+ px;
@@ -114,6 +118,10 @@ $lenght: 100;
   align-items: center;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .ant-modal-confirm-btns {
   float: inherit !important;
   text-align: center !important;
@@ -124,4 +132,3 @@ $lenght: 100;
     color: red;
   }
 }
-

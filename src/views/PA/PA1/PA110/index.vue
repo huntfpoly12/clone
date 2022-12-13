@@ -242,18 +242,15 @@
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from "vue"
 import DxButton from "devextreme-vue/button"
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { useStore } from 'vuex'
-import { useQuery, useMutation } from "@vue/apollo-composable"
+import { useQuery } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
-import notification from "@/utils/notification"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent2.vue"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
-import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
-import { Message } from "@/configs/enum"
 import { sampleDataIncomeWage, sampleFormIncomeWage } from "./utils/index"
 import filters from "@/helpers/filters";
 

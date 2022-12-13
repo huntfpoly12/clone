@@ -96,15 +96,15 @@ import { useStore } from "vuex";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 
-import mutations from "../../../../../../graphql/mutations/PA/PA1/PA120/index";
-import queries from "../../../../../../graphql/queries/common/index";
-import notification from "../../../../../../utils/notification";
+import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
+import queries from "@/graphql/queries/common/index";
+import notification from "@/utils/notification";
 import {
   radioCheckForeigner,
   radioCheckHouseholder,
   initFormStateTab1,
 } from "../../utils/index";
-import { companyId } from "../../../../../../helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 
 export default defineComponent({
   components: {
@@ -226,10 +226,10 @@ export default defineComponent({
     });
 
     const createNewEmployeeWage = (e: any) => {
-    //   var res = e.validationGroup.validate();
-    //   if (!res.isValid) {
-    //     res.brokenRules[0].validator.focus();
-    //   } else {
+      var res = e.validationGroup.validate();
+      if (!res.isValid) {
+        res.brokenRules[0].validator.focus();
+      } else {
         emit('employeeId', employeeId);
         let dataNew = {
           companyId: companyId,
@@ -239,7 +239,7 @@ export default defineComponent({
           },
         };
         createEmployeeWage(dataNew);
-    //   }
+      }
 
     };
 // compare data
