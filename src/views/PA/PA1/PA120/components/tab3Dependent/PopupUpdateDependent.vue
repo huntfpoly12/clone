@@ -249,6 +249,7 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+                delete formState.householder;
                 let newValDataEdit = {
                     ...formState
                 };
