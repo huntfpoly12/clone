@@ -9,6 +9,8 @@ export default gql`
       companyId: $companyId
       processKey: $processKey
       input: $input
-    )
+    ) {
+      incomeId
+    }
   }
 `;
