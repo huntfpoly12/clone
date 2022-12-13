@@ -1,0 +1,241 @@
+<template>
+  <a-spin :spinning="loadingIncomeExtras" size="large">
+    <DxDataGrid
+      :show-row-lines="true"
+      :hoverStateEnabled="true"
+      :data-source="dataSourceDetail"
+      :show-borders="true"
+      :allow-column-reordering="move_column"
+      :allow-column-resizing="colomn_resize"
+      :column-auto-width="true"
+      @selection-changed="selectionChanged"
+      @row-click="actionEditFuc"
+    >
+      <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" width="50" />
+      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="185" />
+      <template #tag="{ data }" class="custom-action">
+        <div>
+          <button style="margin-right: 5px">
+            {{ data.data.incomeTypeCode }}
+          </button>
+          <a-tooltip placement="top">
+            <template #title v-if="data.data.employee.incomeTypeName.length > 10">
+              <span>{{ data.data.employee.incomeTypeName }}</span>
+            </template>
+
+            {{ checkLen(data.data.employee.incomeTypeName) }}
+          </a-tooltip>
+        </div>
+      </template>
+      <DxColumn caption="지급일" data-field="paymentDay" width="60" alignment="left" />
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="90" alignment="left" />
+      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="90" alignment="left" />
+      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="90" alignment="left" />
+      <DxColumn caption="세율" data-field="taxRate" width="60" alignment="left" />
+      <DxColumn caption="공제" cell-template="incomLocalTax" width="90px" alignment="left" />
+      <template #incomLocalTax="{ data }">
+        {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
+      </template>
+      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px" alignment="left" />
+      <DxSummary v-if="dataSourceDetail.length > 0">
+        <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
+        <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}" value-format="#,###" />
+        <DxTotalItem class="custom-sumary" column="필요경비" summary-type="sum" value-format="#,###" display-format="필요경비합계: {0}" />
+        <DxTotalItem class="custom-sumary" column="소득금액" summary-type="sum" value-format="#,###" display-format="소득금액합계: {0}" />
+        <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
+        <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" value-format="#,###" />
+      </DxSummary>
+    </DxDataGrid>
+  </a-spin>
+</template>
+
+<script lang="ts">
+import { ref, defineComponent, watch, computed, reactive } from 'vue';
+import { useStore } from 'vuex';
+import { useQuery, useMutation } from '@vue/apollo-composable';
+import {
+  DxDataGrid,
+  DxColumn,
+  DxPaging,
+  DxExport,
+  DxSelection,
+  DxSearchPanel,
+  DxToolbar,
+  DxEditing,
+  DxGrouping,
+  DxScrolling,
+  DxItem,
+  DxMasterDetail,
+  DxSummary,
+  DxTotalItem,
+} from 'devextreme-vue/data-grid';
+import { companyId } from '@/helpers/commonFunction';
+import queries from '@/graphql/queries/PA/PA7/PA720/index';
+import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
+import type { DropdownProps } from 'ant-design-vue';
+import { dataActionUtils, dataGetDetailEdit } from '../utils/index';
+import notification from '@/utils/notification';
+import filters from '@/helpers/filters';
+
+export default defineComponent({
+  components: {
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxSelection,
+    DxExport,
+    DxSearchPanel,
+    DxScrolling,
+    DxToolbar,
+    DxEditing,
+    DxGrouping,
+    DxItem,
+    DxMasterDetail,
+    DxSummary,
+    DxTotalItem,
+  },
+  props: {
+    dataCallTableDetail: {
+      type: Object,
+    },
+    actionSave: {
+      type: Number,
+    },
+    changeFommDone: {
+      type: Number,
+    },
+  },
+  setup(props, { emit }) {
+    let dataSourceDetail = ref([]);
+    const triggerDetail = ref<boolean>(true);
+    const store = useStore();
+    const per_page = computed(() => store.state.settings.per_page);
+    const move_column = computed(() => store.state.settings.move_column);
+    const colomn_resize = computed(() => store.state.settings.colomn_resize);
+    const rowTable = ref(0);
+    let updateParam = reactive<any>({});
+    let dataAction: any = reactive({
+      ...dataActionUtils,
+    });
+    let dataTableDetail: any = ref({
+      ...props.dataCallTableDetail,
+    });
+    const arrDropDown = [
+      { id: 1, url: '520', event: '520', title: '' },
+      {
+        id: 2,
+        function: 'History',
+        event: 'History',
+        title: '일용직근로소득자료 변경이력',
+      },
+      {
+        id: 2,
+        function: 'HistoryStatus',
+        event: 'HistoryStatus',
+        title: '일용직근로소득 마감상태 변경이력',
+      },
+    ];
+    const incomeIdDels = ref<any>([]);
+
+    //Mutation
+    const { mutate: onDelIncomeExtras, onDone: onDoneDeleteIncomeExtras, onError: onErorDeleteIncomeExtras } = useMutation(mutations.deleteIncomeExtras);
+
+    // ================GRAPQL==============================================
+
+    // API QUERY TABLE SMALL LEFT SIDE
+    const {
+      refetch: refetchIncomeExtras,
+      loading: loadingIncomeExtras,
+      onError: errorIncomeExtras,
+      onResult: resIncomeExtras,
+    } = useQuery(queries.getIncomeExtras, dataTableDetail, () => ({
+      enabled: triggerDetail.value,
+      fetchPolicy: 'no-cache',
+    }));
+    resIncomeExtras((res) => {
+      dataSourceDetail.value = res.data.getIncomeExtras;
+      triggerDetail.value = false;
+      loadingIncomeExtras.value = true;
+    });
+    errorIncomeExtras((res) => {
+      // notification('error', res.message);
+      triggerDetail.value = false;
+    });
+
+    // ================WATCHING============================================
+    watch(
+      () => props.dataCallTableDetail,
+      (newValue) => {
+        dataTableDetail.value = newValue;
+        triggerDetail.value = true;
+        refetchIncomeExtras();
+      },
+      { deep: true }
+    );
+
+    watch(
+      () => props.changeFommDone,
+      () => {
+        triggerDetail.value = true;
+        refetchIncomeExtras();
+      }
+    );
+
+    // ================FUNCTION============================================
+
+    const actionEditFuc = (data: any) => {
+      updateParam = {
+        companyId: companyId,
+        processKey: {
+          imputedYear: dataTableDetail.value.processKey?.imputedYear,
+          imputedMonth: dataTableDetail.value.processKey?.imputedMonth,
+          paymentYear: dataTableDetail.value.processKey?.paymentYear,
+          paymentMonth: dataTableDetail.value.processKey?.paymentMonth,
+        },
+        incomeId: data.data.incomeId,
+      };
+      emit('editTax', updateParam);
+    };
+
+    const checkLen = (text: String) => {
+      if (text.length > 10) {
+        return text.substring(0, 10) + '...';
+      }
+      return text;
+    };
+    const customTextSummary = () => {
+      let total = 0;
+      dataSourceDetail.value.map((val: any) => {
+        total += val.withholdingIncomeTax + val.withholdingLocalIncomeTax;
+      });
+      return '공제합계: ' + filters.formatCurrency(total);
+    };
+    const formateMoney = (options: any) => {
+      return filters.formatCurrency(options.value);
+    };
+    const selectionChanged = (data: any) => {
+        incomeIdDels.value = data.selectedRowsData.map((item: { incomeId: number }) => {
+        return item.incomeId;
+      });
+    };
+    return {
+      dataAction,
+      rowTable,
+      per_page,
+      move_column,
+      colomn_resize,
+      dataSourceDetail,
+      actionEditFuc,
+      checkLen,
+      loadingIncomeExtras,
+      customTextSummary,
+      formateMoney,
+      selectionChanged,
+      incomeIdDels,
+    };
+  },
+});
+</script>
+
+<style>
+</style>
