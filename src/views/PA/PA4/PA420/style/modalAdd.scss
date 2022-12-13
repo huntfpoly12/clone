@@ -1,0 +1,99 @@
+.ant-steps-navigation {
+    margin-top: 5px;
+}
+
+::v-deep .ant-steps-navigation .ant-steps-item-container {
+    margin-left: 0px;
+    margin-bottom: -5px;
+}
+
+::v-deep .step-content {
+    height: 700px;
+    overflow-x: hidden;
+}
+
+::v-deep .month-custom-1,
+::v-deep .month-custom-2 {
+    padding-left: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    color: white;
+
+    .dp__input {
+        color: white;
+        padding: 0px;
+        border: none;
+        height: 30px;
+    }
+
+    .dp__icon {
+        display: none;
+    }
+}
+
+::v-deep .month-custom-2 {
+    background-color: black;
+
+    .dp__input {
+        background-color: black;
+    }
+}
+
+::v-deep .month-custom-1 {
+    background-color: #A6A6A6;
+
+    .dp__input {
+        background-color: #A6A6A6;
+    }
+}
+
+
+::v-deep .label-required {
+    label {
+        color: red;
+    }
+}
+
+.modal-add {
+    ::v-deep label {
+        min-width: 120px;
+    }
+
+    .custom-label {
+        ::v-deep label {
+            width: 200px;
+        }
+    }
+}
+
+.header-text-title {
+    width: 100%;
+    background-color: #376092;
+    font-size: 18px;
+    padding: 3px 0 3px 10px;
+    color: white;
+}
+
+.header-text-1 {
+    width: 100%;
+    background-color: #558ED5;
+    font-size: 18px;
+    padding: 3px 0 3px 10px;
+    color: white;
+}
+
+.header-text-2 {
+    width: 100%;
+    background-color: #C6D9F1;
+    font-size: 14px;
+    padding: 3px 0 3px 10px;
+    color: white;
+    line-height: 28px;
+}
+
+::v-deep .custom-waring {
+    font-size: 11px;
+    line-height: 12px;
+    color: #A6A6A6;
+    width: 180px;
+}
