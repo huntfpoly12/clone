@@ -209,8 +209,8 @@
             <template #tag="{ data }" class="custom-action">
               <div class="custom-action">
                 <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-                  :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-                  :foreigner="data.data.employee.foreigner" :checkStatus="false" />
+                  :status="data.data.employee.status" :foreigner="data.data.employee.foreigner" :checkStatus="false"
+                  :midTermSettlement="data.data.midTermSettlement" />
               </div>
             </template>
             <DxColumn caption="급여" data-field="totalPay" />
@@ -333,7 +333,7 @@ export default defineComponent({
       paymentMonth: dayjs().month() + 1,
 
     }
-    const processKey = computed(() => store.state.common.processKeyPA510)
+    const processKey = computed(() => store.state.common.processKeyPA110)
     let dataCustomRes: any = ref([])
     const dataIncomeWage: any = ref({ ...sampleDataIncomeWage })
 
@@ -427,7 +427,6 @@ export default defineComponent({
           { id: 11, name: "공제총액", },
           { id: 12, name: "차인지급액", },
         ]
-        console.log('res', respon)
         respon.forEach((val: any, index: any) => {
           arrDataPoint.value.push({
             imputedYear: val.imputedYear,
@@ -506,18 +505,20 @@ export default defineComponent({
     watch(resultIncomeWage, (value) => {
       if (value) {
         dataIncomeWage.value = value.getIncomeWage
+        console.log('value', value)
       }
     })
     watch(resultTaxPayInfo, (value) => {
-
       dataTaxPayInfo.value = value.getIncomeWages
+      console.log('dataTaxPayInfo.value', dataTaxPayInfo.value)
       dataTaxPayInfo.value.map((value: any) => {
         arrayEmploySelect.value.push({
           employeeId: value.employee.employeeId,
           name: value.employee.name,
           idCardNumber: value.employee.idCardNumber,
           status: value.employee.status,
-          foreigner: value.employee.foreigner
+          foreigner: value.employee.foreigner,
+          midTermSettlement: value.employee.midTermSettlement
         }
         )
       })
@@ -567,8 +568,8 @@ export default defineComponent({
     }
     const showDetailSelected = (data: any) => {
       status.value = data.status
-      store.state.common.processKeyPA510.paymentYear = data.paymentYear
-      store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
+      store.state.common.processKeyPA110.paymentYear = data.paymentYear
+      store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
     }
     return {
       loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
