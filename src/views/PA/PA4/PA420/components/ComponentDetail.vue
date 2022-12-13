@@ -62,28 +62,36 @@
             :focused-row-enabled="true" @selection-changed="selectionChanged" class="mt-10">
             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
             <DxScrolling column-rendering-mode="virtual" />
-            <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
+            <DxColumn caption="사원" cell-template="tag" />
             <template #tag="{ data }" class="custom-action">
                 <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
                     :incomeTypeName="data.data.employee.incomeTypeName" />
             </template>
-            <DxColumn caption="지급일" data-field="paymentDay" data-type="string" :format="amountFormat" />
+            <DxColumn caption="구분" data-field="paymentDay" data-type="string" :format="amountFormat" />
             <DxColumn caption="지급액" data-field="paymentAmount" data-type="string" :format="amountFormat" />
-            <DxColumn caption="세율" data-field="taxRate" data-type="string" :format="amountFormat" />
-            <DxColumn caption="공제" cell-template="income-tax" />
+            <DxColumn caption="입사일 (정산시작일)" data-field="taxRate" data-type="string" :format="amountFormat" />
+            <DxColumn caption="퇴사일 (정산종료일)" cell-template="income-tax" />
             <template #income-tax="{ data }" class="custom-action">
                 {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax)
                 }}
             </template>
+            <DxColumn caption="퇴직급여" data-field="actualPayment" data-type="string" :format="amountFormat" />
+            <DxColumn caption="비과세 퇴직급여" data-field="actualPayment" data-type="string" :format="amountFormat" />
+            <DxColumn caption="과세대상 퇴직급여" data-field="actualPayment" data-type="string" :format="amountFormat" />
+            <DxColumn caption="공제" data-field="actualPayment" data-type="string" :format="amountFormat" />
             <DxColumn caption="차인지급액" data-field="actualPayment" data-type="string" :format="amountFormat" />
-            <DxSummary>
+            <DxColumn caption="비고" data-field="actualPayment" data-type="string" :format="amountFormat" />
+            <DxColumn caption="지급일" data-field="actualPayment" data-type="string" :format="amountFormat" />
+
+
+            <!-- <DxSummary>
                 <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
                 <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
                     value-format="#,###" />
                 <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
                 <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum"
                     display-format="차인지급액합계: {0}" value-format="#,###" />
-            </DxSummary>
+            </DxSummary> -->
         </DxDataGrid>
     </a-spin>
 

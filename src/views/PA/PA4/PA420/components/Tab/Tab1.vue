@@ -240,44 +240,47 @@ export default defineComponent({
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
-        const arrayEmploySelect: any = reactive([])
+        const globalYear = computed(() => store.state.settings.globalYear) 
         const dataGetOption = reactive({
             companyId: companyId,
             imputedYear: globalYear,
         })
         const trigger = ref(true)
-
+        store.dispatch('common/getListEmployee', {
+                companyId: companyId,
+                imputedYear: globalYear,
+        })
+        const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410)
 
         // =============== GRAPQL ==================================
-        const { result: resultOption } = useQuery(queries.getEmployeeWages, dataGetOption, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-        }));
-        watch(resultOption, (value) => {
-            if (value) {
-                let respon = value.getEmployeeWages
-                respon.map((val: any) => {
-                    arrayEmploySelect.push(val)
-                })
-            }
-        });
+        // const { result: resultOption } = useQuery(queries.getEmployeeWages, dataGetOption, () => ({
+        //     enabled: trigger.value,
+        //     fetchPolicy: "no-cache",
+        // }));
+        // watch(resultOption, (value) => {
+        //     if (value) {
+        //         let respon = value.getEmployeeWages
+        //         respon.map((val: any) => {
+        //             arrayEmploySelect.push(val)
+        //         })
+        //     }
+        // });
 
-        const { result: resultOption2 } = useQuery(queries.getEmployeeWageDailies, dataGetOption, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-        }));
-        watch(resultOption2, (value) => {
-            if (value) {
-                console.log(value);
+        // const { result: resultOption2 } = useQuery(queries.getEmployeeWageDailies, dataGetOption, () => ({
+        //     enabled: trigger.value,
+        //     fetchPolicy: "no-cache",
+        // }));
+        // watch(resultOption2, (value) => {
+        //     if (value) {
+        //         console.log(value);
 
-                let respon = value.getEmployeeWageDailies
-                respon.map((val: any) => {
-                    if (val.retirementIncome == true)
-                        arrayEmploySelect.push(val)
-                })
-            }
-        });
+        //         let respon = value.getEmployeeWageDailies
+        //         respon.map((val: any) => {
+        //             if (val.retirementIncome == true)
+        //                 arrayEmploySelect.push(val)
+        //         })
+        //     }
+        // });
 
         watch(valueSelected, (value) => {
             console.log(value);
