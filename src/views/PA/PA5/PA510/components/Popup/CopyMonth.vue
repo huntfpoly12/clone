@@ -5,7 +5,6 @@
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ month }}
-                    <!-- <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" /> -->
                 </div>
                 <div class="month-custom-2 d-flex-center">
                     지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
@@ -65,8 +64,9 @@ import { companyId } from "@/helpers/commonFunction"
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 import notification from "@/utils/notification";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
+import queries from "@/graphql/queries/PA/PA5/PA510/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -75,10 +75,6 @@ export default defineComponent({
         data: {
             type: Number,
             default: 0
-        },
-        arrDataPoint: {
-            type: Array,
-            default: []
         },
     },
     components: {
@@ -91,6 +87,7 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear)
         const month: any = ref<number>()
         const dataApiCopy: any = ref({})
+        const arrDataPoint: any = ref({})
         watch(() => props.data, (val) => {
             month.value = val
         });
@@ -100,6 +97,34 @@ export default defineComponent({
         const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const { result: resultConfig } = useQuery(
+            queries.getWithholdingConfig,
+            dataQuery,
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultConfig, (value) => {
+            if (value) {
+                paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+            }
+        });
+        const originData: any = ref({
+            companyId: companyId,
+            filter: {
+                startImputedYearMonth: parseInt(`${globalYear.value}1`),
+                finishImputedYearMonth: parseInt(`${globalYear.value}12`),
+            }
+        })
+        const {
+            onResult: onResult
+        } = useQuery(queries.findIncomeProcessWageDailyStatViews, originData, () => ({
+            fetchPolicy: "no-cache",
+        }));
+        onResult((value: any) => {
+            arrDataPoint.value = value.data.findIncomeProcessWageDailyStatViews
+        })
 
         const {
             mutate,
@@ -168,6 +193,7 @@ export default defineComponent({
             setModalVisibleCopy,
             onSubmit,
             updateValue,
+            arrDataPoint,
         }
     },
 })
