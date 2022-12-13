@@ -245,7 +245,9 @@
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
 
-                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" />
+                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" 
+                :processKey="valueCallApiGetEmployeeBusiness.processKey" :data="dataModalCopy"
+                @loadingTable="loadingTable"/>
             </a-row>
         </div>
     </div>
@@ -284,6 +286,7 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(0);
+        const dataModalCopy: any = ref()
         const originData = reactive({ ...origindata, rows: per_page });
         const trigger = ref<boolean>(true);
         const modalCopy = ref<boolean>(false);
@@ -427,7 +430,12 @@ export default defineComponent({
 
 
         const addMonth = (month: number) => {
+            dataModalCopy.value = month
             modalCopy.value = true
+        }
+
+        const loadingTable = () => {
+            refetchData()
         }
 
 
@@ -450,7 +458,9 @@ export default defineComponent({
             addMonth,
             saving,
             showDetailSelected,
-            actionCopySuccess
+            actionCopySuccess,
+            dataModalCopy,
+            loadingTable
         };
     },
 });
