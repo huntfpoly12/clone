@@ -189,7 +189,8 @@
           :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
         <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
           :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
-        <ProcessStatus v-model:valueStatus="status" />
+        <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
+
       </a-col>
       <a-col class="">
         <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
@@ -247,7 +248,9 @@
           :actionUpdateItem="actionUpdateItem" :actionAddItem="actionAddItem" :statusButton="statusButton"
           @createdDone="createdDone" :updateData="updateData" />
       </a-col>
-      <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" />
+      <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
+        @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
+        @dataAddIncomeProcess="dataAddIncomeProcess" />
     </a-row>
   </div>
 </template>
@@ -256,21 +259,22 @@ import { ref, defineComponent, watch, computed, reactive } from "vue"
 import DxButton from "devextreme-vue/button"
 import dayjs from 'dayjs';
 import { useStore } from 'vuex'
-import { useQuery } from "@vue/apollo-composable"
+import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent2.vue"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
+import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import { sampleDataIncomeWage, sampleFormIncomeWage } from "./utils/index"
 import filters from "@/helpers/filters";
-
+import notification from "@/utils/notification"
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import DeductionPopup from "./components/Popup/DeductionPopup.vue"
 import InsurancePopup from "./components/Popup/InsurancePopup.vue"
-import CopyMonth from "./components/CopyMonth.vue";
+import CopyMonth from "./components/Popup/CopyMonth.vue";
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -388,6 +392,18 @@ export default defineComponent({
       enabled: triggeraxPayInfo.value,
       fetchPolicy: "no-cache",
     }))
+    const {
+      mutate: actionChangeIncomeProcess,
+      onError: errorChangeIncomeProcess,
+      onDone: successChangeIncomeProcess,
+    } = useMutation(mutations.changeIncomeProcessWageStatus)
+    errorChangeIncomeProcess(e => {
+      notification('error', e.message)
+    })
+    successChangeIncomeProcess(e => {
+      notification('success', `업데이트 완료!`)
+      refetchDataProcessIncomeWages()
+    })
     // ======================= WATCH ==================================
     // get data table detail getIncomeProcessWages
     watch(resIncomeProcessWages, (value) => {
@@ -512,6 +528,13 @@ export default defineComponent({
     // ======================= FUNCTION ================================
     const onSubmit = (e: any) => {
     }
+    const statusComfirm = () => {
+      actionChangeIncomeProcess({
+        companyId: companyId,
+        processKey: { ...processKey.value },
+        status: status.value
+      })
+    }
     const updateData = (e: any) => {
       actionUpdateItem.value++
     }
@@ -531,6 +554,11 @@ export default defineComponent({
     const copyMonth = (month: number) => {
       dataModalCopy.value = month
       modalCopy.value = true
+
+    }
+    const dataAddIncomeProcess = (data: any) => {
+      dataSource.value[0]['month' + data.imputedMonth] = data
+      dataSource.value[0]['month' + data.imputedMonth].status = 10
 
     }
     const createdDone = () => {
@@ -556,7 +584,7 @@ export default defineComponent({
       imputedYear,
       imputedMonth,
       dataCustomRes,
-      formIncomeWageDaily, copyMonth, dataModalCopy, arrDataPoint,
+      formIncomeWageDaily, copyMonth, dataModalCopy, arrDataPoint, statusComfirm, dataAddIncomeProcess,
       showDetailSelected,
       dataTaxPayInfo, dataRows, actionAddItem, loadingTableInfo, updateData, actionUpdateItem, createdDone,
       actionEditTaxPay, modalCopy, actionCopySuccess, addMonth
