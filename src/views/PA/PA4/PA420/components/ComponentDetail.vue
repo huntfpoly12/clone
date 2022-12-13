@@ -63,26 +63,25 @@
             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
             <DxScrolling column-rendering-mode="virtual" />
             <DxColumn caption="사원" cell-template="tag" />
+
+            <DxColumn caption="구분" data-field="retirementType" data-type="string" />
+            <DxColumn caption="지급액" data-field="joinedAt" data-type="date" />
+            <DxColumn caption="입사일 (정산시작일)" data-field="leavedAt" data-type="date" />
+            <DxColumn caption="퇴사일 (정산종료일)" data-field="retirementBenefits" />
+            <DxColumn caption="퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string" />
+            <DxColumn caption="비과세 퇴직급여" data-field="taxableRetirementBenefits" data-type="string" />
+            <DxColumn caption="과세대상 퇴직급여" data-field="totalDeduction" data-type="string" />
+            <DxColumn caption="공제" data-field="totalPay" data-type="string" :format="amountFormat" />
+            <DxColumn caption="차인지급액" cell-template="note" data-type="string" :format="amountFormat" />
+            <DxColumn caption="비고" data-field="paymentDay" data-type="string" />
+
+            <template #note="{ data }" class="custom-action">
+                antu
+            </template>
             <template #tag="{ data }" class="custom-action">
                 <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
                     :incomeTypeName="data.data.employee.incomeTypeName" />
             </template>
-            <DxColumn caption="구분" data-field="paymentDay" data-type="string" :format="amountFormat" />
-            <DxColumn caption="지급액" data-field="paymentAmount" data-type="string" :format="amountFormat" />
-            <DxColumn caption="입사일 (정산시작일)" data-field="taxRate" data-type="string" :format="amountFormat" />
-            <DxColumn caption="퇴사일 (정산종료일)" cell-template="income-tax" />
-            <template #income-tax="{ data }" class="custom-action">
-                {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax)
-                }}
-            </template>
-            <DxColumn caption="퇴직급여" data-field="actualPayment" data-type="string" :format="amountFormat" />
-            <DxColumn caption="비과세 퇴직급여" data-field="actualPayment" data-type="string" :format="amountFormat" />
-            <DxColumn caption="과세대상 퇴직급여" data-field="actualPayment" data-type="string" :format="amountFormat" />
-            <DxColumn caption="공제" data-field="actualPayment" data-type="string" :format="amountFormat" />
-            <DxColumn caption="차인지급액" data-field="actualPayment" data-type="string" :format="amountFormat" />
-            <DxColumn caption="비고" data-field="actualPayment" data-type="string" :format="amountFormat" />
-            <DxColumn caption="지급일" data-field="actualPayment" data-type="string" :format="amountFormat" />
-
 
             <!-- <DxSummary>
                 <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
@@ -168,15 +167,13 @@ export default defineComponent({
             ...props.dataCallTableDetail
         })
 
-        // ================GRAPQL==============================================
-
-        // API QUERY TABLE SMALL LEFT SIDE
-        const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, dataTableDetail, () => ({
+        // ================GRAPQL============================================== 
+        const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeRetirements, dataTableDetail, () => ({
             enabled: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
         resIncomeProcessBusinessesDetail(res => {
-            dataSourceDetail.value = res.data.getIncomeBusinesses
+            dataSourceDetail.value = res.data.getIncomeRetirements
             triggerDetail.value = false
         })
         errorGetIncomeProcessBusinessesDetail(res => {

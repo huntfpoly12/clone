@@ -228,7 +228,7 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import dayjs from "dayjs";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
@@ -241,52 +241,20 @@ export default defineComponent({
         let month2: any = ref(dayjs().format("YYYY-MM"))
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear) 
-        const dataGetOption = reactive({
+        store.dispatch('common/getListEmployee', {
             companyId: companyId,
             imputedYear: globalYear,
-        })
-        const trigger = ref(true)
-        store.dispatch('common/getListEmployee', {
-                companyId: companyId,
-                imputedYear: globalYear,
         })
         const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410)
 
         // =============== GRAPQL ==================================
-        // const { result: resultOption } = useQuery(queries.getEmployeeWages, dataGetOption, () => ({
-        //     enabled: trigger.value,
-        //     fetchPolicy: "no-cache",
-        // }));
-        // watch(resultOption, (value) => {
-        //     if (value) {
-        //         let respon = value.getEmployeeWages
-        //         respon.map((val: any) => {
-        //             arrayEmploySelect.push(val)
-        //         })
-        //     }
-        // });
 
-        // const { result: resultOption2 } = useQuery(queries.getEmployeeWageDailies, dataGetOption, () => ({
-        //     enabled: trigger.value,
-        //     fetchPolicy: "no-cache",
-        // }));
-        // watch(resultOption2, (value) => {
-        //     if (value) {
-        //         console.log(value);
 
-        //         let respon = value.getEmployeeWageDailies
-        //         respon.map((val: any) => {
-        //             if (val.retirementIncome == true)
-        //                 arrayEmploySelect.push(val)
-        //         })
-        //     }
-        // });
-
+        // =============== WATCH ==================================
         watch(valueSelected, (value) => {
             console.log(value);
 
         });
-
 
 
         // =============== FUNCTION ================================
