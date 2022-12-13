@@ -15,6 +15,7 @@
             </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
+            <span class="tag-foreigner" v-if="forDailyUse == true">일용</span>
         </div>
     </div>
 </template>
@@ -42,6 +43,8 @@ export default defineComponent({
         checkStatus: {
             type: Boolean,
         },
+        forDailyUse: Boolean,
+
     },
     components: {
         DxButton

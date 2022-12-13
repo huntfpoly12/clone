@@ -21,15 +21,6 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear)
-    onActivated(() => {
-      store.dispatch('auth/getUserInfor')
-      store.dispatch('common/getListEmployee', {
-            companyId: companyId,
-            imputedYear: globalYear,
-        })
-    })
-  
     const currentPage = computed(() => store.state.common.currentPagePA410);
     return {
       currentPage
