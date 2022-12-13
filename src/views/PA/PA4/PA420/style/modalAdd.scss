@@ -7,8 +7,8 @@
     margin-bottom: -5px;
 }
 
-::v-deep .step-content {
-    height: 700px;
+.step-content {
+    height: 70vh;
     overflow-x: hidden;
 }
 
@@ -95,5 +95,25 @@
     font-size: 11px;
     line-height: 12px;
     color: #A6A6A6;
-    width: 180px;
+    width: 330px;
+} 
+.d-flex-top {
+    display: flex;
+    align-items: flex-start;
+}
+
+.modal-add-step-3 {
+    .custom-waring {
+        width: 250px;
+    }
+
+    ::v-deep label {
+        width: 180px;
+    }
+}
+
+.label-children {
+    ::v-deep label {
+        padding-left: 40px;
+    }
 }
