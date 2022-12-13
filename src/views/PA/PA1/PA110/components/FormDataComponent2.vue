@@ -3,19 +3,16 @@
         <a-spin :spinning="loading" size="large">
             <a-row>
                 <a-col :span="24">
-                    <a-spin :spinning="loadingEmployeeWage" size="large">
-                        <a-col :span="12">
-                            <a-form-item label="근무일수">
-                                <EmploySelect :arrayValue="arrayEmploySelect"
-                                    v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="316px"
-                                    :required="true" />
-                            </a-form-item>
-                            <a-form-item label="지급일">
-                                <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWage.paymentDay"
-                                    :max="31" :spinButtons="true" />
-                            </a-form-item>
-                        </a-col>
-                    </a-spin>
+                    <a-col :span="12">
+                        <a-form-item label="근무일수">
+                            <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
+                                v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="316px" />
+                        </a-form-item>
+                        <a-form-item label="지급일">
+                            <number-box width="200px" :min="1" v-model="dataIncomeWage.paymentDay" :max="31"
+                                :spinButtons="true" />
+                        </a-form-item>
+                    </a-col>
                 </a-col>
             </a-row>
             <a-row :gutter="16">
@@ -27,18 +24,18 @@
                         </span>
                     </div>
 
-                    <a-form-item label="총근로시간" label-align="right" class="red">
-                        <text-number-box width="200px" :required="true"
-                            v-model:valueInput="dataIncomeWage.totalWorkingHours" placeholder="총근로시간" />
-                    </a-form-item> <a-form-item label="연장근로시간" label-align="right" class="red">
-                        <text-number-box width="200px" :required="true"
-                            v-model:valueInput="dataIncomeWage.overtimeWorkingHours" placeholder="연장근로시간" />
-                    </a-form-item> <a-form-item label="야간근로시간" label-align="right" class="red">
-                        <text-number-box width="200px" :required="true"
-                            v-model:valueInput="dataIncomeWage.workingHoursAtNight" placeholder="야간근로시간" />
-                    </a-form-item> <a-form-item label="휴일근로시간" label-align="right" class="red">
-                        <text-number-box width="200px" :required="true"
-                            v-model:valueInput="dataIncomeWage.workingHoursOnHolidays" placeholder="휴일근로시간" />
+                    <a-form-item label="총근로시간" label-align="right">
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.totalWorkingHours"
+                            placeholder="총근로시간" />
+                    </a-form-item> <a-form-item label="연장근로시간" label-align="right">
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.overtimeWorkingHours"
+                            placeholder="연장근로시간" />
+                    </a-form-item> <a-form-item label="야간근로시간" label-align="right">
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.workingHoursAtNight"
+                            placeholder="야간근로시간" />
+                    </a-form-item> <a-form-item label="휴일근로시간" label-align="right">
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.workingHoursOnHolidays"
+                            placeholder="휴일근로시간" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -121,8 +118,8 @@
             <a-row style="margin-top: 40px">
 
                 <a-col :offset="4" style="text-align: center;">
-                    <!-- <button-basic style="margin-right: 20px" text="공제계산/caculate" type="default" mode="contained"
-                        :width="120" @onClick="calculateTax" /> -->
+                    <button-basic style="margin-right: 20px" text="공제계산/caculate" type="default" mode="contained"
+                        :width="120" @onClick="calculateTax" />
                     <div class="text-align-center ">
                         <DxButton @click="modalDeductions = true" :text="'공제 재계산'"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
@@ -175,10 +172,6 @@ export default defineComponent({
         DxButton, DeductionPopup, InsurancePopup, DeletePopupTaxPay, DeletePopupMidTerm
     },
     props: {
-        // arrayEmploySelect: {
-        //     type: Array,
-        //     default: []
-        // },
         dataIncomeWage: {
             type: Object,
             default: []
@@ -191,6 +184,7 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+
         modalStatus: Boolean,
     },
     setup(props, { emit }) {
@@ -204,7 +198,7 @@ export default defineComponent({
         const modalDeteleTaxpay = ref<boolean>(false)
         const modalDeteleMidTerm = ref<boolean>(false)
         const totalDeduction = ref(0);
-        let switchAction = ref<boolean>(true)
+        let switchAction = ref<boolean>(false)
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
         const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
@@ -217,7 +211,7 @@ export default defineComponent({
         const triggerDetail = ref<boolean>(false);
         const trigger = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear);
-        const formState2 = reactive<any>({
+        let formState2 = reactive<any>({
             ...initFormState2,
         });
         const formState1 = reactive<any>({
@@ -390,6 +384,7 @@ export default defineComponent({
             totalDeduction.value = dataConfigDeduction.value.reduce((accumulator: any, object: any) => {
                 return accumulator + object.value;
             }, 0);
+            console.log('formState2.dataConfigDeduction', formState2.payItems)
         }
 
         // API EDIT
@@ -404,6 +399,7 @@ export default defineComponent({
         })
 
         actionUpdateDone(res => {
+            emit('createdDone', true)
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
@@ -424,20 +420,22 @@ export default defineComponent({
             notification('error', res.message)
         })
         watch(() => props.dataIncomeWage, (newValue) => {
-            switchAction.value = false
             dataIncomeWage.value = newValue
-
             triggerDetail.value = true
         }, { deep: true })
         // action add new
         watch(() => props.actionAddItem, (value) => {
             if (value) {
+                switchAction.value = true
+                emit('updateData', true)
+                console.log('switchAction.add ', switchAction.value)
                 addRow()
             }
         })
         const addRow = () => {
-            dataIncomeWage.value = { ...initFormState1, paymentDay: 1 }
-
+            dataIncomeWage.value = { ...initFormState1 }
+            console.log('formstate', formState2 = { ...initFormState2 })
+            refetchValueDetail()
         }
 
         // action update
@@ -453,20 +451,37 @@ export default defineComponent({
                     overtimeWorkingHours: dataIncomeWage.value.overtimeWorkingHours,
                     workingHoursAtNight: dataIncomeWage.value.workingHoursAtNight,
                     workingHoursOnHolidays: dataIncomeWage.value.workingHoursOnHolidays,
-                    payItems: [],
-                    deductionItems: [],
-
+                    payItems: formState2.payItems,
+                    deductionItems: formState2.deductionItems,
                 }
             };
+            switchAction.value = false
             actionUpdate(variables)
+            refetchValueDetail()
         }
         // switch action
         watch(() => props.actionUpdateItem, () => {
             if (switchAction.value == true) {
-                actionCreated(formState1)
+                const variables = {
+                    ...formState1,
+                    companyId: companyId,
+                    processKey: { ...processKey.value },
+                    incomeId: props.dataIncomeWage.incomeId,
+                    input: {
+                        workingDays: dataIncomeWage.value.workingDays,
+                        totalWorkingHours: dataIncomeWage.value.totalWorkingHours,
+                        overtimeWorkingHours: dataIncomeWage.value.overtimeWorkingHours,
+                        workingHoursAtNight: dataIncomeWage.value.workingHoursAtNight,
+                        workingHoursOnHolidays: dataIncomeWage.value.workingHoursOnHolidays,
+                        paymentDay: dataIncomeWage.paymentDay,
+                        employeeId: dataIncomeWage.employee.employeeId,
+                        payItems: [],
+                        deductionItems: []
+                    }
+                };
+                actionCreated(variables)
             }
             else {
-
                 updateIncomeWage()
             }
         })
