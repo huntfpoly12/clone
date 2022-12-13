@@ -1,3 +1,13 @@
+import { companyId } from "@/helpers/commonFunction";
+import dayjs from 'dayjs';
+interface Origindata {
+    page: number,
+    rows: number,
+    statuses: number[],
+    grade: null | number,
+    name: string,
+    code: string,
+}
 export const radioCheckForeigner = [
     { id: false, text: '내국인' },
     { id: true, text: '외국인' }];
@@ -92,37 +102,74 @@ export const getIncomeExtrasFake = [{
     requiredExpenses: 123,
     taxRate: 123,
     actualPayment: 123,
-    employee:{
-        type:123,    
-        employeeId:123,
-        incomeTypeCode:123,
-        name:123,
-        foreigner:123,
-        nationality:123,
-        nationalityCode:123,
-        stayQualification:123,
-        residentIdValidity:123,
-        roadAddress:123,
-        addressExtend:123,
-        email:123,
-        department:123,
-        responsibility:123,
-        status:123,
-        withholdingIncomeTax:123,
-        withholdingLocalIncomeTax:123,
-        withholdingRuralSpecialTax:123,
-        createdAt:123,
-        createdBy:123,
-        updatedAt:123,
-        updatedBy:123,
-        ip:123,
-        active:123,
-        residentId:123,
-        incomeTypeName:"nguyen pham hong bao",
-        deletable:123,
+    employee: {
+        type: 123,
+        employeeId: 123,
+        incomeTypeCode: 123,
+        name: 123,
+        foreigner: 123,
+        nationality: 123,
+        nationalityCode: 123,
+        stayQualification: 123,
+        residentIdValidity: 123,
+        roadAddress: 123,
+        addressExtend: 123,
+        email: 123,
+        department: 123,
+        responsibility: 123,
+        status: 123,
+        withholdingIncomeTax: 123,
+        withholdingLocalIncomeTax: 123,
+        withholdingRuralSpecialTax: 123,
+        createdAt: 123,
+        createdBy: 123,
+        updatedAt: 123,
+        updatedBy: 123,
+        ip: 123,
+        active: 123,
+        residentId: 123,
+        incomeTypeName: "nguyen pham hong bao",
+        deletable: 123,
     }
 }
 ]
-export const monthNums = [1,2,3,4,5,6,7,8,9,10,11,12];
+export const monthNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+export const dataActionUtils = {
+    companyId: companyId,
+    processKey: {
+        imputedYear: null,
+        imputedMonth: null,
+        paymentYear: null,
+        paymentMonth: null,
+    },
+    input: {
+        paymentDay: null,
+        employeeId: null,
+        incomeTypeCode: "",
+        paymentAmount: null,
+        requiredExpenses: null,
+        taxRate: null,
+        withholdingLocalIncomeTax: null,
+        withholdingIncomeTax: null,
+    }
+}
+export const dataGetDetailEdit = {
+    companyId: companyId,
+    processKey: {
+        imputedYear: 2022,
+        imputedMonth: 1,
+        paymentYear: 2022,
+        paymentMonth: 1,
+    },
+    incomeId: 0
+}
+export const taxDateIndex = {
+    processKey: {
+        imputedYear: dayjs().format('YYYY'),
+        imputedMonth: dayjs().format('MM'),
+        paymentYear: dayjs().format('YYYY'),
+        paymentMonth: dayjs().format('MM'),
+    },
+}
 
 

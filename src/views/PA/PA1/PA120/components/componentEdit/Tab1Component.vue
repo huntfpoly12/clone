@@ -97,7 +97,6 @@ import { defineComponent, reactive, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import notification from "@/utils/notification";
@@ -107,7 +106,6 @@ import {
 } from "../../utils/index";
 import { companyId } from "@/helpers/commonFunction";
 import _ from "lodash";
-
 export default defineComponent({
   components: {
 
@@ -236,7 +234,8 @@ export default defineComponent({
     watch(getValueDefault,value => {
       let rowData = arrDataEdit.find(item => item.employeeId === props.idRowEdit);
       //If it already exists in arrDataEdit, fill it out in the form
-      if(rowData){
+      if (rowData) {
+        console.log(rowData)
           formStateTab1.name = rowData.name
           formStateTab1.foreigner = rowData.foreigner
           formStateTab1.nationality = rowData.nationality
@@ -322,8 +321,8 @@ export default defineComponent({
         arrDataEdit.forEach(rowData => {
           let newValDataEdit = {
               ...rowData,
-              joinedAt: typeof rowData.joinedAt == "string" ? parseInt(rowData.joinedAt.replaceAll('-', '')) : rowData.joinedAt,
-              leavedAt: typeof rowData.leavedAt == "string" ? parseInt(rowData.leavedAt.replaceAll('-', '')) : rowData.leavedAt,
+              joinedAt: rowData.joinedAt,
+              leavedAt: rowData.leavedAt,
               residentId: rowData.residentId.slice(0, 6) + '-' + rowData.residentId.slice(6, 14)
             };
             delete newValDataEdit.employeeId;

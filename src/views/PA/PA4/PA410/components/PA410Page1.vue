@@ -20,9 +20,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex';
-
+import { companyId } from '@/helpers/commonFunction';
 export default defineComponent({
     components: {
     },
@@ -37,7 +37,12 @@ export default defineComponent({
         watch(valueSelected, (newValue) => {
             isSelected.value = newValue !== 0 ? false : true;
         })
-   
+        const globalYear = computed(() => store.state.settings.globalYear)
+        store.dispatch('auth/getUserInfor')
+        store.dispatch('common/getListEmployee', {
+                companyId: companyId,
+                imputedYear: globalYear,
+        })
         const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
         return {
             nextPage,

@@ -3,9 +3,11 @@
         :width="500">
         <standard-form action="" name="edit-510">
             <div class="custom-modal-edit">
-                    <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
-                    <span>선택된 내역 지급일을</span>
-                    <span>일로 변경하시겠습니까?</span>
+                <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
+                <span>선택된 내역 지급일을</span>
+                <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
+                    :spinButtons="true" />
+                <span>일로 변경하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
@@ -18,9 +20,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import notification from "@/utils/notification";
+import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
+import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -28,36 +32,54 @@ export default defineComponent({
             default: false,
         },
         data: {
+            type: Array,
+            default: []
+        },
+        processKey: {
             type: Object,
-            default: {}
-        }
+        },
     },
     components: {
     },
     setup(props, { emit }) {
-
+        const dayValue = ref(1)
         const setModalVisible = () => {
             emit("closePopup", false)
         };
+        const {
+            mutate,
+            onDone,
+            onError,
+        } = useMutation(mutations.changeIncomeBusinessPaymentDay);
+        onDone(() => {
+            notification('success', `업데이트 완료!`)
+            emit("closePopup", false)
+        })
+        onError((e: any) => {
+            notification('error', e.message)
+        })
 
-        const onSubmit = (e: any) => {
-            var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
-                
-            }
+        const onSubmit = () => {
+            props.data.map((val: any) => {
+                mutate({
+                    companyId: companyId,
+                    processKey: props.processKey,
+                    incomeId: val,
+                    day: dayValue.value
+                })
+            })
         };
 
         return {
             setModalVisible,
             onSubmit,
+            dayValue,
         }
     },
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-modal-edit {
     display: flex;
     align-items: center;
