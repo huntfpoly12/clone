@@ -27,13 +27,13 @@
     <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
         :width="600">
         <div class="mt-30 d-flex-center">
-            <span>과거내역</span> 
+            <span>과거내역</span>
             <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
-                 field-template="field-data"
-                @value-changed="updateValue" :disabled="false">
+                field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{data.imputedYear}}-{{data.imputedMonth}} 지 {{data.paymentYear}}-{{data.paymentMonth}}
+                        귀 {{ data.imputedYear }}-{{ data.imputedMonth }} 지 {{ data.paymentYear }}-{{ data.paymentMonth
+                        }}
                         <DxTextBox style="display: none;" />
                     </span>
                     <span v-else style="padding: 4px">
@@ -42,7 +42,8 @@
                     </span>
                 </template>
                 <template #item-data="{ data }">
-                    <span>귀 {{data.imputedYear}}-{{data.imputedMonth}} 지 {{data.paymentYear}}-{{data.paymentMonth}}</span>
+                    <span>귀 {{ data.imputedYear }}-{{ data.imputedMonth }} 지
+                        {{ data.paymentYear }}-{{ data.paymentMonth }}</span>
                 </template>
             </DxSelectBox>
             <span>로 부터 복사하여 새로 입력합니다.</span>
@@ -73,7 +74,7 @@ export default defineComponent({
         },
         data: {
             type: Number,
-            default: 1
+            default: 0
         },
         arrDataPoint: {
             type: Array,
@@ -87,6 +88,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore()
         const processKey = computed(() => store.state.common.processKeyPA510)
+        const globalYear = computed(() => store.state.settings.globalYear)
         const month: any = ref<number>()
         const dataApiCopy: any = ref({})
         watch(() => props.data, (val) => {
@@ -95,7 +97,7 @@ export default defineComponent({
         const updateValue = (value: any) => {
             dataApiCopy.value = value.value
         };
-        const month2 = ref()
+        const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
 
@@ -109,7 +111,12 @@ export default defineComponent({
         })
         onDone(res => {
             setModalVisible()
+            setModalVisibleCopy()
             notification('success', ` 완료!`)
+            emit('loadingTableInfo', true)
+            store.state.common.processKeyPA510.imputedMonth = month.value
+            store.state.common.processKeyPA510.paymentYear = dataApiCopy.value.paymentYear
+            store.state.common.processKeyPA510.paymentMonth = dataApiCopy.value.paymentMonth
         })
 
         const setModalVisible = () => {
@@ -120,20 +127,34 @@ export default defineComponent({
         };
 
         const onSubmit = () => {
-
-            modalCopy.value = false
+            emit("dataAddIncomeProcess", {
+                imputedYear: processKey.value.imputedYear,
+                imputedMonth: month.value,
+                paymentYear: parseInt(month2.value.split('-')[0]),
+                paymentMonth: parseInt(month2.value.split('-')[1]),
+            })
+            emit("closePopup", false)
         };
 
         const openModalCopy = () => {
             modalCopy.value = true
         }
         const actionCopy = () => {
-            mutate({
-                companyId: companyId,
-                source: dataApiCopy.value,
-                target: dataApiCopy.value,
+            if (dataApiCopy.value.imputedYear) {
+                mutate({
+                    companyId: companyId,
+                    source: dataApiCopy.value,
+                    target: {
+                        imputedYear: processKey.value.imputedYear,
+                        imputedMonth: month.value,
+                        paymentYear: dataApiCopy.value.paymentYear,
+                        paymentMonth: dataApiCopy.value.paymentMonth,
+                    },
+                })
+            } else {
+                notification('error', '날짜를 선택하세요.')
+            }
 
-            })
         }
         return {
             processKey,

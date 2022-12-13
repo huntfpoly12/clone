@@ -1,0 +1,321 @@
+<template>
+  <standard-form name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px">
+    <a-spin :spinning="loadingIncomeExtra" size="large">
+      <a-row>
+        <a-col :span="24">
+          <a-form-item label="사업소득자" label-align="right">
+            <employ-type-select
+              :disabled="disabledInput"
+              :arrayValue="isEdit ? incomeArr : arrayEmploySelect"
+              v-model:valueEmploy="dataAction.input.employeeId"
+              width="350px"
+              :required="true"
+              @incomeTypeCode="changeIncomeTypeCode"
+              :readOnly="isEdit"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col span="24">
+          <div class="header-text-1 mb-10">소득내역</div>
+        </a-col>
+        <a-col :span="12" style="padding-right: 5px">
+          <a-form-item label="귀속/지급연월" style="display: flex">
+            <div class="d-flex-center">
+              <div class="month-custom-1 d-flex-center">
+                귀
+                <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" />
+              </div>
+              <div class="month-custom-2 d-flex-center">
+                지
+                <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" />
+              </div>
+            </div>
+          </a-form-item>
+          <a-form-item label="지급일">
+            <number-box :max="31" :min="1" :readOnly="isEdit" width="150px" class="mr-5" v-model:valueInput="dataAction.input.paymentDay" :disabled="disabledInput" />
+          </a-form-item>
+          <a-form-item label="지급액">
+            <number-box-money width="150px" :min="0" v-model:valueInput="dataAction.input.paymentAmount" :required="true"></number-box-money>
+          </a-form-item>
+          <a-form-item label="필요경비">
+            <number-box-money width="150px" :min="0" :required="true" v-model:valueInput="dataAction.input.requiredExpenses"></number-box-money>
+          </a-form-item>
+          <a-form-item label="세율">
+            <DxSelectBox
+              width="200px"
+              valueExpr="value"
+              :data-source="taxRateOptions"
+              :value="dataAction.input.taxRate"
+              placeholder="선택"
+              item-template="item"
+              display-expr="label"
+              :height="$config_styles.HeightInput"
+              @value-changed="updateValue"
+            >
+              <template #item="{ data }">
+                <a-tooltip placement="top" zIndex="9999">
+                  <template #title v-if="data?.tooltip">
+                    <span>{{ data.tooltip }}</span>
+                  </template>
+                  <span>{{ data.label }}</span>
+                </a-tooltip>
+              </template>
+            </DxSelectBox>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12" style="padding-left: 5px">
+          <div class="">
+            <div class="header-text-2 mb-10">
+              공제합계원
+              <b>{{ $filters.formatCurrency(dataAction.input.withholdingIncomeTax + dataAction.input.withholdingLocalIncomeTax) }}</b
+              >원
+            </div>
+          </div>
+          <div class="input-text">
+            <a-form-item label="소득세(공제)">
+              <number-box-money :min="0" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingIncomeTax" />
+              <span>원</span>
+            </a-form-item>
+          </div>
+          <div class="input-text">
+            <a-form-item label="지방소득세(공제)">
+              <number-box-money :min="0" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" />
+              <span>원</span>
+            </a-form-item>
+          </div>
+          <div class="top-con">
+            <div class="header-text-2 mb-10">
+              차인지급액
+              <b>{{
+                $filters.formatCurrency(dataAction.input.paymentAmount - dataAction.input.requiredExpenses - dataAction.input.withholdingIncomeTax - dataAction.input.withholdingLocalIncomeTax)
+              }}</b>
+              원
+              <img src="@/assets/images/iconInfo.png" style="width: 16px" />
+              <span style="font-size: 10px; color: #7f7f7f; margin-left: 5px">지급액 - 필요경비 - 공제합계</span>
+            </div>
+          </div>
+        </a-col>
+      </a-row>
+    </a-spin>
+  </standard-form>
+</template>
+
+<script lang="ts">
+import { ref, defineComponent, watch, reactive, onUnmounted } from 'vue';
+import { useQuery, useMutation } from '@vue/apollo-composable';
+import queries from '@/graphql/queries/PA/PA7/PA720/index';
+import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
+import dayjs from 'dayjs';
+import DxSelectBox from 'devextreme-vue/select-box';
+import notification from '@/utils/notification';
+import { companyId } from '@/helpers/commonFunction';
+export default defineComponent({
+  components: {
+    DxSelectBox,
+  },
+  props: {
+    actionSave: {
+      type: Number,
+    },
+    editTax: {
+      required: true,
+      type: Object,
+      //... rest of your props
+    },
+  },
+  setup(props, { emit }) {
+    const incomeExtraParam = ref<any>({
+      ...props.editTax,
+    });
+    const incomeExtraData = ref<any>([]);
+    const triggerIncomeExtra = ref<boolean>(false);
+    const incomeArr = ref<any>([]);
+    let month1: any = ref(dayjs().format('YYYY-MM'));
+    let month2: any = ref(dayjs().format('YYYY-MM'));
+    let disabledInput = ref(false);
+    let dataAction: any = reactive({
+      companyId: companyId,
+      processKey: {
+        imputedYear: null,
+        imputedMonth: null,
+        paymentYear: null,
+        paymentMonth: null,
+      },
+      input: {
+        paymentDay: null,
+        employeeId: null,
+        incomeTypeCode: '',
+        paymentAmount: null,
+        requiredExpenses: null,
+        taxRate: null,
+        withholdingLocalIncomeTax: null,
+        withholdingIncomeTax: null,
+      },
+    });
+    const isEdit = ref(false);
+    const isShowForm = ref(incomeExtraParam.companyId ?? false);
+    const getEmployeeExtrasTrigger = ref<boolean>(true);
+    const getEmployeeExtrasParams = reactive({
+      companyId: companyId,
+      imputedYear: parseInt(dayjs().format('YYYY')),
+    });
+    const arrayEmploySelect = ref<any>([]);
+
+    //watch for changes
+    watch(
+      () => props.editTax,
+      (newValue) => {
+        incomeExtraParam.value = newValue;
+        dataAction.companyId = newValue.companyId;
+        triggerIncomeExtra.value = true;
+        isEdit.value = true;
+        isShowForm.value = true;
+        let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
+        let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
+        month1.value = dayjs(date1).format('YYYY-MM');
+        month2.value = dayjs(date2).format('YYYY-MM');
+        incomeArr.value = [];
+        refetchIncomeExtra();
+      },
+      { deep: true }
+    );
+    //query
+    const {
+      refetch: refetchIncomeExtra,
+      loading: loadingIncomeExtra,
+      onResult: onResultIncomeExtra,
+      onError: onErrorIncomeExtra,
+    } = useQuery(queries.getIncomeExtra, incomeExtraParam, () => ({
+      enabled: triggerIncomeExtra.value,
+      fetchPolicy: 'no-cache',
+    }));
+    const { refetch: refetchEmployeeExtras, result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+      fetchPolicy: 'no-cache',
+      enabled: getEmployeeExtrasTrigger.value,
+    }));
+    // mutation
+    const { mutate: createIncomeExtra, onDone: createIncomeExtraDone, onError: createIncomeExtraError } = useMutation(mutations.createIncomeExtra);
+    const { mutate: updateIncomeExtra, onDone: updateIncomeExtraDone, onError: updateIncomeExtraError } = useMutation(mutations.updateIncomeExtra);
+    const {
+      mutate: updatechangeIncomeProcessExtraStatus,
+      onDone: updatechangeIncomeProcessExtraStatusDone,
+      onError: updatechangeIncomeProcessExtraStatusError,
+    } = useMutation(mutations.changeIncomeProcessExtraStatus);
+    const { mutate: createCopyIncomeExtras, onDone: createCopyIncomeExtrasDone, onError: createCopyIncomeExtrasError } = useMutation(mutations.copyIncomeExtras);
+    // get data
+
+    onResultIncomeExtra((res) => {
+      let data = res.data.getIncomeExtra;
+      incomeExtraData.value = data;
+      triggerIncomeExtra.value = false;
+      console.log('sdfdsf');
+      dataAction.input = {
+        paymentDay: data.paymentDay,
+        employeeId: data.employeeId,
+        incomeTypeCode: data.incomeTypeCode,
+        paymentAmount: data.paymentAmount,
+        requiredExpenses: data.requiredExpenses,
+        taxRate: data.taxRate,
+        withholdingLocalIncomeTax: data.withholdingLocalIncomeTax,
+        withholdingIncomeTax: data.withholdingIncomeTax,
+      };
+      dataAction.processKey = incomeExtraParam.value.processKey;
+      incomeArr.value.push({
+        employeeId: data.employee.employeeId,
+        incomeTypeCode: data.incomeTypeCode,
+        name: data.employee.name,
+        incomeTypeName: data.employee.incomeTypeName,
+      });
+    });
+    //watch
+    watch(
+      () => props.actionSave,
+      () => {
+        dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
+        dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0]);
+        dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1]);
+        dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0]);
+        if (isEdit.value === true) {
+          let incomeExtraUpdateData = JSON.parse(JSON.stringify(dataAction));
+          delete incomeExtraUpdateData.input.paymentDay;
+          delete incomeExtraUpdateData.input.employeeId;
+          delete incomeExtraUpdateData.input.incomeTypeCode;
+          incomeExtraUpdateData.incomeId = incomeExtraParam.value.incomeId;
+          updateIncomeExtra(incomeExtraUpdateData);
+          return;
+        }
+        createIncomeExtra(dataAction);
+      }
+    );
+    watch(resultEmployeeExtras, (newValue: any) => {
+      arrayEmploySelect.value = newValue.getEmployeeExtras;
+      getEmployeeExtrasTrigger.value = false;
+    });
+
+    const checkLen = (text: String) => {
+      if (text.length > 10) {
+        return text.substring(0, 10) + '...';
+      }
+      return text;
+    };
+    const changeIncomeTypeCode = (res: string) => {
+      dataAction.input.incomeTypeCode = res;
+    };
+
+    //after action form
+    createIncomeExtraDone((res) => {
+      emit('changeFommDone');
+      notification('success', `업데이트 완료!`);
+    });
+    updateIncomeExtraDone((res) => {
+      emit('changeFommDone');
+      notification('success', `업데이트 완료!`);
+    });
+    //error message
+    onErrorIncomeExtra((res: any) => {
+      notification('error', res.message);
+    });
+    createIncomeExtraError((res: any) => {
+      notification('error', res.message);
+    });
+    const taxRateOptions = [
+      {
+        label: '20% (일반적인 기타소득)',
+        value: 20,
+      },
+      {
+        label: '15% (연금외수령)',
+        tooltip: '세액공제를 받은 연금납입액, 연금계좌의 운용실적에 따라 증가된 금액',
+        value: 15,
+      },
+      {
+        label: '30% (복권 등 당첨금)',
+        value: 30,
+      },
+    ];
+    const updateValue = (value: any) => {
+      dataAction.input.taxRate = value.value;
+    };
+    return {
+      checkLen,
+      month1,
+      month2,
+      incomeExtraData,
+      incomeExtraParam,
+      incomeArr,
+      disabledInput,
+      dataAction,
+      changeIncomeTypeCode,
+      loadingIncomeExtra,
+      isShowForm,
+      taxRateOptions,
+      updateValue,
+      isEdit,
+      arrayEmploySelect,
+    };
+  },
+});
+</script>
+
+<style lang="scss" scoped src="../style/style.scss" >
+</style>>
