@@ -23,8 +23,13 @@ if (token) {
 }
 
 const openTab = (objTab :  any) => {
-    store.state.common.activeTab= objTab
-    store.state.common.menuTab.push(objTab)
+    store.state.common.activeTab = objTab
+    /**
+     * If you already have a tab, don't add a new tab
+     */
+    if (store.state.common.menuTab.filter((item : any )=> item.id === objTab.id).length == 0) {
+        store.state.common.menuTab.push(objTab)
+    }
     Router.push(objTab.url);
 }
 

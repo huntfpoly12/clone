@@ -265,7 +265,7 @@
                     :actionUpdateItem="actionUpdateItem" />
             </a-col>
         </a-row>
-        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
+        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" 
             @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
             @dataAddIncomeProcess="dataAddIncomeProcess" />
     </div>
@@ -322,7 +322,7 @@ export default defineComponent({
         const actionSaveItem: any = ref<number>(0)
         const actionUpdateItem: any = ref<number>(0)
         let dataCustomRes: any = ref([])
-        const arrDataPoint: any = ref([])
+        // const arrDataPoint: any = ref([])
         const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
         const dataRows: any = ref([])
         const dataSource: any = ref([])
@@ -370,7 +370,7 @@ export default defineComponent({
 
         // ======================= WATCH ==================================
         watch(result, (value) => {
-            arrDataPoint.value = [];
+            // arrDataPoint.value = [];
             if (value) {
                 let respon = value.getIncomeProcessWageDailies
                 dataSource.value = [{
@@ -385,12 +385,12 @@ export default defineComponent({
                     { id: 6, name: "차인지급액", },
                 ]
                 respon.forEach((val: any, index: any) => {
-                    arrDataPoint.value.push({
-                        imputedYear: val.imputedYear,
-                        imputedMonth: val.imputedMonth,
-                        paymentYear: val.paymentYear,
-                        paymentMonth: val.paymentMonth,
-                    })
+                    // arrDataPoint.value.push({
+                    //     imputedYear: val.imputedYear,
+                    //     imputedMonth: val.imputedMonth,
+                    //     paymentYear: val.paymentYear,
+                    //     paymentMonth: val.paymentMonth,
+                    // })
                     let dataAdd = {
                         imputedYear: val.imputedYear,
                         imputedMonth: val.imputedMonth,
@@ -525,7 +525,7 @@ export default defineComponent({
             copyMonth,
             modalCopy,
             dataModalCopy,
-            arrDataPoint,
+            // arrDataPoint,
             amountFormat,
             dataAddIncomeProcess,
             statusComfirm,

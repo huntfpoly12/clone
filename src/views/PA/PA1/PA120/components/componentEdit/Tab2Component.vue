@@ -103,14 +103,15 @@
           <div class="deduction-main">
             <div v-for="(item) in dataConfigDeduction" :key="item.name" class="custom-deduction">
               <span>
-                <deduction-items v-if="item.itemCode && item.itemCode != 1002" :name="item.name" :type="1"
-                  subName="과세" />
-                <deduction-items v-if="item.itemCode && item.itemCode == 1002" :name="item.name" :type="2"
-                  subName="상여(과세)" />
-                <deduction-items v-if="!item.itemCode && item.taxfreePayItemCode" :name="item.name" :type="3"
-                  :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-                <deduction-items v-if="item.itemCode == null && item.taxfreePayItemCode == null" :name="item.name"
-                  :type="4" subName="과세" />
+                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                      :name="item.name" :type="1" subName="과세" />
+                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                      :name="item.name" :type="2" subName="상여(과세)" />
+                  <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                      :name="item.name" :type="3"
+                      :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                  <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                      :name="item.name" :type="4" subName="과세" />
               </span>
               <div>
                 <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :readOnly="true" :min="0">
@@ -187,7 +188,7 @@ export default defineComponent({
     const datagConfigPayItems = ref();
     const dataConfigDeduction = ref();
     const triggerDetail = ref<boolean>(false);
-    const triggerCalcIncome = ref<boolean>(false);
+ 
     const globalYear = computed(() => store.state.settings.globalYear);
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,
@@ -195,13 +196,14 @@ export default defineComponent({
       employeementReductionFinishDate: dayjs().format("YYYY-MM-DD")
       
     });
+    const triggerCalcIncome = ref<boolean>(false);
     const calculateVariables = {
         companyId: companyId,
         imputedYear: globalYear.value,
         totalTaxPay: totalPayItem.value,
         dependentCount: 1
     }
-    // get WithholdingConfigPayItems
+    // get Withholding Config PayItems
     const originDataDetail = ref({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -211,6 +213,10 @@ export default defineComponent({
       refetchConfigPayItems()
       refetchConfigDeduction()
     })
+
+    /**
+     * get Withholding Config PayItems
+     */
     const {
       refetch: refetchConfigPayItems,
       result: resConfigPayItems,
@@ -230,14 +236,14 @@ export default defineComponent({
                         taxfreePayItemName:item.taxfreePayItemName,
                         taxFreeIncludeSubmission:item.taxFreeIncludeSubmission,
                         value: 0
-                      }
+                    }
           });
         triggerDetail.value = true;
         refetchValueDetail( {
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      employeeId: employeeId.value
-    });
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          employeeId: employeeId.value
+        });
       }
     });
     
@@ -291,7 +297,7 @@ export default defineComponent({
                 Obj.value = item.amount ;
               }            
           });
-          })
+        })
         value.getEmployeeWage.deductionItems.map((item :any) => {
           dataConfigDeduction.value.find((Obj : any) => {
               if(item.itemCode == Obj.itemCode){
@@ -311,13 +317,6 @@ export default defineComponent({
      * Calculate Pension Employee 
      * */  
     const calculateTax = () => {
-      triggerCalcIncome.value = true;
-      refetchCalcIncomeWageTax({
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        totalTaxPay: totalPayItem.value,
-        dependentCount: dependentCount.value
-      })
 			dataConfigDeduction.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
           let total1 = formStateTab2.nationalPensionDeduction ? calculateNationalPensionEmployee(totalPayItem.value, formStateTab2.nationalPensionSupportPercent) : 0
@@ -377,6 +376,21 @@ export default defineComponent({
         return accumulator + object.value;
         }, 0);
     }
+
+    /**
+     * Calculate Income Wage Tax if totalPayItem != 0
+     */
+    watch(totalPayItem,(newValue)=>{
+      if(newValue != 0){
+        triggerCalcIncome.value = true;
+        refetchCalcIncomeWageTax({
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          totalTaxPay: newValue,
+          dependentCount: dependentCount.value
+        })
+      }
+    })
 
     /**
      * Calculate Income Wage Tax API
