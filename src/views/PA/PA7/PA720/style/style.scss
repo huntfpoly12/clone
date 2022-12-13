@@ -28,6 +28,21 @@
         }
     }
 
+    .header-text-1 {
+        background-color: #558ED5;
+        font-size: 18px;
+        padding: 3px 0 3px 10px;
+        color: white;
+    }
+
+    .header-text-2 {
+        background-color: #C6D9F1;
+        font-size: 14px;
+        padding: 3px 0 3px 10px;
+        color: black;
+        line-height: 28px;
+    }
+
     .header-text-3 {
         background-color: #558ED5;
         padding: 5px;
@@ -77,24 +92,82 @@
         }
     }
 
+    .hover-underlined:hover {
+        text-decoration: underline;
+    }
+
     ::v-deep .dx-show-invalid-badge {
         margin-left: 0px !important;
-        display: inline-block !important;
+        // display: inline-block !important;
     }
-    ::v-deep .ant-form-item-label > label{
+
+    ::v-deep .ant-form-item-label>label {
         width: 117px;
     }
+
     ::v-deep .dx-master-detail-cell {
         padding: 0px;
+    }
+
+    ::v-deep .month-custom-1 {
+        background-color: #A6A6A6;
+        padding-left: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+
+        .dp__input {
+            color: white;
+            padding: 0px;
+            border: none;
+            height: 30px;
+            background-color: #A6A6A6;
+        }
+
+        .dp__icon {
+            display: none;
+        }
+    }
+
+    ::v-deep .month-custom-2 {
+        background-color: black;
+        padding-left: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+
+        .dp__input {
+            color: white;
+            padding: 0px;
+            border: none;
+            height: 30px;
+            background-color: black;
+        }
+
+        .dp__icon {
+            display: none;
+        }
+    }
+    ::v-deep .ant-form-item-control-input-content{
+        display: flex;
+        align-items: center;
+    }
+    ::v-deep .dx-datagrid-text-content {
+        white-space: pre-wrap;
     }
 }
 
 .button-open-tab {
+    height: 100%;
+    padding-bottom: 7px;
+    width: 100px;
+}
+
+.custom-select-tab {
     color: white;
     background-color: blue;
     font-size: 10px;
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
-    ;
 }
