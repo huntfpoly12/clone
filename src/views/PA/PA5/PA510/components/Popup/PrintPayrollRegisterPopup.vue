@@ -6,7 +6,7 @@
                 <img src="@/assets/images/print.svg" alt="" style="width: 30px;">
                 <span>급여대장을 출력하시겠습니까? </span>
                 <DxSelectBox :data-source="dataSelect" :style="{ width: '100px', display: 'inline-block' }"
-                    v-model:value="valueSelect" value-expr="name" display-expr="name" :required="true">
+                    v-model:value="valueSelect" value-expr="value" display-expr="name" :required="true">
                 </DxSelectBox>
             </div>
             <div class="text-align-center mt-30">
@@ -46,15 +46,12 @@ export default defineComponent({
         };
 
         const dataSelect = ref([
-            { name: '전체' },
-            { name: '부서별' },
-            { name: '직위별' },
+            { name: '사번순', value: '사번' },
+            { name: '부서순', value: '부서' },
+            { name: '직위순', value: '직위' },
         ])
-        const valueSelect = ref('전체')
-        const originData: any = ref({
-            companyId: companyId,
-            input: {...processKey.value}
-        })
+        const valueSelect = ref('사번')
+        const originData: any = ref({})
         const {
             refetch: refetchData,
             result,
@@ -71,10 +68,14 @@ export default defineComponent({
             }
         })
         const onSubmitPrint = (e: any) => {
+            originData.value = {
+                companyId: companyId,
+                input: { ...processKey.value }
+            }
             originData.value.input.sortType = valueSelect.value
             trigger.value = true
         };
-        
+
 
         return {
             setModalVisible,
