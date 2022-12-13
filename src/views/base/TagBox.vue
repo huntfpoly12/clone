@@ -114,6 +114,7 @@
                 </td>
                 <td>
                     <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
+                    <b>- Return :</b> checkConfirm: true <br />
                 </td>
                 <td>
                     <pre class="mycode"> &lt;process-status v-model:valueStatus="status"/&gt;
