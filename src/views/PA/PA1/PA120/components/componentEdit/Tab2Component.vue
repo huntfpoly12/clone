@@ -305,7 +305,6 @@ export default defineComponent({
               }            
           });
         })
-        alert(value.getEmployeeWage.employeementReductionStartDate);
         let ReductionStartDate = value.getEmployeeWage.employeementReductionStartDate != null ? dayjs(value.getEmployeeWage.employeementReductionStartDate) : dayjs();
         let ReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate != null ? dayjs(value.getEmployeeWage.employeementReductionFinishDate) : dayjs();
         rangeDate.value = [ReductionStartDate, ReductionFinishDate]
@@ -318,13 +317,6 @@ export default defineComponent({
      * Calculate Pension Employee 
      * */  
     const calculateTax = () => {
-      triggerCalcIncome.value = true;
-      refetchCalcIncomeWageTax({
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        totalTaxPay: totalPayItem.value,
-        dependentCount: dependentCount.value
-      })
 			dataConfigDeduction.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
           let total1 = formStateTab2.nationalPensionDeduction ? calculateNationalPensionEmployee(totalPayItem.value, formStateTab2.nationalPensionSupportPercent) : 0
@@ -384,6 +376,21 @@ export default defineComponent({
         return accumulator + object.value;
         }, 0);
     }
+
+    /**
+     * Calculate Income Wage Tax if totalPayItem != 0
+     */
+    watch(totalPayItem,(newValue)=>{
+      if(newValue != 0){
+        triggerCalcIncome.value = true;
+        refetchCalcIncomeWageTax({
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          totalTaxPay: newValue,
+          dependentCount: dependentCount.value
+        })
+      }
+    })
 
     /**
      * Calculate Income Wage Tax API

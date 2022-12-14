@@ -3,6 +3,7 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/common/index";
 import { getJwtObject } from "@bankda/jangbuda-common";
 const actions = {
+    
     getUserInfor: (context: any) => {
         const jwtObject = getJwtObject(context.state.authData);
         let dataInfor: any = ref([]);

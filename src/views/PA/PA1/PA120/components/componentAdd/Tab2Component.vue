@@ -76,7 +76,8 @@
         <div class="header-text-2">수당 항목 {{$filters.formatCurrency(totalPayItem)}} 원 = 과세 + 비과세 </div>
         <a-spin :spinning="loading1" size="large">
           <div class="deduction-main">
-            <div v-for="(item) in datagConfigPayItems" :key="item.name" class="custom-deduction">
+        
+            <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
               <span>
                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1"
                   subName="과세" />
@@ -174,7 +175,7 @@ export default defineComponent({
 
     const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
     const store = useStore();
-    const datagConfigPayItems = ref();
+    const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
     const triggerDetail = ref<boolean>(false);
  
@@ -204,7 +205,6 @@ export default defineComponent({
       imputedYear: globalYear.value,
     })
     const {
-      refetch: refreshResConfigPayItems,
       result: resConfigPayItems,
       loading: loading1
     } = useQuery(queries.getWithholdingConfigPayItems, originDataDetail, () => ({
@@ -212,7 +212,18 @@ export default defineComponent({
     }))
     watch(resConfigPayItems, (value) => {
       if (value) {
-        datagConfigPayItems.value = value.getWithholdingConfigPayItems;
+        dataConfigPayItems.value = value.getWithholdingConfigPayItems.map((item :any) => {
+              return { 
+                        itemCode:item.itemCode ,
+                        name :item.name,
+                        tax: item.tax,
+                        taxPayItemCode:item.taxPayItemCode, 
+                        taxfreePayItemCode:item.taxfreePayItemCode,
+                        taxfreePayItemName:item.taxfreePayItemName,
+                        taxFreeIncludeSubmission:item.taxFreeIncludeSubmission,
+                        value: 0
+                    }
+          });
       }
     });
 
@@ -220,7 +231,6 @@ export default defineComponent({
      *  get Withouthoulding Config deduction
      */
     const {
-      refetch: refreshResConfigDeduction,
       result: resConfigDeduction,
       loading: loading2
 
@@ -229,7 +239,9 @@ export default defineComponent({
     }))
     watch(resConfigDeduction, (value) => {
       if (value) {
-        dataConfigDeduction.value = value.getWithholdingConfigDeductionItems;
+          dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.map((item :any) => {
+              return {itemCode:item.itemCode ,name :item.name, value: 0}
+          });
       }
     });
 
@@ -269,13 +281,7 @@ export default defineComponent({
      * Calculate Pension Employee 
      * */  
     const calculateTax = () => {
-      triggerCalcIncome.value = true;
-      refetchCalcIncomeWageTax({
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        totalTaxPay: totalPayItem.value,
-        dependentCount: dependentCount.value
-      })
+
 			dataConfigDeduction.value?.map((item: any) => {
 				if (item.itemCode == 1001) {
           let total1 = formStateTab2.nationalPensionDeduction ? calculateNationalPensionEmployee(totalPayItem.value, formStateTab2.nationalPensionSupportPercent) : 0
@@ -310,22 +316,22 @@ export default defineComponent({
           }
 				}
 			})
-      formStateTab2.payItems = datagConfigPayItems.value?.map((item: any) => {
+      formStateTab2.payItems = dataConfigPayItems.value?.map((item: any) => {
             return { 
               itemCode: item.itemCode,
               amount: item.value
             }
       });
-      totalPayItem.value = datagConfigPayItems.value.reduce((accumulator : any, object : any) => {
+      totalPayItem.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
-      totalPayItemTax.value = datagConfigPayItems.value.reduce((accumulator : any, object : any) => {
+      totalPayItemTax.value = dataConfigPayItems.value.reduce((accumulator : any, object : any) => {
         if(object.tax){
           accumulator += object.value
         }
         return accumulator;
       }, 0);
-      totalPayItemTaxFree.value = datagConfigPayItems.value.reduce((accumulator : any, object : any) => {
+      totalPayItemTaxFree.value = dataConfigPayItems.value.reduce((accumulator : any, object : any) => {
         if(!object.tax){
           accumulator += object.value
         }
@@ -333,8 +339,22 @@ export default defineComponent({
       }, 0);
       totalDeduction.value = dataConfigDeduction.value.reduce((accumulator : any, object : any) => {
         return accumulator + object.value;
-        }, 0);
+      }, 0);
     }
+    /**
+     * Calculate Income Wage Tax if totalPayItem != 0
+     */
+    watch(totalPayItem,(newValue)=>{
+      if(newValue != 0){
+        triggerCalcIncome.value = true;
+        refetchCalcIncomeWageTax({
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          totalTaxPay: newValue,
+          dependentCount: dependentCount.value
+        })
+      }
+    })
 
     /**
      *  Save form 
@@ -366,14 +386,17 @@ export default defineComponent({
 				mutate(variables)
 		}
     return {
-      formStateTab2, loading1, loading2,loading3,
-      rangeDate,calculateTax,
-      totalPayItem,totalPayItemTaxFree,totalPayItemTax,totalDeduction,
-      subPayment,createDeduction,
+      formStateTab2, loading1, loading2,
+      rangeDate,
+      totalPayItem,totalPayItemTaxFree,totalPayItemTax,
+      totalDeduction,
+      subPayment,
+      calculateTax,loading3,
+      createDeduction,
       radioCheckPersenPension,
       radioCheckReductioRate,
       radioCheckReductionInput,
-      IncomeTaxAppRate, companyId, datagConfigPayItems, dataConfigDeduction
+      IncomeTaxAppRate, companyId, dataConfigPayItems, dataConfigDeduction
     };
   },
 });
