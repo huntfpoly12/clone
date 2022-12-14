@@ -214,7 +214,7 @@
                             </div>
                         </template>
                         <DxColumn width="80" caption="근무일수" data-field="workingDays" />
-                        <DxColumn width="80" caption="일급여" data-field="dailyWage" :format="amountFormat" />
+                        <DxColumn width="100" caption="일급여" data-field="dailyWage" :format="amountFormat" />
                         <DxColumn width="80" caption="공제" data-field="totalDeduction" cell-template="total-deduction" />
                         <template #total-deduction="{ data }">
                             <a-tooltip placement="top">
@@ -226,8 +226,8 @@
                                 </span>
                             </a-tooltip>
                         </template>
-                        <DxColumn width="100" caption="차인지급액" data-field="actualPayment" :format="amountFormat" />
-                        <DxColumn caption="비고" cell-template="four-major-insurance" />
+                        <DxColumn width="117" caption="차인지급액" data-field="actualPayment" :format="amountFormat" />
+                        <DxColumn width="300" caption="비고" cell-template="four-major-insurance" />
                         <template #four-major-insurance="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -287,7 +287,7 @@ import { sampleDataIncomeWageDaily } from "./utils/index"
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
-
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -479,7 +479,7 @@ export default defineComponent({
             dataTaxPayInfo.value.map((val: any) => {
                 total += val.workingDays * val.dailyWage
             })
-            return `월급여합계: ${total}`;
+            return `월급여합계: ${filters.formatCurrency(total)}`;
         }
 
         const copyMonth = (month: number) => {
