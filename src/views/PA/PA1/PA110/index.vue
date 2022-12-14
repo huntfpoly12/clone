@@ -208,7 +208,7 @@
             <DxColumn width="200" caption="사원" cell-template="tag" />
             <template #tag="{ data }" class="custom-action">
               <div class="custom-action">
-                <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                <EmployeeInfoSettment :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                   :status="data.data.employee.status" :foreigner="data.data.employee.foreigner" :checkStatus="false"
                   :midTermSettlement="data.data.midTermSettlement" />
               </div>
