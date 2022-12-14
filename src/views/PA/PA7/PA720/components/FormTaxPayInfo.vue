@@ -1,6 +1,6 @@
 <template>
   <standard-form name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px">
-    <a-spin :spinning="loadingIncomeExtra" size="large">
+    <a-spin :spinning="loadingIncomeExtra || newDateLoading" size="large">
       <a-row>
         <a-col :span="24">
           <a-form-item label="사업소득자" label-align="right">
@@ -73,13 +73,13 @@
           </div>
           <div class="input-text">
             <a-form-item label="소득세(공제)">
-              <number-box-money :min="0" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingIncomeTax" />
+              <number-box-money :readOnly="true" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingIncomeTax" />
               <span>원</span>
             </a-form-item>
           </div>
           <div class="input-text">
             <a-form-item label="지방소득세(공제)">
-              <number-box-money :min="0" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" />
+              <number-box-money :readOnly="true" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" />
               <span>원</span>
             </a-form-item>
           </div>
@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, reactive, onUnmounted } from 'vue';
+import { ref, defineComponent, watch, reactive, nextTick, computed } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -109,6 +109,7 @@ import dayjs from 'dayjs';
 import DxSelectBox from 'devextreme-vue/select-box';
 import notification from '@/utils/notification';
 import { companyId } from '@/helpers/commonFunction';
+import { Formula } from '@bankda/jangbuda-common';
 export default defineComponent({
   components: {
     DxSelectBox,
@@ -121,6 +122,9 @@ export default defineComponent({
       required: true,
       type: Object,
       //... rest of your props
+    },
+    addNewIncomeExtra: {
+      type: Object,
     },
   },
   setup(props, { emit }) {
@@ -148,8 +152,8 @@ export default defineComponent({
         paymentAmount: null,
         requiredExpenses: null,
         taxRate: null,
-        withholdingLocalIncomeTax: null,
         withholdingIncomeTax: null,
+        withholdingLocalIncomeTax: null,
       },
     });
     const isEdit = ref(false);
@@ -160,8 +164,23 @@ export default defineComponent({
       imputedYear: parseInt(dayjs().format('YYYY')),
     });
     const arrayEmploySelect = ref<any>([]);
-
+    const newDateLoading = ref<boolean>(false);
+    // common
+    let incomeAmount = ref(0);
+    let incomeTax = ref(0);
+    let localIncomeTax = ref(0);
     //watch for changes
+    watch(
+      () => dataAction.input,
+      () => {
+        let objIncomeAmount: any = Formula.getExtraEmployeeIncomeAmount(dataAction.input.paymentAmount, dataAction.input.requiredExpenses);
+        let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, dataAction.input.taxRate);
+        incomeAmount.value = objIncomeAmount;
+        dataAction.input.withholdingIncomeTax = objIncomeTax.incomeTax;
+        dataAction.input.withholdingIncomeTax = objIncomeTax.localIncomeTax;
+      },
+      { deep: true }
+    );
     watch(
       () => props.editTax,
       (newValue) => {
@@ -178,6 +197,19 @@ export default defineComponent({
         refetchIncomeExtra();
       },
       { deep: true }
+    );
+    watch(
+      () => props.addNewIncomeExtra,
+      async (newValue: any) => {
+        newDateLoading.value = true;
+        let date1 = newValue.imputedYear + '-' + newValue.imputedMonth;
+        let date2 = newValue.paymentYear + '-' + newValue.paymentMonth;
+        month1.value = dayjs(date1).format('YYYY-MM');
+        month2.value = dayjs(date2).format('YYYY-MM');
+        setTimeout(() => {
+          newDateLoading.value = false;
+        }, 300);
+      }
     );
     //query
     const {
@@ -196,19 +228,13 @@ export default defineComponent({
     // mutation
     const { mutate: createIncomeExtra, onDone: createIncomeExtraDone, onError: createIncomeExtraError } = useMutation(mutations.createIncomeExtra);
     const { mutate: updateIncomeExtra, onDone: updateIncomeExtraDone, onError: updateIncomeExtraError } = useMutation(mutations.updateIncomeExtra);
-    const {
-      mutate: updatechangeIncomeProcessExtraStatus,
-      onDone: updatechangeIncomeProcessExtraStatusDone,
-      onError: updatechangeIncomeProcessExtraStatusError,
-    } = useMutation(mutations.changeIncomeProcessExtraStatus);
-    const { mutate: createCopyIncomeExtras, onDone: createCopyIncomeExtrasDone, onError: createCopyIncomeExtrasError } = useMutation(mutations.copyIncomeExtras);
+
     // get data
 
     onResultIncomeExtra((res) => {
       let data = res.data.getIncomeExtra;
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
-      console.log('sdfdsf');
       dataAction.input = {
         paymentDay: data.paymentDay,
         employeeId: data.employeeId,
@@ -216,8 +242,8 @@ export default defineComponent({
         paymentAmount: data.paymentAmount,
         requiredExpenses: data.requiredExpenses,
         taxRate: data.taxRate,
-        withholdingLocalIncomeTax: data.withholdingLocalIncomeTax,
         withholdingIncomeTax: data.withholdingIncomeTax,
+        withholdingLocalIncomeTax: data.withholdingLocalIncomeTax,
       };
       dataAction.processKey = incomeExtraParam.value.processKey;
       incomeArr.value.push({
@@ -312,6 +338,10 @@ export default defineComponent({
       updateValue,
       isEdit,
       arrayEmploySelect,
+      newDateLoading,
+      incomeAmount,
+      incomeTax,
+      localIncomeTax,
     };
   },
 });
