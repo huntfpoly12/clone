@@ -1,5 +1,23 @@
 <template>
-    <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
+
+    <a-modal :visible="modalOption" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
+        style="top: 20px">
+        <div class="mt-20">
+            <radio-group :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
+            <radio-group :arrayValue="option2" v-model:valueRadioCheck="retirementIncome2" layoutCustom="horizontal" />
+            <span>
+                퇴직소득자료 입력하시겠습니까?
+            </span>
+        </div>
+        <div class="footer mt-30">
+            <button-basic class="button-form-modal mr-5" text="아니요" type="default" mode="outlined"
+                @onClick="setModalVisible" />
+            <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
+                @onClick="openModalAdd" />
+        </div>
+    </a-modal>
+
+    <a-modal :visible="modalStatusAccept" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
         width="70%" style="top: 20px">
         <div class="header-text-title mt-20">퇴직소득자료입력</div>
         <a-steps :current="step" type="navigation">
@@ -10,7 +28,7 @@
         <div class="step-content pt-20">
             <form action="your-action">
                 <template v-if="step === 0">
-                    <Tab1 />
+                    <Tab1 :option1="retirementIncome1" :option2="retirementIncome2" />
                 </template>
                 <template v-if="step === 1">
                     <Tab2 />
@@ -29,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, reactive, watch } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
@@ -57,7 +75,20 @@ export default defineComponent({
     setup(props, { emit }) {
         const step = ref(0)
         const dayValue = ref(1)
+        const modalStatusAccept = ref(false)
+        const retirementIncome1 = ref(true)
+        const retirementIncome2 = ref(true)
+        const modalOption = ref()
+        const option1 = reactive([
+            { id: true, text: '사원' },
+            { id: false, text: '일용직사원' }
+        ])
+        const option2 = reactive([
+            { id: true, text: '퇴직소득(퇴직자)' },
+            { id: false, text: '중도정산' }
+        ])
         const setModalVisible = () => {
+            modalStatusAccept.value = false
             emit("closePopup", false)
         };
 
@@ -75,7 +106,10 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-
+        // ================WATCHING============================================
+        watch(() => props.modalStatus, (newValue) => {
+            modalOption.value = newValue
+        })
 
         // =========================  FUNCTION ===============================================
         // all Computed 
@@ -137,16 +171,28 @@ export default defineComponent({
         const created = () => {
 
         }
+
+        const openModalAdd = () => {
+            modalStatusAccept.value = true
+            modalOption.value = false
+
+        }
         return {
             setModalVisible,
             onSubmit,
             changeStep,
-            nextStep, prevStep,created,
+            nextStep, prevStep, created,
+            openModalAdd,
             checkStepTwo,
             checkStepThree,
             checkStepFour,
             step,
             dayValue,
+            modalStatusAccept,
+            option1, option2,
+            modalOption,
+            retirementIncome1,
+            retirementIncome2,
         }
     },
 })

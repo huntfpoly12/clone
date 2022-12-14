@@ -4,7 +4,7 @@
             :mask-closable="false">
             <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
             loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
-            loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130">
+            loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -86,6 +86,8 @@ export default defineComponent({
         let trigger520 = ref<boolean>(false);
         let trigger510 = ref<boolean>(false);
         let triggerStatus510 = ref<boolean>(false);
+        let triggerStatus420 = ref<boolean>(false);
+        let trigger420 = ref<boolean>(false);
         let trigger620 = ref<boolean>(false);
         let triggerStatus620 = ref<boolean>(false);
         let trigger120 = ref<boolean>(false);
@@ -240,6 +242,32 @@ export default defineComponent({
                             triggerStatus510.value = true;
                             refetchStatusPA510();
                             break;
+                        case 'pa-status-420':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            triggerStatus420.value = true;
+                            refetchStatusPA420();
+                            break;
+                        case 'pa-420':
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            trigger420.value = true;
+                            refetchPA420();
+                            break;
 
                         case 'pa-620':
                             trigger620.value = true;
@@ -290,6 +318,8 @@ export default defineComponent({
                     trigger120.value = false;
                     trigger510.value = false;
                     triggerStatus510.value = false;
+                    triggerStatus420.value = false;
+                    trigger420.value = false;
                     trigger620.value = false;
                     triggerStatus620.value = false;
 
@@ -495,6 +525,36 @@ export default defineComponent({
             }
         });
 
+        // get getIncomeProcessRetirementLogs pa-420
+        const { result: resultStatusPA420, loading: loadingStatusPA420, refetch: refetchStatusPA420 } = useQuery(
+            queries.getIncomeProcessRetirementLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerStatus420.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultStatusPA420, (value) => {
+            if (value && value.getIncomeProcessRetirementLogs) {
+                dataTableShow.value = value.getIncomeProcessRetirementLogs;
+            }
+        });
+
+        // get getIncomeRetirementsLogs pa-420
+        const { result: resultPA420, loading: loadingPA420, refetch: refetchPA420 } = useQuery(
+            queries.getIncomeRetirementsLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger420.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA420, (value) => {
+            if (value && value.getIncomeRetirementsLogs) {
+                dataTableShow.value = value.getIncomeRetirementsLogs;
+            }
+        });
+
 
         // get getIncomeWageDailiesLogs pa-620
         const { result: resultPA620, loading: loadingPA620, refetch: refetchPA620 } = useQuery(
@@ -602,7 +662,9 @@ export default defineComponent({
             loadingPA120,
             formarDate,
             dataQuery,
-            loadingPA610
+            loadingPA610,
+            loadingStatusPA420,
+            loadingPA420,
         }
     },
 

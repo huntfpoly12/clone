@@ -1,7 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="562">
-        <standard-form action="" name="email-single110">
+        <standard-form action="" name="email-single-630">
             <div class="custom-modal-send-email">
                 <img src="@/assets/images/email.svg" alt="" />
                 <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
@@ -18,10 +18,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA//PA5/PA510/index"
+import mutations from "@/graphql/mutations/PA//PA1/PA110/index"
+import { companyId } from '@/helpers/commonFunction';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -36,9 +38,11 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const processKey = computed(() => store.state.common.processKeyPA510)
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
-            emailAddress.value = val?.employeeInputs.receiverAddress
+            emailAddress.value = val?.employee.email
         });
 
         const setModalVisible = () => {
@@ -49,15 +53,27 @@ export default defineComponent({
             onDone: onDoneAdd,
             onError: errorSendEmail,
             error,
-        } = useMutation(mutations.sendIncomeWageDailyPayrollRegisterReportEmail);
+        } = useMutation(mutations.sendIncomeWagePayrollRegisterReportEmail);
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let variables = props.data
-                variables.employeeInputs.receiverAddress = emailAddress.value
-                sendEmail(variables);
+                sendEmail({
+                    companyId: companyId,
+                    input: {
+                        imputedYear: processKey.value.imputedYear,
+                        imputedMonth: processKey.value.imputedMonth,
+                        paymentYear: processKey.value.paymentYear,
+                        paymentMonth: processKey.value.paymentMonth,
+                        sortType: "부서별"
+                    },
+                    emailInput: {
+                        senderName: sessionStorage.getItem("username"),
+                        receiverName: props.data.employee.name,
+                        receiverAddress: emailAddress.value,
+                    }
+                });
             }
         };
         onDoneAdd(() => {
@@ -66,9 +82,6 @@ export default defineComponent({
         })
         errorSendEmail((e: any) => {
             notification('error', e.message)
-        })
-        watch(() => props.modalStatus, (value) => {
-
         })
 
         return {
@@ -80,7 +93,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-modal-send-email {
     display: flex;
     align-items: center;
