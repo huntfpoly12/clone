@@ -49,7 +49,7 @@
             <a-col :span="12">
                 <div class="header-text-0">월급여
                     <span class="fz-12">
-                        { {{ originDataUpdate.formDifferencePayment.totalAmount }} }
+                        { {{ $filters.formatCurrency(totalAmountDifferencePayment) }} }
                     </span>
                 </div>
                 <div>
@@ -110,7 +110,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch, reactive } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import { radioCheckPersenPension, originDataInputUpdate } from "../../utils/index";
 import dayjs from 'dayjs';
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -140,18 +140,12 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear.value,
         })
+        const totalAmountDifferencePayment = ref(0)
         const originDataDetail = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
             employeeId: props.idRowEdit
         })
-        // const formDifferencePayment: any = reactive({
-        // 	id: null,
-        // 	totalAmount: '0',
-        // 	status: true,
-        // 	wage: null,
-        // 	working: null
-        // })
         let originDataUpdate: any = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -161,7 +155,6 @@ export default defineComponent({
             },
             formDifferencePayment: {
                 id: null,
-                totalAmount: '0',
                 status: true,
                 wage: null,
                 working: null
@@ -282,7 +275,7 @@ export default defineComponent({
             res.value.map((val: any) => {
                 total += val.price
             })
-            totalPayDifferen.value = filters.formatCurrency((total + parseInt(originDataUpdate.value.formDifferencePayment.totalAmount.replace(',', ''))))
+            totalPayDifferen.value = filters.formatCurrency(total + totalAmountDifferencePayment.value)
             totalDeduction.value = filters.formatCurrency(total)
         }, { deep: true })
 
@@ -295,24 +288,19 @@ export default defineComponent({
             arrEdit.push(newVal)
         })
 
-        watch(() => originDataUpdate, (respon) => {
-            let res = respon.value.formDifferencePayment
-
+        watch(() => originDataUpdate.value.formDifferencePayment, (res: any,) => {
             if (res.status == false) {
-                res.totalAmount = res.wage * res.working
+                totalAmountDifferencePayment.value = res.wage * res.working
                 messageMonthlySalary.value = "일급 선택시, 월급 = 일급 x 근무일수"
             }
             else {
                 if (res.wage)
-                    res.totalAmount = res.wage
+                    totalAmountDifferencePayment.value = res.wage
                 else
-                    res.totalAmount = 0
+                    totalAmountDifferencePayment.value = 0
                 messageMonthlySalary.value = "월급 선택시, 일급 = 월급 / 근무일수"
             }
-            totalPayDifferen.value = filters.formatCurrency(res.totalAmount + parseInt(totalDeduction.value.replace(',', '')))
-            console.log(filters.formatCurrency(res.totalAmount));
-            
-            // originDataUpdate.value.formDifferencePayment.totalAmount = 
+            totalPayDifferen.value = filters.formatCurrency(totalAmountDifferencePayment.value + parseInt(totalDeduction.value.replace(',', '')))
         }, { deep: true })
 
 
@@ -325,7 +313,7 @@ export default defineComponent({
         }
         const callFuncCalculate = () => {
             let dataDefault = originDataUpdate.value.input
-            let totalPrices = parseInt(originDataUpdate.value.formDifferencePayment.totalAmount.replace(',', ''))
+            let totalPrices = totalAmountDifferencePayment.value
             let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
             let total2 = calculateHealthInsuranceEmployee(totalPrices)
             let total3 = calculateLongTermCareInsurance(totalPrices)
@@ -375,6 +363,7 @@ export default defineComponent({
             rangeDate,
             radioCheckPersenPension,
             loading,
+            totalAmountDifferencePayment,
             callFuncCalculate,
             updateDeduction
         };
