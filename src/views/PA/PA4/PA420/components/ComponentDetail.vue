@@ -86,12 +86,11 @@
 
     <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
-
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="dataTableDetail.processKey"
         title="변경이력" typeHistory="pa-420" />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="actionDeleteSuccess" :data="dataTableDetail.processKey"
-        title="변경이력" typeHistory="pa-420-status" />
-    <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+        :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
+    <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
@@ -202,7 +201,7 @@ export default defineComponent({
 
         const deleteItem = () => {
             // if (popupDataDelete.value.length > 0) {
-                modalDelete.value = true;
+            modalDelete.value = true;
             // }
         };
 
@@ -225,7 +224,7 @@ export default defineComponent({
 
         const editPaymentDate = () => {
             // if (popupDataDelete.value.length > 0) {
-                modalEdit.value = true
+            modalEdit.value = true
             // }
         }
 

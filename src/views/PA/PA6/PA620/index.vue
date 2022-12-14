@@ -1,5 +1,5 @@
 <template>
-    <action-header title="사업소득자등록" @actionSave="saving" />
+    <action-header title="사업소득자료입력" @actionSave="saving" />
     <div id="pa-620">
         <div class="page-content">
             <a-row>
