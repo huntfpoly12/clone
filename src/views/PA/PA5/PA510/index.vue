@@ -322,7 +322,6 @@ export default defineComponent({
         const actionSaveItem: any = ref<number>(0)
         const actionUpdateItem: any = ref<number>(0)
         let dataCustomRes: any = ref([])
-        // const arrDataPoint: any = ref([])
         const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
         const dataRows: any = ref([])
         const dataSource: any = ref([])
@@ -370,7 +369,6 @@ export default defineComponent({
 
         // ======================= WATCH ==================================
         watch(result, (value) => {
-            // arrDataPoint.value = [];
             if (value) {
                 let respon = value.getIncomeProcessWageDailies
                 dataSource.value = [{
@@ -385,12 +383,6 @@ export default defineComponent({
                     { id: 6, name: "차인지급액", },
                 ]
                 respon.forEach((val: any, index: any) => {
-                    // arrDataPoint.value.push({
-                    //     imputedYear: val.imputedYear,
-                    //     imputedMonth: val.imputedMonth,
-                    //     paymentYear: val.paymentYear,
-                    //     paymentMonth: val.paymentMonth,
-                    // })
                     let dataAdd = {
                         imputedYear: val.imputedYear,
                         imputedMonth: val.imputedMonth,
@@ -497,7 +489,6 @@ export default defineComponent({
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
-
         }
         return {
             processKey,
@@ -525,7 +516,6 @@ export default defineComponent({
             copyMonth,
             modalCopy,
             dataModalCopy,
-            // arrDataPoint,
             amountFormat,
             dataAddIncomeProcess,
             statusComfirm,

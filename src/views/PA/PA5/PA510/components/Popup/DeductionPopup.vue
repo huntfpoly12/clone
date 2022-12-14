@@ -5,7 +5,7 @@
             <div class="text-align-center">
                 <h3>공제 재계산 결과</h3>
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data"
-                        :show-borders="true" :column-auto-width="true">
+                        :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
                         <DxColumn caption="항목" data-field="name" />
                         <DxColumn caption="계산후" data-field="priceNew" />
                         <DxColumn caption="원본" data-field="price" />
@@ -46,11 +46,20 @@ export default defineComponent({
             emit("updateDate", true)
             emit("closePopup", false)
         };
-
+        const changeColorRow = (e: any) => {
+            if (e.data) {
+                if (e.data.price == e.data.priceNew) {
+                    e.rowElement.style.color = 'black';
+                } else {
+                    e.rowElement.style.color = 'red';
+                }
+            }
+        }
 
         return {
             setModalVisible,
             onSubmit,
+            changeColorRow,
         }
     },
 })

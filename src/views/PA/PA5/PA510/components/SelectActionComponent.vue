@@ -8,14 +8,14 @@
     <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
-            <div style="text-align: center;"><img :src="'../../../../../../src/assets/images/' + data.img" alt=""
+            <div style="text-align: center;"><img :src="'@/assets/images/' + data.img" alt=""
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
     <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
-            <div style="text-align: center;"><img :src="'../../../../../../src/assets/images/' + data.img" alt=""
+            <div style="text-align: center;"><img src="`@/assets/images/${data.img}`" alt=""
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
