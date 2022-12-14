@@ -286,14 +286,15 @@ export default defineComponent({
             totalDeduction.value = filters.formatCurrency(total)
         }, { deep: true })
 
-        // watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
-        //     arrEdit.map((val: any, index: any) => {
-        //         if (val.employeeId == newVal.employeeId) {
-        //             arrEdit.splice(index, 1);
-        //         }
-        //     })
-        //     arrEdit.push(newVal)
-        // }, { deep: true })
+        watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
+            arrEdit.map((val: any, index: any) => {
+                if (val.employeeId == newVal.employeeId) {
+                    arrEdit.splice(index, 1);
+                }
+            })
+            arrEdit.push(newVal)
+        })
+
         // watch(() => originDataUpdate.value.formDifferencePayment, (res) => {
         //     if (res.status == false) {
         //         res.totalAmount = res.wage * res.working
