@@ -137,7 +137,13 @@ export default defineComponent({
         };
 
         const onSubmit = () => {
-            // mutate()
+            emit("dataAddIncomeProcess", {
+                imputedYear: globalYear.value,
+                imputedMonth: month1.value,
+                paymentYear: parseInt(month2.value.split('-')[0]),
+                paymentMonth: parseInt(month2.value.split('-')[1]),
+            })
+            emit("closePopup", false)
 
         };
         const updateValue = (value: any) => {
