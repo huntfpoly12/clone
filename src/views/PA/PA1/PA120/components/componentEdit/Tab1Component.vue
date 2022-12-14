@@ -135,7 +135,7 @@ export default defineComponent({
     let formStateTab1 = reactive<any>({
       ...initFormStateTab1,
       joinedAt: dayjs().format("YYYY-MM-DD"),
-      leavedAt: dayjs().format("YYYY-MM-DD"),
+      leavedAt: null,
     });
 
     let oldFormStateTab1 = {};
