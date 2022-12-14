@@ -81,7 +81,7 @@
 				<div class="header-text-0">공제 항목 <span class="fz-12">{ {{ totalDeduction }} }원</span></div>
 				<a-spin :spinning="loading" size="large">
 					<div class="deduction-main">
-						<div v-for="(item, index) in arrDeduction" class="custom-deduction">
+						<div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
 							<span>
 								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
 									:name="item.name" :type="1" subName="과세" />
@@ -253,6 +253,7 @@ export default defineComponent({
 					arr = val
 				}
 			})
+            
 			if (countArr == 0) {
 				originDataDetail.value.employeeId = res
 				originDataUpdate.value.employeeId = res
@@ -286,7 +287,8 @@ export default defineComponent({
 			})
 			totalPayDifferen.value = filters.formatCurrency((total + parseInt(formDifferencePayment.totalAmount.replace(',', ''))))
 			totalDeduction.value = filters.formatCurrency(total)
-		}, { deep: true })
+        }, { deep: true })
+        
 		watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
 			arrEdit.map((val: any, index: any) => {
 				if (val.employeeId == newVal.employeeId) {
@@ -294,7 +296,8 @@ export default defineComponent({
 				}
 			})
 			arrEdit.push(newVal)
-		}, { deep: true })
+        }, { deep: true })
+        
 		watch(() => formDifferencePayment, (res) => {
 			if (res.status == false) {
 				res.totalAmount = res.wage * res.working
@@ -338,7 +341,8 @@ export default defineComponent({
 					val.price = total4
 
 			})
-		}
+    }
+        
 		const funcCheckPrice = (id: any) => {
 			let price = 0
 			originDataUpdate.value.input.deductionItems.map((val: any) => {
