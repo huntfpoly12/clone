@@ -81,7 +81,7 @@
 				<div class="header-text-0">공제 항목 <span class="fz-12">{ {{ totalDeduction }} }원</span></div>
 				<a-spin :spinning="loading" size="large">
 					<div class="deduction-main">
-				
+
 					</div>
 				</a-spin>
 			</a-col>
@@ -233,7 +233,7 @@ export default defineComponent({
 					arr = val
 				}
 			})
-            
+
 			if (countArr == 0) {
 				originDataDetail.value.employeeId = res
 				originDataUpdate.value.employeeId = res
@@ -267,11 +267,9 @@ export default defineComponent({
 			})
 			totalPayDifferen.value = filters.formatCurrency((total + parseInt(originDataUpdate.value.formDifferencePayment.totalAmount.replace(',', ''))))
 			totalDeduction.value = filters.formatCurrency(total)
-        }, { deep: true })
-        
+		}, { deep: true })
+
 		watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
-
-
 			arrEdit.map((val: any, index: any) => {
 				if (val.employeeId == newVal.employeeId) {
 					arrEdit.splice(index, 1);
@@ -322,8 +320,8 @@ export default defineComponent({
 					val.price = total4
 
 			})
-    }
-        
+		}
+
 		const funcCheckPrice = (id: any) => {
 			let price = 0
 			originDataUpdate.value.input.deductionItems.map((val: any) => {
@@ -346,7 +344,7 @@ export default defineComponent({
 		return {
 			originDataUpdate,
 			messageMonthlySalary,
-			totalPayDifferen, 
+			totalPayDifferen,
 			totalDeduction,
 			arrDeduction,
 			rangeDate,
