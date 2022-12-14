@@ -81,24 +81,7 @@
 				<div class="header-text-0">공제 항목 <span class="fz-12">{ {{ totalDeduction }} }원</span></div>
 				<a-spin :spinning="loading" size="large">
 					<div class="deduction-main">
-						<div v-for="(item, index) in arrDeduction" class="custom-deduction">
-							<span>
-								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-									:name="item.name" :type="1" subName="과세" />
-								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-									:name="item.name" :type="2" subName="상여(과세)" />
-								<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-									:name="item.name" :type="3"
-									:subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-								<deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-									:name="item.name" :type="4" subName="과세" />
-							</span>
-							<div>
-								<number-box-money min="0" width="150px" :spinButtons="false"
-									v-model:valueInput="item.price" :disabled="true" />
-								<span class="pl-5">원</span>
-							</div>
-						</div>
+				
 					</div>
 				</a-spin>
 			</a-col>
@@ -253,6 +236,7 @@ export default defineComponent({
 					arr = val
 				}
 			})
+            
 			if (countArr == 0) {
 				originDataDetail.value.employeeId = res
 				originDataUpdate.value.employeeId = res
@@ -286,7 +270,8 @@ export default defineComponent({
 			})
 			totalPayDifferen.value = filters.formatCurrency((total + parseInt(formDifferencePayment.totalAmount.replace(',', ''))))
 			totalDeduction.value = filters.formatCurrency(total)
-		}, { deep: true })
+        }, { deep: true })
+        
 		watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
 			arrEdit.map((val: any, index: any) => {
 				if (val.employeeId == newVal.employeeId) {
@@ -294,7 +279,8 @@ export default defineComponent({
 				}
 			})
 			arrEdit.push(newVal)
-		}, { deep: true })
+        }, { deep: true })
+        
 		watch(() => formDifferencePayment, (res) => {
 			if (res.status == false) {
 				res.totalAmount = res.wage * res.working
@@ -338,7 +324,8 @@ export default defineComponent({
 					val.price = total4
 
 			})
-		}
+    }
+        
 		const funcCheckPrice = (id: any) => {
 			let price = 0
 			originDataUpdate.value.input.deductionItems.map((val: any) => {
