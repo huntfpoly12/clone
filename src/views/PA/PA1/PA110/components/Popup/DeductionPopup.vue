@@ -7,8 +7,8 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
                     :column-auto-width="true">
                     <DxColumn caption="항목" data-field="name" />
-                    <DxColumn caption="계산후" data-field="priceNew" />
-                    <DxColumn caption="원본" data-field="price" />
+                    <DxColumn caption="계산후" data-field="value" />
+                    <DxColumn caption="원본" data-field="value" />
                 </DxDataGrid>
             </div>
         </div>
@@ -43,7 +43,7 @@ export default defineComponent({
             emit("closePopup", false)
         };
         const onSubmit = (e: any) => {
-            emit("updateDate", true)
+            emit("updateCaculate", true)
             emit("closePopup", false)
         };
 
