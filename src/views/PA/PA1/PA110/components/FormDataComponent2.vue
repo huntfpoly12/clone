@@ -304,7 +304,7 @@ export default defineComponent({
         watch(resConfigDeduction, (value) => {
             if (value) {
                 dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.map((item: any) => {
-                    return { itemCode: item.itemCode, name: item.name, value: 0 }
+                    return { itemCode: item.itemCode, name: item.name, newValue: 0 }
                 });
             }
         });
