@@ -1,12 +1,12 @@
 import gql from "graphql-tag";
 export default gql`
-mutation changeIncomeRetirementPaymentDay( 
+mutation changeIncomeBusinessPaymentDay( 
     $companyId: Int!
     $processKey: IncomeProcessKeyInput! 
     $incomeId: Int!
     $day: Int!
     ) {
-        changeIncomeRetirementPaymentDay( 
+        changeIncomeBusinessPaymentDay( 
             companyId : $companyId,
             incomeId: $incomeId, 
             processKey: $processKey,
