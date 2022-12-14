@@ -16,7 +16,8 @@
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
             <span class="tag-foreigner" v-if="forDailyUse == true">일용</span>
-
+            <span class="tag-midTermSettlement2" v-if="midTermSettlement == false">중도정산O</span>
+            <span class="tag-midTermSettlement1" v-if="midTermSettlement == true">중도정산O</span>
         </div>
     </div>
 </template>
@@ -41,7 +42,9 @@ export default defineComponent({
         foreigner: {
             type: Boolean,
         },
-
+        midTermSettlement: {
+            type: Boolean,
+        },
         checkStatus: {
             type: Boolean,
         },
@@ -107,6 +110,23 @@ export default defineComponent({
     border-radius: 5px;
     margin: 0 5px;
 }
+
+.tag-midTermSettlement2 {
+    background-color: rgb(219, 14, 14);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.tag-midTermSettlement1 {
+    background-color: rgb(85, 155, 45);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
 
 .display-none {
     display: none;

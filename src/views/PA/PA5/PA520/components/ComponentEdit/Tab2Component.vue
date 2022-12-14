@@ -81,7 +81,24 @@
 				<div class="header-text-0">공제 항목 <span class="fz-12">{ {{ totalDeduction }} }원</span></div>
 				<a-spin :spinning="loading" size="large">
 					<div class="deduction-main">
-
+						<div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
+							<span>
+								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+									:name="item.name" :type="1" subName="과세" />
+								<deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+									:name="item.name" :type="2" subName="상여(과세)" />
+								<deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+									:name="item.name" :type="3"
+									:subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+								<deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+									:name="item.name" :type="4" subName="과세" />
+							</span>
+							<div>
+								<number-box-money min="0" width="150px" :spinButtons="false"
+									v-model:valueInput="item.price" :disabled="true" />
+								<span class="pl-5">원</span>
+							</div>
+						</div>
 					</div>
 				</a-spin>
 			</a-col>
