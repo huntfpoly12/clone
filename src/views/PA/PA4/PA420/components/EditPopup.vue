@@ -50,7 +50,7 @@ export default defineComponent({
             mutate,
             onDone,
             onError,
-        } = useMutation(mutations.changeIncomeRetirementPaymentDay);
+        } = useMutation(mutations.changeIncomeBusinessPaymentDay);
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
@@ -59,9 +59,7 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-        const onSubmit = () => {
-            console.log(props.data);
-
+        const onSubmit = () => { 
             props.data.map((val: any) => {
                 mutate({
                     companyId: companyId,
