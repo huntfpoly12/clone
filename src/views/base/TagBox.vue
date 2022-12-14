@@ -19,7 +19,7 @@
                     <b>- status (Boolean):</b> Box status employee<br />
                     <b>- foreigner (Boolean):</b> Box foreigner employee <br />
                     <b>- *checkStatus (Boolean):</b> Box checkStatus employee <br />
-                    <b>- midTermSettlement (Boolean):</b> Box midTermSettlement <br />
+
                 </td>
 
                 <td>
@@ -30,7 +30,7 @@
     :status="0"
     :foreigner="true" 
     :checkStatus="false"
-    :midTermSettlement="true"
+    
     /&gt;
                     </pre>
                 </td>
