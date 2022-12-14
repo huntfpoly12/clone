@@ -44,22 +44,28 @@
             </span>
         </div>
         <a-row :gutter="16">
-            <a-col :span="24"><b class="fz-20">차인지급액</b> <b>{ {{ totalPayDifferen }} }</b>원
+            <a-col :span="24"><b class="fz-20">차인지급액</b> <b>{ {{ $filters.formatCurrency(totalPayDifferen) }} }</b>원
             </a-col>
             <a-col :span="12">
                 <div class="header-text-0">월급여
                     <span class="fz-12">
-                        { {{ $filters.formatCurrency(totalAmountDifferencePayment) }} }
+                        {
+                        {{ originDataUpdate.input.monthlyPaycheck == true ?
+                                $filters.formatCurrency(originDataUpdate.input.monthlyWage *
+                                    originDataUpdate.input.workingDays) :
+                                $filters.formatCurrency(originDataUpdate.input.monthlyWage)
+                        }}
+                        }
                     </span>
                 </div>
                 <div>
                     <a-form-item label="일급/월급">
                         <div class="d-flex-center">
                             <switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
-                                v-model:valueSwitch="originDataUpdate.formDifferencePayment.status" />
+                                v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
                             <number-box-money :min="0" width="200px" class="mr-5"
-                                v-model:valueInput="originDataUpdate.formDifferencePayment.wage"
-                                :placeholder="originDataUpdate.formDifferencePayment.status == false ? '일급여' : '월급여'" />
+                                v-model:valueInput="originDataUpdate.input.monthlyWage"
+                                :placeholder="originDataUpdate.input.monthlyPaycheck == false ? '일급여' : '월급여'" />
                         </div>
                     </a-form-item>
                     <div class="pl-10">
@@ -71,7 +77,7 @@
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
                             <number-box-money width="200px" class="mr-5" :min="0"
-                                v-model:valueInput="originDataUpdate.formDifferencePayment.working" />
+                                v-model:valueInput="originDataUpdate.input.workingDays" />
                             <span class="ml-10">일</span>
                         </div>
                     </a-form-item>
@@ -153,12 +159,6 @@ export default defineComponent({
             input: {
                 ...originDataInputUpdate
             },
-            formDifferencePayment: {
-                id: null,
-                status: true,
-                wage: null,
-                working: null
-            }
         })
         // ================== GRAPQL ====================================
         const {
@@ -198,10 +198,7 @@ export default defineComponent({
                 })
 
                 originDataUpdate.value.input.deductionItems = dataAddDedution
-                originDataUpdate.value.formDifferencePayment.status = res.monthlyPaycheck
-                originDataUpdate.value.formDifferencePayment.wage = res.monthlyPaycheck == false ? res.dailyWage : res.monthlyWage
-                originDataUpdate.value.formDifferencePayment.working = res.workingDays
-                originDataUpdate.value.formDifferencePayment.id = res.employeeId
+
             }
         })
 
@@ -262,9 +259,6 @@ export default defineComponent({
                 originDataUpdate.value.input.dailyWage = arr.input.dailyWage
                 originDataUpdate.value.input.monthlyWage = arr.input.monthlyWage
                 originDataUpdate.value.input.deductionItems = arr.input.deductionItems
-                originDataUpdate.value.formDifferencePayment.status = arr.input.monthlyPaycheck
-                originDataUpdate.value.formDifferencePayment.wage = arr.input.monthlyPaycheck == false ? arr.input.dailyWage : arr.input.monthlyWage
-                originDataUpdate.value.formDifferencePayment.working = arr.input.workingDays
                 arrDeduction.value?.map((val: any) => {
                     val.price = funcCheckPrice(val.itemCode)
                 })
@@ -275,7 +269,7 @@ export default defineComponent({
             res.value.map((val: any) => {
                 total += val.price
             })
-            totalPayDifferen.value = filters.formatCurrency(total + totalAmountDifferencePayment.value)
+            totalPayDifferen.value = total + totalAmountDifferencePayment.value
             totalDeduction.value = filters.formatCurrency(total)
         }, { deep: true })
 
@@ -286,30 +280,17 @@ export default defineComponent({
                 }
             })
             arrEdit.push(newVal)
-        })
-
-        watch(() => originDataUpdate.value.formDifferencePayment, (res: any,) => {
-            if (res.status == false) {
-                totalAmountDifferencePayment.value = res.wage * res.working
-                messageMonthlySalary.value = "일급 선택시, 월급 = 일급 x 근무일수"
-            }
-            else {
-                if (res.wage)
-                    totalAmountDifferencePayment.value = res.wage
-                else
-                    totalAmountDifferencePayment.value = 0
-                messageMonthlySalary.value = "월급 선택시, 일급 = 월급 / 근무일수"
-            }
-            totalPayDifferen.value = filters.formatCurrency(totalAmountDifferencePayment.value + parseInt(totalDeduction.value.replace(',', '')))
-        }, { deep: true })
+        }) 
 
 
 
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
-            arrEdit.map((val: any) => {
-                mutate(val)
-            })
+            console.log(arrEdit);
+
+            // arrEdit.map((val: any) => {
+            //     mutate(val)
+            // })
         }
         const callFuncCalculate = () => {
             let dataDefault = originDataUpdate.value.input

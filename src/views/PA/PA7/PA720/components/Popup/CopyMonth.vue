@@ -2,10 +2,7 @@
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="" :width="500">
     <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
       <div class="d-flex-center">
-        <div class="month-custom-1 d-flex-center">
-          귀 {{ processKey.imputedYear }}-{{ $filters.formatDay(month) }}
-          <!-- <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" /> -->
-        </div>
+        <div class="month-custom-1 d-flex-center">귀 {{ processKey.imputedYear }}-{{ formatMonth(month) }}</div>
         <div class="month-custom-2 d-flex-center">지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" /></div>
       </div>
     </a-form-item>
@@ -25,7 +22,7 @@
       <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data" field-template="field-data" @value-changed="updateValue" :disabled="false">
         <template #field-data="{ data }">
           <span v-if="data" style="padding: 4px">
-            귀 {{ data.imputedYear }}-{{ $filters.formatDay(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{ $filters.formatDay(data.paymentMonth) }}
+            귀 {{ data.imputedYear }}-{{ formatMonth(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{ formatMonth(data.paymentMonth) }}
             <DxTextBox style="display: none" />
           </span>
           <span v-else style="padding: 4px">
@@ -34,7 +31,7 @@
           </span>
         </template>
         <template #item-data="{ data }">
-          <span>귀 {{ data.imputedYear }}-{{ $filters.formatDay(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{ $filters.formatDay(data.paymentMonth) }}</span>
+          <span>귀 {{ data.imputedYear }}-{{ formatMonth(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{ formatMonth(data.paymentMonth) }}</span>
         </template>
       </DxSelectBox>
       <span>로 부터 복사하여 새로 입력합니다.</span>
@@ -148,6 +145,12 @@ export default defineComponent({
         notification('error', '날짜를 선택하세요.');
       }
     };
+    const formatMonth = (month: number) => {
+      if (month < 10) {
+        return '0' + month;
+      }
+      return month;
+    };
     return {
       processKey,
       modalCopy,
@@ -161,6 +164,7 @@ export default defineComponent({
       updateValue,
       arrDataPoint,
       dataApiCopy,
+      formatMonth,
     };
   },
 });
