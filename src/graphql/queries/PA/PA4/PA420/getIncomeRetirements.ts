@@ -19,16 +19,16 @@ export default gql`
                 prevPaymentDay  
                 actualPayment
                 employee{
-                ... on EmployeeWage{
-                    joinedAt
-                            leavedAt
-                    totalPay
-                }
-                ... on EmployeeWageDaily{
-                    joinedAt
-                            leavedAt
-                    monthlyWage
-                }
+                    ... on EmployeeWage{
+                        joinedAt
+                        leavedAt
+                        totalPay
+                    }
+                    ... on EmployeeWageDaily{
+                        joinedAt
+                        leavedAt
+                        monthlyWage
+                    }
                 }
                 retirementType 
                 retirementBenefits

@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 export default gql`
-mutation deleteIncomeBusinesses( 
+mutation deleteIncomeRetirements( 
     $companyId: Int!
     $processKey: IncomeProcessKeyInput!
     $incomeIds: [Int!]! 
     ) {
-        deleteIncomeBusinesses( 
+        deleteIncomeRetirements( 
             companyId : $companyId,
             processKey: $processKey, 
             incomeIds: $incomeIds, 
