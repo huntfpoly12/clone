@@ -412,11 +412,6 @@ export default defineComponent({
         }))
         watch(result, (value) => {
             if (value) {
-                formState1.workingDays = value.getIncomeWage.workingDays;
-                formState1.totalWorkingHours = value.getIncomeWage.totalWorkingHours;
-                formState1.overtimeWorkingHours = value.getIncomeWage.overtimeWorkingHours;
-                formState1.workingHoursAtNight = value.getIncomeWage.workingHoursAtNight;
-                formState1.workingHoursOnHolidays = value.getIncomeWage.workingHoursOnHolidays;
                 value.getIncomeWage.payItems.map((item: any) => {
                     dataConfigPayItems.value.find((Obj: any) => {
                         if (item.itemCode == Obj.itemCode) {
@@ -498,7 +493,6 @@ export default defineComponent({
         // action update
         const updateIncomeWage = () => {
             const variables = {
-                ...formState1,
                 companyId: companyId,
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
@@ -534,7 +528,7 @@ export default defineComponent({
         // create wage
         const createWage = () => {
             const variables = {
-                ...formState1,
+
                 companyId: companyId,
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
