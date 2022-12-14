@@ -346,7 +346,7 @@ export default defineComponent({
                 dataIncomeWageDaily.value.workingDays,
                 dataIncomeWageDaily.value.dailyWage,
                 dataIncomeWageDaily.value.employee.monthlyPaycheck);
-
+            
             arrDeduction.value?.map((val: any) => {
                 val.priceNew = 0
                 if (val.deductionItemCode == 1001)
@@ -375,7 +375,6 @@ export default defineComponent({
                 if ([1001, 1002, 1003, 1004, 1011].includes(val.deductionItemCode))
                     val.price = val.priceNew
             })
-            console.log(arrDeduction.value)
         }
         watch(() => arrDeduction, (res) => {
             let total = 0
