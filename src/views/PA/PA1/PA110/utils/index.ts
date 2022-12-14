@@ -1,3 +1,4 @@
+import { employees } from "./../../../../CM/CM1/CM130/utils/data";
 export const sampleFormIncomeWage = {
   companyId: 29,
   processKey: {
@@ -20,6 +21,8 @@ export const sampleDataIncomeWage = {
   monthlyWage: 0,
   dailyWage: 0,
   workingDays: 0,
+  paymentDay: 0,
+  deductionItems: [{ amount: 0 }],
   employee: {
     name: "",
     totalDeduction: 0,
@@ -65,12 +68,27 @@ export const initFormState2 = {
   payItems: [],
   deductionItems: [],
 };
+import { companyId } from "@/helpers/commonFunction";
+
 export const initFormState1 = {
-  workingDays: 0,
-  totalWorkingHours: 0,
-  overtimeWorkingHours: 0,
-  workingHoursAtNight: 0,
-  workingHoursOnHolidays: 0,
-  payItems: [],
-  deductionItems: [],
+  companyId: companyId,
+  processKey: {
+    imputedYear: 2022,
+    imputedMonth: 1,
+    paymentYear: 2022,
+    paymentMonth: 1,
+  },
+  input: {
+    workingDays: 0,
+    totalWorkingHours: 0,
+    overtimeWorkingHours: 0,
+    workingHoursAtNight: 0,
+    workingHoursOnHolidays: 0,
+    payItems: [],
+    deductionItems: [],
+  },
+  paymentDay: null,
+  employee: {
+    employeeId: null,
+  },
 };

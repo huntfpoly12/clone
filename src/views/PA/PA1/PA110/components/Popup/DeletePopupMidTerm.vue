@@ -3,13 +3,27 @@
         :width="600">
         <div class="custom-modal">
             <div class="text-align-center">
-                <h3>공제 재계산 결과</h3>
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
-                    :column-auto-width="true">
-                    <DxColumn caption="항목" data-field="name" />
-                    <DxColumn caption="계산후" data-field="newValue" />
-                    <DxColumn caption="원본" data-field="value" />
-                </DxDataGrid>
+                <h3>중도퇴사자정산 결과
+                </h3>
+                <div>
+                    <table class="table text-align-left">
+                        <tr class="title">
+                            <th>항목 </th>
+                            <th>중도퇴사자정산 결과 </th>
+                            <th>원본</th>
+                        </tr>
+                        <tr>
+                            <td>중도정산 소득세</td>
+                            <td>{new-intermidiateIncomeTax}</td>
+                            <td>old-intermidiateIncomeTax</td>
+                        </tr>
+                        <tr>
+                            <td>중도정산 지방소득세</td>
+                            <td>{new-intermidiateLocalIncomeTax}</td>
+                            <td>{old-intermidiateLocalIncomeTax}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="text-align-center mt-40">
@@ -20,7 +34,6 @@
 </template>
 
 <script lang="ts">
-import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid"
 import { defineComponent, watch, ref } from 'vue'
 export default defineComponent({
     props: {
@@ -29,22 +42,24 @@ export default defineComponent({
             default: false,
         },
         data: {
-            type: Array,
-            default: []
+            type: Object,
+            default: {}
         },
-
+        emailUserLogin: {
+            type: String,
+            default: ""
+        }
     },
     components: {
-        DxDataGrid,
-        DxColumn
     },
     setup(props, { emit }) {
+        ;
+
         const setModalVisible = () => {
             emit("closePopup", false)
         };
         const onSubmit = (e: any) => {
-            emit("updateCaculate", true)
-            emit("closePopup", false)
+
         };
 
 
@@ -56,12 +71,20 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .custom-modal {
     display: flex;
     width: 100%;
     justify-content: center;
     margin-top: 20px;
+
+    .table,
+    th,
+    td {
+        border: 1px solid gray;
+        padding: 5px 10px;
+        width: 500px;
+    }
 
     .title {
         background-color: #e6f7ff;

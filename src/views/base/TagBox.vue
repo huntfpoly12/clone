@@ -10,7 +10,7 @@
                 <td>
                     <p><b> Employee Info</b></p>
                     <employee-info idEmployee="JBD00001" name="계약정보관리&심사" idCardNumber="800101-1100123" :status="0"
-                        :foreigner="true" :checkStatus="false" />
+                        :foreigner="true" :checkStatus="false" :midTermSettlement="false" />
                 </td>
                 <td>
                     <b>- idEmployee (String):</b> ID employee <br />
@@ -19,6 +19,7 @@
                     <b>- status (Boolean):</b> Box status employee<br />
                     <b>- foreigner (Boolean):</b> Box foreigner employee <br />
                     <b>- *checkStatus (Boolean):</b> Box checkStatus employee <br />
+
                 </td>
 
                 <td>
@@ -28,7 +29,9 @@
     idCardNumber="800101-1100123" 
     :status="0"
     :foreigner="true" 
-    :checkStatus="false"/&gt;
+    :checkStatus="false"
+    
+    /&gt;
                     </pre>
                 </td>
             </tr>
@@ -94,7 +97,7 @@
             <tr>
                 <td>
                     <p><b>Colorful Badge</b></p>
-                    <colorful-badge :value="40" :year="2022" :month="12"/>
+                    <colorful-badge :value="40" :year="2022" :month="12" />
                 </td>
                 <td>
                     <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
@@ -110,7 +113,7 @@
                 <td>
                     <p><b>Process Status</b></p>
                     {{ status }}
-                    <process-status v-model:valueStatus="status"  style="margin-left: 150px;"/>
+                    <process-status v-model:valueStatus="status" style="margin-left: 150px;" />
                 </td>
                 <td>
                     <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
@@ -129,7 +132,7 @@
 import ProcessStatus from "@/components/common/ProcessStatus.vue";
 import { defineComponent, ref } from "vue";
 export default defineComponent({
-  components: { ProcessStatus },
+    components: { ProcessStatus },
     data() {
         return {
             styles: {
