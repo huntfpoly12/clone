@@ -118,8 +118,8 @@
             <a-row style="margin-top: 40px">
 
                 <a-col :offset="4" style="text-align: center;">
-                    <button-basic style="margin-right: 20px" text="공제계산/caculate" type="default" mode="contained"
-                        :width="120" @onClick="calculateTax" />
+                    <!-- <button-basic style="margin-right: 20px" text="공제계산/caculate" type="default" mode="contained"
+                        :width="120" @onClick="calculateTax" /> -->
                     <div class="text-align-center ">
                         <DxButton @click="modalDeductions = true" :text="'공제 재계산'"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
@@ -130,6 +130,8 @@
                             :height="'33px'" />
                         <DxButton @click="modalDeteleTaxpay = true" :text="'중도정산 반영'"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                        <button-basic style="margin-right: 20px" text="create" type="default" mode="contained"
+                            :width="120" @onClick="createWage" />
 
                     </div>
                 </a-col>
@@ -493,6 +495,27 @@ export default defineComponent({
                     val.price = val.priceNew
             })
         }
+        // create wage
+        const createWage = () => {
+            const variables = {
+                ...formState1,
+                companyId: companyId,
+                processKey: { ...processKey.value },
+                incomeId: props.dataIncomeWage.incomeId,
+                input: {
+                    workingDays: dataIncomeWage.value.workingDays,
+                    totalWorkingHours: dataIncomeWage.value.totalWorkingHours,
+                    overtimeWorkingHours: dataIncomeWage.value.overtimeWorkingHours,
+                    workingHoursAtNight: dataIncomeWage.value.workingHoursAtNight,
+                    workingHoursOnHolidays: dataIncomeWage.value.workingHoursOnHolidays,
+                    paymentDay: dataIncomeWage.paymentDay,
+                    employeeId: dataIncomeWage.employee.employeeId,
+                    payItems: formState2.payItems,
+                    deductionItems: formState2.deductionItems
+                }
+            };
+            actionCreated(variables)
+        }
         return {
             formState2, loading1, loading2, loading,
             rangeDate, modalDeductions,
@@ -501,7 +524,7 @@ export default defineComponent({
             totalDeduction, dataIncomeWage,
             subPayment, arrayEmploySelect,
             calculateTax, loadingEmployeeWage, arrDeduction,
-            updateIncomeWage, actionUpdate, updateDataDeduction,
+            updateIncomeWage, actionUpdate, updateDataDeduction, createWage,
             companyId, datagConfigPayItems, dataConfigDeduction, month1, month2,
         };
     },
