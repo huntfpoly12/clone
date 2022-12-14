@@ -6,7 +6,7 @@
                 <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
                 <span>선택된 내역({{ data.length }}건) 삭제합니다. 그래도 진행하시겠습니까?</span>
             </div>
-            <div class="text-align-center mt-30">
+            <div class="text-center mt-30">
                 <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined"
                     @onClick="setModalVisible" />
                 <button-basic class="button-form-modal" text="네. 삭제합니다" :width="140" type="default" mode="contained"
@@ -50,7 +50,7 @@ export default defineComponent({
             mutate: actionDelete,
             onError: errorDelete,
             onDone: successDelete,
-        } = useMutation(mutations.deleteIncomeBusinesses)
+        } = useMutation(mutations.deleteIncomeRetirements)
         errorDelete(e => {
             notification('error', e.message)
         })
@@ -94,11 +94,7 @@ export default defineComponent({
 
 .mt-30 {
     margin-top: 30px;
-}
-
-.text-align-center {
-    text-align: center;
-}
+} 
 
 .button-form-modal {
     margin: 0px 5px;

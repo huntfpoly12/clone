@@ -55,17 +55,7 @@
     .ant-form-item {
         margin-bottom: 10px;
     }
-
-    ::v-deep .custom-layout {
-        padding: 10px 10px 10px 0;
-
-        >div {
-            border: 1px solid #d7d7d7;
-            padding: 10px;
-            min-height: 770px;
-        }
-    }
-
+    
     .ml-3 {
         margin-left: 3px;
     }
@@ -95,6 +85,22 @@
     .hover-underlined:hover {
         text-decoration: underline;
     }
+    .custom-sumary {
+        text-align: center !important;
+    }
+    ::v-deep .custom-layout {
+        padding: 10px 10px 10px 0;
+
+        >div {
+            border: 1px solid #d7d7d7;
+            padding: 10px;
+            min-height: 770px;
+        }
+    }
+    ::v-deep .content-btm col:first-child{
+        width: 40px !important;
+    }
+
 
     ::v-deep .dx-show-invalid-badge {
         margin-left: 0px !important;

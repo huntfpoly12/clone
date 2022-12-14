@@ -10,10 +10,10 @@
                 <span>일로 변경하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
-                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+                <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined"
                     @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'"
-                    :mode="'contained'" @onClick="onSubmit" />
+                <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
+                    @onClick="onSubmit" />
             </div>
         </standard-form>
     </a-modal>
@@ -59,9 +59,7 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-        const onSubmit = () => {
-            console.log(props.data);
-
+        const onSubmit = () => { 
             props.data.map((val: any) => {
                 mutate({
                     companyId: companyId,

@@ -1,12 +1,12 @@
 
-import deleteIncomeBusinesses from "./deleteIncomeBusinesses";
+import deleteIncomeRetirements from "./deleteIncomeRetirements";
 import updateIncomeBusiness from "./updateIncomeBusiness";
 import createIncomeBusiness from "./createIncomeBusiness";
 import updateEmployeeBusiness from "./updateEmployeeBusiness";
 import changeIncomeBusinessPaymentDay from "./changeIncomeBusinessPaymentDay";
 import copyIncomeBusinesses from "./copyIncomeBusinesses";
 const mutations = {
-    deleteIncomeBusinesses: deleteIncomeBusinesses,
+    deleteIncomeRetirements: deleteIncomeRetirements,
     createIncomeBusiness: createIncomeBusiness,
     updateIncomeBusiness: updateIncomeBusiness,
     updateEmployeeBusiness: updateEmployeeBusiness, 

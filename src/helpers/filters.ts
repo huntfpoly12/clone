@@ -34,6 +34,12 @@ const filters = {
             return check;
         })
         return obj[0].label;
+    },
+    formatDay(day: number){
+        if(day<10) {
+            return '0' + day;
+        }
+        return day;
     }
 }
 export default filters;
