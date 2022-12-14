@@ -1,5 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
+    <action-header title="일용직근로소득자료입력" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
     <div id="pa-510" class="page-content">
         <a-row>
             <a-spin :spinning="loading" size="large">
@@ -185,7 +185,7 @@
         </a-row>
         <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
-                <DxButton :text="'귀' + processKey.paymentYear + '-' + processKey.paymentMonth"
+                <DxButton :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0'+processKey.imputedMonth )"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                 <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />

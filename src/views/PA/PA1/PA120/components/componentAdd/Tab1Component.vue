@@ -234,7 +234,7 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        emit('employeeId', employeeId);
+        emit('employeeId', employeeId.value);
         let dataNew = {
           companyId: companyId,
           imputedYear: globalYear.value,
