@@ -4,7 +4,7 @@
             :mask-closable="false">
             <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
             loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
-            loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130">
+            loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA720 || loadingPA720">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -89,6 +89,8 @@ export default defineComponent({
         let trigger620 = ref<boolean>(false);
         let triggerStatus620 = ref<boolean>(false);
         let trigger120 = ref<boolean>(false);
+        let trigger720 = ref<boolean>(false);
+        let triggerStatus720 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
@@ -269,6 +271,34 @@ export default defineComponent({
                             if (dataQuery.value.companyId)
                                 refetchStatusPA620();
                             break;
+                            case 'pa-720':
+                            trigger720.value = true;
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            if (dataQuery.value.companyId)
+                                refetchPA720();
+                            break;
+                        case 'pa-720-status':
+                            triggerStatus720.value = true;
+                            dataQuery.value = {
+                                companyId: companyId,
+                                processKey: {
+                                    imputedYear: props.data.imputedYear,
+                                    imputedMonth: props.data.imputedMonth,
+                                    paymentYear: props.data.paymentYear,
+                                    paymentMonth: props.data.paymentMonth,
+                                },
+                            };
+                            if (dataQuery.value.companyId)
+                                refetchStatusPA720();
+                            break;
                         default:
                             break;
                     }
@@ -292,6 +322,7 @@ export default defineComponent({
                     triggerStatus510.value = false;
                     trigger620.value = false;
                     triggerStatus620.value = false;
+                    triggerStatus720.value = false;
 
                 }
             }
@@ -568,7 +599,34 @@ export default defineComponent({
                 dataTableShow.value = value.getIncomeProcessWageLogs;
             }
         });
-
+        // get getIncomeWageDailiesLogs pa-720
+        const { result: resultPA720, loading: loadingPA720, refetch: refetchPA720 } = useQuery(
+            queries.getIncomeExtrasLogs,
+            dataQuery,
+            () => ({
+                enabled: trigger720.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA720, (value) => {
+            if (value && value.getIncomeExtrasLogs) {
+                dataTableShow.value = value.getIncomeExtrasLogs;
+            }
+        });
+        // get incomeProcessExtra pa-720
+        const { result: resultStatusPA720, loading: loadingStatusPA720, refetch: refetchStatusPA720 } = useQuery(
+            queries.getIncomeProcessExtraLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerStatus720.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultStatusPA720, (value) => {
+            if (value && value.getIncomeProcessExtraLogs) {
+                dataTableShow.value = value.getIncomeProcessExtraLogs;
+            }
+        });
 
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
@@ -602,7 +660,9 @@ export default defineComponent({
             loadingPA120,
             formarDate,
             dataQuery,
-            loadingPA610
+            loadingPA610,
+            loadingPA720,
+            loadingStatusPA720,
         }
     },
 
