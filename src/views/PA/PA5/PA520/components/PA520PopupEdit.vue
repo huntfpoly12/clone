@@ -3,10 +3,10 @@
         <div id="pa-520" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1">
-                    <Tab1Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" @editRowKey="activeRowKey"/>
+                    <Tab1Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" @editRowKey="activeRowKey" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여/공제">
-                    <!-- <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" /> -->
+                    <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -36,17 +36,17 @@ export default defineComponent({
         // ============ FUNCTION ============================= 
         const setModalVisible = () => {
             emit('closePopup', false)
-        }  
-        const activeKey = ref() 
-        watch(() => props.idRowEdit, (value) => { 
-            if (value) { 
+        }
+        const activeKey = ref()
+        watch(() => props.idRowEdit, (value) => {
+            if (value) {
                 activeKey.value = '1'
             }
         })
-        const activeRowKey = (id:any)=>{ 
+        const activeRowKey = (id: any) => {
             emit("editRowKey", id)
         }
-        return { 
+        return {
             activeRowKey,
             setModalVisible,
             activeKey
