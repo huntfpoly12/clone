@@ -57,7 +57,7 @@
                         <div class="d-flex-center">
                             <switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
                                 v-model:valueSwitch="originDataUpdate.formDifferencePayment.status" />
-                            <number-box-money min="0" width="200px" class="mr-5"
+                            <number-box-money :min="0" width="200px" class="mr-5"
                                 v-model:valueInput="originDataUpdate.formDifferencePayment.wage"
                                 :placeholder="originDataUpdate.formDifferencePayment.status == false ? '일급여' : '월급여'" />
                         </div>
@@ -70,7 +70,7 @@
                     </div>
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
-                            <number-box-money width="200px" class="mr-5" min="0"
+                            <number-box-money width="200px" class="mr-5" :min="0"
                                 v-model:valueInput="originDataUpdate.formDifferencePayment.working" />
                             <span class="ml-10">일</span>
                         </div>
@@ -94,7 +94,7 @@
                                     :name="item.name" :type="4" subName="과세" />
                             </span>
                             <div>
-                                <number-box-money min="0" width="150px" :spinButtons="false"
+                                <number-box-money :min="0" width="150px" :spinButtons="false"
                                     v-model:valueInput="item.price" :disabled="true" />
                                 <span class="pl-5">원</span>
                             </div>
@@ -272,7 +272,7 @@ export default defineComponent({
                 originDataUpdate.value.formDifferencePayment.status = arr.input.monthlyPaycheck
                 originDataUpdate.value.formDifferencePayment.wage = arr.input.monthlyPaycheck == false ? arr.input.dailyWage : arr.input.monthlyWage
                 originDataUpdate.value.formDifferencePayment.working = arr.input.workingDays
-                originDataUpdate.value.arrDeduction.value?.map((val: any) => {
+                arrDeduction.value?.map((val: any) => {
                     val.price = funcCheckPrice(val.itemCode)
                 })
             }
@@ -295,21 +295,25 @@ export default defineComponent({
             arrEdit.push(newVal)
         })
 
-        // watch(() => originDataUpdate.value.formDifferencePayment, (res) => {
-        //     if (res.status == false) {
-        //         res.totalAmount = res.wage * res.working
-        //         messageMonthlySalary.value = "일급 선택시, 월급 = 일급 x 근무일수"
-        //     }
-        //     else {
-        //         if (res.wage)
-        //             res.totalAmount = res.wage
-        //         else
-        //             res.totalAmount = 0
-        //         messageMonthlySalary.value = "월급 선택시, 일급 = 월급 / 근무일수"
-        //     }
-        //     totalPayDifferen.value = filters.formatCurrency(res.totalAmount + parseInt(totalDeduction.value.replace(',', '')))
-        //     originDataUpdate.value.formDifferencePayment.totalAmount = filters.formatCurrency(res.totalAmount)
-        // }, { deep: true })
+        watch(() => originDataUpdate, (respon) => {
+            let res = respon.value.formDifferencePayment
+
+            if (res.status == false) {
+                res.totalAmount = res.wage * res.working
+                messageMonthlySalary.value = "일급 선택시, 월급 = 일급 x 근무일수"
+            }
+            else {
+                if (res.wage)
+                    res.totalAmount = res.wage
+                else
+                    res.totalAmount = 0
+                messageMonthlySalary.value = "월급 선택시, 일급 = 월급 / 근무일수"
+            }
+            totalPayDifferen.value = filters.formatCurrency(res.totalAmount + parseInt(totalDeduction.value.replace(',', '')))
+            console.log(filters.formatCurrency(res.totalAmount));
+            
+            // originDataUpdate.value.formDifferencePayment.totalAmount = 
+        }, { deep: true })
 
 
 
