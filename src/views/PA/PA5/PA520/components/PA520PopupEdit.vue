@@ -6,7 +6,7 @@
                     <Tab1Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" @editRowKey="activeRowKey"/>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여/공제">
-                    <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" />
+                    <!-- <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" /> -->
                 </a-tab-pane>
             </a-tabs>
         </div>
