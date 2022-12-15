@@ -14,7 +14,7 @@
                         <div class="pr-5 pl-10">
                             <img src="@/assets/images/iconInfo.png" style="width: 16px;">
                         </div>
-                        <span class="fz-11">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
+                        <span class="style-note">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
                         </span>
                     </div>
                 </a-form-item>
@@ -81,6 +81,19 @@
                             <span class="ml-10">일</span>
                         </div>
                     </a-form-item>
+                    <div>
+                        일급여 <b>{
+                            {{
+                                    $filters.formatCurrency(originDataUpdate.input.monthlyPaycheck == false ?
+                                        originDataUpdate.input.monthlyWage :
+                                        (originDataUpdate.input.monthlyWage / (originDataUpdate.input.workingDays > 0 ?
+                                            originDataUpdate.input.workingDays : 1)))
+                            }}
+                            }</b> 원
+                    </div>
+                    <div>
+                        일급여 <b>{500000}</b> 원
+                    </div>
                 </div>
             </a-col>
             <a-col :span="12">
@@ -280,7 +293,7 @@ export default defineComponent({
                 }
             })
             arrEdit.push(newVal)
-        }) 
+        })
 
 
 
