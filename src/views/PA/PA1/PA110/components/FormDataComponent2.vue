@@ -27,10 +27,15 @@
                         </span>
                     </div>
 
+                    <a-form-item label="일하는 날" label-align="right">
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.workingDays"
+                            placeholder="일하는 날" />
+                    </a-form-item>
                     <a-form-item label="총근로시간" label-align="right">
                         <text-number-box width="200px" v-model:valueInput="dataIncomeWage.totalWorkingHours"
                             placeholder="총근로시간" />
-                    </a-form-item> <a-form-item label="연장근로시간" label-align="right">
+                    </a-form-item>
+                    <a-form-item label="연장근로시간" label-align="right">
                         <text-number-box width="200px" v-model:valueInput="dataIncomeWage.overtimeWorkingHours"
                             placeholder="연장근로시간" />
                     </a-form-item> <a-form-item label="야간근로시간" label-align="right">
@@ -155,7 +160,7 @@ import { defineComponent, reactive, ref, watch, computed, onMounted } from "vue"
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
     initFormState1,
-    initFormState2
+    initFormState2, initRefreshDeduction
 } from "../utils/index";
 import dayjs from 'dayjs';
 import { useStore } from "vuex";
@@ -218,6 +223,7 @@ export default defineComponent({
         const store = useStore();
         const dataConfigPayItems = ref();
         const dataConfigDeduction = ref();
+        let arrRefresh = ref()
         const triggerDetail = ref<boolean>(false);
         const triggerCalcIncome = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear);
@@ -298,6 +304,10 @@ export default defineComponent({
                 dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.map((item: any) => {
                     return { itemCode: item.itemCode, name: item.name, oldValue: 0, value: 0, }
                 });
+                arrRefresh.value = value.getWithholdingConfigDeductionItems.map((item: any) => {
+                    return { itemCode: item.itemCode, name: item.name, oldValue: 0, value: 0, }
+                });
+
             }
         });
         // get IncomeWage value
@@ -419,6 +429,7 @@ export default defineComponent({
             totalDeduction.value = dataConfigDeduction.value.reduce((accumulator: any, object: any) => {
                 return accumulator + object.value;
             }, 0);
+
         }
 
         // Calculate Income Wage Tax if totalPayItem != 0
@@ -460,6 +471,7 @@ export default defineComponent({
         doneCreated(res => {
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
+            emit("loadingTableInfo", true)
             triggerDetail.value = true
             refetchValueDetail()
         })
@@ -469,8 +481,16 @@ export default defineComponent({
         })
         // refresh value
         const addRow = () => {
+
             dataIncomeWage.value = { ...initFormState1 }
-            refetchValueDetail()
+            dataConfigDeduction.value.map((data: any) => {
+                data.value = 0
+            })
+            dataConfigPayItems.value.map((data: any) => {
+                data.value = 0
+            })
+            calculateTax()
+            emit('updateData', true)
         }
         // action update
         const updateIncomeWage = () => {
@@ -519,8 +539,8 @@ export default defineComponent({
         watch(() => props.actionAddItem, (value) => {
             if (value) {
                 switchAction.value = true
-                emit('updateData', true)
                 addRow()
+
             }
         })
         // action update
@@ -528,6 +548,9 @@ export default defineComponent({
             updateIncomeWage()
         })
         watch(() => props.actionSaveItem, () => {
+            calculateTax()
+            refetchConfigPayItems()
+            refetchConfigDeduction()
             createWage()
 
         })
@@ -539,7 +562,6 @@ export default defineComponent({
         const calculate = () => {
             calculateTax()
         }
-
         return {
             formState2, loading1, loading2, loading,
             rangeDate, modalDeductions,
