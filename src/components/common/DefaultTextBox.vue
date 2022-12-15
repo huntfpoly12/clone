@@ -36,7 +36,7 @@ export default defineComponent({
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: String,
+      type: String || Number,
       default: "",
     },
     placeholder: String,

@@ -48,3 +48,41 @@ export const dataGetDetailEdit = {
 export const dataCallApiCreated = {
     retirementIncome: '',
 }
+
+export const dataAddTableBigUtils = [
+    {
+        id: 1,
+        name: "인원",
+    },
+    {
+        id: 2,
+        name: "퇴직급여",
+    },
+    {
+        id: 3,
+        name: "비과세퇴직급여",
+
+    },
+    {
+        id: 4,
+        name: "과세대상퇴직급여",
+
+    },
+    {
+        id: 5,
+        name: "소득세",
+
+    },
+    {
+        id: 6,
+        name: "지방소득세",
+    },
+    {
+        id: 7,
+        name: "공제총액",
+    },
+    {
+        id: 8,
+        name: "차인지급액",
+    },
+]

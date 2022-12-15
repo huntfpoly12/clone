@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 export default gql`
-    query getIncomeProcessBusinesses(
+    query getIncomeProcessRetirements(
             $companyId: Int!
             $imputedYear: Int!
             $imputedMonth: Int
         ){
-            getIncomeProcessBusinesses(companyId: $companyId, imputedYear: $imputedYear,imputedMonth:$imputedMonth) { 
+            getIncomeProcessRetirements(companyId: $companyId, imputedYear: $imputedYear,imputedMonth:$imputedMonth) { 
                 companyId
                 imputedMonth
                 imputedYear
@@ -13,13 +13,16 @@ export default gql`
                 paymentYear
                 paymentMonth
                 employeeStat{
+                    retireEmployeeCount
                     employeeCount
                 }
-                incomeStat{
+                incomeStat{ 
                     incomePayment
+                    nonTaxableRetirementBenefits
+                    taxableRetirementBenefits
+                    retirementBenefits
                     withholdingIncomeTax
-                    withholdingLocalIncomeTax
-                    actualPayment
+                    withholdingLocalIncomeTax 
                 }
             }
         }`

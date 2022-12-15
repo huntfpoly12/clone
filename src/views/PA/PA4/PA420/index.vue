@@ -1,5 +1,5 @@
 <template>
-    <action-header title="사업소득자등록" @actionSave="saving" />
+    <action-header title="퇴직소득자료입력" @actionSave="saving" />
     <div id="pa-420">
         <div class="page-content">
             <a-row>
@@ -146,7 +146,7 @@
                                 </div>
                             </template>
                             <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
-                            <template #detailRow="{ data }"> 
+                            <template #detailRow="{ data }">
                                 <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="false"
                                     :column-auto-width="true" :allow-column-reordering="move_column"
                                     :show-column-headers="false" :allow-column-resizing="colomn_resize"
@@ -234,14 +234,14 @@
                                             {{ data.data.month12.value }}
                                         </div>
                                     </template>
-                                </DxDataGrid> 
+                                </DxDataGrid>
                             </template>
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
 
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
-                    :actionSave="actionSave" @createdDone="createdDone" /> 
+                    :actionSave="actionSave" @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" />
             </a-row>
         </div>
@@ -255,7 +255,7 @@ import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
-import { origindata } from "./utils";
+import { origindata, dataAddTableBigUtils } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import HistoryPopup from '@/components/HistoryPopup.vue';
@@ -263,7 +263,6 @@ import dayjs from 'dayjs';
 import filters from "@/helpers/filters";
 import ComponentDetail from "./components/ComponentDetail.vue";
 import CopyMonth from "./components/CopyMonth.vue";
-
 
 export default defineComponent({
     components: {
@@ -285,7 +284,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const modalCopy = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear)
-        const valueCallApiGetIncomeProcessBusinesses = reactive({
+        const dataGetValueTable = reactive({
             companyId: companyId,
             imputedYear: globalYear,
             // imputedMonth: dayjs().month(),
@@ -312,7 +311,7 @@ export default defineComponent({
         // ================GRAPQL==============================================
 
         // API QUERY TABLE BIG
-        const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessBusinesses, valueCallApiGetIncomeProcessBusinesses, () => ({
+        const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessRetirements, dataGetValueTable, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
@@ -322,84 +321,66 @@ export default defineComponent({
                 companyId: companyId,
             }]
 
-            dataCustomRes.value = [
-                {
-                    id: 1,
-                    name: "인원",
-                },
-                {
-                    id: 2,
-                    name: "지급액",
-                },
-                {
-                    id: 3,
-                    name: "소득세",
+            dataCustomRes.value = [...dataAddTableBigUtils]
 
-                },
-                {
-                    id: 4,
-                    name: "지방소득세",
+            if (respon)
+                respon.map((val: any) => {
+                    // data table minify  
+                    let dataAdd = {
+                        imputedMonth: val.imputedMonth,
+                        imputedYear: val.imputedYear,
+                        paymentYear: val.paymentYear,
+                        paymentMonth: val.paymentMonth,
+                    }
 
-                },
-                {
-                    id: 5,
-                    name: "공제총액",
+                    dataSource.value[0]['month' + val.imputedMonth] = val
 
-                },
-                {
-                    id: 6,
-                    name: "차인지급액",
-                },
-            ]
+                    // data table detail
+                    dataCustomRes.value[0]['month' + val.imputedMonth] =
+                    {
+                        value: filters.formatCurrency(val.employeeStat?.employeeCount) + " (" + filters.formatCurrency(val.employeeStat?.retireEmployeeCount) + ")",
+                        ...dataAdd
+                    }
+                    dataCustomRes.value[1]['month' + val.imputedMonth] =
+                    {
+                        value: filters.formatCurrency(val.incomeStat?.retirementBenefits),
+                        ...dataAdd
+                    }
+                    dataCustomRes.value[2]['month' + val.imputedMonth] = {
+                        value: filters.formatCurrency(val.incomeStat?.nonTaxableRetirementBenefits),
+                        ...dataAdd
+                    }
+                    dataCustomRes.value[3]['month' + val.imputedMonth] = {
+                        value: filters.formatCurrency(val.incomeStat?.taxableRetirementBenefits),
+                        ...dataAdd
+                    }
+                    dataCustomRes.value[4]['month' + val.imputedMonth] = {
+                        value: filters.formatCurrency(val.incomeStat?.incomePayment),
+                        ...dataAdd
+                    }
+                    dataCustomRes.value[5]['month' + val.imputedMonth] = {
+                        value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+                        ...dataAdd
+                    }
 
-            respon.map((val: any) => {
-                // data table minify
-                let dataAdd = {
-                    imputedMonth: val.imputedMonth,
-                    imputedYear: val.imputedYear,
-                    paymentYear: val.paymentYear,
-                    paymentMonth: val.paymentMonth,
-                }
+                    // =================================== Pending value ============================= 
+                    dataCustomRes.value[6]['month' + val.imputedMonth] = {
+                        value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+                        ...dataAdd
+                    }
+                    dataCustomRes.value[7]['month' + val.imputedMonth] = {
+                        value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+                        ...dataAdd
+                    }
 
-                dataSource.value[0]['month' + val.imputedMonth] = val
-
-                // data table detail
-                dataCustomRes.value[0]['month' + val.imputedMonth] =
-                {
-                    value: filters.formatCurrency(val.employeeStat?.employeeCount),
-                    ...dataAdd
-                }
-                dataCustomRes.value[1]['month' + val.imputedMonth] =
-                {
-                    value: filters.formatCurrency(val.incomeStat?.incomePayment),
-                    ...dataAdd
-                }
-                dataCustomRes.value[2]['month' + val.imputedMonth] = {
-                    value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
-                    ...dataAdd
-                }
-                dataCustomRes.value[3]['month' + val.imputedMonth] = {
-                    value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
-                    ...dataAdd
-                }
-                dataCustomRes.value[4]['month' + val.imputedMonth] = {
-                    value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax + val.incomeStat?.withholdingLocalIncomeTax),
-                    ...dataAdd
-                }
-                dataCustomRes.value[5]['month' + val.imputedMonth] = {
-                    value: filters.formatCurrency(val.incomeStat?.actualPayment),
-                    ...dataAdd
-                }
-
-                if (val.imputedMonth == (dayjs().month() + 1)) {
-                    dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
-                    dataCallTableSmall.processKey.imputedYear = val.imputedYear
-                    dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
-                    dataCallTableSmall.processKey.paymentYear = val.paymentYear
-                    statusButton.value = val.status
-                }
-            })
-
+                    if (val.imputedMonth == (dayjs().month() + 1)) {
+                        dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
+                        dataCallTableSmall.processKey.imputedYear = val.imputedYear
+                        dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
+                        dataCallTableSmall.processKey.paymentYear = val.paymentYear
+                        statusButton.value = val.status
+                    }
+                })
         })
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
@@ -421,7 +402,6 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         }
-
 
         const addMonth = (month: number) => {
             modalCopy.value = true
