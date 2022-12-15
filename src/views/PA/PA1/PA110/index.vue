@@ -415,6 +415,7 @@ export default defineComponent({
       arrDataPoint.value = [];
       if (value) {
         let respon = value.getIncomeProcessWages
+        console.log('rest', respon)
         dataSource.value = [{
           companyId: companyId,
         }]
@@ -449,59 +450,60 @@ export default defineComponent({
           if (JSON.stringify(dataAdd) == JSON.stringify(processKey.value)) {
             status.value = val.status
           }
-
           dataSource.value[0]['month' + val.imputedMonth] = val
+
           // data table detail
           dataCustomRes.value[0]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: `${[val.value].reduce((total, status) => (status != 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })} (${[val].reduce((total, status) => (status == 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })})`,
             ...dataAdd
           }
           dataCustomRes.value[1]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
             ...dataAdd
           }
           dataCustomRes.value[2]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.totalTaxPay.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.totalTaxPay),
             ...dataAdd
           }
           dataCustomRes.value[3]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.totalTaxfreePay.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.totalTaxfreePay),
             ...dataAdd
           }
           dataCustomRes.value[4]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' }) : 0,
+
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
           dataCustomRes.value[5]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: customizeTotalItemCode1(dataAdd),
             ...dataAdd
           }
           dataCustomRes.value[6]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
           dataCustomRes.value[7]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
           dataCustomRes.value[8]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
           dataCustomRes.value[9]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
             ...dataAdd
           }
           dataCustomRes.value[10]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
           dataCustomRes.value[11]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.totalDeduction.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.totalDeduction),
             ...dataAdd
           }
           dataCustomRes.value[11]['month' + val.imputedMonth] = {
-            value: val.incomeStat ? val.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' }) : 0,
+            value: filters.formatCurrency(val.incomeStat?.actualPayment),
             ...dataAdd
           }
         })
@@ -526,11 +528,19 @@ export default defineComponent({
         )
       })
     })
+
+    const customizeTotalItemCode1 = (data: any) => {
+      let totalItemCode1: any = 0
+      dataTaxPayInfo.value.map((val: any) => {
+        console.log('valueas', val)
+      })
+      return `1${filters.formatCurrency(totalItemCode1)}`;
+    }
     const loadingTableInfo = () => {
       refetchDataTaxPayInfo()
     }
     // ======================= FUNCTION ================================
-
+    // function get total item code
     const statusComfirm = () => {
       actionChangeIncomeProcess({
         companyId: companyId,
@@ -538,6 +548,7 @@ export default defineComponent({
         status: status.value
       })
     }
+
     const updateData = (e: any) => {
       actionUpdateItem.value++
     }
@@ -590,7 +601,7 @@ export default defineComponent({
       imputedYear,
       imputedMonth,
       dataCustomRes, actionSaveItem,
-      formIncomeWageDaily, copyMonth, dataModalCopy, arrDataPoint, statusComfirm, dataAddIncomeProcess,
+      formIncomeWageDaily, copyMonth, dataModalCopy, arrDataPoint, statusComfirm, dataAddIncomeProcess, customizeTotalItemCode1,
       showDetailSelected,
       dataTaxPayInfo, dataRows, actionAddItem, loadingTableInfo, updateData, actionUpdateItem, createdDone,
       actionEditTaxPay, modalCopy, actionCopySuccess, addMonth
