@@ -41,7 +41,7 @@
                     <a-typography-title :level="5" style="margin-bottom: 0;">급여 / 공제</a-typography-title>
                 </div>
             </a-col>
-            <a-col :span="9" style="padding-right: 5px;">
+            <a-col :span="10" style="padding-right: 5px;">
                 <div class="top-content">
                     <a-typography-title :level="5" style="margin-bottom: 0;">
                         월급여 {{ dataIncomeWageDaily.employee.monthlyPaycheck ?
@@ -54,18 +54,18 @@
                     <span>일급/월급:</span>
                     <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'일급'"
                         :textUnCheck="'월급'" />
-                    <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="100px" :required="true"
+                    <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
                         placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
-                    <number-box-money v-else width="100px" :required="true" placeholder='일급여' :spinButtons="false"
+                    <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
                         v-model:valueInput="dataIncomeWageDaily.dailyWage" />
                 </div>
-                <div style="margin-bottom: 10px;" class="style-note">
+                <div style="margin-bottom: 10px;">
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 / 근무일수</span>
-                    <span v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
+                    <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 / 근무일수</span>
+                    <span  v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                 </div>
                 <a-form-item label="근무일수">
-                    <text-number-box width="100px" :required="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
+                    <text-number-box width="150px" :required="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
                         :min="1" :max="30" :spinButtons="true"></text-number-box>
                 </a-form-item>
                 <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
@@ -80,7 +80,7 @@
                         dataIncomeWageDaily.workingDays)
                 }}원</span>
             </a-col>
-            <a-col :span="15" style="padding-leftt: 5px;">
+            <a-col :span="14" style="padding-leftt: 5px;">
                 <div class="top-content">
                     <a-typography-title :level="5" style="margin-bottom: 0;">월급여 {{ totalDeduction }}
                         원</a-typography-title>
@@ -90,17 +90,17 @@
                         <div v-for="(item, index) in arrDeduction" :key="index" class="custom-deduction">
                             <span>
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                    :name="item.name" :type="1" :fullText="true" subName="과세" />
+                                    :name="item.name" :type="1" :width="'150px'" subName="과세" />
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                    :name="item.name" :type="2" :fullText="true" subName="상여(과세)" />
+                                    :name="item.name" :type="2" :width="'150px'" subName="상여(과세)" />
                                 <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                    :name="item.name" :type="3" :fullText="true"
+                                    :name="item.name" :type="3" :width="'150px'"
                                     :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
                                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                    :name="item.name" :type="4" :fullText="true" subName="과세" />
+                                    :name="item.name" :type="4" :width="'150px'" subName="과세" />
                             </span>
                             <div>
-                                <number-box-money min="0" width="150px" :spinButtons="false"
+                                <number-box-money min="0" width="130px" :spinButtons="false"
                                     v-model:valueInput="item.price" :disabled="true" />
                                 <span class="pl-5">원</span>
                             </div>
