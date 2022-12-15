@@ -135,8 +135,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
-import { radioCheckPersenPension, originDataInputUpdate } from "../../utils/index";
-import dayjs from 'dayjs';
+import { radioCheckPersenPension, originDataInputUpdate } from "../../utils/index"; 
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { useStore } from 'vuex';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
