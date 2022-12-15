@@ -121,7 +121,6 @@ export default defineComponent({
     editTax: {
       required: true,
       type: Object,
-      //... rest of your props
     },
     addNewIncomeExtra: {
       type: Object,
@@ -157,7 +156,6 @@ export default defineComponent({
       },
     });
     const isEdit = ref(false);
-    const isShowForm = ref(incomeExtraParam.companyId ?? false);
     const getEmployeeExtrasTrigger = ref<boolean>(true);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
@@ -188,7 +186,6 @@ export default defineComponent({
         dataAction.companyId = newValue.companyId;
         triggerIncomeExtra.value = true;
         isEdit.value = true;
-        isShowForm.value = true;
         let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
         let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
         month1.value = dayjs(date1).format('YYYY-MM');
@@ -333,7 +330,6 @@ export default defineComponent({
       dataAction,
       changeIncomeTypeCode,
       loadingIncomeExtra,
-      isShowForm,
       taxRateOptions,
       updateValue,
       isEdit,

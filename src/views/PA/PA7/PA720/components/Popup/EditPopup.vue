@@ -20,11 +20,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref, computed } from 'vue'
+import { defineComponent,  ref,  } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA7/PA720/index"
-import { useStore } from 'vuex'
 export default defineComponent({
     props: {
         modalStatus: {

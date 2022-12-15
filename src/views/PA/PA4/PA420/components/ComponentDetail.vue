@@ -18,39 +18,25 @@
                 <DxButton @click="editPaymentDate">
                     <EditOutlined style="font-size: 18px;" />
                 </DxButton>
-                <template v-for="(placement, index) in placements" :key="placement">
-                    <a-dropdown :placement="placement" class="ml-5">
-                        <a-button class="button-open-tab">선택</a-button>
-                        <template #overlay>
-                            <a-menu>
-                                <a-menu-item>
-                                    <div class="custom-select-tab">
-                                        <a href="/dashboard/pa-610" style="color: white;">
-                                            기타소득자등록
-                                        </a>
-                                    </div>
-                                </a-menu-item>
-                                <a-menu-item>
-                                    <a-tooltip placement="left">
-                                        <template #title>사업소득자료 변경이력</template>
-                                        <div style="text-align: center;" @click="onItemClick('history')">
-                                            <HistoryOutlined style="font-size: 20px" />
-                                        </div>
-                                    </a-tooltip>
-                                </a-menu-item>
-                                <a-menu-item>
-                                    <a-tooltip placement="left">
-                                        <template #title>사업소득 마감상태 변경이력</template>
-                                        <div style="text-align: center;" @click="onItemClick('historyEdit')">
-                                            <img src="@/assets/images/icon_status_history.png" alt=""
-                                                style="width: 20px; height: 20px;" />
-                                        </div>
-                                    </a-tooltip>
-                                </a-menu-item>
-                            </a-menu>
-                        </template>
-                    </a-dropdown>
-                </template>
+
+                <DxButton @click="onItemClick('history')">
+                    <a-tooltip placement="left">
+                        <template #title>근로소득자료 변경이력</template>
+                        <div class="text-center">
+                            <HistoryOutlined style="font-size: 20px" />
+                        </div>
+                    </a-tooltip>
+                </DxButton>
+
+                <DxButton @click="onItemClick('historyEdit')">
+                    <a-tooltip placement="left">
+                        <template #title>근로소득 마감상태 변경이력</template>
+                        <div class="text-center">
+                            <img src="@/assets/images/icon_status_history.png" alt=""
+                                style="width: 20px; height: 20px;" />
+                        </div>
+                    </a-tooltip>
+                </DxButton>
             </div>
         </div>
     </a-col>
@@ -58,43 +44,53 @@
     <a-spin :spinning="(loadingTableDetail)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
             :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
-            :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEditFuc"
-            :focused-row-enabled="true" @selection-changed="selectionChanged" class="mt-10">
+            :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
+            @selection-changed="selectionChanged" class="mt-10">
             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
             <DxScrolling column-rendering-mode="virtual" />
-            <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
+
+            <DxColumn caption="사원" cell-template="tag" />
+            <DxColumn caption="구분" data-field="retirementType" data-type="string" />
+            <DxColumn caption="지급액" data-field="joinedAt" data-type="date" />
+            <DxColumn caption="입사일 (정산시작일)" data-field="leavedAt" data-type="date" />
+            <DxColumn caption="퇴사일 (정산종료일)" data-field="retirementBenefits" />
+            <DxColumn caption="퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string" />
+            <DxColumn caption="비과세 퇴직급여" data-field="taxableRetirementBenefits" data-type="string" />
+            <DxColumn caption="과세대상 퇴직급여" data-field="totalDeduction" data-type="string" />
+            <DxColumn caption="공제" data-field="totalPay" data-type="string" :format="amountFormat" />
+            <DxColumn caption="차인지급액" cell-template="note" data-type="string" :format="amountFormat" />
+            <DxColumn caption="비고" data-field="paymentDay" data-type="string" />
+            <DxColumn caption="" cell-template="action" width="60px" />
+
+            <template #note="{ data }" class="custom-action">
+                antu
+            </template>
+            <template #action="{ data }" class="custom-action">
+                <DeleteOutlined class="fz-14" />
+            </template>
             <template #tag="{ data }" class="custom-action">
                 <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
                     :incomeTypeName="data.data.employee.incomeTypeName" />
             </template>
-            <DxColumn caption="지급일" data-field="paymentDay" data-type="string" :format="amountFormat" />
-            <DxColumn caption="지급액" data-field="paymentAmount" data-type="string" :format="amountFormat" />
-            <DxColumn caption="세율" data-field="taxRate" data-type="string" :format="amountFormat" />
-            <DxColumn caption="공제" cell-template="income-tax" />
-            <template #income-tax="{ data }" class="custom-action">
-                {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax)
-                }}
-            </template>
-            <DxColumn caption="차인지급액" data-field="actualPayment" data-type="string" :format="amountFormat" />
-            <DxSummary>
-                <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
+
+            <DxSummary v-if="dataSourceDetail.length > 0">
+                <DxTotalItem column="사원" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
                 <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
                     value-format="#,###" />
                 <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
-                <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum"
-                    display-format="차인지급액합계: {0}" value-format="#,###" />
+                <DxTotalItem class="custom-sumary" column="비고" summary-type="sum" display-format="차인지급액합계: {0}"
+                    value-format="#,###" />
             </DxSummary>
         </DxDataGrid>
     </a-spin>
 
     <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
-
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="dataTableDetail.processKey"
         title="변경이력" typeHistory="pa-420" />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="actionDeleteSuccess" :data="dataTableDetail.processKey"
-        title="변경이력" typeHistory="pa-420-status" />
-    <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+        :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
+    <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
@@ -160,18 +156,16 @@ export default defineComponent({
             ...props.dataCallTableDetail
         })
 
-        // ================GRAPQL==============================================
-
-        // API QUERY TABLE SMALL LEFT SIDE
-        const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, dataTableDetail, () => ({
+        // ================GRAPQL============================================== 
+        const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorTableDetail, onResult: resTableDetail } = useQuery(queries.getIncomeRetirements, dataTableDetail, () => ({
             enabled: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
-        resIncomeProcessBusinessesDetail(res => {
-            dataSourceDetail.value = res.data.getIncomeBusinesses
+        resTableDetail(res => {
+            dataSourceDetail.value = res.data.getIncomeRetirements
             triggerDetail.value = false
         })
-        errorGetIncomeProcessBusinessesDetail(res => {
+        errorTableDetail(res => {
             notification('error', res.message)
         })
 
@@ -197,10 +191,6 @@ export default defineComponent({
 
         }
 
-        const actionEditFuc = (data: any) => {
-
-        }
-
         const changeIncomeTypeCode = (res: string) => {
             dataAction.input.incomeTypeCode = res
         }
@@ -210,9 +200,9 @@ export default defineComponent({
         }
 
         const deleteItem = () => {
-            if (popupDataDelete.value.length > 0) {
-                modalDelete.value = true;
-            }
+            // if (popupDataDelete.value.length > 0) {
+            modalDelete.value = true;
+            // }
         };
 
         const actionDeleteSuccess = () => {
@@ -233,9 +223,9 @@ export default defineComponent({
         }
 
         const editPaymentDate = () => {
-            if (popupDataDelete.value.length > 0) {
-                modalEdit.value = true
-            }
+            // if (popupDataDelete.value.length > 0) {
+            modalEdit.value = true
+            // }
         }
 
         const customTextSummary = () => {
@@ -265,7 +255,6 @@ export default defineComponent({
             amountFormat,
             addRow,
             deleteItem,
-            actionEditFuc,
             changeIncomeTypeCode,
             selectionChanged,
             actionDeleteSuccess,

@@ -26,6 +26,8 @@ import getIncomeProcessWageDailyLogs from "./getIncomeProcessWageDailyLogs";
 import getIncomeBusinessesLogs from "./getIncomeBusinessesLogs";
 import getIncomeProcessBusinessLogs from "./getIncomeProcessBusinessLogs";
 import getIncomeProcessWageLogs from "./getIncomeProcessWageLogs";
+import getIncomeProcessRetirementLogs from "./getIncomeProcessRetirementLogs";
+import getIncomeRetirementsLogs from "./getIncomeRetirementsLogs";
 import getIncomeExtrasLogs from "./getIncomeExtrasLogs";
 import getIncomeProcessExtraLogs from "./getIncomeProcessExtraLogs";
 const queries = {
@@ -58,6 +60,8 @@ const queries = {
   getIncomeProcessWageLogs: getIncomeProcessWageLogs,
   getIncomeBusinessesLogs: getIncomeBusinessesLogs,
   getIncomeProcessBusinessLogs: getIncomeProcessBusinessLogs,
+  getIncomeProcessRetirementLogs: getIncomeProcessRetirementLogs,
+  getIncomeRetirementsLogs: getIncomeRetirementsLogs,
   getIncomeExtrasLogs: getIncomeExtrasLogs,
   getIncomeProcessExtraLogs: getIncomeProcessExtraLogs,
 };

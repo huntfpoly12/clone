@@ -1,6 +1,6 @@
 <template>
-    <DxRadioGroup :items="arrayValue" :value="data" :layout="layoutCustom" @valueChanged="changeValueRadioGroup"  value-expr="id"
-              display-expr="text" :disabled="disabled"/>
+    <DxRadioGroup :items="arrayValue" :value="data" :layout="layoutCustom" @valueChanged="changeValueRadioGroup"
+        value-expr="id" display-expr="text" :disabled="disabled" />
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, watch, ref } from "vue";
@@ -13,7 +13,7 @@ export default defineComponent({
             required: true
         },
         valueRadioCheck: {
-            type: Object
+            type: Number || Object || String
         },
         layoutCustom: {
             type: String

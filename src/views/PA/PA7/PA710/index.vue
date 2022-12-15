@@ -127,10 +127,6 @@
                             </a-form-item>
                         </a-col>
                     </a-row>
-                    <!-- <div v-if="checkForm" class="text-align-center mt-20">
-                        <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
-                            :mode="'contained'" @onClick="onUpdate($event)" />
-                    </div> -->
                 </a-spin>
             </a-col>
         </a-row>
@@ -212,8 +208,6 @@ export default defineComponent({
         onDoneAdd(() => {
             trigger.value = true;
             refetchData();
-            console.log(initialState);
-
             Object.assign(formState, initialState);
             notification('success', `업데이트 완료되었습니다!`)
         });

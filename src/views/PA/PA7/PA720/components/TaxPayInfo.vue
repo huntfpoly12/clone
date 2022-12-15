@@ -52,7 +52,7 @@
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
-import { useQuery, useMutation } from '@vue/apollo-composable';
+import { useQuery } from '@vue/apollo-composable';
 import {
   DxDataGrid,
   DxColumn,
@@ -71,10 +71,7 @@ import {
 } from 'devextreme-vue/data-grid';
 import { companyId } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
-import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
-import type { DropdownProps } from 'ant-design-vue';
-import { dataActionUtils, dataGetDetailEdit } from '../utils/index';
-import notification from '@/utils/notification';
+import { dataActionUtils } from '../utils/index';
 import filters from '@/helpers/filters';
 
 export default defineComponent({
