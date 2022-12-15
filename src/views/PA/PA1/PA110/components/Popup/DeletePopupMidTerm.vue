@@ -14,13 +14,13 @@
                         </tr>
                         <tr>
                             <td>중도정산 소득세</td>
-                            <td>{new-intermidiateIncomeTax}</td>
-                            <td>old-intermidiateIncomeTax</td>
+                            <td>{new-intermidiate}</td>
+                            <td>old-intermidiate</td>
                         </tr>
                         <tr>
                             <td>중도정산 지방소득세</td>
-                            <td>{new-intermidiateLocalIncomeTax}</td>
-                            <td>{old-intermidiateLocalIncomeTax}</td>
+                            <td>{new-intermidiateLocal}</td>
+                            <td>{old-intermidiateLocal}</td>
                         </tr>
                     </table>
                 </div>

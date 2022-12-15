@@ -7,8 +7,8 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
                     :column-auto-width="true">
                     <DxColumn caption="항목" data-field="name" />
-                    <DxColumn caption="계산후" data-field="newValue" />
-                    <DxColumn caption="원본" data-field="value" />
+                    <DxColumn caption="계산후" data-field="value" />
+                    <DxColumn caption="원본" data-field="oldValue" />
                 </DxDataGrid>
             </div>
         </div>
