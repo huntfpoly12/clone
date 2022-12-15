@@ -120,7 +120,7 @@
                                     @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth)">
                                     <colorful-badge :value="data.data.month10.status"
                                         :year="data.data.month10.paymentYear"
-                                        :month="data.data.month10.paymentdMonth" />
+                                        :month="data.data.month10.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
                                 </div>
@@ -243,7 +243,9 @@
                 </a-col>
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
-                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" />
+                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" 
+                :processKey="valueCallApiGetEmployeeBusiness.processKey"
+                :data="dataModalCopy"  @dataAddIncomeProcess="dataAddIncomeProcess"/>
             </a-row>
         </div>
     </div>
@@ -283,6 +285,7 @@ export default defineComponent({
         const originData = reactive({ ...origindata, rows: per_page });
         const trigger = ref<boolean>(true);
         const modalCopy = ref<boolean>(false);
+        const dataModalCopy: any = ref()
         const globalYear = computed(() => store.state.settings.globalYear)
         const dataGetValueTable = reactive({
             companyId: companyId,
@@ -393,7 +396,12 @@ export default defineComponent({
             refetchData()
         }
         const addMonth = (month: number) => {
+            dataModalCopy.value = month
             modalCopy.value = true
+        }
+        const dataAddIncomeProcess = (data: any) => {
+            dataSource.value[0]['month' + data.imputedMonth] = data
+            dataSource.value[0]['month' + data.imputedMonth].status = 10
         }
         const actionCopySuccess = () => {
             modalCopy.value = false
@@ -412,9 +420,11 @@ export default defineComponent({
             originData,
             createdDone,
             addMonth,
+            dataModalCopy,
             saving,
             showDetailSelected,
-            actionCopySuccess
+            actionCopySuccess,
+            dataAddIncomeProcess
         };
     },
 });
