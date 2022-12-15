@@ -94,7 +94,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
-import { radioCheckForeigner, DataCreated } from "../../utils/index"; 
+import { radioCheckForeigner, DataCreated } from "../../utils/index";
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -107,10 +107,10 @@ export default defineComponent({
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
         const countryInfo = ref()
-        const selectBoxData1 = ref()
-        const selectBoxData2 = ref()
+        const selectBoxData1 = ref([])
+        const selectBoxData2 = ref([])
         let dataCreated: any = reactive({
-            ...DataCreated 
+            ...DataCreated
         })
         const originData = ref({
             companyId: companyId,
@@ -219,4 +219,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
+
 </style>

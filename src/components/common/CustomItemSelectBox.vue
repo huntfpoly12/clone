@@ -1,4 +1,5 @@
 <template>
+    {{typeof value}}
     <DxSelectBox :search-enabled="true" :width="width" :data-source="selectBoxData" :show-clear-button="clearButton"
         v-model:value="value" :read-only="readOnly" display-expr="value" value-expr="value" :disabled="disabled"
         :accept-custom-value="customValue" @custom-item-creating="customItemCreating"
@@ -28,7 +29,7 @@ export default defineComponent({
         disabled: Boolean,
         valueInput: {
             type: Number,
-            default: "",
+            default: 0,
         },
         readOnly: Boolean,
         arrSelect: Array,

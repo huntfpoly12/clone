@@ -27,7 +27,7 @@
                             <div>
                                 <img src="@/assets/images/iconInfo.png" alt="">
                             </div>
-                            <span>
+                            <span class="style-note">
                                 본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
                             </span>
                         </div>

@@ -27,7 +27,7 @@ import DxButton from 'devextreme-vue/button';
 export default defineComponent({
     props: {
         idEmployee: {
-            type: String,
+            type: Number,
         },
         idCardNumber: {
             type: String,

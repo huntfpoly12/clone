@@ -1,10 +1,10 @@
 <template>
     <div class="deduction">
-        <a-tooltip placement="top" v-if="name.split('').length > 4">
+        <a-tooltip placement="top" v-if="name.split('').length > 4 ">
             <template #title>{{ name }}</template>
-            <span class="deducation-name">{{ name }}</span>
+            <span class="deducation-name" :style="{ 'width': width }">{{ name }}</span>
         </a-tooltip>
-        <span class="deducation-name" v-else>{{ name }}</span>
+        <span class="deducation-name" :style="{ 'width': width }" v-else>{{ name }}</span>
         <a-tooltip placement="top" v-if="type == 1">
             <template #title>{{ subName }}</template>
             <div class="deduction-tag deduction-tag-1">
@@ -52,6 +52,10 @@ export default defineComponent({
             type: String,
             required: true
         },
+        width: {
+            type: String,
+            default: '70px'
+        }
     },
     setup(props, { emit }) {
         return {
@@ -99,7 +103,6 @@ export default defineComponent({
     }
 
     .deducation-name {
-        width: 70px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
