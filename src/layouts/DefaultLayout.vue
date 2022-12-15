@@ -9,7 +9,7 @@
         <a-dropdown>
           <a class="ant-dropdown-link" @click.prevent>
             {{ username }}
-            <DownOutlined />
+            <!-- <DownOutlined /> -->
           </a>
           <template #overlay>
             <a-menu>

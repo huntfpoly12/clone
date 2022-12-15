@@ -246,7 +246,8 @@
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
         <FormDataComponent :dataIncomeWage="dataIncomeWage" :arrayEmploySelect="arrayEmploySelect"
           :actionUpdateItem="actionUpdateItem" :actionAddItem="actionAddItem" :statusButton="statusButton"
-          @createdDone="createdDone" :updateData="updateData" />
+          @createdDone="createdDone" :updateData="updateData" :actionSaveItem="actionSaveItem"
+          @loadingTableInfo="loadingTableInfo" />
       </a-col>
       <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
         @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
@@ -270,11 +271,13 @@ import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import { sampleDataIncomeWage, sampleFormIncomeWage } from "./utils/index"
 import filters from "@/helpers/filters";
 import notification from "@/utils/notification"
+const actionSaveItem: any = ref<number>(0)
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import DeductionPopup from "./components/Popup/DeductionPopup.vue"
 import InsurancePopup from "./components/Popup/InsurancePopup.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
+import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -306,7 +309,9 @@ export default defineComponent({
     ProcessStatus,
     DeductionPopup,
     InsurancePopup,
-    FormDataComponent, CopyMonth
+    FormDataComponent,
+    CopyMonth,
+    EmployeeInfoSettment
   },
   setup() {
     const store = useStore()
@@ -370,7 +375,7 @@ export default defineComponent({
     }))
     const {
       refetch: refetchDataIncomeWages,
-      onResult: resIncomeWages,
+      result: resIncomeWages,
       loading: loadingIncomeWages
     } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
       enabled: triggerIncomeWages.value,
@@ -505,7 +510,6 @@ export default defineComponent({
     watch(resultIncomeWage, (value) => {
       if (value) {
         dataIncomeWage.value = value.getIncomeWage
-        console.log('value', value)
       }
     })
     watch(resultTaxPayInfo, (value) => {
@@ -526,8 +530,7 @@ export default defineComponent({
       refetchDataTaxPayInfo()
     }
     // ======================= FUNCTION ================================
-    const onSubmit = (e: any) => {
-    }
+
     const statusComfirm = () => {
       actionChangeIncomeProcess({
         companyId: companyId,
@@ -537,6 +540,9 @@ export default defineComponent({
     }
     const updateData = (e: any) => {
       actionUpdateItem.value++
+    }
+    const onSubmit = (e: any) => {
+      actionSaveItem.value++
     }
     const actionEditTaxPay = (data: any) => {
       dataIncomeWage.value = data.data
@@ -583,7 +589,7 @@ export default defineComponent({
       arrayEmploySelect,
       imputedYear,
       imputedMonth,
-      dataCustomRes,
+      dataCustomRes, actionSaveItem,
       formIncomeWageDaily, copyMonth, dataModalCopy, arrDataPoint, statusComfirm, dataAddIncomeProcess,
       showDetailSelected,
       dataTaxPayInfo, dataRows, actionAddItem, loadingTableInfo, updateData, actionUpdateItem, createdDone,
