@@ -14,7 +14,7 @@
                         <div class="pr-5 pl-10">
                             <img src="@/assets/images/iconInfo.png" style="width: 16px;">
                         </div>
-                        <span class="fz-11">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
+                        <span class="style-note">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
                         </span>
                     </div>
                 </a-form-item>
