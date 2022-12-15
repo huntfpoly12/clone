@@ -13,7 +13,7 @@
           :column-auto-width="true"
         >
           <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
-          <template #imputed-year="{ data }">
+          <template #imputed-year>
             <span>지급연월 </span>
           </template>
           <DxColumn caption="01" width="100px" cell-template="imputed-month1" />
@@ -259,12 +259,12 @@
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
         <DxButton
-          :text="'귀' + incomeExtrasParams?.processKey?.imputedYear + '-' + $filters.formatDay(incomeExtrasParams?.processKey?.imputedMonth)"
+          :text="'귀' + incomeExtrasParams?.processKey?.imputedYear + '-' + formatMonth(incomeExtrasParams?.processKey?.imputedMonth)"
           :style="{ color: 'white', backgroundColor: 'gray' }"
           :height="'33px'"
         />
         <DxButton
-          :text="'지' + incomeExtrasParams?.processKey?.paymentYear + '-' + $filters.formatDay(incomeExtrasParams?.processKey?.paymentMonth)"
+          :text="'지' + incomeExtrasParams?.processKey?.paymentYear + '-' + formatMonth(incomeExtrasParams?.processKey?.paymentMonth)"
           :style="{ color: 'white', backgroundColor: 'black' }"
           :height="'33px'"
         />
@@ -323,9 +323,19 @@
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="" :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
   <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false" @loadingTableInfo="onLoadingTable" @dataAddIncomeProcess="onAddIncomeProcess" />
+  <PopupMessage
+    :modalStatus="popupAddStatus"
+    @closePopup="popupAddStatus = false"
+    :typeModal="'confirm'"
+    :title="'ban co muon xoa khong'"
+    :content="'Content notification'"
+    :keyAccept="'1234'"
+    :okText="'확인'"
+    @checkConfirm="onPopupComfirm"
+  />
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed, reactive, onMounted, onRenderTriggered } from 'vue';
+import { ref, defineComponent, watch, computed, reactive } from 'vue';
 import DxButton from 'devextreme-vue/button';
 import dayjs from 'dayjs';
 import { useStore } from 'vuex';
@@ -338,13 +348,13 @@ import EditPopup from './components/Popup/EditPopup.vue';
 import ProcessStatus from '@/components/common/ProcessStatus.vue';
 import TaxPayInfo from './components/TaxPayInfo.vue';
 import FormTaxPayInfo from './components/FormTaxPayInfo.vue';
-import { taxDateIndex } from './utils/index';
+import { taxDateIndex, dataActionUtils } from './utils/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import notification from '@/utils/notification';
 import type { DropdownProps } from 'ant-design-vue';
 import { HistoryOutlined } from '@ant-design/icons-vue';
 import CopyMonth from './components/Popup/CopyMonth.vue';
-import filters from '@/helpers/filters';
+
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -415,6 +425,7 @@ export default defineComponent({
     const modalCopy = ref<boolean>(false);
     const dataModalCopy = ref<number>(1);
     const dataAddIncomeProcess = ref({});
+    const popupAddStatus = ref<boolean>(false);
     // ======================= GRAPQL ================================
     const {
       refetch: refetchIncomeProcessExtras,
@@ -443,15 +454,16 @@ export default defineComponent({
       deleteIncomeExtrasParam.value.companyId = incomeExtrasParams.companyId;
       deleteIncomeExtrasParam.value.processKey = incomeExtrasParams.processKey;
     };
-    const editItem = (value: any) => {
+    const editItem = () => {
       if (Object.keys(taxPayRef.value.paymentData).length !== 0) {
         modalEdit.value = true;
         changeIncomeExtraPaymentDayParam.value = { ...incomeExtrasParams, ...taxPayRef.value.paymentData };
       }
     };
     const addItem = () => {
-      resetFormNum.value++;
-      formTaxRef.value.triggerIncomeExtra = false;
+      if (JSON.stringify(formTaxRef.value.dataAction.input) != JSON.stringify(dataActionUtils.input)) {
+        popupAddStatus.value = true;
+      }
     };
     const onSubmit = (e: any) => {
       actionSave.value++;
@@ -484,6 +496,10 @@ export default defineComponent({
     const onAddIncomeProcess = (emit: any) => {
       dataAddIncomeProcess.value = emit;
     };
+    const onPopupComfirm = () => {
+      resetFormNum.value++;
+      formTaxRef.value.triggerIncomeExtra = false;
+    };
 
     //compute data function
     const checkLen = (text: String) => {
@@ -492,6 +508,12 @@ export default defineComponent({
       }
       return text;
     };
+    const formatMonth = (month: number) => {
+      if (month < 10) {
+        return '0' + month;
+      }
+      return month;
+    };
 
     const showDetailSelected = (obj: any) => {
       incomeExtrasParams.processKey.imputedMonth = obj.imputedMonth;
@@ -499,7 +521,6 @@ export default defineComponent({
       incomeExtrasParams.processKey.paymentYear = obj.paymentYear;
       incomeExtrasParams.processKey.paymentMonth = obj.paymentMonth;
       statusParam.value = { ...incomeExtrasParams, status: obj.status };
-      console.log(obj);
     };
     const IncomeProcessExtrasCustom = ref<any>([]);
     let columnData = ref<any>([{}]);
@@ -595,14 +616,8 @@ export default defineComponent({
         addObj(11, val);
         addObj(12, val);
       });
-      console.log(columnData.value[0]['month_'+`${dayjs().month()+1}`]);
-      showDetailSelected(columnData.value[0]['month_'+`${dayjs().month()+1}`])
+      showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
     });
-    const montedArr = ref([{ month_12: { tren: 'sf' } }]);
-    // onMounted(() => {
-    //   console.log(montedArr.value[0].month_12);
-    //   console.log(reactive(columnData.value[0])?.month_12);
-    // });
     return {
       statusParam,
       loadingIncomeProcessExtras,
@@ -651,6 +666,9 @@ export default defineComponent({
       onLoadingTable,
       dataAddIncomeProcess,
       onAddIncomeProcess,
+      formatMonth,
+      popupAddStatus,
+      onPopupComfirm,
     };
   },
 });

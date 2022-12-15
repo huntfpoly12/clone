@@ -296,8 +296,6 @@ export default defineComponent({
         };
 
         const setModalVisible = () => {
-            console.log(JSON.stringify(arrValueFacilytiDefault.value), JSON.stringify(valueFacilyti.value));
-            
             arrValueFacilytiDefault.value
             if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState.value) == true
                 && JSON.stringify(arrValueFacilytiDefault.value) === JSON.stringify(valueFacilyti.value) == true)

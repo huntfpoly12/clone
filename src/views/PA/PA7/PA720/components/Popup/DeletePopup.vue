@@ -15,8 +15,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useStore } from 'vuex';
-import { companyId } from '@/helpers/commonFunction';
 import notification from '@/utils/notification';
 import { useMutation } from '@vue/apollo-composable';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -37,9 +35,6 @@ export default defineComponent({
       emit('closePopup', false);
     };
     const { mutate: onDelIncomeExtras, onDone: onDoneDeleteIncomeExtras, onError: onErorDeleteIncomeExtras } = useMutation(mutations.deleteIncomeExtras);
-    // onErorDeleteIncomeExtras((e) => {
-    //   notification('error', e.message);
-    // });
     onDoneDeleteIncomeExtras((e) => {
       setModalVisible();
       notification('success', ` 완료!`);
