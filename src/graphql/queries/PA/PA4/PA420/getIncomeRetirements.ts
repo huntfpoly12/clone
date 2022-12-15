@@ -23,11 +23,20 @@ export default gql`
                         joinedAt
                         leavedAt
                         totalPay
+                        name
+                        employeeId
+                        residentId
+                        status
+                        foreigner
                     }
                     ... on EmployeeWageDaily{
                         joinedAt
                         leavedAt
                         monthlyWage
+                        name
+                        residentId
+                        status
+                        foreigner
                     }
                 }
                 retirementType 

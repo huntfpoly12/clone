@@ -15,25 +15,21 @@
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
                 <DxButton icon="plus" @click="addRow" />
-                <DxButton @click="editPaymentDate">
-                    <EditOutlined style="font-size: 18px;" />
-                </DxButton>
-
+                <DxButton icon="edit" @click="editPaymentDate" />
                 <DxButton @click="onItemClick('history')">
                     <a-tooltip placement="left">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
-                            <HistoryOutlined style="font-size: 20px" />
+                            <HistoryOutlined style="font-size: 16px" />
                         </div>
                     </a-tooltip>
                 </DxButton>
-
                 <DxButton @click="onItemClick('historyEdit')">
                     <a-tooltip placement="left">
                         <template #title>근로소득 마감상태 변경이력</template>
                         <div class="text-center">
                             <img src="@/assets/images/icon_status_history.png" alt=""
-                                style="width: 20px; height: 20px;" />
+                                style="width: 16px; height: 16px;" />
                         </div>
                     </a-tooltip>
                 </DxButton>
@@ -48,7 +44,6 @@
             @selection-changed="selectionChanged" class="mt-10">
             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
             <DxScrolling column-rendering-mode="virtual" />
-
             <DxColumn caption="사원" cell-template="tag" />
             <DxColumn caption="구분" data-field="retirementType" data-type="string" />
             <DxColumn caption="지급액" data-field="joinedAt" data-type="date" />
@@ -62,15 +57,21 @@
             <DxColumn caption="비고" data-field="paymentDay" data-type="string" />
             <DxColumn caption="" cell-template="action" width="60px" />
 
+            <template #tag="{ data }" class="custom-action">
+                <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                    :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                    :foreigner="data.data.employee.foreigner" :checkStatus="false" />
+
+                <!-- <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
+                    :incomeTypeName="data.data.employee.incomeTypeName" /> -->
+            </template>
             <template #note="{ data }" class="custom-action">
                 antu
             </template>
             <template #action="{ data }" class="custom-action">
-                <DeleteOutlined class="fz-14" />
-            </template>
-            <template #tag="{ data }" class="custom-action">
-                <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
-                    :incomeTypeName="data.data.employee.incomeTypeName" />
+                <div class="wf-100 text-center">
+                    <EditOutlined class="fz-18" />
+                </div>
             </template>
 
             <DxSummary v-if="dataSourceDetail.length > 0">
@@ -163,6 +164,8 @@ export default defineComponent({
         }));
         resTableDetail(res => {
             dataSourceDetail.value = res.data.getIncomeRetirements
+            console.log(dataSourceDetail.value);
+
             triggerDetail.value = false
         })
         errorTableDetail(res => {
@@ -200,17 +203,17 @@ export default defineComponent({
         }
 
         const deleteItem = () => {
-            // if (popupDataDelete.value.length > 0) {
-            modalDelete.value = true;
-            // }
+            if (popupDataDelete.value.length > 0) {
+                modalDelete.value = true;
+            }
         };
 
         const actionDeleteSuccess = () => {
-            // modalDelete.value = false
-            // modalEdit.value = false
-            // triggerDetail.value = true
-            // refetchTableDetail()
-            // emit('createdDone', true)
+            modalDelete.value = false
+            modalEdit.value = false
+            triggerDetail.value = true
+            refetchTableDetail()
+            emit('createdDone', true)
             modalAdd.value = false
         }
 

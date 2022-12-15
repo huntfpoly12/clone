@@ -45,7 +45,6 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false)
         };
-
         const {
             mutate: actionDelete,
             onError: errorDelete,
@@ -58,7 +57,6 @@ export default defineComponent({
             setModalVisible()
             notification('success', ` 완료!`)
         })
-
         const onSubmit = (e: any) => {
             actionDelete({
                 companyId: companyId,
