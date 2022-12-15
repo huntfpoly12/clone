@@ -346,7 +346,10 @@ export default defineComponent({
                 dataIncomeWageDaily.value.workingDays,
                 dataIncomeWageDaily.value.dailyWage,
                 dataIncomeWageDaily.value.employee.monthlyPaycheck);
-
+            console.log(dataIncomeWageDaily.value.workingDays,
+                dataIncomeWageDaily.value.dailyWage,
+                dataIncomeWageDaily.value.employee.monthlyPaycheck);
+            
             arrDeduction.value?.map((val: any) => {
                 val.priceNew = 0
                 if (val.deductionItemCode == 1001)
