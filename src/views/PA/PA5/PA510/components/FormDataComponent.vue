@@ -331,7 +331,6 @@ export default defineComponent({
             return price
         }
 
-
         const actionDedution = () => {
             let dataDefault = dataIncomeWageDaily.value.employee
             let totalPrices = parseInt(dataIncomeWageDaily.value.employee.monthlyPaycheck ?
