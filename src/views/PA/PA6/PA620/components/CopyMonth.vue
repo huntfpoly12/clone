@@ -90,7 +90,7 @@ export default defineComponent({
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const month1: any = ref<number>()
-            watch(() => props.data, (val) => {
+        watch(() => props.data, (val) => {
             month1.value = val
         });
         let month2: any = ref(dayjs().format("YYYY-MM"))
@@ -192,22 +192,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.custom-modal-delete {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: center;
-    margin-top: 20px;
-
-    img {
-        width: 40px;
-        margin-right: 5px;
-    }
-
-    span {
-        padding: 0px 5px;
-    }
-}
 
 .mt-30 {
     margin-top: 30px;

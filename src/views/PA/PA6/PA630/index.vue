@@ -72,15 +72,15 @@
                         <income-type :typeCode="data.data.employee.incomeTypeCode"
                             :typeName="data.data.employee.incomeTypeName"></income-type>
                     </template>
-                    <DxColumn caption="지급총액" data-field="paymentAmount" />
-                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
-                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
-                    <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax" />
+                    <DxColumn caption="지급총액" data-field="paymentAmount" :format="amountFormat"/>
+                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" :format="amountFormat"/>
+                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" :format="amountFormat"/>
+                    <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax" :format="amountFormat"/>
                     <DxSummary>
                         <DxTotalItem column="성명 (상호)" summary-type="count" display-format="Count: {0}" />
-                        <DxTotalItem column="지급총액" summary-type="sum" display-format="Sum: {0}" />
-                        <DxTotalItem column="원천징수세액 소득세" summary-type="sum" display-format="Sum: {0}" />
-                        <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="Sum: {0}" />
+                        <DxTotalItem column="지급총액" summary-type="sum" display-format="Sum: {0}" value-format="#,###"/>
+                        <DxTotalItem column="원천징수세액 소득세" summary-type="sum" display-format="Sum: {0}" value-format="#,###"/>
+                        <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="Sum: {0}" value-format="#,###"/>
                     </DxSummary>
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
@@ -158,6 +158,7 @@ export default defineComponent({
         const modalEmailSingle = ref(false)
         const modalEmailMulti = ref(false)
         const dataSource: any = ref({})
+        const amountFormat = ref({ currency: 'VND', useGrouping: true })
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
@@ -303,6 +304,7 @@ export default defineComponent({
             selectionChanged,
             emailUserLogin,
             actionPrint,
+            amountFormat,
         };
     },
 });
