@@ -344,11 +344,8 @@ export default defineComponent({
                 parseInt(`${processKey.value.paymentYear}${processKey.value.paymentMonth}`),
                 dataIncomeWageDaily.value.workingDays,
                 dataIncomeWageDaily.value.dailyWage,
-                dataIncomeWageDaily.value.employee.monthlyPaycheck);
-            console.log(dataIncomeWageDaily.value.workingDays,
-                dataIncomeWageDaily.value.dailyWage,
-                dataIncomeWageDaily.value.employee.monthlyPaycheck);
-            
+                dataIncomeWageDaily.value.monthlyWage);
+
             arrDeduction.value?.map((val: any) => {
                 val.priceNew = 0
                 if (val.deductionItemCode == 1001)
