@@ -47,7 +47,7 @@
                             </a-form-item>
                             <div style="margin: 0px 0px 20px 150px">
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                <span style="margin-left: 5px">
+                                <span class="style-note">
                                     급여명세서 계산방법에 표시됩니다.
                                 </span>
                             </div>
