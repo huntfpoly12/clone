@@ -4,8 +4,9 @@
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1">
                     <Tab1Component @closePopup="setModalVisible" />
-                </a-tab-pane> 
-                 
+                </a-tab-pane>  
+                <a-tab-pane key="2" tab="급여/공제" class="tab1" disabled> 
+                </a-tab-pane>  
             </a-tabs>
         </div>
     </a-spin>

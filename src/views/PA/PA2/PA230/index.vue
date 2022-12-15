@@ -40,8 +40,9 @@
             <div class="format-settings">
               <strong>서식 설정 : </strong>
               <div class="format-settings-text">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 본 설정으로 적용된 서식으로 출력 및
-                메일발송 됩니다.
+                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 
+                <span class="style-note">본 설정으로 적용된 서식으로 출력 및
+                메일발송 됩니다.</span> 
               </div>
             </div>
             <div class="tax-select">

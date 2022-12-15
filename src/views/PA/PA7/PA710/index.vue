@@ -71,7 +71,8 @@
                                         placeholder="숫자만 입력 가능" :disabled="checkForm">
                                     </number-box>
                                     <span>
-                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 
+                                        <span class="style-note"></span> 최초 저장된 이후 수정 불가
                                     </span>
                                 </div>
                             </a-form-item>

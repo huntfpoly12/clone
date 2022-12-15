@@ -3,31 +3,39 @@
         <a-spin :spinning="loading" size="large">
             <a-row>
                 <a-col :span="24">
-                    <a-col :span="12">
-                        <a-form-item label="근무일수">
-                            <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
-                                v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="316px" />
-                        </a-form-item>
-                        <a-form-item label="지급일">
-                            <number-box width="200px" :min="1" v-model="dataIncomeWage.paymentDay" :max="31"
-                                :spinButtons="true" />
-                        </a-form-item>
-                    </a-col>
+                    <a-form-item label="근무일수">
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
+                            v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="316px" />
+                    </a-form-item>
+
+                </a-col>
+            </a-row>
+            <a-row>
+                <a-col :span="24">
+                    <a-form-item label="지급일">
+                        <number-box width="200px" :min="1" v-model="dataIncomeWage.paymentDay" :max="31"
+                            :spinButtons="true" />
+                    </a-form-item>
                 </a-col>
             </a-row>
             <a-row :gutter="16">
                 <a-col :span="12" class="input-items">
                     <div class="header-text-2">근로시간
-                        <span>
-                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                            <p>사원별 급여명세서에 표시 됩니다. </p>
+                        <span class="d-flex-center fz-11 ml-10" style="color: gray;">
+                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                            사원별 급여명세서에 표시 됩니다.
                         </span>
                     </div>
 
+                    <a-form-item label="일하는 날" label-align="right">
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.workingDays"
+                            placeholder="일하는 날" />
+                    </a-form-item>
                     <a-form-item label="총근로시간" label-align="right">
                         <text-number-box width="200px" v-model:valueInput="dataIncomeWage.totalWorkingHours"
                             placeholder="총근로시간" />
-                    </a-form-item> <a-form-item label="연장근로시간" label-align="right">
+                    </a-form-item>
+                    <a-form-item label="연장근로시간" label-align="right">
                         <text-number-box width="200px" v-model:valueInput="dataIncomeWage.overtimeWorkingHours"
                             placeholder="연장근로시간" />
                     </a-form-item> <a-form-item label="야간근로시간" label-align="right">
@@ -50,9 +58,9 @@
                         </div>
                         <div class="text4">차인지급액 {{ $filters.formatCurrency(subPayment) }}원 </div>
                         <div class="text5">
-                            <span>
-                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                <p>차인지급액 = 수당 합계 - 공제 합계</p>
+                            <span class="d-flex-center fz-11 ml-10" style="color: gray;">
+                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                                차인지급액 = 수당 합계 - 공제 합계
                             </span>
                         </div>
                     </div>
@@ -152,7 +160,7 @@ import { defineComponent, reactive, ref, watch, computed, onMounted } from "vue"
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
     initFormState1,
-    initFormState2
+    initFormState2, initRefreshDeduction
 } from "../utils/index";
 import dayjs from 'dayjs';
 import { useStore } from "vuex";
@@ -163,7 +171,6 @@ import {
     calculateLongTermCareInsurance,
     calculateEmployeementInsuranceEmployee
 } from "@/helpers/commonFunction"
-import filters from "@/helpers/filters"
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index";
 import queries from "@/graphql/queries/PA/PA1/PA110/index";
 import notification from "@/utils/notification";
@@ -189,15 +196,17 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-
+        actionSaveItem: {
+            type: Number,
+            default: 0
+        },
         modalStatus: Boolean,
     },
     setup(props, { emit }) {
         const arrayEmploySelect: any = ref([])
-
-        const totalPayItemTaxFree = ref(0);
-        const totalPayItemTax = ref(0);
-        const totalPayItem = ref(0);
+        let totalPayItemTaxFree = ref(0);
+        let totalPayItemTax = ref(0);
+        let totalPayItem = ref(0);
         let modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
         const modalDeteleTaxpay = ref<boolean>(false)
@@ -214,21 +223,18 @@ export default defineComponent({
         const store = useStore();
         const dataConfigPayItems = ref();
         const dataConfigDeduction = ref();
+        let arrRefresh = ref()
         const triggerDetail = ref<boolean>(false);
         const triggerCalcIncome = ref<boolean>(false);
-        const trigger = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear);
         let formState2 = reactive<any>({
             ...initFormState2,
-        });
-        const formState1 = reactive<any>({
-            ...initFormState1,
         });
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
         });
-        const arrDeduction: any = ref([])
+        const arrDeduction: any = ref()
         const calculateVariables = {
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -253,14 +259,6 @@ export default defineComponent({
         })
         watch(() => props.dataIncomeWage, (value) => {
             dataIncomeWage.value = value
-            arrDeduction.value.map((data: any) => {
-                data.price = 0
-                value.deductionItems.forEach((val: any) => {
-                    if (val.itemCode == data.itemCode) {
-                        data.price = val.amount
-                    }
-                })
-            })
             refetchConfigPayItems()
             refetchConfigDeduction()
         })
@@ -304,11 +302,46 @@ export default defineComponent({
         watch(resConfigDeduction, (value) => {
             if (value) {
                 dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.map((item: any) => {
-                    return { itemCode: item.itemCode, name: item.name, newValue: 0 }
+                    return { itemCode: item.itemCode, name: item.name, oldValue: 0, value: 0, }
                 });
+                arrRefresh.value = value.getWithholdingConfigDeductionItems.map((item: any) => {
+                    return { itemCode: item.itemCode, name: item.name, oldValue: 0, value: 0, }
+                });
+
             }
         });
-
+        // get IncomeWage value
+        const {
+            refetch: refetchValueDetail,
+            result,
+            loading
+        } = useQuery(queries.getIncomeWage, {
+            companyId: companyId,
+            processKey: { ...processKey.value },
+            incomeId: 0,
+        }, () => ({
+            fetchPolicy: "no-cache",
+            enabled: triggerDetail.value,
+        }))
+        watch(result, (value) => {
+            if (value) {
+                value.getIncomeWage.payItems.map((item: any) => {
+                    dataConfigPayItems.value.find((Obj: any) => {
+                        if (item.itemCode == Obj.itemCode) {
+                            Obj.value = item.amount;
+                        }
+                    });
+                })
+                value.getIncomeWage.deductionItems.map((item: any) => {
+                    dataConfigDeduction.value.find((Obj: any) => {
+                        if (item.itemCode == Obj.itemCode) {
+                            Obj.value = item.amount;
+                        }
+                    });
+                })
+                calculateTax();
+            }
+        })
         // caculate imcome wage tax
         const {
             result: resCalcIncomeWageTax,
@@ -396,44 +429,9 @@ export default defineComponent({
             totalDeduction.value = dataConfigDeduction.value.reduce((accumulator: any, object: any) => {
                 return accumulator + object.value;
             }, 0);
+
         }
-        // get IncomeWage value
-        const {
-            refetch: refetchValueDetail,
-            result,
-            loading
-        } = useQuery(queries.getIncomeWage, {
-            companyId: companyId,
-            processKey: { ...processKey.value },
-            incomeId: 0,
-        }, () => ({
-            fetchPolicy: "no-cache",
-            enabled: triggerDetail.value,
-        }))
-        watch(result, (value) => {
-            if (value) {
-                formState1.workingDays = value.getIncomeWage.workingDays;
-                formState1.totalWorkingHours = value.getIncomeWage.totalWorkingHours;
-                formState1.overtimeWorkingHours = value.getIncomeWage.overtimeWorkingHours;
-                formState1.workingHoursAtNight = value.getIncomeWage.workingHoursAtNight;
-                formState1.workingHoursOnHolidays = value.getIncomeWage.workingHoursOnHolidays;
-                value.getIncomeWage.payItems.map((item: any) => {
-                    dataConfigPayItems.value.find((Obj: any) => {
-                        if (item.itemCode == Obj.itemCode) {
-                            Obj.value = item.amount;
-                        }
-                    });
-                })
-                value.getIncomeWage.deductionItems.map((item: any) => {
-                    dataConfigDeduction.value.find((Obj: any) => {
-                        if (item.itemCode == Obj.itemCode) {
-                            Obj.value = item.amount;
-                        }
-                    });
-                })
-                calculateTax();
-            }
-        })
+
         // Calculate Income Wage Tax if totalPayItem != 0
         watch(totalPayItem, (newValue) => {
             if (newValue != 0) {
@@ -459,6 +457,7 @@ export default defineComponent({
 
         actionUpdateDone(res => {
             emit('createdDone', true)
+            emit("loadingTableInfo", true)
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
@@ -472,33 +471,30 @@ export default defineComponent({
         doneCreated(res => {
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
+            emit("loadingTableInfo", true)
             triggerDetail.value = true
             refetchValueDetail()
         })
         errorCreated(res => {
+            emit("loadingTableInfo", true)
             notification('error', res.message)
         })
-        watch(() => props.dataIncomeWage, (newValue) => {
-            dataIncomeWage.value = newValue
-            triggerDetail.value = true
-        }, { deep: true })
-        // action add new
-        watch(() => props.actionAddItem, (value) => {
-            if (value) {
-                switchAction.value = true
-                emit('updateData', true)
-                console.log('switchAction.add ', switchAction.value)
-                addRow()
-            }
-        })
+        // refresh value
         const addRow = () => {
+
             dataIncomeWage.value = { ...initFormState1 }
-            refetchValueDetail()
+            dataConfigDeduction.value.map((data: any) => {
+                data.value = 0
+            })
+            dataConfigPayItems.value.map((data: any) => {
+                data.value = 0
+            })
+            calculateTax()
+            emit('updateData', true)
         }
         // action update
         const updateIncomeWage = () => {
             const variables = {
-                ...formState1,
                 companyId: companyId,
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
@@ -514,27 +510,10 @@ export default defineComponent({
             };
             switchAction.value = false
             actionUpdate(variables)
-            refetchValueDetail()
-        }
-        // action update
-        watch(() => props.actionUpdateItem, () => {
-            updateIncomeWage()
-        })
-        // open popup deduction
-        const popupCompareData = () => {
-            modalDeductions.value = true
-            console.log(dataConfigDeduction.value)
-
-
-        }
-        // update data deduction
-        const calculate = () => {
-            calculateTax()
         }
         // create wage
         const createWage = () => {
             const variables = {
-                ...formState1,
                 companyId: companyId,
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
@@ -544,13 +523,44 @@ export default defineComponent({
                     overtimeWorkingHours: dataIncomeWage.value.overtimeWorkingHours,
                     workingHoursAtNight: dataIncomeWage.value.workingHoursAtNight,
                     workingHoursOnHolidays: dataIncomeWage.value.workingHoursOnHolidays,
-                    paymentDay: dataIncomeWage.paymentDay,
-                    employeeId: dataIncomeWage.employee.employeeId,
+                    paymentDay: dataIncomeWage.value.paymentDay,
+                    employeeId: dataIncomeWage.value.employee.employeeId,
                     payItems: formState2.payItems,
                     deductionItems: formState2.deductionItems
                 }
             };
             actionCreated(variables)
+        }
+        watch(() => props.dataIncomeWage, (newValue) => {
+            dataIncomeWage.value = newValue
+            triggerDetail.value = true
+        }, { deep: true })
+        // action add new
+        watch(() => props.actionAddItem, (value) => {
+            if (value) {
+                switchAction.value = true
+                addRow()
+
+            }
+        })
+        // action update
+        watch(() => props.actionUpdateItem, () => {
+            updateIncomeWage()
+        })
+        watch(() => props.actionSaveItem, () => {
+            calculateTax()
+            refetchConfigPayItems()
+            refetchConfigDeduction()
+            createWage()
+
+        })
+        // open popup deduction
+        const popupCompareData = () => {
+            modalDeductions.value = true
+        }
+        // update data deduction
+        const calculate = () => {
+            calculateTax()
         }
         return {
             formState2, loading1, loading2, loading,
