@@ -375,7 +375,7 @@ export default defineComponent({
     }))
     const {
       refetch: refetchDataIncomeWages,
-      onResult: resIncomeWages,
+      result: resIncomeWages,
       loading: loadingIncomeWages
     } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
       enabled: triggerIncomeWages.value,
