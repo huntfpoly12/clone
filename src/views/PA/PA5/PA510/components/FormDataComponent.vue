@@ -331,7 +331,6 @@ export default defineComponent({
             return price
         }
 
-
         const actionDedution = () => {
             let dataDefault = dataIncomeWageDaily.value.employee
             let totalPrices = parseInt(dataIncomeWageDaily.value.employee.monthlyPaycheck ?
@@ -346,7 +345,7 @@ export default defineComponent({
                 dataIncomeWageDaily.value.workingDays,
                 dataIncomeWageDaily.value.dailyWage,
                 dataIncomeWageDaily.value.employee.monthlyPaycheck);
-            
+
             arrDeduction.value?.map((val: any) => {
                 val.priceNew = 0
                 if (val.deductionItemCode == 1001)

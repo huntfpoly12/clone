@@ -375,7 +375,7 @@ export default defineComponent({
     }))
     const {
       refetch: refetchDataIncomeWages,
-      onResult: resIncomeWages,
+      result: resIncomeWages,
       loading: loadingIncomeWages
     } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
       enabled: triggerIncomeWages.value,
@@ -418,6 +418,7 @@ export default defineComponent({
         dataSource.value = [{
           companyId: companyId,
         }]
+        console.log('respoen', respon)
         dataCustomRes.value = [
           { id: 1, name: "재직(퇴사) " },
           { id: 2, name: "과세급여", },
