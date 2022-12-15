@@ -6,7 +6,7 @@
                     <div style="display: flex;">
                         <h3>4대보험 EDI 조회 결과</h3>
                         <img src="@/assets/images/iconInfo.png" style="width: 16px; height: 16px; margin: 5px 5px 0px 10px;" />
-                        <div class="noteText">
+                        <div class="style-note">
                             <span>4대보험 EDI 정보를 불러오기 전이거나 오류인 경
                                 <br>
                             우 4대보험 EDI 값이 공란으로 표시될 수 있습니다.</span>

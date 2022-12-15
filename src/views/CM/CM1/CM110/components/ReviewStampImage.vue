@@ -8,8 +8,8 @@
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                         </div>
                         <div>
-                            <a-typography-text>
-                                직인에 인쇄될 상호를 입력하신 후 <br /><b>미리보기</b> 버튼을 누르세요.
+                            <a-typography-text class="style-note">
+                                직인에 인쇄될 상호를 입력하신 후 <b>미리보기</b> 버튼을 누르세요.
                             </a-typography-text>
                         </div>
                     </div>

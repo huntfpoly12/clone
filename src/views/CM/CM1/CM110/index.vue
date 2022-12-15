@@ -64,7 +64,7 @@
                                                     </a-col>
                                                     <a-col :span="16">
                                                         <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                                        <a-typography-text>
+                                                        <a-typography-text class="style-note">
                                                             직인 이미지를 자동으로 생성하여 등록합니다.
                                                         </a-typography-text>
                                                     </a-col>
@@ -86,7 +86,7 @@
                                         </a-col>
                                         <a-col :span="14" :xl="14">
                                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                            <a-typography-text>
+                                            <a-typography-text class="style-note">
                                                 이미지 사이즈 : 100 x 100 이하 / 파일크기 : 1M 이하 /
                                                 종류 : GIF, JPG, PNG
                                             </a-typography-text>
