@@ -309,7 +309,8 @@ export default defineComponent({
             return item !== newValue.employeeId;
         })
         arrEmployeeRowEdited.push(newValue.employeeId)
-        store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited
+        store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited;
+        console.log(`output->store.state.common.arrayRoweditedPA120`,store.state.common.arrayRoweditedPA120)
       }
     },{deep:true})
 
@@ -350,7 +351,7 @@ export default defineComponent({
       radioCheckForeigner,
       arrDepartments,
       arrResponsibility, 
-      actionUpdated
+      actionUpdated,
     };
   },
 });
