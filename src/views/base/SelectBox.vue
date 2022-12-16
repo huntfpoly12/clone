@@ -9,6 +9,35 @@
             <tr>
                 <td>
                     <div class="dx-field">
+                        <div class="dx-field-label">Select Box Common</div>
+                    </div>
+                    <select-box-common :arrSelect="arraySelectBox" :required="true"
+                                    v-model:valueInput="valueSelectBox"/>
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li>
+                            <strong>valueInput:</strong> {type: Number}
+                        </li>
+                        <li><strong>arrSelect:</strong> {type: Array}</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
+                &lt;select-box-common :arrSelect="arraySelectBox" :required="true"
+                                    v-model:valueInput="valueSelectBox" /&gt;
+        </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
                         <div class="dx-field-label">Employ Select </div>
                     </div>
                     <employ-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="valueEmploy" width="350px" :required="true" />
@@ -583,12 +612,19 @@ export default defineComponent({
             { id: 2, name: "Urgent" },
             { id: 3, name: "High" },
         ]);
+        const arraySelectBox = ref([
+            { value: 0, label: "Low" },
+            { value: 1, label: "Normal" },
+            { value: 2, label: "Urgent" },
+            { value: 3, label: "High" },
+        ]);
         const arrayEmploySelect = ref([
             { employeeId: 123, name: 'khiem', idCardNumber: '800101-1100123', status: 0, foreigner: true },
             { employeeId: 456, name: 'khiem 1', idCardNumber: '800101-1100123', status: 0, foreigner: false },
             { employeeId: 789, name: 'khiem 3', idCardNumber: '800101-1100123', status: 1, foreigner: true },
         ])
         const valueTagSelectBox = ref([1, 2]);
+        const valueSelectBox = ref(1);
         const saleStatus = ref(10);
         const valTest = ref('Nancy');
         return {
@@ -601,6 +637,8 @@ export default defineComponent({
             valueTypeCodeSelectSelectBox,
             arrayEmploySelect,
             valueEmploy,
+            valueSelectBox,
+            arraySelectBox,
         };
     },
 });

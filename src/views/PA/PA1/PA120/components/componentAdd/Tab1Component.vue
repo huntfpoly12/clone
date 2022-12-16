@@ -1,6 +1,7 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
+        {{formStateTab1}}{{employeeId}}
       <standard-form formName="tab1-pa120">
           <a-form-item label="사번(코드)" label-align="right" class="red">
             <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능" />
@@ -91,7 +92,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed } from "vue";
+import { defineComponent, reactive, ref, watch, computed, onUnmounted } from "vue";
 import { useStore } from "vuex";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -126,7 +127,7 @@ export default defineComponent({
     const formStateTab1 = reactive<any>({
       ...initFormStateTab1,
       joinedAt: dayjs().format("YYYY-MM-DD"),
-      leavedAt: '',
+      leavedAt: "",
     });
 
     const oldFormState = { ...formStateTab1 };
@@ -250,7 +251,6 @@ export default defineComponent({
     const compareData = () => {
       var formStateTab1Copy = reactive(formStateTab1);
       initFormStateTab1.joinedAt = dayjs().format("YYYY-MM-DD");
-      initFormStateTab1.leavedAt = '';
       if(JSON.stringify(formStateTab1Copy)!==JSON.stringify(initFormStateTab1)){
           return false;
         }

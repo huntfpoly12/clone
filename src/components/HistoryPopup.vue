@@ -118,9 +118,12 @@ export default defineComponent({
                     else {
                         dataQuery.value = { id: props.idRowEdit };
                     }
-
+                    
                     switch (props.typeHistory) {
                         case 'bf-320':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
                             trigger320.value = true;
                             refetchBf320();
                             break;
@@ -132,14 +135,23 @@ export default defineComponent({
                             refetchBf310();
                             break;
                         case 'bf-330':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
                             trigger330.value = true;
                             refetchBf330();
                             break;
                         case 'bf-340':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
                             trigger340.value = true;
                             refetchBf340();
                             break;
                         case 'bf-210':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
                             trigger210.value = true;
                             refetchBf210();
                             break;
