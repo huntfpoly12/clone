@@ -257,7 +257,7 @@ export default defineComponent({
      activeTab: {
       handler(newValue, oldVal) {   
          if (newValue) {
-          this.$store.state.common.activeTab = JSON.parse(JSON.stringify(newValue))
+          // this.$store.state.common.activeTab = JSON.parse(JSON.stringify(newValue))
           if (newValue.id.includes("bf-1")) {
             this.openKeys = ["bf-000", "bf-100"];
           }
