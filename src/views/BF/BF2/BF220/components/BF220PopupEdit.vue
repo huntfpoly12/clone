@@ -249,8 +249,6 @@ export default defineComponent({
             }
         }
         const setModalVisible = () => {
-            console.log(objDataDefault.value)
-            console.log(dataRes.value)
             if (JSON.stringify(objDataDefault.value) === JSON.stringify(dataRes.value) == true)
                 emit("closePopupEdit", false)
             else

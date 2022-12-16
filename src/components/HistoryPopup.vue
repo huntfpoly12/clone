@@ -2,9 +2,10 @@
     <div id="components-modal-demo-position">
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
-            <a-spin tip="로딩 중..." :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
-            loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
-            loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720"> 
+            <a-spin tip="로딩 중..."
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
+                loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
+                loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -67,8 +68,6 @@ export default defineComponent({
     },
 
     setup(props, { emit }) {
-        // console.log(props.data);
-
         let visible = ref(false);
         const dataQuery = ref();
         let trigger320 = ref<boolean>(false);
@@ -93,6 +92,7 @@ export default defineComponent({
         let trigger120 = ref<boolean>(false);
         let trigger720 = ref<boolean>(false);
         let triggerStatus720 = ref<boolean>(false);
+        let triggerBf310 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
@@ -116,21 +116,40 @@ export default defineComponent({
                     else {
                         dataQuery.value = { id: props.idRowEdit };
                     }
-
+                    
                     switch (props.typeHistory) {
                         case 'bf-320':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
                             trigger320.value = true;
                             refetchBf320();
                             break;
+                        case 'bf-310':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
+                            triggerBf310.value = true;
+                            refetchBf310();
+                            break;
                         case 'bf-330':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
                             trigger330.value = true;
                             refetchBf330();
                             break;
                         case 'bf-340':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
                             trigger340.value = true;
                             refetchBf340();
                             break;
                         case 'bf-210':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
                             trigger210.value = true;
                             refetchBf210();
                             break;
@@ -299,7 +318,7 @@ export default defineComponent({
                             if (dataQuery.value.companyId)
                                 refetchStatusPA620();
                             break;
-                            case 'pa-720':
+                        case 'pa-720':
                             trigger720.value = true;
                             dataQuery.value = {
                                 companyId: companyId,
@@ -333,6 +352,7 @@ export default defineComponent({
                 } else {
                     visible.value = newValue;
                     trigger320.value = false;
+                    triggerBf310.value = false;
                     trigger340.value = false;
                     trigger210.value = false;
                     trigger130.value = false;
@@ -358,6 +378,20 @@ export default defineComponent({
             }
         );
 
+        // get getCompanyLogs Bf310
+        const { result: resultBf310, loading: loadingBf310, refetch: refetchBf310 } = useQuery(
+            queries.getSubscriptionRequestLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerBf310.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultBf310, (value) => {
+            if (value && value.getSubscriptionRequestLogs) {
+                dataTableShow.value = value.getSubscriptionRequestLogs;
+            }
+        });
         // get getCompanyLogs 320
         const { result: resultBf320, loading: loadingBf320, refetch: refetchBf320 } = useQuery(
             queries.getCompanyLogs,
@@ -701,6 +735,7 @@ export default defineComponent({
             move_column,
             colomn_resize,
             visible,
+            loadingBf310,
             loadingBf320,
             loadingBf330,
             loadingBf340,

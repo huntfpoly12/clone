@@ -235,7 +235,6 @@ export default defineComponent({
       let rowData = arrDataEdit.find(item => item.employeeId === props.idRowEdit);
       //If it already exists in arrDataEdit, fill it out in the form
       if (rowData) {
-        console.log(rowData)
           formStateTab1.name = rowData.name
           formStateTab1.foreigner = rowData.foreigner
           formStateTab1.nationality = rowData.nationality
@@ -310,7 +309,6 @@ export default defineComponent({
         })
         arrEmployeeRowEdited.push(newValue.employeeId)
         store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited;
-        console.log(`output->store.state.common.arrayRoweditedPA120`,store.state.common.arrayRoweditedPA120)
       }
     },{deep:true})
 
