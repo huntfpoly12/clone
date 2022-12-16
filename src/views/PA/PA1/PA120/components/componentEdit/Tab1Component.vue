@@ -310,7 +310,6 @@ export default defineComponent({
         })
         arrEmployeeRowEdited.push(newValue.employeeId)
         store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited;
-        console.log(`output->store.state.common.arrayRoweditedPA120`,store.state.common.arrayRoweditedPA120)
       }
     },{deep:true})
 
