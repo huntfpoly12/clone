@@ -2,7 +2,7 @@
     <center>
       <h1>Not Found!</h1>
       <p>
-        <a href="/">Go home?</a>
+        <a href="/dashboard">Go home?</a>
       </p>
     </center>
   </template>

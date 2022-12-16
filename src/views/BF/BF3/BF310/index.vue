@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-spin :spinning="loading" size="large">
-        <action-header title="계약정보관리&심사" @actionSearch="searching" />
+        <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)" />
         <div id="bf-310">
             <div class="search-form">
                 <a-row :gutter="[24, 8]">
@@ -21,7 +21,7 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">영업자 :</label>
-                            <list-sales-dropdown v-model:selected="originData.salesRepresentativeId" />
+                            <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" />
                         </div>
                     </a-col>
 
@@ -46,21 +46,21 @@
                 </a-row>
             </div>
             <div class="page-content">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-reordering="move_column"
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="rowTable" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
-                    <DxToolbar>                     
+                    <DxToolbar>
                         <DxItem name="exportButton" />
-                        <DxItem name="page" template="pagination-table"  location="after"/>
-                        <DxItem name="searchPanel"/>
+                        <DxItem name="page" template="pagination-table" location="after" />
+                        <DxItem name="searchPanel" />
                     </DxToolbar>
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">
                             <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                :total="rowTable" show-less-items @change="searching" />
+                                :total="rowTable" show-less-items @change="changePage" />
                         </div>
                     </template>
 
@@ -80,7 +80,7 @@
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn caption="신청서비스" cell-template="acc-service" />
                     <template #acc-service="{ data }">
-                        <span>회계
+                        <span v-if="data.data.simpleAccountingInfos">회계
                             <a-popover>
                                 <template #content>
                                     <a-table :columns="[{
@@ -98,7 +98,7 @@
                                 </a-tag>
                             </a-popover>
                         </span>
-                        <span>원천
+                        <span v-if="data.data.simpleWithholdingInfo">원천
                             <a-popover>
                                 <template #content>
                                     <a-table :columns="[{
@@ -118,15 +118,26 @@
                     <DxColumn :width="80" cell-template="pupop" type="buttons" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
-                            <div style="color: blue;cursor: pointer;" @click="setModalVisible(data)">편집</div>
+                            <a-space :size="10">
+                                <a-tooltip placement="top">
+                                    <template #title>편집</template>
+                                    <EditOutlined @click="setModalVisible(data)" />
+                                </a-tooltip>
+                                <a-tooltip placement="top">
+                                    <template #title>변경이력</template>
+                                    <HistoryOutlined @click="modalHistory(data)" />
+                                </a-tooltip>
+                            </a-space>
                         </div>
                     </template>
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                        :total="rowTable" show-less-items @change="searching" />
+                        :total="rowTable" show-less-items />
                 </div>
-                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false " :data="idSubRequest" />
+                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="idSubRequest" />
+                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    :data="popupData" title="변경이력" :idRowEdit="idSubRequest" typeHistory="bf-310" />
             </div>
         </div>
     </a-spin>
@@ -136,7 +147,7 @@ import { ref, defineComponent, reactive, watch, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from 'dayjs';
-import { SearchOutlined, EditOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, EditOutlined, HistoryOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxPager, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
@@ -162,7 +173,7 @@ export default defineComponent({
         DeleteOutlined,
         SaveOutlined,
         DxToolbar,
-        DxItem
+        DxItem, HistoryOutlined
     },
     setup() {
         const store = useStore();
@@ -176,13 +187,19 @@ export default defineComponent({
         const statuses: any = ref([]);
         const trigger = ref<boolean>(true);
         const rowTable = ref()
+        let modalHistoryStatus = ref<boolean>(false)
+        let popupData = ref([])
+        const actionSearch: any = ref<boolean>(true)
         const originData = reactive({
             ...dataSearchIndex,
             rows: per_page,
         })
+
         const setModalVisible = (data: any,) => {
             idSubRequest.value = data.data.id;
             modalStatus.value = true;
+            popupData.value = data;
+
         }
         const { refetch: refetchData, loading, error, result } = useQuery(queries.searchSubscriptionRequests, { filter: originData }, () => ({
             enabled: trigger.value,
@@ -190,6 +207,11 @@ export default defineComponent({
         }));
         const onExporting = (e: { component: any; cancel: boolean; }) => {
             onExportingCommon(e.component, e.cancel, '계약정보관리&심사')
+        }
+        const modalHistory = (data: any) => {
+            idSubRequest.value = data.data.id;
+            modalHistoryStatus.value = true;
+            popupData.value = data;
         }
         const getColorTag = (data: any) => {
             if (data == 10) {
@@ -205,7 +227,17 @@ export default defineComponent({
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY-MM-DD')
         }
-        const searching = () => {
+        const searching = (e: any) => {
+            originData.page = 1
+            originData.startDate = formarDate(rangeDate.value[0]);
+            originData.finishDate = formarDate(rangeDate.value[1]);
+            originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
+            trigger.value = true;
+            refetchData()
+            actionSearch.value = false
+        }
+        const changePage = (e: any) => {
+            actionSearch.value = true
             originData.startDate = formarDate(rangeDate.value[0]);
             originData.finishDate = formarDate(rangeDate.value[1]);
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
@@ -213,7 +245,6 @@ export default defineComponent({
             refetchData()
         }
         watch(result, (value) => {
-
             if (value) {
                 rowTable.value = value.searchSubscriptionRequests.totalCount
                 dataSource.value = value.searchSubscriptionRequests.datas
@@ -223,21 +254,45 @@ export default defineComponent({
         return {
             loading,
             move_column,
-            colomn_resize,
+            colomn_resize, modalHistoryStatus, modalHistory,
             rangeDate,
             idSubRequest,
             dataSource,
-            modalStatus,
+            modalStatus, popupData,
             rowTable,
             setModalVisible,
             originData,
             statuses,
-            searching,
+            searching, changePage,
             getColorTag,
             onExporting,
+            actionSearch,
         }
     },
 
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style lang="scss" scoped  src="./style/style.scss" />

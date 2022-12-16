@@ -185,7 +185,8 @@
         </a-row>
         <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
-                <DxButton :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0'+processKey.imputedMonth )"
+                <DxButton
+                    :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                 <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
@@ -265,9 +266,8 @@
                     :actionUpdateItem="actionUpdateItem" />
             </a-col>
         </a-row>
-        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" 
-            @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
-            @dataAddIncomeProcess="dataAddIncomeProcess" />
+        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
+            @loadingTableInfo="loadingTableInfo" @dataAddIncomeProcess="dataAddIncomeProcess" />
     </div>
 </template>
 <script lang="ts">
@@ -395,7 +395,7 @@ export default defineComponent({
 
                     dataSource.value[0]['month' + val.imputedMonth] = val
                     // data table detail
-
+                    console.log('val', val)
                     dataCustomRes.value[0]['month' + val.imputedMonth] =
                     {
                         value: val.employeeStat ? `${val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })}(${val.employeeStat.retireEmployeeCount})` : 0,

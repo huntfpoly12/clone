@@ -9,7 +9,7 @@
         <a-dropdown>
           <a class="ant-dropdown-link" @click.prevent>
             {{ username }}
-            <!-- <DownOutlined /> -->
+            <DownOutlined />
           </a>
           <template #overlay>
             <a-menu>
@@ -28,7 +28,6 @@
     <a-layout-content>
       <div class="header-content">
         <div class="left">
-    
           <a-button type="primary" @click="() => (collapsed = !collapsed)">
             <menu-unfold-outlined v-if="collapsed" class="trigger" />
             <menu-fold-outlined v-else class="trigger" />
@@ -71,7 +70,6 @@
           </nav>
         </div>
       </div>
-
       <a-layout>
         <a-layout-sider
           width="250"
@@ -79,10 +77,12 @@
           :trigger="null"
           collapsible
         >
+        
           <a-menu
             v-model:selectedKeys="selectedKeys"
             theme="dark"
             mode="inline"
+            :inline-collapsed="false"
             :open-keys="openKeys"
             @openChange="onOpenChange"
           >
@@ -101,14 +101,16 @@
                 <a-menu-item
                   v-for="item in subMenu.items"
                   :key="item.id"
-                  :class="
+                  :class="[
                     item.id === activeTab.id
                       ? 'ant-menu-item-selected-active'
-                      : ''
+                    : '',
+                     item.url == '#' ? 'not-done' : ''
+                    ]
                   "
                   @click.enter="addMenuTab(item.id)"
                 >
-                  <router-link :to="item.url">{{ item.name }}</router-link>
+                  <router-link :to="item.url" >{{ item.name }}</router-link>
                 </a-menu-item>
               </a-sub-menu>
             </a-sub-menu>
@@ -187,19 +189,10 @@ export default defineComponent({
   name: `LayoutDefault`,
   data() {
     return {
- 
       styles: {
         main: this.$config_styles.Main,
         sub: this.$config_styles.Sub,
       },
-      user: null,
-      inputSearchText: "",
-      filteredResult: [],
-      state: false,
-      activeKey: 1,
-      openKeys: ["bf-000"],
-      rootSubmenuKeys: ["bf-000", "cm-000", "ac-000", "pa-000"],
-      selectedKeys: [],
     };
   },
   components: {
@@ -362,6 +355,12 @@ export default defineComponent({
     },
   },
   setup() {
+    const inputSearchText = ref("");
+    const filteredResult =ref([]);
+    const openKeys = ref(["bf-000"]);
+    const rootSubmenuKeys = ref(["bf-000", "cm-000", "ac-000", "pa-000"]);
+    const selectedKeys = ref([]);
+    const state = ref(false);
     let menuDatas = menuData;
     let menuItems = menuTree;
     const store = useStore();
@@ -381,9 +380,9 @@ export default defineComponent({
     }
 
     const onSearch  = (key)=>{
-      this.state = true;
-      this.filteredResult = [];
-      this.inputSearchText = key;
+      state.value = true;
+      filteredResult.value = [];
+      inputSearchText.value = key;
       if (menuDatas?.length > 0) {
         menuDatas.forEach((val) => {
           const searchId = val.name.includes(key) || val.id.includes(key);
@@ -394,13 +393,14 @@ export default defineComponent({
       }
     }
     const toggleDropdown  = ()=>{
-      this.state = !this.state;
+      state.value = !state.value;
     }
 
     const addMenuTab  = (itemId)=>{
       let itemNew = [];
       itemNew = menuDatas.find(item => item.id === itemId);
       activeTab.value = menuDatas.find(item => item.id === itemId);
+      store.state.common.activeTab = menuDatas.find(item => item.id === itemId);
       if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
         menuTab.value.push(itemNew);
         selectedItems.value = [];
@@ -424,29 +424,30 @@ export default defineComponent({
       }
     }
     const focusInput  = ()=>{
-      this.state = false;
+      state.value = false;
     }
 
     watch(()=>store.state.common.activeTab, (newValue)=>{     
         activeTab.value = newValue;
     },{deep:true})
-    const onOpenChange  = (openKeys)=>{
-      // const latestOpenKey = openKeys.find(
-      //   (key) => this.openKeys.indexOf(key) === -1
-      // );
-      // if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-      //   if (latestOpenKey && latestOpenKey.includes("bf")) {
-      //     this.openKeys = ["bf-000", latestOpenKey];
-      //   } else if (latestOpenKey && latestOpenKey.includes("cm")) {
-      //     this.openKeys = ["cm-000", latestOpenKey];
-      //   } else if (latestOpenKey && latestOpenKey.includes("ac")) {
-      //     this.openKeys = ["ac-000", latestOpenKey];
-      //   } else if (latestOpenKey && latestOpenKey.includes("pa")) {
-      //     this.openKeys = ["pa-000", latestOpenKey];
-      //   }
-      // } else {
-      //   this.openKeys = latestOpenKey ? [latestOpenKey] : [];
-      // }
+    const onOpenChange = (opKeys) => {
+      console.log(openKeys);
+      const latestOpenKey = opKeys.find(
+        (key) => openKeys.value.indexOf(key) === -1
+      );
+      if (rootSubmenuKeys.value.indexOf(latestOpenKey) === -1) {
+        if (latestOpenKey && latestOpenKey.includes("bf")) {
+          openKeys.value = ["bf-000", latestOpenKey];
+        } else if (latestOpenKey && latestOpenKey.includes("cm")) {
+          openKeys.value = ["cm-000", latestOpenKey];
+        } else if (latestOpenKey && latestOpenKey.includes("ac")) {
+          openKeys.value = ["ac-000", latestOpenKey];
+        } else if (latestOpenKey && latestOpenKey.includes("pa")) {
+          openKeys.value = ["pa-000", latestOpenKey];
+        }
+      } else {
+        openKeys.value = latestOpenKey ? [latestOpenKey] : [];
+      }
     }
 
     /**
@@ -491,6 +492,8 @@ export default defineComponent({
       collapsed,
       selectedItems,
       filteredOptions,
+      selectedKeys,
+      openKeys
     }
   },
 });
@@ -502,5 +505,9 @@ export default defineComponent({
 
 .ant-layout-header {
   background: v-bind('styles.main');
+}
+
+.not-done{
+  color: red;
 }
 </style>

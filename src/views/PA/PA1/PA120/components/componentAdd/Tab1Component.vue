@@ -1,7 +1,6 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
-        {{formStateTab1}}{{employeeId}}
       <standard-form formName="tab1-pa120">
           <a-form-item label="사번(코드)" label-align="right" class="red">
             <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능" />
