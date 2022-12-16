@@ -2,7 +2,6 @@
 <template>
     <action-header title="기타소득자등록" @actionSave="onSubmit($event)" :buttonDelete="false" />
     <div id="pa-120" class="page-content">
-        {{rowIndex}}
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
                 <div class="total-user">
@@ -50,7 +49,7 @@
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
                         :focused-row-enabled="true" :onContentReady="onContentChange">
-                        <DxPaging :page-size="5" />
+                        <DxPaging :page-size="15" />
 
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -244,15 +243,6 @@ export default defineComponent({
             }
         })
 
-        // watch(()=>arrRowEdit.value,()=>{
-        //     let listElementRow = document.body.querySelectorAll('[aria-rowindex]')
-        //     console.log(listElementRow,'value')
-        //     dataSource.value.map((val: any, index: any) => {
-        //         if (arrRowEdit.value.includes(val.employeeId))
-        //         console.log(arrRowEdit,'arrRowEdit')
-        //             listElementRow[index].classList.add("active-row-key");
-        //     })   
-        // })
         // show row when edit
         const rowEditData = ref('');
         const rowIndex = ref<any>([]);
@@ -261,8 +251,8 @@ export default defineComponent({
             idRowEdit.value = data.data.employeeId
             modalEditStatus.value = true
             rowEditData.value = data.data;
-            if (rowIndex.value.indexOf(data.loadIndex+1) === -1) {
-                rowIndex.value.push({loadIndex:data.loadIndex+1, key: data.key, isEdit: false});
+            if (rowIndex.value.filter((e:any) => e.loadIndex === data.loadIndex+1).length == 0) {
+            rowIndex.value.push({loadIndex:data.loadIndex+1, key: data.key, isEdit: false});
             }
         }
         const changeClass = () => {
@@ -282,7 +272,7 @@ export default defineComponent({
             changeClass();
         })
         watch(()=> store.state.common.arrayRoweditedPA120,(newVal)=> {
-            rowIndex.value.forEach((item:any) => {
+            rowIndex.value.find((item:any) => {
                 if(item.key==newVal[newVal.length-1]){
                     item.isEdit = true;
                 }

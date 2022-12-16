@@ -28,7 +28,6 @@
     <a-layout-content>
       <div class="header-content">
         <div class="left">
-    
           <a-button type="primary" @click="() => (collapsed = !collapsed)">
             <menu-unfold-outlined v-if="collapsed" class="trigger" />
             <menu-fold-outlined v-else class="trigger" />
@@ -102,14 +101,16 @@
                 <a-menu-item
                   v-for="item in subMenu.items"
                   :key="item.id"
-                  :class="
+                  :class="[
                     item.id === activeTab.id
                       ? 'ant-menu-item-selected-active'
-                      : ''
+                    : '',
+                     item.url == '#' ? 'not-done' : ''
+                    ]
                   "
                   @click.enter="addMenuTab(item.id)"
                 >
-                  <router-link :to="item.url">{{ item.name }}</router-link>
+                  <router-link :to="item.url" >{{ item.name }}</router-link>
                 </a-menu-item>
               </a-sub-menu>
             </a-sub-menu>
@@ -399,6 +400,7 @@ export default defineComponent({
       let itemNew = [];
       itemNew = menuDatas.find(item => item.id === itemId);
       activeTab.value = menuDatas.find(item => item.id === itemId);
+      store.state.common.activeTab = menuDatas.find(item => item.id === itemId);
       if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
         menuTab.value.push(itemNew);
         selectedItems.value = [];
@@ -503,5 +505,9 @@ export default defineComponent({
 
 .ant-layout-header {
   background: v-bind('styles.main');
+}
+
+.not-done{
+  color: red;
 }
 </style>
