@@ -60,8 +60,6 @@ export default defineComponent({
         })
 
         const onSubmit = () => {
-            console.log(props.data);
-
             props.data.map((val: any) => {
                 mutate({
                     companyId: companyId,
