@@ -186,6 +186,7 @@ export default defineComponent({
             popupData.value = data;
         };
         const modalHistory = (data: any) => {
+            idRowEdit.value = data.data.id;
             modalHistoryStatus.value = true;
             popupData.value = data;
         };
