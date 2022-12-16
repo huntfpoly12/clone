@@ -26,7 +26,6 @@ export default defineComponent({
         }
 
         const getImgUrl = (data: any) => {
-            console.log(data);
             let dataImg = {
                 ...data,
                 name: data.fileName

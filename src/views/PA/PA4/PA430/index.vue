@@ -316,8 +316,6 @@ export default defineComponent({
         },
         employeeInputs: dataSelect.value
       }
-      // console.log(popupDataEmailMulti.value);
-
       modalEmailMulti.value = true
     }
 

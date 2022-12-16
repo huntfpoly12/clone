@@ -68,8 +68,6 @@ export default defineComponent({
     },
 
     setup(props, { emit }) {
-        // console.log(props.data);
-
         let visible = ref(false);
         const dataQuery = ref();
         let trigger320 = ref<boolean>(false);

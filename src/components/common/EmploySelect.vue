@@ -85,8 +85,6 @@ export default defineComponent({
         );
 
         const eventItemClick = () => {
-            console.log('xxxxxxxx');
-            
         }
         return {
             updateValue,
