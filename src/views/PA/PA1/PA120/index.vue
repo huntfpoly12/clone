@@ -2,7 +2,6 @@
 <template>
     <action-header title="기타소득자등록" @actionSave="onSubmit($event)" :buttonDelete="false" />
     <div id="pa-120" class="page-content">
-        {{rowIndex}}
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
                 <div class="total-user">
@@ -244,15 +243,6 @@ export default defineComponent({
             }
         })
 
-        // watch(()=>arrRowEdit.value,()=>{
-        //     let listElementRow = document.body.querySelectorAll('[aria-rowindex]')
-        //     console.log(listElementRow,'value')
-        //     dataSource.value.map((val: any, index: any) => {
-        //         if (arrRowEdit.value.includes(val.employeeId))
-        //         console.log(arrRowEdit,'arrRowEdit')
-        //             listElementRow[index].classList.add("active-row-key");
-        //     })   
-        // })
         // show row when edit
         const rowEditData = ref('');
         const rowIndex = ref<any>([]);
@@ -282,7 +272,7 @@ export default defineComponent({
             changeClass();
         })
         watch(()=> store.state.common.arrayRoweditedPA120,(newVal)=> {
-            rowIndex.value.forEach((item:any) => {
+            rowIndex.value.find((item:any) => {
                 if(item.key==newVal[newVal.length-1]){
                     item.isEdit = true;
                 }
