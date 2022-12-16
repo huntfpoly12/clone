@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-spin :spinning="loading" size="large">
-        <action-header title="계약정보관리&심사" @actionSearch="searching" />
+        <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)" />
         <div id="bf-310">
             <div class="search-form">
                 <a-row :gutter="[24, 8]">
@@ -60,7 +60,7 @@
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">
                             <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                :total="rowTable" show-less-items @change="searching" />
+                                :total="rowTable" show-less-items @change="changePage" />
                         </div>
                     </template>
 
@@ -133,7 +133,7 @@
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                        :total="rowTable" show-less-items @change="searching" />
+                        :total="rowTable" show-less-items />
                 </div>
                 <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -189,7 +189,7 @@ export default defineComponent({
         const rowTable = ref()
         let modalHistoryStatus = ref<boolean>(false)
         let popupData = ref([])
-
+        const actionSearch: any = ref<boolean>(true)
         const originData = reactive({
             ...dataSearchIndex,
             rows: per_page,
@@ -227,7 +227,17 @@ export default defineComponent({
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY-MM-DD')
         }
-        const searching = () => {
+        const searching = (e: any) => {
+            originData.page = 1
+            originData.startDate = formarDate(rangeDate.value[0]);
+            originData.finishDate = formarDate(rangeDate.value[1]);
+            originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
+            trigger.value = true;
+            refetchData()
+            actionSearch.value = false
+        }
+        const changePage = (e: any) => {
+            actionSearch.value = true
             originData.startDate = formarDate(rangeDate.value[0]);
             originData.finishDate = formarDate(rangeDate.value[1]);
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
@@ -253,14 +263,20 @@ export default defineComponent({
             setModalVisible,
             originData,
             statuses,
-            searching,
+            searching, changePage,
             getColorTag,
             onExporting,
+            actionSearch,
         }
     },
 
 });
 </script>
+
+
+
+
+
 
 
 
