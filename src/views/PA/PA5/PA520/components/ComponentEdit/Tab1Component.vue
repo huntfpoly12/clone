@@ -12,10 +12,10 @@
             <a-form-item label="퇴직급여대상 여부" label-align="right">
                 <a-radio-group v-model:value="dataEdited.retirementIncome">
                     <a-radio :value="true">
-                        <div class="custom-checkbox-group" style=" background-color: #77933C;">O</div>
+                        <div class="custom-checkbox-group" style="background-color: #77933C;">O</div>
                     </a-radio>
                     <a-radio :value="false">
-                        <div class="custom-checkbox-group" style=" background-color: red;">X</div>
+                        <div class="custom-checkbox-group" style="background-color: red;">X</div>
                     </a-radio>
                 </a-radio-group>
             </a-form-item>
@@ -87,7 +87,7 @@
                 <custom-item-select-box v-model:valueInput="dataEdited.responsibility" :arrSelect="selectBoxData2"
                     width="200px" />
             </a-form-item>
-            <div style="width: 100%;text-align: center;margin-top: 30px;">
+            <div  class="wf-100 text-center mt-30">
                 <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)" />
             </div>
         </standard-form>
@@ -138,8 +138,7 @@ export default defineComponent({
         } = useQuery(queries.getDepartments, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-        resGetDepartments(res => {
-            // selectBoxData.value = res.data.getDepartments 
+        resGetDepartments(res => { 
             let valArr: any = []
             res.data.getDepartments.map((v: any) => {
                 valArr.push({
@@ -243,12 +242,9 @@ export default defineComponent({
                     arrEdit.splice(index, 1);
                 }
             })
-
             if (newVal.employeeId == oldVal.employeeId) { 
                 emit("editRowKey", newVal.employeeId)
             }
-
-
             arrEdit.push(newVal)
         }, { deep: true })
         watch(() => dataEdited.foreigner, (value: any) => {
@@ -311,5 +307,4 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
-
 </style>

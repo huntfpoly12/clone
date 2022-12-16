@@ -135,7 +135,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
-import { radioCheckPersenPension, originDataInputUpdate } from "../../utils/index"; 
+import { radioCheckPersenPension, originDataInputUpdate } from "../../utils/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { useStore } from 'vuex';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
@@ -143,6 +143,7 @@ import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEm
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
 import filters from "@/helpers/filters";
+import { Formula } from "@bankda/jangbuda-common";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -151,7 +152,7 @@ export default defineComponent({
     setup(props, { emit }) {
         let arrEdit: any = []
         let dataReturn = ref()
-        const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수') 
+        const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수')
         const store = useStore();
         const globalYear: any = computed(() => store.state.settings.globalYear);
         const totalDeduction = ref('0')
@@ -176,6 +177,22 @@ export default defineComponent({
             },
         })
         // ================== GRAPQL ====================================
+        const {
+            loading: loading,
+            onResult: resWithholdingConfigPayItems,
+        } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
+            fetchPolicy: "no-cache",
+        }))
+        resWithholdingConfigPayItems(res => {
+            arrDeduction.value = []
+            res.data.getWithholdingConfigDeductionItems.map((val: any) => {
+                let price = funcCheckPrice(val.itemCode)
+                arrDeduction.value.push({
+                    ...val,
+                    price: price
+                })
+            })
+        })
         const {
             refetch: refectchDetail,
             onResult: resApiGetEmployeeWageDaily,
@@ -208,24 +225,9 @@ export default defineComponent({
                         dataAddDedution.push({ itemCode: val.itemCode, amount: 0 })
                     }
                 })
-                originDataUpdate.value.input.deductionItems = dataAddDedution
+                if (dataAddDedution)
+                    originDataUpdate.value.input.deductionItems = dataAddDedution
             }
-        })
-        const {
-            loading: loading,
-            onResult: resWithholdingConfigPayItems,
-        } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
-            fetchPolicy: "no-cache",
-        }))
-        resWithholdingConfigPayItems(res => {
-            arrDeduction.value = []
-            res.data.getWithholdingConfigDeductionItems.map((val: any) => {
-                let price = funcCheckPrice(val.itemCode)
-                arrDeduction.value.push({
-                    ...val,
-                    price: price
-                })
-            })
         })
         const {
             mutate,
@@ -301,7 +303,10 @@ export default defineComponent({
             let total2 = calculateHealthInsuranceEmployee(totalPrices)
             let total3 = calculateLongTermCareInsurance(totalPrices)
             let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
+            let total5 = Formula.getDailyEmployeeTax(202210, originDataUpdate.value.input.workingDays, originDataUpdate.value.input.dailyWage, originDataUpdate.value.input.monthlyWage).incomeAmount
+            let arrCallApi: any = []
             arrDeduction.value?.map((val: any) => {
+                delete val.__typename
                 if (val.deductionItemCode == 1001)
                     val.price = total1
                 if (val.deductionItemCode == 1002)
@@ -310,7 +315,14 @@ export default defineComponent({
                     val.price = total3
                 if (val.deductionItemCode == 1004)
                     val.price = total4
+                if (val.deductionItemCode == 1011)
+                    val.price = total5
+                arrCallApi.push({
+                    itemCode: val.deductionItemCode,
+                    amount: val.price
+                })
             })
+            originDataUpdate.value.input.deductionItems = arrCallApi
         }
         const funcCheckPrice = (id: any) => {
             let price = 0
@@ -335,7 +347,7 @@ export default defineComponent({
             messageMonthlySalary,
             totalPayDifferen,
             totalDeduction,
-            arrDeduction, 
+            arrDeduction,
             radioCheckPersenPension,
             loading,
             totalAmountDifferencePayment,
