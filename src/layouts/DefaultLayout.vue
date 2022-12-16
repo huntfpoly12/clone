@@ -255,8 +255,9 @@ export default defineComponent({
   },
   watch: {
      activeTab: {
-      handler(newValue, oldVal) {
-        if (newValue) {
+      handler(newValue, oldVal) {   
+         if (newValue) {
+          this.$store.state.common.activeTab = JSON.parse(JSON.stringify(newValue))
           if (newValue.id.includes("bf-1")) {
             this.openKeys = ["bf-000", "bf-100"];
           }
@@ -400,7 +401,7 @@ export default defineComponent({
       let itemNew = [];
       itemNew = menuDatas.find(item => item.id === itemId);
       activeTab.value = menuDatas.find(item => item.id === itemId);
-      store.state.common.activeTab = menuDatas.find(item => item.id === itemId);
+      
       if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
         menuTab.value.push(itemNew);
         selectedItems.value = [];
@@ -431,7 +432,6 @@ export default defineComponent({
         activeTab.value = newValue;
     },{deep:true})
     const onOpenChange = (opKeys) => {
-      console.log(openKeys);
       const latestOpenKey = opKeys.find(
         (key) => openKeys.value.indexOf(key) === -1
       );
