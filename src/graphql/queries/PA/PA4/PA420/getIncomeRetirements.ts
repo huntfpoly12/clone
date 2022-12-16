@@ -28,6 +28,13 @@ export default gql`
                         residentId
                         status
                         foreigner
+                        nationalPensionDeduction
+                        healthInsuranceDeduction
+                        employeementInsuranceDeduction
+                        nationalPensionSupportPercent
+                        employeementInsuranceSupportPercent
+                        employeementReductionRatePercent
+                        incomeTaxMagnification
                     }
                     ... on EmployeeWageDaily{
                         joinedAt
@@ -37,6 +44,11 @@ export default gql`
                         residentId
                         status
                         foreigner
+                        nationalPensionDeduction
+                        healthInsuranceDeduction
+                        employeementInsuranceDeduction
+                        nationalPensionSupportPercent
+                        employeementInsuranceSupportPercent 
                     }
                 }
                 retirementType 
