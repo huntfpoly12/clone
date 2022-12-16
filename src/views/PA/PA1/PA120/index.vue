@@ -43,11 +43,13 @@
         <a-row>
             <a-col :span="10" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
+                    <keep-alive>
+
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
-                        :focused-row-enabled="true">
-                        <DxPaging :page-size="15" />
+                        :focused-row-enabled="true" :onContentReady="onContentChange">
+                        <DxPaging :page-size="5" />
 
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -83,6 +85,7 @@
                             </div>
                         </template>
                     </DxDataGrid>
+                    </keep-alive>
                 </a-spin>
             </a-col>
             <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
@@ -150,6 +153,7 @@ export default defineComponent({
         const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false);
         const idRowEdit = ref()
+        let arrayRoweditedPA120 = ref<any>(store.state.common.arrayRoweditedPA120);
         const {
             refetch: refetchData,
             result,
@@ -187,18 +191,12 @@ export default defineComponent({
             }
         }
         const openAddNewModal = async () => {
-            actionChangeComponent.value = 1
-            modalAddNewStatus.value = !modalAddNewStatus.value;
-            addNew.value.compareData()
+            actionChangeComponent.value = 1;
             if (!addNew.value.compareData()) {
                 popupStatus.value = true;
             }
         };
-        const actionEdit = (data: any) => {
-            actionChangeComponent.value = 2
-            idRowEdit.value = data.data.employeeId
-            modalEditStatus.value = true
-        }
+        
         watch(()=> store.state.common.reloadEmployeeList,() => {
             trigger.value = true
             refetchData()
@@ -245,13 +243,42 @@ export default defineComponent({
             }
         })
 
-        watch(()=>arrRowEdit.value,()=>{
-            let listElementRow = document.body.querySelectorAll('[aria-rowindex]')
-            dataSource.value.map((val: any, index: any) => {
-                if (arrRowEdit.value.includes(val.employeeId))
-                    listElementRow[index].classList.add("active-row-key");
-            })   
+        // show row when edit
+        const rowEditData = ref('');
+        const rowIndex = ref<any>([]);
+        const actionEdit = (data: any) => {
+            actionChangeComponent.value = 2
+            idRowEdit.value = data.data.employeeId
+            modalEditStatus.value = true
+            rowEditData.value = data.data;
+            if (rowIndex.value.indexOf(data.loadIndex+1) === -1) {
+                rowIndex.value.push({loadIndex:data.loadIndex+1, key: data.key, isEdit: false});
+            }
+        }
+        const changeClass = () => {
+            let listElementRow = document.body.querySelectorAll('[aria-rowindex]');
+            listElementRow.forEach((item:any, index:number) => {
+                rowIndex.value.forEach((val: any)=> {
+                    if(item.ariaRowIndex == val.loadIndex && val.isEdit) {
+                        item.classList.add('active-row-key');
+                    }
+                })
+            })
+        }
+        const onContentChange = (e:any) => {
+            changeClass();
+        }
+        watch(()=>rowEditData.value,()=> {
+            changeClass();
         })
+        watch(()=> store.state.common.arrayRoweditedPA120,(newVal)=> {
+            rowIndex.value.find((item:any) => {
+                if(item.key==newVal[newVal.length-1]){
+                    item.isEdit = true;
+                }
+            })
+        })
+
         return {
             loading,
             idRowEdit,
@@ -275,7 +302,10 @@ export default defineComponent({
             onPopupComfirm,
             popupStatus,
             addNew,
-            arrRowEdit
+            arrRowEdit,
+            rowEditData,
+            onContentChange,
+            rowIndex,
         }
     },
 });

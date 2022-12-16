@@ -304,10 +304,6 @@ export default defineComponent({
                 dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.map((item: any) => {
                     return { itemCode: item.itemCode, name: item.name, oldValue: 0, value: 0, }
                 });
-                arrRefresh.value = value.getWithholdingConfigDeductionItems.map((item: any) => {
-                    return { itemCode: item.itemCode, name: item.name, oldValue: 0, value: 0, }
-                });
-
             }
         });
         // get IncomeWage value
