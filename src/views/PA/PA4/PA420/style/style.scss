@@ -1,8 +1,6 @@
 #pa-420 {
     margin-top: 10px;
 
-
-
     .total-user {
         background-color: #17375E;
         color: white;
@@ -159,8 +157,6 @@
             display: none;
         }
     }
-
-
 }
 
 .button-open-tab {
@@ -180,4 +176,23 @@
 
 ::v-deep .dx-datagrid-text-content {
     white-space: pre-wrap;
+}
+
+
+.retirementType-1 {
+    background-color: #C00000;
+    text-align: center;
+    width: 60px;
+    border-radius: 5px;
+    padding: 3px 0;
+    color: white;
+}
+
+.retirementType-2 {
+    background-color: #77933C;
+    text-align: center;
+    width: 60px;
+    border-radius: 5px;
+    padding: 3px 0;
+    color: white;
 }

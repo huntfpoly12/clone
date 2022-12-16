@@ -13,7 +13,6 @@
                         <img src="@/assets/images/user.svg" style="width: 70px" />
                     </div>
                 </a-col>
-
                 <a-col :span="24" class="mt-10">
                     <a-spin :spinning="loadingGetIncomeProcessBusinesses" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -30,7 +29,7 @@
                                 <div class="hover-underlined" v-if="data.data.month1"
                                     @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth)">
                                     <colorful-badge :value="data.data.month1.status"
-                                        :year="data.data.month1.imputedYear" :month="data.data.month1.imputedMonth" />
+                                        :year="data.data.month1.paymentYear" :month="data.data.month1.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
                                 </div>
@@ -40,7 +39,7 @@
                                 <div class="hover-underlined" v-if="data.data.month2"
                                     @click="showDetailSelected(data.data.month2.imputedMonth, data.data.month2.imputedYear, data.data.month2.paymentYear, data.data.month2.paymentMonth)">
                                     <colorful-badge :value="data.data.month2.status"
-                                        :year="data.data.month2.imputedYear" :month="data.data.month2.imputedMonth" />
+                                        :year="data.data.month2.paymentYear" :month="data.data.month2.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
                                 </div>
@@ -50,7 +49,7 @@
                                 <div class="hover-underlined" v-if="data.data.month3"
                                     @click="showDetailSelected(data.data.month3.imputedMonth, data.data.month3.imputedYear, data.data.month3.paymentYear, data.data.month3.paymentMonth)">
                                     <colorful-badge :value="data.data.month3.status"
-                                        :year="data.data.month3.imputedYear" :month="data.data.month3.imputedMonth" />
+                                        :year="data.data.month3.paymentYear" :month="data.data.month3.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
                                 </div>
@@ -60,7 +59,7 @@
                                 <div class="hover-underlined" v-if="data.data.month4"
                                     @click="showDetailSelected(data.data.month4.imputedMonth, data.data.month4.imputedYear, data.data.month4.paymentYear, data.data.month4.paymentMonth)">
                                     <colorful-badge :value="data.data.month4.status"
-                                        :year="data.data.month4.imputedYear" :month="data.data.month4.imputedMonth" />
+                                        :year="data.data.month4.paymentYear" :month="data.data.month4.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
                                 </div>
@@ -70,7 +69,7 @@
                                 <div class="hover-underlined" v-if="data.data.month5"
                                     @click="showDetailSelected(data.data.month5.imputedMonth, data.data.month5.imputedYear, data.data.month5.paymentYear, data.data.month5.paymentMonth)">
                                     <colorful-badge :value="data.data.month5.status"
-                                        :year="data.data.month5.imputedYear" :month="data.data.month5.imputedMonth" />
+                                        :year="data.data.month5.paymentYear" :month="data.data.month5.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
                                 </div>
@@ -80,7 +79,7 @@
                                 <div class="hover-underlined" v-if="data.data.month6"
                                     @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth)">
                                     <colorful-badge :value="data.data.month6.status"
-                                        :year="data.data.month6.imputedYear" :month="data.data.month6.imputedMonth" />
+                                        :year="data.data.month6.paymentYear" :month="data.data.month6.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
                                 </div>
@@ -90,7 +89,7 @@
                                 <div class="hover-underlined" v-if="data.data.month7"
                                     @click="showDetailSelected(data.data.month7.imputedMonth, data.data.month7.imputedYear, data.data.month7.paymentYear, data.data.month7.paymentMonth)">
                                     <colorful-badge :value="data.data.month7.status"
-                                        :year="data.data.month7.imputedYear" :month="data.data.month7.imputedMonth" />
+                                        :year="data.data.month7.paymentYear" :month="data.data.month7.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
                                 </div>
@@ -100,7 +99,7 @@
                                 <div class="hover-underlined" v-if="data.data.month8"
                                     @click="showDetailSelected(data.data.month8.imputedMonth, data.data.month8.imputedYear, data.data.month8.paymentYear, data.data.month8.paymentMonth)">
                                     <colorful-badge :value="data.data.month8.status"
-                                        :year="data.data.month8.imputedYear" :month="data.data.month8.imputedMonth" />
+                                        :year="data.data.month8.paymentYear" :month="data.data.month8.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
                                 </div>
@@ -110,7 +109,7 @@
                                 <div class="hover-underlined" v-if="data.data.month9"
                                     @click="showDetailSelected(data.data.month9.imputedMonth, data.data.month9.imputedYear, data.data.month9.paymentYear, data.data.month9.paymentMonth)">
                                     <colorful-badge :value="data.data.month9.status"
-                                        :year="data.data.month9.imputedYear" :month="data.data.month9.imputedMonth" />
+                                        :year="data.data.month9.paymentYear" :month="data.data.month9.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(9)"> [+]
                                 </div>
@@ -120,7 +119,8 @@
                                 <div class="hover-underlined" v-if="data.data.month10"
                                     @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth)">
                                     <colorful-badge :value="data.data.month10.status"
-                                        :year="data.data.month10.imputedYear" :month="data.data.month10.imputedMonth" />
+                                        :year="data.data.month10.paymentYear"
+                                        :month="data.data.month10.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
                                 </div>
@@ -130,7 +130,8 @@
                                 <div class="hover-underlined" v-if="data.data.month11"
                                     @click="showDetailSelected(data.data.month11.imputedMonth, data.data.month11.imputedYear, data.data.month11.paymentYear, data.data.month11.paymentMonth)">
                                     <colorful-badge :value="data.data.month11.status"
-                                        :year="data.data.month11.imputedYear" :month="data.data.month11.imputedMonth" />
+                                        :year="data.data.month11.paymentYear"
+                                        :month="data.data.month11.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(11)"> [+]
                                 </div>
@@ -140,7 +141,8 @@
                                 <div class="hover-underlined" v-if="data.data.month12"
                                     @click="showDetailSelected(data.data.month12.imputedMonth, data.data.month12.imputedYear, data.data.month12.paymentYear, data.data.month12.paymentMonth)">
                                     <colorful-badge :value="data.data.month12.status"
-                                        :year="data.data.month12.imputedYear" :month="data.data.month12.imputedMonth" />
+                                        :year="data.data.month12.paymentYear"
+                                        :month="data.data.month12.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(12)"> [+]
                                 </div>
@@ -239,10 +241,11 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
-                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" />
+                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" 
+                :processKey="valueCallApiGetEmployeeBusiness.processKey"
+                :data="dataModalCopy"  @dataAddIncomeProcess="dataAddIncomeProcess"/>
             </a-row>
         </div>
     </div>
@@ -263,7 +266,6 @@ import dayjs from 'dayjs';
 import filters from "@/helpers/filters";
 import ComponentDetail from "./components/ComponentDetail.vue";
 import CopyMonth from "./components/CopyMonth.vue";
-
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
@@ -283,6 +285,7 @@ export default defineComponent({
         const originData = reactive({ ...origindata, rows: per_page });
         const trigger = ref<boolean>(true);
         const modalCopy = ref<boolean>(false);
+        const dataModalCopy: any = ref()
         const globalYear = computed(() => store.state.settings.globalYear)
         const dataGetValueTable = reactive({
             companyId: companyId,
@@ -302,27 +305,24 @@ export default defineComponent({
             companyId: companyId,
             processKey: {
                 imputedYear: globalYear.value,
-                imputedMonth: (dayjs().month() + 1),
+                imputedMonth: dayjs().month() + 1,
                 paymentYear: globalYear.value,
                 paymentMonth: dayjs().month() + 1
             }
         })
         let dataCustomRes: any = ref([])
         // ================GRAPQL==============================================
-
         // API QUERY TABLE BIG
         const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessRetirements, dataGetValueTable, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resIncomeProcessBusinesses(res => {
-            let respon = res.data.getIncomeProcessBusinesses
+            let respon = res.data.getIncomeProcessRetirements
             dataSource.value = [{
                 companyId: companyId,
             }]
-
             dataCustomRes.value = [...dataAddTableBigUtils]
-
             if (respon)
                 respon.map((val: any) => {
                     // data table minify  
@@ -332,9 +332,7 @@ export default defineComponent({
                         paymentYear: val.paymentYear,
                         paymentMonth: val.paymentMonth,
                     }
-
                     dataSource.value[0]['month' + val.imputedMonth] = val
-
                     // data table detail
                     dataCustomRes.value[0]['month' + val.imputedMonth] =
                     {
@@ -362,7 +360,6 @@ export default defineComponent({
                         value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
-
                     // =================================== Pending value ============================= 
                     dataCustomRes.value[6]['month' + val.imputedMonth] = {
                         value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
@@ -372,7 +369,6 @@ export default defineComponent({
                         value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
-
                     if (val.imputedMonth == (dayjs().month() + 1)) {
                         dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
                         dataCallTableSmall.processKey.imputedYear = val.imputedYear
@@ -385,7 +381,6 @@ export default defineComponent({
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
         })
-
         // ================FUNCTION============================================   
         const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
             valueCallApiGetEmployeeBusiness.processKey.imputedMonth = imputedMonth
@@ -393,21 +388,21 @@ export default defineComponent({
             valueCallApiGetEmployeeBusiness.processKey.paymentYear = paymentYear
             valueCallApiGetEmployeeBusiness.processKey.paymentMonth = paymentMonth
         }
-
         const saving = () => {
             actionSave.value++;
         }
-
         const createdDone = () => {
             trigger.value = true
             refetchData()
         }
-
         const addMonth = (month: number) => {
+            dataModalCopy.value = month
             modalCopy.value = true
         }
-
-
+        const dataAddIncomeProcess = (data: any) => {
+            dataSource.value[0]['month' + data.imputedMonth] = data
+            dataSource.value[0]['month' + data.imputedMonth].status = 10
+        }
         const actionCopySuccess = () => {
             modalCopy.value = false
         }
@@ -425,9 +420,11 @@ export default defineComponent({
             originData,
             createdDone,
             addMonth,
+            dataModalCopy,
             saving,
             showDetailSelected,
-            actionCopySuccess
+            actionCopySuccess,
+            dataAddIncomeProcess
         };
     },
 });
