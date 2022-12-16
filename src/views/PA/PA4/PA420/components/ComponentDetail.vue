@@ -110,9 +110,9 @@
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
-        :processKey="dataTableDetail.processKey" />
+        :processKey="dataTableDetail.processKey" /> 
     <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
-        :processKey="dataTableDetail.processKey" />
+        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow"/>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -154,6 +154,7 @@ export default defineComponent({
         let dataSourceDetail = ref([]);
         let arrayEmploySelect: any = ref([])
         let placements = ["bottomRight"] as DropdownProps["placement"][];
+        const keyDetailRow = ref()
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
         const modalDelete = ref<boolean>(false)
@@ -219,6 +220,7 @@ export default defineComponent({
             refetchTableDetail()
             emit('createdDone', true)
             modalAdd.value = false
+            modalUpdate.value = false
         }
         const onItemClick = (key: String) => {
             if (key == 'history') {
@@ -252,10 +254,11 @@ export default defineComponent({
         }
 
         const actionEditRow = (data:any) =>{
-            console.log(data);
-            
+            modalUpdate.value = true 
+            keyDetailRow.value = data
         }
         return {
+            keyDetailRow,
             modalAdd,modalUpdate,
             arrayEmploySelect,
             statusButton,

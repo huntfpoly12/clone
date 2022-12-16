@@ -24,9 +24,7 @@
                     <employ-select :arrayValue="arrayEmploySelect" :required="true" v-model:valueEmploy="valueSelected"
                         width="300px" />
                 </a-form-item>
-                <a-form-item label="임원여부">
-                    <switch-basic textCheck="X" textUnCheck="O" width="60px" />
-                </a-form-item>
+
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
                         <number-box min="1" max="31" :required="false" width="150px" />
@@ -38,6 +36,9 @@
                         </div>
                     </div>
                 </a-form-item>
+                <a-form-item label="임원여부">
+                    <switch-basic textCheck="X" textUnCheck="O" width="60px" />
+                </a-form-item>
                 <a-form-item label="퇴직사유" class="label-required">
                     <select-box-common :arrSelect="arrayReasonResignation" :required="true"
                         v-model:valueInput="valueReasonResignation" placeholder="영업자선택" width="300px" />
@@ -48,7 +49,7 @@
                 <checkbox-basic size="13" label="중간지급여부" class="mb-10" />
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">근속연수</div>
+                <div class="header-text-2 mb-10">중간지급 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
@@ -101,7 +102,7 @@
                 </div>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">근속연수</div>
+                <div class="header-text-2 mb-10">최종 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" />

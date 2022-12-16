@@ -9,6 +9,7 @@ export default gql`
             getIncomeRetirement(companyId: $companyId, processKey: $processKey, incomeId:$incomeId) { 
                 incomeId
                 paymentDay
+                retirementType
                 employeeType
                 employeeId
                 incomeTypeCode
@@ -38,6 +39,7 @@ export default gql`
                         incomeTaxMagnification
                     }
                     ... on EmployeeWageDaily{
+                        retirementIncome
                         joinedAt
                         leavedAt
                         monthlyWage
