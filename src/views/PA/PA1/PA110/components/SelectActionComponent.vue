@@ -121,6 +121,7 @@ export default defineComponent({
         const deleteItem = (value: any) => {
             if (props.dataRows.length) {
                 modalDelete.value = true;
+
                 popupDataDelete.value = props.dataRows
             } else {
                 notification('error', `항목을 최소 하나 이상 선택해야합니다`)
@@ -133,6 +134,7 @@ export default defineComponent({
             if (props.dataRows.length == 1) {
                 modalEdit.value = true;
                 popupDataEdit.value = props.dataRows[0]
+
             } else {
                 notification('error', `항목을 하나만 선택하십시오`)
             }

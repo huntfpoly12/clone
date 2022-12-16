@@ -2,8 +2,7 @@
   <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
   <div id="pa-110" class="page-content">
     <a-row>
-      <a-spin :spinning="(loadingIncomeProcessWages || loadingIncomeWages || loadingTaxPayInfo || loadingIncomeWage)"
-        size="large">
+      <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -414,8 +413,8 @@ export default defineComponent({
     watch(resIncomeProcessWages, (value) => {
       arrDataPoint.value = [];
       if (value) {
+
         let respon = value.getIncomeProcessWages
-        console.log('rest', respon)
         dataSource.value = [{
           companyId: companyId,
         }]
@@ -475,7 +474,7 @@ export default defineComponent({
             ...dataAdd
           }
           dataCustomRes.value[5]['month' + val.imputedMonth] = {
-            value: customizeTotalItemCode1(dataAdd),
+            value: 0,
             ...dataAdd
           }
           dataCustomRes.value[6]['month' + val.imputedMonth] = {
@@ -532,12 +531,12 @@ export default defineComponent({
     const customizeTotalItemCode1 = (data: any) => {
       let totalItemCode1: any = 0
       dataTaxPayInfo.value.map((val: any) => {
-        console.log('valueas', val)
       })
       return `1${filters.formatCurrency(totalItemCode1)}`;
     }
     const loadingTableInfo = () => {
       refetchDataTaxPayInfo()
+      refetchDataProcessIncomeWages()
     }
     // ======================= FUNCTION ================================
     // function get total item code
@@ -586,6 +585,7 @@ export default defineComponent({
       status.value = data.status
       store.state.common.processKeyPA110.paymentYear = data.paymentYear
       store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
+      store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
     }
     return {
       loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
