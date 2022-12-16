@@ -104,7 +104,7 @@
                 </div>
                 <BF330Popup :modalStatus="modalStatus" @closePopup="closePopup" :idRowEdit="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력[cm-000-pop]" :idRowEdit="idSubRequest" typeHistory="bf-330" />
+                    :data="popupData" title="변경이력" :idRowEdit="idSubRequest" typeHistory="bf-330" />
             </div>
         </div>
     </a-spin>
