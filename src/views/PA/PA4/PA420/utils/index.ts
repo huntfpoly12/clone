@@ -86,3 +86,30 @@ export const dataAddTableBigUtils = [
         name: "차인지급액",
     },
 ]
+
+export const arrayReasonResignationUtils = [
+    {
+        label: "정년퇴직",
+        value: 1
+    },
+    {
+        label: "정리해고",
+        value: 2
+    },
+    {
+        label: "자발적퇴직",
+        value: 3
+    },
+    {
+        label: "임원퇴직",
+        value: 4
+    },
+    {
+        label: "중간정산",
+        value: 5
+    },
+    {
+        label: "기타",
+        value: 6
+    },
+]
