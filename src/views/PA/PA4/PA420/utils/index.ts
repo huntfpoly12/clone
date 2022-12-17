@@ -48,3 +48,68 @@ export const dataGetDetailEdit = {
 export const dataCallApiCreated = {
     retirementIncome: '',
 }
+
+export const dataAddTableBigUtils = [
+    {
+        id: 1,
+        name: "인원",
+    },
+    {
+        id: 2,
+        name: "퇴직급여",
+    },
+    {
+        id: 3,
+        name: "비과세퇴직급여",
+
+    },
+    {
+        id: 4,
+        name: "과세대상퇴직급여",
+
+    },
+    {
+        id: 5,
+        name: "소득세",
+
+    },
+    {
+        id: 6,
+        name: "지방소득세",
+    },
+    {
+        id: 7,
+        name: "공제총액",
+    },
+    {
+        id: 8,
+        name: "차인지급액",
+    },
+]
+
+export const arrayReasonResignationUtils = [
+    {
+        label: "정년퇴직",
+        value: 1
+    },
+    {
+        label: "정리해고",
+        value: 2
+    },
+    {
+        label: "자발적퇴직",
+        value: 3
+    },
+    {
+        label: "임원퇴직",
+        value: 4
+    },
+    {
+        label: "중간정산",
+        value: 5
+    },
+    {
+        label: "기타",
+        value: 6
+    },
+]

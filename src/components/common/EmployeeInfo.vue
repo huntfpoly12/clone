@@ -15,9 +15,8 @@
             </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
-            <span class="tag-foreigner" v-if="forDailyUse == true">일용</span>
-            <span class="tag-midTermSettlement2" v-if="midTermSettlement == false">중도정산O</span>
-            <span class="tag-midTermSettlement1" v-if="midTermSettlement == true">중도정산O</span>
+            <span class="tag-forDailyUse" v-if="forDailyUse == true">일용</span>
+
         </div>
     </div>
 </template>
@@ -28,7 +27,7 @@ import DxButton from 'devextreme-vue/button';
 export default defineComponent({
     props: {
         idEmployee: {
-            type: String,
+            type: Number,
         },
         idCardNumber: {
             type: String,
@@ -42,14 +41,10 @@ export default defineComponent({
         foreigner: {
             type: Boolean,
         },
-        midTermSettlement: {
-            type: Boolean,
-        },
         checkStatus: {
             type: Boolean,
         },
         forDailyUse: Boolean,
-
     },
     components: {
         DxButton
@@ -111,22 +106,12 @@ export default defineComponent({
     margin: 0 5px;
 }
 
-.tag-midTermSettlement2 {
-    background-color: rgb(219, 14, 14);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
+.tag-forDailyUse {
+    border: 1px solid black;
+    color: rgb(0, 0, 0);
+    padding: 3px 10px;
+    border-radius: 5px; 
 }
-
-.tag-midTermSettlement1 {
-    background-color: rgb(85, 155, 45);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
-}
-
 
 .display-none {
     display: none;

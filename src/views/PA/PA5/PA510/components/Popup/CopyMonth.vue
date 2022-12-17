@@ -4,7 +4,7 @@
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ month }}
+                    귀 {{ processKey.imputedYear }}-{{ month > 9 ? month : '0' + month }}
                 </div>
                 <div class="month-custom-2 d-flex-center">
                     지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
@@ -31,7 +31,8 @@
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{ data.imputedYear }}-{{ data.imputedMonth }} 지 {{ data.paymentYear }}-{{ data.paymentMonth
+                        귀 {{ data.imputedYear }}-{{ data.imputedMonth > 9 ? data.imputedMonth : '0' + data.imputedMonth }}
+                        지 {{ data.paymentYear }}-{{ data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
                         }}
                         <DxTextBox style="display: none;" />
                     </span>
@@ -41,8 +42,11 @@
                     </span>
                 </template>
                 <template #item-data="{ data }">
-                    <span>귀 {{ data.imputedYear }}-{{ data.imputedMonth }} 지
-                        {{ data.paymentYear }}-{{ data.paymentMonth }}</span>
+                    <span>귀 {{ data.imputedYear }}-{{ data.imputedMonth > 9 ? data.imputedMonth :
+                            '0' + data.imputedMonth
+                    }} 지
+                        {{ data.paymentYear }}-{{ data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
+                        }}</span>
                 </template>
             </DxSelectBox>
             <span>로 부터 복사하여 새로 입력합니다.</span>
@@ -200,21 +204,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.custom-modal-delete {
+.d-flex-center {
     display: flex;
     align-items: center;
-    width: 100%;
-    justify-content: center;
-    margin-top: 20px;
-
-    img {
-        width: 40px;
-        margin-right: 5px;
-    }
-
-    span {
-        padding: 0px 5px;
-    }
 }
 
 .mt-30 {

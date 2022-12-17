@@ -3,7 +3,7 @@
         <a-row :gutter="16">
             <a-col :span="12">
                 <a-form-item label="구분">
-                    <a-tag color="green">퇴직소득</a-tag>
+                    <a-tag :color="option1 ? 'green' : 'red'">퇴직소득</a-tag>
                 </a-form-item>
                 <a-form-item label="귀속/지급연월">
                     <div class="d-flex-center">
@@ -24,11 +24,24 @@
                     <employ-select :arrayValue="arrayEmploySelect" :required="true" v-model:valueEmploy="valueSelected"
                         width="300px" />
                 </a-form-item>
+
+                <a-form-item label="입사일">
+                    <div class="d-flex-center">
+                        <number-box min="1" max="31" :required="false" width="150px" />
+                        <div class="ml-5 d-flex-center">
+                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                            <span class="custom-waring">
+                                수정이 필요한 경우 [사원등록]에서 수정하시기 바랍니다.
+                            </span>
+                        </div>
+                    </div>
+                </a-form-item>
                 <a-form-item label="임원여부">
                     <switch-basic textCheck="X" textUnCheck="O" width="60px" />
                 </a-form-item>
                 <a-form-item label="퇴직사유" class="label-required">
-                    Select
+                    <select-box-common :arrSelect="arrayReasonResignation" :required="true"
+                        v-model:valueInput="valueReasonResignation" placeholder="영업자선택" width="300px" />
                 </a-form-item>
             </a-col>
             <div class="header-text-1">근속연수</div>
@@ -36,18 +49,7 @@
                 <checkbox-basic size="13" label="중간지급여부" class="mb-10" />
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">근속연수</div>
-                <a-form-item label="입사일">
-                    <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
-                        <div class="ml-5 d-flex-center">
-                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            <span class="custom-waring">
-                                수정이 필요한 경우 [사원등록] 에서 수정하시기 바랍니다.
-                            </span>
-                        </div>
-                    </div>
-                </a-form-item>
+                <div class="header-text-2 mb-10">중간지급 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
@@ -100,18 +102,7 @@
                 </div>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">근속연수</div>
-                <a-form-item label="입사일">
-                    <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
-                        <div class="ml-5 d-flex-center">
-                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            <span class="custom-waring">
-                                수정이 필요한 경우 [사원등록] 에서 수정하시기 바랍니다.
-                            </span>
-                        </div>
-                    </div>
-                </a-form-item>
+                <div class="header-text-2 mb-10">최종 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
@@ -183,21 +174,9 @@
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-
             </a-col>
             <a-col :span="12" class="mt-10">
                 <div class="header-text-2 mb-10">정산 근속연수</div>
-                <a-form-item label="입사일">
-                    <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
-                        <div class="ml-5 d-flex-center">
-                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            <span class="custom-waring">
-                                수정이 필요한 경우 [사원등록]에서 수정하시기 바랍니다
-                            </span>
-                        </div>
-                    </div>
-                </a-form-item>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
@@ -228,62 +207,45 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed, reactive } from 'vue'
 import dayjs from "dayjs";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
+import { arrayReasonResignationUtils } from '../../utils/index'
 export default defineComponent({
+    props: {
+        option1: Boolean,
+        option2: Boolean,
+        modalStatusAccept: Boolean,
+    },
     setup(props, { emit }) {
         let valueSelected = ref()
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear)
-        const arrayEmploySelect: any = reactive([])
-        const dataGetOption = reactive({
+        store.dispatch('common/getListEmployee', {
             companyId: companyId,
             imputedYear: globalYear,
         })
-        const trigger = ref(true)
-
+        const valueReasonResignation = ref(1)
+        const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
+        const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410)
 
         // =============== GRAPQL ==================================
-        const { result: resultOption } = useQuery(queries.getEmployeeWages, dataGetOption, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-        }));
-        watch(resultOption, (value) => {
-            if (value) {
-                let respon = value.getEmployeeWages
-                respon.map((val: any) => {
-                    arrayEmploySelect.push(val)
-                })
-            }
-        });
 
-        const { result: resultOption2 } = useQuery(queries.getEmployeeWageDailies, dataGetOption, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-        }));
-        watch(resultOption2, (value) => {
-            if (value) {
-                console.log(value);
 
-                let respon = value.getEmployeeWageDailies
-                respon.map((val: any) => {
-                    if (val.retirementIncome == true)
-                        arrayEmploySelect.push(val)
-                })
-            }
-        });
-
+        // =============== WATCH ==================================
         watch(valueSelected, (value) => {
             console.log(value);
 
         });
+        watch(() => props.modalStatusAccept, (value) => {
+            console.log(value);
 
+        });
 
 
         // =============== FUNCTION ================================
@@ -291,6 +253,8 @@ export default defineComponent({
             valueSelected,
             arrayEmploySelect,
             month1, month2,
+            arrayReasonResignation,
+            valueReasonResignation
         }
     }
 })

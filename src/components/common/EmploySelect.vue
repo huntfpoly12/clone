@@ -52,7 +52,6 @@ export default defineComponent({
         disabled: Boolean,
         valueEmploy: {
             type: Number,
-            default: "",
         },
         arrayValue: {
             type: Array,
@@ -85,8 +84,6 @@ export default defineComponent({
         );
 
         const eventItemClick = () => {
-            console.log('xxxxxxxx');
-            
         }
         return {
             updateValue,

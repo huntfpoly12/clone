@@ -19,7 +19,7 @@
                     <b>- status (Boolean):</b> Box status employee<br />
                     <b>- foreigner (Boolean):</b> Box foreigner employee <br />
                     <b>- *checkStatus (Boolean):</b> Box checkStatus employee <br />
-                    <b>- midTermSettlement (Boolean):</b> Box midTermSettlement <br />
+
                 </td>
 
                 <td>
@@ -30,7 +30,7 @@
     :status="0"
     :foreigner="true" 
     :checkStatus="false"
-    :midTermSettlement="true"
+    
     /&gt;
                     </pre>
                 </td>
@@ -82,15 +82,18 @@
                     <deduction-items name="940904" :type="1" subName="과세" />-
                     <deduction-items name="940904" :type="2" subName="과세" />-
                     <deduction-items name="940904" :type="3" subName="과세" />-
-                    <deduction-items name="940904" :type="4" subName="과세" />
+                    <deduction-items name="Show full name" :type="4" subName="과세" :width="'auto'" />
                 </td>
                 <td>
                     <b>- name (String):</b> Name <br />
                     <b>- type (Number):</b> Number : 1,2,3,4 <br />
                     <b>- subName (Number):</b> Text tooltip <br />
+                    <b>- width (String):</b> Set width text  <br />
                 </td>
                 <td>
                     <pre class="mycode"> &lt;deduction-items name="940904" :type="1" subName="과세" /&gt;
+                    </pre>
+                    <pre class="mycode"> &lt;deduction-items name="Show full name" :type="4" subName="과세" :width="'auto'" /&gt;
                     </pre>
                 </td>
             </tr>

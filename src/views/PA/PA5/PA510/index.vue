@@ -1,5 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
+    <action-header title="일용직근로소득자료입력" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
     <div id="pa-510" class="page-content">
         <a-row>
             <a-spin :spinning="loading" size="large">
@@ -185,7 +185,8 @@
         </a-row>
         <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
-                <DxButton :text="'귀' + processKey.paymentYear + '-' + processKey.paymentMonth"
+                <DxButton
+                    :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                 <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
@@ -214,7 +215,7 @@
                             </div>
                         </template>
                         <DxColumn width="80" caption="근무일수" data-field="workingDays" />
-                        <DxColumn width="80" caption="일급여" data-field="dailyWage" :format="amountFormat" />
+                        <DxColumn width="100" caption="일급여" data-field="dailyWage" :format="amountFormat" />
                         <DxColumn width="80" caption="공제" data-field="totalDeduction" cell-template="total-deduction" />
                         <template #total-deduction="{ data }">
                             <a-tooltip placement="top">
@@ -226,8 +227,8 @@
                                 </span>
                             </a-tooltip>
                         </template>
-                        <DxColumn width="100" caption="차인지급액" data-field="actualPayment" :format="amountFormat" />
-                        <DxColumn caption="비고" cell-template="four-major-insurance" />
+                        <DxColumn width="117" caption="차인지급액" data-field="actualPayment" :format="amountFormat" />
+                        <DxColumn width="300" caption="비고" cell-template="four-major-insurance" />
                         <template #four-major-insurance="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -265,9 +266,8 @@
                     :actionUpdateItem="actionUpdateItem" />
             </a-col>
         </a-row>
-        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" 
-            @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
-            @dataAddIncomeProcess="dataAddIncomeProcess" />
+        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
+            @loadingTableInfo="loadingTableInfo" @dataAddIncomeProcess="dataAddIncomeProcess" />
     </div>
 </template>
 <script lang="ts">
@@ -287,7 +287,7 @@ import { sampleDataIncomeWageDaily } from "./utils/index"
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
-
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -322,7 +322,6 @@ export default defineComponent({
         const actionSaveItem: any = ref<number>(0)
         const actionUpdateItem: any = ref<number>(0)
         let dataCustomRes: any = ref([])
-        // const arrDataPoint: any = ref([])
         const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
         const dataRows: any = ref([])
         const dataSource: any = ref([])
@@ -370,7 +369,6 @@ export default defineComponent({
 
         // ======================= WATCH ==================================
         watch(result, (value) => {
-            // arrDataPoint.value = [];
             if (value) {
                 let respon = value.getIncomeProcessWageDailies
                 dataSource.value = [{
@@ -385,12 +383,6 @@ export default defineComponent({
                     { id: 6, name: "차인지급액", },
                 ]
                 respon.forEach((val: any, index: any) => {
-                    // arrDataPoint.value.push({
-                    //     imputedYear: val.imputedYear,
-                    //     imputedMonth: val.imputedMonth,
-                    //     paymentYear: val.paymentYear,
-                    //     paymentMonth: val.paymentMonth,
-                    // })
                     let dataAdd = {
                         imputedYear: val.imputedYear,
                         imputedMonth: val.imputedMonth,
@@ -403,7 +395,6 @@ export default defineComponent({
 
                     dataSource.value[0]['month' + val.imputedMonth] = val
                     // data table detail
-
                     dataCustomRes.value[0]['month' + val.imputedMonth] =
                     {
                         value: val.employeeStat ? `${val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })}(${val.employeeStat.retireEmployeeCount})` : 0,
@@ -487,7 +478,7 @@ export default defineComponent({
             dataTaxPayInfo.value.map((val: any) => {
                 total += val.workingDays * val.dailyWage
             })
-            return `월급여합계: ${total}`;
+            return `월급여합계: ${filters.formatCurrency(total)}`;
         }
 
         const copyMonth = (month: number) => {
@@ -497,7 +488,6 @@ export default defineComponent({
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
-
         }
         return {
             processKey,
@@ -525,7 +515,6 @@ export default defineComponent({
             copyMonth,
             modalCopy,
             dataModalCopy,
-            // arrDataPoint,
             amountFormat,
             dataAddIncomeProcess,
             statusComfirm,

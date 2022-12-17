@@ -3,17 +3,17 @@
         :width="500">
         <standard-form action="" name="edit-510">
             <div class="custom-modal-edit">
-                <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
+                <EditOutlined class="fz-18" />
                 <span>선택된 내역 지급일을</span>
                 <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
                     :spinButtons="true" />
                 <span>일로 변경하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">
-                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+                <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined"
                     @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" :text="'네. 변경합니다'" :width="140" :type="'default'"
-                    :mode="'contained'" @onClick="onSubmit" />
+                <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
+                    @onClick="onSubmit" />
             </div>
         </standard-form>
     </a-modal>
@@ -25,6 +25,7 @@ import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
+import { EditOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -40,6 +41,7 @@ export default defineComponent({
         },
     },
     components: {
+        EditOutlined
     },
     setup(props, { emit }) {
         const dayValue = ref(1)
@@ -59,9 +61,7 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-        const onSubmit = () => {
-            console.log(props.data);
-
+        const onSubmit = () => { 
             props.data.map((val: any) => {
                 mutate({
                     companyId: companyId,

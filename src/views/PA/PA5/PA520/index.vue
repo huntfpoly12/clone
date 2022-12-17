@@ -48,10 +48,16 @@
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         :onRowClick="openEditModal">
                         <DxToolbar>
+                            <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
+                        </template>
+                        <template #button-history>
+                            <DxButton>
+                                <HistoryOutlined @click="modalHistory" class="fz-18" />
+                            </DxButton>
                         </template>
                         <DxColumn caption="성명" cell-template="company-name" width="300px" />
                         <template #company-name="{ data }">
@@ -75,17 +81,9 @@
                                     :typeValue="1" :ratio="data.data.employeementInsuranceSupportPercent" />
                             </div>
                         </template>
-                        <DxColumn cell-template="pupop" width="70" />
+                        <DxColumn cell-template="pupop" width="50" />
                         <template #pupop="{ data }" class="custom-action">
-                            <div class="custom-action">
-                                <a-tooltip placement="top">
-                                    <template #title>편집</template>
-                                    <EditOutlined @click="openEditModal(data)" class="mr-5" />
-                                </a-tooltip>
-                                <a-tooltip placement="top">
-                                    <template #title>변경이력</template>
-                                    <HistoryOutlined @click="modalHistory(data)" class="mr-5" />
-                                </a-tooltip>
+                            <div class="custom-action text-center">
                                 <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                             </div>
                         </template>
@@ -217,8 +215,7 @@ export default defineComponent({
             idRowEdit.value = val.data.employeeId
             modalEditStatus.value = true
         }
-        const modalHistory = (data: any) => {
-            idRowEdit.value = data.data.id
+        const modalHistory = () => {
             modalHistoryStatus.value = companyId
         }
         const actionDeleteFuc = (data: any) => {
@@ -251,7 +248,7 @@ export default defineComponent({
             a[indexActive].classList.add("active-row-key");
         }
 
-        
+
         return {
             actionChangeComponent,
             idRowEdit,
@@ -274,7 +271,7 @@ export default defineComponent({
             openAddNewModal,
             openEditModal,
             statusComfirm,
-            activeRowKey, 
+            activeRowKey,
         }
     },
 })

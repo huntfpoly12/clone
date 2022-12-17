@@ -21,6 +21,8 @@ export const sampleDataIncomeWage = {
   monthlyWage: 0,
   dailyWage: 0,
   workingDays: 0,
+  paymentDay: 0,
+  deductionItems: [{ amount: 0 }],
   employee: {
     name: "",
     totalDeduction: 0,
@@ -90,3 +92,70 @@ export const initFormState1 = {
     employeeId: null,
   },
 };
+export const initRefreshDeduction = [
+  {
+    itemCode: 1001,
+    name: "국민연금",
+    value: 0,
+  },
+  {
+    itemCode: 1002,
+    name: "건강보험",
+    value: 0,
+  },
+  {
+    itemCode: 1003,
+    name: "장기요양보험",
+    value: 0,
+  },
+  {
+    itemCode: 1004,
+    name: "고용보험",
+    value: 0,
+  },
+  {
+    itemCode: 10011,
+    name: "소득세",
+    value: 0,
+  },
+  {
+    itemCode: 10012,
+    name: "지방소득세",
+    value: 0,
+  },
+  {
+    itemCode: 10013,
+    name: "농어촌특별세",
+    value: 0,
+  },
+  {
+    itemCode: 10021,
+    name: "연말정산 소득세",
+    value: 0,
+  },
+  {
+    itemCode: 10022,
+    name: "연말정산 지방소득세",
+    value: 0,
+  },
+  {
+    itemCode: 10023,
+    name: "연말정산 농어촌특별세",
+    value: 0,
+  },
+  {
+    itemCode: 10031,
+    name: "중도정산 소득세",
+    value: 0,
+  },
+  {
+    itemCode: 10032,
+    name: "중도정산 지방소득세",
+    value: 0,
+  },
+  {
+    itemCode: 10033,
+    name: "학자금상환",
+    value: 0,
+  },
+];

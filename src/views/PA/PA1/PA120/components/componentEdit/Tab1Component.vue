@@ -135,7 +135,7 @@ export default defineComponent({
     let formStateTab1 = reactive<any>({
       ...initFormStateTab1,
       joinedAt: dayjs().format("YYYY-MM-DD"),
-      leavedAt: dayjs().format("YYYY-MM-DD"),
+      leavedAt: '',
     });
 
     let oldFormStateTab1 = {};
@@ -235,7 +235,6 @@ export default defineComponent({
       let rowData = arrDataEdit.find(item => item.employeeId === props.idRowEdit);
       //If it already exists in arrDataEdit, fill it out in the form
       if (rowData) {
-        console.log(rowData)
           formStateTab1.name = rowData.name
           formStateTab1.foreigner = rowData.foreigner
           formStateTab1.nationality = rowData.nationality
@@ -309,7 +308,7 @@ export default defineComponent({
             return item !== newValue.employeeId;
         })
         arrEmployeeRowEdited.push(newValue.employeeId)
-        store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited
+        store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited;
       }
     },{deep:true})
 
@@ -350,7 +349,7 @@ export default defineComponent({
       radioCheckForeigner,
       arrDepartments,
       arrResponsibility, 
-      actionUpdated
+      actionUpdated,
     };
   },
 });

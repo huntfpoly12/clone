@@ -45,6 +45,18 @@ export default [
           { name: "제본/배송관리", url: "#", id: "bf-540" },
         ],
       },
+      {
+        title: "원천업무",
+        id: "bf-600",
+        items: [
+          { name: "원천마감관리", url: "#", id: "bf-610" },
+          { name: "원천세/지방소득세전자신고", url: "#", id: "bf-620" },
+          { name: "지급명세서전자신고(연말정산)", url: "#", id: "bf-630" },
+          { name: "간이지급명세서전자신고", url: "#", id: "bf-640" },
+          { name: "일용직근로소득지급명세서전자신고", url: "#", id: "bf-650" },
+        ],
+      },
+      
     ],
   },
   {
@@ -208,8 +220,8 @@ export default [
         id: "pa-700",
         items: [
           { name: "기타소득자등록", url: "/dashboard/pa-710", id: "pa-710" },
-          { name: "기타소득자등록", url: '/dashboard/pa-720', id: "pa-720" },
-          { name: "기타소득자료입력", url: "/dashboard/pa-730", id: "pa-730" },
+          { name: "기타소득자료입력", url: '/dashboard/pa-720', id: "pa-720" },
+          { name: "기타소득원천징수영수증", url: "/dashboard/pa-730", id: "pa-730" },
           { name: "기타소득원천징수영수증", url: "#", id: "pa-740" },
         ],
       },

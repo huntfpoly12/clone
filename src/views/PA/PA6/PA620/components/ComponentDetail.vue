@@ -180,7 +180,7 @@ import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUn
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
-import { dataActionUtils, dataGetDetailEdit } from "../utils/index";
+import { dataActionUtils, dataGetDetailEdit, arrDropDownUtil } from "../utils/index";
 import dayjs from "dayjs";
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import type { DropdownProps } from "ant-design-vue";
@@ -245,9 +245,7 @@ export default defineComponent({
             ...dataGetDetailEdit
         })
         const arrDropDown = [
-            { id: 1, url: '520', event: '520', title: '' },
-            { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
-            { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
+            ...arrDropDownUtil
         ]
 
 
@@ -437,7 +435,7 @@ export default defineComponent({
             }
         }
 
-        const customTextSummary = () => { 
+        const customTextSummary = () => {
             let total = 0
             dataSourceDetail.value.map((val: any) => {
                 total += val.withholdingIncomeTax + val.withholdingLocalIncomeTax
