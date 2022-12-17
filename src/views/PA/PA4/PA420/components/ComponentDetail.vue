@@ -81,7 +81,7 @@
             </template>
             <template #action="{ data }" class="custom-action">
                 <div class="wf-100 text-center">
-                    <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)"/>
+                    <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)" />
                 </div>
             </template>
             <DxSummary v-if="dataSourceDetail.length > 0">
@@ -110,9 +110,9 @@
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
-        :processKey="dataTableDetail.processKey" /> 
-    <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
-        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow"/>
+        :processKey="dataTableDetail.processKey" />
+    <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
+        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -222,6 +222,10 @@ export default defineComponent({
             modalAdd.value = false
             modalUpdate.value = false
         }
+
+        const actionClosePopup = () => {
+            modalUpdate.value = false
+        }
         const onItemClick = (key: String) => {
             if (key == 'history') {
                 modalHistory.value = true
@@ -231,7 +235,7 @@ export default defineComponent({
         }
         const editPaymentDate = () => {
             if (popupDataDelete.value.length > 0) {
-            modalEdit.value = true
+                modalEdit.value = true
             }
         }
         const customTextSummary = () => {
@@ -253,13 +257,13 @@ export default defineComponent({
             return '사원수: ' + dataSourceDetail.value.length + " (퇴직:" + total1 + ", 중간:" + total2 + ")"
         }
 
-        const actionEditRow = (data:any) =>{
-            modalUpdate.value = true 
+        const actionEditRow = (data: any) => {
+            modalUpdate.value = true
             keyDetailRow.value = data
         }
         return {
             keyDetailRow,
-            modalAdd,modalUpdate,
+            modalAdd, modalUpdate,
             arrayEmploySelect,
             statusButton,
             dataTableDetail,
@@ -282,7 +286,8 @@ export default defineComponent({
             onItemClick,
             editPaymentDate,
             customTextSummary, customTextSummaryInfo,
-            actionEditRow
+            actionEditRow,
+            actionClosePopup
         }
     }
 });

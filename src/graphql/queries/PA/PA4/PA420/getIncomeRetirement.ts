@@ -53,11 +53,24 @@ export default gql`
                         nationalPensionSupportPercent
                         employeementInsuranceSupportPercent 
                     }
-                }
-                retirementType 
+                } 
                 retirementBenefits
                 nonTaxableRetirementBenefits
                 taxableRetirementBenefits
                 totalDeduction
+                specification {
+                    executive
+                    retirementReason
+                    specificationDetail {
+                        prevRetiredYearsOfService {
+                            settlementStartDate
+                            settlementFinishDate
+                        }
+                    }
+                }
+                imputedMonth
+                paymentYear
+                paymentMonth
+              
             }
         }`
