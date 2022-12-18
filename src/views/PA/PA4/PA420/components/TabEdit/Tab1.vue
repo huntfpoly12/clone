@@ -3,7 +3,7 @@
         <a-row :gutter="16">
             <a-col :span="12">
                 <a-form-item label="구분">
-                    <a-tag color="green">퇴직소득</a-tag>
+                    <a-tag :color="dataGet.retirementType == 1 ? 'green' : 'red'">퇴직소득</a-tag>
                 </a-form-item>
                 <a-form-item label="귀속/지급연월">
                     <div class="d-flex-center">
@@ -16,41 +16,47 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일" class="label-required">
-                    <number-box min="1" max="31" :required="true" width="150px" />
+                    <number-box min="1" max="31" :required="true" width="150px"
+                        v-model:valueInput="dataGet.paymentDay" />
                 </a-form-item>
             </a-col>
             <a-col :span="12">
                 <a-form-item label="사원" class="label-required">
-                    <employ-select :arrayValue="arrayEmploySelect" :required="true" v-model:valueEmploy="valueSelected"
-                        width="300px" />
+                    <employ-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="valueSelected" width="350px"
+                        :required="true" />
                 </a-form-item>
-                <a-form-item label="임원여부">
-                    <switch-basic textCheck="X" textUnCheck="O" width="60px" />
-                </a-form-item>
-                <a-form-item label="퇴직사유" class="label-required">
-                    Select
-                </a-form-item>
-            </a-col>
-            <div class="header-text-1">근속연수</div>
-            <a-col :span="24">
-                <checkbox-basic size="13" label="중간지급여부" class="mb-10" />
-            </a-col>
-            <a-col :span="12">
-                <div class="header-text-2 mb-10">근속연수</div>
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
+                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" disabled="true"
+                            :valueDate="dayjs(dataGet.employee.joinedAt).format('YYYY-MM-DD')" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
-                                수정이 필요한 경우 [사원등록] 에서 수정하시기 바랍니다.
+                                수정이 필요한 경우 <span style="cursor: pointer; color: blue;" @click="openTabFuc">[사원등록]
+                                </span> 에서 수정하시기 바랍니다.
                             </span>
                         </div>
                     </div>
                 </a-form-item>
-                <a-form-item label="정산시작(입사)일" class="label-required">
+                <a-form-item label="임원여부">
+                    <switch-basic textCheck="X" textUnCheck="O" width="60px"
+                        v-model:valueSwitch="dataGet.specification.executive" />
+                </a-form-item>
+                <a-form-item label="퇴직사유" class="label-required">
+                    <select-box-common :arrSelect="arrayReasonResignation" :required="true"
+                        v-model:valueInput="dataGet.specification.retirementReason" placeholder="영업자선택" width="300px" />
+                </a-form-item>
+            </a-col>
+            <div class="header-text-1">근속연수</div>
+            <a-col :span="24">
+                <checkbox-basic size="13" label="중간지급여부" class="mb-10" v-model:valueCheckbox="checkBoxYearsService" />
+            </a-col>
+            <a-col :span="12">
+                <div class="header-text-2 mb-10">중간지급 근속연수</div>
+                <a-form-item label="정산시작(입사)일" :class="checkBoxYearsService ? 'label-required' : ''">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!checkBoxYearsService"
+                            v-model:valueDate="dataGet.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
@@ -59,9 +65,10 @@
                         </div>
                     </div>
                 </a-form-item>
-                <a-form-item label="정산종료(퇴사)일" class="label-required">
+                <a-form-item label="정산종료(퇴사)일" :class="checkBoxYearsService ? 'label-required' : ''">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!checkBoxYearsService"
+                            v-model:valueDate="dataGet.settlementFinishDate" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
@@ -71,11 +78,12 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일">
-                    <number-box min="1" max="31" :required="false" width="150px" />
+                    <number-box min="1" max="31" :required="false" width="150px" :disabled="!checkBoxYearsService" />
                 </a-form-item>
                 <a-form-item label="제외일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!checkBoxYearsService" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
@@ -86,7 +94,8 @@
                 </a-form-item>
                 <a-form-item label="가산일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!checkBoxYearsService" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
@@ -100,21 +109,11 @@
                 </div>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">근속연수</div>
-                <a-form-item label="입사일">
-                    <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
-                        <div class="ml-5 d-flex-center">
-                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            <span class="custom-waring">
-                                수정이 필요한 경우 [사원등록] 에서 수정하시기 바랍니다.
-                            </span>
-                        </div>
-                    </div>
-                </a-form-item>
+                <div class="header-text-2 mb-10">최종 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                            v-model:valueDate="dataGet.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
@@ -167,37 +166,28 @@
                 <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
                 <a-form-item label="중간지급 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!checkBoxYearsService" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 비과세퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!checkBoxYearsService" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 과세대상 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!checkBoxYearsService" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-
             </a-col>
             <a-col :span="12" class="mt-10">
                 <div class="header-text-2 mb-10">정산 근속연수</div>
-                <a-form-item label="입사일">
-                    <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" />
-                        <div class="ml-5 d-flex-center">
-                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            <span class="custom-waring">
-                                수정이 필요한 경우 [사원등록]에서 수정하시기 바랍니다
-                            </span>
-                        </div>
-                    </div>
-                </a-form-item>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
@@ -228,40 +218,63 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed, reactive } from 'vue'
 import dayjs from "dayjs";
 import { useStore } from 'vuex';
-import { useQuery } from "@vue/apollo-composable";
-import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import { companyId } from '@/helpers/commonFunction';
+import { companyId, openTab } from '@/helpers/commonFunction';
+import { arrayReasonResignationUtils, dataDefaultDetailUtils } from '../../utils/index'
 export default defineComponent({
+    props: {
+        option1: Boolean,
+        option2: Boolean,
+        dataDetail: Object
+    },
     setup(props, { emit }) {
-        let valueSelected = ref()
+        let valueSelected = ref(17)
+        let checkBoxYearsService = ref(true)
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
+
+        const dataGet: any = ref({
+            ...dataDefaultDetailUtils
+        })
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear) 
+        const globalYear = computed(() => store.state.settings.globalYear)
         store.dispatch('common/getListEmployee', {
             companyId: companyId,
             imputedYear: globalYear,
         })
+        const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
         const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410)
-
-        // =============== GRAPQL ==================================
 
 
         // =============== WATCH ==================================
-        watch(valueSelected, (value) => {
-            console.log(value);
+        watch(() => props.dataDetail, (value: any) => {
+            dataGet.value = value
+            month1.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYY-MM")
+            dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate = dayjs(value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate.toString()).format('YYYY-MM-DD')
+            dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate = dayjs(value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate.toString()).format('YYYY-MM-DD')
 
-        });
+        }, { deep: true });
 
+        watch(() => valueSelected, (newVal) => {
+            console.log(newVal.value);
 
+        }, { deep: true });
         // =============== FUNCTION ================================
+        const openTabFuc = () => {
+            emit('closePopup', true)
+            openTab({ name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" })
+        }
         return {
             valueSelected,
             arrayEmploySelect,
             month1, month2,
+            arrayReasonResignation,
+            dataGet,
+            dayjs,
+            checkBoxYearsService,
+            openTabFuc
         }
     }
 })
