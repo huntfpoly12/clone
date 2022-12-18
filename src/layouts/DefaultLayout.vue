@@ -50,7 +50,8 @@
 
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
-            <ul class="list-menu-tab">
+             <caret-left-outlined v-if="isArrowScroll" class="arrow-left"   @click="tabLeft"/>
+            <ul ref="scroll_container" class="list-menu-tab">
               <li
                 v-for="(item, index) in menuTab"
                 :class="activeTab.id === item.id ? 'active' : ''"
@@ -67,7 +68,9 @@
                 />
               </li>
             </ul>
+               <caret-right-outlined v-if="isArrowScroll" class="arrow-right"  @click="tabRight"/>
           </nav>
+          
         </div>
       </div>
       <a-layout>
@@ -183,8 +186,9 @@ import {
   SearchOutlined,
   SaveOutlined,
   CloseCircleFilled,
+  CaretLeftOutlined, 
+  CaretRightOutlined
 } from "@ant-design/icons-vue";
-
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -230,6 +234,8 @@ export default defineComponent({
     SearchOutlined,
     SaveOutlined,
     CloseCircleFilled,
+    CaretLeftOutlined, 
+    CaretRightOutlined
   },
   created() {
     menuData.forEach((item) => {
@@ -257,7 +263,6 @@ export default defineComponent({
      activeTab: {
       handler(newValue, oldVal) {   
          if (newValue) {
-          // this.$store.state.common.activeTab = JSON.parse(JSON.stringify(newValue))
           if (newValue.id.includes("bf-1")) {
             this.openKeys = ["bf-000", "bf-100"];
           }
@@ -368,10 +373,39 @@ export default defineComponent({
     const router = useRouter()
     const collapsed = ref(false);
     const selectedItems = ref([]);
-    const   activeTab = ref();
+    const activeTab = ref();
+
+    /**
+    * Check scroll tab if overflow
+    */
+    const scroll_container = ref(null);
+    const isArrowScroll= ref(false);
+    const checkOverflow = ()=> {
+      console.log(scroll_container.value.offsetWidth,scroll_container.value.scrollWidth);
+          isArrowScroll.value =  scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth
+    }
+    const tabLeft = (e)=>{
+       if(scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth){
+              scroll_container.value.scrollTo({
+                left: scroll_container.value.scrollLeft -= 40,
+                    behavior: 'smooth',
+          }) ;
+       }
+        
+    }
+    const tabRight = (e)=>{
+       if(scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth){
+          scroll_container.value.scrollTo({
+            left: scroll_container.value.scrollLeft += 40,
+            behavior: 'smooth',
+          }) ;
+       }
+    }
+
+
     let menuTab = ref(store.state.common.menuTab);
     const filteredOptions = computed(() =>
-    menuDatas.filter((o) => !selectedItems.value.includes(o))
+      menuDatas.filter((o) => !selectedItems.value.includes(o))
     );
 
     const logout = ()=>{
@@ -403,9 +437,12 @@ export default defineComponent({
       activeTab.value = menuDatas.find(item => item.id === itemId);
       
       if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
+        store.state.common.activeTab = itemNew
         menuTab.value.push(itemNew);
         selectedItems.value = [];
+        checkOverflow()
       }
+
     }
     const removeItemTab  = (item)=>{
       menuTab.value.splice(item, 1);
@@ -416,6 +453,7 @@ export default defineComponent({
         router.push("/dashboard");
         menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
       }
+      checkOverflow()
     }
     const changeActiveTab  = (item)=>{
       activeTab.value = item;
@@ -493,7 +531,11 @@ export default defineComponent({
       selectedItems,
       filteredOptions,
       selectedKeys,
-      openKeys
+      openKeys,
+      scrollX,
+      scroll_container,
+      isArrowScroll,
+      tabLeft,tabRight
     }
   },
 });
