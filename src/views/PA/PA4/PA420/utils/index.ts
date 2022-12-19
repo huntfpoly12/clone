@@ -16,13 +16,14 @@ export const origindata: Origindata = {
 }
 
 import { companyId } from "@/helpers/commonFunction";
+import dayjs from "dayjs";
 export const dataActionUtils = {
     companyId: companyId,
     processKey: {
-        imputedYear: 2022,
-        imputedMonth: 1,
-        paymentYear: 2022,
-        paymentMonth: 1,
+        imputedYear: dayjs().format("YYYY"),
+        imputedMonth: dayjs().format("MM"),
+        paymentYear: dayjs().format("YYYY"),
+        paymentMonth: dayjs().format("MM"),
     },
     input: {
         paymentDay: null,
@@ -32,6 +33,53 @@ export const dataActionUtils = {
         taxRate: 3,
         withholdingIncomeTax: 0,
         withholdingLocalIncomeTax: 0,
+    }
+}
+export const initialFormState = {
+    companyId: companyId,
+    processKey: {
+        imputedYear: 2022,
+        imputedMonth: 1,
+        paymentYear: 2022,
+        paymentMonth: 1,
+    },
+    input: {
+        paymentDay: 1,
+        employeeId: null,
+        employeeType: null,
+        retirementType: 1,
+        executive: true,
+        retirementReason: null,
+    },
+    incomeCalculationInput: {
+        settlementStartDate: null,
+        settlementFinishDate: null,
+        exclusionDays: 1,
+        additionalDays: 1,
+        totalPay3Month: 0,
+        totalAnualBonus: 0,
+        annualLeaveAllowance: 0,
+    },
+    taxCalculationInput: {
+        prevRetirementBenefitStatus: {
+            retirementBenefits: 0,
+            nonTaxableRetirementBenefits: 0,
+            taxableRetirementBenefits: 0,
+        },
+        prevRetiredYearsOfService: {
+            settlementStartDate: null,
+            settlementFinishDate: null,
+            paymentDate: null,
+            exclusionDays: 1,
+            additionalDays: 1,
+        },
+        lastRetiredYearsOfService: {
+            settlementStartDate: null,
+            settlementFinishDate: null,
+            paymentDate: null,
+            exclusionDays: 1,
+            additionalDays: 1,
+        }
     }
 }
 export const dataGetDetailEdit = {
