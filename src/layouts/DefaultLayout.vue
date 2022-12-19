@@ -50,7 +50,7 @@
 
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
-             <caret-left-outlined v-if="isArrowScroll" class="arrow-left"   @click="tabLeft"/>
+            <caret-left-outlined class="arrow-left"  v-if="isArrowScroll"    @click="tabLeft"/>
             <ul ref="scroll_container" class="list-menu-tab">
               <li
                 v-for="(item, index) in menuTab"
@@ -68,7 +68,7 @@
                 />
               </li>
             </ul>
-               <caret-right-outlined v-if="isArrowScroll" class="arrow-right"  @click="tabRight"/>
+            <caret-right-outlined v-if="isArrowScroll" class="arrow-right"  @click="tabRight" />
           </nav>
           
         </div>
@@ -387,7 +387,7 @@ export default defineComponent({
     const tabLeft = (e)=>{
        if(scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth){
               scroll_container.value.scrollTo({
-                left: scroll_container.value.scrollLeft -= 40,
+                left: scroll_container.value.scrollLeft -= 200,
                     behavior: 'smooth',
           }) ;
        }
@@ -396,7 +396,7 @@ export default defineComponent({
     const tabRight = (e)=>{
        if(scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth){
           scroll_container.value.scrollTo({
-            left: scroll_container.value.scrollLeft += 40,
+            left: scroll_container.value.scrollLeft += 200,
             behavior: 'smooth',
           }) ;
        }
