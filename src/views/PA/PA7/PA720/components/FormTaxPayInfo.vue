@@ -175,7 +175,7 @@ export default defineComponent({
         let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, dataAction.input.taxRate);
         incomeAmount.value = objIncomeAmount;
         dataAction.input.withholdingIncomeTax = objIncomeTax.incomeTax;
-        dataAction.input.withholdingIncomeTax = objIncomeTax.localIncomeTax;
+        dataAction.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
       },
       { deep: true }
     );

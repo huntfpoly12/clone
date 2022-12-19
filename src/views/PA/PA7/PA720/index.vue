@@ -2,7 +2,7 @@
   <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
   <div id="pa-720" class="page-content">
     <a-row>
-      <a-spin :spinning="loadingIncomeProcessExtras" size="large">
+      <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
         <DxDataGrid
           :show-row-lines="true"
           :hoverStateEnabled="true"
@@ -276,41 +276,39 @@
         </DxButton>
         <DxButton class="ml-3" icon="plus" @click="addItem" />
         <DxButton class="ml-3" icon="edit" @click="editItem" />
-        <template v-for="(placement, index) in placements" :key="placement">
-          <a-dropdown :placement="placement" class="ml-5">
-            <a-button class="button-open-tab">선택</a-button>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item>
-                  <div class="custom-select-tab">
-                    <a href="/dashboard/pa-610" style="color: white"> 기타소득자등록 </a>
+        <a-dropdown placement="bottomCenter" class="ml-5">
+          <a-button>선택 <DownOutlined /></a-button>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item>
+                <div class="custom-select-tab">
+                  <a href="/dashboard/pa-710" style="color: white"> 기타소득자등록 </a>
+                </div>
+              </a-menu-item>
+              <a-menu-item>
+                <a-tooltip placement="left">
+                  <template #title>사업소득자료 변경이력</template>
+                  <div style="text-align: center" @click="modalHistory = true">
+                    <HistoryOutlined style="font-size: 20px" />
                   </div>
-                </a-menu-item>
-                <a-menu-item>
-                  <a-tooltip placement="left">
-                    <template #title>사업소득자료 변경이력</template>
-                    <div style="text-align: center" @click="modalHistory = true">
-                      <HistoryOutlined style="font-size: 20px" />
-                    </div>
-                  </a-tooltip>
-                </a-menu-item>
-                <a-menu-item>
-                  <a-tooltip placement="left">
-                    <template #title>사업소득 마감상태 변경이력</template>
-                    <div style="text-align: center" @click="modalHistoryStatus = true">
-                      <img src="@/assets/images/icon_status_history.png" alt="" style="width: 20px; height: 20px" />
-                    </div>
-                  </a-tooltip>
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
-        </template>
+                </a-tooltip>
+              </a-menu-item>
+              <a-menu-item>
+                <a-tooltip placement="left">
+                  <template #title>사업소득 마감상태 변경이력</template>
+                  <div style="text-align: center" @click="modalHistoryStatus = true">
+                    <img src="@/assets/images/icon_status_history.png" alt="" style="width: 20px; height: 20px" />
+                  </div>
+                </a-tooltip>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
       </a-col>
     </a-row>
     <a-row class="content-btm">
       <a-col :span="13" class="custom-layout">
-        <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax" :changeFommDone="changeFommDone" />
+        <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax" :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" />
       </a-col>
       <a-col :span="11" class="custom-layout" style="padding-right: 0px">
         <FormTaxPayInfo ref="formTaxRef" :actionSave="actionSave" :editTax="editTaxParam" @changeFommDone="onFormDone" :key="resetFormNum" :addNewIncomeExtra="dataAddIncomeProcess" />
@@ -354,7 +352,7 @@ import notification from '@/utils/notification';
 import type { DropdownProps } from 'ant-design-vue';
 import { HistoryOutlined } from '@ant-design/icons-vue';
 import CopyMonth from './components/Popup/CopyMonth.vue';
-
+import { UserOutlined, DownOutlined } from '@ant-design/icons-vue';
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -368,6 +366,7 @@ export default defineComponent({
     FormTaxPayInfo,
     HistoryOutlined,
     CopyMonth,
+    DownOutlined,
   },
   setup() {
     const statusParam = ref<any>({ status: 10 });
@@ -406,7 +405,6 @@ export default defineComponent({
     const resetFormNum = ref(1);
     const actionDeleteSuccess = () => {
       modalDelete.value = false;
-      modalEdit.value = false;
     };
     const popupDataDelete: any = ref([]);
     const taxPayRef = ref();
@@ -421,7 +419,6 @@ export default defineComponent({
         paymentMonth: +dayjs().format('MM'),
       },
     });
-    let placements = ['bottomRight'] as DropdownProps['placement'][];
     const modalCopy = ref<boolean>(false);
     const dataModalCopy = ref<number>(1);
     const dataAddIncomeProcess = ref({});
@@ -520,10 +517,13 @@ export default defineComponent({
       incomeExtrasParams.processKey.imputedYear = obj.imputedYear;
       incomeExtrasParams.processKey.paymentYear = obj.paymentYear;
       incomeExtrasParams.processKey.paymentMonth = obj.paymentMonth;
+      dataAddIncomeProcess.value = { ...incomeExtrasParams.processKey };
       statusParam.value = { ...incomeExtrasParams, status: obj.status };
     };
     const IncomeProcessExtrasCustom = ref<any>([]);
     let columnData = ref<any>([{}]);
+    const isRunOnce = ref<boolean>(true);
+    const toNumber = (num: any) => (!num ? '' : num);
     onResultIncomeProcessExtras((res: any) => {
       let responeData = res.data.getIncomeProcessExtras;
       IncomeProcessExtrasCustom.value = [
@@ -563,7 +563,6 @@ export default defineComponent({
           };
         }
       };
-
       responeData.forEach((val: any) => {
         let dataAdd = {
           imputedMonth: val.imputedMonth,
@@ -572,7 +571,7 @@ export default defineComponent({
           paymentMonth: val.paymentMonth,
         };
         IncomeProcessExtrasCustom.value[0]['month' + val.imputedMonth] = {
-          value: (val?.employeeStat?.employeeCount + val?.employeeStat?.retireEmployeeCount)?.toLocaleString('en-US', { currency: 'VND' }),
+          value: toNumber(val?.employeeStat?.employeeCount + val?.employeeStat?.retireEmployeeCount)?.toLocaleString('en-US', { currency: 'VND' }),
           ...dataAdd,
         };
         IncomeProcessExtrasCustom.value[1]['month' + val?.imputedMonth] = {
@@ -592,7 +591,7 @@ export default defineComponent({
           ...dataAdd,
         };
         IncomeProcessExtrasCustom.value[4]['month' + val?.imputedMonth] = {
-          value: val?.incomeStat?.totalDeduction?.toLocaleString('en-US', {
+          value: toNumber(val?.incomeStat?.withholdingIncomeTax + val?.incomeStat?.withholdingLocalIncomeTax).toLocaleString('en-US', {
             currency: 'VND',
           }),
           ...dataAdd,
@@ -603,20 +602,14 @@ export default defineComponent({
           }),
           ...dataAdd,
         };
-        addObj(1, val);
-        addObj(2, val);
-        addObj(3, val);
-        addObj(4, val);
-        addObj(5, val);
-        addObj(6, val);
-        addObj(7, val);
-        addObj(8, val);
-        addObj(9, val);
-        addObj(10, val);
-        addObj(11, val);
-        addObj(12, val);
+        for (var i = 1; i < 13; i++) {
+          addObj(i, val);
+        }
       });
-      showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
+      if (isRunOnce.value) {
+        isRunOnce.value = false;
+        showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
+      }
     });
     return {
       statusParam,
@@ -660,7 +653,6 @@ export default defineComponent({
       actionEditDaySuccess,
       modalHistory,
       modalHistoryStatus,
-      placements,
       modalCopy,
       dataModalCopy,
       onLoadingTable,
@@ -669,6 +661,7 @@ export default defineComponent({
       formatMonth,
       popupAddStatus,
       onPopupComfirm,
+      isRunOnce,
     };
   },
 });
