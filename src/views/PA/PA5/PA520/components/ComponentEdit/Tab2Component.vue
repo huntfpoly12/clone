@@ -304,6 +304,7 @@ export default defineComponent({
             let total3 = calculateLongTermCareInsurance(totalPrices)
             let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
             let total5 = Formula.getDailyEmployeeTax(202210, originDataUpdate.value.input.workingDays, originDataUpdate.value.input.dailyWage, originDataUpdate.value.input.monthlyWage).incomeAmount
+            let total6 = Formula.getDailyEmployeeTax(202210, originDataUpdate.value.input.workingDays, originDataUpdate.value.input.dailyWage, originDataUpdate.value.input.monthlyWage).localIncomeTax
             let arrCallApi: any = []
             arrDeduction.value?.map((val: any) => {
                 delete val.__typename
@@ -317,6 +318,8 @@ export default defineComponent({
                     val.price = total4
                 if (val.deductionItemCode == 1011)
                     val.price = total5
+                if (val.deductionItemCode == 1012)
+                val.price = total6
                 arrCallApi.push({
                     itemCode: val.deductionItemCode,
                     amount: val.price
