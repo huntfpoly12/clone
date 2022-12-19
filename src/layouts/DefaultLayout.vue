@@ -241,6 +241,7 @@ export default defineComponent({
     menuData.forEach((item) => {
       if (this.$route.fullPath.includes(item.id)) {
         this.activeTab = item;
+        this.$store.state.common.activeTab = item
         this.menuTab.push(item);
         return;
       } else if (
