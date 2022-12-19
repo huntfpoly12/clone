@@ -4,7 +4,7 @@
         style="top: 20px">
         <div class="mt-20">
             <radio-group :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
-            <radio-group :arrayValue="option2" v-model:valueRadioCheck="retirementIncome2" layoutCustom="horizontal" />
+            <radio-group :arrayValue="option2" v-model:valueRadioCheck="dataForm.input.retirementType" layoutCustom="horizontal" />
             <span>
                 퇴직소득자료 입력하시겠습니까?
             </span>
@@ -28,13 +28,13 @@
         <div class="step-content pt-20">
             <form action="your-action">
                 <template v-if="step === 0">
-                    <Tab1 :option1="retirementIncome1" :option2="retirementIncome2" />
+                    <Tab1 :option1="retirementIncome1" :dataForm="dataForm" />
                 </template>
                 <template v-if="step === 1">
-                    <Tab2 />
+                    <Tab2 :dataForm="dataForm"/>
                 </template>
                 <template v-if="step === 2">
-                    <Tab3 />
+                    <Tab3 :dataForm="dataForm"/>
                 </template>
             </form>
         </div>
@@ -43,6 +43,7 @@
             <button-basic text="다음" type="default" mode="contained" @onClick="nextStep" v-if="step < 2" />
             <button-basic text="저장" type="default" mode="contained" @onClick="created" v-if="step === 2" />
         </div>
+        {{ dataForm }}
     </a-modal>
 </template>
 
@@ -57,7 +58,7 @@ import Tab2 from './TabCreated/Tab2.vue';
 import Tab3 from './TabCreated/Tab3.vue';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-
+import { initialFormState } from '../utils/index'
 export default defineComponent({
     props: {
         modalStatus: {
@@ -84,16 +85,17 @@ export default defineComponent({
         const dayValue = ref(1)
         const modalStatusAccept = ref(false)
         const retirementIncome1 = ref(true)
-        const retirementIncome2 = ref(true)
+        // const retirementIncome2 = ref(1)
         const modalOption = ref()
         const trigger = ref(false)
+        const dataForm = reactive({ ...initialFormState });
         const option1 = reactive([
             { id: true, text: '사원' },
             { id: false, text: '일용직사원' }
         ])
         const option2 = reactive([
-            { id: true, text: '퇴직소득(퇴직자)' },
-            { id: false, text: '중도정산' }
+            { id: 1, text: '퇴직소득(퇴직자)' },
+            { id: 2, text: '중도정산' }
         ])
         const setModalVisible = () => {
             modalStatusAccept.value = false
@@ -203,7 +205,8 @@ export default defineComponent({
             option1, option2,
             modalOption,
             retirementIncome1,
-            retirementIncome2,
+            // retirementIncome2,
+            dataForm,
         }
     },
 })
