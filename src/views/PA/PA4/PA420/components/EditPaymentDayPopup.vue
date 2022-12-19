@@ -3,7 +3,7 @@
         :width="500">
         <standard-form action="" name="edit-510">
             <div class="custom-modal-edit">
-                <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
+                <EditOutlined class="fz-18" />
                 <span>선택된 내역 지급일을</span>
                 <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
                     :spinButtons="true" />
@@ -25,6 +25,7 @@ import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
+import { EditOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -40,6 +41,7 @@ export default defineComponent({
         },
     },
     components: {
+        EditOutlined
     },
     setup(props, { emit }) {
         const dayValue = ref(1)

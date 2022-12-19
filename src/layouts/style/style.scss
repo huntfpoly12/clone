@@ -1,6 +1,6 @@
 .list-menu-tab {
 	margin-top: 0px;
-	margin-bottom: 2px !important;
+	margin-bottom: -15px !important;
 }
 
 .ant-layout.ant-layout-has-sider {
@@ -50,7 +50,26 @@
 		// padding-left: 24px;
 		padding-top: 3px;
 		float: left;
-		width: calc(100% - 324px);
+		width: calc(100% - 250px);
+
+		.arrow-left{
+				font-size: 30px;
+				color: white;
+				cursor: pointer;
+		}
+
+		.arrow-right{
+				font-size: 30px;
+				color: white;
+				cursor: pointer;
+				float: right;
+		}
+		.arrow-right:hover{
+			color:gray !important;
+		}
+		.arrow-left:hover{
+			color:gray !important;
+		}
 	}
 
 	&::after {
@@ -151,6 +170,7 @@
 	display: block;
 	box-shadow: inset 0 -1px 0 #888;
 	height: 35px;
+	display: flex;
 	// margin-bottom: 5px;
 
 	ul {
@@ -158,8 +178,7 @@
 		text-align: left;
 		padding-left: 0;
 		white-space: nowrap;
-		overflow-x: auto;
-		overflow-y: hidden;
+		overflow: hidden;
 		max-width: 100%;
 
 		li {

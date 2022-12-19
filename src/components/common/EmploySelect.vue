@@ -52,7 +52,6 @@ export default defineComponent({
         disabled: Boolean,
         valueEmploy: {
             type: Number,
-            default: "",
         },
         arrayValue: {
             type: Array,

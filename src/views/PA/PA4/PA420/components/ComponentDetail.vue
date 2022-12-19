@@ -36,7 +36,6 @@
             </div>
         </div>
     </a-col>
-
     <a-spin :spinning="(loadingTableDetail)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
             :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
@@ -82,13 +81,11 @@
             </template>
             <template #action="{ data }" class="custom-action">
                 <div class="wf-100 text-center">
-                    <EditOutlined class="fz-18" />
+                    <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)" />
                 </div>
             </template>
-
             <DxSummary v-if="dataSourceDetail.length > 0">
                 <DxTotalItem column="사원" :customize-text="customTextSummaryInfo" />
-
                 <DxTotalItem class="custom-sumary" column="retirementBenefits" summary-type="sum"
                     display-format="퇴직급여합계: {0}" value-format="#,###" />
                 <DxTotalItem class="custom-sumary" column="nonTaxableRetirementBenefits" summary-type="sum"
@@ -99,13 +96,11 @@
                     value-format="#,###" />
                 <DxTotalItem class="custom-sumary" column="차인지급액" summary-type="sum" display-format="차인지급액합계: {0}"
                     value-format="#,###" />
-                <!-- <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
-                <DxTotalItem class="custom-sumary" column="비고" summary-type="sum" display-format="차인지급액합계: {0}"
-                    value-format="#,###" /> -->
             </DxSummary>
         </DxDataGrid>
     </a-spin>
 
+    <!--============================================= Components ============================================-->
     <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="dataTableDetail.processKey"
@@ -116,8 +111,9 @@
         :processKey="dataTableDetail.processKey" />
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
+    <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
+        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" />
 </template>
-
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
@@ -131,16 +127,16 @@ import { dataActionUtils } from "../utils/index";
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import type { DropdownProps } from "ant-design-vue";
 import DeletePopup from "./DeletePopup.vue"
-import EditPopup from "./EditPopup.vue"
+import EditPopup from "./EditPaymentDayPopup.vue"
 import AddPopup from "./AddPopup.vue"
+import UpdatePopup from "./UpdatePopup.vue"
 import filters from "@/helpers/filters";
-
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
         EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
         MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined,
-        DeletePopup, EditPopup, AddPopup
+        DeletePopup, EditPopup, AddPopup, UpdatePopup
     },
     props: {
         dataCallTableDetail: {
@@ -158,6 +154,7 @@ export default defineComponent({
         let dataSourceDetail = ref([]);
         let arrayEmploySelect: any = ref([])
         let placements = ["bottomRight"] as DropdownProps["placement"][];
+        const keyDetailRow = ref()
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
         const modalDelete = ref<boolean>(false)
@@ -170,6 +167,7 @@ export default defineComponent({
         const rowTable = ref(0);
         const modalHistory = ref<boolean>(false)
         const modalAdd = ref(false)
+        const modalUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false)
         let dataAction: any = reactive({
             ...dataActionUtils
@@ -177,7 +175,6 @@ export default defineComponent({
         let dataTableDetail: any = ref({
             ...props.dataCallTableDetail
         })
-
         // ================GRAPQL============================================== 
         const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorTableDetail, onResult: resTableDetail } = useQuery(queries.getIncomeRetirements, dataTableDetail, () => ({
             enabled: triggerDetail.value,
@@ -185,50 +182,37 @@ export default defineComponent({
         }));
         resTableDetail(res => {
             dataSourceDetail.value = res.data.getIncomeRetirements
-            console.log(dataSourceDetail.value);
-
             triggerDetail.value = false
         })
         errorTableDetail(res => {
             notification('error', res.message)
         })
-
-
         // ================WATCHING============================================
         watch(() => props.dataCallTableDetail, (newValue) => {
             dataTableDetail.value = newValue
             triggerDetail.value = true
             refetchTableDetail()
         }, { deep: true })
-
         watch(() => dataTableDetail, (newValue) => {
         }, { deep: true })
-
         watch(() => props.statusButton, (newValue) => {
             statusButton.value = newValue
         })
-
-
         // ================FUNCTION============================================   
         const addRow = () => {
             modalAdd.value = true
-
         }
-
         const changeIncomeTypeCode = (res: string) => {
             dataAction.input.incomeTypeCode = res
         }
-
         const selectionChanged = (event: any) => {
             popupDataDelete.value = event.selectedRowKeys
         }
-
         const deleteItem = () => {
             if (popupDataDelete.value.length > 0) {
                 modalDelete.value = true;
             }
         };
-
         const actionDeleteSuccess = () => {
             modalDelete.value = false
             modalEdit.value = false
@@ -236,8 +220,12 @@ export default defineComponent({
             refetchTableDetail()
             emit('createdDone', true)
             modalAdd.value = false
+            modalUpdate.value = false
         }
 
+        const actionClosePopup = () => {
+            modalUpdate.value = false
+        }
         const onItemClick = (key: String) => {
             if (key == 'history') {
                 modalHistory.value = true
@@ -245,13 +233,11 @@ export default defineComponent({
                 modalHistoryStatus.value = true
             }
         }
-
         const editPaymentDate = () => {
-            // if (popupDataDelete.value.length > 0) {
-            modalEdit.value = true
-            // }
+            if (popupDataDelete.value.length > 0) {
+                modalEdit.value = true
+            }
         }
-
         const customTextSummary = () => {
             let total = 0
             dataSourceDetail.value.map((val: any) => {
@@ -259,24 +245,25 @@ export default defineComponent({
             })
             return '공제합계: ' + filters.formatCurrency(total)
         }
-
         const customTextSummaryInfo = () => {
             let total1 = 0
             let total2 = 0
-            console.log(dataSourceDetail.value);
             dataSourceDetail.value.map((val: any) => {
                 if (val.retirementType == 1)
                     total1++
                 else
                     total2++
             })
-
             return '사원수: ' + dataSourceDetail.value.length + " (퇴직:" + total1 + ", 중간:" + total2 + ")"
         }
 
-
+        const actionEditRow = (data: any) => {
+            modalUpdate.value = true
+            keyDetailRow.value = data
+        }
         return {
-            modalAdd,
+            keyDetailRow,
+            modalAdd, modalUpdate,
             arrayEmploySelect,
             statusButton,
             dataTableDetail,
@@ -299,6 +286,8 @@ export default defineComponent({
             onItemClick,
             editPaymentDate,
             customTextSummary, customTextSummaryInfo,
+            actionEditRow,
+            actionClosePopup
         }
     }
 });
