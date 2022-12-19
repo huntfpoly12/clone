@@ -383,7 +383,6 @@ export default defineComponent({
     const scroll_container = ref(null);
     const isArrowScroll= ref(false);
     const checkOverflow = ()=> {
-      console.log(scroll_container.value.offsetWidth,scroll_container.value.scrollWidth);
           isArrowScroll.value =  scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth
     }
     const tabLeft = (e)=>{
@@ -434,7 +433,6 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
-      console.log(itemId,'ffffff');
       let itemNew = [];
       itemNew = menuDatas.find(item => item.id === itemId);
       activeTab.value = menuDatas.find(item => item.id === itemId);
