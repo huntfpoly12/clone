@@ -43,6 +43,7 @@
               show-search
               placeholder="메뉴를 입력해보세요"
               style="width: 180px"
+              optionFilterProp="label"
               @change="addMenuTab"
             />
           </div>
@@ -423,7 +424,7 @@ export default defineComponent({
         menuDatas.forEach((val) => {
           const searchId = val.name.includes(key) || val.id.includes(key);
           if (searchId) {
-            this.filteredResult.push(val);
+            filteredResult.value.push(val);
           }
         });
       }
@@ -432,7 +433,8 @@ export default defineComponent({
       state.value = !state.value;
     }
 
-    const addMenuTab  = (itemId)=>{
+    const addMenuTab = (itemId) => {
+      console.log(itemId,'ffffff');
       let itemNew = [];
       itemNew = menuDatas.find(item => item.id === itemId);
       activeTab.value = menuDatas.find(item => item.id === itemId);
