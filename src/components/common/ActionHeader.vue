@@ -1,7 +1,7 @@
 <template>
   <div class="top-content">
     <a-typography-title :level="3" style="margin-bottom: 0">
-      {{title}}
+      {{tabTitle.name}} [{{tabTitle.id}}]
     </a-typography-title>
     <div class="list-action">
       <a-tooltip v-if="buttonSearch">
@@ -32,7 +32,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import {
   SearchOutlined,
   SaveOutlined,
@@ -73,11 +73,13 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const store = useStore();
+    const tabTitle = computed(()=>store.state.common.activeTab)
     const actionHeader = (event: any, method: any) => {
       emit("action" + method, event);
     };
     return {
       actionHeader,
+      tabTitle
     };
   },
 });
