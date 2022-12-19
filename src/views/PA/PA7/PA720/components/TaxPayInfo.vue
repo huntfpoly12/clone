@@ -1,5 +1,5 @@
 <template>
-  <a-spin :spinning="loadingIncomeExtras" size="large">
+  <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
     <DxDataGrid
       :show-row-lines="true"
       :hoverStateEnabled="true"
@@ -8,10 +8,13 @@
       :allow-column-reordering="move_column"
       :allow-column-resizing="colomn_resize"
       :column-auto-width="true"
+      focused-row-enabled="true"
+      key-expr="employeeId"
       @selection-changed="selectionChanged"
       @row-click="actionEditFuc"
     >
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+      <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="185" />
       <template #tag="{ data }" class="custom-action">
         <div>
@@ -101,10 +104,11 @@ export default defineComponent({
     changeFommDone: {
       type: Number,
     },
+    isRunOnce: Boolean,
   },
   setup(props, { emit }) {
     let dataSourceDetail = ref([]);
-    const triggerDetail = ref<boolean>(true);
+    const triggerDetail = ref<boolean>(false);
     const store = useStore();
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
@@ -222,7 +226,7 @@ export default defineComponent({
       paymentData,
       refetchIncomeExtras,
       triggerDetail,
-      dataTableDetail
+      dataTableDetail,
     };
   },
 });
