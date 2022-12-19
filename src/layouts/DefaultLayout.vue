@@ -462,6 +462,7 @@ export default defineComponent({
         activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
         menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
       }
+      store.state.common.activeTab =  activeTab.value
     }
     const focusInput  = ()=>{
       state.value = false;
