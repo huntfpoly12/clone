@@ -53,10 +53,7 @@ export default gql`
                         nationalPensionSupportPercent
                         employeementInsuranceSupportPercent 
                     }
-                } 
-                retirementBenefits
-                nonTaxableRetirementBenefits
-                taxableRetirementBenefits
+                }  
                 totalDeduction
                 specification {
                     executive
@@ -65,8 +62,41 @@ export default gql`
                         prevRetiredYearsOfService {
                             settlementStartDate
                             settlementFinishDate
+                            paymentDate
+                            exclusionDays
+                            additionalDays
+                        }
+                        lastRetiredYearsOfService {
+                            settlementStartDate
+                            settlementFinishDate
+                            paymentDate
+                            exclusionDays
+                            additionalDays
+                        }
+                        prevRetirementBenefitStatus {
+                            retirementBenefits
+                            nonTaxableRetirementBenefits
+                            taxableRetirementBenefits
+                        }
+                        settlementRetiredYearsOfService {
+                            settlementStartDate
+                            settlementFinishDate
+                            paymentDate
+                            exclusionDays
+                            additionalDays
+                        }
+                        taxAmountCalculation {
+                            taxCredit
+                            prePaidDelayedTaxPaymentTaxAmount
                         }
                     }
+                    totalPay3Month
+                    totalAnualBonus
+                    annualLeaveAllowance
+                    expectedRetirementBenefits
+                    definedRetirementBenefits
+                    nonTaxableRetirementBenefits
+                    taxableRetirementBenefits
                 }
                 imputedMonth
                 paymentYear
