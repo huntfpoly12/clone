@@ -1,7 +1,7 @@
 <template>
   <div class="top-content">
     <a-typography-title :level="3" style="margin-bottom: 0">
-      {{ titleHeader }}
+      {{title}}
     </a-typography-title>
     <div class="list-action">
       <a-tooltip v-if="buttonSearch">
@@ -73,13 +73,11 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const store = useStore();
-    const titleHeader = store.state.common.activeTab.name
     const actionHeader = (event: any, method: any) => {
       emit("action" + method, event);
     };
     return {
       actionHeader,
-      titleHeader
     };
   },
 });

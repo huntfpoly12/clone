@@ -49,7 +49,7 @@
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
                         :focused-row-enabled="true" :onContentReady="onContentChange">
-                        <DxPaging :page-size="5" />
+                        <DxPaging :page-size="15" />
 
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -251,8 +251,8 @@ export default defineComponent({
             idRowEdit.value = data.data.employeeId
             modalEditStatus.value = true
             rowEditData.value = data.data;
-            if (rowIndex.value.indexOf(data.loadIndex+1) === -1) {
-                rowIndex.value.push({loadIndex:data.loadIndex+1, key: data.key, isEdit: false});
+            if (rowIndex.value.filter((e:any) => e.loadIndex === data.loadIndex+1).length == 0) {
+            rowIndex.value.push({loadIndex:data.loadIndex+1, key: data.key, isEdit: false});
             }
         }
         const changeClass = () => {

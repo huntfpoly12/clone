@@ -1,23 +1,5 @@
 <template>
-
-    <a-modal :visible="modalOption" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
-        style="top: 20px">
-        <div class="mt-20">
-            <radio-group :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
-            <radio-group :arrayValue="option2" v-model:valueRadioCheck="retirementIncome2" layoutCustom="horizontal" />
-            <span>
-                퇴직소득자료 입력하시겠습니까?
-            </span>
-        </div>
-        <div class="footer mt-30">
-            <button-basic class="button-form-modal mr-5" text="아니요" type="default" mode="outlined"
-                @onClick="setModalVisible" />
-            <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
-                @onClick="openModalAdd" />
-        </div>
-    </a-modal>
-
-    <a-modal :visible="modalStatusAccept" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
+    <a-modal :visible="statusModal" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
         width="70%" style="top: 20px">
         <div class="header-text-title mt-20">퇴직소득자료입력</div>
         <a-steps :current="step" type="navigation">
@@ -28,7 +10,8 @@
         <div class="step-content pt-20">
             <form action="your-action">
                 <template v-if="step === 0">
-                    <Tab1 :option1="retirementIncome1" :option2="retirementIncome2" />
+                    <Tab1 :option1="retirementIncome1" :option2="retirementIncome2" :dataDetail="dataDetailValue"
+                        @closePopup="setModalVisible" />
                 </template>
                 <template v-if="step === 1">
                     <Tab2 />
@@ -50,12 +33,11 @@
 import { defineComponent, ref, computed, reactive, watch } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation , useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
-import Tab1 from './TabCreated/Tab1.vue';
-import Tab2 from './TabCreated/Tab2.vue';
-import Tab3 from './TabCreated/Tab3.vue';
-import { useQuery } from "@vue/apollo-composable";
+import Tab1 from './TabEdit/Tab1.vue';
+import Tab2 from './TabEdit/Tab2.vue';
+import Tab3 from './TabEdit/Tab3.vue'; 
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 
 export default defineComponent({
@@ -71,7 +53,7 @@ export default defineComponent({
         processKey: {
             type: Object,
         },
-        key: {
+        keyRowIndex: {
             type: Number,
         },
     },
@@ -79,14 +61,14 @@ export default defineComponent({
         Tab1, Tab2, Tab3
     },
     setup(props, { emit }) {
-
         const step = ref(0)
         const dayValue = ref(1)
-        const modalStatusAccept = ref(false)
         const retirementIncome1 = ref(true)
         const retirementIncome2 = ref(true)
-        const modalOption = ref()
+        const modalOption = ref(false)
         const trigger = ref(false)
+        const statusModal = ref(props.modalStatus)
+        const dataDetailValue = ref()
         const option1 = reactive([
             { id: true, text: '사원' },
             { id: false, text: '일용직사원' }
@@ -95,15 +77,15 @@ export default defineComponent({
             { id: true, text: '퇴직소득(퇴직자)' },
             { id: false, text: '중도정산' }
         ])
-        const setModalVisible = () => {
-            modalStatusAccept.value = false
+        const setModalVisible = () => { 
+            statusModal.value = false
             emit("closePopup", false)
         };
 
-        const requestCallDetail = reactive({
+        const requestCallDetail: any = ref({
             companyId: companyId,
             processKey: props.processKey,
-            incomeId: props.key
+            incomeId: 0
         })
 
         // =========================  GRAPQL =================================================
@@ -125,10 +107,18 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
 
-        // ================WATCHING============================================
+
+        // ================WATCHING============================================ 
         watch(() => props.modalStatus, (newValue) => {
-            modalOption.value = newValue
-        })
+            requestCallDetail.value.incomeId = props.keyRowIndex
+            statusModal.value = newValue
+            trigger.value = true
+            refetchGetDetail()
+        }, { deep: true })
+
+        watch(() => resultGetDetail, (newValue) => {
+            dataDetailValue.value = newValue.value.getIncomeRetirement
+        }, { deep: true })
 
         // =========================  FUNCTION ===============================================
         // all Computed 
@@ -183,10 +173,7 @@ export default defineComponent({
         }
 
         const openModalAdd = () => {
-            modalStatusAccept.value = true
             modalOption.value = false
-            console.log(props.data);
-
         }
         return {
             setModalVisible,
@@ -199,11 +186,11 @@ export default defineComponent({
             checkStepFour,
             step,
             dayValue,
-            modalStatusAccept,
             option1, option2,
-            modalOption,
             retirementIncome1,
             retirementIncome2,
+            statusModal,
+            dataDetailValue
         }
     },
 })

@@ -395,7 +395,6 @@ export default defineComponent({
 
                     dataSource.value[0]['month' + val.imputedMonth] = val
                     // data table detail
-                    console.log('val', val)
                     dataCustomRes.value[0]['month' + val.imputedMonth] =
                     {
                         value: val.employeeStat ? `${val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })}(${val.employeeStat.retireEmployeeCount})` : 0,
