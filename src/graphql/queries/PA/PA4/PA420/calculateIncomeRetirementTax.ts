@@ -6,59 +6,59 @@ export default gql`
             $input: IncomeRetirementTaxCalculationInput!
         ){
             calculateIncomeRetirementTax(companyId: $companyId, input: $input) { 
-                prevRetirementBenefitStatus: {
+                prevRetirementBenefitStatus {
                     retirementBenefits
                     nonTaxableRetirementBenefits
                     taxableRetirementBenefits
                 }
-                lastRetirementBenefitStatus: {
+                lastRetirementBenefitStatus{
                     retirementBenefits
                     nonTaxableRetirementBenefits
                     taxableRetirementBenefits
                 }
-                settlementRetirementBenefitStatus: {
+                settlementRetirementBenefitStatus {
                     retirementBenefits
                     nonTaxableRetirementBenefits
                     taxableRetirementBenefits
                 }
-                prevRetiredYearsOfService: {
+                prevRetiredYearsOfService {
                     settlementStartDate
                     settlementFinishDate
                     paymentDate
                     exclusionDays
                     additionalDays
                 }
-                lastRetiredYearsOfService: {
+                lastRetiredYearsOfService {
                     settlementStartDate
                     settlementFinishDate
                     paymentDate
                     exclusionDays
                     additionalDays
                 }
-                settlementRetiredYearsOfService: {
+                settlementRetiredYearsOfService {
                     settlementStartDate
                     settlementFinishDate
                     paymentDate
                     exclusionDays
                     additionalDays
                 }
-                taxBaseCalculation: {
+                taxBaseCalculation {
                     retirementIncome
                     deductionForYearsOfService
                     conversionBenefit
                     deductionByConversionBenefit
                     taxBaseForRetirementIncome
                 }
-                taxAmountCalculation: {
+                taxAmountCalculation {
                     convertedTaxAmount
                     taxAmountCalculatedForRetirementIncome
                     taxCredit
                     prePaidDelayedTaxPaymentTaxAmount
                     taxAmountSubjectToReporting
                 }
-                calculationOfDeferredRetirementIncomeTax: {
+                calculationOfDeferredRetirementIncomeTax {
                     totalAmount
-                    statements: {
+                    statements {
                         pensionAccountHolder
                         bizNumber
                         bankAccountNumber
@@ -67,15 +67,15 @@ export default gql`
                     }
                     retirementIncomeTax
                 }
-                taxAmountToBeReported: {
+                taxAmountToBeReported {
                     incomeTax
                     localIncomeTax
                 }
-                retirementIncomeTax: {
+                retirementIncomeTax{
                     incomeTax
                     localIncomeTax
                 }
-                deductibleWithholdingTax: {
+                deductibleWithholdingTax {
                     incomeTax
                     localIncomeTax
                 }
