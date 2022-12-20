@@ -52,8 +52,8 @@
                 </div>
                 <div class="input-text">
                     <span>일급/월급:</span>
-                    <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'일급'"
-                        :textUnCheck="'월급'" />
+                    <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'월급'"
+                        :textUnCheck="'일급'" />
                     <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
                         placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                     <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
@@ -62,7 +62,7 @@
                 <div style="margin-bottom: 10px;">
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                     <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 / 근무일수</span>
-                    <span  v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
+                    <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                 </div>
                 <a-form-item label="근무일수">
                     <text-number-box width="150px" :required="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
@@ -73,7 +73,7 @@
                 }}원</span>
                 <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
                 <br>
-                <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
+                <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
                         $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
                 }}원</span>
                 <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
