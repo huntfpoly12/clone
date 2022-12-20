@@ -8,26 +8,26 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
         <div class="step-content pt-20">
-            <a-spin :spinning="loading" size="large">
-                <form action="your-action">
-                    <keep-alive>
-                        <template v-if="step === 0">
-                            <Tab1 :dataDetail="dataDetailValue" @closePopup="setModalVisible"
-                                :actionNextStep="valueNextStep" @nextPage="step++" />
-                        </template>
-                    </keep-alive>
+
+            <form action="your-action">
+                <keep-alive>
+                    <template v-if="step === 0">
+                        <Tab1 :dataDetail="dataDetailValue" @closePopup="setModalVisible"
+                            :actionNextStep="valueNextStep" @nextPage="step++" />
+                    </template>
+                </keep-alive>
+                <keep-alive>
                     <template v-if="step === 1">
-                        <keep-alive>
-                            <Tab2 v-model:dataDetail="dataDetailValue" />
-                        </keep-alive>
+                        <Tab2 v-model:dataDetail="dataDetailValue" />
                     </template>
+                </keep-alive>
+                <keep-alive>
                     <template v-if="step === 2">
-                        <keep-alive>
-                            <Tab3 v-model:dataDetail="dataDetailValue" />
-                        </keep-alive>
+                        <Tab3 v-model:dataDetail="dataDetailValue" />
                     </template>
-                </form>
-            </a-spin>
+                </keep-alive>
+            </form>
+
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -68,8 +68,7 @@ export default defineComponent({
     components: {
         Tab1, Tab2, Tab3
     },
-    setup(props, { emit }) {
-        const loading = ref(false)
+    setup(props, { emit }) { 
         const step = ref(0)
         const valueNextStep = ref(0)
         const dayValue = ref(1)
@@ -119,12 +118,11 @@ export default defineComponent({
         }, { deep: true })
 
         watch(() => resultGetDetail, (newValue) => {
-            dataDetailValue.value = newValue.value.getIncomeRetirement
-        }, { deep: true })
-
-        watch(() => dataDetailValue, (newValue) => {
-            // console.log(newValue.value);
-
+            dataDetailValue.value =
+            {
+                ...newValue.value.getIncomeRetirement,
+                "checkBoxCallApi": true,
+            }
         }, { deep: true })
 
         // =========================  FUNCTION ===============================================
@@ -161,11 +159,7 @@ export default defineComponent({
 
         };
         const changeStep = (stepChange: any) => {
-            step.value = stepChange
-            loading.value = true
-            setTimeout(() => {
-                loading.value = false
-            }, 500);
+            step.value = stepChange 
         }
 
         const nextStep = (event: any) => {
@@ -196,8 +190,7 @@ export default defineComponent({
             onSubmit,
             changeStep,
             nextStep, prevStep, created,
-            openModalAdd,
-            loading,
+            openModalAdd, 
             checkStepTwo,
             checkStepThree,
             checkStepFour,
