@@ -1,5 +1,6 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
+    {{focusedRowKey}}
     <DxDataGrid
       :show-row-lines="true"
       :hoverStateEnabled="true"
@@ -10,6 +11,8 @@
       :column-auto-width="true"
       focused-row-enabled="true"
       key-expr="employeeId"
+      :auto-navigate-to-focused-row="true"
+      v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
       @row-click="actionEditFuc"
     >
@@ -123,7 +126,6 @@ export default defineComponent({
     });
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>({});
-
     // ================GRAPQL==============================================
 
     // API QUERY TABLE SMALL LEFT SIDE
@@ -138,6 +140,9 @@ export default defineComponent({
     }));
     resIncomeExtras((res) => {
       dataSourceDetail.value = res.data.getIncomeExtras;
+      focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
+      let firstDataParam = { data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } };
+      actionEditFuc(firstDataParam);
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
     });
@@ -209,6 +214,8 @@ export default defineComponent({
         paymentData.value = {};
       }
     };
+    // highlight row
+    const focusedRowKey = ref<Number>(0);
     return {
       dataAction,
       rowTable,
@@ -227,6 +234,7 @@ export default defineComponent({
       refetchIncomeExtras,
       triggerDetail,
       dataTableDetail,
+      focusedRowKey,
     };
   },
 });
