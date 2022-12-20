@@ -8,18 +8,26 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
         <div class="step-content pt-20">
-            <form action="your-action">
-                <template v-if="step === 0">
-                    <Tab1 :option1="retirementIncome1" :option2="retirementIncome2" :dataDetail="dataDetailValue"
-                        @closePopup="setModalVisible" />
-                </template>
-                <template v-if="step === 1">
-                    <Tab2 />
-                </template>
-                <template v-if="step === 2">
-                    <Tab3 />
-                </template>
-            </form>
+            <a-spin :spinning="loading" size="large">
+                <form action="your-action">
+                    <keep-alive>
+                        <template v-if="step === 0">
+                            <Tab1 :dataDetail="dataDetailValue" @closePopup="setModalVisible"
+                                :actionNextStep="valueNextStep" @nextPage="step++" />
+                        </template>
+                    </keep-alive>
+                    <template v-if="step === 1">
+                        <keep-alive>
+                            <Tab2 v-model:dataDetail="dataDetailValue" />
+                        </keep-alive>
+                    </template>
+                    <template v-if="step === 2">
+                        <keep-alive>
+                            <Tab3 v-model:dataDetail="dataDetailValue" />
+                        </keep-alive>
+                    </template>
+                </form>
+            </a-spin>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -33,11 +41,11 @@
 import { defineComponent, ref, computed, reactive, watch } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
-import { useMutation , useQuery } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
 import Tab1 from './TabEdit/Tab1.vue';
 import Tab2 from './TabEdit/Tab2.vue';
-import Tab3 from './TabEdit/Tab3.vue'; 
+import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 
 export default defineComponent({
@@ -61,7 +69,9 @@ export default defineComponent({
         Tab1, Tab2, Tab3
     },
     setup(props, { emit }) {
+        const loading = ref(false)
         const step = ref(0)
+        const valueNextStep = ref(0)
         const dayValue = ref(1)
         const retirementIncome1 = ref(true)
         const retirementIncome2 = ref(true)
@@ -69,15 +79,7 @@ export default defineComponent({
         const trigger = ref(false)
         const statusModal = ref(props.modalStatus)
         const dataDetailValue = ref()
-        const option1 = reactive([
-            { id: true, text: '사원' },
-            { id: false, text: '일용직사원' }
-        ])
-        const option2 = reactive([
-            { id: true, text: '퇴직소득(퇴직자)' },
-            { id: false, text: '중도정산' }
-        ])
-        const setModalVisible = () => { 
+        const setModalVisible = () => {
             statusModal.value = false
             emit("closePopup", false)
         };
@@ -120,6 +122,11 @@ export default defineComponent({
             dataDetailValue.value = newValue.value.getIncomeRetirement
         }, { deep: true })
 
+        watch(() => dataDetailValue, (newValue) => {
+            // console.log(newValue.value);
+
+        }, { deep: true })
+
         // =========================  FUNCTION ===============================================
         // all Computed 
         const checkStepTwo = computed(() => {
@@ -153,19 +160,28 @@ export default defineComponent({
         const onSubmit = () => {
 
         };
-
         const changeStep = (stepChange: any) => {
             step.value = stepChange
+            loading.value = true
+            setTimeout(() => {
+                loading.value = false
+            }, 500);
         }
 
         const nextStep = (event: any) => {
-            if (step.value < 2) {
+            if (step.value == 0)
+                valueNextStep.value++
+            else if (step.value == 1)
                 step.value++
-            }
+
+
+            // if (step.value < 2) {
+            //     step.value++
+            // }
         }
 
         const prevStep = () => {
-            step.value--;
+            step.value--
         }
 
         const created = () => {
@@ -181,16 +197,17 @@ export default defineComponent({
             changeStep,
             nextStep, prevStep, created,
             openModalAdd,
+            loading,
             checkStepTwo,
             checkStepThree,
             checkStepFour,
             step,
             dayValue,
-            option1, option2,
             retirementIncome1,
             retirementIncome2,
             statusModal,
-            dataDetailValue
+            dataDetailValue,
+            valueNextStep,
         }
     },
 })

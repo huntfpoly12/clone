@@ -8,7 +8,7 @@
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
                     <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
-                    <template #imputed-year="{ data }">
+                    <template #imputed-year="{ }">
                         <span>지급연월</span>
                     </template>
                     <DxColumn width="100px" caption="01" cell-template="imputed-month1" />
@@ -120,7 +120,7 @@
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
                     </template>
                     <DxMasterDetail class="table-detail" :enabled="true" template="row-detail" />
-                    <template #row-detail="{ data }">
+                    <template #row-detail="{ }">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
                             :show-borders="true" :column-auto-width="true" :show-column-headers="false">
                             <DxColumn cell-template="col-first" data-type="string" />
@@ -317,7 +317,7 @@ export default defineComponent({
         }
         const processKey = computed(() => store.state.common.processKeyPA510)
         const modalCopy = ref<boolean>(false);
-        const amountFormat = ref({ currency: 'VND', useGrouping: true })
+        const amountFormat = ref({ useGrouping: true })
         const actionAddItem: any = ref<boolean>(true)
         const actionSaveItem: any = ref<number>(0)
         const actionUpdateItem: any = ref<number>(0)
@@ -397,29 +397,29 @@ export default defineComponent({
                     // data table detail
                     dataCustomRes.value[0]['month' + val.imputedMonth] =
                     {
-                        value: val.employeeStat ? `${val.employeeStat.employeeCount.toLocaleString('en-US', { currency: 'VND' })}(${val.employeeStat.retireEmployeeCount})` : 0,
+                        value: val.employeeStat ? `${filters.formatCurrency(val.employeeStat.employeeCount)}(${filters.formatCurrency(val.employeeStat.retireEmployeeCount)})` : 0,
                         ...dataAdd
                     }
 
                     dataCustomRes.value[1]['month' + val.imputedMonth] =
                     {
-                        value: val.incomeStat ? val.incomeStat.incomePayment.toLocaleString('en-US', { currency: 'VND' }) : 0,
+                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.incomePayment) : 0,
                         ...dataAdd
                     }
                     dataCustomRes.value[2]['month' + val.imputedMonth] = {
-                        value: val.incomeStat ? val.incomeStat.withholdingIncomeTax.toLocaleString('en-US', { currency: 'VND' }) : 0,
+                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.withholdingIncomeTax) : 0,
                         ...dataAdd
                     }
                     dataCustomRes.value[3]['month' + val.imputedMonth] = {
-                        value: val.incomeStat ? val.incomeStat.withholdingLocalIncomeTax.toLocaleString('en-US', { currency: 'VND' }) : 0,
+                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax) : 0,
                         ...dataAdd
                     }
                     dataCustomRes.value[4]['month' + val.imputedMonth] = {
-                        value: val.incomeStat ? val.incomeStat.totalDeduction.toLocaleString('en-US', { currency: 'VND' }) : 0,
+                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.totalDeduction) : 0,
                         ...dataAdd
                     }
                     dataCustomRes.value[5]['month' + val.imputedMonth] = {
-                        value: val.incomeStat ? val.incomeStat.actualPayment.toLocaleString('en-US', { currency: 'VND' }) : 0,
+                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.actualPayment) : 0,
                         ...dataAdd
                     }
                 })

@@ -3,55 +3,69 @@
         <a-col :span="12">
             <a-form-item label="퇴직급여(확정)">
                 <div class="d-flex-center">
-                    <number-box-money :required="false" width="150px" />
-                    <span class="pl-5">원</span>
-                    <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5 ml-5">
-                    <span class="custom-waring">
-                        실제 지급된 퇴직급여를 입력합니다.
-                    </span>
+                    <number-box-money :required="false" width="150px"
+                        v-model:valueInput="dataGet.specification.definedRetirementBenefits" />
+                    <span class="pl-5 mr-5">원</span>
+                    <a-tooltip placement="top" class="custom-tooltip">
+                        <template #title>
+                            실제 지급된 퇴직급여를 입력합니다.
+                        </template>
+                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                    </a-tooltip>
                 </div>
             </a-form-item>
             <a-form-item label="비과세퇴직급여(확정)">
                 <div class="d-flex-center">
-                    <number-box-money :required="false" width="150px" />
+                    <number-box-money :required="false" width="150px"
+                        v-model:valueInput="dataGet.specification.nonTaxableRetirementBenefits" />
                     <span class="pl-5">원</span>
                 </div>
             </a-form-item>
             <a-form-item label="과세대상 퇴직급여(확정)">
                 <div class="d-flex-center">
-                    <number-box-money :required="false" width="150px" />
-                    <span class="pl-5">원</span>
-                    <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5 ml-5">
-                    <span class="custom-waring">
-                        = 퇴직급여(확정) - 비과세퇴직급여(확정)
-                    </span>
+                    <number-box-money :required="false" width="150px"
+                        v-model:valueInput="dataGet.specification.taxableRetirementBenefits" />
+                    <span class="pl-5 mr-5">원</span>
+                    <a-tooltip placement="top" class="custom-tooltip">
+                        <template #title>
+                            = 퇴직급여(확정) - 비과세퇴직급여(확정)
+                        </template>
+                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                    </a-tooltip>
                 </div>
             </a-form-item>
             <a-form-item label="세액공제">
                 <div class="d-flex-top">
                     <div class="d-flex-center">
-                        <number-box-money :required="false" width="150px" />
-                        <span class="pl-5">원</span>
-                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5 ml-5">
+                        <number-box-money :required="false" width="150px"
+                            v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.taxCredit" />
+                        <span class="pl-5 mr-5">원</span>
+                        <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                                거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할 것이 있을 때에는 해당 금액을
+                                기재합니다.
+                            </template>
+                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                        </a-tooltip>
                     </div>
-                    <span class="custom-waring">
-                        거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할 것이 있을 때에는 해당 금액을 기재합니다.
-                    </span>
                 </div>
             </a-form-item>
             <a-form-item label="기납부(기과세이연)세액">
                 <div class="d-flex-center">
-                    <number-box-money :required="false" width="150px" />
-                    <span class="pl-5">원</span>
-                    <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5 ml-5">
-                    <span class="custom-waring">
-                        직전 중간정산시 소득세를 입력합니다.
-                    </span>
+                    <number-box-money :required="false" width="150px"
+                        v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount" />
+                    <span class="pl-5 mr-5">원</span>
+                    <a-tooltip placement="top" class="custom-tooltip">
+                        <template #title>
+                            직전 중간정산시 소득세를 입력합니다.
+                        </template>
+                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                    </a-tooltip>
                 </div>
             </a-form-item>
         </a-col>
         <a-col :span="12">
-            <div class="header-text-2 mb-10">연금계좌입금명세 (${계좌입금금액합계} 원)</div>
+            <div class="header-text-2 mb-10">연금계좌입금명세 {{ }} 원</div>
             <div class="d-flex">
                 <number-box-money :required="false" width="20%" class="mr-5" placeholder="연금계좌취급자" />
                 <number-box-money :required="false" width="20%" class="mr-5" placeholder="사업자등록번호" />
@@ -70,7 +84,6 @@
         <div class="mb-10 wf-100 text-center">
             <button-basic text="퇴직소득세 계산" type="default" mode="contained" />
         </div>
-
         <a-col :span="12">
             <div class="header-text-2 mb-10">과세표준계산</div>
             <a-form-item label="퇴직소득">
@@ -219,21 +232,36 @@
                     <number-box-money :required="false" width="150px" />
                     <span class="pl-5">원</span>
                 </div>
-            </a-form-item> 
+            </a-form-item>
         </a-col>
     </a-row>
 </template>
 
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, watch, reactive } from 'vue'
+import { useQuery } from "@vue/apollo-composable";
+import queries from "@/graphql/queries/PA/PA4/PA420/index";
+import { companyId } from '@/helpers/commonFunction';
+import dayjs from "dayjs";
+
 export default defineComponent({
+    props: {
+        dataDetail: Object,
+        actionNextStep: Number,
+    },
+
     setup(props, { emit }) {
+        const dataGet: any = ref({
+            ...props.dataDetail
+        })
 
-
+        watch(() => dataGet, (newValue) => {
+            emit("update:dataDetail", newValue);
+        }, { deep: true })
 
         return {
-
+            dataGet,
         }
     }
 })
