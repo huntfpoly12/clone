@@ -135,15 +135,19 @@
                               </div>
                           </a-form-item>
                       </div>
-                      <div class="header-text-2 mb-10 d-flex-center">
+                      <div class="header-text-2 mb-10">
+                        <div>
                           공제합계 <b class="ml-5"> {{ ($filters.formatCurrency(dataAction.input.paymentAmount -
                                   dataAction.input.withholdingIncomeTax -
                                   dataAction.input.withholdingLocalIncomeTax))
                           }}</b>원
+                        </div>
+                        <div>
                           <span class="d-flex-center fz-11 ml-10" style="color: gray;">
                               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                               지급액 - 공제합계
                           </span>
+                        </div>
                       </div>
                   </a-col>
               </a-row>
