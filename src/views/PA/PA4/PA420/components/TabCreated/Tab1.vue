@@ -1,6 +1,5 @@
 <template>
     <standard-form class="modal-add">
-        {{ dataForm }}
         <a-row :gutter="16">
             <a-col :span="12">
                 <a-form-item label="구분">
@@ -50,13 +49,13 @@
             </a-col>
             <div class="header-text-1">근속연수</div>
             <a-col :span="24">
-                <checkbox-basic size="13" label="중간지급여부" class="mb-10" v-model:valueCheckbox="valueCheckBox" />
+                <checkbox-basic size="13" label="중간지급여부" class="mb-10" v-model:valueCheckbox="dataForm.checkBoxCallApi" />
             </a-col>
             <a-col :span="12">
                 <div class="header-text-2 mb-10">중간지급 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!valueCheckBox" v-model:valueDate="prevSettlementStartDate" />
+                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataForm.checkBoxCallApi" v-model:valueDate="prevSettlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
                                 <template #title>퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.</template>
@@ -69,7 +68,7 @@
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!valueCheckBox" v-model:valueDate="prevSettlementFinishDate"/>
+                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataForm.checkBoxCallApi" v-model:valueDate="prevSettlementFinishDate"/>
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
                                 <template #title>퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</template>
@@ -81,11 +80,11 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일">
-                    <date-time-box :required="false" width="150px" :disabled="!valueCheckBox" v-model:valueDate="prevPaymentDate"/>
+                    <date-time-box :required="false" width="150px" :disabled="!dataForm.checkBoxCallApi" v-model:valueDate="prevPaymentDate"/>
                 </a-form-item>
                 <a-form-item label="제외일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!valueCheckBox" v-model:valueInput="dataForm.taxCalculationInput.prevRetiredYearsOfService.exclusionDays" />
+                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!dataForm.checkBoxCallApi" v-model:valueInput="dataForm.taxCalculationInput.prevRetiredYearsOfService.exclusionDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
                                 <template #title>정산시작(기산)일 기준 제외일수만큼 뒤로 미뤄서 근속일수를 계산합니다.</template>
@@ -98,7 +97,7 @@
                 </a-form-item>
                 <a-form-item label="가산일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!valueCheckBox" v-model:valueInput="dataForm.taxCalculationInput.prevRetiredYearsOfService.additionalDays"/>
+                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!dataForm.checkBoxCallApi" v-model:valueInput="dataForm.taxCalculationInput.prevRetiredYearsOfService.additionalDays"/>
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
                                 <template #title>정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</template>
@@ -178,19 +177,19 @@
                 <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
                 <a-form-item label="중간지급 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box-money :required="false" width="150px" :disabled="!valueCheckBox" v-model:valueInput="dataForm.taxCalculationInput.prevRetirementBenefitStatus.retirementBenefits"/>
+                        <number-box-money :required="false" width="150px" :disabled="!dataForm.checkBoxCallApi" v-model:valueInput="dataForm.taxCalculationInput.prevRetirementBenefitStatus.retirementBenefits"/>
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 비과세퇴직급여">
                     <div class="d-flex-center">
-                        <number-box-money :required="false" width="150px" :disabled="!valueCheckBox" v-model:valueInput="dataForm.taxCalculationInput.prevRetirementBenefitStatus.nonTaxableRetirementBenefits"/>
+                        <number-box-money :required="false" width="150px" :disabled="!dataForm.checkBoxCallApi" v-model:valueInput="dataForm.taxCalculationInput.prevRetirementBenefitStatus.nonTaxableRetirementBenefits"/>
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 과세대상 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box-money :required="false" width="150px" :disabled="!valueCheckBox" v-model:valueInput="dataForm.taxCalculationInput.prevRetirementBenefitStatus.taxableRetirementBenefits"/>
+                        <number-box-money :required="false" width="150px" :disabled="!dataForm.checkBoxCallApi" v-model:valueInput="dataForm.taxCalculationInput.prevRetirementBenefitStatus.taxableRetirementBenefits"/>
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
@@ -233,11 +232,12 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed, reactive } from 'vue'
 import dayjs from "dayjs";
-import { useStore } from 'vuex';
+
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId, openTab } from '@/helpers/commonFunction';
 import { arrayReasonResignationUtils } from '../../utils/index'
+import { Formula } from "@bankda/jangbuda-common";
 export default defineComponent({
     props: {
         option1: Boolean,
@@ -246,49 +246,39 @@ export default defineComponent({
             type: Object,
             default: {}
         },
-        modalStatusAccept: Boolean,
+        arrayEmploySelect: {
+            type: Array,
+            default: []
+        },
     },
     setup(props, { emit }) {
-        let valueSelected = ref()
         const joinedAt = ref()
         const settlementStartDate = ref(null)
         const settlementFinishDate = ref(null)
         // Prev
-        const prevSettlementStartDate = ref(null)
-        const prevSettlementFinishDate = ref(null)
+        const prevSettlementStartDate: any = ref(null)
+        const prevSettlementFinishDate: any = ref(null)
         const prevPaymentDate = ref(null)
 
         // Last
         const lastSettlementStartDate = ref(null)
         const lastSettlementFinishDate = ref(null)
         const lastPaymentDate = ref(null)
-        
-        // const dataForm = reactive({ ...initialFormState });
-        const valueCheckBox = ref<boolean>(false);
+
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
-        const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
-        store.dispatch('common/getListEmployee', {
-            companyId: companyId,
-            imputedYear: globalYear,
-        })
 
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
-        const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410)
+        
 
         // =============== GRAPQL ==================================
 
 
         // =============== WATCH ==================================
-        watch(valueSelected, (value) => {
-            console.log(value);
-
-        });
-        watch(month1, (value) => {
-            props.dataForm.processKey.imputedYear = parseInt(value.split('-')[0])
-            props.dataForm.processKey.imputedMonth = parseInt(value.split('-')[1])
-        });
+        // watch(month1, (value) => {
+        //     props.dataForm.processKey.imputedYear = parseInt(value.split('-')[0])
+        //     props.dataForm.processKey.imputedMonth = parseInt(value.split('-')[1])
+        // });
         watch(month2, (value) => {
             props.dataForm.processKey.paymentYear = parseInt(value.split('-')[0])
             props.dataForm.processKey.paymentMonth = parseInt(value.split('-')[1])
@@ -323,15 +313,22 @@ export default defineComponent({
 
         
         watch(() => props.dataForm.input.employeeId, (value) => {
-            let dataEmployee = arrayEmploySelect.value.find((element: any) => element.employeeId == value)
+            let dataEmployee: any = props.arrayEmploySelect.find((element: any) => element.employeeId == value)
             props.dataForm.input.employeeType = dataEmployee?.type
             joinedAt.value = dataEmployee?.joinedAt
         });
 
-        watch(() => props.modalStatusAccept, (value) => {
-            console.log(value);
+        watch(() => props.dataForm.taxCalculationInput.prevRetiredYearsOfService, (value: any) => {
 
-        });
+            console.log(value);
+            let objectData = Formula.getDateOfService(
+                prevSettlementStartDate.value,
+                prevSettlementFinishDate.value,
+                value.exclusionDays,
+                value.additionalDays);
+                console.log(objectData);
+            
+        }, { deep: true });
 
 
         // =============== FUNCTION ================================
@@ -340,12 +337,8 @@ export default defineComponent({
             // openTab({ name: "사원등록", url: "/dashboard/pa-120", id: "pa-120" })
         };
         return {
-            // dataForm,
-            valueSelected,
-            arrayEmploySelect,
             month1, month2,
             arrayReasonResignation,
-            valueCheckBox,
             openNewTab,
             joinedAt,
             prevSettlementStartDate,
