@@ -23,7 +23,7 @@
               :value="data.data.month_1?.status"
               :year="data.data.month_1?.paymentYear"
               :month="data.data.month_1?.paymentMonth"
-              :isUnder="true"
+              :isUnder="month == 1"
               @click="showDetailSelected(data.data.month_1)"
             />
             <div v-else @click="onAddMonth(1)">[+]</div>
@@ -36,7 +36,7 @@
               :year="data.data.month_2?.paymentYear"
               :month="data.data.month_2?.paymentMonth"
               @click="showDetailSelected(data.data.month_2)"
-              :isUnder="true"
+              :isUnder="month == 2"
             />
             <div v-else @click="onAddMonth(2)">[+]</div>
           </template>
@@ -48,7 +48,7 @@
               :year="data.data.month_3?.paymentYear"
               :month="data.data.month_3?.paymentMonth"
               @click="showDetailSelected(data.data.month_3)"
-              :isUnder="true"
+              :isUnder="month == 3"
             />
             <div v-else @click="onAddMonth(3)">[+]</div>
           </template>
@@ -60,7 +60,7 @@
               :year="data.data.month_4?.paymentYear"
               :month="data.data.month_4?.paymentMonth"
               @click="showDetailSelected(data.data.month_4)"
-              :isUnder="true"
+              :isUnder="month == 4"
             />
             <div v-else @click="onAddMonth(4)">[+]</div>
           </template>
@@ -72,7 +72,7 @@
               :year="data.data.month_5?.paymentYear"
               :month="data.data.month_5?.paymentMonth"
               @click="showDetailSelected(data.data.month_5)"
-              :isUnder="true"
+              :isUnder="month == 5"
             />
             <div v-else @click="onAddMonth(5)">[+]</div>
           </template>
@@ -84,7 +84,7 @@
               :year="data.data.month_6?.paymentYear"
               :month="data.data.month_6?.paymentMonth"
               @click="showDetailSelected(data.data.month_6)"
-              :isUnder="true"
+              :isUnder="month == 6"
             />
             <div v-else @click="onAddMonth(6)">[+]</div>
           </template>
@@ -96,7 +96,7 @@
               :year="data.data.month_7?.paymentYear"
               :month="data.data.month_7?.paymentMonth"
               @click="showDetailSelected(data.data.month_7)"
-              :isUnder="true"
+              :isUnder="month == 7"
             />
             <div v-else @click="onAddMonth(7)">[+]</div>
           </template>
@@ -108,7 +108,7 @@
               :year="data.data.month_8?.paymentYear"
               :month="data.data.month_8?.paymentMonth"
               @click="showDetailSelected(data.data.month_8)"
-              :isUnder="true"
+              :isUnder="month == 8"
             />
             <div v-else @click="onAddMonth(8)">[+]</div>
           </template>
@@ -120,7 +120,7 @@
               :year="data.data.month_9?.paymentYear"
               :month="data.data.month_9?.paymentMonth"
               @click="showDetailSelected(data.data.month_9)"
-              :isUnder="true"
+              :isUnder="month == 9"
             />
             <div v-else @click="onAddMonth(9)">[+]</div>
           </template>
@@ -132,7 +132,7 @@
               :year="data.data.month_10?.paymentYear"
               :month="data.data.month_10?.paymentMonth"
               @click="showDetailSelected(data.data.month_10)"
-              :isUnder="true"
+              :isUnder="month == 10"
             />
             <div v-else @click="onAddMonth(10)">[+]</div>
           </template>
@@ -144,7 +144,7 @@
               :year="data.data.month_11?.paymentYear"
               :month="data.data.month_11?.paymentMonth"
               @click="showDetailSelected(data.data.month_11)"
-              :isUnder="true"
+              :isUnder="month == 11"
             />
             <div v-else @click="onAddMonth(11)">[+]</div>
           </template>
@@ -156,7 +156,7 @@
               :year="data.data.month_12?.paymentYear"
               :month="data.data.month_12?.paymentMonth"
               @click="showDetailSelected(data.data.month_12)"
-              :isUnder="true"
+              :isUnder="month == 12"
             />
             <div v-else @click="onAddMonth(12)">[+]</div>
           </template>
@@ -270,21 +270,19 @@
         />
         <ProcessStatus v-model:valueStatus="statusParam.status" @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
-      <a-col class="">
+      <a-col style="display: inline-flex; align-items: center">
         <DxButton class="ml-3" @click="deleteItem">
           <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
         </DxButton>
         <DxButton class="ml-3" icon="plus" @click="addItem" />
         <DxButton class="ml-3" icon="edit" @click="editItem" />
-        <a-dropdown placement="bottomCenter" class="ml-5">
+        <div class="custom-select-tab">
+          <router-link to="/dashboard/pa-710" style="color: white"> 기타소득자등록 </router-link>
+        </div>
+        <a-dropdown placement="bottom" class="ml-3">
           <a-button>선택 <DownOutlined /></a-button>
           <template #overlay>
             <a-menu>
-              <a-menu-item>
-                <div class="custom-select-tab">
-                  <a href="/dashboard/pa-710" style="color: white"> 기타소득자등록 </a>
-                </div>
-              </a-menu-item>
               <a-menu-item>
                 <a-tooltip placement="left">
                   <template #title>사업소득자료 변경이력</template>
@@ -346,13 +344,12 @@ import EditPopup from './components/Popup/EditPopup.vue';
 import ProcessStatus from '@/components/common/ProcessStatus.vue';
 import TaxPayInfo from './components/TaxPayInfo.vue';
 import FormTaxPayInfo from './components/FormTaxPayInfo.vue';
-import { taxDateIndex, dataActionUtils } from './utils/index';
+import { dataActionUtils } from './utils/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import notification from '@/utils/notification';
-import type { DropdownProps } from 'ant-design-vue';
 import { HistoryOutlined } from '@ant-design/icons-vue';
 import CopyMonth from './components/Popup/CopyMonth.vue';
-import { UserOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { DownOutlined } from '@ant-design/icons-vue';
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -377,15 +374,6 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const trigger = ref<boolean>(true);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
-    const modalEmailSingle = ref(false);
-    const modalEmailSinglePayrollRegister = ref(false);
-    const modalEmailMulti = ref(false);
-
-    const popupDataEmailSingle = ref({});
-    const popupDataEmailSinglePayrollRegister = ref({});
-    const popupDataEmailMulti = ref({});
-
     // const modalPrintSalaryStatement = ref<boolean>(false);
     const modalDelete = ref<boolean>(false);
     const modalEdit = ref<boolean>(false);
@@ -396,7 +384,7 @@ export default defineComponent({
       imputedYear: globalYear,
     });
     let actionSave = ref(0);
-    const editTaxParam = ref<any>({ ...taxDateIndex });
+    const editTaxParam = ref<any>({});
     const editTax = (emit: any) => {
       editTaxParam.value = emit;
     };
@@ -439,11 +427,10 @@ export default defineComponent({
       dataSource.value = value.getIncomeProcessExtras;
       trigger.value = false;
     });
-    watch(changeFommDone, (value) => {
+    watch(changeFommDone, () => {
       trigger.value = true;
       refetchIncomeProcessExtras();
     });
-
     // ======================= form ================================
     const deleteItem = () => {
       modalDelete.value = true;
@@ -462,13 +449,20 @@ export default defineComponent({
         popupAddStatus.value = true;
       }
     };
+    const resetForm = () => {
+      resetFormNum.value++;
+      formTaxRef.value.triggerIncomeExtra = false;
+      formTaxRef.value.newDateLoading = false;
+      setTimeout(() => {
+        formTaxRef.value.isResetComponent = !formTaxRef.value.isResetComponent;
+      }, 200);
+    };
     const onSubmit = (e: any) => {
       actionSave.value++;
     };
     const onFormDone = () => {
       changeFommDone.value++;
-      resetFormNum.value++;
-      formTaxRef.value.triggerIncomeExtra = false;
+      resetForm();
     };
     onDoneChangeIncomeProcessExtraStatusDone((res) => {
       notification('success', `업데이트 완료!`);
@@ -493,11 +487,11 @@ export default defineComponent({
     const onAddIncomeProcess = (emit: any) => {
       dataAddIncomeProcess.value = emit;
     };
-    const onPopupComfirm = () => {
-      resetFormNum.value++;
-      formTaxRef.value.triggerIncomeExtra = false;
+    const onPopupComfirm = (emit: Boolean) => {
+      if (emit) {
+        resetForm();
+      }
     };
-
     //compute data function
     const checkLen = (text: String) => {
       if (text.length > 10) {
@@ -511,7 +505,9 @@ export default defineComponent({
       }
       return month;
     };
-
+    // active tab
+    const month = ref<number>(0);
+    // fnc click month
     const showDetailSelected = (obj: any) => {
       incomeExtrasParams.processKey.imputedMonth = obj.imputedMonth;
       incomeExtrasParams.processKey.imputedYear = obj.imputedYear;
@@ -519,6 +515,8 @@ export default defineComponent({
       incomeExtrasParams.processKey.paymentMonth = obj.paymentMonth;
       dataAddIncomeProcess.value = { ...incomeExtrasParams.processKey };
       statusParam.value = { ...incomeExtrasParams, status: obj.status };
+      resetForm();
+      month.value = obj.imputedMonth;
     };
     const IncomeProcessExtrasCustom = ref<any>([]);
     let columnData = ref<any>([{}]);
@@ -527,30 +525,12 @@ export default defineComponent({
     onResultIncomeProcessExtras((res: any) => {
       let responeData = res.data.getIncomeProcessExtras;
       IncomeProcessExtrasCustom.value = [
-        {
-          id: 1,
-          name: '인원',
-        },
-        {
-          id: 2,
-          name: '지급액',
-        },
-        {
-          id: 3,
-          name: '소득세',
-        },
-        {
-          id: 4,
-          name: '지방소득세',
-        },
-        {
-          id: 5,
-          name: '공제총액',
-        },
-        {
-          id: 6,
-          name: '차인지급액',
-        },
+        { id: 1, name: '인원' },
+        { id: 2, name: '지급액' },
+        { id: 3, name: '소득세' },
+        { id: 4, name: '지방소득세' },
+        { id: 5, name: '공제총액' },
+        { id: 6, name: '차인지급액' },
       ];
       const addObj = (monthNum: number, val: any) => {
         if (val.imputedMonth == monthNum) {
@@ -624,12 +604,6 @@ export default defineComponent({
       popupDataDelete,
       editItem,
       modalEdit,
-      modalEmailSingle,
-      modalEmailSinglePayrollRegister,
-      modalEmailMulti,
-      popupDataEmailSingle,
-      popupDataEmailSinglePayrollRegister,
-      popupDataEmailMulti,
       checkLen,
       globalYear,
       showDetailSelected,
@@ -662,6 +636,7 @@ export default defineComponent({
       popupAddStatus,
       onPopupComfirm,
       isRunOnce,
+      month,
     };
   },
 });

@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;
-    align-items: center;" :class="{'text_under':isUnder}">
+    align-items: center;" :class="{'text_under':isUnder, 'hover_text': true}">
         <span style="margin-right: 5px;">{{year}}-{{month > 9 ? month : '0'+month}}</span>
         <div v-if="value == 10" class="badge entering"></div>
         <div v-if="value == 20" class="badge input closing"></div>
@@ -56,9 +56,7 @@ export default defineComponent({
     border: 3px solid rgb(114, 4, 4);
 }
 .text_under{
-    &:hover{
-        text-decoration: underline;
-    }
+    text-decoration: underline;
 }
 </style>
     
