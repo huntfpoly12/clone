@@ -2,7 +2,7 @@
     margin-top: 10px;
 
 
-
+    
     .total-user {
         background-color: #17375E;
         color: white;
@@ -99,6 +99,9 @@
         text-decoration: underline;
     }
 
+    .current-underlined {
+      text-decoration: underline;
+    }
     ::v-deep .form-action {
         label {
             width: 120px;
@@ -158,6 +161,15 @@
         .dp__icon {
             display: none;
         }
+    }
+
+    .open-tab{
+      color: white;
+      background-color: blue;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      height: 35px;
     }
 
 

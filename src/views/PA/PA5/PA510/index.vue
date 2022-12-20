@@ -8,7 +8,7 @@
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
                     <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
-                    <template #imputed-year="{ data }">
+                    <template #imputed-year="{ }">
                         <span>지급연월</span>
                     </template>
                     <DxColumn width="100px" caption="01" cell-template="imputed-month1" />
@@ -120,7 +120,7 @@
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
                     </template>
                     <DxMasterDetail class="table-detail" :enabled="true" template="row-detail" />
-                    <template #row-detail="{ data }">
+                    <template #row-detail="{ }">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
                             :show-borders="true" :column-auto-width="true" :show-column-headers="false">
                             <DxColumn cell-template="col-first" data-type="string" />
