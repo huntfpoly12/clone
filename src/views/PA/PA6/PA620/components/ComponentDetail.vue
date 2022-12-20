@@ -2,11 +2,11 @@
   <a-col :span="24">
       <div class="header-detail-main">
           <div class="table-detail-left d-flex-center">
-              <div class="text-box-1">귀 {{ dataTableDetail.processKey.imputedYear }}-{{
-                      dataTableDetail.processKey.imputedMonth
+              <div class="text-box-1">귀 {{ processKey.imputedYear }}-{{
+                      processKey.imputedMonth
               }}</div>
-              <div class="text-box-2">지 {{ dataTableDetail.processKey.paymentYear }}-{{
-                      dataTableDetail.processKey.paymentMonth
+              <div class="text-box-2">지 {{ processKey.paymentYear }}-{{
+                      processKey.paymentMonth
               }}</div>
               <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm"/>
           </div>
@@ -17,7 +17,7 @@
               <DxButton class="ml-3" icon="plus" @click="addRow" />
               <DxButton class="ml-3" icon="edit" @click="editPaymentDate" />
               <button-basic  :width="150" text="기타소득자등록" class="open-tab"  @onClick="onItemClick('openTab')"></button-basic>
-              <template v-for="(placement, index) in placements" :key="placement">
+              <template v-for="(placement) in placements" :key="placement">
                   <a-dropdown :placement="placement" class="ml-5">
                       <a-button class="button-open-tab">선택</a-button>
                       <template #overlay>
@@ -84,7 +84,7 @@
       </a-spin>
   </a-col>
   <a-col :span="10" class="custom-layout form-action">
-      <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingDetailEdit || loadingEdit)" size="large">
+      <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit)" size="large">
           <a-form-item label="사업소득자" label-align="right">
               <employ-type-select :disabled="disabledInput" :arrayValue="arrayEmploySelect"
                   v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
@@ -135,15 +135,19 @@
                               </div>
                           </a-form-item>
                       </div>
-                      <div class="header-text-2 mb-10 d-flex-center">
+                      <div class="header-text-2 mb-10">
+                        <div>
                           공제합계 <b class="ml-5"> {{ ($filters.formatCurrency(dataAction.input.paymentAmount -
                                   dataAction.input.withholdingIncomeTax -
                                   dataAction.input.withholdingLocalIncomeTax))
                           }}</b>원
+                        </div>
+                        <div>
                           <span class="d-flex-center fz-11 ml-10" style="color: gray;">
                               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                               지급액 - 공제합계
                           </span>
+                        </div>
                       </div>
                   </a-col>
               </a-row>
@@ -158,7 +162,7 @@
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="actionDeleteSuccess" :data="dataTableDetail.processKey"
       title="변경이력" typeHistory="pa-620-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
-      :processKey="dataTableDetail.processKey" />
+      :processKey="dataTableDetail.processKey"/>
 </template>
 
 <script lang="ts">
@@ -188,9 +192,6 @@ export default defineComponent({
       DeletePopup, EditPopup
   },
   props: {
-      dataCallTableDetail: {
-          type: Object
-      },
       statusBt: {
           type: Number
       },
@@ -237,10 +238,11 @@ export default defineComponent({
       })
       let dataCallApiGetOption = ref({
           companyId: companyId,
-          imputedYear: globalYear,
+          imputedYear: globalYear.value,
       })
-      let dataTableDetail: any = ref({
-          ...props.dataCallTableDetail
+    let dataTableDetail: any = reactive({
+          companyId: companyId,
+          processKey: processKey.value
       })
       let dataCallApiDetailEdit = reactive({
           ...dataGetDetailEdit
@@ -257,9 +259,9 @@ export default defineComponent({
           enabled: triggerDetail.value,
           fetchPolicy: "no-cache",
       }));
-      resIncomeProcessBusinessesDetail(res => {
+    resIncomeProcessBusinessesDetail(res => {
           dataSourceDetail.value = res.data.getIncomeBusinesses
-          triggerDetail.value = false
+           triggerDetail.value = false
       })
       errorGetIncomeProcessBusinessesDetail(res => {
           notification('error', res.message)
@@ -296,6 +298,7 @@ export default defineComponent({
               dataAction.input.paymentAmount = respon.paymentAmount
               dataAction.input.withholdingIncomeTax = respon.withholdingIncomeTax
               dataAction.input.withholdingLocalIncomeTax = respon.withholdingLocalIncomeTax
+              triggerDetailDetailEdit.value = false;
           }
       }, { deep: true })
       errorDetailEdit(res => {
@@ -337,7 +340,7 @@ export default defineComponent({
       })
 
       // ================WATCHING============================================
-      watch(() => props.dataCallTableDetail, (newValue) => {
+      watch(() => processKey.value, (newValue) => {
           dataTableDetail.value = newValue
           triggerDetail.value = true
           refetchTableDetail()
@@ -405,7 +408,7 @@ export default defineComponent({
       const actionEditFuc = (data: any) => {
           disabledInput.value = true
           switchAction.value = false
-          dataCallApiDetailEdit.processKey = dataTableDetail.value.processKey
+          dataCallApiDetailEdit.processKey = processKey.value
           dataCallApiDetailEdit.incomeId = data.data.incomeId
           triggerDetailDetailEdit.value = true
           refetchDetailEdit()
@@ -477,7 +480,7 @@ export default defineComponent({
       return {
           month1, month2,
           arrayEmploySelect,
-          statusButton,
+          statusButton,dataActionUtils,
           dataTableDetail,
           dataAction,
           rowTable, per_page, move_column, colomn_resize,
@@ -495,7 +498,7 @@ export default defineComponent({
           modalHistory,
           modalHistoryStatus,
           modalEdit,
-          addRow,
+          addRow,processKey,
           deleteItem,
           actionEditFuc,
           changeIncomeTypeCode,
