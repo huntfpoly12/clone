@@ -18,7 +18,7 @@
                 <DxButton @click="editPaymentDate">
                     <EditOutlined style="font-size: 18px;" />
                 </DxButton>
-                <template v-for="(placement, index) in placements" :key="placement">
+                <template v-for="(placement) in placements" :key="placement">
                     <a-dropdown :placement="placement" class="ml-5">
                         <a-button class="button-open-tab">선택</a-button>
                         <template #overlay>
@@ -199,7 +199,7 @@ export default defineComponent({
         dataCallTableDetail: {
             type: Object
         },
-        statusButton: {
+        statusBt: {
             type: Number
         },
         actionSave: {
@@ -211,7 +211,7 @@ export default defineComponent({
         let switchAction = ref<boolean>(true)
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
-        let statusButton = ref(props.statusButton)
+        let statusButton = ref(props.statusBt)
         let dataSourceDetail = ref([]);
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
@@ -349,7 +349,7 @@ export default defineComponent({
             month2.value = dayjs(date2).format("YYYY-MM")
         }, { deep: true })
 
-        watch(() => props.statusButton, (newValue) => {
+        watch(() => props.statusBt, (newValue) => {
             statusButton.value = newValue
         })
 
