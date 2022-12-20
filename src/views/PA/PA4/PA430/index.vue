@@ -14,8 +14,9 @@
           <a-col>
             <div class=" custom-flex">
               <label class="lable-item">영수일:</label>
-              <a-range-picker :placeholder="['2022-09', '2022-11']" format="YYYY-MM" :value="value" :mode="mode2"
-                locale="ko" @panelChange="handlePanelChange2" @change="handleChange" />
+              {{ rangeDate }}
+              <a-range-picker :placeholder="['Start Month', 'Finish Month']" format="YYYY-MM" v-model="rangeDate" :mode="['month', 'month']"
+                locale="ko" />
             </div>
           </a-col>
           <a-col>
@@ -57,14 +58,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" @selection-changed="selectionChanged">
-          <!-- <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                  <DxExport :enabled="true" :allow-export-selected-data="true" /> -->
           <DxToolbar>
-            <!-- <DxItem name="searchPanel" />
-                      <DxItem name="exportButton" />
-                      <DxItem name="groupPanel" />
-                      <DxItem name="addRowButton" show-text="always" />
-                      <DxItem name="columnChooserButton" /> -->
             <DxItem template="send-group-mail" />
           </DxToolbar>
           <template #send-group-mail>
@@ -100,10 +94,10 @@
           <DxColumn caption="지급연월" data-field="withholdingIncomeTax" />
           <DxColumn caption="퇴직급여" data-field="withholdingLocalIncomeTax" />
           <DxColumn caption="비과세 퇴직급여" data-field="paymentAmount" />
-          <DxColumn caption="과세대상 퇴직급여" data-field="test1" />
-          <DxColumn caption="공제" data-field="test1" />
-          <DxColumn caption="차인지급액" data-field="test1" />
-          <DxColumn caption="비고" data-field="test1" />
+          <DxColumn caption="과세대상 퇴직급여" />
+          <DxColumn caption="공제"  />
+          <DxColumn caption="차인지급액" />
+          <DxColumn caption="비고"  />
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
             <div class="custom-action" style="text-align: center;">
@@ -138,6 +132,7 @@
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
+import dayjs from 'dayjs';
 import DxButton from "devextreme-vue/button";
 import {
   DxDataGrid,
@@ -187,62 +182,16 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const modalEmailSingle = ref(false)
     const modalEmailMulti = ref(false)
-    const dataSource = ref([
-      {
-        paymentAmount: 2,
-        withholdingIncomeTax: 5,
-        withholdingLocalIncomeTax: 20,
-        employee: {
-          type: 1,
-          employeeId: 40,
-          incomeTypeCode: 'qweqw',
-          name: 'rqweqwe',
-          email: 'qrqweqw@gmail.com',
-          foreigner: false,
-          residentIdValidity: true,
-          status: 10,
-          residentId: '12312412',
-          incomeTypeName: '31231'
-        }
-      },
-      {
-        paymentAmount: 2,
-        withholdingIncomeTax: 5,
-        withholdingLocalIncomeTax: 20,
-        employee: {
-          type: 1,
-          employeeId: 40,
-          incomeTypeCode: '3123',
-          name: '412312',
-          email: 'sdqe13@gmail.com',
-          foreigner: true,
-          residentIdValidity: true,
-          status: 20,
-          residentId: '4123',
-          incomeTypeName: '1231'
-        }
-      },
 
-
-    ]);
+    const dataSource = ref([]);
     const arrayRadioCheck = ref([
       { id: 0, text: "전체" },
       { id: 1, text: "퇴직소득" },
       { id: 2, text: "중간정산" },
     ]);
     const valueRadioBox = ref(0);
-    const mode2 = ref(["month", "month"]);
-    const value = ref([]);
-    const handleChange = (val: any) => {
-      value.value = val;
-    };
-    const handlePanelChange2 = (val: any, mode: any) => {
-      value.value = val;
-      mode2.value = [
-        mode[0] === "date" ? "month" : mode[0],
-        mode[1] === "date" ? "month" : mode[1],
-      ];
-    };
+    const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
+
     const getColorTag = (data: any) => {
       if (data == 10) {
         return { name: "red", tag_name: "신청" };
@@ -256,7 +205,12 @@ export default defineComponent({
     };
     const originData = ref({
       companyId: companyId,
-      imputedYear: globalYear,
+      filter: {
+        imputedYear: globalYear.value,
+        startMonth: '',
+        finishMonth: '',
+        type: '',
+      },
     });
     const valueDefaultIncomeRetirement = ref({
       companyId: companyId,
@@ -270,6 +224,10 @@ export default defineComponent({
         incomeTypeCode: ""
       }
     });
+
+    /**
+     *  search Income Retirement Withholding Receipts
+     */
     const {
       refetch: refetchData,
       result,
@@ -278,6 +236,7 @@ export default defineComponent({
       enabled: trigger.value,
       fetchPolicy: "no-cache",
     }));
+
     const onExporting = (e: { component: any; cancel: boolean }) => {
       onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
     };
@@ -342,7 +301,7 @@ export default defineComponent({
 
     watch(result, (value) => {
       if (value) {
-        // dataSource.value = value.searchIncomeRetirementWithholdingReceipts;
+        dataSource.value = value.searchIncomeRetirementWithholdingReceipts;
         trigger.value = false;
       }
     });
@@ -390,10 +349,7 @@ export default defineComponent({
       onCloseEmailMultiModal,
       selectionChanged,
       emailUserLogin,
-      mode2,
-      value,
-      handleChange,
-      handlePanelChange2,
+      rangeDate,
       valueRadioBox,
       arrayRadioCheck,
       getColorTag
