@@ -105,10 +105,17 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-        const { refetch: refetchGetDetail, onError: errorGetDetail, result: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
+        const { refetch: refetchGetDetail, onError: errorGetDetail, onResult: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
+        resultGetDetail(newValue => {
+            dataDetailValue.value =
+            {
+                ...newValue.data.getIncomeRetirement,
+                "checkBoxCallApi": true,
+            }
+        })
         errorGetDetail(res => {
             notification('error', res.message)
         })
@@ -121,13 +128,6 @@ export default defineComponent({
             refetchGetDetail()
         }, { deep: true })
 
-        watch(() => resultGetDetail, (newValue) => {
-            dataDetailValue.value =
-            {
-                ...newValue.value.getIncomeRetirement,
-                "checkBoxCallApi": true,
-            }
-        }, { deep: true })
 
         // =========================  FUNCTION ===============================================
         // all Computed 
@@ -221,11 +221,11 @@ export default defineComponent({
 
             mutate(cleanData)
         }
-       
+
         return {
             setModalVisible,
             changeStep,
-            nextStep, prevStep, updated, 
+            nextStep, prevStep, updated,
             checkStepTwo,
             checkStepThree,
             checkStepFour,

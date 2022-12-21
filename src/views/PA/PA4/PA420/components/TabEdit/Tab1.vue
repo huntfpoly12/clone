@@ -218,7 +218,6 @@
                 <div class="header-text-2 mb-10">정산 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <!-- {{ dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate }} -->
                         <date-time-box width="150px"
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
@@ -310,8 +309,9 @@ export default defineComponent({
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
 
+
         watch(() => valueSelected, (newVal) => {
-            dataGet.value.employee.joinedAt = (arrayEmploySelect.find((val: any) => val.employeeId === newVal.value).joinedAt).toString()
+            dataGet.value.employee.joinedAt = arrayEmploySelect.find((val: any) => val.employeeId === newVal.value).joinedAt
         }, { deep: true });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
@@ -350,6 +350,24 @@ export default defineComponent({
             yearsOfService3.year = objectData.yearsOfService
         }, { deep: true });
 
+
+        let indexChange = ref(0)
+        watch(() => [
+            dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate,
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate, dataGet.value.checkBoxCallApi], ([newA, newB, newC, checkBoxNew], [prevA, prevB, prevC, checkBoxOld]) => {
+                if (indexChange)
+                    if (checkBoxNew == true) {
+                        dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newA
+                        dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
+                    } else {
+                        dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newC
+                        dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
+                    }
+
+
+                indexChange.value++
+            });
         // =============== FUNCTION ================================
         const openTabFuc = () => {
             emit('closePopup', true)
@@ -364,6 +382,9 @@ export default defineComponent({
                 emit('nextPage', true)
             }
         }
+
+
+
         return {
             yearsOfService1, yearsOfService2, yearsOfService3,
             valueSelected,
