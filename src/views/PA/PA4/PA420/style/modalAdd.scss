@@ -52,13 +52,24 @@
     }
 }
 
-
 ::v-deep .label-required {
     label {
         color: red;
     }
 }
-
+.block-radio {
+    margin: 20px 100px;
+    text-align: center;
+}
+.radio-group {
+    padding: 5px;
+    border-radius: 10px;
+    margin: 10px 0;
+    border: 1px solid #337ab7;
+}
+::v-deep .dx-widget {
+    justify-content: space-evenly;
+}
 .modal-add {
     ::v-deep label {
         min-width: 120px;

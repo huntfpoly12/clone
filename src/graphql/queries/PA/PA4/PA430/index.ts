@@ -2,8 +2,8 @@ import getIncomeRetirementWithholdingReceiptReportViewUrl from "./getIncomeRetir
 import searchIncomeRetirementWithholdingReceipts from "./searchIncomeRetirementWithholdingReceipts";
 
 const queries = {
-  // getIncomeRetirementWithholdingReceiptReportViewUrl:
-  //   getIncomeRetirementWithholdingReceiptReportViewUrl,
+  getIncomeRetirementWithholdingReceiptReportViewUrl:
+    getIncomeRetirementWithholdingReceiptReportViewUrl,
   searchIncomeRetirementWithholdingReceipts:
     searchIncomeRetirementWithholdingReceipts,
 };
