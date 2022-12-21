@@ -23,7 +23,7 @@
             <a-col :span="12">
                 <a-form-item label="사원" class="label-required">
                     <employ-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="valueSelected" width="350px"
-                        :required="true" />
+                        :required="true" disabled="true" />
                 </a-form-item>
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
@@ -54,6 +54,7 @@
             </a-col>
             <a-col :span="12">
                 <div class="header-text-2 mb-10">중간지급 근속연수</div>
+                <!-- {{ typeof dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate }} -->
                 <a-form-item label="정산시작(입사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataGet.checkBoxCallApi"
@@ -71,7 +72,7 @@
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataGet.checkBoxCallApi"
+                        <date-time-box width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate"
                             :required="true" />
                         <div class="ml-5 d-flex-center">
@@ -221,7 +222,8 @@
                 <div class="header-text-2 mb-10">정산 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                        <!-- {{ dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate }} -->
+                        <date-time-box width="150px"
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -285,20 +287,6 @@ export default defineComponent({
         watch(() => props.dataDetail, (value: any) => {
             dataGet.value = value
             month1.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYY-MM")
-            if (value.specification.specificationDetail.prevRetiredYearsOfService) {
-                dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate = dayjs(value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate.toString()).format('YYYY-MM-DD')
-                dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate = dayjs(value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate.toString()).format('YYYY-MM-DD')
-            }
-
-            if (value.specification.specificationDetail.lastRetiredYearsOfService) {
-                dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = dayjs(value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate.toString()).format('YYYY-MM-DD')
-                dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate = dayjs(value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate.toString()).format('YYYY-MM-DD')
-            }
-
-            if (value.specification.specificationDetail.settlementRetiredYearsOfService) {
-                dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = dayjs(value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate.toString()).format('YYYY-MM-DD')
-                dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = dayjs(value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate.toString()).format('YYYY-MM-DD')
-            }
         }, { deep: true });
 
         watch(() => props.actionNextStep, (newVal) => {
@@ -337,8 +325,6 @@ export default defineComponent({
     }
 })
 </script>
-
-
 <style lang="scss" scoped src="../../style/modalAdd.scss">
 
 </style>

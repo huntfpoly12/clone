@@ -237,7 +237,7 @@ export const arrayReasonResignationUtils = [
     },
 ]
 
-export const dataDefaultDetailUtils = { 
+export const dataDefaultDetailUtils = {
     "incomeId": 0,
     "paymentDay": 0,
     "retirementType": 0,
@@ -355,7 +355,5 @@ export const dataDefaultDetailUtils = {
         "definedRetirementBenefits": 0,
         "nonTaxableRetirementBenefits": 0,
         "taxableRetirementBenefits": 0,
-
     }
-
 }

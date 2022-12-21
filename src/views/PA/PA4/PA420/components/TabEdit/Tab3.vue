@@ -134,11 +134,13 @@
                         <number-box-money width="150px"
                             v-model:valueInput="dataGet.specification.specificationDetail.taxBaseCalculation.deductionByConversionBenefit"
                             disabled="true" />
-                        <span class="pl-5">원</span>
-                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5 ml-5">
-                        <span class="custom-waring">
-                            = [환산급여] - [환산급여별공제]
-                        </span>
+                        <span class="pl-5 pr-5">원</span>
+                        <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                                = [환산급여] - [환산급여별공제]
+                            </template>
+                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                        </a-tooltip>
                     </div>
                 </a-form-item>
             </a-col>
@@ -176,11 +178,13 @@
                     <div class="d-flex-center">
                         <number-box-money width="150px" disabled="true"
                             v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.taxAmountSubjectToReporting" />
-                        <span class="pl-5">원</span>
-                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5 ml-5">
-                        <span class="custom-waring">
-                            = [환산산출세액] - [세액공제] - [기납부(기과세이연)세액]
-                        </span>
+                        <span class="pl-5 pr-5">원</span>
+                        <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                                = [환산산출세액] - [세액공제] - [기납부(기과세이연)세액]
+                            </template>
+                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                        </a-tooltip>
                     </div>
                 </a-form-item>
             </a-col>
@@ -222,11 +226,13 @@
                     <div class="d-flex-center">
                         <number-box-money width="150px" disabled="true"
                             v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.retirementIncomeTax" />
-                        <span class="pl-5">원</span>
-                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5 ml-5">
-                        <span class="custom-waring">
-                            = [환산산출세액] - [세액공제] - [기납부(기과세이연)세액]
-                        </span>
+                        <span class="pl-5 pr-5">원</span>
+                        <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                                = [신고대상세액] * [계좌입금금액합계] / [과세대상 퇴직급여(확정)]
+                            </template>
+                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                        </a-tooltip>
 
                     </div>
                 </a-form-item>
@@ -350,7 +356,7 @@ export default defineComponent({
                     "exclusionDays": 0,
                     "additionalDays": 0,
                 }
-            } 
+            }
         }, { deep: true })
 
         // ====================== FUNCTION =======================================
@@ -368,21 +374,33 @@ export default defineComponent({
             delete dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].__typename
             delete dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].__typename
 
+            // dataGet.value = JSON.parse(
+            //     JSON.stringify((name: any, val: any) => {
+            //         if (
+            //             name === "__typename"
+            //         ) {
+            //             delete val[name];
+            //         } else {
+            //             return val;
+            //         }
+            //     })
+            // )
+
             // Setup value call api
             dataRequestCaculate.value.input = {
                 "taxCredit": dataGet.value.specification.specificationDetail.taxAmountCalculation.taxCredit,
                 "prevRetirementBenefitStatus": dataGet.value.specification.specificationDetail.prevRetirementBenefitStatus,
                 "prevRetiredYearsOfService": {
                     ...dataGet.value.specification.specificationDetail.prevRetiredYearsOfService,
-                    settlementStartDate: parseInt(dayjs(dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate).format('YYYYMMDD')),
-                    settlementFinishDate: parseInt(dayjs(dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate).format('YYYYMMDD')),
+                    settlementStartDate: dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate,
+                    settlementFinishDate: dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate
                 },
                 "prePaidDelayedTaxPaymentTaxAmount": dataGet.value.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
                 "lastRetirementBenefitStatus": dataGet.value.specification.specificationDetail.lastRetirementBenefitStatus,
                 "lastRetiredYearsOfService": {
                     ...dataGet.value.specification.specificationDetail.lastRetiredYearsOfService,
-                    settlementStartDate: parseInt(dayjs(dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate).format('YYYYMMDD')),
-                    settlementFinishDate: parseInt(dayjs(dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate).format('YYYYMMDD')),
+                    settlementStartDate: dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate,
+                    settlementFinishDate: dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
                 },
                 "calculationOfDeferredRetirementIncomeTax": dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax
             }
