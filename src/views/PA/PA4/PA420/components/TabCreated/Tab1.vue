@@ -269,7 +269,6 @@ import { arrayReasonResignationUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
 export default defineComponent({
     props: {
-        option1: Boolean,
         dataForm: {
             type: Object,
             default: {}

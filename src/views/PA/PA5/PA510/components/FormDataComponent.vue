@@ -69,7 +69,7 @@
                         :min="1" :max="30" :spinButtons="true"></text-number-box>
                 </a-form-item>
                 <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
-                        $filters.formatCurrency(dataIncomeWageDaily.monthlyWage / dataIncomeWageDaily.workingDays)
+                        $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage / dataIncomeWageDaily.workingDays))
                 }}원</span>
                 <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
                 <br>
@@ -214,7 +214,7 @@ export default defineComponent({
                 input: {
                     paymentDay: dataIncomeWageDaily.value.paymentDay,
                     employeeId: dataIncomeWageDaily.value.employee.employeeId,
-                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays : dataIncomeWageDaily.value.dailyWage,
+                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
                     monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
                     workingDays: dataIncomeWageDaily.value.workingDays,
                     deductionItems: arrDeductionItems,
@@ -234,7 +234,7 @@ export default defineComponent({
                 processKey: { ...processKey.value },
                 incomeId: dataIncomeWageDaily.value.incomeId,
                 input: {
-                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays : dataIncomeWageDaily.value.dailyWage,
+                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
                     monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
                     workingDays: dataIncomeWageDaily.value.workingDays,
                     deductionItems: arrDeductionItems,
