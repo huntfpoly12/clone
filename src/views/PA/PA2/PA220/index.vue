@@ -1,5 +1,5 @@
 <template>
-    <action-header title="일용직근로소득원천징수영수증" @actionSearch="searching" />
+    <action-header title="일용직근로소득원천징수영수증" />
     <div id="pa-220">
         <div class="search-form">
             <a-row :gutter="[24, 8]">
@@ -10,18 +10,18 @@
                 <a-col :span="21">
                     <div class="selectRatio">
                         <strong class="lable-item">구분 :</strong>
-                        <radio-group :arrayValue="arrayRadioDivision" v-model:valueRadioCheck="formSearch.division"
-                            :layoutCustom="'horizontal'" />
+                        <radio-group :arrayValue="arrayRadioDivision" v-model:valueRadioCheck="searchParam.filter.leaved"
+                            :layoutCustom="'horizontal'" valueExpr = "value" />
                     </div>
                 </a-col>
             </a-row>
         </div>
         <div class="page-content">
-            <div class="title-body">
+            <div class="title-body" style="padding-top: 7px">
                 <a-row>
                     <a-col :span="12">
                         <div class="title-body-left-1">
-                            <div>
+                            <div stlyle="font-size: 12px">
                                 서식 설정 :
                             </div>
                             <div>
@@ -32,13 +32,13 @@
                             </span>
                         </div>
                         <div class="title-body-left-2">
-                            <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="formSearch.type"
-                                :layoutCustom="'horizontal'" />
+                            <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
+                                :layoutCustom="'vetical'" />
                         </div>
                     </a-col>
                     <a-col :span="12">
                         <div class="title-body-right">
-                            <date-time-box width="160px" v-model:valueDate="formSearch.receiptDate"
+                            <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
                                 dateFormat="YYYY-MM-DD" />
                         </div>
                     </a-col>
@@ -85,9 +85,9 @@
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action" style="text-align: center;">
-                        <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg"
+                        <img @click="onOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg"
                             alt="" style="width: 25px; margin-right: 3px;" />
-                        <img src="@/assets/images/print.svg" alt="" style="width: 25px;" />
+                        <img @click="onOpenPopUpMultiMail()" src="@/assets/images/print.svg" alt="" style="width: 25px;" />
                     </div>
                 </template>
             </DxDataGrid>
@@ -95,24 +95,30 @@
                 :data="popupDataEmailSingle" />
             <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="onCloseEmailMultiModal"
                 :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin" />
+            <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'" :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" />
         </div>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, reactive, watch } from "vue";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
-import { onExportingCommon } from "@/helpers/commonFunction"
 import DxButton from "devextreme-vue/button";
 import { radioDivision, radioType } from "./utils/index"
-import {  userId } from "@/helpers/commonFunction";
+import {
+    companyId,
+    onExportingCommon,
+    userId,
+} from "@/helpers/commonFunction";
+import queries from "@/graphql/queries/PA/PA2/PA220/index";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton,
     },
     setup() {
+        const globalYear = computed(() => store.state.settings.globalYear);
         const arrayRadioDivision = ref([...radioDivision])
         const arrayRadioType = ref([ ...radioType ])
         const formSearch = ref({
@@ -121,42 +127,21 @@ export default defineComponent({
             receiptDate: new Date().toJSON().slice(0, 10),
         })
 
-        const emailUserLogin = ref()
-
         const popupDataEmailSingle = ref({})
         const popupDataEmailMulti = ref({})
 
         const modalEmailSingle = ref(false)
         const modalEmailMulti = ref(false)
 
-        const actionOpenPopupEmailSingle = (data: any) => {
-            // popupDataEmailSingle.value = {
-            //     companyId: companyId,
-            //     input: {
-            //         imputedYear: globalYear,
-            //         type: valueDefaultIncomeBusiness.value.input.type,
-            //         receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
-            //     },
-            //     employeeInputs: {
-            //         senderName: sessionStorage.getItem("username"),
-            //         receiverName: data.employee.name,
-            //         receiverAddress: data.employee.email,
-            //         employeeId: data.employee.employeeId,
-            //         incomeTypeCode: data.employee.incomeTypeCode
-            //     }
-            // }
-            // modalEmailSingle.value = true
-        }
-
         const dataSource: any = ref([]);
         const store = useStore();
 
-        const globalYear: any = computed(() => store.state.settings.globalYear);
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
-        // QUERY NAME : getUser
+// QUERY NAME : getUser
+        const emailUserLogin = ref()
         const {
             onResult: onResultUserInf
         } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
@@ -177,37 +162,120 @@ export default defineComponent({
             modalEmailMulti.value = false
         }
 
-        const searching = () => {
-            // dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
-            // refetchData()
-        };
+// Search
+        const searchData = ref([]);
+        const searchParam  = reactive({
+            companyId: 29,
+            filter: { imputedYear: 2022, leaved: null, name: null }
+        })
+        const searchTrigger = ref<boolean>(true)
+        const {
+            refetch: refetchSearch,
+            result: resultSearch,
+            loading: loadingSearch,
+        } = useQuery(queries.searchIncomeWageWithholdingReceipts, searchParam, () => ({
+            enabled: searchTrigger.value,
+            fetchPolicy: "no-cache",
+        }));
         
-        const sendMailGroup = () => {
-            // if (selectedItemKeys.value.length > 0) {
-            //     actionSendEmailGroup.value = true
-            //     let dataCall: any = []
-            //     dataDemoUltil.employee.map((val: any) => {
-            //         if (check(val) == 1) {
-            //             dataCall.push({
-            //                 senderName: sessionStorage.getItem("username"),
-            //                 receiverName: val.name,
-            //                 receiverAddress: val.email,
-            //                 employeeId: val.employeeId,
-            //             })
-            //         }
-            //     })
-            //     dataCallModal.value = dataCall
-            //     paymentYearMonthsModal.value = getArrPaymentYearMonth()
-            //     modalStatus.value = true
-            // } else {
-            //     notification('error', "일용직근로자들을 선택하세요!")
-            // }
-        }
-
+        watch(resultSearch, (newData)=> {
+            searchData.value = newData.searchIncomeWageWithholdingReceipts;
+            viewUrlParam.input.type = newData.searchIncomeWageWithholdingReceipts?.employee?.type ?? 1;
+            searchParam.filter.leaved = newData.searchIncomeWageWithholdingReceipts?.leaved ?? null;
+        })
+        
+// PRINT VIEW URL
+        const viewUrlParam = reactive({
+            companyId: 29,
+            input: { imputedYear: globalYear, type: 1, receiptDate: new Date().toJSON().slice(0, 10) },
+            incomeIds: [],
+        })
+        const printTrigger = ref<boolean>(false);
+        const {
+            refetch: refetchPrint,
+            result: resultPrint,
+        } = useQuery(queries.getIncomeWageWithholdingReceiptReportViewUrl, viewUrlParam, () => ({
+            enabled: printTrigger.value,
+            fetchPolicy: "no-cache",
+        }));
+        watch(resultPrint, (value) => {
+            if (value) {
+                window.open(value.getIncomeBusinessWithholdingReceiptReportViewUrl)
+            }
+        });
+//SEND MAIL GROUP
+        const sendMailGroupParam = reactive({
+            companyId: companyId,
+            input: { imputedYear: globalYear, type: viewUrlParam.input.type, receiptDate: viewUrlParam.input.receiptDate },
+            incomeInputs: [
+            {
+                receiverName: "",
+                receiverAddress: "",
+                senderName: "",
+                incomeId: NaN,
+            },
+            ]
+        });
+        // has muitiple mail groups
+        const isOnlyEmployee = ref<boolean>(false);
+        const popupMailGroup = ref<boolean>(false);
+        const isClickRow = ref<boolean>(false);
         const selectionChanged = (data: any) => {
-            // selectedItemKeys.value = data.selectedRowKeys
+            isClickRow.value = true;
+            isOnlyEmployee.value = data.selectedRowKeys.length < 2;
+            if (!isOnlyEmployee.value) {
+                data.selectedRowKeys.forEach((data: any) => {
+                    sendMailGroupParam.incomeInputs.push({
+                        senderName: sessionStorage.getItem("username") ?? "",
+                        receiverName: data.employee.name,
+                        receiverAddress: data.employee.email,
+                        incomeId: data.incomeId
+                    })
+                })
+            }
         }
-
+        const onOpenPopUpMultiMail = () => {
+            if (!isClickRow.value) {
+                popupMailGroup.value = true;
+                return;
+            }
+            if (isOnlyEmployee.value) {
+                popupMailGroup.value = true;
+                return;
+            }
+            modalEmailMulti.value = true
+        }
+//SEND MAIL SINGLE
+        const onOpenPopupEmailSingle = (data: any) => {
+            popupDataEmailSingle.value = {
+                companyId: companyId,
+                input: {
+                    imputedYear: globalYear,
+                    type: viewUrlParam.input.type,
+                    receiptDate: viewUrlParam.input.receiptDate,
+                },
+                employeeInputs: {
+                    senderName: sessionStorage.getItem("username"),
+                    receiverName: data.employee.name,
+                    receiverAddress: data.employee.email,
+                    employeeId: data.employee.employeeId,
+                    incomeTypeCode: data.employee.incomeTypeCode
+                }
+            }
+            modalEmailSingle.value = true
+        }
+        const sendMailGroup = () => {
+            if (!isClickRow.value) {
+                popupMailGroup.value = true;
+                return;
+            }
+            if (isOnlyEmployee.value) {
+                popupMailGroup.value = true;
+                return;
+            }
+            popupDataEmailMulti.value = sendMailGroupParam;
+            modalEmailMulti.value = true
+        }
         return {
             arrayRadioDivision,
             arrayRadioType,
@@ -222,11 +290,15 @@ export default defineComponent({
             modalEmailMulti,
             onCloseEmailSingleModal,
             onCloseEmailMultiModal,
-            actionOpenPopupEmailSingle,
+            onOpenPopupEmailSingle,
             sendMailGroup,
             emailUserLogin,
             onExporting,
-            searching,
+            searchData,
+            viewUrlParam,
+            onOpenPopUpMultiMail,
+            popupMailGroup,
+            searchParam,
         };
     },
 });
