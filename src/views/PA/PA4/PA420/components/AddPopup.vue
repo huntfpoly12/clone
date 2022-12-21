@@ -1,13 +1,15 @@
 <template>
     <a-modal :visible="modalOption" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
         style="top: 20px">
-        <div class="mt-20">
-            <radio-group :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
-            <radio-group :arrayValue="option2" v-model:valueRadioCheck="dataForm.input.retirementType"
+        <div class="block-radio ">
+            <radio-group class="radio-group" :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
+            <radio-group class="radio-group" :arrayValue="option2" v-model:valueRadioCheck="dataForm.input.retirementType"
                 layoutCustom="horizontal" />
-            <span>
-                퇴직소득자료 입력하시겠습니까?
-            </span>
+            <div class="mt-10">
+                <span>
+                    퇴직소득자료 입력하시겠습니까?
+                </span>
+            </div>
         </div>
         <div class="footer mt-30">
             <button-basic class="button-form-modal mr-5" text="아니요" type="default" mode="outlined"
@@ -29,8 +31,7 @@
             <form action="your-action">
                 <keep-alive>
                     <template v-if="step === 0">
-                        <Tab1 :option1="retirementIncome1" :dataForm="dataForm"
-                            :arrayEmploySelect="arrayEmploySelect" />
+                        <Tab1 :dataForm="dataForm" :arrayEmploySelect="arrayEmploySelect" />
                     </template>
                 </keep-alive>
                 <keep-alive>
@@ -50,8 +51,8 @@
             <button-basic text="다음" type="default" mode="contained" @onClick="nextStep" v-if="step < 2" />
             <button-basic text="저장" type="default" mode="contained" @onClick="created" v-if="step === 2" />
         </div>
-        {{ dataForm }}
     </a-modal>
+
 </template>
 
 <script lang="ts">
@@ -93,8 +94,7 @@ export default defineComponent({
         const step = ref(0)
         const dayValue = ref(1)
         const modalStatusAccept = ref(false)
-        const retirementIncome1 = ref(true)
-        // const retirementIncome2 = ref(1)
+        const retirementIncome1 = ref(null)
         const modalOption = ref()
         const trigger = ref(false)
         const dataForm = reactive({ ...initialFormState });
@@ -131,6 +131,7 @@ export default defineComponent({
         } = useMutation(mutations.createIncomeRetirement);
         onDoneCreateIncomeRetirement(() => {
             notification('success', `업데이트 완료!`)
+            modalStatusAccept.value = false
             emit("closePopup", false)
         })
         onErrorCreateIncomeRetirement((e: any) => {
@@ -146,6 +147,13 @@ export default defineComponent({
         watch(() => props.modalStatus, (newValue) => {
             modalOption.value = newValue
         })
+        watch(retirementIncome1, (value) => {
+            if (value) {
+                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10)
+            } else {
+                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20)
+            }
+        });
 
         // =========================  FUNCTION ===============================================
         // all Computed 
@@ -210,8 +218,6 @@ export default defineComponent({
         const openModalAdd = () => {
             modalStatusAccept.value = true
             modalOption.value = false
-            console.log(props.data);
-
         }
         return {
             setModalVisible,
@@ -227,7 +233,6 @@ export default defineComponent({
             option1, option2,
             modalOption,
             retirementIncome1,
-            // retirementIncome2,
             dataForm,
             arrayEmploySelect,
         }

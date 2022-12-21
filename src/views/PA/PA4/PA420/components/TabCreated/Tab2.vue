@@ -56,7 +56,6 @@
     </a-row>
 </template>
 
-
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue'
 import { useQuery } from "@vue/apollo-composable";
