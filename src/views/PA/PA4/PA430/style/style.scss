@@ -59,14 +59,39 @@
   color: white;
 }
 ::v-deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
-  background: rgb(76, 134, 65);
+  background: #77933C;
   padding: 2px 15px;
   border-radius: 5px;
   color: white;
 }
 ::v-deep .selectRatio  .dx-item-content {
-  background: rgb(76, 134, 65);
+  background: #77933C;
   padding: 2px 15px;
   border-radius: 5px;
   color: white;
+}
+.ant-switch-checked {
+  background-color: black;
+}
+.income-earners{
+  display: flex;
+  .label-belonging{
+    align-items: center;
+    background: #A6A6A6;
+    padding: 2px 20px;
+    border-radius: 20px;
+    color: white;
+  }
+}
+
+.dflex {
+  display: flex;
+}
+
+.custom-flex {
+  align-items: flex-start;
+  align-items: center;
+}
+::v-deep .cell-center {
+  text-align: center !important
 }

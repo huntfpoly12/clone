@@ -363,51 +363,43 @@ export default defineComponent({
 
         // Click button caculate step-3
         const actionCaculate = () => {
+            // Remove redundant lines 
+            const cleanData = JSON.parse(
+                JSON.stringify(dataGet.value, (name, val) => {
+                    if (
+                        name === "__typename"
+                    ) {
+                        delete val[name];
+                    } else {
+                        return val;
+                    }
+                })
+            );
 
-            // Remove redundant lines
-            delete dataGet.value.specification.specificationDetail.prevRetirementBenefitStatus.__typename
-            delete dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.__typename
-            delete dataGet.value.specification.specificationDetail.lastRetirementBenefitStatus.__typename
-            delete dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.__typename
-            delete dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.__typename
-            delete dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax
-            delete dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].__typename
-            delete dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].__typename
-
-            // dataGet.value = JSON.parse(
-            //     JSON.stringify((name: any, val: any) => {
-            //         if (
-            //             name === "__typename"
-            //         ) {
-            //             delete val[name];
-            //         } else {
-            //             return val;
-            //         }
-            //     })
-            // )
-
+            
             // Setup value call api
             dataRequestCaculate.value.input = {
-                "taxCredit": dataGet.value.specification.specificationDetail.taxAmountCalculation.taxCredit,
-                "prevRetirementBenefitStatus": dataGet.value.specification.specificationDetail.prevRetirementBenefitStatus,
+                "taxCredit": cleanData.specification.specificationDetail.taxAmountCalculation.taxCredit,
+                "prevRetirementBenefitStatus": cleanData.specification.specificationDetail.prevRetirementBenefitStatus,
                 "prevRetiredYearsOfService": {
-                    ...dataGet.value.specification.specificationDetail.prevRetiredYearsOfService,
-                    settlementStartDate: dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate,
-                    settlementFinishDate: dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate
+                    ...cleanData.specification.specificationDetail.prevRetiredYearsOfService,
+                    settlementStartDate: cleanData.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate,
+                    settlementFinishDate: cleanData.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate
                 },
-                "prePaidDelayedTaxPaymentTaxAmount": dataGet.value.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
-                "lastRetirementBenefitStatus": dataGet.value.specification.specificationDetail.lastRetirementBenefitStatus,
+                "prePaidDelayedTaxPaymentTaxAmount": cleanData.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
+                "lastRetirementBenefitStatus": cleanData.specification.specificationDetail.lastRetirementBenefitStatus,
                 "lastRetiredYearsOfService": {
-                    ...dataGet.value.specification.specificationDetail.lastRetiredYearsOfService,
-                    settlementStartDate: dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate,
-                    settlementFinishDate: dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
+                    ...cleanData.specification.specificationDetail.lastRetiredYearsOfService,
+                    settlementStartDate: cleanData.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate,
+                    settlementFinishDate: cleanData.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
                 },
-                "calculationOfDeferredRetirementIncomeTax": dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax
+                "calculationOfDeferredRetirementIncomeTax": cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax
             }
-
+            
+            delete dataRequestCaculate.value.input.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax
 
             // If step 1 is not checked, delete some variables that do not need to be passed
-            if (dataGet.value.checkBoxCallApi == false) {
+            if (cleanData.checkBoxCallApi == false) {
                 delete dataRequestCaculate.value.input.prevRetirementBenefitStatus
                 delete dataRequestCaculate.value.input.prevRetiredYearsOfService
             }

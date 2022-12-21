@@ -54,7 +54,6 @@
             </a-col>
             <a-col :span="12">
                 <div class="header-text-2 mb-10">중간지급 근속연수</div>
-                <!-- {{ typeof dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate }} -->
                 <a-form-item label="정산시작(입사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataGet.checkBoxCallApi"
@@ -92,8 +91,7 @@
                 </a-form-item>
                 <a-form-item label="제외일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
-                            :disabled="!dataGet.checkBoxCallApi"
+                        <number-box :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetiredYearsOfService.exclusionDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -107,8 +105,7 @@
                 </a-form-item>
                 <a-form-item label="가산일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
-                            :disabled="!dataGet.checkBoxCallApi"
+                        <number-box :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetiredYearsOfService.additionalDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -121,7 +118,8 @@
                     </div>
                 </a-form-item>
                 <div>
-                    근속연수 / 근속월수 / 근속일수: {근속연수}년/{근속월수}개월/{근속일수}일
+                    근속연수 / 근속월수 / 근속일수: {{ yearsOfService1.year }}년/{{ yearsOfService1.month }}개월/{{ yearsOfService1.day
+                    }}일
                 </div>
             </a-col>
             <a-col :span="12">
@@ -161,7 +159,7 @@
                 </a-form-item>
                 <a-form-item label="제외일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
+                        <number-box :required="false" width="150px"
                             v-model:valueInput="dataGet.specification.specificationDetail.lastRetiredYearsOfService.exclusionDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -175,7 +173,7 @@
                 </a-form-item>
                 <a-form-item label="가산일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
+                        <number-box :required="false" width="150px"
                             v-model:valueInput="dataGet.specification.specificationDetail.lastRetiredYearsOfService.additionalDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -188,31 +186,29 @@
                     </div>
                 </a-form-item>
                 <div>
-                    근속연수 / 근속월수 / 근속일수: {근속연수}년/{근속월수}개월/{근속일수}일
+                    근속연수 / 근속월수 / 근속일수: {{ yearsOfService2.year }}년/{{ yearsOfService2.month }}개월/{{ yearsOfService2.day
+                    }}일
                 </div>
             </a-col>
             <a-col :span="12" class="mt-10 custom-label">
                 <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
                 <a-form-item label="중간지급 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
-                            :disabled="!dataGet.checkBoxCallApi"
+                        <number-box :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.retirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 비과세퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
-                            :disabled="!dataGet.checkBoxCallApi"
+                        <number-box :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.nonTaxableRetirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 과세대상 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
-                            :disabled="!dataGet.checkBoxCallApi"
+                        <number-box :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.taxableRetirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
@@ -222,7 +218,6 @@
                 <div class="header-text-2 mb-10">정산 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <!-- {{ dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate }} -->
                         <date-time-box width="150px"
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
@@ -249,7 +244,9 @@
                         </div>
                     </div>
                 </a-form-item>
-                <div>근속연수 / 근속월수 / 근속일수: {근속연수}년/{근속월수}개월/{근속일수}일</div>
+                <div>근속연수 / 근속월수 / 근속일수: {{ yearsOfService3.year }}년/{{ yearsOfService3.month }}개월/{{
+                        yearsOfService3.day
+                }}일</div>
             </a-col>
         </a-row>
         <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="checkBox"
@@ -262,6 +259,8 @@ import dayjs from "dayjs";
 import { useStore } from 'vuex';
 import { companyId, openTab } from '@/helpers/commonFunction';
 import { arrayReasonResignationUtils, dataDefaultDetailUtils } from '../../utils/index'
+import { Formula } from "@bankda/jangbuda-common";
+
 export default defineComponent({
     props: {
         dataDetail: Object,
@@ -271,6 +270,23 @@ export default defineComponent({
         let valueSelected = ref(17)
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
+
+        let yearsOfService1 = reactive({
+            day: 0,
+            month: 0,
+            year: 0
+        })
+        let yearsOfService2 = reactive({
+            day: 0,
+            month: 0,
+            year: 0
+        })
+        let yearsOfService3 = reactive({
+            day: 0,
+            month: 0,
+            year: 0
+        })
+
         const dataGet: any = ref({
             ...dataDefaultDetailUtils
         })
@@ -293,11 +309,65 @@ export default defineComponent({
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
 
+
         watch(() => valueSelected, (newVal) => {
-            dataGet.value.employee.joinedAt = (arrayEmploySelect.find((val: any) => val.employeeId === newVal.value).joinedAt).toString()
+            dataGet.value.employee.joinedAt = arrayEmploySelect.find((val: any) => val.employeeId === newVal.value).joinedAt
+        }, { deep: true });
+
+        watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
+            let objectData = Formula.getDateOfService(
+                newVal.settlementStartDate,
+                newVal.settlementFinishDate,
+                newVal.exclusionDays,
+                newVal.additionalDays);
+
+            yearsOfService1.day = objectData.daysOfService
+            yearsOfService1.month = objectData.monthsOfService
+            yearsOfService1.year = objectData.yearsOfService
+        }, { deep: true });
+
+        watch(() => dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, (newVal) => {
+            let objectData = Formula.getDateOfService(
+                newVal.settlementStartDate,
+                newVal.settlementFinishDate,
+                newVal.exclusionDays,
+                newVal.additionalDays);
+
+            yearsOfService2.day = objectData.daysOfService
+            yearsOfService2.month = objectData.monthsOfService
+            yearsOfService2.year = objectData.yearsOfService
+        }, { deep: true });
+
+        watch(() => dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService, (newVal) => {
+            let objectData = Formula.getDateOfService(
+                newVal.settlementStartDate,
+                newVal.settlementFinishDate,
+                (dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.exclusionDays + dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.exclusionDays),
+                (dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.additionalDays + dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.additionalDays));
+
+            yearsOfService3.day = objectData.daysOfService
+            yearsOfService3.month = objectData.monthsOfService
+            yearsOfService3.year = objectData.yearsOfService
         }, { deep: true });
 
 
+        let indexChange = ref(0)
+        watch(() => [
+            dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate,
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate, dataGet.value.checkBoxCallApi], ([newA, newB, newC, checkBoxNew], [prevA, prevB, prevC, checkBoxOld]) => {
+                if (indexChange)
+                    if (checkBoxNew == true) {
+                        dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newA
+                        dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
+                    } else {
+                        dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newC
+                        dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
+                    }
+
+
+                indexChange.value++
+            });
         // =============== FUNCTION ================================
         const openTabFuc = () => {
             emit('closePopup', true)
@@ -312,7 +382,11 @@ export default defineComponent({
                 emit('nextPage', true)
             }
         }
+
+
+
         return {
+            yearsOfService1, yearsOfService2, yearsOfService3,
             valueSelected,
             arrayEmploySelect,
             month1, month2,

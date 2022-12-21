@@ -99,15 +99,23 @@ export default defineComponent({
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
+            emit("updateSuccess", true)
         })
         onError((e: any) => {
             notification('error', e.message)
         })
 
-        const { refetch: refetchGetDetail, onError: errorGetDetail, result: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
+        const { refetch: refetchGetDetail, onError: errorGetDetail, onResult: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
+        resultGetDetail(newValue => {
+            dataDetailValue.value =
+            {
+                ...newValue.data.getIncomeRetirement,
+                "checkBoxCallApi": true,
+            }
+        })
         errorGetDetail(res => {
             notification('error', res.message)
         })
@@ -120,13 +128,6 @@ export default defineComponent({
             refetchGetDetail()
         }, { deep: true })
 
-        watch(() => resultGetDetail, (newValue) => {
-            dataDetailValue.value =
-            {
-                ...newValue.value.getIncomeRetirement,
-                "checkBoxCallApi": true,
-            }
-        }, { deep: true })
 
         // =========================  FUNCTION ===============================================
         // all Computed 
@@ -157,28 +158,20 @@ export default defineComponent({
                 return "finish";
             }
         });
-
-
         const changeStep = (stepChange: any) => {
             step.value = stepChange
         }
-
         const nextStep = (event: any) => {
             if (step.value == 0)
                 valueNextStep.value++
             else if (step.value == 1)
                 step.value++
         }
-
         const prevStep = () => {
             step.value--
         }
-
         const updated = () => {
             let dataDefault = dataDetailValue.value.specification
-
-            // console.log(typeof dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementStartDate);
-
             let dataCallApiUpdate =
             {
                 "companyId": companyId,
@@ -206,8 +199,8 @@ export default defineComponent({
                     },
                     "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
                     "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,
-                    "lastRetiredYearsOfService": dataDefault.specificationDetail.lastRetiredYearsOfService, 
-                    "prevRetiredYearsOfService": dataDefault.specificationDetail.prevRetiredYearsOfService,  
+                    "lastRetiredYearsOfService": dataDefault.specificationDetail.lastRetiredYearsOfService,
+                    "prevRetiredYearsOfService": dataDefault.specificationDetail.prevRetiredYearsOfService,
                     "lastRetirementBenefitStatus": dataDefault.specificationDetail.lastRetirementBenefitStatus,
                     "prevRetirementBenefitStatus": dataDefault.specificationDetail.prevRetirementBenefitStatus
                 }
@@ -229,14 +222,10 @@ export default defineComponent({
             mutate(cleanData)
         }
 
-        const openModalAdd = () => {
-            modalOption.value = false
-        }
         return {
             setModalVisible,
             changeStep,
             nextStep, prevStep, updated,
-            openModalAdd,
             checkStepTwo,
             checkStepThree,
             checkStepFour,
