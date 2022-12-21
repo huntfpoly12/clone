@@ -1,6 +1,6 @@
 <template>
   <standard-form name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px">
-    <a-spin :spinning="loadingIncomeExtra || newDateLoading" size="large">
+    <a-spin :spinning="newDateLoading" size="large">
       <a-row>
         <a-col :span="24">
           <a-form-item label="사업소득자" label-align="right">
@@ -23,11 +23,11 @@
             <div class="d-flex-center">
               <div class="month-custom-1 d-flex-center">
                 귀
-                <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" />
+                <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="isEdit" />
               </div>
               <div class="month-custom-2 d-flex-center">
                 지
-                <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" />
+                <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="isEdit" />
               </div>
             </div>
           </a-form-item>
@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, reactive, nextTick, computed } from 'vue';
+import { ref, defineComponent, watch, reactive, nextTick, computed, onUnmounted, onMounted } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -163,6 +163,7 @@ export default defineComponent({
     });
     const arrayEmploySelect = ref<any>([]);
     const newDateLoading = ref<boolean>(false);
+    const isResetComponent = ref<boolean>(true);
     // common
     let incomeAmount = ref(0);
     let incomeTax = ref(0);
@@ -182,30 +183,31 @@ export default defineComponent({
     watch(
       () => props.editTax,
       (newValue) => {
-        incomeExtraParam.value = newValue;
-        dataAction.companyId = newValue.companyId;
-        triggerIncomeExtra.value = true;
-        isEdit.value = true;
-        let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
-        let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
-        month1.value = dayjs(date1).format('YYYY-MM');
-        month2.value = dayjs(date2).format('YYYY-MM');
-        incomeArr.value = [];
-        refetchIncomeExtra();
+        newDateLoading.value = true;
+        if (newValue.incomeId) {
+          incomeExtraParam.value = newValue;
+          dataAction.companyId = newValue.companyId;
+          triggerIncomeExtra.value = true;
+          let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
+          let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
+          month1.value = dayjs(date1).format('YYYY-MM');
+          month2.value = dayjs(date2).format('YYYY-MM');
+          incomeArr.value = [];
+          isEdit.value = true;
+          refetchIncomeExtra();
+        } else {
+          newDateLoading.value = false;
+        }
       },
       { deep: true }
     );
     watch(
-      () => props.addNewIncomeExtra,
-      async (newValue: any) => {
-        newDateLoading.value = true;
+      () => [props.addNewIncomeExtra, isResetComponent.value],
+      async ([newValue]: any) => {
         let date1 = newValue.imputedYear + '-' + newValue.imputedMonth;
         let date2 = newValue.paymentYear + '-' + newValue.paymentMonth;
         month1.value = dayjs(date1).format('YYYY-MM');
         month2.value = dayjs(date2).format('YYYY-MM');
-        setTimeout(() => {
-          newDateLoading.value = false;
-        }, 300);
       }
     );
     //query
@@ -249,6 +251,7 @@ export default defineComponent({
         name: data.employee.name,
         incomeTypeName: data.employee.incomeTypeName,
       });
+      newDateLoading.value = loadingIncomeExtra.value;
     });
     //watch
     watch(
@@ -296,7 +299,7 @@ export default defineComponent({
     });
     //error message
     onErrorIncomeExtra((res: any) => {
-      notification('error', res.message);
+      newDateLoading.value = loadingIncomeExtra.value;
     });
     createIncomeExtraError((res: any) => {
       notification('error', res.message);
@@ -329,7 +332,6 @@ export default defineComponent({
       disabledInput,
       dataAction,
       changeIncomeTypeCode,
-      loadingIncomeExtra,
       taxRateOptions,
       updateValue,
       isEdit,
@@ -338,6 +340,7 @@ export default defineComponent({
       incomeAmount,
       incomeTax,
       localIncomeTax,
+      isResetComponent,
     };
   },
 });

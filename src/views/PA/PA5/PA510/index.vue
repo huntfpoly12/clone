@@ -16,7 +16,7 @@
                         <div v-if="data.data.month1">
                             <colorful-badge class="hover-underlined" :value="data.data.month1.status"
                                 @click="showDetailSelected(data.data.month1)" :year="data.data.month1.paymentYear"
-                                :month="data.data.month1.paymentMonth" />
+                                :month="data.data.month1.paymentMonth" :isUnder="month == 1"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
                     </template>
@@ -25,7 +25,7 @@
                         <div v-if="data.data.month2">
                             <colorful-badge class="hover-underlined" :value="data.data.month2.status"
                                 @click="showDetailSelected(data.data.month2)" :year="data.data.month2.paymentYear"
-                                :month="data.data.month2.paymentMonth" />
+                                :month="data.data.month2.paymentMonth" :isUnder="month == 2"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
                     </template>
@@ -34,7 +34,7 @@
                         <div v-if="data.data.month3">
                             <colorful-badge class="hover-underlined" :value="data.data.month3.status"
                                 @click="showDetailSelected(data.data.month3)" :year="data.data.month3.paymentYear"
-                                :month="data.data.month3.paymentMonth" />
+                                :month="data.data.month3.paymentMonth" :isUnder="month == 3"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
                     </template>
@@ -43,7 +43,7 @@
                         <div v-if="data.data.month4">
                             <colorful-badge class="hover-underlined" :value="data.data.month4.status"
                                 @click="showDetailSelected(data.data.month4)" :year="data.data.month4.paymentYear"
-                                :month="data.data.month4.paymentMonth" />
+                                :month="data.data.month4.paymentMonth" :isUnder="month == 4"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
                     </template>
@@ -52,7 +52,7 @@
                         <div v-if="data.data.month5">
                             <colorful-badge class="hover-underlined" :value="data.data.month5.status"
                                 @click="showDetailSelected(data.data.month5)" :year="data.data.month5.paymentYear"
-                                :month="data.data.month5.paymentMonth" />
+                                :month="data.data.month5.paymentMonth" :isUnder="month == 5"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
                     </template>
@@ -61,7 +61,7 @@
                         <div v-if="data.data.month6">
                             <colorful-badge class="hover-underlined" :value="data.data.month6.status"
                                 @click="showDetailSelected(data.data.month6)" :year="data.data.month6.paymentYear"
-                                :month="data.data.month6.paymentMonth" />
+                                :month="data.data.month6.paymentMonth" :isUnder="month == 6"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
                     </template>
@@ -70,7 +70,7 @@
                         <div v-if="data.data.month7">
                             <colorful-badge class="hover-underlined" :value="data.data.month7.status"
                                 @click="showDetailSelected(data.data.month7)" :year="data.data.month7.paymentYear"
-                                :month="data.data.month7.paymentMonth" />
+                                :month="data.data.month7.paymentMonth" :isUnder="month == 7"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
                     </template>
@@ -79,7 +79,7 @@
                         <div v-if="data.data.month8">
                             <colorful-badge class="hover-underlined" :value="data.data.month8.status"
                                 @click="showDetailSelected(data.data.month8)" :year="data.data.month8.paymentYear"
-                                :month="data.data.month8.paymentMonth" />
+                                :month="data.data.month8.paymentMonth" :isUnder="month == 8"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
                     </template>
@@ -88,7 +88,7 @@
                         <div v-if="data.data.month9">
                             <colorful-badge class="hover-underlined" :value="data.data.month9.status"
                                 @click="showDetailSelected(data.data.month9)" :year="data.data.month9.paymentYear"
-                                :month="data.data.month9.paymentMonth" />
+                                :month="data.data.month9.paymentMonth" :isUnder="month == 9"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
                     </template>
@@ -97,7 +97,7 @@
                         <div v-if="data.data.month10">
                             <colorful-badge class="hover-underlined" :value="data.data.month10.status"
                                 @click="showDetailSelected(data.data.month10)" :year="data.data.month10.paymentYear"
-                                :month="data.data.month10.paymentMonth" />
+                                :month="data.data.month10.paymentMonth" :isUnder="month == 10"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
                     </template>
@@ -106,7 +106,7 @@
                         <div v-if="data.data.month11">
                             <colorful-badge class="hover-underlined" :value="data.data.month11.status"
                                 @click="showDetailSelected(data.data.month11)" :year="data.data.month11.paymentYear"
-                                :month="data.data.month11.paymentMonth" />
+                                :month="data.data.month11.paymentMonth" :isUnder="month == 11"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
                     </template>
@@ -115,7 +115,7 @@
                         <div v-if="data.data.month12">
                             <colorful-badge class="hover-underlined" :value="data.data.month12.status"
                                 @click="showDetailSelected(data.data.month12)" :year="data.data.month12.paymentYear"
-                                :month="data.data.month12.paymentMonth" />
+                                :month="data.data.month12.paymentMonth" :isUnder="month == 12"/>
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
                     </template>
@@ -203,7 +203,8 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
                         :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
-                        :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged">
+                        :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged" 
+                        v-model:focused-row-key="focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                         <DxColumn width="150" caption="일용직사원" cell-template="tag" />
                         <template #tag="{ data }" class="custom-action">
@@ -271,7 +272,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed, reactive } from "vue"
+import { ref, defineComponent, watch, computed, reactive, onMounted } from "vue"
 import DxButton from "devextreme-vue/button"
 import dayjs, { Dayjs } from 'dayjs';
 import { useStore } from 'vuex'
@@ -328,7 +329,7 @@ export default defineComponent({
         let status: any = ref()
         const dataTaxPayInfo: any = ref([])
         const dataModalCopy: any = ref()
-
+        const IncomeWageDailiesTrigger = ref<boolean>(false)
         const arrayEmploySelect: any = ref([])
 
         const originData = ref({
@@ -339,6 +340,9 @@ export default defineComponent({
             companyId: companyId,
             processKey: processKey.value,
         })
+        const isRunOnce = ref<boolean>(true);
+        const month = ref<number>(0);
+        const focusedRowKey = ref<Number>(1);
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -352,8 +356,9 @@ export default defineComponent({
             result: resultTaxPayInfo,
             loading: loadingTaxPayInfo,
         } = useQuery(queries.getIncomeWageDailies, originDataTaxPayInfo, () => ({
-            fetchPolicy: "no-cache",
-        }))
+            enabled: IncomeWageDailiesTrigger.value,
+            fetchPolicy: 'no-cache',
+        }));
         const {
             mutate: actionChangeIncomeProcess,
             onError: errorChangeIncomeProcess,
@@ -424,10 +429,21 @@ export default defineComponent({
                     }
                 })
             }
+            if (isRunOnce.value) {
+                IncomeWageDailiesTrigger.value=true
+                isRunOnce.value = false;
+                const obj=dataSource.value[0]['month' + `${dayjs().month() + 1}`]
+                showDetailSelected(obj)
+            }
         })
 
         watch(resultTaxPayInfo, (value) => {
-            dataTaxPayInfo.value = value.getIncomeWageDailies
+            dataTaxPayInfo.value = value.getIncomeWageDailies;
+            focusedRowKey.value = value.getIncomeWageDailies[0]?.employeeId ?? 1;
+            let firstDataParam = { data: value.getIncomeWageDailies[0], rowType:'data' };
+            if(firstDataParam.data){
+                actionEditTaxPay(firstDataParam);
+            }
             dataTaxPayInfo.value.map((value: any) => {
                 arrayEmploySelect.value.push({
                     employeeId: value.employee.employeeId,
@@ -464,10 +480,12 @@ export default defineComponent({
             dataRows.value = data.selectedRowsData
         }
         const showDetailSelected = (data: any) => {
+            IncomeWageDailiesTrigger.value=true;
             status.value = data.status
             store.state.common.processKeyPA510.imputedMonth = data.imputedMonth
             store.state.common.processKeyPA510.paymentYear = data.paymentYear
             store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
+            month.value = data.imputedMonth;
         }
         const loadingTableInfo = () => {
             refetchDataTaxPayInfo()
@@ -489,6 +507,8 @@ export default defineComponent({
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
         }
+        onMounted(()=> {
+        })
         return {
             processKey,
             loading,
@@ -518,6 +538,8 @@ export default defineComponent({
             amountFormat,
             dataAddIncomeProcess,
             statusComfirm,
+            month,
+            focusedRowKey,
         }
 
     },

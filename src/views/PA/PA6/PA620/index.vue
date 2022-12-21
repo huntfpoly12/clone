@@ -13,7 +13,6 @@
                         <img src="@/assets/images/user.svg" style="width: 70px" />
                     </div>
                 </a-col>
-
                 <a-col :span="24" class="mt-10">
                     <a-spin :spinning="loadingGetIncomeProcessBusinesses" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -253,11 +252,11 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" v-model:statusBt="statusButton"
+                <ComponentDetail  v-model:statusBt="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
 
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" 
-                :processKey="valueCallApiGetEmployeeBusiness.processKey" :data="dataModalCopy"
+                :processKey="processKey" :data="dataModalCopy"
                 @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess"/>
             </a-row>
         </div>
@@ -308,24 +307,8 @@ export default defineComponent({
             imputedYear: globalYear.value,
             // imputedMonth: dayjs().month(),
         })
-        const dataCallTableSmall = reactive({
-            companyId: companyId,
-            processKey: {
-                imputedYear: null,
-                imputedMonth: null,
-                paymentYear: null,
-                paymentMonth: null,
-            }
-        })
-        let valueCallApiGetEmployeeBusiness = reactive({
-            companyId: companyId,
-            processKey: {
-                imputedYear: globalYear.value,
-                imputedMonth: (dayjs().month() + 1),
-                paymentYear: globalYear.value,
-                paymentMonth: dayjs().month() + 1
-            }
-        })
+        const processKey = computed(() => store.state.common.processKeyPA620)
+      
         let dataCustomRes: any = ref([])
         // ================GRAPQL==============================================
 
@@ -410,13 +393,14 @@ export default defineComponent({
                 }
 
               if (val.imputedMonth == (dayjs().month() + 1)) {
-                
-                    dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
-                    dataCallTableSmall.processKey.imputedYear = val.imputedYear
-                    dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
-                    dataCallTableSmall.processKey.paymentYear = val.paymentYear
-                    statusButton.value = val.status
-                }
+                statusButton.value = val.status
+                if(actionSave.value == 0){
+                    store.state.common.processKeyPA620.imputedYear = val.imputedYear
+                    store.state.common.processKeyPA620.imputedMonth = val.imputedMonth
+                    store.state.common.processKeyPA620.paymentYear = val.paymentYear
+                    store.state.common.processKeyPA620.paymentMonth = val.paymentMonth
+                }          
+              }
             })
 
         })
@@ -431,11 +415,6 @@ export default defineComponent({
             store.state.common.processKeyPA620.imputedMonth = data.imputedMonth
             store.state.common.processKeyPA620.paymentYear = data.paymentYear
             store.state.common.processKeyPA620.paymentMonth = data.paymentMonth
-            
-            valueCallApiGetEmployeeBusiness.processKey.imputedMonth = data.imputedMonth
-            valueCallApiGetEmployeeBusiness.processKey.imputedYear = data.imputedYear
-            valueCallApiGetEmployeeBusiness.processKey.paymentYear = data.paymentYear
-            valueCallApiGetEmployeeBusiness.processKey.paymentMonth = data.paymentMonth
         }
 
         const saving = () => {
@@ -473,7 +452,7 @@ export default defineComponent({
             modalCopy,
             actionSave,
             statusButton,
-            valueCallApiGetEmployeeBusiness,
+            processKey,
             dataCustomRes,
             globalYear,
             setUnderline,

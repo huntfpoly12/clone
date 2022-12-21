@@ -4,6 +4,7 @@
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="actionAddItem" />
     <DxButton class="ml-3" icon="edit" @click="editItem" />
+    <button class="button-open-tab" @click="openTab({url: '/dashboard/pa-520',name: '일용직사원등록', id: 'pa-520' })">일용직사원등록</button>
 
     <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
         item-template="item-field">
@@ -16,6 +17,7 @@
                 </div>
         </template>
     </DxDropDownButton>
+    
     <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
@@ -29,6 +31,7 @@
                 </div>
         </template>
     </DxDropDownButton>
+    
     <DxDropDownButton class="ml-3" :items="arrDropDown" display-expr="title" text="선택" style="width: 120px;"
         @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
@@ -38,7 +41,6 @@
                     <img src="@/assets/images/icon_status_history.png" alt=""
                         style="width: 20px; height: 20px;" />
                 </div>
-                <button v-else-if="data.url" class="button-open-tab">일용직사원등록</button>
             </div>
         </template>
     </DxDropDownButton>
@@ -157,8 +159,7 @@ export default defineComponent({
             { id: 3, img: 'group_email.png', event: 'EmailMultiSalaryStatement' },
         ];
         const arrDropDown = [
-            { id: 1, url: '520', event: 'open-tab-520', title: '' },
-            { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
+            { id: 1, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
             { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
         ]
         const onItemClick = (value: any) => {
@@ -256,6 +257,7 @@ export default defineComponent({
             actionAddItem,
             popupDataEdit,
             loadingTableInfo,
+            openTab,
         };
     },
 });
