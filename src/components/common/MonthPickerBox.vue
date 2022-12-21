@@ -9,6 +9,7 @@
     :format="format"
     :uid="id"
     @update:modelValue="handleDate"
+    :readonly="readonly"
   />
 </template>
 <script lang="ts">
@@ -34,6 +35,10 @@ export default defineComponent({
     },
     className: {
       type: String,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     }
   },
   components: {

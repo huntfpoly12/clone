@@ -40,15 +40,15 @@
             <div class="header-text-2 mb-10">퇴직급여</div>
             <a-form-item label="퇴직급여(예상)">
                 <div class="d-flex-center">
-                    <number-box-money :required="false" width="200px"
-                        v-model:valueInput="dataForm.incomeCalculationInput.expectedRetirementBenefits" />
+                    <number-box-money :required="false" width="200px" disabled="true"
+                        v-model:valueInput="dataIncomeRetirement" />
                     <span class="pl-5">원</span>
                 </div>
             </a-form-item>
             <a-form-item label="퇴직급여(확정)">
-                <div class="d-flex-center">
+                <div class="d-flex-center" :class="dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits !== dataIncomeRetirement ? 'custom-input-number' : ''">
                     <number-box-money :required="false" width="200px"
-                        v-model:valueInput="dataForm.incomeCalculationInput.definedRetirementBenefits" />
+                        v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits" />
                     <span class="pl-5">원</span>
                 </div>
             </a-form-item>
@@ -72,6 +72,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const trigger = ref<boolean>(false)
+        const dataIncomeRetirement = ref()
         const variables = ref({})
         const {
             result, loading, refetch, onError
@@ -85,7 +86,7 @@ export default defineComponent({
 
         watch(result, (value) => {
             if (value && value.calculateIncomeRetirement) {
-                // caculateValue.value = value.calculateIncomeRetirement;
+                dataIncomeRetirement.value = value.calculateIncomeRetirement;
             }
             trigger.value = false;
         })
@@ -93,21 +94,14 @@ export default defineComponent({
         const calculateIncomeRetirement = () => {
             variables.value = {
                 companyId: companyId,
-                input: {
-                    settlementStartDate: props.dataForm.incomeCalculationInput.settlementStartDate,
-                    settlementFinishDate: props.dataForm.incomeCalculationInput.settlementFinishDate,
-                    exclusionDays: props.dataForm.taxCalculationInput.lastRetiredYearsOfService.exclusionDays,
-                    additionalDays: props.dataForm.taxCalculationInput.lastRetiredYearsOfService.additionalDays,
-                    totalPay3Month: props.dataForm.incomeCalculationInput.totalPay3Month,
-                    totalAnualBonus: props.dataForm.incomeCalculationInput.totalAnualBonus,
-                    annualLeaveAllowance: props.dataForm.incomeCalculationInput.annualLeaveAllowance,
-                }
+                input: props.dataForm.incomeCalculationInput,
             }
             trigger.value = true;
         }
 
         return {
-            calculateIncomeRetirement
+            calculateIncomeRetirement,
+            dataIncomeRetirement
         }
     }
 })
@@ -120,5 +114,8 @@ export default defineComponent({
 <style scoped lang="scss">
 ::v-deep label {
     min-width: 250px !important;
+}
+::v-deep .custom-input-number .dx-texteditor-input {
+    color: red;
 }
 </style>

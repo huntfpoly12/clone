@@ -36,12 +36,13 @@ export const dataActionUtils = {
     }
 }
 export const initialFormState = {
+    checkBoxCallApi: false,
     companyId: companyId,
     processKey: {
-        imputedYear: 2022,
-        imputedMonth: 1,
-        paymentYear: 2022,
-        paymentMonth: 1,
+        imputedYear: parseInt(dayjs().format("YYYY")),
+        imputedMonth: parseInt(dayjs().format("MM")),
+        paymentYear: parseInt(dayjs().format("YYYY")),
+        paymentMonth: parseInt(dayjs().format("MM")),
     },
     input: {
         paymentDay: 1,
@@ -66,6 +67,11 @@ export const initialFormState = {
             nonTaxableRetirementBenefits: 0,
             taxableRetirementBenefits: 0,
         },
+        lastRetirementBenefitStatus: {
+            retirementBenefits: 0,
+            nonTaxableRetirementBenefits: 0,
+            taxableRetirementBenefits: 0,
+        },
         prevRetiredYearsOfService: {
             settlementStartDate: null,
             settlementFinishDate: null,
@@ -79,7 +85,76 @@ export const initialFormState = {
             paymentDate: null,
             exclusionDays: 1,
             additionalDays: 1,
+        },
+        taxCredit: 0,
+        prePaidDelayedTaxPaymentTaxAmount: 0,
+        calculationOfDeferredRetirementIncomeTax: {
+            totalAmount: 0,
+            statements: [
+                {
+                    pensionAccountHolder: null,
+                    bizNumber: null,
+                    bankAccountNumber: null,
+                    depositDate: null,
+                    accountDepositAmount: 0,
+                },
+                {
+                    pensionAccountHolder: null,
+                    bizNumber: null,
+                    bankAccountNumber: null,
+                    depositDate: null,
+                    accountDepositAmount: 0,
+                }
+            ]
         }
+    }
+}
+export const initialIncomeRetirementTax = {
+    taxBaseCalculation: {
+        retirementIncome: null,
+        deductionForYearsOfService: null,
+        conversionBenefit: null,
+        deductionByConversionBenefit: null,
+        taxBaseForRetirementIncome: null,
+    },
+    taxAmountCalculation: {
+        convertedTaxAmount: null,
+        taxAmountCalculatedForRetirementIncome: null,
+        taxCredit: null,
+        prePaidDelayedTaxPaymentTaxAmount: null,
+        taxAmountSubjectToReporting: null,
+    },
+    calculationOfDeferredRetirementIncomeTax: {
+        totalAmount: null,
+        retirementIncomeTax: null,
+        statements: [
+            {
+                pensionAccountHolder: null,
+                bizNumber: null,
+                bankAccountNumber: null,
+                depositDate: null,
+                accountDepositAmount: null,
+            },
+            {
+                pensionAccountHolder: null,
+                bizNumber: null,
+                bankAccountNumber: null,
+                depositDate: null,
+                accountDepositAmount: null,
+            }
+        ]
+    },
+    deductibleWithholdingTax: {
+        incomeTax: null,
+        localIncomeTax: null,
+    },
+    taxAmountToBeReported: {
+        incomeTax: null,
+        localIncomeTax: null,
+    },
+    retirementIncomeTax: {
+        incomeTax: null,
+        localIncomeTax: null,
     }
 }
 export const dataGetDetailEdit = {
@@ -202,6 +277,11 @@ export const dataDefaultDetailUtils = {
         "executive": false,
         "retirementReason": 0,
         "specificationDetail": {
+            "lastRetirementBenefitStatus": {
+                "retirementBenefits": 10,
+                "nonTaxableRetirementBenefits": 10,
+                "taxableRetirementBenefits": 10
+            },
             "prevRetiredYearsOfService": {
                 "settlementStartDate": 0,
                 "settlementFinishDate": 0,
@@ -230,7 +310,42 @@ export const dataDefaultDetailUtils = {
             },
             "taxAmountCalculation": {
                 "taxCredit": 0,
-                "prePaidDelayedTaxPaymentTaxAmount" : 0
+                "prePaidDelayedTaxPaymentTaxAmount": 0,
+                "convertedTaxAmount": 0,
+                "taxAmountCalculatedForRetirementIncome": 0,
+                "taxAmountSubjectToReporting": 0
+            },
+            "calculationOfDeferredRetirementIncomeTax": {
+                "totalAmount": 0,
+                "retirementIncomeTax": 0,
+                "statements": [
+                    {
+                        "pensionAccountHolder": "",
+                        "bizNumber": "",
+                        "bankAccountNumber": "",
+                        "depositDate": "",
+                        "accountDepositAmount": 0
+                    }
+                ]
+            },
+            "taxBaseCalculation": {
+                "retirementIncome": 0,
+                "deductionForYearsOfService": 0,
+                "conversionBenefit": 0,
+                "taxBaseForRetirementIncome": 0,
+                "deductionByConversionBenefit": 0
+            },
+            "deductibleWithholdingTax": {
+                "incomeTax": 0,
+                "localIncomeTax": 0
+            },
+            "taxAmountToBeReported": {
+                "incomeTax": 0,
+                "localIncomeTax": 0
+            },
+            "retirementIncomeTax": {
+                "incomeTax": 0,
+                "localIncomeTax": 0
             }
         },
         "totalPay3Month": 0,
@@ -240,7 +355,5 @@ export const dataDefaultDetailUtils = {
         "definedRetirementBenefits": 0,
         "nonTaxableRetirementBenefits": 0,
         "taxableRetirementBenefits": 0,
-
     }
-
 }

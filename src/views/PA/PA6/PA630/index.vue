@@ -17,7 +17,7 @@
                 </a-row>
             </div>
             <div class="page-content">
-                <a-row style="margin-bottom: 20px;">
+                <a-row class="header-group">
                     <a-col :span="12">
                         <div class="format-settings">
                             <strong>서식 설정 : </strong>
@@ -36,7 +36,7 @@
                         </div>
                     </a-col>
                 </a-row>
-                <a-row style="margin-bottom: 20px;">
+                <a-row >
                     <a-col :span="24">
                         <label class="lable-item">소득자보관용</label>
                         <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
@@ -77,10 +77,11 @@
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" :format="amountFormat"/>
                     <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax" :format="amountFormat"/>
                     <DxSummary>
-                        <DxTotalItem column="성명 (상호)" summary-type="count" display-format="Count: {0}" />
-                        <DxTotalItem column="지급총액" summary-type="sum" display-format="Sum: {0}" value-format="#,###"/>
-                        <DxTotalItem column="원천징수세액 소득세" summary-type="sum" display-format="Sum: {0}" value-format="#,###"/>
-                        <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="Sum: {0}" value-format="#,###"/>
+                        <DxTotalItem column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
+                        <DxTotalItem column="지급총액" summary-type="sum" display-format="지급총액합계: {0}" value-format="#,###"/>
+                        <DxTotalItem column="원천징수세액 소득세" summary-type="sum" display-format="원천징수세액 소득세합계: {0}" value-format="#,###"/>
+                        <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="원천징수세액 지방소득세합계: {0}" value-format="#,###"/>
+                        <DxTotalItem column="원천징수세액 계" summary-type="sum" display-format="원천징수세액 계합계: {0}" value-format="#,###"/>
                     </DxSummary>
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
@@ -96,6 +97,7 @@
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="onCloseEmailMultiModal"
                     :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin" />
+                <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'" :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" />
             </div>
         </div>
     </a-spin>
@@ -225,6 +227,14 @@ export default defineComponent({
         }
 
         const actionOpenPopupEmailMulti = () => {
+            if (!isClickRow.value) {
+                popupMailGroup.value = true;
+                return;
+            }
+            if (isOnlyEmployee.value) {
+                popupMailGroup.value = true;
+                return;
+            }
             popupDataEmailMulti.value = {
                 companyId: companyId,
                 input: {
@@ -236,8 +246,14 @@ export default defineComponent({
             }
             modalEmailMulti.value = true
         }
-
+        //popupMailGroup
+        const isOnlyEmployee = ref<boolean>(false);
+        const popupMailGroup = ref<boolean>(false);
+        const isClickRow = ref<boolean>(false);
         const selectionChanged = (data: any) => {
+            isClickRow.value = true;
+        isOnlyEmployee.value = data.selectedRowKeys.length < 2;
+        if (!isOnlyEmployee.value) {
             data.selectedRowKeys.forEach((data: any) => {
                 dataSelect.value.push({
                     senderName: sessionStorage.getItem("username"),
@@ -247,7 +263,7 @@ export default defineComponent({
                     incomeTypeCode: data.employee.incomeTypeCode
                 })
             })
-        }
+        }}
         const {
             onResult: onResultUserInf
         } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
@@ -305,6 +321,7 @@ export default defineComponent({
             emailUserLogin,
             actionPrint,
             amountFormat,
+            popupMailGroup,
         };
     },
 });

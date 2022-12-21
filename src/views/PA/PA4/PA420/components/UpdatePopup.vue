@@ -8,31 +8,31 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
         <div class="step-content pt-20">
-            <a-spin :spinning="loading" size="large">
-                <form action="your-action">
-                    <keep-alive>
-                        <template v-if="step === 0">
-                            <Tab1 :dataDetail="dataDetailValue" @closePopup="setModalVisible"
-                                :actionNextStep="valueNextStep" @nextPage="step++" />
-                        </template>
-                    </keep-alive>
+
+            <form action="your-action">
+                <keep-alive>
+                    <template v-if="step === 0">
+                        <Tab1 :dataDetail="dataDetailValue" @closePopup="setModalVisible"
+                            :actionNextStep="valueNextStep" @nextPage="step++" />
+                    </template>
+                </keep-alive>
+                <keep-alive>
                     <template v-if="step === 1">
-                        <keep-alive>
-                            <Tab2 v-model:dataDetail="dataDetailValue" />
-                        </keep-alive>
+                        <Tab2 v-model:dataDetail="dataDetailValue" />
                     </template>
+                </keep-alive>
+                <keep-alive>
                     <template v-if="step === 2">
-                        <keep-alive>
-                            <Tab3 v-model:dataDetail="dataDetailValue" />
-                        </keep-alive>
+                        <Tab3 v-model:dataDetail="dataDetailValue" />
                     </template>
-                </form>
-            </a-spin>
+                </keep-alive>
+            </form>
+
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
             <button-basic text="다음" type="default" mode="contained" @onClick="nextStep" v-if="step < 2" />
-            <button-basic text="저장" type="default" mode="contained" @onClick="created" v-if="step === 2" />
+            <button-basic text="저장" type="default" mode="contained" @onClick="updated" v-if="step === 2" />
         </div>
     </a-modal>
 </template>
@@ -47,6 +47,7 @@ import Tab1 from './TabEdit/Tab1.vue';
 import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
+import dayjs from "dayjs";
 
 export default defineComponent({
     props: {
@@ -69,7 +70,6 @@ export default defineComponent({
         Tab1, Tab2, Tab3
     },
     setup(props, { emit }) {
-        const loading = ref(false)
         const step = ref(0)
         const valueNextStep = ref(0)
         const dayValue = ref(1)
@@ -95,7 +95,7 @@ export default defineComponent({
             mutate,
             onDone,
             onError,
-        } = useMutation(mutations.changeIncomeBusinessPaymentDay);
+        } = useMutation(mutations.updateIncomeRetirement);
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
@@ -108,7 +108,9 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-
+        errorGetDetail(res => {
+            notification('error', res.message)
+        })
 
         // ================WATCHING============================================ 
         watch(() => props.modalStatus, (newValue) => {
@@ -119,12 +121,11 @@ export default defineComponent({
         }, { deep: true })
 
         watch(() => resultGetDetail, (newValue) => {
-            dataDetailValue.value = newValue.value.getIncomeRetirement
-        }, { deep: true })
-
-        watch(() => dataDetailValue, (newValue) => {
-            // console.log(newValue.value);
-
+            dataDetailValue.value =
+            {
+                ...newValue.value.getIncomeRetirement,
+                "checkBoxCallApi": true,
+            }
         }, { deep: true })
 
         // =========================  FUNCTION ===============================================
@@ -157,15 +158,9 @@ export default defineComponent({
             }
         });
 
-        const onSubmit = () => {
 
-        };
         const changeStep = (stepChange: any) => {
             step.value = stepChange
-            loading.value = true
-            setTimeout(() => {
-                loading.value = false
-            }, 500);
         }
 
         const nextStep = (event: any) => {
@@ -173,19 +168,65 @@ export default defineComponent({
                 valueNextStep.value++
             else if (step.value == 1)
                 step.value++
-
-
-            // if (step.value < 2) {
-            //     step.value++
-            // }
         }
 
         const prevStep = () => {
             step.value--
         }
 
-        const created = () => {
+        const updated = () => {
+            let dataDefault = dataDetailValue.value.specification
 
+            // console.log(typeof dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementStartDate);
+
+            let dataCallApiUpdate =
+            {
+                "companyId": companyId,
+                "processKey": props.processKey,
+                "incomeId": props.keyRowIndex,
+                "input": {
+                    retirementType: dataDetailValue.value.retirementType,
+                    executive: dataDefault.executive,
+                    retirementReason: dataDefault.retirementReason,
+                },
+                "incomeCalculationInput": {
+                    "totalPay3Month": dataDefault.totalPay3Month,
+                    "totalAnualBonus": dataDefault.totalAnualBonus,
+                    "annualLeaveAllowance": dataDefault.annualLeaveAllowance,
+                    "settlementStartDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementStartDate,
+                    "settlementFinishDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate,
+                    "exclusionDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.exclusionDays,
+                    "additionalDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.additionalDays
+                },
+
+                "taxCalculationInput": {
+                    "calculationOfDeferredRetirementIncomeTax": {
+                        "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
+                        "statements": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements
+                    },
+                    "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
+                    "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,
+                    "lastRetiredYearsOfService": dataDefault.specificationDetail.lastRetiredYearsOfService, 
+                    "prevRetiredYearsOfService": dataDefault.specificationDetail.prevRetiredYearsOfService,  
+                    "lastRetirementBenefitStatus": dataDefault.specificationDetail.lastRetirementBenefitStatus,
+                    "prevRetirementBenefitStatus": dataDefault.specificationDetail.prevRetirementBenefitStatus
+                }
+            }
+
+            // remove all row name : __typename
+            const cleanData = JSON.parse(
+                JSON.stringify(dataCallApiUpdate, (name, val) => {
+                    if (
+                        name === "__typename"
+                    ) {
+                        delete val[name];
+                    } else {
+                        return val;
+                    }
+                })
+            );
+
+            mutate(cleanData)
         }
 
         const openModalAdd = () => {
@@ -193,11 +234,9 @@ export default defineComponent({
         }
         return {
             setModalVisible,
-            onSubmit,
             changeStep,
-            nextStep, prevStep, created,
+            nextStep, prevStep, updated,
             openModalAdd,
-            loading,
             checkStepTwo,
             checkStepThree,
             checkStepFour,
