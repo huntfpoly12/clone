@@ -61,7 +61,7 @@ export default defineComponent({
             }
         };
         onDoneAdd(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', `이메일을 발송했습니다`)
             emit("closePopup", false)
         })
         errorSendEmail((e: any) => {
