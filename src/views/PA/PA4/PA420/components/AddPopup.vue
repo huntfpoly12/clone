@@ -52,6 +52,7 @@
         </div>
         {{ dataForm }}
     </a-modal>
+    
 </template>
 
 <script lang="ts">
@@ -94,7 +95,6 @@ export default defineComponent({
         const dayValue = ref(1)
         const modalStatusAccept = ref(false)
         const retirementIncome1 = ref(true)
-        // const retirementIncome2 = ref(1)
         const modalOption = ref()
         const trigger = ref(false)
         const dataForm = reactive({ ...initialFormState });
@@ -131,6 +131,7 @@ export default defineComponent({
         } = useMutation(mutations.createIncomeRetirement);
         onDoneCreateIncomeRetirement(() => {
             notification('success', `업데이트 완료!`)
+            modalStatusAccept.value = false
             emit("closePopup", false)
         })
         onErrorCreateIncomeRetirement((e: any) => {
@@ -210,8 +211,6 @@ export default defineComponent({
         const openModalAdd = () => {
             modalStatusAccept.value = true
             modalOption.value = false
-            console.log(props.data);
-
         }
         return {
             setModalVisible,
@@ -227,7 +226,6 @@ export default defineComponent({
             option1, option2,
             modalOption,
             retirementIncome1,
-            // retirementIncome2,
             dataForm,
             arrayEmploySelect,
         }

@@ -23,7 +23,7 @@
             <a-col :span="12">
                 <a-form-item label="사원" class="label-required">
                     <employ-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="valueSelected" width="350px"
-                        :required="true" />
+                        :required="true" disabled="true" />
                 </a-form-item>
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
@@ -49,13 +49,15 @@
             </a-col>
             <div class="header-text-1">근속연수</div>
             <a-col :span="24">
-                <checkbox-basic size="13" label="중간지급여부" class="mb-10" v-model:valueCheckbox="checkBoxYearsService" />
+                <checkbox-basic size="13" label="중간지급여부" class="mb-10"
+                    v-model:valueCheckbox="dataGet.checkBoxCallApi" />
             </a-col>
             <a-col :span="12">
                 <div class="header-text-2 mb-10">중간지급 근속연수</div>
-                <a-form-item label="정산시작(입사)일" :class="checkBoxYearsService ? 'label-required' : ''">
+                <!-- {{ typeof dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate }} -->
+                <a-form-item label="정산시작(입사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!checkBoxYearsService"
+                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate"
                             :required="true" />
                         <div class="ml-5 d-flex-center">
@@ -68,9 +70,9 @@
                         </div>
                     </div>
                 </a-form-item>
-                <a-form-item label="정산종료(퇴사)일" :class="checkBoxYearsService ? 'label-required' : ''">
+                <a-form-item label="정산종료(퇴사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!checkBoxYearsService"
+                        <date-time-box width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate"
                             :required="true" />
                         <div class="ml-5 d-flex-center">
@@ -84,13 +86,14 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일">
-                    <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!checkBoxYearsService"
+                    <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataGet.checkBoxCallApi"
                         v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.paymentDate"
                         :required="true" />
                 </a-form-item>
                 <a-form-item label="제외일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!checkBoxYearsService"
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetiredYearsOfService.exclusionDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -104,7 +107,8 @@
                 </a-form-item>
                 <a-form-item label="가산일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!checkBoxYearsService"
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetiredYearsOfService.additionalDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -151,7 +155,7 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일">
-                    <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!checkBoxYearsService"
+                    <date-time-box width="150px" dateFormat="YYYY-MM-DD"
                         v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.paymentDate"
                         :required="true" />
                 </a-form-item>
@@ -191,21 +195,24 @@
                 <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
                 <a-form-item label="중간지급 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!checkBoxYearsService"
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.retirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 비과세퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!checkBoxYearsService"
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.nonTaxableRetirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 과세대상 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px" :disabled="!checkBoxYearsService"
+                        <number-box min="1" max="31" :required="false" width="150px"
+                            :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.taxableRetirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
@@ -215,7 +222,8 @@
                 <div class="header-text-2 mb-10">정산 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                        <!-- {{ dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate }} -->
+                        <date-time-box width="150px"
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -261,7 +269,6 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         let valueSelected = ref(17)
-        let checkBoxYearsService = ref(true)
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
         const dataGet: any = ref({
@@ -280,20 +287,14 @@ export default defineComponent({
         watch(() => props.dataDetail, (value: any) => {
             dataGet.value = value
             month1.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYY-MM")
-            dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate = dayjs(value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate.toString()).format('YYYY-MM-DD')
-            dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate = dayjs(value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate.toString()).format('YYYY-MM-DD')
-            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = dayjs(value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate.toString()).format('YYYY-MM-DD')
-            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate = dayjs(value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate.toString()).format('YYYY-MM-DD')
-            dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = dayjs(value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate.toString()).format('YYYY-MM-DD')
-            dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = dayjs(value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate.toString()).format('YYYY-MM-DD')
         }, { deep: true });
 
         watch(() => props.actionNextStep, (newVal) => {
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
 
-        watch(() => valueSelected, (newVal) => {   
-            dataGet.value.employee.joinedAt =  (arrayEmploySelect.find((val: any) => val.employeeId === newVal.value).joinedAt).toString()  
+        watch(() => valueSelected, (newVal) => {
+            dataGet.value.employee.joinedAt = (arrayEmploySelect.find((val: any) => val.employeeId === newVal.value).joinedAt).toString()
         }, { deep: true });
 
 
@@ -318,15 +319,12 @@ export default defineComponent({
             arrayReasonResignation,
             dataGet,
             dayjs,
-            checkBoxYearsService,
             openTabFuc,
             submitForm,
         }
     }
 })
 </script>
-
-
 <style lang="scss" scoped src="../../style/modalAdd.scss">
 
 </style>
