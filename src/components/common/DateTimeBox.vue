@@ -18,7 +18,7 @@ export default defineComponent({
       type: String,
     },
     valueDate: {
-      type: Number,
+      type: [Number,String],
       default: parseInt(dayjs().format("YYYYMMDD")),
     },
     id: {
