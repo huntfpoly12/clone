@@ -364,8 +364,6 @@ export default defineComponent({
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newC
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
                     }
-
-
                 indexChange.value++
             });
         // =============== FUNCTION ================================

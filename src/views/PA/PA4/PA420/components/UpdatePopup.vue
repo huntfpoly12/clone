@@ -8,7 +8,6 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
         <div class="step-content pt-20">
-
             <form action="your-action">
                 <keep-alive>
                     <template v-if="step === 0">
@@ -27,7 +26,6 @@
                     </template>
                 </keep-alive>
             </form>
-
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -36,7 +34,6 @@
         </div>
     </a-modal>
 </template>
-
 <script lang="ts">
 import { defineComponent, ref, computed, reactive, watch } from 'vue'
 import notification from "@/utils/notification";
@@ -48,7 +45,6 @@ import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import dayjs from "dayjs";
-
 export default defineComponent({
     props: {
         modalStatus: {
@@ -83,13 +79,11 @@ export default defineComponent({
             statusModal.value = false
             emit("closePopup", false)
         };
-
         const requestCallDetail: any = ref({
             companyId: companyId,
             processKey: props.processKey,
             incomeId: 0
         })
-
         // =========================  GRAPQL =================================================
         const {
             mutate,
@@ -104,7 +98,6 @@ export default defineComponent({
         onError((e: any) => {
             notification('error', e.message)
         })
-
         const { refetch: refetchGetDetail, onError: errorGetDetail, onResult: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
@@ -119,7 +112,6 @@ export default defineComponent({
         errorGetDetail(res => {
             notification('error', res.message)
         })
-
         // ================WATCHING============================================ 
         watch(() => props.modalStatus, (newValue) => {
             requestCallDetail.value.incomeId = props.keyRowIndex
@@ -127,8 +119,6 @@ export default defineComponent({
             trigger.value = true
             refetchGetDetail()
         }, { deep: true })
-
-
         // =========================  FUNCTION ===============================================
         // all Computed 
         const checkStepTwo = computed(() => {
@@ -191,7 +181,6 @@ export default defineComponent({
                     "exclusionDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.exclusionDays,
                     "additionalDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.additionalDays
                 },
-
                 "taxCalculationInput": {
                     "calculationOfDeferredRetirementIncomeTax": {
                         "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
@@ -205,7 +194,6 @@ export default defineComponent({
                     "prevRetirementBenefitStatus": dataDefault.specificationDetail.prevRetirementBenefitStatus
                 }
             }
-
             // remove all row name : __typename
             const cleanData = JSON.parse(
                 JSON.stringify(dataCallApiUpdate, (name, val) => {
@@ -218,10 +206,8 @@ export default defineComponent({
                     }
                 })
             );
-
             mutate(cleanData)
         }
-
         return {
             setModalVisible,
             changeStep,
@@ -240,7 +226,5 @@ export default defineComponent({
     },
 })
 </script>
-
 <style lang="scss" scoped src="../style/modalAdd.scss">
-
 </style> 
