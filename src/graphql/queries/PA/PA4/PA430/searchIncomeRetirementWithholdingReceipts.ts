@@ -38,14 +38,90 @@ export default gql`
       actualPayment
       employee{
         ... on EmployeeWage {
-            employeeId
-            incomeTypeCode
-            name
-        }
-        ... on EmployeeWageDaily {
+          type
           employeeId
           incomeTypeCode
           name
+          foreigner
+          nationality
+          nationalityCode
+          stayQualification
+          residentIdValidity
+          roadAddress
+          addressExtend
+          email
+          department
+          responsibility
+          status
+          withholdingIncomeTax
+          withholdingLocalIncomeTax
+          withholdingRuralSpecialTax
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          ip
+          active
+          residentId
+          joinedAt
+          leavedAt
+          president
+          householder
+          nationalPensionDeduction
+          healthInsuranceDeduction
+          longTermCareInsuranceDeduction
+          employeementInsuranceDeduction
+          insuranceSupport
+          nationalPensionSupportPercent
+          employeementInsuranceSupportPercent
+        }
+        ... on EmployeeWageDaily {
+          type
+          employeeId
+          incomeTypeCode
+          name
+          foreigner
+          nationality
+          nationalityCode
+          stayQualification
+          residentIdValidity
+          roadAddress
+          addressExtend
+          email
+          department
+          responsibility
+          status
+          withholdingIncomeTax
+          withholdingLocalIncomeTax
+          withholdingRuralSpecialTax
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          ip
+          active
+          residentId
+          joinedAt
+          leavedAt
+          retirementIncome
+          nationalPensionDeduction
+          healthInsuranceDeduction
+          longTermCareInsuranceDeduction
+          employeementInsuranceDeduction
+          insuranceSupport
+          nationalPensionSupportPercent
+          employeementInsuranceSupportPercent
+          weeklyWorkingHours
+          monthlyPaycheck
+          workingDays
+          dailyWage
+          monthlyWage
+          totalDeduction
+          deletable
+          deductionItems{
+            itemCode
+            amount
+          }
         }
       }
       specification{

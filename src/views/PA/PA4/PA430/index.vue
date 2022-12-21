@@ -3,38 +3,41 @@
     <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" />
     <div id="pa-430">
       <div class="search-form">
-        <div class=" custom-flex">
-          <a-row>
-            <a-col :span="24">
-              <label class="lable-item">소득자보관용: </label>
-              <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'지급'"
-                :textUnCheck="'귀속'" />
+          <a-row :gutter="20">
+            <a-col >
+              <div class="income-earners dflex custom-flex">
+                <label class="lable-item">소득자보관용: </label>
+                <div style="width: 70px;" class="label-belonging">귀속</div>
+              </div>
+            </a-col>
+            <a-col>
+              <div class="dflex custom-flex">
+                <a-range-picker
+                    :placeholder="['Start month', 'End month']"
+                    format="YYYY-MM"
+                    :value="rangeDate"
+                    :mode="mode2"
+                    @panelChange="handlePanelChange2"
+                    @change="handleChange"
+                    :locale="locale"
+                  />
+              </div>
+            </a-col>
+            <a-col>
+              <div class=" selectRatio dflex custom-flex">
+                <strong class="lable-item">구분 :</strong>
+                <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="originData.filter.type"
+                  :layoutCustom="'horizontal'" />
+              </div>
             </a-col>
           </a-row>
-          <a-col>
-            <div class=" custom-flex">
-              <label class="lable-item">영수일:</label>
-              {{ rangeDate }}
-              <a-range-picker :placeholder="['Start Month', 'Finish Month']" format="YYYY-MM" v-model="rangeDate" :mode="['month', 'month']"
-                locale="ko" />
-            </div>
-          </a-col>
-          <a-col>
-            <div class=" selectRatio">
-              <strong class="lable-item">구분 :</strong>
-              <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="valueRadioBox"
-                :layoutCustom="'horizontal'" />
-            </div>
-          </a-col>
-        </div>
-
       </div>
       <div class="page-content">
         <div class="page-content-top">
           <a-col :span="12">
             <div class="format-settings">
               <strong>서식 설정: </strong>
-              <div class="format-settings-text">
+              <div class="style-note" >
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                 <span>
                   본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
@@ -69,35 +72,58 @@
             </div>
           </template>
           <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-          <DxColumn :width="250" caption="사원" cell-template="tag" />
-          <template #tag="{ data }" class="custom-action">
+          <DxColumn :width="250" caption="사원" cell-template="employee-info" />
+          <template #employee-info="{ data }" class="custom-action">
             <div class="custom-action">
               <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                 :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-                :foreigner="data.data.employee.foreigner" :checkStatus="false" />
+                :foreigner="data.data.employee.foreigner" :checkStatus="false" :forDailyUse="data.data.employeeType == 20 ? true: false"/>
             </div>
           </template>
-          <DxColumn data-field="employee.status" caption="구분 " cell-template="grid-cell" css-class="cell-center" />
+          <DxColumn data-field="retirementType" caption="구분 " cell-template="grid-cell" css-class="cell-center" />
           <template #grid-cell="{ data }">
             <a-tag :color="getColorTag(data.value)?.name">{{
             getColorTag(data.value)?.tag_name
             }}</a-tag>
           </template>
-          <DxColumn caption="입사일 (정산시작일) " data-field="employee.residentId" />
-
-          <DxColumn caption="퇴사일 (정산종료일) " cell-template="grade-cell" :width="150" />
-          <template #grade-cell="{ data }" class="custom-action">
-            <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
-            </income-type>
+          <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate" cell-template="settlementStartDate" css-class="cell-center"/>
+          <template #settlementStartDate="{ data }">
+            {{ $filters.formatDate(data.value.toString()) }}
           </template>
-          <DxColumn caption="귀속연월" data-field="paymentAmount" />
-          <DxColumn caption="지급연월" data-field="withholdingIncomeTax" />
-          <DxColumn caption="퇴직급여" data-field="withholdingLocalIncomeTax" />
-          <DxColumn caption="비과세 퇴직급여" data-field="paymentAmount" />
-          <DxColumn caption="과세대상 퇴직급여" />
-          <DxColumn caption="공제"  />
-          <DxColumn caption="차인지급액" />
-          <DxColumn caption="비고"  />
+          <DxColumn caption="퇴사일 (정산종료일) " data-field="settlementFinishDate" cell-template="settlementFinishDate" css-class="cell-center" />
+          <template #settlementFinishDate="{ data }">
+            {{ $filters.formatDate(data.value.toString()) }}
+          </template>
+          <DxColumn caption="귀속연월" css-class="cell-center" cell-template="inputedYearMonth"/>
+          <template #inputedYearMonth="{ data }">
+            xxxxx-{{ data.data.imputedMonth }}
+          </template>
+          <DxColumn caption="지급연월" css-class="cell-center"  cell-template="paymentYearMonth"/>
+          <template #paymentYearMonth="{ data  }">
+            {{ data.data.paymentYear }}-{{ data.data.paymentMonth }}
+          </template>
+          <DxColumn caption="퇴직급여"   data-field="retirementBenefits" css-class="cell-center"/>
+          <DxColumn caption="비과세 퇴직급여"   data-field="nonTaxableRetirementBenefits" css-class="cell-center"/>
+          <DxColumn caption="과세대상 퇴직급여"  data-field="taxableRetirementBenefits" css-class="cell-center"/>
+          <DxColumn caption="공제"   data-field="totalDeduction" css-class="cell-center"/>
+          <DxColumn caption="차인지급액" data-field="actualPayment" css-class="cell-center"/>
+          <DxColumn caption="비고"   css-class="cell-center" cell-template="note"/>
+          <template #note="{ data  }">
+              <div class="custom-action">
+                <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
+                <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2" :typeValue="1" />
+                <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
+                  :typeValue="1" />
+                <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
+                  :ratio="data.data.employee.nationalPensionSupportPercent" />
+                <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
+                  :ratio="data.data.employee.employeementInsuranceSupportPercent" />
+                <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
+                  :ratio="data.data.employee.employeementReductionRatePercent" />
+                <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
+                  :ratio="data.data.employee.incomeTaxMagnification" />
+              </div>
+          </template>
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
             <div class="custom-action" style="text-align: center;">
@@ -107,17 +133,12 @@
             </div>
           </template>
           <DxSummary>
-            <DxTotalItem show-in-column="성명 (상호)" />
-            <DxTotalItem column="paymentAmount" summary-type="sum" />
-            <DxTotalItem column="withholdingIncomeTax" summary-type="sum" />
-            <DxTotalItem column="requiredExpenses" summary-type="sum" />
-            <DxTotalItem column="incomePayment" summary-type="sum" />
-            <DxTotalItem column="withholdingLocalIncomeTax" summary-type="sum" />
-            <DxTotalItem column="비과세 퇴직급여" summary-type="sum" />
-            <DxTotalItem column="과세대상 퇴직급여" summary-type="sum" />
-            <DxTotalItem column="공제" summary-type="sum" />
-            <DxTotalItem column="차인지급액" summary-type="sum" />
-            <DxTotalItem column="비고" summary-type="sum" />
+              <DxTotalItem :customize-text="customizeTotal" show-in-column="사원" alignment="left"/>
+              <DxTotalItem :customize-text="customizeTotal" show-in-column="사원" alignment="left"/>
+              <DxTotalItem display-format="퇴직급여합계: {0}"  column="retirementBenefits" summary-type="sum" alignment="left"/>
+              <DxTotalItem display-format="비과세퇴직급여합계: {0}"  column="nonTaxableRetirementBenefits" summary-type="sum" alignment="left"/>
+              <DxTotalItem display-format="과세대상퇴직급여합계: {0}"  column="taxableRetirementBenefits" summary-type="sum" alignment="left"/>
+              <DxTotalItem display-format="공제합계: {0}" column="totalDeduction" summary-type="sum"/> 
           </DxSummary>
         </DxDataGrid>
         <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
@@ -129,10 +150,10 @@
   </a-spin>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed } from "vue";
+import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
-import dayjs from 'dayjs';
+import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
 import DxButton from "devextreme-vue/button";
 import {
   DxDataGrid,
@@ -153,7 +174,11 @@ import queries from "@/graphql/queries/PA/PA4/PA430/index";
 import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 import EmailMultiPopup from "./components/EmailMultiPopup.vue";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
+import dayjs from 'dayjs';
+import { Dayjs } from "dayjs";
+import 'dayjs/locale/ko';
 
+dayjs.locale('ko');
 export default defineComponent({
   components: {
     DxButton,
@@ -175,7 +200,7 @@ export default defineComponent({
     const popupDataEmailMulti = ref({})
     const dataSelect = ref<any>([])
     const store = useStore();
-
+    const mode2 = ref<any>(['month', 'month']);
     const globalYear = computed(() => store.state.settings.globalYear);
     const trigger = ref<boolean>(true);
     const move_column = computed(() => store.state.settings.move_column);
@@ -185,31 +210,27 @@ export default defineComponent({
 
     const dataSource = ref([]);
     const arrayRadioCheck = ref([
-      { id: 0, text: "전체" },
+      { id: null, text: "전체" },
       { id: 1, text: "퇴직소득" },
       { id: 2, text: "중간정산" },
     ]);
     const valueRadioBox = ref(0);
-    const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
+    const rangeDate = ref([dayjs().subtract(11, 'month'), dayjs()]);
 
     const getColorTag = (data: any) => {
-      if (data == 10) {
-        return { name: "red", tag_name: "신청" };
-      } else if (data == 20) {
-        return { name: "blue", tag_name: "심사중" };
-      } else if (data == 30) {
-        return { name: "green", tag_name: "승인" };
-      } else if (data == 99) {
-        return { name: "grey", tag_name: "반려" };
-      }
+      if (data == 1) {
+        return { name: "#C73F09", tag_name: "퇴직" };
+      } else if (data == 2) {
+        return { name: "#77933C", tag_name: "중간" };
+      } 
     };
     const originData = ref({
       companyId: companyId,
       filter: {
         imputedYear: globalYear.value,
-        startMonth: '',
-        finishMonth: '',
-        type: '',
+        startMonth: dayjs().subtract(11, 'month').month()+1,
+        finishMonth: dayjs().month()+1,
+        type: null,
       },
     });
     const valueDefaultIncomeRetirement = ref({
@@ -328,7 +349,30 @@ export default defineComponent({
     const sendMail = (sendType: string) => {
       alert(sendType);
     }
+
+    const handleChange = (val: [Dayjs, Dayjs]) => {
+      
+      
+      rangeDate.value = val;
+    };
+
+    const handlePanelChange2 = (val: [Dayjs, Dayjs], mode: any[]) => {
+      console.log(val[0].month());
+      originData.value.filter.startMonth = val[0].month()+1;
+      originData.value.filter.finishMonth = val[1].month()+1
+      rangeDate.value = val;
+      mode2.value = [
+        mode[0] === 'date' ? 'month' : mode[0],
+        mode[1] === 'date' ? 'month' : mode[1],
+      ];
+    };
+
+    const customizeTotal = () => { 
+       return 'retirementBenefits'
+    }
     return {
+      customizeTotal,
+      locale,handleChange,handlePanelChange2,mode2,
       valueDefaultIncomeRetirement,
       valueSwitch, valueSwitch2,
       loading,
@@ -352,119 +396,10 @@ export default defineComponent({
       rangeDate,
       valueRadioBox,
       arrayRadioCheck,
-      getColorTag
+      getColorTag,
+      originData
     };
   },
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style lang="scss" scoped src="./style/style.scss" />
