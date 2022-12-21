@@ -119,8 +119,7 @@
                                 <div class="hover-underlined" v-if="data.data.month10"
                                     @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth)">
                                     <colorful-badge :value="data.data.month10.status"
-                                        :year="data.data.month10.paymentYear"
-                                        :month="data.data.month10.paymentMonth" />
+                                        :year="data.data.month10.paymentYear" :month="data.data.month10.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
                                 </div>
@@ -130,8 +129,7 @@
                                 <div class="hover-underlined" v-if="data.data.month11"
                                     @click="showDetailSelected(data.data.month11.imputedMonth, data.data.month11.imputedYear, data.data.month11.paymentYear, data.data.month11.paymentMonth)">
                                     <colorful-badge :value="data.data.month11.status"
-                                        :year="data.data.month11.paymentYear"
-                                        :month="data.data.month11.paymentMonth" />
+                                        :year="data.data.month11.paymentYear" :month="data.data.month11.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(11)"> [+]
                                 </div>
@@ -141,8 +139,7 @@
                                 <div class="hover-underlined" v-if="data.data.month12"
                                     @click="showDetailSelected(data.data.month12.imputedMonth, data.data.month12.imputedYear, data.data.month12.paymentYear, data.data.month12.paymentMonth)">
                                     <colorful-badge :value="data.data.month12.status"
-                                        :year="data.data.month12.paymentYear"
-                                        :month="data.data.month12.paymentMonth" />
+                                        :year="data.data.month12.paymentYear" :month="data.data.month12.paymentMonth" />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(12)"> [+]
                                 </div>
@@ -243,9 +240,9 @@
                 </a-col>
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
-                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" 
-                :processKey="valueCallApiGetEmployeeBusiness.processKey"
-                :data="dataModalCopy"  @dataAddIncomeProcess="dataAddIncomeProcess"/>
+                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
+                    :processKey="valueCallApiGetEmployeeBusiness.processKey" :data="dataModalCopy"
+                    @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
         </div>
     </div>
@@ -360,13 +357,13 @@ export default defineComponent({
                         value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
-                    // =================================== Pending value ============================= 
+ 
                     dataCustomRes.value[6]['month' + val.imputedMonth] = {
-                        value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+                        value: filters.formatCurrency(val.incomeStat?.incomePayment + val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
                     dataCustomRes.value[7]['month' + val.imputedMonth] = {
-                        value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+                        value: filters.formatCurrency(val.incomeStat?.retirementBenefits - val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
                     if (val.imputedMonth == (dayjs().month() + 1)) {

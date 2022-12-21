@@ -112,7 +112,7 @@
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
-        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" />
+        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess"/>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -287,7 +287,8 @@ export default defineComponent({
             editPaymentDate,
             customTextSummary, customTextSummaryInfo,
             actionEditRow,
-            actionClosePopup
+            actionClosePopup,
+            refetchTableDetail,
         }
     }
 });
