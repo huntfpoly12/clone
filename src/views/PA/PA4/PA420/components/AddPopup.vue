@@ -50,7 +50,9 @@
             <button-basic text="다음" type="default" mode="contained" @onClick="nextStep" v-if="step < 2" />
             <button-basic text="저장" type="default" mode="contained" @onClick="created" v-if="step === 2" />
         </div>
+        {{ dataForm }}
     </a-modal>
+    
 </template>
 
 <script lang="ts">

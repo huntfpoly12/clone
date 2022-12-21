@@ -56,14 +56,14 @@
                 <default-text-box v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].pensionAccountHolder" :required="false" width="20%" class="mr-5" placeholder="연금계좌취급자" />
                 <default-text-box v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].bizNumber" :required="false" width="20%" class="mr-5" placeholder="사업자등록번호" />
                 <default-text-box v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].bankAccountNumber" :required="false" width="20%" class="mr-5" placeholder="계좌번호" />
-                <date-time-box v-model:valueDate="depositDate0" :required="false" width="25%" class="mr-5" placeholder="입금일" />
+                <date-time-box v-model:valueDate="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate" :required="false" width="25%" class="mr-5" placeholder="입금일" />
                 <number-box-money v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount" :required="false" width="15%" placeholder="계좌입금금액" />
             </div>
             <div class="d-flex mt-5">
                 <default-text-box v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].pensionAccountHolder" :required="false" width="20%" class="mr-5" placeholder="연금계좌취급자" />
                 <default-text-box v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].bizNumber" :required="false" width="20%" class="mr-5" placeholder="사업자등록번호" />
                 <default-text-box v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].bankAccountNumber" :required="false" width="20%" class="mr-5" placeholder="계좌번호" />
-                <date-time-box v-model:valueDate="depositDate1" :required="false" width="25%" class="mr-5" placeholder="입금일" />
+                <date-time-box v-model:valueDate="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate" :required="false" width="25%" class="mr-5" placeholder="입금일" />
                 <number-box-money v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount" :required="false" width="15%" placeholder="계좌입금금액" />
             </div>
         </a-col>
@@ -243,8 +243,6 @@ export default defineComponent({
         const trigger = ref<boolean>(false)
         const variables:any = ref({})
         const dataIncomeRetirementTax: any = ref({...initialIncomeRetirementTax})
-        const depositDate0 = ref(null)
-        const depositDate1 = ref(null)
         const {
             result, loading, refetch, onError
         } = useQuery(queries.calculateIncomeRetirementTax, variables, () => ({
@@ -258,16 +256,10 @@ export default defineComponent({
         watch(result, (value) => {
             if (value.calculateIncomeRetirementTax) {
                 dataIncomeRetirementTax.value = value.calculateIncomeRetirementTax;
-                dataIncomeRetirementTax.value.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')
-                dataIncomeRetirementTax.value.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')
+                // dataIncomeRetirementTax.value.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')
+                // dataIncomeRetirementTax.value.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')
             }
             trigger.value = false;
-        })
-        watch(depositDate0, (value: any) => {
-            props.dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = value.replaceAll('-', '')
-        })
-        watch(depositDate1, (value: any) => {
-            props.dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = value.replaceAll('-', '')
         })
 
         const calculateIncomeRetirementTax = () => {
@@ -280,14 +272,11 @@ export default defineComponent({
                 delete variables.value.input.prevRetirementBenefitStatus
             }
             delete variables.value.input.checkBoxCallApi
-            console.log(variables.value);
             trigger.value = true;
         }
 
         return {
             calculateIncomeRetirementTax,
-            depositDate0,
-            depositDate1,
             dataIncomeRetirementTax,
         }
     }

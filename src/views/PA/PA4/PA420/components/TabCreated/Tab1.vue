@@ -91,7 +91,7 @@
                 </a-form-item>
                 <a-form-item label="제외일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
+                        <number-box :required="false" width="150px"
                             :disabled="!dataForm.checkBoxCallApi"
                             v-model:valueInput="dataForm.taxCalculationInput.prevRetiredYearsOfService.exclusionDays" />
                         <div class="ml-5 d-flex-center">
@@ -107,7 +107,7 @@
                 </a-form-item>
                 <a-form-item label="가산일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
+                        <number-box :required="false" width="150px"
                             :disabled="!dataForm.checkBoxCallApi"
                             v-model:valueInput="dataForm.taxCalculationInput.prevRetiredYearsOfService.additionalDays" />
                         <div class="ml-5 d-flex-center">
@@ -165,7 +165,7 @@
                 </a-form-item>
                 <a-form-item label="제외일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
+                        <number-box :required="false" width="150px"
                             v-model:valueInput="dataForm.taxCalculationInput.lastRetiredYearsOfService.exclusionDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
@@ -180,7 +180,7 @@
                 </a-form-item>
                 <a-form-item label="가산일수">
                     <div class="d-flex-center">
-                        <number-box min="1" max="31" :required="false" width="150px"
+                        <number-box :required="false" width="150px"
                             v-model:valueInput="dataForm.taxCalculationInput.lastRetiredYearsOfService.additionalDays" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
@@ -301,36 +301,18 @@ export default defineComponent({
             props.dataForm.processKey.paymentYear = parseInt(value.split('-')[0])
             props.dataForm.processKey.paymentMonth = parseInt(value.split('-')[1])
         });
-        // watch(settlementStartDate, (value: any) => {
-        //     props.dataForm.incomeCalculationInput.settlementStartDate = parseInt(value.replaceAll('-', ''))
-        // });
-        // watch(settlementFinishDate, (value: any) => {
-        //     props.dataForm.incomeCalculationInput.settlementFinishDate = parseInt(value.replaceAll('-', ''))
-        // });
-        // Prev
-        // watch(prevSettlementStartDate, (value: any) => {
-        //     props.dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementStartDate = parseInt(value.replaceAll('-', ''))
-        //     // settlementStartDate.value = value
-        // });
-        // watch(prevSettlementFinishDate, (value: any) => {
-        //     props.dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementFinishDate = parseInt(value.replaceAll('-', ''))
-        // });
-        // watch(prevPaymentDate, (value: any) => {
-        //     props.dataForm.taxCalculationInput.prevRetiredYearsOfService.paymentDate = parseInt(value.replaceAll('-', ''))
-        // });
 
-        // Last
-        // watch(lastSettlementStartDate, (value: any) => {
-        //     props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementStartDate = parseInt(value.replaceAll('-', ''))
-        //     // settlementStartDate.value = value
-        // });
-        // watch(lastSettlementFinishDate, (value: any) => {
-        //     props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementFinishDate = parseInt(value.replaceAll('-', ''))
-        //     // settlementFinishDate.value = value
-        // });
-        // watch(lastPaymentDate, (value: any) => {
-        //     props.dataForm.taxCalculationInput.lastRetiredYearsOfService.paymentDate = parseInt(value.replaceAll('-', ''))
-        // });
+        // Prev
+        watch(() => props.dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementStartDate, (value: any) => {
+            props.dataForm.incomeCalculationInput.settlementStartDate = value
+        });
+
+        watch(() => props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementStartDate, (value: any) => {
+            props.dataForm.incomeCalculationInput.settlementStartDate = value
+        });
+        watch(() => props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementFinishDate, (value: any) => {
+            props.dataForm.incomeCalculationInput.settlementFinishDate = value
+        });
 
         watch(() => props.dataForm.input.employeeId, (value) => {
             let dataEmployee: any = props.arrayEmploySelect.find((element: any) => element.employeeId == value)
@@ -367,7 +349,6 @@ export default defineComponent({
                 props.dataForm.incomeCalculationInput.exclusionDays,
                 props.dataForm.incomeCalculationInput.additionalDays
             );
-            console.log(dataSettlement.value);
         }, { deep: true });
 
         watch(() => [
