@@ -277,6 +277,11 @@ export const dataDefaultDetailUtils = {
         "executive": false,
         "retirementReason": 0,
         "specificationDetail": {
+            "lastRetirementBenefitStatus": {
+                "retirementBenefits": 10,
+                "nonTaxableRetirementBenefits": 10,
+                "taxableRetirementBenefits": 10
+            },
             "prevRetiredYearsOfService": {
                 "settlementStartDate": 0,
                 "settlementFinishDate": 0,
@@ -305,7 +310,42 @@ export const dataDefaultDetailUtils = {
             },
             "taxAmountCalculation": {
                 "taxCredit": 0,
-                "prePaidDelayedTaxPaymentTaxAmount" : 0
+                "prePaidDelayedTaxPaymentTaxAmount": 0,
+                "convertedTaxAmount": 0,
+                "taxAmountCalculatedForRetirementIncome": 0,
+                "taxAmountSubjectToReporting": 0
+            },
+            "calculationOfDeferredRetirementIncomeTax": {
+                "totalAmount": 0,
+                "retirementIncomeTax": 0,
+                "statements": [
+                    {
+                        "pensionAccountHolder": "",
+                        "bizNumber": "",
+                        "bankAccountNumber": "",
+                        "depositDate": "",
+                        "accountDepositAmount": 0
+                    }
+                ]
+            },
+            "taxBaseCalculation": {
+                "retirementIncome": 0,
+                "deductionForYearsOfService": 0,
+                "conversionBenefit": 0,
+                "taxBaseForRetirementIncome": 0,
+                "deductionByConversionBenefit": 0
+            },
+            "deductibleWithholdingTax": {
+                "incomeTax": 0,
+                "localIncomeTax": 0
+            },
+            "taxAmountToBeReported": {
+                "incomeTax": 0,
+                "localIncomeTax": 0
+            },
+            "retirementIncomeTax": {
+                "incomeTax": 0,
+                "localIncomeTax": 0
             }
         },
         "totalPay3Month": 0,
@@ -315,7 +355,5 @@ export const dataDefaultDetailUtils = {
         "definedRetirementBenefits": 0,
         "nonTaxableRetirementBenefits": 0,
         "taxableRetirementBenefits": 0,
-
     }
-
 }

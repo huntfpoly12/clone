@@ -59,6 +59,11 @@ export default gql`
                     executive
                     retirementReason
                     specificationDetail {
+                        lastRetirementBenefitStatus{
+                            retirementBenefits
+                            nonTaxableRetirementBenefits
+                            taxableRetirementBenefits
+                        }
                         prevRetiredYearsOfService {
                             settlementStartDate
                             settlementFinishDate
@@ -88,6 +93,41 @@ export default gql`
                         taxAmountCalculation {
                             taxCredit
                             prePaidDelayedTaxPaymentTaxAmount
+                            convertedTaxAmount
+                            taxAmountCalculatedForRetirementIncome 
+                            prePaidDelayedTaxPaymentTaxAmount
+                            taxAmountSubjectToReporting
+                        }
+                        calculationOfDeferredRetirementIncomeTax{
+                            totalAmount
+                            retirementIncomeTax
+                            statements{
+                                pensionAccountHolder
+                                bizNumber
+                                bankAccountNumber
+                                depositDate
+                                accountDepositAmount
+                            }
+                        }
+                        taxBaseCalculation {
+                            retirementIncome
+                            deductionForYearsOfService
+                            conversionBenefit
+                            taxBaseForRetirementIncome
+                            deductionByConversionBenefit
+                          
+                        }
+                        deductibleWithholdingTax{
+                            incomeTax
+                            localIncomeTax
+                        }
+                        taxAmountToBeReported {
+                            incomeTax
+                            localIncomeTax
+                        }
+                        retirementIncomeTax {
+                            incomeTax
+                            localIncomeTax
                         }
                     }
                     totalPay3Month
