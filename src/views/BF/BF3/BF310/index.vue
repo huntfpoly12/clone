@@ -133,7 +133,7 @@
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                        :total="rowTable" show-less-items />
+                        :total="rowTable" show-less-items @change="changePage"/>
                 </div>
                 <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -251,6 +251,13 @@ export default defineComponent({
                 trigger.value = false;
             }
         });
+        // Get api when page is changed
+        const onChangePage = (page: any, pageSize:any) => {
+            console.log(`output->page, pageSize`,page, pageSize)
+            originData.page = page;
+            trigger.value = true;
+            refetchData();
+        }
         return {
             loading,
             move_column,
@@ -267,6 +274,7 @@ export default defineComponent({
             getColorTag,
             onExporting,
             actionSearch,
+            onChangePage,
         }
     },
 
