@@ -32,7 +32,7 @@
                             <switch-basic v-model:valueSwitch="formState.active" :textCheck="'이용중'"
                                 :textUnCheck="'이용중지'" />
                         </a-form-item>
-                        <a-form-item label="회원종류2" class="red">
+                        <a-form-item label="회원종류" class="red">
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
                                 value-expr="id" item-template="item" :height="$config_styles.HeightInput" width="140px"
                                 field-template="field" @value-changed="changeValueType">
@@ -66,9 +66,10 @@
                     <a-col :span="24">
                         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
                         <div style="position: relative">
-                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrData" :show-borders="true"
-                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                :column-auto-width="true" class="table-scroll" @selection-changed="onSelectionChanged">
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrData"
+                                :show-borders="true" :allow-column-reordering="move_column"
+                                :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
+                                @selection-changed="onSelectionChanged">
                                 <DxPaging :page-size="0" />
                                 <DxSelection data-field="active" mode="multiple" />
                                 <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
@@ -198,10 +199,12 @@ export default defineComponent({
                 else if (data.value == 3)
                     value = 'r'
                 else if (data.value == 4)
-                    value = 'p'
+                    value = 'p'  
+
                 let dataCall: any = {
                     type: value.toString()
                 }
+                formState.type = value
                 originData.value.types = [value.toString()]
                 dataCallGroup.value = dataCall
             }, 100);
@@ -333,11 +336,13 @@ export default defineComponent({
         const onSelectionChanged = (selectedRows: any) => {
             idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
         };
-       
+
         const creactUserNew = (e: any) => {
+            console.log(formState.type);
+            
             var res = e.validationGroup.validate();
             if (!res.isValid) {
-                res.brokenRules[0].validator.focus(); 
+                res.brokenRules[0].validator.focus();
             } else {
                 var RoleGroup = idRoleGroup.map((row: any) => {
                     return row.id;
@@ -392,6 +397,8 @@ export default defineComponent({
     },
 });
 </script>  
+
+
 
 
 <style lang="scss" scoped src="../style/styleAdd.scss" />
