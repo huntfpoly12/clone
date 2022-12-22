@@ -238,6 +238,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
+                {{ statusButton }}
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
@@ -302,7 +303,7 @@ export default defineComponent({
             companyId: companyId,
             processKey: {
                 imputedYear: globalYear.value,
-                imputedMonth: dayjs().month(),
+                imputedMonth: dayjs().month()+ 1,
                 paymentYear: globalYear.value,
                 paymentMonth: dayjs().month() + 1
             }

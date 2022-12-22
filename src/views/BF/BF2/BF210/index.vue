@@ -217,7 +217,7 @@ export default defineComponent({
             })
             triggerSearching.value = true
             if (originData) {
-                originData.value = dataNew.value
+              originData.value = { filter: dataNew.value }
                 refetchData()
             }
         }
@@ -259,7 +259,7 @@ export default defineComponent({
             }
             triggerSearching.value = true
             if (originData) {
-                originData.value = dataNew.value
+                originData.value = { filter: dataNew.value }
                 refetchData()
             }
         }

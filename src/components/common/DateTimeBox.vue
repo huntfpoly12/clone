@@ -18,7 +18,7 @@ export default defineComponent({
       type: String,
     },
     valueDate: {
-      type: [Number,String],
+      type: [Number, String],
       default: parseInt(dayjs().format("YYYYMMDD")),
     },
     id: {
@@ -34,7 +34,7 @@ export default defineComponent({
     Datepicker,
   },
   setup(props, { emit }) {
-    const date = ref(filters.formatDate(props.valueDate))
+    const date = ref(props.valueDate ? filters.formatDate(props.valueDate.toString()) : filters.formatDate(props.valueDate))
     watch(
       () => props.valueDate,
       (newValue) => {
@@ -54,8 +54,14 @@ export default defineComponent({
 </script> 
 
 
-<style lang="scss">
+<style lang="scss" >
 input.dp__input.dp__input_icon_pad {
   height: 34px;
+}
+
+.dp__disabled {
+  background: #fff;
+  border: 1px solid #ddd;
+  opacity: .5
 }
 </style>

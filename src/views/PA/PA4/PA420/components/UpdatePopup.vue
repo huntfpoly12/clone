@@ -35,7 +35,7 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, reactive, watch } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -44,6 +44,7 @@ import Tab1 from './TabEdit/Tab1.vue';
 import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
+import dayjs from "dayjs";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -69,7 +70,7 @@ export default defineComponent({
         const valueNextStep = ref(0)
         const dayValue = ref(1)
         const retirementIncome1 = ref(true)
-        const retirementIncome2 = ref(true) 
+        const retirementIncome2 = ref(true)
         const trigger = ref(false)
         const statusModal = ref(props.modalStatus)
         const dataDetailValue = ref()
@@ -96,11 +97,15 @@ export default defineComponent({
         onError((e: any) => {
             notification('error', e.message)
         })
+
         const { refetch: refetchGetDetail, onError: errorGetDetail, onResult: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resultGetDetail(newValue => {
+            newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = parseInt(dayjs(newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate).format('YYYYMMDD'))
+            newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = parseInt(dayjs(newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate).format('YYYYMMDD'))
+
             dataDetailValue.value =
             {
                 ...newValue.data.getIncomeRetirement,
@@ -159,7 +164,7 @@ export default defineComponent({
             step.value--
         }
         const updated = () => {
-            let dataDefault = dataDetailValue.value.specification
+            let dataDefault = dataDetailValue.value.specification  
             let dataCallApiUpdate =
             {
                 "companyId": companyId,
@@ -182,7 +187,16 @@ export default defineComponent({
                 "taxCalculationInput": {
                     "calculationOfDeferredRetirementIncomeTax": {
                         "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
-                        "statements": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements
+                        "statements": [
+                            {
+                                ...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0],
+                                "depositDate": dayjs(dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.toString()).format("YYYY-MM-DD")
+                            },
+                            {
+                                ...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1],
+                                "depositDate": dayjs(dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.toString()).format("YYYY-MM-DD")
+                            },
+                        ]
                     },
                     "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
                     "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,
@@ -204,6 +218,7 @@ export default defineComponent({
                     }
                 })
             );
+
             mutate(cleanData)
         }
         return {

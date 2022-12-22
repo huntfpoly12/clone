@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 export default  gql`
-query findManagerUsers  {
-    findManagerUsers  {
+query findManagerUsers ($name: String) {
+    findManagerUsers ( name: $name) {
      id 
      type
      username
