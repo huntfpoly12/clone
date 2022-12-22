@@ -1,7 +1,7 @@
 <template>
   <div>
     <DxSelectBox :search-enabled="true" :width="width"
-      :data-source="result?.findManagerUsers?.length > 0 ? result?.findManagerUsers : []"
+      :data-source="dataSource"
       :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
       :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택" :name="nameInput">
       <DxValidator :name="nameInput">
@@ -11,10 +11,10 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, getCurrentInstance } from "vue";
+import { defineComponent, ref, watch, getCurrentInstance, reactive } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
-import queries from "../graphql/queries/common/index";
+import queries from "@/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 export default defineComponent({
   props: {
@@ -51,10 +51,20 @@ export default defineComponent({
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
+    const dataSource = ref([])
+   
     const value = ref(props.valueInput);
     const { result } = useQuery(
-      queries.getListManager
+      queries.searchUsers, {
+        filter: {
+          rows: 10000,
+          type: 'm'
+        }
+      }
     );
+    watch(result, (valueData) => {
+      dataSource.value = valueData.searchUsers.datas.filter((item : any)=> item.managerGrade == 3);
+    })
     watch(
       () => props.valueInput,
       (newValue) => {
@@ -67,7 +77,7 @@ export default defineComponent({
     return {
       result,
       value,
-      updateValue,
+      updateValue,dataSource,
       messageRequired
     };
   },
