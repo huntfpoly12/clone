@@ -27,7 +27,7 @@
                 </a-form-item>
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
-                        <date-time-box width="130px" dateFormat="YYYY-MM-DD" disabled="true"
+                        <date-time-box width="130px"  disabled="true"
                             :valueDate="dayjs(dataGet.employee.joinedAt).format('YYYY-MM-DD')" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
@@ -56,7 +56,7 @@
                 <div class="header-text-2 mb-10">중간지급 근속연수</div>
                 <a-form-item label="정산시작(입사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataGet.checkBoxCallApi"
+                        <date-time-box width="150px"  :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate"
                             :required="true" />
                         <div class="ml-5 d-flex-center">
@@ -85,7 +85,7 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일">
-                    <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataGet.checkBoxCallApi"
+                    <date-time-box width="150px"  :disabled="!dataGet.checkBoxCallApi"
                         v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.paymentDate"
                         :required="true" />
                 </a-form-item>
@@ -126,7 +126,7 @@
                 <div class="header-text-2 mb-10">최종 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                        <date-time-box width="150px" 
                             v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -140,7 +140,7 @@
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                        <date-time-box width="150px" 
                             v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -153,7 +153,7 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일">
-                    <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                    <date-time-box width="150px" 
                         v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.paymentDate"
                         :required="true" />
                 </a-form-item>
@@ -232,7 +232,7 @@
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                        <date-time-box width="150px" 
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -297,22 +297,35 @@ export default defineComponent({
             imputedYear: globalYear,
         })
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
-        const arrayEmploySelect = reactive(store.state.common.arrayEmployeePA410)
+        const arrayEmploySelect = ref([])
+        const arrayEmploySelectCommon = reactive(store.state.common.arrayEmployeePA410)
+
 
         // =============== WATCH ==================================
         watch(() => props.dataDetail, (value: any) => {
             dataGet.value = value
             month1.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYY-MM")
+            setTimeout(() => {
+                if (arrayEmploySelectCommon) {
+                    arrayEmploySelect.value = JSON.parse(
+                        JSON.stringify(arrayEmploySelectCommon, (name, val) => {
+                            if (
+                                // name !== "name" && name !== "updatedAt" && name != "status" && name != "stayQualification" && name != "type" && name != "employeeId"
+                                name === "__typename"
+                            ) {
+                                delete val[name];
+                            } else {
+                                return val;
+                            }
+                        })
+                    );
+                }
+            }, 100);
         }, { deep: true });
 
         watch(() => props.actionNextStep, (newVal) => {
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
-
-
-        watch(() => valueSelected, (newVal) => {
-            dataGet.value.employee.joinedAt = arrayEmploySelect.find((val: any) => val.employeeId === newVal.value).joinedAt
-        }, { deep: true });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
             let objectData = Formula.getDateOfService(
@@ -364,8 +377,6 @@ export default defineComponent({
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newC
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
                     }
-
-
                 indexChange.value++
             });
         // =============== FUNCTION ================================
@@ -382,8 +393,6 @@ export default defineComponent({
                 emit('nextPage', true)
             }
         }
-
-
 
         return {
             yearsOfService1, yearsOfService2, yearsOfService3,

@@ -1,4 +1,4 @@
-<template>
+<template> 
   <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
     @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }">
   </Datepicker>
@@ -18,7 +18,7 @@ export default defineComponent({
       type: String,
     },
     valueDate: {
-      type: [Number,String],
+      type: [Number, String],
       default: parseInt(dayjs().format("YYYYMMDD")),
     },
     id: {
@@ -34,7 +34,7 @@ export default defineComponent({
     Datepicker,
   },
   setup(props, { emit }) {
-    const date = ref(filters.formatDate(props.valueDate))
+    const date = ref(filters.formatDate(props.valueDate.toString()))
     watch(
       () => props.valueDate,
       (newValue) => {

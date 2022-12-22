@@ -85,8 +85,8 @@
                             v-model:valueInput="value.bizNumber" />
                         <default-text-box width="18%" class="mr-5" placeholder="계좌번호"
                             v-model:valueInput="value.bankAccountNumber" />
-                        <date-time-box width="28%" class="mr-5" dateFormat="YYYY-MM-DD"
-                            v-model:valueDate="value.depositDate" placeholder="입금일" />
+                        <date-time-box width="28%" class="mr-5" v-model:valueDate="value.depositDate"
+                            placeholder="입금일" />
                         <number-box-money width="18%" placeholder="계좌입금금액"
                             v-model:valueInput="value.accountDepositAmount" />
                     </div>
@@ -216,8 +216,8 @@
                             v-model:valueInput="value.bizNumber" disabled="true" />
                         <default-text-box width="19%" class="mr-5" placeholder="계좌번호"
                             v-model:valueInput="value.bankAccountNumber" disabled="true" />
-                        <date-time-box width="24%" class="mr-5" dateFormat="YYYY-MM-DD" disabled="true"
-                            v-model:valueDate="value.depositDate" placeholder="입금일" />
+                        <date-time-box width="24%" class="mr-5" disabled="true" v-model:valueDate="value.depositDate"
+                            placeholder="입금일" />
                         <number-box-money width="19%" placeholder="계좌입금금액"
                             v-model:valueInput="value.accountDepositAmount" disabled="true" />
                     </div>
@@ -302,7 +302,7 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
 import dayjs from "dayjs";
-
+import notification from "@/utils/notification";
 export default defineComponent({
     props: {
         dataDetail: Object,
@@ -324,6 +324,9 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
+        errorCaculate(res => {
+            notification('error', res.message)
+        })
 
 
         // ====================== WATCH =======================================
@@ -376,7 +379,6 @@ export default defineComponent({
                 })
             );
 
-            
             // Setup value call api
             dataRequestCaculate.value.input = {
                 "taxCredit": cleanData.specification.specificationDetail.taxAmountCalculation.taxCredit,
@@ -393,9 +395,21 @@ export default defineComponent({
                     settlementStartDate: cleanData.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate,
                     settlementFinishDate: cleanData.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
                 },
-                "calculationOfDeferredRetirementIncomeTax": cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax
+                "calculationOfDeferredRetirementIncomeTax": {
+                    ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax,
+                    "statements": [
+                        {
+                            ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0],
+                            "depositDate": dayjs(cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.toString()).format("YYYY-MM-DD")
+                        },
+                        {
+                            ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1],
+                            "depositDate": dayjs(cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.toString()).format("YYYY-MM-DD")
+                        }
+                    ]
+                }
             }
-            
+
             delete dataRequestCaculate.value.input.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax
 
             // If step 1 is not checked, delete some variables that do not need to be passed
