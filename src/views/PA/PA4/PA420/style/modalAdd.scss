@@ -67,9 +67,6 @@
     margin: 10px 0;
     border: 1px solid #337ab7;
 }
-::v-deep .dx-widget {
-    justify-content: space-evenly;
-}
 .modal-add {
     ::v-deep label {
         min-width: 120px;
@@ -134,3 +131,13 @@
         padding-left: 40px;
     }
 } 
+::v-deep .dx-radiobutton {
+    display: flex;
+    align-items: center;
+}
+::v-deep .dx-radio-value-container {
+    height: 18px;
+}
+::v-deep .one.dx-radiogroup-horizontal .dx-radiobutton:first-child{
+    margin-right: 95px;
+}
