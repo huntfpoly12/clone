@@ -8,7 +8,6 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
         <div class="step-content pt-20">
-
             <form action="your-action">
                 <keep-alive>
                     <template v-if="step === 0">
@@ -27,7 +26,6 @@
                     </template>
                 </keep-alive>
             </form>
-
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -36,9 +34,8 @@
         </div>
     </a-modal>
 </template>
-
 <script lang="ts">
-import { defineComponent, ref, computed, reactive, watch } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -48,7 +45,6 @@ import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import dayjs from "dayjs";
-
 export default defineComponent({
     props: {
         modalStatus: {
@@ -75,7 +71,6 @@ export default defineComponent({
         const dayValue = ref(1)
         const retirementIncome1 = ref(true)
         const retirementIncome2 = ref(true)
-        const modalOption = ref(false)
         const trigger = ref(false)
         const statusModal = ref(props.modalStatus)
         const dataDetailValue = ref()
@@ -83,13 +78,11 @@ export default defineComponent({
             statusModal.value = false
             emit("closePopup", false)
         };
-
         const requestCallDetail: any = ref({
             companyId: companyId,
             processKey: props.processKey,
             incomeId: 0
         })
-
         // =========================  GRAPQL =================================================
         const {
             mutate,
@@ -110,6 +103,9 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resultGetDetail(newValue => {
+            newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = parseInt(dayjs(newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate).format('YYYYMMDD'))
+            newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = parseInt(dayjs(newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate).format('YYYYMMDD'))
+
             dataDetailValue.value =
             {
                 ...newValue.data.getIncomeRetirement,
@@ -119,7 +115,6 @@ export default defineComponent({
         errorGetDetail(res => {
             notification('error', res.message)
         })
-
         // ================WATCHING============================================ 
         watch(() => props.modalStatus, (newValue) => {
             requestCallDetail.value.incomeId = props.keyRowIndex
@@ -127,8 +122,6 @@ export default defineComponent({
             trigger.value = true
             refetchGetDetail()
         }, { deep: true })
-
-
         // =========================  FUNCTION ===============================================
         // all Computed 
         const checkStepTwo = computed(() => {
@@ -171,7 +164,7 @@ export default defineComponent({
             step.value--
         }
         const updated = () => {
-            let dataDefault = dataDetailValue.value.specification
+            let dataDefault = dataDetailValue.value.specification  
             let dataCallApiUpdate =
             {
                 "companyId": companyId,
@@ -191,11 +184,19 @@ export default defineComponent({
                     "exclusionDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.exclusionDays,
                     "additionalDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.additionalDays
                 },
-
                 "taxCalculationInput": {
                     "calculationOfDeferredRetirementIncomeTax": {
                         "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
-                        "statements": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements
+                        "statements": [
+                            {
+                                ...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0],
+                                "depositDate": dayjs(dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.toString()).format("YYYY-MM-DD")
+                            },
+                            {
+                                ...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1],
+                                "depositDate": dayjs(dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.toString()).format("YYYY-MM-DD")
+                            },
+                        ]
                     },
                     "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
                     "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,
@@ -205,7 +206,6 @@ export default defineComponent({
                     "prevRetirementBenefitStatus": dataDefault.specificationDetail.prevRetirementBenefitStatus
                 }
             }
-
             // remove all row name : __typename
             const cleanData = JSON.parse(
                 JSON.stringify(dataCallApiUpdate, (name, val) => {
@@ -221,7 +221,6 @@ export default defineComponent({
 
             mutate(cleanData)
         }
-
         return {
             setModalVisible,
             changeStep,
@@ -240,7 +239,6 @@ export default defineComponent({
     },
 })
 </script>
-
 <style lang="scss" scoped src="../style/modalAdd.scss">
 
 </style> 

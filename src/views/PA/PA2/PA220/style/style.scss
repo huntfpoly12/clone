@@ -40,7 +40,6 @@
             align-items: center;
 
             >div {
-                font-size: 16px;
                 padding-right: 5px;
             }
 
@@ -107,6 +106,10 @@
             text-align: center;
         }
     }
+
+    .lable-item {
+        font-size: 16px;
+      }
 
     ::v-deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
         background: white;

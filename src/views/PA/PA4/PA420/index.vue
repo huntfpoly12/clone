@@ -238,6 +238,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
+                {{ statusButton }}
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
@@ -357,7 +358,6 @@ export default defineComponent({
                         value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
- 
                     dataCustomRes.value[6]['month' + val.imputedMonth] = {
                         value: filters.formatCurrency(val.incomeStat?.incomePayment + val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
@@ -427,5 +427,4 @@ export default defineComponent({
 });
 </script>  
 <style scoped lang="scss" src="./style/style.scss" >
-
 </style>

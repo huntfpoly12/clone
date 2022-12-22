@@ -211,10 +211,10 @@ export default defineComponent({
                 },
                 employeeInputs: {
                     senderName: sessionStorage.getItem("username"),
-                    receiverName: data.name,
-                    receiverAddress: data.email,
-                    employeeId: data.employeeId,
-                    incomeTypeCode: data.incomeTypeCode
+                    receiverName: data.employee.name,
+                    receiverAddress: data.employee.email,
+                    employeeId: data.employee.employeeId,
+                    incomeTypeCode: data.employee.incomeTypeCode
                 }
             }
             modalEmailSingle.value = true
@@ -252,18 +252,19 @@ export default defineComponent({
         const isClickRow = ref<boolean>(false);
         const selectionChanged = (data: any) => {
             isClickRow.value = true;
-        isOnlyEmployee.value = data.selectedRowKeys.length < 2;
-        if (!isOnlyEmployee.value) {
-            data.selectedRowKeys.forEach((data: any) => {
-                dataSelect.value.push({
-                    senderName: sessionStorage.getItem("username"),
-                    receiverName: data.employee.name,
-                    receiverAddress: data.employee.email,
-                    employeeId: data.employee.employeeId,
-                    incomeTypeCode: data.employee.incomeTypeCode
+            isOnlyEmployee.value = data.selectedRowKeys.length < 2;
+            if (!isOnlyEmployee.value) {
+                data.selectedRowKeys.forEach((data: any) => {
+                    dataSelect.value.push({
+                        senderName: sessionStorage.getItem("username"),
+                        receiverName: data.employee.name,
+                        receiverAddress: data.employee.email,
+                        employeeId: data.employee.employeeId,
+                        incomeTypeCode: data.employee.incomeTypeCode
+                    })
                 })
-            })
-        }}
+            }
+        }
         const {
             onResult: onResultUserInf
         } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({

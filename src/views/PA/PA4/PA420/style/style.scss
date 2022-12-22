@@ -196,3 +196,15 @@
     padding: 3px 0;
     color: white;
 }
+
+::v-deep .custom-button-checkbox {
+    border: 1px solid blue;
+
+    .dx-button-content {
+        padding: 5px 5px;
+    }
+
+    span {
+        color: blue;
+    }
+}

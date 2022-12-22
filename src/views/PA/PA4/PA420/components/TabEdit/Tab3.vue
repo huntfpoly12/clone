@@ -85,8 +85,8 @@
                             v-model:valueInput="value.bizNumber" />
                         <default-text-box width="18%" class="mr-5" placeholder="계좌번호"
                             v-model:valueInput="value.bankAccountNumber" />
-                        <date-time-box width="28%" class="mr-5" dateFormat="YYYY-MM-DD"
-                            v-model:valueDate="value.depositDate" placeholder="입금일" />
+                        <date-time-box width="28%" class="mr-5" v-model:valueDate="value.depositDate"
+                            placeholder="입금일" />
                         <number-box-money width="18%" placeholder="계좌입금금액"
                             v-model:valueInput="value.accountDepositAmount" />
                     </div>
@@ -216,8 +216,8 @@
                             v-model:valueInput="value.bizNumber" disabled="true" />
                         <default-text-box width="19%" class="mr-5" placeholder="계좌번호"
                             v-model:valueInput="value.bankAccountNumber" disabled="true" />
-                        <date-time-box width="24%" class="mr-5" dateFormat="YYYY-MM-DD" disabled="true"
-                            v-model:valueDate="value.depositDate" placeholder="입금일" />
+                        <date-time-box width="24%" class="mr-5" disabled="true" v-model:valueDate="value.depositDate"
+                            placeholder="입금일" />
                         <number-box-money width="19%" placeholder="계좌입금금액"
                             v-model:valueInput="value.accountDepositAmount" disabled="true" />
                     </div>
@@ -233,7 +233,6 @@
                             </template>
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                         </a-tooltip>
-
                     </div>
                 </a-form-item>
             </a-col>
@@ -272,7 +271,6 @@
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-
                 <div>이연퇴직소득세</div>
                 <a-form-item class="label-children" label="소득세">
                     <div class="d-flex-center">
@@ -294,21 +292,18 @@
         </a-row>
     </a-spin>
 </template>
-
-
 <script lang="ts">
 import { defineComponent, ref, watch, reactive } from 'vue'
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
 import dayjs from "dayjs";
-
+import notification from "@/utils/notification";
 export default defineComponent({
     props: {
         dataDetail: Object,
         actionNextStep: Number,
     },
-
     setup(props, { emit }) {
         const trigger = ref(false)
         const dataGet: any = ref({
@@ -318,19 +313,18 @@ export default defineComponent({
             companyId: companyId,
             input: {}
         });
-
         // ====================== GRAPQL =======================================
         const { refetch: refetchCaculate, onError: errorCaculate, result: resultCaculate, loading } = useQuery(queries.calculateIncomeRetirementTax, dataRequestCaculate, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-
-
+        errorCaculate(res => {
+            notification('error', res.message)
+        })
         // ====================== WATCH =======================================
         watch(() => dataGet, (newValue) => {
             emit("update:dataDetail", newValue);
         }, { deep: true })
-
         watch(() => resultCaculate, (newValue) => {
             dataGet.value.specification.specificationDetail.lastRetirementBenefitStatus = newValue.value.calculateIncomeRetirementTax.lastRetirementBenefitStatus
             dataGet.value.specification.specificationDetail.lastRetiredYearsOfService = newValue.value.calculateIncomeRetirementTax.lastRetiredYearsOfService
@@ -341,14 +335,12 @@ export default defineComponent({
             dataGet.value.specification.specificationDetail.deductibleWithholdingTax = newValue.value.calculateIncomeRetirementTax.deductibleWithholdingTax
             dataGet.value.specification.specificationDetail.taxAmountToBeReported = newValue.value.calculateIncomeRetirementTax.taxAmountToBeReported
             dataGet.value.specification.specificationDetail.retirementIncomeTax = newValue.value.calculateIncomeRetirementTax.retirementIncomeTax
-
             if (!newValue.value.calculateIncomeRetirementTax.prevRetirementBenefitStatus) {
                 dataGet.value.specification.specificationDetail.prevRetirementBenefitStatus = {
                     "retirementBenefits": 0,
                     "nonTaxableRetirementBenefits": 0,
                     "taxableRetirementBenefits": 0
                 }
-
                 dataGet.value.specification.specificationDetail.prevRetiredYearsOfService = {
                     "settlementStartDate": '',
                     "settlementFinishDate": '',
@@ -358,9 +350,7 @@ export default defineComponent({
                 }
             }
         }, { deep: true })
-
         // ====================== FUNCTION =======================================
-
         // Click button caculate step-3
         const actionCaculate = () => {
             // Remove redundant lines 
@@ -375,8 +365,6 @@ export default defineComponent({
                     }
                 })
             );
-
-            
             // Setup value call api
             dataRequestCaculate.value.input = {
                 "taxCredit": cleanData.specification.specificationDetail.taxAmountCalculation.taxCredit,
@@ -393,24 +381,30 @@ export default defineComponent({
                     settlementStartDate: cleanData.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate,
                     settlementFinishDate: cleanData.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
                 },
-                "calculationOfDeferredRetirementIncomeTax": cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax
+                "calculationOfDeferredRetirementIncomeTax": {
+                    ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax,
+                    "statements": [
+                        {
+                            ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0],
+                            "depositDate": dayjs(cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.toString()).format("YYYY-MM-DD")
+                        },
+                        {
+                            ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1],
+                            "depositDate": dayjs(cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.toString()).format("YYYY-MM-DD")
+                        }
+                    ]
+                }
             }
-            
             delete dataRequestCaculate.value.input.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax
-
             // If step 1 is not checked, delete some variables that do not need to be passed
             if (cleanData.checkBoxCallApi == false) {
                 delete dataRequestCaculate.value.input.prevRetirementBenefitStatus
                 delete dataRequestCaculate.value.input.prevRetiredYearsOfService
             }
-
             trigger.value = true
             if (dataRequestCaculate.value.input)
                 refetchCaculate()
-
-
         }
-
         return {
             dataGet,
             dayjs,
@@ -420,8 +414,5 @@ export default defineComponent({
     }
 })
 </script>
-
-
 <style lang="scss" scoped src="../../style/modalAdd.scss">
-
 </style>
