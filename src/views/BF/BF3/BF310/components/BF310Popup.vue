@@ -208,7 +208,7 @@
                                                 :data-source="formState.content.accounting.facilityBusinesses"
                                                 :allow-column-reordering="move_column"
                                                 :allow-column-resizing="colomn_resize" :show-borders="true"
-                                                :selected-row-keys="selectedItemKeys">
+                                                >
                                                 <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                                     :new-row-position="'pageBottom'"
                                                     :allow-deleting="true" template="button-template" mode="cell">
@@ -218,7 +218,6 @@
                                                     <DxButton icon="plus" />
                                                 </template>
                                                 <DxPaging :enabled="false" />
-                                                <DxColumn :allow-editing="false" :width="20" />
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
                                                 <DxColumn data-field="facilityBizType" caption="사업분류">
                                                     <DxLookup :data-source="facilityBizType" value-expr="v"
@@ -643,7 +642,7 @@ export default defineComponent({
             }
         }
         const selectionChanged = (e: any) => {
-            e.component.collapseAll(-1);
+            e.component.collapseAll(0);
             e.component.expandRow(e.currentSelectedRowKeys[0]);
         }
         const isNumeric = (value: any) => {
