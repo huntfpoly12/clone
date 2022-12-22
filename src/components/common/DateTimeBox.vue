@@ -1,4 +1,4 @@
-<template> 
+<template>
   <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
     @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }">
   </Datepicker>
@@ -54,8 +54,13 @@ export default defineComponent({
 </script> 
 
 
-<style lang="scss">
+<style lang="scss" >
 input.dp__input.dp__input_icon_pad {
   height: 34px;
+}
+
+.dp__disabled {
+  background: #fff;
+  border: 1px solid #ddd;
 }
 </style>
