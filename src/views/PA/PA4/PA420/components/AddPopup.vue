@@ -2,8 +2,8 @@
     <a-modal :visible="modalOption" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
         style="top: 20px">
         <div class="block-radio ">
-            <radio-group class="radio-group" :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
-            <radio-group class="radio-group" :arrayValue="option2" v-model:valueRadioCheck="dataForm.input.retirementType"
+            <radio-group class="radio-group one" :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
+            <radio-group class="radio-group two" :arrayValue="option2" v-model:valueRadioCheck="dataForm.input.retirementType"
                 layoutCustom="horizontal" />
             <div class="mt-10">
                 <span>
@@ -94,7 +94,7 @@ export default defineComponent({
         const step = ref(0)
         const dayValue = ref(1)
         const modalStatusAccept = ref(false)
-        const retirementIncome1 = ref(null)
+        const retirementIncome1 = ref(true)
         const modalOption = ref()
         const trigger = ref(false)
         const dataForm = reactive({ ...initialFormState });
@@ -147,13 +147,6 @@ export default defineComponent({
         watch(() => props.modalStatus, (newValue) => {
             modalOption.value = newValue
         })
-        watch(retirementIncome1, (value) => {
-            if (value) {
-                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10)
-            } else {
-                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20)
-            }
-        });
 
         // =========================  FUNCTION ===============================================
         // all Computed 
@@ -216,6 +209,11 @@ export default defineComponent({
         }
 
         const openModalAdd = () => {
+            if (retirementIncome1.value) {
+                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10)
+            } else {
+                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20)
+            }
             modalStatusAccept.value = true
             modalOption.value = false
         }

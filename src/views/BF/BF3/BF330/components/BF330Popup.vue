@@ -164,15 +164,15 @@
                                 </a-row>
                                 <a-row :class="formState.usedWithholding ? '' : 'disabled-div' ">
                                     <a-col :span="14">
-                                        <a-form-item label="서비스 시작년월" class="custom-label-select">
-                                            <date-time-box width="150px"
+                                        <a-form-item label="서비스 시작년월" class="custom-label-select red">
+                                            <date-time-box width="150px" :required="true"
                                                 v-model:valueDate="formState.withholdingStartYearMonth"
                                                 date-format="MM/DD/YYYY" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="14">
-                                        <a-form-item label="직 원 수 " class="custom-label-select">
-                                            <number-box-money width="150px" :min="0"
+                                        <a-form-item label="직 원 수 " class="custom-label-select red">
+                                            <number-box-money width="150px" :min="0" :required="true"
                                                 v-model:valueInput="formState.withholdingCapacity"
                                                 :spinButtons="false" />
                                         </a-form-item>
@@ -187,12 +187,8 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <div style="display: flex; padding-left: 120px">
-                                            <!-- <checkbox-basic style="width: 180px"
-                                                v-model:valueCheckbox="formState.checkBoxBasicFee" size="14"
-                                                label="기본이용료" @change="handleInputTexService" /> -->
                                             <span style="width: 180px; line-height: 33px;">기본이용료</span>
                                             <number-box-money  :min="0" width="180px"
-                                                :disabled="formState.disableNumber5"
                                                 v-model:valueInput="formState.usedServiceInfoWithholdingPrice"
                                                 :spinButtons="false" />
                                         </div>
@@ -436,7 +432,6 @@ export default defineComponent({
                 // process price Company / Withholding information (사업자/원천정보)
                 formState.usedServiceInfoWithholdingPrice =
                     value.getServiceContract.usedServiceInfo.withholding.price;
-                // formState.checkBoxBasicFee = value.getServiceContract.usedServiceInfo.withholding.price == 0 ? false : true;
                 formState.disableNumber5 = value.getServiceContract.usedServiceInfo.withholding.price == 0 ? true : false;
                 formState.disableNumber6 = value.getServiceContract.usedServiceInfo.withholding.options.length == 0 ? true : false
                 if ( value.getServiceContract.usedServiceInfo.withholding.options.length > 0 ) {
@@ -898,14 +893,6 @@ export default defineComponent({
                 formState.disableNumber4 = false;
             }
         });
-        // watch(() => formState.checkBoxBasicFee, (newVal) => {
-        //     if (newVal === false) {
-        //         formState.usedServiceInfoWithholdingPrice = 0;
-        //         formState.disableNumber5 = true;
-        //     } else {
-        //         formState.disableNumber5 = false;
-        //     }
-        // });
         watch(() => formState.checkBoxMajorInsurance, (newVal) => {
             if (newVal === false) {
                 formState.fourMajorInsurance = 0;
