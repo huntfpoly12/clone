@@ -35,7 +35,7 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, reactive, watch } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation, useQuery } from "@vue/apollo-composable";
