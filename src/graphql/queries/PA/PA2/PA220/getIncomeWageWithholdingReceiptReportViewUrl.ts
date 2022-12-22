@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 export default gql`
-  query getIncomeRetirementWithholdingReceiptReportViewUrl(
+  query getIncomeWageWithholdingReceiptReportViewUrl(
     $companyId: Int!
-    $input: IncomeRetirementWithholdingReceiptInput!
+    $input: IncomeWageWithholdingReceiptInput!
     $incomeIds: [Int!]!
   ) {
-    getIncomeRetirementWithholdingReceiptReportViewUrl(
+    getIncomeWageWithholdingReceiptReportViewUrl(
       companyId: $companyId
       input: $input
       incomeIds: $incomeIds

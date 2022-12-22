@@ -1,5 +1,5 @@
 <template>
-  <a-spin :spinning="loading" size="large">
+  <a-spin :spinning="loading || loadingReport" size="large">
     <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" />
     <div id="pa-430">
       <div class="search-form">
@@ -48,7 +48,7 @@
           <a-col :span="12">
             <div class="created-date">
               <strong class="lable-item">영수일 :</strong>
-              <date-time-box width="150px" v-model:valueDate="valueDefaultIncomeRetirement.input.receiptDate">
+              <date-time-box width="150px" v-model:valueDate="dataInputReport.input.receiptDate">
               </date-time-box>
             </div>
           </a-col>
@@ -56,7 +56,7 @@
         </div>
         <a-col>
           <strong class="lable-item">소득자보관용 :</strong>
-          <switch-basic v-model:valueSwitch="valueSwitch2" :textCheck="'발행자보관용'" :textUnCheck="'발행자보관용'" />
+          <switch-basic v-model:valueSwitch="valSwitch" :textCheck="'발행자보관용'" :textUnCheck="'발행자보관용'" />
         </a-col>
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -86,27 +86,27 @@
             getColorTag(data.value)?.tag_name
             }}</a-tag>
           </template>
-          <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate" cell-template="settlementStartDate" css-class="cell-center"/>
+          <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate" cell-template="settlementStartDate" css-class="cell-center" :width="100"/>
           <template #settlementStartDate="{ data }">
             {{ $filters.formatDate(data.value.toString()) }}
           </template>
-          <DxColumn caption="퇴사일 (정산종료일) " data-field="settlementFinishDate" cell-template="settlementFinishDate" css-class="cell-center" />
+          <DxColumn caption="퇴사일 (정산종료일) " data-field="settlementFinishDate" cell-template="settlementFinishDate" css-class="cell-center" :width="100"/>
           <template #settlementFinishDate="{ data }">
             {{ $filters.formatDate(data.value.toString()) }}
           </template>
           <DxColumn caption="귀속연월" css-class="cell-center" cell-template="inputedYearMonth"/>
           <template #inputedYearMonth="{ data }">
-            xxxxx-{{ data.data.imputedMonth }}
+            {{globalYear}}-{{ data.data.imputedMonth }}
           </template>
           <DxColumn caption="지급연월" css-class="cell-center"  cell-template="paymentYearMonth"/>
           <template #paymentYearMonth="{ data  }">
             {{ data.data.paymentYear }}-{{ data.data.paymentMonth }}
           </template>
-          <DxColumn caption="퇴직급여"   data-field="retirementBenefits" css-class="cell-center"/>
+          <DxColumn caption="퇴직급여"   data-field="retirementBenefits" css-class="cell-center" :width="130"/>
           <DxColumn caption="비과세 퇴직급여"   data-field="nonTaxableRetirementBenefits" css-class="cell-center"/>
-          <DxColumn caption="과세대상 퇴직급여"  data-field="taxableRetirementBenefits" css-class="cell-center"/>
+          <DxColumn caption="과세대상 퇴직급여"  data-field="taxableRetirementBenefits" css-class="cell-center" />
           <DxColumn caption="공제"   data-field="totalDeduction" css-class="cell-center"/>
-          <DxColumn caption="차인지급액" data-field="actualPayment" css-class="cell-center"/>
+          <DxColumn caption="차인지급액" data-field="actualPayment" css-class="cell-center" />
           <DxColumn caption="비고"   css-class="cell-center" cell-template="note"/>
           <template #note="{ data  }">
               <div class="custom-action">
@@ -129,16 +129,16 @@
             <div class="custom-action" style="text-align: center;">
               <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                 style="width: 25px; margin-right: 3px;" />
-              <img src="@/assets/images/print.svg" alt="" style="width: 25px;" />
+              <img src="@/assets/images/print.svg" alt="" style="width: 25px;"  @click="actionPrint(data.data)"/>
             </div>
           </template>
           <DxSummary>
-              <DxTotalItem :customize-text="customizeTotal" show-in-column="사원" alignment="left"/>
-              <DxTotalItem :customize-text="customizeTotal" show-in-column="사원" alignment="left"/>
+              <DxTotalItem :customize-text="employeeType1" show-in-column="사원" alignment="left"/>
               <DxTotalItem display-format="퇴직급여합계: {0}"  column="retirementBenefits" summary-type="sum" alignment="left"/>
               <DxTotalItem display-format="비과세퇴직급여합계: {0}"  column="nonTaxableRetirementBenefits" summary-type="sum" alignment="left"/>
               <DxTotalItem display-format="과세대상퇴직급여합계: {0}"  column="taxableRetirementBenefits" summary-type="sum" alignment="left"/>
               <DxTotalItem display-format="공제합계: {0}" column="totalDeduction" summary-type="sum"/> 
+              <DxTotalItem display-format="차인지급액합계: {0}" column="actualPayment" summary-type="sum"/> 
           </DxSummary>
         </DxDataGrid>
         <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
@@ -150,7 +150,7 @@
   </a-spin>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue";
+import { ref, defineComponent, watch, computed, reactive } from "vue";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
 import locale from 'ant-design-vue/es/date-picker/locale/ko_KR';
@@ -170,6 +170,7 @@ import {
   onExportingCommon,
   userId,
 } from "@/helpers/commonFunction";
+import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA4/PA430/index";
 import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 import EmailMultiPopup from "./components/EmailMultiPopup.vue";
@@ -194,8 +195,6 @@ export default defineComponent({
     EmailMultiPopup
   },
   setup() {
-    const valueSwitch = ref(true);
-    const valueSwitch2 = ref(true);
     const popupDataEmailSingle = ref({})
     const popupDataEmailMulti = ref({})
     const dataSelect = ref<any>([])
@@ -203,11 +202,16 @@ export default defineComponent({
     const mode2 = ref<any>(['month', 'month']);
     const globalYear = computed(() => store.state.settings.globalYear);
     const trigger = ref<boolean>(true);
+    const triggerReport = ref<boolean>(false);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const modalEmailSingle = ref(false)
     const modalEmailMulti = ref(false)
-
+    const emplRetirementType1 = ref(0)
+    const emplRetirementType2 = ref(0)
+    const totalEmployee = ref(0)
+    const emailUserLogin = ref('')
+    const valSwitch  =  ref(false)
     const dataSource = ref([]);
     const arrayRadioCheck = ref([
       { id: null, text: "전체" },
@@ -233,24 +237,26 @@ export default defineComponent({
         type: null,
       },
     });
-    const valueDefaultIncomeRetirement = ref({
+    const dataInputReport = reactive({
       companyId: companyId,
       input: {
-        imputedYear: globalYear,
-        type: 1,
-        receiptDate: new Date().toJSON().slice(0, 10),
+        imputedYear: globalYear.value,
+        type: 3,
+        receiptDate: dayjs().format('YYYYMMDD')
       },
-      employeeKeys: {
-        employeeId: 0,
-        incomeTypeCode: ""
-      }
-    });
+      incomeIds: Array()
+    })
+
+    watch(valSwitch, (newValue) => { 
+      dataInputReport.input.type = newValue ? 2 : 3;
+    })
 
     /**
      *  search Income Retirement Withholding Receipts
      */
     const {
       refetch: refetchData,
+      onError,
       result,
       loading,
     } = useQuery(queries.searchIncomeRetirementWithholdingReceipts, originData, () => ({
@@ -258,6 +264,9 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }));
 
+    onError(res => {
+        notification('error', res.message)
+    })
     const onExporting = (e: { component: any; cancel: boolean }) => {
       onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
     };
@@ -265,9 +274,9 @@ export default defineComponent({
       popupDataEmailSingle.value = {
         companyId: companyId,
         input: {
-          imputedYear: globalYear,
-          type: valueDefaultIncomeRetirement.value.input.type,
-          receiptDate: valueDefaultIncomeRetirement.value.input.receiptDate,
+          imputedYear: globalYear.value,
+          type: dataInputReport.input.type,
+          receiptDate: dataInputReport.input.receiptDate,
         },
         employeeInputs: {
           senderName: sessionStorage.getItem("username"),
@@ -285,18 +294,42 @@ export default defineComponent({
     const onCloseEmailMultiModal = () => {
       modalEmailMulti.value = false
     }
-
+    /**
+     * action send multi email
+     */
     const actionOpenPopupEmailMulti = () => {
       popupDataEmailMulti.value = {
         companyId: companyId,
         input: {
-          imputedYear: globalYear,
-          type: valueDefaultIncomeRetirement.value.input.type,
-          receiptDate: valueDefaultIncomeRetirement.value.input.receiptDate,
+          imputedYear: globalYear.value,
+          type: dataInputReport.input.type,
+          receiptDate: dataInputReport.input.receiptDate,
         },
         employeeInputs: dataSelect.value
       }
       modalEmailMulti.value = true
+    }
+
+    /**
+     * action print report
+     * @param data
+     */
+     const {
+      refetch: refetchReport,
+      result: resultReport,
+      onError: errorReport,
+      loading : loadingReport,
+    } = useQuery(queries.getIncomeRetirementWithholdingReceiptReportViewUrl, dataInputReport, () => ({
+      enabled: triggerReport.value,
+      fetchPolicy: "no-cache",
+    }));
+    errorReport(res => {
+        notification('error', res.message)
+    })
+    const actionPrint = (data: any) => { 
+      dataInputReport.incomeIds = [data.incomeId]
+      triggerReport.value = true;
+      refetchReport()
     }
 
     const selectionChanged = (data: any) => {
@@ -315,29 +348,19 @@ export default defineComponent({
     } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
       fetchPolicy: "no-cache",
     }));
-    const emailUserLogin = ref('')
+  
     onResultUserInf(e => {
       emailUserLogin.value = e.data.getUser.email
     })
 
     watch(result, (value) => {
       if (value) {
+        value.searchIncomeRetirementWithholdingReceipts
         dataSource.value = value.searchIncomeRetirementWithholdingReceipts;
+        totalEmployee.value = value.searchIncomeRetirementWithholdingReceipts.length
+        emplRetirementType1.value = value.searchIncomeRetirementWithholdingReceipts.filter( (item : any ) => item.retirementType == 1).length;
+        emplRetirementType2.value = value.searchIncomeRetirementWithholdingReceipts.filter( (item : any ) => item.retirementType == 2).length;
         trigger.value = false;
-      }
-    });
-    watch(valueSwitch, (newValue) => {
-      if (newValue) {
-        valueDefaultIncomeRetirement.value.input.type = 1
-      } else {
-        valueDefaultIncomeRetirement.value.input.type = 2
-      }
-    });
-    watch(valueSwitch2, (newValue) => {
-      if (newValue) {
-        valueDefaultIncomeRetirement.value.input.type = 1
-      } else {
-        valueDefaultIncomeRetirement.value.input.type = 2
       }
     });
 
@@ -357,7 +380,6 @@ export default defineComponent({
     };
 
     const handlePanelChange2 = (val: [Dayjs, Dayjs], mode: any[]) => {
-      console.log(val[0].month());
       originData.value.filter.startMonth = val[0].month()+1;
       originData.value.filter.finishMonth = val[1].month()+1
       rangeDate.value = val;
@@ -367,15 +389,14 @@ export default defineComponent({
       ];
     };
 
-    const customizeTotal = () => { 
-       return 'retirementBenefits'
-    }
+    const employeeType1 = () => { 
+      return `사원수: ${totalEmployee.value} (퇴직: ${emplRetirementType1.value}, 중간: ${emplRetirementType2.value})`
+    }    
     return {
-      customizeTotal,
-      locale,handleChange,handlePanelChange2,mode2,
-      valueDefaultIncomeRetirement,
-      valueSwitch, valueSwitch2,
-      loading,
+      employeeType1,
+      locale,handleChange,handlePanelChange2,mode2,dataInputReport,
+      loading,loadingReport,
+      actionPrint,
       popupDataEmailSingle,
       popupDataEmailMulti,
       actionOpenPopupEmailSingle,
@@ -397,7 +418,8 @@ export default defineComponent({
       valueRadioBox,
       arrayRadioCheck,
       getColorTag,
-      originData
+      originData,
+      valSwitch
     };
   },
 });

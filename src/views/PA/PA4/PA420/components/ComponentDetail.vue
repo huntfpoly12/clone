@@ -8,7 +8,7 @@
                 <div class="text-box-2">지 {{ dataTableDetail.processKey.paymentYear }}-{{
                         dataTableDetail.processKey.paymentMonth
                 }}</div>
-                <process-status v-model:valueStatus="statusButton" />
+                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
             </div>
             <div class="table-detail-right">
                 <DxButton @click="deleteItem">
@@ -99,7 +99,6 @@
             </DxSummary>
         </DxDataGrid>
     </a-spin>
-
     <!--============================================= Components ============================================-->
     <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
@@ -112,12 +111,12 @@
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
-        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess"/>
+        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
@@ -131,6 +130,8 @@ import EditPopup from "./EditPaymentDayPopup.vue"
 import AddPopup from "./AddPopup.vue"
 import UpdatePopup from "./UpdatePopup.vue"
 import filters from "@/helpers/filters";
+import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
+import { companyId } from '@/helpers/commonFunction';
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
@@ -187,6 +188,18 @@ export default defineComponent({
         errorTableDetail(res => {
             notification('error', res.message)
         })
+        const {
+            mutate,
+            onError,
+            onDone,
+        } = useMutation(mutations.changeIncomeProcessRetirementStatus)
+        onError(e => { 
+            notification('error', e.message)
+        })
+        onDone(e => {
+            actionDeleteSuccess()
+            notification('success', `업데이트 완료!`)
+        })
         // ================WATCHING============================================
         watch(() => props.dataCallTableDetail, (newValue) => {
             dataTableDetail.value = newValue
@@ -222,7 +235,6 @@ export default defineComponent({
             modalAdd.value = false
             modalUpdate.value = false
         }
-
         const actionClosePopup = () => {
             modalUpdate.value = false
         }
@@ -256,12 +268,18 @@ export default defineComponent({
             })
             return '사원수: ' + dataSourceDetail.value.length + " (퇴직:" + total1 + ", 중간:" + total2 + ")"
         }
-
         const actionEditRow = (data: any) => {
             modalUpdate.value = true
             keyDetailRow.value = data
         }
-        return {
+        const statusComfirm = () => { 
+            mutate({
+                companyId: companyId,
+                processKey: dataTableDetail.value.processKey,
+                status: statusButton.value
+            })
+        }
+        return { 
             keyDetailRow,
             modalAdd, modalUpdate,
             arrayEmploySelect,
@@ -278,6 +296,7 @@ export default defineComponent({
             modalHistoryStatus,
             modalEdit,
             amountFormat,
+            statusComfirm,
             addRow,
             deleteItem,
             changeIncomeTypeCode,
@@ -294,5 +313,4 @@ export default defineComponent({
 });
 </script>
 <style scoped src="../style/style.scss" >
-
 </style>
