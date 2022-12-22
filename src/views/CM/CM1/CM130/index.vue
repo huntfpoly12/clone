@@ -265,7 +265,7 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    <AddCM130Popup :modalStatus="modalAddNewStatus" @closePopup="onCloseAddNewModal" title="원천설정" />
+                    <AddCM130Popup :modalStatus="modalAddNewStatus" :itemCodeMax="itemCodeMax" @closePopup="onCloseAddNewModal" title="원천설정" />
                     <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="onCloseEditModal" :data="popupData"
                         title="원천설정" :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -292,7 +292,6 @@
                             공제
                         </template>
                         <DxColumn data-field="name" caption="항목명" />
-                        <DxColumn caption="유형" />
                         <DxColumn data-field="formula" caption="산출방법" />
                         <DxColumn cell-template="pupop" css-class="cell-center" :width="30" />
                         <template #pupop="{ data }" class="custom-action">
@@ -336,15 +335,8 @@
                         </a-row>
                         <a-row>
                             <a-col :span="24">
-                                <a-form-item label="구분/유형" :label-col="labelCol">
-                                    <TaxPay style="width: 320px" placeholder="공제" :disabled="true"></TaxPay>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                        <a-row>
-                            <a-col :span="24">
                                 <a-form-item label="산출방법" :label-col="labelCol">
-                                    <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                                    <default-text-box style="width: 320px"
                                         v-model:valueInput="formStateDeduction.formula">
                                     </default-text-box>
                                 </a-form-item>
@@ -442,6 +434,7 @@ export default defineComponent({
         const dataQueryInstitution = ref();
         const dataSource = ref([]);
         const dataSourceDeduction = ref([]);
+        let itemCodeMax = ref(0);
         const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
         //================================================= FUNCTION============================================
         const showModal = () => {
@@ -579,6 +572,9 @@ export default defineComponent({
         watch(resultWithholdingConfig, (value) => {
             dataSource.value = value.getWithholdingConfigPayItems;
             dataSource.value.map((e: any) => {
+                if (e.itemCode > itemCodeMax.value) {
+                    itemCodeMax.value = e.itemCode
+                }
                 if (e.taxPayItemCode != null) {
                     taxPayItem.map((eData: any) => {
                         if (eData.value == e.taxPayItemCode) {
@@ -753,6 +749,7 @@ export default defineComponent({
             getAbleDisable,
             onExporting,
             dataPublicInstitution,
+            itemCodeMax,
         };
     },
 });
