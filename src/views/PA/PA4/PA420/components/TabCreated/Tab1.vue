@@ -30,7 +30,7 @@
 
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
-                        <number-box :required="false" width="150px" :disabled="true" v-model:valueInput="joinedAt" />
+                        <date-time-box :required="false" width="150px" :disabled="true" :valueDate="dayjs(joinedAt).format('YYYY-MM-DD')" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
@@ -328,7 +328,7 @@ export default defineComponent({
             );
         }, { deep: true });
 
-        watch(() => props.dataForm.taxCalculationInput.lastRetiredYearsOfService, (value: any) => {
+        watch(() => props.dataForm.taxCalculationInput.lastRetiredYearsOfService, (value: any) => {   
             dataLastRetiredYearsOfService.value = Formula.getDateOfService(
                 value.paymentStartDate,
                 value.paymentFinishDate,
@@ -375,6 +375,7 @@ export default defineComponent({
             dataPrevRetiredYearsOfService,
             dataLastRetiredYearsOfService,
             dataSettlement,
+            dayjs,
         }
     }
 })

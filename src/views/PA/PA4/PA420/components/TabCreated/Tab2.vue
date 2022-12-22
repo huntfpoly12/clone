@@ -29,10 +29,13 @@
                 <div class="d-flex-center" style="margin: 0 auto;">
                     <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement" />
                     <div class="ml-5 d-flex-center">
-                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                        <span class="custom-waring">
-                            상기 급여(수당)으로 퇴직금 계산합니다.
-                        </span>
+                        <a-tooltip placement="top">
+                            <template #title>상기 급여(수당)으로 퇴직금 계산합니다.</template>
+                            <div>
+                                <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
+                                        class="mr-5"></span>
+                            </div>
+                        </a-tooltip>
                     </div>
                 </div>
             </div>
