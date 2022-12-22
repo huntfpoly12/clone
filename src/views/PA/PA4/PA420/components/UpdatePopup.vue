@@ -44,7 +44,6 @@ import Tab1 from './TabEdit/Tab1.vue';
 import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import dayjs from "dayjs";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -70,8 +69,7 @@ export default defineComponent({
         const valueNextStep = ref(0)
         const dayValue = ref(1)
         const retirementIncome1 = ref(true)
-        const retirementIncome2 = ref(true)
-        const modalOption = ref(false)
+        const retirementIncome2 = ref(true) 
         const trigger = ref(false)
         const statusModal = ref(props.modalStatus)
         const dataDetailValue = ref()
@@ -227,4 +225,5 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped src="../style/modalAdd.scss">
+
 </style> 

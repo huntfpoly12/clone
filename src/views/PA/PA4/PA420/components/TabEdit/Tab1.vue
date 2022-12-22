@@ -297,22 +297,35 @@ export default defineComponent({
             imputedYear: globalYear,
         })
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
-        const arrayEmploySelect = reactive(store.state.common.arrayEmployeePA410)
+        const arrayEmploySelect = ref([])
+        const arrayEmploySelectCommon = reactive(store.state.common.arrayEmployeePA410)
+
 
         // =============== WATCH ==================================
         watch(() => props.dataDetail, (value: any) => {
             dataGet.value = value
             month1.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYY-MM")
+            setTimeout(() => {
+                if (arrayEmploySelectCommon) {
+                    arrayEmploySelect.value = JSON.parse(
+                        JSON.stringify(arrayEmploySelectCommon, (name, val) => {
+                            if (
+                                // name !== "name" && name !== "updatedAt" && name != "status" && name != "stayQualification" && name != "type" && name != "employeeId"
+                                name === "__typename"
+                            ) {
+                                delete val[name];
+                            } else {
+                                return val;
+                            }
+                        })
+                    );
+                }
+            }, 100);
         }, { deep: true });
 
         watch(() => props.actionNextStep, (newVal) => {
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
-
-
-        watch(() => valueSelected, (newVal) => {
-            dataGet.value.employee.joinedAt = arrayEmploySelect.find((val: any) => val.employeeId === newVal.value).joinedAt
-        }, { deep: true });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
             let objectData = Formula.getDateOfService(
@@ -380,8 +393,6 @@ export default defineComponent({
                 emit('nextPage', true)
             }
         }
-
-
 
         return {
             yearsOfService1, yearsOfService2, yearsOfService3,
