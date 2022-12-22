@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="spinning || signinLoading" size="large">
+    <a-spin :spinning="signinLoading" size="large">
         <div class="contract-container">
             <h2>서비스가입신청</h2>
             <a-steps :current="step" type="navigation">
@@ -156,15 +156,16 @@
                             </div>
                             <div style="position: relative;">
                                 <div class="overlay" v-if="disableFormVal2 == true"></div>
-                                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" disable="true" id="gridContainer" :data-source="valueFacilityBusinesses"
-                                    :show-borders="true" :allow-column-reordering="move_column"
-                                    :allow-column-resizing="colomn_resize" :selected-row-keys="selectedItemKeys"
-                                    :column-auto-width="true" :repaint-changes-only="true">
-                                    <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
+                                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" disable="true"
+                                    id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
+                                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                                    :selected-row-keys="selectedItemKeys" :column-auto-width="true"
+                                    :repaint-changes-only="true" @content-ready="contentReady">
+                                    <!-- <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
                                         :allow-deleting="true" template="button-template" mode="cell">
                                         <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                                         <DxTexts addRow="추 가" />
-                                    </DxEditing>
+                                    </DxEditing> -->
                                     <template #button-template>
                                         <DxButton icon="plus" />
                                     </template>
@@ -187,6 +188,13 @@
                                     <DxToolbar>
                                         <DxItem name="addRowButton" />
                                     </DxToolbar>
+                                    <DxMasterDetail :enabled="true" template="detailTemplate" />
+                                    <template #detailTemplate="{ data }">
+                                        <div class="employee-info">
+                                            antu
+                                        </div>
+                                    </template>
+
                                 </DxDataGrid>
                             </div>
                             <div class="form-item">
@@ -255,7 +263,8 @@
                                 <default-text-box width="170px" :required="true"
                                     v-model:valueInput="contractCreacted.ownerBizNumber" />
                                 <p>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> : 예금주의 사업자등록번호 또는 주민등록번호입니다
+                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> : 예금주의 사업자등록번호 또는
+                                    주민등록번호입니다
                                 </p>
                             </div>
                             <div class="form-item">
@@ -301,7 +310,7 @@
                         <button-basic v-if="step < 3" :text="'다음'" :type="'success'" :mode="'contained'"
                             @onClick="nextStep" />
                         <button-basic v-if="step === 3" :text="'신 청'" :type="'success'" :mode="'contained'"
-                            @onClick="openPopup" />
+                            @onClick="Creat" />
                     </div>
                 </form>
             </div>
@@ -312,144 +321,41 @@
 import { reactive, ref, watch, computed } from "vue";
 import { useStore } from 'vuex';
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import {
-    CheckOutlined,
-    EditOutlined,
-    DeleteOutlined,
-} from "@ant-design/icons-vue";
+import { CheckOutlined, EditOutlined, DeleteOutlined, } from "@ant-design/icons-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxEditing,
-    DxSelection,
-    DxLookup,
-    DxToolbar,
-    DxItem,
-    DxTexts,
-    DxRequiredRule,
-    DxAsyncRule
-} from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxRequiredRule, DxAsyncRule, DxMasterDetail } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import mutations from "../../graphql/mutations/RqContract/index";
-import dayjs, { Dayjs } from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
+import dayjs from "dayjs";
 import queries from "../../graphql/queries/common/index";
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 import notification from '../../utils/notification';
-import DxTextBox from "devextreme-vue/text-box";
 import { useRouter } from "vue-router";
-import {
-    DxValidator,
-    DxCompareRule,
-    DxPatternRule,
-    DxStringLengthRule,
-} from "devextreme-vue/validator";
+import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil } from "./utils";
 export default {
     components: {
-        CheckOutlined,
-        EditOutlined,
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxEditing,
-        DxSelection,
-        DxLookup,
-        DxToolbar,
-        DxItem,
-        DxTexts,
-        DxButton,
-        imgUpload,
-        DxRequiredRule,
-        DxCompareRule,
-        DxValidator,
-        DxPatternRule,
-        DxTextBox,
-        DxStringLengthRule,
-        DeleteOutlined,
-        DxAsyncRule
+        CheckOutlined, EditOutlined, DxDataGrid, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule
     },
     setup() {
-        // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const titleModal = ref("사업자등록증")
         const titleModal2 = ref("장기요양기관등록증")
-        const radioGroup = ref()
         const router = useRouter();
         const facilityBizTypeCommon = FacilityBizType.all();
-        const plainOptions = ref([
-            {
-                text: "신청합니다",
-                id: 1
-            }, {
-                text: "신청하지않습니다",
-                id: 2
-            }
-        ])
-        const imageId = ref()
-        const spinning = ref(false)
+        const plainOptions = ref({
+            ...plainOptionsUtil
+        })
         const textIDNo = ref("법인등록번호")
         const step = ref(0)
-        const monthFormat = 'YYYY-MM';
         const disableFormVal = ref(false)
         const disableFormVal2 = ref(false)
         const checkAll = ref(false)
         const optionSale = ref()
         const statusMailValidate = ref(false)
-        const initialFormState = {
-            terms: false,
-            personalInfo: false,
-            accountingService: false,
-            withholdingService: false,
-            nameCompany: "",
-            zipcode: "",
-            roadAddress: "",
-            jibunAddress: "",
-            addressExtend: "",
-            bcode: "",
-            bname: "",
-            buildingCode: "",
-            buildingName: "",
-            roadname: "",
-            roadnameCode: "",
-            sido: "",
-            sigungu: "",
-            sigunguCode: "",
-            zonecode: "",
-            phone: "",
-            fax: "",
-            licenseFileStorageId: 0,
-            bizNumber: "",
-            bizType: 1,
-            residentId: "",
-            namePresident: "",
-            birthday: "",
-            mobilePhone: "",
-            email: "",
-            longTermCareInstitutionNumber: "",
-            facilityBizType: 1,
-            accountingServiceTypes: 1,
-            facilityBusinesses: [],
-            startYearMonthHolding: "",
-            capacityHolding: null,
-            withholdingServiceTypes: 1,
-            bankType: "",
-            accountNumber: "",
-            ownerBizNumber: "",
-            withdrawDay: "매월 5일",
-            salesRepresentativeId: parseInt(''),
-            comment: "",
-            ownerName: "",
-            registrationCardFileStorageId: 0
-        };
         const contractCreacted = reactive({
-            ...initialFormState
+            ...dataDefaultsUtil
         });
         const dataInputCallApi = reactive({
             dossier: 1,
@@ -457,28 +363,26 @@ export default {
         })
         var visibleModal = ref(false);
         const listDataConvert = ref();
-        const valueFacilityBusinesses = ref([]);
-        const imagestep = ref("");
-        const imageValue = ref("");
+        const valueFacilityBusinesses = ref([{
+            longTermCareInstitutionNumber: 0,
+            facilityBizType: 0,
+            name: '',
+            startYearMonth: dayjs().format("YYYY-MM-DD"),
+            capacity: 0,
+            registrationCardFileStorageId: 0
+        }]);
         const fileName = ref("");
-        const fileNamestep = ref("");
         const selectedItemKeys = ref(0)
-        const arrayRadioCheck = ref([
-            { id: 1, text: '법인사업자' },
-            { id: 2, text: '개인사업자' },
-        ])
-        const arrayRadioWithdrawDay = ref([
-            { id: '매월 5일', text: '매월 5일' },
-            { id: '매월 12일', text: '매월 12일' },
-            { id: '매월 19일', text: '매월 19일' },
-        ])
+        const arrayRadioCheck = ref({ ...arrayRadioCheckUtil })
+        const arrayRadioWithdrawDay = ref({ ...arrayRadioWithdrawDayUtil })
         const valueRadioBox = ref(1)
         const valueAccountingService = ref(1)
         const valueSourceService = ref(1)
         let dataImg = ref()
         let dataImgStep3 = ref()
         let valueRadioWithdrawDay = ref('매월 5일')
-        // function=======================================================================================================================================
+
+        // =================================== GRAPQL ============================================
         const {
             mutate: Creat,
             loading: signinLoading,
@@ -494,139 +398,95 @@ export default {
             visibleModal.value = true;
         });
         onError((res) => {
-            spinning.value = false
             notification('error', res.message);
         });
-        const onFinish = () => {
-        };
-        const disableForm1 = () => {
-            if (dataInputCallApi.dossier == 2) {
-                disableFormVal2.value = true
-            } else {
-                disableFormVal2.value = false
-            }
-        }
-        const disableForm2 = () => {
-            if (dataInputCallApi.applicationService == 2) {
-                disableFormVal.value = true
-            } else {
-                disableFormVal.value = false
-            }
-        }
-        const { result: resultConfig, refetch: refetchConfig } = useQuery(
-            queries.getSaleRequestContact,
-            {},
+
+        const { result: resultConfig, refetch: refetchConfig } = useQuery(queries.getSaleRequestContact, {},
             () => ({
                 fetchPolicy: "no-cache",
             })
         );
-        const validateEmail = () => {
-            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-            if (reg.test(contractCreacted.email) == false)
-                statusMailValidate.value = true;
+        // =================================== FUNCTION ============================================
+        const disableForm1 = () => {
+            if (dataInputCallApi.dossier == 2)
+                disableFormVal2.value = true
             else
-                statusMailValidate.value = false;
+                disableFormVal2.value = false
+
+        }
+        const disableForm2 = () => {
+            if (dataInputCallApi.applicationService == 2)
+                disableFormVal.value = true
+            else
+                disableFormVal.value = false
+
         }
         // all Computed 
         const checkStepTwo = computed(() => {
-            if (step.value === 0) {
+            if (step.value === 0)
                 return "wait";
-            } else if (step.value === 1) {
+            else if (step.value === 1)
                 return "process";
-            } else {
+            else
                 return "finish";
-            }
+
         });
         const checkStepThree = computed(() => {
-            if (step.value < 2) {
+            if (step.value < 2)
                 return "wait";
-            } else if (step.value === 2) {
+            else if (step.value === 2)
                 return "process";
-            } else {
+            else
                 return "finish";
-            }
         });
         const checkStepFour = computed(() => {
-            if (step.value < 3) {
+            if (step.value < 3)
                 return "wait";
-            } else if (step.value === 3) {
+            else if (step.value === 3)
                 return "process";
-            } else {
+            else
                 return "finish";
-            }
         });
         const changeStep = (val: number) => {
-            if (val == 1) {
-                step.value = 0
-            }
-            if (val == 2
-                && contractCreacted.terms == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true) {
-                step.value = 1
-                window.scrollTo(0, 0);
-            }
-            if (val == 3
-                && contractCreacted.terms == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true
-                && contractCreacted.nameCompany != ""
-                && contractCreacted.bizNumber != ""
-                && contractCreacted.zipcode != ""
-                && contractCreacted.namePresident != ""
-                && contractCreacted.birthday != ""
-                && contractCreacted.mobilePhone != ""
-                && contractCreacted.email != ""
-                && contractCreacted.phone != ""
-                && contractCreacted.bizNumber.length == 10
-                && statusMailValidate.value == false
-            ) {
-                step.value = 2
-                window.scrollTo(0, 0);
-            }
-            if (val == 4
-                && contractCreacted.terms == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true
-                && contractCreacted.nameCompany != ""
-                && contractCreacted.bizNumber != ""
-                && contractCreacted.zipcode != ""
-                && contractCreacted.namePresident != ""
-                && contractCreacted.birthday != ""
-                && contractCreacted.mobilePhone != ""
-                && contractCreacted.email != ""
-                && contractCreacted.phone != ""
-                && contractCreacted.bizNumber.length == 10
-                && statusMailValidate.value == false
-            ) {
-                if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                } else {
-                    let count = 0
-                    if (dataInputCallApi.dossier == 1) {
-                        if (valueFacilityBusinesses.value.length == 0
-                            || contractCreacted.longTermCareInstitutionNumber == ''
-                        ) {
-                            count++
-                        }
-                    }
-                    if (dataInputCallApi.applicationService == 1) {
-                        if (contractCreacted.bankType == ''
-                            || contractCreacted.accountNumber == ''
-                            || contractCreacted.ownerName == ''
-                            || contractCreacted.ownerBizNumber == ''
-                        ) {
-                            count++
-                        }
-                    }
-                    if (count == 0) {
-                        step.value = 3
-                        window.scrollTo(0, 0);
-                    }
-                }
-            }
+            step.value = val - 1
+            // if (val == 1) {
+            //     step.value = 0
+            // }
+            // if (val == 2 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true) {
+            //     step.value = 1
+            //     window.scrollTo(0, 0);
+            // }
+            // if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
+            // ) {
+            //     step.value = 2
+            //     window.scrollTo(0, 0);
+            // }
+            // if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
+            // ) {
+            //     if (dataInputCallApi.dossier != 2 && dataInputCallApi.applicationService != 2) {
+            //         let count = 0
+            //         if (dataInputCallApi.dossier == 1) {
+            //             if (valueFacilityBusinesses.value.length == 0
+            //                 || contractCreacted.longTermCareInstitutionNumber == ''
+            //             ) {
+            //                 count++
+            //             }
+            //         }
+            //         if (dataInputCallApi.applicationService == 1) {
+            //             if (contractCreacted.bankType == ''
+            //                 || contractCreacted.accountNumber == ''
+            //                 || contractCreacted.ownerName == ''
+            //                 || contractCreacted.ownerBizNumber == ''
+            //             ) {
+            //                 count++
+            //             }
+            //         }
+            //         if (count == 0) {
+            //             step.value = 3
+            //             window.scrollTo(0, 0);
+            //         }
+            //     }
+            // }
         }
         const changeTypeCompany = (val: number) => {
             if (val == 1) {
@@ -634,12 +494,6 @@ export default {
             } else if (val == 2) {
                 textIDNo.value = "주민등록번호";
             }
-        }
-        const changeValueDate = (data: any) => {
-            contractCreacted.birthday = data;
-        }
-        const changeValueDateHoding = (data: any) => {
-            contractCreacted.startYearMonthHolding = data;
         }
         const funcAddress = (data: any) => {
             contractCreacted.zipcode = data.zonecode;
@@ -689,7 +543,7 @@ export default {
                         notification('error', '계속하려면 모든 조건을 수락하십시오!')
                     }
                 } else if (step.value == 2) {
-                    if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) { 
+                    if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
                         notification('error', '서비스를 최소 하나 이상 선택해야합니다!')
                     } else {
                         let count = 0
@@ -719,9 +573,7 @@ export default {
                 }
             }
         }
-        const openPopup = () => {
-            Creat();
-        }
+
         const handleOk = () => {
             visibleModal.value = false;
             router.push("/login");
@@ -752,19 +604,18 @@ export default {
         }
         const checkAllFunc = (val: any) => {
             checkAll.value = val
-            if (val == true) {
-                contractCreacted.terms = true
-                contractCreacted.personalInfo = true
-                contractCreacted.accountingService = true
-                contractCreacted.withholdingService = true
-            } else {
-                contractCreacted.terms = false
-                contractCreacted.personalInfo = false
-                contractCreacted.accountingService = false
-                contractCreacted.withholdingService = false
+            contractCreacted.terms = val
+            contractCreacted.personalInfo = val
+            contractCreacted.accountingService = val
+            contractCreacted.withholdingService = val
+        }
+
+        const contentReady = (e: any) => {
+            if (!e.component.getSelectedRowKeys().length) {
+                e.component.selectRowsByIndexes(0)
             }
         }
-        // watch=====================================================================================================================================
+        // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value, (newVal) => {
             contractCreacted.bizType = newVal
             changeTypeCompany(newVal)
@@ -818,14 +669,12 @@ export default {
             listDataConvert.value = [];
             newVal.value.forEach((item: any) => {
                 listDataConvert.value.push({
-                    longTermCareInstitutionNumber:
-                        contractCreacted.longTermCareInstitutionNumber ? contractCreacted.longTermCareInstitutionNumber : '',
+                    longTermCareInstitutionNumber: contractCreacted.longTermCareInstitutionNumber ? contractCreacted.longTermCareInstitutionNumber : '',
                     facilityBizType: item?.facilityBizType,
                     name: item?.name,
                     startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
                     capacity: parseInt(item?.capacity),
-                    registrationCardFileStorageId:
-                        contractCreacted.registrationCardFileStorageId ? contractCreacted.registrationCardFileStorageId : '',
+                    registrationCardFileStorageId: contractCreacted.registrationCardFileStorageId ? contractCreacted.registrationCardFileStorageId : '',
                 });
             });
             var result = Object.values(newVal.value.reduce((c: any, v: any) => {
@@ -835,70 +684,12 @@ export default {
                 return c;
             }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
             if (!result) {
-                notification('error', '중복되었습니다!'); 
+                notification('error', '중복되었습니다!');
             }
         }, { deep: true, });
         return {
-            facilityBizTypeCommon,
-            move_column,
-            colomn_resize,
-            arrayRadioWithdrawDay,
-            valueRadioWithdrawDay,
-            valueSourceService,
-            valueAccountingService,
-            dataImg,
-            dataImgStep3,
-            valueRadioBox,
-            arrayRadioCheck,
-            imageId,
-            changeValueDate,
-            changeValueDateHoding,
-            funcAddress,
-            prevStep,
-            nextStep,
-            openPopup,
-            handleOk,
-            getImgUrl,
-            getImgUrlAccounting,
-            checkAll,
-            checkAllFunc,
-            signinLoading,
-            spinning,
-            textIDNo,
-            changeTypeCompany,
-            changeStep,
-            statusMailValidate,
-            validateEmail,
-            optionSale,
-            disableFormVal,
-            disableFormVal2,
-            disableForm2,
-            dataInputCallApi,
-            disableForm1,
-            contractCreacted,
-            Creat,
-            valueFacilityBusinesses,
-            signinDone,
-            onError,
-            visibleModal,
-            onFinish,
-            listDataConvert,
-            step,
-            imagestep,
-            removeImg,
-            imageValue,
-            fileName,
-            fileNamestep,
-            removeImgStep,
-            monthFormat,
-            checkStepTwo,
-            checkStepThree,
-            checkStepFour,
-            selectedItemKeys,
-            titleModal,
-            titleModal2,
-            plainOptions,
-            radioGroup
+            facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, fileName, checkStepTwo, checkStepThree, checkStepFour, selectedItemKeys, titleModal, titleModal2, plainOptions,
+            contentReady, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep,
         };
     },
 };
