@@ -199,7 +199,7 @@
                                     <imgUpload :title="titleModal2" @update-img="getImgUrlAccounting"
                                         style="margin-top: 10px" />
                                 </div>
-                                <div>
+                                <div class="preview-img">
                                     <preview-image :dataImage="dataImgStep3" @deleteImg="removeImgStep" />
                                 </div>
                             </div>
