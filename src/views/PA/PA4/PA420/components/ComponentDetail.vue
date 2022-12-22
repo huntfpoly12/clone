@@ -15,7 +15,6 @@
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
                 <DxButton icon="plus" @click="addRow" />
-                <DxButton icon="edit" @click="editPaymentDate" />
                 <DxButton @click="onItemClick('history')">
                     <a-tooltip placement="left">
                         <template #title>근로소득자료 변경이력</template>
@@ -32,6 +31,12 @@
                                 style="width: 16px; height: 16px;" />
                         </div>
                     </a-tooltip>
+                </DxButton>
+                <DxButton @click="editPaymentDate" class="custom-button-checkbox">
+                    <div class="d-flex-center">
+                        <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
+                        <span class="fz-12 pl-5">지급일변경</span>
+                    </div>
                 </DxButton>
             </div>
         </div>
@@ -193,7 +198,7 @@ export default defineComponent({
             onError,
             onDone,
         } = useMutation(mutations.changeIncomeProcessRetirementStatus)
-        onError(e => { 
+        onError(e => {
             notification('error', e.message)
         })
         onDone(e => {
@@ -272,14 +277,14 @@ export default defineComponent({
             modalUpdate.value = true
             keyDetailRow.value = data
         }
-        const statusComfirm = () => { 
+        const statusComfirm = () => {
             mutate({
                 companyId: companyId,
                 processKey: dataTableDetail.value.processKey,
                 status: statusButton.value
             })
         }
-        return { 
+        return {
             keyDetailRow,
             modalAdd, modalUpdate,
             arrayEmploySelect,
@@ -313,4 +318,5 @@ export default defineComponent({
 });
 </script>
 <style scoped src="../style/style.scss" >
+
 </style>
