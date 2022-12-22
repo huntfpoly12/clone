@@ -146,7 +146,7 @@ export default defineComponent({
             {
                 id: 1,
                 color: 'white',
-                name: "중간메니저",
+                name: "중간매니저",
                 type: "m",
                 grade: "2",
                 background: 'black',
@@ -155,7 +155,7 @@ export default defineComponent({
             {
                 id: 2,
                 color: 'white',
-                name: "당당메니저",
+                name: "담당매니저",
                 type: "m",
                 grade: "3",
                 background: 'black',
@@ -359,9 +359,6 @@ export default defineComponent({
                         managerGrade: formState.managerGrade,
                     }
                 }
-
-
-
                 creactUser(dataCallApiCreate)
             }
 
