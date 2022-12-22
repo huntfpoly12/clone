@@ -5,22 +5,8 @@
             <standard-form formName="add-cm-310">
                 <a-spin tip="Loading..." :spinning="loading">
                     <h2 style="font-weight: 600; color: gray" class="title_modal">
-                        급여상세항목
+                        급여항목추가
                     </h2>
-                    <a-row :gutter="24">
-                        <a-col :span="14">
-                            <a-form-item label="코드" :label-col="labelCol" class="red">
-                                <number-box :width="150" :min="0" :max="30" v-model:valueInput="formState.itemCode"
-                                    :spinButtons="true" :required="true">
-                                </number-box>
-                            </a-form-item>
-                        </a-col>
-                        <!-- <a-col :span="4"></a-col>
-                        <a-col :span="6">
-                            <switch-basic style="width: 80px;" v-model:valueSwitch="formState.use" :textCheck="'이용중'"
-                                :textUnCheck="'이용중지'" />
-                        </a-col> -->
-                    </a-row>
                     <a-row>
                         <a-col :span="14">
                             <a-form-item label="항목명" :label-col="labelCol" class="red">
@@ -78,7 +64,7 @@ import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import dayjs, { Dayjs } from "dayjs";
 
 export default defineComponent({
-    props: ["modalStatus", "data", "msg", "title"],
+    props: ["modalStatus", "data", "msg", "title", "itemCodeMax"],
 
     components: {
         TaxPay,
@@ -119,7 +105,7 @@ export default defineComponent({
                     companyId: companyId,
                     imputedYear: parseInt(dayjs().format("YYYY")),
                     input: {
-                        itemCode: formState.itemCode,
+                        itemCode: props.itemCodeMax+1,
                         name: formState.name,
                         use: formState.use,
                         sort: 0,
