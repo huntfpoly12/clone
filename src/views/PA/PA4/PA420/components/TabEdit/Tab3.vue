@@ -233,7 +233,6 @@
                             </template>
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                         </a-tooltip>
-
                     </div>
                 </a-form-item>
             </a-col>
@@ -272,7 +271,6 @@
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-
                 <div>이연퇴직소득세</div>
                 <a-form-item class="label-children" label="소득세">
                     <div class="d-flex-center">
@@ -294,8 +292,6 @@
         </a-row>
     </a-spin>
 </template>
-
-
 <script lang="ts">
 import { defineComponent, ref, watch, reactive } from 'vue'
 import { useQuery } from "@vue/apollo-composable";
@@ -308,7 +304,6 @@ export default defineComponent({
         dataDetail: Object,
         actionNextStep: Number,
     },
-
     setup(props, { emit }) {
         const trigger = ref(false)
         const dataGet: any = ref({
@@ -318,7 +313,6 @@ export default defineComponent({
             companyId: companyId,
             input: {}
         });
-
         // ====================== GRAPQL =======================================
         const { refetch: refetchCaculate, onError: errorCaculate, result: resultCaculate, loading } = useQuery(queries.calculateIncomeRetirementTax, dataRequestCaculate, () => ({
             enabled: trigger.value,
@@ -327,13 +321,10 @@ export default defineComponent({
         errorCaculate(res => {
             notification('error', res.message)
         })
-
-
         // ====================== WATCH =======================================
         watch(() => dataGet, (newValue) => {
             emit("update:dataDetail", newValue);
         }, { deep: true })
-
         watch(() => resultCaculate, (newValue) => {
             dataGet.value.specification.specificationDetail.lastRetirementBenefitStatus = newValue.value.calculateIncomeRetirementTax.lastRetirementBenefitStatus
             dataGet.value.specification.specificationDetail.lastRetiredYearsOfService = newValue.value.calculateIncomeRetirementTax.lastRetiredYearsOfService
@@ -344,14 +335,12 @@ export default defineComponent({
             dataGet.value.specification.specificationDetail.deductibleWithholdingTax = newValue.value.calculateIncomeRetirementTax.deductibleWithholdingTax
             dataGet.value.specification.specificationDetail.taxAmountToBeReported = newValue.value.calculateIncomeRetirementTax.taxAmountToBeReported
             dataGet.value.specification.specificationDetail.retirementIncomeTax = newValue.value.calculateIncomeRetirementTax.retirementIncomeTax
-
             if (!newValue.value.calculateIncomeRetirementTax.prevRetirementBenefitStatus) {
                 dataGet.value.specification.specificationDetail.prevRetirementBenefitStatus = {
                     "retirementBenefits": 0,
                     "nonTaxableRetirementBenefits": 0,
                     "taxableRetirementBenefits": 0
                 }
-
                 dataGet.value.specification.specificationDetail.prevRetiredYearsOfService = {
                     "settlementStartDate": '',
                     "settlementFinishDate": '',
@@ -361,9 +350,7 @@ export default defineComponent({
                 }
             }
         }, { deep: true })
-
         // ====================== FUNCTION =======================================
-
         // Click button caculate step-3
         const actionCaculate = () => {
             // Remove redundant lines 
@@ -378,7 +365,6 @@ export default defineComponent({
                     }
                 })
             );
-
             // Setup value call api
             dataRequestCaculate.value.input = {
                 "taxCredit": cleanData.specification.specificationDetail.taxAmountCalculation.taxCredit,
@@ -409,22 +395,16 @@ export default defineComponent({
                     ]
                 }
             }
-
             delete dataRequestCaculate.value.input.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax
-
             // If step 1 is not checked, delete some variables that do not need to be passed
             if (cleanData.checkBoxCallApi == false) {
                 delete dataRequestCaculate.value.input.prevRetirementBenefitStatus
                 delete dataRequestCaculate.value.input.prevRetiredYearsOfService
             }
-
             trigger.value = true
             if (dataRequestCaculate.value.input)
                 refetchCaculate()
-
-
         }
-
         return {
             dataGet,
             dayjs,
@@ -434,8 +414,5 @@ export default defineComponent({
     }
 })
 </script>
-
-
 <style lang="scss" scoped src="../../style/modalAdd.scss">
-
 </style>

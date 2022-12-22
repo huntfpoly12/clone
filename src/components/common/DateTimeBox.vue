@@ -34,7 +34,7 @@ export default defineComponent({
     Datepicker,
   },
   setup(props, { emit }) {
-    const date = ref(filters.formatDate(props.valueDate.toString()))
+    const date = ref(props.valueDate ? filters.formatDate(props.valueDate.toString()) : filters.formatDate(props.valueDate))
     watch(
       () => props.valueDate,
       (newValue) => {
