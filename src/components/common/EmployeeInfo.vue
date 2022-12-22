@@ -82,7 +82,7 @@ export default defineComponent({
 }
 
 .tag-status {
-    background-color: red;
+    background-color: #C00000;
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
@@ -91,7 +91,7 @@ export default defineComponent({
 
 
 .tag-status {
-    background-color: red;
+    background-color: #C00000;
     color: white;
     padding: 4px 10px;
     border-radius: 5px;

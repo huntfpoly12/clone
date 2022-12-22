@@ -199,12 +199,14 @@ export default defineComponent({
                 else if (data.value == 3)
                     value = 'r'
                 else if (data.value == 4)
-                    value = 'p'  
+                    value = 'p'
 
                 let dataCall: any = {
                     type: value.toString()
                 }
-                formState.type = value
+
+                formState.managerGrade = parseInt(products.value.filter((val: any) => val.id === data.value)[0].grade) 
+                formState.type = value 
                 originData.value.types = [value.toString()]
                 dataCallGroup.value = dataCall
             }, 100);
@@ -337,9 +339,7 @@ export default defineComponent({
             idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
         };
 
-        const creactUserNew = (e: any) => {
-            console.log(formState.type);
-            
+        const creactUserNew = (e: any) => { 
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -356,9 +356,12 @@ export default defineComponent({
                         mobilePhone: formState.mobilePhone,
                         email: formState.email,
                         groupId: formState.groupCode,
-                        managerGrade: (formState.type == '2' || formState.type == '3') ? parseInt(formState.type) : null,
+                        managerGrade: formState.managerGrade,
                     }
                 }
+
+
+
                 creactUser(dataCallApiCreate)
             }
 
@@ -397,6 +400,12 @@ export default defineComponent({
     },
 });
 </script>  
+
+
+
+
+
+
 
 
 

@@ -303,7 +303,7 @@ export default defineComponent({
             companyId: companyId,
             processKey: {
                 imputedYear: globalYear.value,
-                imputedMonth: dayjs().month(),
+                imputedMonth: dayjs().month()+ 1,
                 paymentYear: globalYear.value,
                 paymentMonth: dayjs().month() + 1
             }

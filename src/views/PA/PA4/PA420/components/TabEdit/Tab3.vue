@@ -190,7 +190,7 @@
             </a-col>
             <a-col :span="12">
                 <div class="header-text-2 mb-10">세액계산</div>
-                <a-form-item label="환산산출세액">
+                <a-form-item label="신고대상세액">
                     <div class="d-flex-center">
                         <number-box-money width="150px"
                             v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.taxAmountSubjectToReporting"
@@ -222,7 +222,7 @@
                             v-model:valueInput="value.accountDepositAmount" disabled="true" />
                     </div>
                 </template>
-                <a-form-item label="신고대상세액">
+                <a-form-item label="이연퇴직소득세">
                     <div class="d-flex-center">
                         <number-box-money width="150px" disabled="true"
                             v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.retirementIncomeTax" />
