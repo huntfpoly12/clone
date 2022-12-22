@@ -31,7 +31,7 @@
             <form action="your-action">
                 <keep-alive>
                     <template v-if="step === 0">
-                        <Tab1 :dataForm="dataForm" :arrayEmploySelect="arrayEmploySelect" />
+                        <Tab1 :dataForm="dataForm" :arrayEmploySelect="arrayEmploySelect" :actionNextStep="valueNextStep" @nextPage="step++"/>
                     </template>
                 </keep-alive>
                 <keep-alive>
@@ -92,6 +92,7 @@ export default defineComponent({
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear)
         const step = ref(0)
+        const valueNextStep = ref(0)
         const dayValue = ref(1)
         const modalStatusAccept = ref(false)
         const retirementIncome1 = ref(true)
@@ -183,9 +184,10 @@ export default defineComponent({
         }
 
         const nextStep = (event: any) => {
-            if (step.value < 2) {
+            if (step.value == 0)
+                valueNextStep.value++
+            else if (step.value == 1)
                 step.value++
-            }
         }
 
         const prevStep = () => {
@@ -233,6 +235,7 @@ export default defineComponent({
             retirementIncome1,
             dataForm,
             arrayEmploySelect,
+            valueNextStep,
         }
     },
 })

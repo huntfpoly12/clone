@@ -1,7 +1,7 @@
 <template>
     <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
         value-expr="employeeId" display-expr="employeeId"
-        :value="valueEmploy"
+        :value="valueEmploy" :name="nameInput"
         field-template="field-data" @value-changed="updateValue" @change="eventItemClick"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
@@ -39,13 +39,18 @@
             <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
             <span class="tag-type-20" v-if="data.type == 20">일용</span>
         </template>
+        
+        <DxValidator :name="nameInput">
+            <DxRequiredRule v-if="required" :message="messageRequired" />
+        </DxValidator>
     </DxSelectBox>
+    {{ messageRequired }}
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
-
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 export default defineComponent({
     props: {
         width: String,
@@ -57,12 +62,32 @@ export default defineComponent({
             type: Array,
             required: true
         },
+        required: {
+            type: Boolean,
+            default: false,
+        },
+        nameInput: {
+            type: String,
+            default: '',
+        },
+        messRequired: {
+            type: String,
+            default: "",
+        },
     },
     components: {
         DxSelectBox,
-        DxTextBox
+        DxTextBox,
+        DxValidator,
+        DxRequiredRule
     },
     setup(props, { emit }) {
+        const app: any = getCurrentInstance();
+        const messages = app.appContext.config.globalProperties.$messages;
+        const messageRequired = ref(messages.getCommonMessage('102').message);
+        if (props.messRequired != "") {
+            messageRequired.value = props.messRequired;
+        }
         const valueEmploy = ref(props.valueEmploy);
 
         const updateValue = (value: any) => {
@@ -89,7 +114,8 @@ export default defineComponent({
             updateValue,
             valueEmploy,
             convertBirthDay,
-            eventItemClick
+            eventItemClick,
+            messageRequired
         };
     },
 });
