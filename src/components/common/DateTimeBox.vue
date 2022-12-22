@@ -62,5 +62,6 @@ input.dp__input.dp__input_icon_pad {
 .dp__disabled {
   background: #fff;
   border: 1px solid #ddd;
+  opacity: .5
 }
 </style>
