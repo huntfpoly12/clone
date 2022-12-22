@@ -50,8 +50,8 @@
             <DxScrolling column-rendering-mode="virtual" />
             <DxColumn caption="사원" cell-template="tag" width="300px" />
             <DxColumn caption="구분" cell-template="retirementType" data-type="string" />
-            <DxColumn caption="입사일 (정산시작일)" data-field="employee.joinedAt" data-type="date" />
-            <DxColumn caption="퇴사일 (정산종료일)" data-field="employee.leavedAt" data-type="date" />
+            <DxColumn caption="입사일 (정산시작일)" cell-template="joinedAt" data-type="date" />
+            <DxColumn caption="퇴사일 (정산종료일)" cell-template="leavedAt" data-type="date" />
             <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" />
             <DxColumn caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string" />
             <DxColumn caption="과세대상 퇴직급여" data-field="taxableRetirementBenefits" data-type="string" />
@@ -60,6 +60,12 @@
             <DxColumn caption="비고" cell-template="note" data-type="string" width="150px" />
             <DxColumn caption="지급일" data-field="paymentDay" data-type="string" />
             <DxColumn caption="" cell-template="action" width="50px" />
+            <template #joinedAt="{ data }">
+                <div>{{ $filters.formatDate(data.data.employee.joinedAt) }}</div>
+            </template>
+            <template #leavedAt="{ data }">
+                <div>{{ $filters.formatDate(data.data.employee.leavedAt) }}</div>
+            </template>
             <template #retirementType="{ data }">
                 <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
                 <div v-if="data.data.retirementType == 2" class="retirementType-2">중간</div>

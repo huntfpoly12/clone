@@ -15,13 +15,13 @@
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="신청" label-align="left" :label-col="labelCol">
-                                            <default-text-box v-model:valueInput="formState.createdAt" :disabled="true"
+                                            <default-text-box :valueInput="isNumeric(formState.createdAt)?$filters.formatDate(formState.createdAt):''" :disabled="true"
                                                 width="200px" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="심사중" label-align="left" :label-col="labelCol">
-                                            <default-text-box v-model:valueInput="formState.processedAt"
+                                            <default-text-box :valueInput="isNumeric(formState.processedAt)?$filters.formatDate(formState.processedAt):''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
@@ -31,7 +31,7 @@
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="반려" label-align="left" :label-col="labelCol">
-                                            <default-text-box v-model:valueInput="formState.rejectedAt" :disabled="true"
+                                            <default-text-box :valueInput="isNumeric(formState.rejectedAt)?$filters.formatDate(formState.rejectedAt):''" :disabled="true"
                                                 width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
@@ -41,7 +41,7 @@
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="승인" label-align="left" :label-col="labelCol">
-                                            <default-text-box v-model:valueInput="formState.approvedAt" :disabled="true"
+                                            <default-text-box :valueInput="isNumeric(formState.approvedAt)?$filters.formatDate(formState.approvedAt ?? ''):''" :disabled="true"
                                                 width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
@@ -261,7 +261,7 @@
                                                 <a-col :span="12">
                                                     <checkbox-basic
                                                         v-model:valueCheckbox="formState.content.accounting.accountingServiceTypes[0]"
-                                                        :disabled="false" size="15" label="회계서비스 신청합니다." />
+                                                        :disabled="false" size="15" label="회계입력대행서비스" />
                                                 </a-col>
                                             </a-row>
                                         </div>
@@ -270,7 +270,7 @@
                             </a-collapse-panel>
                             <a-collapse-panel key="5" header="원천서비스신청">
                                 <div>
-                                    <checkbox-basic label="회계서비스 신청합니다." v-model:valueCheckbox="checkedService"
+                                    <checkbox-basic label="원천서비스 신청합니다" v-model:valueCheckbox="checkedService"
                                         :disabled="false" :size="'16'" />
                                     <div style="margin-top: 20px">
                                         <a-form-item label="서비스 시작년월" class="clr" label-align="left"
@@ -367,6 +367,7 @@ import mutations from "@/graphql/mutations/BF/BF3/BF310/index";
 import imgUpload from "@/components/UploadImage.vue";
 import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import dayjs from 'dayjs'
 export default defineComponent({
     props: {
         modalStatus: {
@@ -414,11 +415,10 @@ export default defineComponent({
         let canChangeableBizNumber = ref<boolean>(false);
         const checkedService = ref(true)
         const selectedItemKeys = reactive([])
-        const titleModal = ref("사업자등록증")
+        const titleModal = ref("장기요양기관등록증")
         var dataStatus = initialDataStatus
         let objDataDefault = ref({ ...initialFormState });
         const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay]) 
-        
         var formState = ref({ ...initialFormState });
         // event close popup
         const setModalVisible = () => {
@@ -646,6 +646,9 @@ export default defineComponent({
             e.component.collapseAll(-1);
             e.component.expandRow(e.currentSelectedRowKeys[0]);
         }
+        const isNumeric = (value: any) => {
+            return /^-?\d+$/.test(value);
+        }
         return {
             selectionChanged,
             contentReady,
@@ -673,7 +676,9 @@ export default defineComponent({
             licenseFileName,
             imageLicenseFile,
             removeLicenseFile,
-            arrayRadioWithdrawDay
+            arrayRadioWithdrawDay,
+            dayjs,
+            isNumeric
         };
     },
 });
