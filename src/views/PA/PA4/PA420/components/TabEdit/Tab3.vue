@@ -84,9 +84,9 @@
                         <default-text-box width="18%" class="mr-5" placeholder="사업자등록번호"
                             v-model:valueInput="value.bizNumber" />
                         <default-text-box width="18%" class="mr-5" placeholder="계좌번호"
-                            v-model:valueInput="value.bankAccountNumber" />
-                        <date-time-box width="28%" class="mr-5" dateFormat="YYYY-MM-DD"
-                            v-model:valueDate="value.depositDate" placeholder="입금일" />
+                            v-model:valueInput="value.bankAccountNumber" /> 
+                        <date-time-box width="28%" class="mr-5" v-model:valueDate="value.depositDate"
+                            placeholder="입금일" />
                         <number-box-money width="18%" placeholder="계좌입금금액"
                             v-model:valueInput="value.accountDepositAmount" />
                     </div>
@@ -216,8 +216,8 @@
                             v-model:valueInput="value.bizNumber" disabled="true" />
                         <default-text-box width="19%" class="mr-5" placeholder="계좌번호"
                             v-model:valueInput="value.bankAccountNumber" disabled="true" />
-                        <date-time-box width="24%" class="mr-5" dateFormat="YYYY-MM-DD" disabled="true"
-                            v-model:valueDate="value.depositDate" placeholder="입금일" />
+                        <date-time-box width="24%" class="mr-5" disabled="true" v-model:valueDate="value.depositDate"
+                            placeholder="입금일" />
                         <number-box-money width="19%" placeholder="계좌입금금액"
                             v-model:valueInput="value.accountDepositAmount" disabled="true" />
                     </div>
@@ -376,7 +376,7 @@ export default defineComponent({
                 })
             );
 
-            
+
             // Setup value call api
             dataRequestCaculate.value.input = {
                 "taxCredit": cleanData.specification.specificationDetail.taxAmountCalculation.taxCredit,
@@ -395,7 +395,7 @@ export default defineComponent({
                 },
                 "calculationOfDeferredRetirementIncomeTax": cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax
             }
-            
+
             delete dataRequestCaculate.value.input.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax
 
             // If step 1 is not checked, delete some variables that do not need to be passed

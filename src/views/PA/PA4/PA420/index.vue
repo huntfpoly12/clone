@@ -238,6 +238,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
+                {{ statusButton }}
                 <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
