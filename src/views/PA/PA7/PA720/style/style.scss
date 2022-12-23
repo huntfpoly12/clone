@@ -171,22 +171,39 @@
   ::v-deep.ant-btn.ant-dropdown-trigger{
     height: auto;
   }
+  ::v-deep .custom-button-checkbox {
+    border: 1px solid blue;
+    height: 91.5%;
+
+    .dx-button-content {
+        padding: 5px 5px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    span {
+        color: blue;
+    }
+}
   .button-open-tab {
+    color: #fff;
+    background-color: #00f;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    margin-left: 3px;
+    cursor: pointer;
     height: 100%;
-    padding-bottom: 7px;
     width: 100px;
   }
 
   .custom-select-tab {
     color: white;
     background-color: blue;
-    font-size: 10px;
     border: none;
     border-radius: 5px;
-    padding: 5px 8px;
     display: inline-flex;
     align-items: center;
-    margin-left: 3px;
     height: 91.5%;
   }
 }
