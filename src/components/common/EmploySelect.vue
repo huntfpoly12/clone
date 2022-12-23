@@ -44,7 +44,6 @@
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
     </DxSelectBox>
-    {{ messageRequired }}
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
