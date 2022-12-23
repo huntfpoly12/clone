@@ -1,39 +1,8 @@
 <template>
     <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
-        <a-col>
-            <div v-if="!customrow">
-                <a-form-item class="title" :label="title" disable="true">
-                    <a-row>
-                        <div v-if="disabledImg == false">
-                            <div style="display: flex;">
-                                <input class="custom-file-input" type="file" @change="onFileChange" />
-                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                            </div>
-
-                            <p v-if="messageUpload">{{ messageUpload }}</p>
-
-                        </div>
-                        <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
-                            <div style="display: flex;">
-                                <input class="custom-file-input" type="file" disabled />
-                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                            </div>
-                        </div>
-                    </a-row>
-                    <a-row>
-                        <a-space :size="10" style="margin-top: 8px">
-                            <div class="warring-modal">
-                                <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
-                                <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
-                                <p>파일용량 : 최대 5MB</p>
-                            </div>
-                        </a-space>
-                    </a-row>
-                </a-form-item>
-            </div>
-            <div v-else>
-                <p><b>{{ title }}</b></p>
-                <a-row>
+        <a-form-item :label="title" v-if="!customrow">
+            <a-row>
+                <a-col :span="12">
                     <div v-if="disabledImg == false">
                         <div style="display: flex;">
                             <input class="custom-file-input" type="file" @change="onFileChange" />
@@ -49,25 +18,47 @@
                             <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                         </div>
                     </div>
-                </a-row>
-                <a-row>
-                    <a-space :size="8" style="margin-top: 8px">
+                </a-col>
+                <a-col :span="12">
+                    <a-space :size="10" style="margin-top: 8px">
                         <div class="warring-modal">
                             <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
                             <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
                             <p>파일용량 : 최대 5MB</p>
                         </div>
                     </a-space>
-                </a-row>
-            </div>
-        </a-col>
-        <a-col> </a-col>
-        <a-col :span="7">
-            <!-- <div class="img-preview">
-        <img :src="imageUrl" @click="handlePreview" />
-      </div> -->
-        </a-col>
+                </a-col>
+            </a-row>
+        </a-form-item>
+        <a-row v-else>
+            <p><b>{{ title }}</b></p>
+            <a-col :span="12">
+                <div v-if="disabledImg == false">
+                    <div style="display: flex;">
+                        <input class="custom-file-input" type="file" @change="onFileChange" />
+                        <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                    </div>
 
+                    <p v-if="messageUpload">{{ messageUpload }}</p>
+
+                </div>
+                <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
+                    <div style="display: flex;">
+                        <input class="custom-file-input" type="file" disabled />
+                        <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                    </div>
+                </div>
+            </a-col>
+            <a-col :span="12">
+                <a-space :size="8" style="margin-top: 8px">
+                    <div class="warring-modal">
+                        <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
+                        <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
+                        <p>파일용량 : 최대 5MB</p>
+                    </div>
+                </a-space>
+            </a-col>
+        </a-row>
         <a-modal :visible="previewVisible" :title="title" :footer="null" @cancel="handleCancel" :mask-closable="false">
             <img style="width: 100%" :src="imageUrl" />
         </a-modal>
@@ -76,7 +67,7 @@
 
 <script src="" lang="ts">
 import { ref, defineComponent } from "vue";
-import { message, Upload, UploadProps } from "ant-design-vue";
+import { Upload, UploadProps } from "ant-design-vue";
 import Repository from "../repositories/index";
 const uploadRepository = Repository.get("upload");
 
@@ -126,7 +117,7 @@ export default defineComponent({
         customrow: {
             type: Number
         },
-        name:{
+        name: {
             type: String
         }
     },
@@ -192,7 +183,7 @@ export default defineComponent({
             fileName.value = file.name;
             try {
                 loading.value = true;
-                const data = await uploadRepository.public(formData); 
+                const data = await uploadRepository.public(formData);
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
                     loading.value = false;
@@ -208,7 +199,7 @@ export default defineComponent({
                         url: imageUrl.value,
                         id: data.data.id,
                         fileNamestep: fileName.value,
-                        
+
                     });
                 });
             } catch (error) {
@@ -279,12 +270,6 @@ export default defineComponent({
     text-shadow: 1px 1px #fff;
     font-weight: 700;
     font-size: 10pt;
-}
-
-
-
-.title {
-    padding-right: 8px;
 }
 
 .button_remove {

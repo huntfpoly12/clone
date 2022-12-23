@@ -1,6 +1,6 @@
 <template>
     <DxSelectBox :search-enabled="true" :width="width" :data-source="arrSelect" :show-clear-button="clearButton"
-        v-model:value="value" :read-only="readOnly" display-expr="label" value-expr="value" :disabled="disabled"
+        v-model:value="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr" :disabled="disabled"
         @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -33,6 +33,14 @@ export default defineComponent({
         nameInput: {
             type: String,
             default: '',
+        },
+        displayeExpr: {
+            type: String,
+            default: 'label',
+        },
+        valueExpr: {
+            type: String,
+            default: 'value',
         },
     },
     components: {

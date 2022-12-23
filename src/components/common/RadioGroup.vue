@@ -19,7 +19,7 @@ export default defineComponent({
             type: String
         },
         disabled: Boolean,
-        valueExpr:{
+        valueExpr: {
             type: String,
             default: 'id'
         }
