@@ -121,9 +121,6 @@
                                         dateFormat="YYYY-MM-DD"
                                     ></date-time-box> 
                                 </a-form-item>
-                                <p class="validate-message">
-                                    ‘-’없이 8자리 숫자로 입력하세요. ( 자릿수 : 연4 월2 일2 )
-                                </p>
                             </div>
                             <div class="dflex">
                                 <a-form-item label="이메일" class="red" :label-col="labelCol">
