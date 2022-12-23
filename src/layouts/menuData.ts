@@ -23,12 +23,23 @@ export default [
 
   { name: "원천마감관리", url: "/dashboard/bf-310", id: "bf-610" },
   { name: "원천세/지방소득세전자신고", url: "/dashboard/bf-310", id: "bf-620" },
-  { name: "지급명세서전자신고(연말정산)", url: "/dashboard/bf-310", id: "bf-630" },
+  {
+    name: "지급명세서전자신고(연말정산)",
+    url: "/dashboard/bf-310",
+    id: "bf-630",
+  },
   { name: "간이지급명세서전자신고", url: "/dashboard/bf-310", id: "bf-640" },
-  { name: "일용직근로소득지급명세서전자신고", url: "/dashboard/bf-310", id: "bf-650" },
+  {
+    name: "일용직근로소득지급명세서전자신고",
+    url: "/dashboard/bf-310",
+    id: "bf-650",
+  },
 
   { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
   { name: "회계설정", url: "/dashboard/bf-310", id: "cm-120" },
+  { name: "통장관리", url: "/dashboard/bf-310", id: "cm-121" },
+  { name: "거래저관리", url: "/dashboard/bf-310", id: "cm-122" },
+  { name: "계정코드", url: "/dashboard/bf-310", id: "cm-123" },
   { name: "원천설정", url: "/dashboard/bf-310", id: "cm-130" },
 
   { name: "통장내역", url: "/dashboard/bf-310", id: "ac-110" },
@@ -66,7 +77,7 @@ export default [
   { name: "필요경비대장", url: "/dashboard/ac-520", id: "ac-520" },
   { name: "정부보조금명세서", url: "/dashboard/ac-530", id: "ac-530" },
   { name: "보조금정산서", url: "/dashboard/bf-310", id: "ac-540" },
-  
+
   { name: "근로소득자료입력", url: "/dashboard/pa-110", id: "pa-110" },
   { name: "사원등록", url: "/dashboard/pa-120", id: "pa-120" },
   { name: "원천징수이행상황신고서", url: "/dashboard/bf-310", id: "pa-210" },
