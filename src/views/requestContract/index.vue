@@ -65,14 +65,14 @@
                                         :required="true" />
                                 </div>
                                 <div class="form-item">
-                                    <a-row style="width: 100%;">
+                                    <a-row style="width: 100%">
                                         <a-col :span="12" class="d-flex">
                                             <label class="red">사업자유형 :</label>
                                             <radio-group :arrayValue="arrayRadioCheck"
                                                 v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
                                         </a-col>
                                         <a-col :span="12" class="d-flex">
-                                            <div style="margin-right: 10px;">{{ textIDNo }} :</div>
+                                            <div style="margin-right: 10px">{{ textIDNo }} :</div>
                                             <id-number-text-box v-model:valueInput="contractCreacted.residentId" />
                                         </a-col>
                                     </a-row>
@@ -154,19 +154,26 @@
                             <div class="group-title">
                                 <p class="red">⁙ 운영사업</p>
                             </div>
-                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" disable="true"
-                                id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
+                                :data-source="valueFacilityBusinesses" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                :selected-row-keys="selectedItemKeys" :column-auto-width="true"
-                                :repaint-changes-only="true" @content-ready="contentReady">
-                                <DxEditing :use-icons="true" :allow-updating="false" :allow-adding="true"
-                                    :allow-deleting="true" template="button-template" mode="cell">
+                                :column-auto-width="true" :repaint-changes-only="true" @content-ready="contentReady"
+                                ref="gridRefName" @selection-changed="onSelectionChanged"
+                                :onRowClick="onSelectionClick">
+                                <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
+                                    template="button-template" mode="cell">
                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                                     <DxTexts addRow="추가" />
                                 </DxEditing>
+
+                                <DxToolbar>
+                                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                                    <DxItem name="addRowButton" />
+                                </DxToolbar>
                                 <template #button-template>
-                                    <DxButton icon="plus" />
+                                    <DxButton icon="plus" @click="addRow" />
                                 </template>
+
                                 <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                     cell-template="indexCell" />
                                 <template #indexCell="{ data }">
@@ -179,44 +186,41 @@
                                 <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
                                     format="yyyy-MM" />
                                 <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
-                                <DxToolbar>
-                                    <DxItem name="addRowButton" />
-                                </DxToolbar>
-                                <DxMasterDetail :enabled="true" template="detailTemplate" />
-                                <template #detailTemplate="{ data }">
-                                    <a-row :gutter="24">
-                                        <a-col :span="12">
-                                            <a-form-item label="사업분류">
-                                                <div class="d-flex-center">
-                                                    <span class="pl-5">원</span>
-                                                </div>
-                                            </a-form-item>
-                                            <div class="form-item">
-                                                <label class="red">장기요양기관등록번호 :</label>
-                                                <text-number-box width="100%" :required="true"
-                                                    :disabled="disableFormVal2"
-                                                    v-model:valueInput="contractCreacted.longTermCareInstitutionNumber" />
-                                            </div>
-                                            <div>
-                                                <imgUpload :title="titleModal2" @update-img="getImgUrlAccounting"
-                                                    style="margin-top: 10px" />
-                                            </div>
-                                            <div class="custom-checkbox-location">
-                                                <label>부가서비스:</label>
-                                                <checkbox-basic
-                                                    v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
-                                                    label="회계입력대행서비스" :size="16" />
-                                            </div>
-                                        </a-col>
-                                        <a-col :span="12">
-                                            <div class="preview-img">
-                                                <preview-image :dataImage="dataImgStep3" @deleteImg="removeImgStep" />
-                                            </div>
-                                        </a-col>
-                                    </a-row>
-                                </template>
                             </DxDataGrid>
+ 
+                            <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow">
+                                <a-col :span="12">
+                                    <a-form-item label="사업분류">
+                                        <select-box-common :arrSelect="facilityBizTypeCommon"
+                                            v-model:valueInput="dataActiveRow.facilityBizType" displayeExpr="n"
+                                            valueExpr="v" width="200px" />
+                                    </a-form-item>
+                                    <a-form-item label="사업명 (중복불가)">
+                                        <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
+                                    </a-form-item>
+                                    <a-form-item label="서비스 시작년월">
+                                        <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
+                                            width="200px" />
+                                    </a-form-item>
+                                    <a-form-item label="장기요양기관등록번호">
+                                        <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
+                                            v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
+                                    </a-form-item>
+                                    <imgUpload :title="titleModal2" @update-img="getImgUrlAccounting"
+                                        style="margin-top: 10px" />
+                                </a-col>
 
+                                <a-col :span="12">
+                                    <div class="preview-img">
+                                        <preview-image :dataImage="dataImgStep3" @deleteImg="removeImgStep" />
+                                    </div>
+                                </a-col>
+                            </a-row>
+                            <div class="custom-checkbox-location">
+                                <label>부가서비스:</label>
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
+                                    label="회계입력대행서비스" :size="16" />
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>2. 원천서비스 신청</label>
@@ -224,7 +228,7 @@
                                 <radio-group :arrayValue="plainOptions" v-model:valueRadioCheck="valueSourceService"
                                     layoutCustom="horizontal" />
                             </div>
-                            <div class="form-item" style="margin-bottom:10px">
+                            <div class="form-item" style="margin-bottom: 10px">
                                 <label>서비스 시작년월 :</label>
                                 <month-picker-box width="170px" :disabled="disableFormVal"
                                     v-model:valueDate="contractCreacted.startYearMonthHolding" />
@@ -234,7 +238,7 @@
                                 <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding"
                                     :disabled="disableFormVal" :min="0" :spinButtons="true" />
                             </div>
-                            <div class=" form-item">
+                            <div class="form-item">
                                 <label>부가서비스 :</label>
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingServiceTypes"
                                     label="4대보험신고서비스" :disabled="disableFormVal" :size="16" />
@@ -262,8 +266,8 @@
                                 <default-text-box width="170px" :required="true"
                                     v-model:valueInput="contractCreacted.ownerBizNumber" />
                                 <p>
-                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> : 예금주의 사업자등록번호 또는
-                                    주민등록번호입니다
+                                    <img src="@/assets/images/iconInfo.png" style="width: 14px" /> :
+                                    예금주의 사업자등록번호 또는 주민등록번호입니다
                                 </p>
                             </div>
                             <div class="form-item">
@@ -290,8 +294,7 @@
                         <p class="mt-3">
                             ⁙ 귀하의 신청내용을 확인하신 후 아래 신청 버튼을 누르시면 신청이
                             완료됩니다.<br />
-                            ( 만약, 수정할 사항이 있는 경우 이전 버튼을 누르셔서 수정하시기
-                            바랍니다. )
+                            ( 만약, 수정할 사항이 있는 경우 이전 버튼을 누르셔서 수정하시기 바랍니다. )
                         </p>
                     </template>
                     <a-modal class="confirm-modal" v-model:visible="visibleModal" :mask-closable="false" ok-text="확인"
@@ -305,7 +308,7 @@
                     </a-modal>
                     <div class="group-button">
                         <button-basic v-if="step > 0" text="이 전" type="info" mode="contained" @onClick="prevStep"
-                            style="margin-right:10px" />
+                            style="margin-right: 10px" />
                         <button-basic v-if="step < 3" text="다음" type="default" mode="contained" @onClick="nextStep" />
                         <button-basic v-if="step === 3" text="신 청" type="default" mode="contained" @onClick="Creat" />
                     </div>
@@ -316,56 +319,88 @@
 </template>
 <script lang="ts">
 import { reactive, ref, watch, computed } from "vue";
-import { useStore } from 'vuex';
+import { useStore } from "vuex";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { CheckOutlined, EditOutlined, DeleteOutlined, } from "@ant-design/icons-vue";
+import { CheckOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
-import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxRequiredRule, DxAsyncRule, DxMasterDetail } from "devextreme-vue/data-grid";
+import {
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxEditing,
+    DxSelection,
+    DxLookup,
+    DxToolbar,
+    DxItem,
+    DxTexts,
+    DxRequiredRule,
+    DxAsyncRule,
+    DxMasterDetail,
+} from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import mutations from "../../graphql/mutations/RqContract/index";
-import dayjs from "dayjs";
 import queries from "../../graphql/queries/common/index";
-import notification from '../../utils/notification';
+import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
-import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil } from "./utils";
+import {
+    dataDefaultsUtil,
+    plainOptionsUtil,
+    arrayRadioCheckUtil,
+    arrayRadioWithdrawDayUtil,
+} from "./utils";
 export default {
     components: {
-        CheckOutlined, EditOutlined, DxDataGrid, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule
+        CheckOutlined,
+        EditOutlined,
+        DxDataGrid,
+        DxColumn,
+        DxPaging,
+        DxMasterDetail,
+        DxEditing,
+        DxSelection,
+        DxLookup,
+        DxToolbar,
+        DxItem,
+        DxTexts,
+        DxButton,
+        imgUpload,
+        DxRequiredRule,
+        DeleteOutlined,
+        DxAsyncRule,
     },
     setup() {
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const titleModal = ref("사업자등록증")
-        const titleModal2 = ref("장기요양기관등록증")
+        const titleModal = ref("사업자등록증");
+        const titleModal2 = ref("장기요양기관등록증");
         const router = useRouter();
         const facilityBizTypeCommon = FacilityBizType.all();
-        const plainOptions = ref({ ...plainOptionsUtil })
-        const textIDNo = ref("법인등록번호")
-        const step = ref(0)
-        const disableFormVal = ref(false)
-        const disableFormVal2 = ref(false)
-        const checkAll = ref(false)
-        const optionSale = ref()
-        const statusMailValidate = ref(false)
+        const plainOptions = ref({ ...plainOptionsUtil });
+        const textIDNo = ref("법인등록번호");
+        const step = ref(0);
+        const disableFormVal = ref(false);
+        const disableFormVal2 = ref(false);
+        const checkAll = ref(false);
+        const optionSale = ref();
+        const statusMailValidate = ref(false);
         const contractCreacted = reactive({ ...dataDefaultsUtil });
         const dataInputCallApi = reactive({
             dossier: 1,
             applicationService: 1,
-        })
+        });
         var visibleModal = ref(false);
         const listDataConvert = ref();
-        const valueFacilityBusinesses = ref([]);
-        const selectedItemKeys = ref(0)
-        const arrayRadioCheck = ref([...arrayRadioCheckUtil])
-        const arrayRadioWithdrawDay = ref([...arrayRadioWithdrawDayUtil])
-        const valueRadioBox = ref(1)
-        const valueAccountingService = ref(1)
-        const valueSourceService = ref(1)
-        let dataImg = ref()
-        let dataImgStep3 = ref()
-        let valueRadioWithdrawDay = ref('매월 5일')
+        const valueFacilityBusinesses: any = ref([]);
+        const arrayRadioCheck = ref([...arrayRadioCheckUtil]);
+        const arrayRadioWithdrawDay = ref([...arrayRadioWithdrawDayUtil]);
+        const valueRadioBox = ref(1);
+        const valueAccountingService = ref(1);
+        const valueSourceService = ref(1);
+        let dataImg = ref();
+        let dataImgStep3 = ref();
+        let valueRadioWithdrawDay = ref("매월 5일");
 
         // =================================== GRAPQL ============================================
         const {
@@ -383,57 +418,43 @@ export default {
             visibleModal.value = true;
         });
         onError((res) => {
-            notification('error', res.message);
+            notification("error", res.message);
         });
 
-        const { result: resultConfig, refetch: refetchConfig } = useQuery(queries.getSaleRequestContact, {},
+        const { result: resultConfig, refetch: refetchConfig } = useQuery(
+            queries.getSaleRequestContact,
+            {},
             () => ({
                 fetchPolicy: "no-cache",
             })
         );
         // =================================== FUNCTION ============================================
         const disableForm1 = () => {
-            if (dataInputCallApi.dossier == 2)
-                disableFormVal2.value = true
-            else
-                disableFormVal2.value = false
-
-        }
+            if (dataInputCallApi.dossier == 2) disableFormVal2.value = true;
+            else disableFormVal2.value = false;
+        };
         const disableForm2 = () => {
-            if (dataInputCallApi.applicationService == 2)
-                disableFormVal.value = true
-            else
-                disableFormVal.value = false
-
-        }
-        // all Computed 
+            if (dataInputCallApi.applicationService == 2) disableFormVal.value = true;
+            else disableFormVal.value = false;
+        };
+        // all Computed
         const checkStepTwo = computed(() => {
-            if (step.value === 0)
-                return "wait";
-            else if (step.value === 1)
-                return "process";
-            else
-                return "finish";
-
+            if (step.value === 0) return "wait";
+            else if (step.value === 1) return "process";
+            else return "finish";
         });
         const checkStepThree = computed(() => {
-            if (step.value < 2)
-                return "wait";
-            else if (step.value === 2)
-                return "process";
-            else
-                return "finish";
+            if (step.value < 2) return "wait";
+            else if (step.value === 2) return "process";
+            else return "finish";
         });
         const checkStepFour = computed(() => {
-            if (step.value < 3)
-                return "wait";
-            else if (step.value === 3)
-                return "process";
-            else
-                return "finish";
+            if (step.value < 3) return "wait";
+            else if (step.value === 3) return "process";
+            else return "finish";
         });
         const changeStep = (val: number) => {
-            step.value = val - 1
+            step.value = val - 1;
             // if (val == 1) {
             //     step.value = 0
             // }
@@ -472,14 +493,14 @@ export default {
             //         }
             //     }
             // }
-        }
+        };
         const changeTypeCompany = (val: number) => {
             if (val == 1) {
                 textIDNo.value = "법인등록번호";
             } else if (val == 2) {
                 textIDNo.value = "주민등록번호";
             }
-        }
+        };
         const funcAddress = (data: any) => {
             contractCreacted.zipcode = data.zonecode;
             contractCreacted.roadAddress = data.roadAddress;
@@ -494,62 +515,70 @@ export default {
             contractCreacted.sigungu = data.sigungu;
             contractCreacted.sigunguCode = data.sigunguCode;
             contractCreacted.zonecode = data.zonecode;
-        }
+        };
         const prevStep = () => {
             step.value--;
-        }
+        };
         const nextStep = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
                 if (step.value == 0) {
-                    if (contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true) {
-                        step.value++;
-                        window.scrollTo(0, 0);
-                    } else {
-                        notification('error', '계속하려면 모든 조건을 수락하십시오!')
-                    }
-                } else if (step.value == 1) {
-                    if (contractCreacted.nameCompany != ""
-                        && contractCreacted.bizNumber != ""
-                        && contractCreacted.zipcode != ""
-                        && contractCreacted.namePresident != ""
-                        && contractCreacted.birthday != ""
-                        && contractCreacted.mobilePhone != ""
-                        && contractCreacted.email != ""
-                        && contractCreacted.phone != ""
-                        && contractCreacted.bizNumber.length == 10
-                        && statusMailValidate.value == false
+                    if (
+                        contractCreacted.terms == true &&
+                        contractCreacted.personalInfo == true &&
+                        contractCreacted.accountingService == true &&
+                        contractCreacted.withholdingService == true
                     ) {
                         step.value++;
                         window.scrollTo(0, 0);
                     } else {
-                        notification('error', '계속하려면 모든 조건을 수락하십시오!')
+                        notification("error", "계속하려면 모든 조건을 수락하십시오!");
+                    }
+                } else if (step.value == 1) {
+                    if (
+                        contractCreacted.nameCompany != "" &&
+                        contractCreacted.bizNumber != "" &&
+                        contractCreacted.zipcode != "" &&
+                        contractCreacted.namePresident != "" &&
+                        contractCreacted.birthday != "" &&
+                        contractCreacted.mobilePhone != "" &&
+                        contractCreacted.email != "" &&
+                        contractCreacted.phone != "" &&
+                        contractCreacted.bizNumber.length == 10 &&
+                        statusMailValidate.value == false
+                    ) {
+                        step.value++;
+                        window.scrollTo(0, 0);
+                    } else {
+                        notification("error", "계속하려면 모든 조건을 수락하십시오!");
                     }
                 } else if (step.value == 2) {
                     if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
-                        notification('error', '서비스를 최소 하나 이상 선택해야합니다!')
+                        notification("error", "서비스를 최소 하나 이상 선택해야합니다!");
                     } else {
-                        let count = 0
+                        let count = 0;
                         if (dataInputCallApi.dossier == 1) {
-                            if (valueFacilityBusinesses.value.length == 0
-                                || contractCreacted.longTermCareInstitutionNumber == ''
+                            if (
+                                valueFacilityBusinesses.value.length == 0 ||
+                                contractCreacted.longTermCareInstitutionNumber == ""
                             ) {
-                                count++
+                                count++;
                             }
                         }
                         if (dataInputCallApi.applicationService == 1) {
-                            if (contractCreacted.bankType == ''
-                                || contractCreacted.accountNumber == ''
-                                || contractCreacted.ownerName == ''
-                                || contractCreacted.ownerBizNumber == ''
+                            if (
+                                contractCreacted.bankType == "" ||
+                                contractCreacted.accountNumber == "" ||
+                                contractCreacted.ownerName == "" ||
+                                contractCreacted.ownerBizNumber == ""
                             ) {
-                                count++
+                                count++;
                             }
                         }
                         if (count > 0) {
-                            notification('error', '계속하려면 모든 조건을 수락하십시오!')
+                            notification("error", "계속하려면 모든 조건을 수락하십시오!");
                         } else {
                             step.value++;
                             window.scrollTo(0, 0);
@@ -557,124 +586,223 @@ export default {
                     }
                 }
             }
-        }
+        };
 
         const handleOk = () => {
             visibleModal.value = false;
             router.push("/login");
-        }
+        };
         const getImgUrl = (img: any) => {
             let resImg = {
                 ...img,
-                name: img.fileName
-            }
-            dataImg.value = resImg
-            contractCreacted.licenseFileStorageId = resImg.id
-        }
+                name: img.fileName,
+            };
+            dataImg.value = resImg;
+            contractCreacted.licenseFileStorageId = resImg.id;
+        };
         const removeImg = () => {
-            dataImg.value = ''
-            contractCreacted.licenseFileStorageId = parseInt('')
+            dataImg.value = "";
+            contractCreacted.licenseFileStorageId = parseInt("");
         };
         const removeImgStep = () => {
-            dataImgStep3.value = ''
-            contractCreacted.registrationCardFileStorageId = parseInt('')
+            dataImgStep3.value = "";
+            contractCreacted.registrationCardFileStorageId = parseInt("");
         };
         const getImgUrlAccounting = (img: any) => {
             let resImg = {
                 ...img,
-                name: img.fileName
-            }
-            dataImgStep3.value = resImg
-            contractCreacted.registrationCardFileStorageId = img.id
-        }
+                name: img.fileName,
+            };
+            dataImgStep3.value = resImg;
+            contractCreacted.registrationCardFileStorageId = img.id;
+        };
         const checkAllFunc = (val: any) => {
-            checkAll.value = val
-            contractCreacted.terms = val
-            contractCreacted.personalInfo = val
-            contractCreacted.accountingService = val
-            contractCreacted.withholdingService = val
-        }
+            checkAll.value = val;
+            contractCreacted.terms = val;
+            contractCreacted.personalInfo = val;
+            contractCreacted.accountingService = val;
+            contractCreacted.withholdingService = val;
+        };
 
         const contentReady = (e: any) => {
             if (!e.component.getSelectedRowKeys().length) {
-                e.component.selectRowsByIndexes(0)
+                e.component.selectRowsByIndexes(0);
             }
-        }
+        };
+
+        const gridRefName: any = ref("grid");
+
         // ======================================= WATCH ==============================================================
-        watch(() => valueRadioBox.value, (newVal) => {
-            contractCreacted.bizType = newVal
-            changeTypeCompany(newVal)
-        })
-        watch(() => valueAccountingService.value, (newVal) => {
-            dataInputCallApi.dossier = newVal
-            disableForm1()
-        })
-        watch(() => valueSourceService.value, (newVal) => {
-            dataInputCallApi.applicationService = newVal
-            disableForm2()
-        })
-        watch(() => valueRadioWithdrawDay.value, (newVal) => {
-            contractCreacted.withdrawDay = newVal
-        })
-        watch([() => contractCreacted.terms, () => contractCreacted.personalInfo, () => contractCreacted.accountingService, () => contractCreacted.withholdingService], (value) => {
-            if (contractCreacted.terms == true
-                && contractCreacted.personalInfo == true
-                && contractCreacted.accountingService == true
-                && contractCreacted.withholdingService == true) {
-                checkAll.value = true
-            } else {
-                checkAll.value = false
+        watch(
+            () => valueRadioBox.value,
+            (newVal) => {
+                contractCreacted.bizType = newVal;
+                changeTypeCompany(newVal);
             }
-        });
-        watch(() => contractCreacted.longTermCareInstitutionNumber, (newVal) => {
-            if (listDataConvert.value.length > 0) {
-                listDataConvert.value.forEach((item: any) => {
-                    item.longTermCareInstitutionNumber = newVal;
-                });
+        );
+        watch(
+            () => valueAccountingService.value,
+            (newVal) => {
+                dataInputCallApi.dossier = newVal;
+                disableForm1();
             }
-        })
-        watch(() => contractCreacted.registrationCardFileStorageId, (newVal) => {
-            if (listDataConvert.value && listDataConvert.value.length > 0) {
-                listDataConvert.value.forEach((item: any) => {
-                    item.registrationCardFileStorageId = newVal;
-                });
+        );
+        watch(
+            () => valueSourceService.value,
+            (newVal) => {
+                dataInputCallApi.applicationService = newVal;
+                disableForm2();
             }
-        })
+        );
+        watch(
+            () => valueRadioWithdrawDay.value,
+            (newVal) => {
+                contractCreacted.withdrawDay = newVal;
+            }
+        );
+        watch(
+            [
+                () => contractCreacted.terms,
+                () => contractCreacted.personalInfo,
+                () => contractCreacted.accountingService,
+                () => contractCreacted.withholdingService,
+            ],
+            (value) => {
+                if (
+                    contractCreacted.terms == true &&
+                    contractCreacted.personalInfo == true &&
+                    contractCreacted.accountingService == true &&
+                    contractCreacted.withholdingService == true
+                ) {
+                    checkAll.value = true;
+                } else {
+                    checkAll.value = false;
+                }
+            }
+        );
+        watch(
+            () => contractCreacted.longTermCareInstitutionNumber,
+            (newVal) => {
+                if (listDataConvert.value.length > 0) {
+                    listDataConvert.value.forEach((item: any) => {
+                        item.longTermCareInstitutionNumber = newVal;
+                    });
+                }
+            }
+        );
+        watch(
+            () => contractCreacted.registrationCardFileStorageId,
+            (newVal) => {
+                if (listDataConvert.value && listDataConvert.value.length > 0) {
+                    listDataConvert.value.forEach((item: any) => {
+                        item.registrationCardFileStorageId = newVal;
+                    });
+                }
+            }
+        );
         watch(resultConfig, (value) => {
-            let dataOption: any = []
+            let dataOption: any = [];
             value.getSalesRepresentativesForPublicScreen.map((e: any) => {
                 dataOption.push({
                     label: e.name,
-                    value: e.id
-                })
-            })
-            optionSale.value = dataOption
-        });
-        watch(() => valueFacilityBusinesses, (newVal: any) => {
-            listDataConvert.value = [];
-            newVal.value.forEach((item: any) => {
-                listDataConvert.value.push({
-                    longTermCareInstitutionNumber: contractCreacted.longTermCareInstitutionNumber ? contractCreacted.longTermCareInstitutionNumber : '',
-                    facilityBizType: item?.facilityBizType,
-                    name: item?.name,
-                    startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
-                    capacity: parseInt(item?.capacity),
-                    registrationCardFileStorageId: contractCreacted.registrationCardFileStorageId ? contractCreacted.registrationCardFileStorageId : '',
+                    value: e.id,
                 });
             });
-            var result = Object.values(newVal.value.reduce((c: any, v: any) => {
-                let k = v.name;
-                c[k] = c[k] || [];
-                c[k].push(v);
-                return c;
-            }, {})).reduce((c: any, v: any) => v.length > 1 ? c.concat(v) : c, []);
-            if (!result) {
-                notification('error', '중복되었습니다!');
-            }
-        }, { deep: true, });
+            optionSale.value = dataOption;
+        });
+        // watch(
+        //     () => valueFacilityBusinesses,
+        //     (newVal: any) => {
+        //         listDataConvert.value = [];
+        //         newVal.value.forEach((item: any) => {
+        //             listDataConvert.value.push({
+        //                 longTermCareInstitutionNumber: contractCreacted.longTermCareInstitutionNumber
+        //                     ? contractCreacted.longTermCareInstitutionNumber
+        //                     : "",
+        //                 facilityBizType: item?.facilityBizType,
+        //                 name: item?.name,
+        //                 startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
+        //                 capacity: parseInt(item?.capacity),
+        //                 registrationCardFileStorageId: contractCreacted.registrationCardFileStorageId
+        //                     ? contractCreacted.registrationCardFileStorageId
+        //                     : "",
+        //             });
+        //         });
+        //         var result = Object.values(
+        //             newVal.value.reduce((c: any, v: any) => {
+        //                 let k = v.name;
+        //                 c[k] = c[k] || [];
+        //                 c[k].push(v);
+        //                 return c;
+        //             }, {})
+        //         ).reduce((c: any, v: any) => (v.length > 1 ? c.concat(v) : c), []);
+        //         if (!result) {
+        //             notification("error", "중복되었습니다!");
+        //         }
+        //     },
+        //     { deep: true }
+        // );
+
+        const dataActiveRow: any = ref()
+
+        const onSelectionChanged = (value: any) => {
+            dataActiveRow.value = value.selectedRowsData[0]
+        }
+        const onSelectionClick = (value: any) => {
+            dataActiveRow.value = value.data
+        }
+        const addRow = () => {
+            gridRefName.value.instance.addRow()
+            gridRefName.value.instance.deselectAll()
+
+        };
+
         return {
-            facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, selectedItemKeys, titleModal, titleModal2, plainOptions,
-            contentReady, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep
+            dataActiveRow,
+            gridRefName,
+            facilityBizTypeCommon,
+            move_column,
+            colomn_resize,
+            arrayRadioWithdrawDay,
+            valueRadioWithdrawDay,
+            valueSourceService,
+            valueAccountingService,
+            dataImg,
+            dataImgStep3,
+            valueRadioBox,
+            arrayRadioCheck,
+            checkAll,
+            signinLoading,
+            textIDNo,
+            statusMailValidate,
+            optionSale,
+            disableFormVal,
+            disableFormVal2,
+            contractCreacted,
+            valueFacilityBusinesses,
+            visibleModal,
+            step,
+            checkStepTwo,
+            checkStepThree,
+            checkStepFour,
+            titleModal,
+            titleModal2,
+            plainOptions,
+            contentReady,
+            onSelectionChanged,
+            checkAllFunc,
+            funcAddress,
+            prevStep,
+            nextStep,
+            Creat,
+            handleOk,
+            getImgUrl,
+            getImgUrlAccounting,
+            changeStep,
+            removeImg,
+            removeImgStep,
+            addRow,
+            onSelectionClick
         };
     },
 };
