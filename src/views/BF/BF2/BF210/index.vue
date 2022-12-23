@@ -52,8 +52,8 @@
         </div>
         <div class="page-content">
             <a-spin :spinning="spinning" size="large">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-reordering="move_column"
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -120,8 +120,8 @@
             </a-spin>
         </div>
     </div>
-    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
-    <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
+    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="count" />
+    <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" 
         :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
         title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
@@ -170,6 +170,7 @@ export default defineComponent({
     },
     setup() {
         const popupData = ref([])
+        const count = ref(0)
         const modalAddNewStatus = ref(false)
         const modalHistoryStatus = ref(false)
         const modalLoginStatus = ref(false)
@@ -217,7 +218,7 @@ export default defineComponent({
             })
             triggerSearching.value = true
             if (originData) {
-              originData.value = { filter: dataNew.value }
+                originData.value = { filter: dataNew.value }
                 refetchData()
             }
         }
@@ -273,6 +274,7 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '회원관리')
         }
         const openAddNewModal = () => {
+            count.value++
             modalAddNewStatus.value = true;
         }
         const setModalEditVisible = (data: any) => {
@@ -345,15 +347,10 @@ export default defineComponent({
             dataSearch,
             rowChoose,
             checkStatus,
-            products
+            products,
+            count
         }
     },
 });
 </script> 
-
-
-
-
-
-
 <style scoped lang="scss" src="./style/style.scss"/>
