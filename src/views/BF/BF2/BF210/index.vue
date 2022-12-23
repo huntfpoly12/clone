@@ -353,10 +353,4 @@ export default defineComponent({
     },
 });
 </script> 
-
-
-
-
-
-
 <style scoped lang="scss" src="./style/style.scss"/>
