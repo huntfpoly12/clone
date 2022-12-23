@@ -165,7 +165,6 @@
                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                                     <DxTexts addRow="추가" />
                                 </DxEditing>
-
                                 <DxToolbar>
                                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
                                     <DxItem name="addRowButton" />
@@ -173,7 +172,6 @@
                                 <template #button-template>
                                     <DxButton icon="plus" @click="addRow" />
                                 </template>
-
                                 <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                     cell-template="indexCell" />
                                 <template #indexCell="{ data }">
@@ -187,7 +185,6 @@
                                     format="yyyy-MM" />
                                 <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
                             </DxDataGrid>
- 
                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow">
                                 <a-col :span="12">
                                     <a-form-item label="사업분류">
@@ -202,24 +199,29 @@
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
                                             width="200px" />
                                     </a-form-item>
+                                    <a-form-item label="정원수">
+                                        <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
+                                            v-model:valueInput="dataActiveRow.capacity" />
+                                    </a-form-item>
                                     <a-form-item label="장기요양기관등록번호">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                     </a-form-item>
-                                    <imgUpload :title="titleModal2" @update-img="getImgUrlAccounting"
-                                        style="margin-top: 10px" />
+                                    <imgUpload :title="titleModal2" style="margin-top: 10px"
+                                        v-model:imageId="dataActiveRow.registrationCardFileStorageId"
+                                        @update-img="(res) => dataActiveRow.dataImg = res" />
                                 </a-col>
-
                                 <a-col :span="12">
                                     <div class="preview-img">
-                                        <preview-image :dataImage="dataImgStep3" @deleteImg="removeImgStep" />
+                                        <preview-image :dataImage="dataActiveRow.dataImg" @deleteImg="removeImgStep" />
                                     </div>
                                 </a-col>
                             </a-row>
                             <div class="custom-checkbox-location">
-                                <label>부가서비스:</label>
-                                <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
-                                    label="회계입력대행서비스" :size="16" />
+                                <a-form-item label="부가서비스">
+                                    <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
+                                        label="회계입력대행서비스" :size="16" />
+                                </a-form-item>
                             </div>
                         </div>
                         <div class="form-group">
@@ -323,52 +325,17 @@ import { useStore } from "vuex";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { CheckOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxEditing,
-    DxSelection,
-    DxLookup,
-    DxToolbar,
-    DxItem,
-    DxTexts,
-    DxRequiredRule,
-    DxAsyncRule,
-    DxMasterDetail,
-} from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxRequiredRule, DxAsyncRule, DxMasterDetail } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import mutations from "../../graphql/mutations/RqContract/index";
 import queries from "../../graphql/queries/common/index";
 import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
-import {
-    dataDefaultsUtil,
-    plainOptionsUtil,
-    arrayRadioCheckUtil,
-    arrayRadioWithdrawDayUtil,
-} from "./utils";
+import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil } from "./utils";
+import dayjs from 'dayjs';
 export default {
-    components: {
-        CheckOutlined,
-        EditOutlined,
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxMasterDetail,
-        DxEditing,
-        DxSelection,
-        DxLookup,
-        DxToolbar,
-        DxItem,
-        DxTexts,
-        DxButton,
-        imgUpload,
-        DxRequiredRule,
-        DeleteOutlined,
-        DxAsyncRule,
-    },
+    components: { CheckOutlined, EditOutlined, DxDataGrid, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
@@ -391,7 +358,6 @@ export default {
             applicationService: 1,
         });
         var visibleModal = ref(false);
-        const listDataConvert = ref();
         const valueFacilityBusinesses: any = ref([]);
         const arrayRadioCheck = ref([...arrayRadioCheckUtil]);
         const arrayRadioWithdrawDay = ref([...arrayRadioWithdrawDayUtil]);
@@ -401,30 +367,23 @@ export default {
         let dataImg = ref();
         let dataImgStep3 = ref();
         let valueRadioWithdrawDay = ref("매월 5일");
-
+        const dataActiveRow: any = ref()
         // =================================== GRAPQL ============================================
         const {
-            mutate: Creat,
+            mutate: mutateCreated,
             loading: signinLoading,
             onDone: signinDone,
             onError: onError,
-        } = useMutation(mutations.creactContract, () => ({
-            variables: {
-                ...contractCreacted,
-                facilityBusinesses: listDataConvert.value,
-            },
-        }));
+        } = useMutation(mutations.createSubscriptionRequest);
         signinDone((res) => {
             visibleModal.value = true;
         });
         onError((res) => {
             notification("error", res.message);
         });
-
-        const { result: resultConfig, refetch: refetchConfig } = useQuery(
+        const { result: resultConfig } = useQuery(
             queries.getSaleRequestContact,
-            {},
-            () => ({
+            {}, () => ({
                 fetchPolicy: "no-cache",
             })
         );
@@ -455,44 +414,42 @@ export default {
         });
         const changeStep = (val: number) => {
             step.value = val - 1;
-            // if (val == 1) {
-            //     step.value = 0
-            // }
-            // if (val == 2 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true) {
-            //     step.value = 1
-            //     window.scrollTo(0, 0);
-            // }
-            // if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
-            // ) {
-            //     step.value = 2
-            //     window.scrollTo(0, 0);
-            // }
-            // if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
-            // ) {
-            //     if (dataInputCallApi.dossier != 2 && dataInputCallApi.applicationService != 2) {
-            //         let count = 0
-            //         if (dataInputCallApi.dossier == 1) {
-            //             if (valueFacilityBusinesses.value.length == 0
-            //                 || contractCreacted.longTermCareInstitutionNumber == ''
-            //             ) {
-            //                 count++
-            //             }
-            //         }
-            //         if (dataInputCallApi.applicationService == 1) {
-            //             if (contractCreacted.bankType == ''
-            //                 || contractCreacted.accountNumber == ''
-            //                 || contractCreacted.ownerName == ''
-            //                 || contractCreacted.ownerBizNumber == ''
-            //             ) {
-            //                 count++
-            //             }
-            //         }
-            //         if (count == 0) {
-            //             step.value = 3
-            //             window.scrollTo(0, 0);
-            //         }
-            //     }
-            // }
+            if (val == 1) {
+                step.value = 0
+            }
+            if (val == 2 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true) {
+                step.value = 1
+                window.scrollTo(0, 0);
+            }
+            if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
+            ) {
+                step.value = 2
+                window.scrollTo(0, 0);
+            }
+            if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
+            ) {
+                if (dataInputCallApi.dossier != 2 && dataInputCallApi.applicationService != 2) {
+                    let count = 0
+                    if (dataInputCallApi.dossier == 1) {
+                        if (valueFacilityBusinesses.value.length == 0) {
+                            count++
+                        }
+                    }
+                    if (dataInputCallApi.applicationService == 1) {
+                        if (contractCreacted.bankType == ''
+                            || contractCreacted.accountNumber == ''
+                            || contractCreacted.ownerName == ''
+                            || contractCreacted.ownerBizNumber == ''
+                        ) {
+                            count++
+                        }
+                    }
+                    if (count == 0) {
+                        step.value = 3
+                        window.scrollTo(0, 0);
+                    }
+                }
+            }
         };
         const changeTypeCompany = (val: number) => {
             if (val == 1) {
@@ -555,15 +512,13 @@ export default {
                         notification("error", "계속하려면 모든 조건을 수락하십시오!");
                     }
                 } else if (step.value == 2) {
+                    // if user not choose service
                     if (dataInputCallApi.dossier == 2 && dataInputCallApi.applicationService == 2) {
                         notification("error", "서비스를 최소 하나 이상 선택해야합니다!");
                     } else {
                         let count = 0;
                         if (dataInputCallApi.dossier == 1) {
-                            if (
-                                valueFacilityBusinesses.value.length == 0 ||
-                                contractCreacted.longTermCareInstitutionNumber == ""
-                            ) {
+                            if (valueFacilityBusinesses.value.length == 0) {
                                 count++;
                             }
                         }
@@ -587,7 +542,6 @@ export default {
                 }
             }
         };
-
         const handleOk = () => {
             visibleModal.value = false;
             router.push("/login");
@@ -623,51 +577,118 @@ export default {
             contractCreacted.accountingService = val;
             contractCreacted.withholdingService = val;
         };
-
         const contentReady = (e: any) => {
             if (!e.component.getSelectedRowKeys().length) {
                 e.component.selectRowsByIndexes(0);
             }
         };
-
         const gridRefName: any = ref("grid");
-
+        const Creat = () => {
+            valueFacilityBusinesses.value.map((val: any) => {
+                delete val.__KEY__
+                delete val.dataImg
+                val.startYearMonth = dayjs(val.startYearMonth).format('YYYY-MM-DD')
+                val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
+            })
+            let dataCallCreated = {
+                content: {
+                    agreements: {
+                        terms: contractCreacted.terms,
+                        personalInfo: contractCreacted.personalInfo,
+                        accountingService: contractCreacted.accountingService,
+                        withholdingService: contractCreacted.withholdingService
+                    },
+                    company: {
+                        name: contractCreacted.nameCompany,
+                        zipcode: contractCreacted.zipcode,
+                        roadAddress: contractCreacted.roadAddress,
+                        jibunAddress: contractCreacted.jibunAddress,
+                        addressExtend: contractCreacted.addressExtend,
+                        addressDetail: {
+                            bcode: contractCreacted.bcode,
+                            bname: contractCreacted.bname,
+                            buildingCode: contractCreacted.buildingCode,
+                            buildingName: contractCreacted.buildingName,
+                            roadname: contractCreacted.roadname,
+                            roadnameCode: contractCreacted.roadnameCode,
+                            sido: contractCreacted.sido,
+                            sigungu: contractCreacted.sigungu,
+                            sigunguCode: contractCreacted.sigunguCode,
+                            zonecode: contractCreacted.zonecode,
+                        },
+                        phone: contractCreacted.phone,
+                        fax: contractCreacted.fax,
+                        licenseFileStorageId: contractCreacted.licenseFileStorageId,
+                        bizNumber: contractCreacted.bizNumber,
+                        bizType: contractCreacted.bizType,
+                        residentId: contractCreacted.residentId,
+                    },
+                    president: {
+                        name: contractCreacted.namePresident,
+                        birthday: dayjs(contractCreacted.birthday).format('YYYY-MM-DD'),
+                        mobilePhone: contractCreacted.mobilePhone,
+                        email: contractCreacted.email,
+                    },
+                    accounting: {
+                        facilityBusinesses: valueFacilityBusinesses.value,
+                        accountingServiceTypes: contractCreacted.accountingServiceTypes,
+                    },
+                    withholding: {
+                        startYearMonth: contractCreacted.startYearMonthHolding,
+                        capacity: contractCreacted.capacityHolding,
+                        withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
+                    },
+                    cmsBank: {
+                        bankType: contractCreacted.bankType,
+                        accountNumber: contractCreacted.accountNumber,
+                        ownerBizNumber: contractCreacted.ownerBizNumber,
+                        ownerName: contractCreacted.ownerName,
+                        withdrawDay: contractCreacted.withdrawDay,
+                    },
+                    extra: {
+                        salesRepresentativeId: contractCreacted.salesRepresentativeId,
+                        comment: contractCreacted.comment,
+                    }
+                }
+            }
+            if (dataCallCreated)
+                mutateCreated(dataCallCreated)
+        }
+        const onSelectionChanged = (value: any) => {
+            dataActiveRow.value = value.selectedRowsData[0]
+        }
+        const onSelectionClick = (value: any) => {
+            dataActiveRow.value = value.data
+        }
+        const addRow = () => {
+            gridRefName.value.instance.addRow()
+            gridRefName.value.instance.deselectAll()
+        };
         // ======================================= WATCH ==============================================================
-        watch(
-            () => valueRadioBox.value,
+        watch(() => valueRadioBox.value,
             (newVal) => {
                 contractCreacted.bizType = newVal;
                 changeTypeCompany(newVal);
             }
         );
-        watch(
-            () => valueAccountingService.value,
+        watch(() => valueAccountingService.value,
             (newVal) => {
                 dataInputCallApi.dossier = newVal;
                 disableForm1();
             }
         );
-        watch(
-            () => valueSourceService.value,
+        watch(() => valueSourceService.value,
             (newVal) => {
                 dataInputCallApi.applicationService = newVal;
                 disableForm2();
             }
         );
-        watch(
-            () => valueRadioWithdrawDay.value,
-            (newVal) => {
+        watch(() => valueRadioWithdrawDay.value, (newVal) => {
                 contractCreacted.withdrawDay = newVal;
             }
         );
         watch(
-            [
-                () => contractCreacted.terms,
-                () => contractCreacted.personalInfo,
-                () => contractCreacted.accountingService,
-                () => contractCreacted.withholdingService,
-            ],
-            (value) => {
+            [() => contractCreacted.terms, () => contractCreacted.personalInfo, () => contractCreacted.accountingService, () => contractCreacted.withholdingService], (value) => {
                 if (
                     contractCreacted.terms == true &&
                     contractCreacted.personalInfo == true &&
@@ -677,26 +698,6 @@ export default {
                     checkAll.value = true;
                 } else {
                     checkAll.value = false;
-                }
-            }
-        );
-        watch(
-            () => contractCreacted.longTermCareInstitutionNumber,
-            (newVal) => {
-                if (listDataConvert.value.length > 0) {
-                    listDataConvert.value.forEach((item: any) => {
-                        item.longTermCareInstitutionNumber = newVal;
-                    });
-                }
-            }
-        );
-        watch(
-            () => contractCreacted.registrationCardFileStorageId,
-            (newVal) => {
-                if (listDataConvert.value && listDataConvert.value.length > 0) {
-                    listDataConvert.value.forEach((item: any) => {
-                        item.registrationCardFileStorageId = newVal;
-                    });
                 }
             }
         );
@@ -710,103 +711,11 @@ export default {
             });
             optionSale.value = dataOption;
         });
-        // watch(
-        //     () => valueFacilityBusinesses,
-        //     (newVal: any) => {
-        //         listDataConvert.value = [];
-        //         newVal.value.forEach((item: any) => {
-        //             listDataConvert.value.push({
-        //                 longTermCareInstitutionNumber: contractCreacted.longTermCareInstitutionNumber
-        //                     ? contractCreacted.longTermCareInstitutionNumber
-        //                     : "",
-        //                 facilityBizType: item?.facilityBizType,
-        //                 name: item?.name,
-        //                 startYearMonth: dayjs(item?.startYearMonth).format("YYYY/MM/DD"),
-        //                 capacity: parseInt(item?.capacity),
-        //                 registrationCardFileStorageId: contractCreacted.registrationCardFileStorageId
-        //                     ? contractCreacted.registrationCardFileStorageId
-        //                     : "",
-        //             });
-        //         });
-        //         var result = Object.values(
-        //             newVal.value.reduce((c: any, v: any) => {
-        //                 let k = v.name;
-        //                 c[k] = c[k] || [];
-        //                 c[k].push(v);
-        //                 return c;
-        //             }, {})
-        //         ).reduce((c: any, v: any) => (v.length > 1 ? c.concat(v) : c), []);
-        //         if (!result) {
-        //             notification("error", "중복되었습니다!");
-        //         }
-        //     },
-        //     { deep: true }
-        // );
-
-        const dataActiveRow: any = ref()
-
-        const onSelectionChanged = (value: any) => {
-            dataActiveRow.value = value.selectedRowsData[0]
-        }
-        const onSelectionClick = (value: any) => {
-            dataActiveRow.value = value.data
-        }
-        const addRow = () => {
-            gridRefName.value.instance.addRow()
-            gridRefName.value.instance.deselectAll()
-
-        };
-
         return {
-            dataActiveRow,
-            gridRefName,
-            facilityBizTypeCommon,
-            move_column,
-            colomn_resize,
-            arrayRadioWithdrawDay,
-            valueRadioWithdrawDay,
-            valueSourceService,
-            valueAccountingService,
-            dataImg,
-            dataImgStep3,
-            valueRadioBox,
-            arrayRadioCheck,
-            checkAll,
-            signinLoading,
-            textIDNo,
-            statusMailValidate,
-            optionSale,
-            disableFormVal,
-            disableFormVal2,
-            contractCreacted,
-            valueFacilityBusinesses,
-            visibleModal,
-            step,
-            checkStepTwo,
-            checkStepThree,
-            checkStepFour,
-            titleModal,
-            titleModal2,
-            plainOptions,
-            contentReady,
-            onSelectionChanged,
-            checkAllFunc,
-            funcAddress,
-            prevStep,
-            nextStep,
-            Creat,
-            handleOk,
-            getImgUrl,
-            getImgUrlAccounting,
-            changeStep,
-            removeImg,
-            removeImgStep,
-            addRow,
-            onSelectionClick
+            dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
+            contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
 };
 </script>
-<style lang="scss" scoped src="./style.scss">
-
-</style>
+<style lang="scss" scoped src="./style.scss"/>

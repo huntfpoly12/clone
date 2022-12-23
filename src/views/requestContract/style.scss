@@ -48,11 +48,12 @@
 
 ::v-deep .custom-label-master-detail {
     border: 1px solid #ccc;
-    margin: 0 0 10px 0 !important;
+    margin: 5px 0 10px 0 !important;
     padding: 10px 0px;
 
-    label {
 
+    label {
+        color: red;
         width: 170px;
     }
 

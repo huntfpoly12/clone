@@ -187,13 +187,13 @@ export default defineComponent({
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
                     loading.value = false;
-                    emit('update:imageId', 10)
+                    emit('update:imageId', data.data.id)
                     emit('update:imageSource', imageUrl.value)
                     emit("update-img", {
                         url: imageUrl.value,
                         id: data.data.id,
                         fileName: fileName.value,
-                        name: props.name
+                        name: fileName.value
                     });
                     emit("update-step", {
                         url: imageUrl.value,
