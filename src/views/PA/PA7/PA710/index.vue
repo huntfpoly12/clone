@@ -1,5 +1,6 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave=" checkForm ? onUpdate($event) : onSubmit($event)" :buttonDelete="false"/>
+    <action-header title="기타소득자등록" @actionSave="checkForm ? onUpdate($event) : onSubmit($event)"
+        :buttonDelete="false" />
     <div id="pa-710" class="page-content">
         <a-row>
             <a-col :span="3" class="total-user">
@@ -65,20 +66,20 @@
                 <a-spin :spinning="loadingForm" size="large">
                     <a-row :gutter="24" class="pa-710-popup-add">
                         <a-col :span="24">
-                            <a-form-item label="코드" :label-col="labelCol">
+                            <a-form-item label="코드" :label-col="labelCol" class="red">
                                 <div class="custom-note">
                                     <number-box :required="true" :width="150" v-model:valueInput="formState.employeeId"
                                         placeholder="숫자만 입력 가능" :disabled="checkForm">
                                     </number-box>
                                     <span>
-                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                         <span class="style-note"></span> 최초 저장된 이후 수정 불가
                                     </span>
                                 </div>
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item label="성명(상호) " :label-col="labelCol">
+                            <a-form-item label="성명(상호) " :label-col="labelCol" class="red">
                                 <default-text-box :width="150" v-model:valueInput="formState.name" :required="true"
                                     placeholder="한글,영문(대문자) 입력 가능">
                                 </default-text-box>
@@ -91,25 +92,28 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item label="외국인 국적 " :label-col="labelCol">
-                                <country-code-select-box style="width: 310px" v-model:valueCountry="formState.nationalityCode"
-                                    @textCountry="textCountry" :required="true" :disabled="disabledSelect" />
+                            <a-form-item label="외국인 국적 " :label-col="labelCol" :class="disabledSelect ? '' : 'red'">
+                                <country-code-select-box style="width: 310px"
+                                    v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
+                                    :required="!disabledSelect" :disabled="disabledSelect" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item label="외국인 체류자격 " :label-col="labelCol">
-                                <stay-qualification-select-box style="width: 310px" :required="true" :disabled="disabledSelect"
+                            <a-form-item label="외국인 체류자격 " :label-col="labelCol" :class="disabledSelect ? '' : 'red'">
+                                <stay-qualification-select-box style="width: 310px" :required="!disabledSelect"
+                                    :disabled="disabledSelect"
                                     v-model:valueStayQualifiction="formState.stayQualification" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item :label="disabledSelect ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol">
+                            <a-form-item :label="disabledSelect ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol"
+                                class="red">
                                 <id-number-text-box :width="150" v-model:valueInput="formState.residentId"
                                     :required="true"></id-number-text-box>
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item label="외국인 체류자격 " :label-col="labelCol">
+                            <a-form-item label="외국인 체류자격 " :label-col="labelCol" class="red">
                                 <type-code-select-box style="width: 310px" v-model:valueInput="formState.incomeTypeCode"
                                     @textTypeCode="textTypeCode" :required="true">
                                 </type-code-select-box>
@@ -122,7 +126,8 @@
                                         :required="true" id="email">
                                     </mail-text-box>
                                     <span>
-                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
+                                        <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요 서류를
+                                        메일로 전달 가능합니다.
                                     </span>
                                 </div>
                             </a-form-item>
@@ -251,26 +256,30 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let dataUpdate = {
-                    companyId: companyId,
-                    imputedYear: parseInt(dayjs().format("YYYY")),
-                    employeeId: formState.employeeId,
-                    incomeTypeCode: formState.incomeTypeCode,
-                    input: {
-                        name: formState.name,
-                        foreigner: formState.foreigner,
-                        nationality: formState.nationality,
-                        nationalityCode: formState.nationalityCode,
-                        stayQualification: formState.stayQualification,
-                        residentId: formState.residentId.slice(0, 6) + '-' + formState.residentId.slice(6, 13),
-                        email: formState.email,
-                        incomeTypeName: formState.incomeTypeName,
-                    }
-                };
-                updateEmployeeExtra(dataUpdate);
+                arrEdit.map((item: any) => {
+                    let dataUpdate = {
+                        companyId: companyId,
+                        imputedYear: parseInt(dayjs().format("YYYY")),
+                        employeeId: item.employeeId,
+                        incomeTypeCode: item.incomeTypeCode,
+                        input: {
+                            name: item.name,
+                            foreigner: item.foreigner,
+                            nationality: item.nationality,
+                            nationalityCode: item.nationalityCode,
+                            stayQualification: item.stayQualification,
+                            residentId: item.residentId,
+                            email: item.email,
+                            incomeTypeName: item.incomeTypeName,
+                        }
+                    };
+                    updateEmployeeExtra(dataUpdate);
+                })
             }
         };
         onDoneUpdate(() => {
+            console.log(1);
+            
             trigger.value = true;
             refetchData();
             checkForm.value = false;
@@ -278,6 +287,7 @@ export default defineComponent({
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorUpdate((e) => {
+            console.log(2);
             notification('error', e.message)
         });
 
@@ -290,19 +300,45 @@ export default defineComponent({
         const textTypeCode = (e: any) => {
             formState.incomeTypeName = e
         }
-        const editData = (e: any) => {
+        const rowEditData = ref({});
+        let arrEdit: any = []
+        const editData = (data: any) => {
             checkForm.value = true;
-            formState.name = e.data.name
-            formState.foreigner = e.data.foreigner
-            formState.nationality = e.data.nationality
-            formState.nationalityCode = e.data.nationalityCode
-            formState.stayQualification = e.data.stayQualification
-            formState.residentId = e.data.residentId
-            formState.email = e.data.email
-            formState.employeeId = e.data.employeeId
-            formState.incomeTypeCode = e.data.incomeTypeCode
-            formState.incomeTypeName = e.data.incomeTypeName
+            formState.name = data.data.name
+            formState.foreigner = data.data.foreigner
+            formState.nationality = data.data.nationality
+            formState.nationalityCode = data.data.nationalityCode
+            formState.stayQualification = data.data.stayQualification
+            formState.residentId = data.data.residentId
+            formState.email = data.data.email
+            formState.employeeId = data.data.employeeId
+            formState.incomeTypeCode = data.data.incomeTypeCode
+            formState.incomeTypeName = data.data.incomeTypeName
+            rowEditData.value = { ...formState }
         }
+        watch(() => JSON.parse(JSON.stringify(formState)), (newValue, old) => {
+            if (checkForm.value == true) {
+                if (JSON.stringify(rowEditData.value) != JSON.stringify(formState)) {
+                    let activeRow: any = document.body.querySelector('.dx-row-focused')
+                    activeRow.classList.add('active-row-key');
+
+                    arrEdit?.map((val: any, index: any) => {
+                        if (val.employeeId == newValue.employeeId)
+                            arrEdit.splice(index, 1);
+                    })
+                    arrEdit.push(newValue)
+                    listEmployeeExtra.value.map((val: any) => {
+                        if (val.employeeId == newValue.employeeId) {
+                            val.foreigner = newValue.foreigner
+                            val.incomeTypeCode = newValue.incomeTypeCode
+                            val.incomeTypeName = newValue.incomeTypeName
+                            val.name = newValue.name
+                            val.residentId = newValue.residentId
+                        }
+                    })
+                }
+            }
+        }, { deep: true });
         const formCreate = (e: any) => {
             checkForm.value = false;
             Object.assign(formState, initialState);
@@ -337,6 +373,8 @@ export default defineComponent({
                 disabledSelect.value = false;
             } else {
                 disabledSelect.value = true;
+                formState.nationalityCode = null
+                formState.stayQualification = null
             }
         });
         return {
@@ -361,7 +399,7 @@ export default defineComponent({
             popupData,
             listEmployeeExtra,
             DeleteOutlined,
-            deleteData
+            deleteData,
         };
     },
 });
