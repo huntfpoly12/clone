@@ -23,11 +23,11 @@
             <div class="d-flex-center">
               <div class="month-custom-1 d-flex-center">
                 귀
-                <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="isEdit" />
+                <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="true" />
               </div>
               <div class="month-custom-2 d-flex-center">
                 지
-                <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="isEdit" />
+                <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="true" />
               </div>
             </div>
           </a-form-item>
