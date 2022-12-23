@@ -355,8 +355,7 @@ export default defineComponent({
             yearsOfService2.year = objectData.yearsOfService
         }, { deep: true });
 
-        watch(() => dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService, (newVal) => {
-            // console.log(newVal.settlementStartDate);
+        watch(() => dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService, (newVal) => { 
             let val1: any = dayjs(newVal.settlementStartDate.toString())
             let val2: any = dayjs(newVal.settlementFinishDate.toString())
 
