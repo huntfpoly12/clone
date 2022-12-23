@@ -4,7 +4,7 @@ export default gql`
     $companyId: Int!
     $imputedYear: Int!
   ) {
-    IncomeExtraWithholdingReceiptReportSummariesByEmployee(
+    searchIncomeExtraWithholdingReceipts(
       companyId: $companyId
       imputedYear: $imputedYear
     ) {

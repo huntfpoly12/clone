@@ -211,7 +211,7 @@ export default defineComponent({
           employeeId: 42,
           incomeTypeCode: '312',
           name: 'khjasd',
-          email: 'asdgas@gmail.com',
+          email: 'dinhtruong2808@gmail.com',
           foreigner: true,
           residentIdValidity: true,
           status: 32,
@@ -253,7 +253,7 @@ export default defineComponent({
         input: {
           imputedYear: globalYear,
           type: valueDefaultIncomeExtra.value.input.type,
-          receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
+          receiptDate: String(valueDefaultIncomeExtra.value.input.receiptDate),
         },
         employeeInputs: {
           senderName: sessionStorage.getItem('username'),
@@ -288,13 +288,6 @@ export default defineComponent({
       };
       modalEmailGroup.value = true;
     };
-    const check = (val: any) => {
-      let value = 0;
-      selectedItemKeys.value.map((val: any) => {
-        if (val.employeeId == val) value = 1;
-      });
-      return value;
-    };
     //popupMailGroup
     const isOnlyEmployee = ref<boolean>(false);
     const popupMailGroup = ref<boolean>(false);
@@ -303,16 +296,14 @@ export default defineComponent({
       isClickRow.value = true;
       isOnlyEmployee.value = data.selectedRowKeys.length < 2;
       if (!isOnlyEmployee.value) {
-        data.selectedRowKeys.map((val: any) => {
-          if (check(val) == 1) {
-            dataSelect.value.push({
-              senderName: sessionStorage.getItem('username'),
-              receiverName: data.employee.name,
-              receiverAddress: data.employee.email,
-              employeeId: data.employee.employeeId,
-              incomeTypeCode: data.employee.incomeTypeCode,
-            });
-          }
+        dataSelect.value = data.selectedRowKeys.map((val: any) => {
+          return{
+            senderName: sessionStorage.getItem('username'),
+            receiverName: val.employee.name,
+            receiverAddress: val.employee.email,
+            employeeId: val.employee.employeeId,
+            incomeTypeCode: val.employee.incomeTypeCode,
+          };
         });
         data.selectedRowKeys.value = dataSelect;
       }
@@ -323,7 +314,8 @@ export default defineComponent({
     };
     watch(result, (value) => {
       if (value) {
-        // dataSource.value = value.searchIncomeExtraWithholdingReceipts;
+        // dataSource.values = value.searchIncomeExtraWithholdingReceipts;
+        console.log(`output->`,value.searchIncomeExtraWithholdingReceipts)
         trigger.value = false;
       }
     });
@@ -363,7 +355,7 @@ export default defineComponent({
     }));
     const onPrint = (data: any) => {
       receiptReportViewUrlParam.employeeKeys = { employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode };
-      receiptReportViewUrlParam.input = { imputedYear: globalYear, type: data.employee.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
+      receiptReportViewUrlParam.input = { imputedYear: globalYear, type: data.employee.type, receiptDate: String(valueDefaultIncomeExtra.value.input.receiptDate) };
       receiptReportViewUrlTrigger.value = true;
       refetchReceiptViewUrl();
     };
@@ -406,6 +398,7 @@ export default defineComponent({
       emailUserLogin,
       isOnlyEmployee,
       popupMailGroup,
+      receiptReportViewUrlParam,
     };
   },
 });

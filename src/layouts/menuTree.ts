@@ -68,7 +68,16 @@ export default [
         id: "cm-100",
         items: [
           { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
-          { name: "회계설정", url: "#", id: "cm-120" },
+          { 
+            name: "회계설정",
+            url: "#",
+            id: "cm-120",
+            subMenus: [
+              { name: "통장관리", url: "#", id: "cm-121" },
+              { name: "거래저관리", url: "#", id: "cm-122" },
+              { name: "계정코드", url: "#", id: "cm-123" },
+            ]
+          },
           { name: "원천설정", url: "/dashboard/cm-130", id: "cm-130" },
         ],
       },
