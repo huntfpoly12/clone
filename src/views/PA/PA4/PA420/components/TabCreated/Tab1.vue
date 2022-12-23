@@ -1,5 +1,6 @@
 <template>
     <standard-form class="modal-add">
+        {{  dataForm }}
         <a-row :gutter="16">
             <a-col :span="12">
                 <a-form-item label="구분">
@@ -30,7 +31,7 @@
 
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
-                        <date-time-box :required="false" width="150px" :disabled="true"
+                        <date-time-box width="150px" :disabled="true"
                             :valueDate="dayjs(joinedAt).format('YYYY-MM-DD')" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
@@ -228,7 +229,7 @@
                 <div class="header-text-2 mb-10">정산 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                        <date-time-box width="150px" :required="true" dateFormat="YYYY-MM-DD"
                             v-model:valueDate="dataForm.incomeCalculationInput.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
@@ -261,6 +262,8 @@
                 }}일</div>
             </a-col>
         </a-row>
+        <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="checkBox"
+            style="display: none;" />
     </standard-form>
 </template>
 
@@ -279,6 +282,7 @@ export default defineComponent({
             type: Array,
             default: []
         },
+        actionNextStep: Number,
     },
     setup(props, { emit }) {
         const joinedAt = ref()
@@ -372,10 +376,24 @@ export default defineComponent({
             props.dataForm.incomeCalculationInput.exclusionDays = props.dataForm.taxCalculationInput.prevRetiredYearsOfService.exclusionDays + props.dataForm.taxCalculationInput.lastRetiredYearsOfService.exclusionDays
         })
 
+        watch(() => props.actionNextStep, (newVal) => {
+            (document.getElementById("checkBox") as HTMLInputElement).click();
+        });
+
         // =============== FUNCTION ================================
         const openNewTab = () => {
             window.open('pa-120')
         };
+        const submitForm = (e: any) => {
+            console.log(e.validationGroup.validate());
+            
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                emit('nextPage', true)
+            }
+        }
         return {
             month1, month2,
             arrayReasonResignation,
@@ -385,6 +403,7 @@ export default defineComponent({
             dataLastRetiredYearsOfService,
             dataSettlement,
             dayjs,
+            submitForm,
         }
     }
 })
