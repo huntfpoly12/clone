@@ -3,11 +3,17 @@
 		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
 		:disabled="disabled" :required="required">
 		<template #field="{ data }">
-			<div class="select-content" style="padding: 3px 0px;">
+			<div v-if="data" class="select-content" style="padding: 3px 0px;">
 				<a-tag color="default">{{ data.key }}</a-tag>
 				<div>
 					<DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
 					{{ data.value }}
+				</div>
+			</div>
+			<div v-else class="select-content" style="padding: 3px 0px; height: 30px;">
+				<div>
+					<span>선택</span>
+					<DxTextBox style="display: none;" />
 				</div>
 			</div>
 		</template>
@@ -20,14 +26,21 @@
 				</div>
 			</div>
 		</template>
+		<DxValidator :name="nameInput">
+			<DxRequiredRule v-if="required" :message="messageRequired" />
+		</DxValidator>
 	</DxSelectBox>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, getCurrentInstance } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
-import { CountryCode, enum2KeysByValueMap , getEnumValue} from "@trandung1291/common-tsv"; 
+import {
+	DxValidator,
+	DxRequiredRule,
+} from "devextreme-vue/validator";
+import { CountryCode, enum2KeysByValueMap, getEnumValue } from "@trandung1291/common-tsv";
 
 export default defineComponent({
 	props: {
@@ -46,13 +59,29 @@ export default defineComponent({
 		required: {
 			type: Boolean,
 			default: false
-		}
+		},
+		nameInput: {
+			type: String,
+			default: '',
+		},
+		messRequired: {
+			type: String,
+			default: "",
+		},
 	},
 	components: {
 		DxSelectBox,
 		DxTextBox,
+		DxValidator,
+		DxRequiredRule,
 	},
 	setup(props, { emit }) {
+		const app: any = getCurrentInstance()
+		const messages = app.appContext.config.globalProperties.$messages;
+		const messageRequired = ref(messages.getCommonMessage('102').message);
+		if (props.messRequired != "") {
+			messageRequired.value = props.messRequired;
+		}
 		let dataSelect = ref(Array());
 		const data = new ArrayStore({
 			data: dataSelect.value,
@@ -62,12 +91,12 @@ export default defineComponent({
 			dataSelect.value.push({ key: codeCountry, value: nameCountry });
 		});
 
-		const onValueChanged = (val: any) => { 
-			emit('textCountry',getEnumValue(CountryCode,val.value))
+		const onValueChanged = (val: any) => {
+			emit('textCountry', getEnumValue(CountryCode, val.value))
 			emit('update:valueCountry', val.value)
 		}
 
-		return { dataSelect, data, onValueChanged };
+		return { dataSelect, data, onValueChanged, messageRequired };
 	},
 });
 </script>

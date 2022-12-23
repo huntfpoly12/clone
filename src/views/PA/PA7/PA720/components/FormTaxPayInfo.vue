@@ -13,6 +13,7 @@
               @incomeTypeCode="changeIncomeTypeCode"
               :readOnly="isEdit"
             />
+            <div v-if="validations.employeeId" class="validate">this must be filled</div>
           </a-form-item>
         </a-col>
         <a-col span="24">
@@ -33,12 +34,15 @@
           </a-form-item>
           <a-form-item label="지급일">
             <number-box :max="31" :min="1" :readOnly="isEdit" width="150px" class="mr-5" v-model:valueInput="dataAction.input.paymentDay" :disabled="disabledInput" />
+            <div v-if="validations.paymentDay" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="지급액">
-            <number-box-money width="150px" :min="0" v-model:valueInput="dataAction.input.paymentAmount" :required="true"></number-box-money>
+            <number-box-money width="150px" :min="0" :max="2147483647" v-model:valueInput="dataAction.input.paymentAmount" :required="true"></number-box-money>
+            <div v-if="validations.paymentAmount" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="필요경비">
-            <number-box-money width="150px" :min="0" :required="true" v-model:valueInput="dataAction.input.requiredExpenses"></number-box-money>
+            <number-box-money width="150px" :min="0" max="2147483647" :required="true" v-model:valueInput="dataAction.input.requiredExpenses"></number-box-money>
+            <div v-if="validations.requiredExpenses" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="세율">
             <DxSelectBox
@@ -61,9 +65,10 @@
                 </a-tooltip>
               </template>
             </DxSelectBox>
+            <div v-if="validations.taxRate" class="validate">this must be filled</div>
           </a-form-item>
         </a-col>
-        <a-col :span="12" style="padding-left: 5px">
+        <a-col class="input-group-4" :span="12" style="padding-left: 5px">
           <div class="">
             <div class="header-text-2 mb-10">
               공제합계원
@@ -101,7 +106,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, reactive, nextTick, computed, onUnmounted, onMounted } from 'vue';
+import { ref, defineComponent, watch, reactive } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -220,7 +225,7 @@ export default defineComponent({
       enabled: triggerIncomeExtra.value,
       fetchPolicy: 'no-cache',
     }));
-    const { refetch: refetchEmployeeExtras, result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+    const {result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
       fetchPolicy: 'no-cache',
       enabled: getEmployeeExtrasTrigger.value,
     }));
@@ -252,11 +257,64 @@ export default defineComponent({
         incomeTypeName: data.employee.incomeTypeName,
       });
       newDateLoading.value = loadingIncomeExtra.value;
+      validations.employeeId=false;
+      validations.taxRate=false;
+      validations.paymentDay=false;
+      validations.paymentAmount=false;
+      validations.requiredExpenses=false;
     });
-    //watch
+    // validate
+    const validations = reactive({
+      employeeId: false,
+      taxRate: false,
+      paymentDay: false,
+      paymentAmount: false,
+      requiredExpenses: false,
+    });
+    watch(
+      dataAction.input,
+      (newVal) => {
+        console.log(`output->newVal`,newVal)
+        if (newVal.employeeId) {
+          validations.employeeId = false;
+        }
+        if (newVal.paymentDay) {
+          validations.paymentDay = false;
+        }
+        if (newVal.paymentAmount) {
+          validations.paymentAmount = false;
+        }
+        if (newVal.requiredExpenses) {
+          validations.requiredExpenses = false;
+        }
+        if (newVal.taxRate) {
+          validations.taxRate = false;
+        }
+      },
+      { deep: true }
+    );
+// SUBMIT FORM
     watch(
       () => props.actionSave,
       () => {
+        if (!dataAction.input.employeeId) {
+          validations.employeeId = true;
+        }
+        if (!dataAction.input.paymentDay) {
+          validations.paymentAmount = true;
+        }
+        if (!dataAction.input.paymentAmount) {
+          validations.paymentDay = true;
+        }
+        if (!dataAction.input.requiredExpenses) {
+          validations.requiredExpenses = true;
+        }
+        if (!dataAction.input.taxRate) {
+          validations.taxRate = true;
+        }
+        if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
+          return;
+        }
         dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
         dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0]);
         dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1]);
@@ -273,6 +331,7 @@ export default defineComponent({
         createIncomeExtra(dataAction);
       }
     );
+// GET FORM 
     watch(resultEmployeeExtras, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeExtras;
       getEmployeeExtrasTrigger.value = false;
@@ -284,11 +343,12 @@ export default defineComponent({
       }
       return text;
     };
+// GET INCOMETYPECODE
     const changeIncomeTypeCode = (res: string) => {
       dataAction.input.incomeTypeCode = res;
     };
 
-    //after action form
+// AFTER ACTION FORM
     createIncomeExtraDone((res) => {
       emit('changeFommDone');
       notification('success', `업데이트 완료!`);
@@ -341,6 +401,7 @@ export default defineComponent({
       incomeTax,
       localIncomeTax,
       isResetComponent,
+      validations,
     };
   },
 });

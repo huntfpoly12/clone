@@ -17,7 +17,7 @@
     >
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="185" />
+      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="170" />
       <template #tag="{ data }" class="custom-action">
         <div>
           <button style="margin-right: 5px">
@@ -33,11 +33,11 @@
         </div>
       </template>
       <DxColumn caption="지급일" data-field="paymentDay" width="60" alignment="left" />
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="90" alignment="left" />
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="110" alignment="left" />
       <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="110" alignment="left" />
       <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="110" alignment="left" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" />
-      <DxColumn caption="공제" cell-template="incomLocalTax" width="90px" alignment="left" />
+      <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="left" />
       <template #incomLocalTax="{ data }">
         {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
       </template>
@@ -124,7 +124,7 @@ export default defineComponent({
       ...props.dataCallTableDetail,
     });
     const incomeIdDels = ref<any>([]);
-    const paymentData = ref<any>({});
+    const paymentData = ref<any>([]);
     // ================GRAPQL==============================================
 
     // API QUERY TABLE SMALL LEFT SIDE
@@ -205,13 +205,9 @@ export default defineComponent({
       incomeIdDels.value = data.selectedRowsData.map((item: { incomeId: number }) => {
         return item.incomeId;
       });
-      if (data.selectedRowsData.length === 1) {
-        data.selectedRowsData.forEach((item: { incomeId: number; paymentDay: number }) => {
-          paymentData.value = { incomeId: item.incomeId, day: item.paymentDay };
-        });
-      } else {
-        paymentData.value = {};
-      }
+      paymentData.value = data.selectedRowsData.map((item: { incomeId: number; paymentDay: number }) => {
+        return { incomeId: item.incomeId, day: item.paymentDay,...dataTableDetail.value };
+      });
     };
     // highlight row
     const focusedRowKey = ref<Number>(0);

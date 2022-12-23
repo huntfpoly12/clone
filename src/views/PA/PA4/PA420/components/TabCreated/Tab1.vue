@@ -1,6 +1,5 @@
 <template>
     <standard-form class="modal-add">
-        {{  dataForm }}
         <a-row :gutter="16">
             <a-col :span="12">
                 <a-form-item label="구분">
