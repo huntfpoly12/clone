@@ -15,38 +15,38 @@
                             <div class="custom-checkbox-step-1">
                                 <label>1. 서비스약관 동의</label>
                                 <div>
-                                    <checkbox-basic :label="'전체 동의'" v-model:valueCheckbox="checkAll"
-                                        @change="checkAllFunc" :disabled="false" :size="'16'" />
+                                    <checkbox-basic label="전체 동의" v-model:valueCheckbox="checkAll"
+                                        @change="checkAllFunc" :disabled="false" :size="16" />
                                 </div>
                             </div>
                             <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
                             <div class="radio-group">
-                                <checkbox-basic v-model:valueCheckbox="contractCreacted.terms" :label="'동의함'"
-                                    :disabled="false" :size="'16'" />
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.terms" label="동의함"
+                                    :disabled="false" :size="16" />
                             </div>
                         </div>
                         <div>
                             <label>2. 개인정보제공 및 활용동의</label>
                             <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
                             <div class="radio-group">
-                                <checkbox-basic v-model:valueCheckbox="contractCreacted.personalInfo" :label="'동의함'"
-                                    :disabled="false" :size="'16'" />
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.personalInfo" label="동의함"
+                                    :disabled="false" :size="16" />
                             </div>
                         </div>
                         <div>
                             <label>3. 회계서비스약관 동의</label>
                             <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
                             <div class="radio-group">
-                                <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingService"
-                                    :label="'동의함'" :disabled="false" :size="'16'" />
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingService" label="동의함"
+                                    :disabled="false" :size="16" />
                             </div>
                         </div>
                         <div>
                             <label>4. 원천서비스약관 동의</label>
                             <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
                             <div class="radio-group">
-                                <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingService"
-                                    :label="'동의함'" :disabled="false" :size="'16'" />
+                                <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingService" label="동의함"
+                                    :disabled="false" :size="16" />
                             </div>
                         </div>
                     </template>
@@ -69,7 +69,7 @@
                                         <a-col :span="12" class="d-flex">
                                             <label class="red">사업자유형 :</label>
                                             <radio-group :arrayValue="arrayRadioCheck"
-                                                v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
+                                                v-model:valueRadioCheck="valueRadioBox" layoutCustom="horizontal" />
                                         </a-col>
                                         <a-col :span="12" class="d-flex">
                                             <div style="margin-right: 10px;">{{ textIDNo }} :</div>
@@ -147,83 +147,82 @@
                     <template v-if="step === 2">
                         <div class="form-group">
                             <label>1. 회계서비스 신청</label>
-                            <div class="list-checkbox">
-                                <radio-group :arrayValue="plainOptions" v-model:valueRadioCheck="valueAccountingService"
+                            <div class="list-checkbox">  
+                                <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="valueRadioBox"
                                     :layoutCustom="'horizontal'" />
                             </div>
                             <div class="group-title">
                                 <p class="red">⁙ 운영사업</p>
                             </div>
-                            <div style="position: relative;">
-                                <div class="overlay" v-if="disableFormVal2 == true"></div>
-                                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" disable="true"
-                                    id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
-                                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                    :selected-row-keys="selectedItemKeys" :column-auto-width="true"
-                                    :repaint-changes-only="true" @content-ready="contentReady">
-                                    <!-- <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                        :allow-deleting="true" template="button-template" mode="cell">
-                                        <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                        <DxTexts addRow="추 가" />
-                                    </DxEditing> -->
-                                    <template #button-template>
-                                        <DxButton icon="plus" />
-                                    </template>
-                                    <DxPaging :enabled="false" />
-                                    <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
-                                        cell-template="indexCell" />
-                                    <template #indexCell="{ data }">
-                                        <div>{{ data.rowIndex + 1 }}</div>
-                                    </template>
-                                    <DxColumn data-field="name" caption="사업명 (중복불가)">
-                                        <DxRequiredRule />
-                                    </DxColumn>
-                                    <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
-                                        <DxLookup :data-source="facilityBizTypeCommon" value-expr="v"
-                                            display-expr="n" />
-                                    </DxColumn>
-                                    <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
-                                        :format="'yyyy-MM-dd'" />
-                                    <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
-                                    <DxToolbar>
-                                        <DxItem name="addRowButton" />
-                                    </DxToolbar>
-                                    <DxMasterDetail :enabled="true" template="detailTemplate" />
-                                    <template #detailTemplate="{ data }">
-                                        <div class="employee-info">
-                                            antu
-                                        </div>
-                                    </template>
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" disable="true"
+                                id="gridContainer" :data-source="valueFacilityBusinesses" :show-borders="true"
+                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                                :selected-row-keys="selectedItemKeys" :column-auto-width="true"
+                                :repaint-changes-only="true" @content-ready="contentReady">
+                                <DxEditing :use-icons="true" :allow-updating="false" :allow-adding="true"
+                                    :allow-deleting="true" template="button-template" mode="cell">
+                                    <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                    <DxTexts addRow="추가" />
+                                </DxEditing>
+                                <template #button-template>
+                                    <DxButton icon="plus" />
+                                </template>
+                                <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                                    cell-template="indexCell" />
+                                <template #indexCell="{ data }">
+                                    <div>{{ data.rowIndex + 1 }}</div>
+                                </template>
+                                <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                                <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
+                                    <DxLookup :data-source="facilityBizTypeCommon" value-expr="v" display-expr="n" />
+                                </DxColumn>
+                                <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
+                                    format="yyyy-MM" />
+                                <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
+                                <DxToolbar>
+                                    <DxItem name="addRowButton" />
+                                </DxToolbar>
+                                <DxMasterDetail :enabled="true" template="detailTemplate" />
+                                <template #detailTemplate="{ data }">
+                                    <a-row>
+                                        <a-col :span="12">
+                                            <a-form-item label="중간지급 퇴직급여">
+                                                <div class="d-flex-center">
+                                                    <span class="pl-5">원</span>
+                                                </div>
+                                            </a-form-item>
+                                            <div class="form-item">
+                                                <label class="red">장기요양기관등록번호 :</label>
+                                                <text-number-box width="100%" :required="true"
+                                                    :disabled="disableFormVal2"
+                                                    v-model:valueInput="contractCreacted.longTermCareInstitutionNumber" />
+                                            </div>
+                                            <div>
+                                                <imgUpload :title="titleModal2" @update-img="getImgUrlAccounting"
+                                                    style="margin-top: 10px" />
+                                            </div>
+                                            <div class="custom-checkbox-location">
+                                                <label>부가서비스:</label>
+                                                <checkbox-basic
+                                                    v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
+                                                    label="회계입력대행서비스" :size="16" />
+                                            </div>
+                                        </a-col>
+                                        <a-col :span="12">
+                                            <div class="preview-img">
+                                                <preview-image :dataImage="dataImgStep3" @deleteImg="removeImgStep" />
+                                            </div>
+                                        </a-col>
+                                    </a-row>
+                                </template>
+                            </DxDataGrid>
 
-                                </DxDataGrid>
-                            </div>
-                            <div class="form-item">
-                                <label class="red">장기요양기관등록번호 :</label>
-                                <text-number-box width="100%" :required="true" :disabled="disableFormVal2"
-                                    v-model:valueInput="contractCreacted.longTermCareInstitutionNumber" />
-                            </div>
-                            <div style="display: flex">
-                                <div>
-                                    <imgUpload :title="titleModal2" @update-img="getImgUrlAccounting"
-                                        style="margin-top: 10px" />
-                                </div>
-                                <div class="preview-img">
-                                    <preview-image :dataImage="dataImgStep3" @deleteImg="removeImgStep" />
-                                </div>
-                            </div>
-                            <div class="form-item">
-                                <div class="custom-checkbox-location">
-                                    <label>부가서비스:</label>
-                                    <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingServiceTypes"
-                                        :label="'회계입력대행서비스'" :size="'16'" />
-                                </div>
-                            </div>
                         </div>
                         <div class="form-group">
                             <label>2. 원천서비스 신청</label>
                             <div class="list-checkbox">
                                 <radio-group :arrayValue="plainOptions" v-model:valueRadioCheck="valueSourceService"
-                                    :layoutCustom="'horizontal'" />
+                                    layoutCustom="horizontal" />
                             </div>
                             <div class="form-item" style="margin-bottom:10px">
                                 <label>서비스 시작년월 :</label>
@@ -238,14 +237,14 @@
                             <div class=" form-item">
                                 <label>부가서비스 :</label>
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingServiceTypes"
-                                    :label="'4대보험신고서비스'" :disabled="disableFormVal" :size="'16'" />
+                                    label="4대보험신고서비스" :disabled="disableFormVal" :size="16" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label>3. CMS (자동이체출금) 계좌 정보 입력</label>
                             <div class="form-item">
                                 <label class="red">출금은행:</label>
-                                <bank-select-box v-model:valueInput="contractCreacted.bankType" :width="'178px'"
+                                <bank-select-box v-model:valueInput="contractCreacted.bankType" width="178px"
                                     :required="true" />
                             </div>
                             <div class="form-item">
@@ -270,7 +269,7 @@
                             <div class="form-item">
                                 <label class="red">자동이체출금일자 :</label>
                                 <radio-group :arrayValue="arrayRadioWithdrawDay"
-                                    v-model:valueRadioCheck="valueRadioWithdrawDay" :layoutCustom="'horizontal'" />
+                                    v-model:valueRadioCheck="valueRadioWithdrawDay" layoutCustom="horizontal" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -300,17 +299,15 @@
                         <a-result status="success" title="서비스 가입신청이 완료되었습니다! "
                             sub-title="가입심사가 진행중입니다. 신청일로부터 최대 3일 이내에 승인여부를 알려드릴 예정입니다. ">
                             <template #extra>
-                                <button-basic :text="'확인'" :type="'success'" :mode="'contained'" @onClick="handleOk" />
+                                <button-basic text="확인" type="success" mode="contained" @onClick="handleOk" />
                             </template>
                         </a-result>
                     </a-modal>
                     <div class="group-button">
-                        <button-basic v-if="step > 0" :text="'이 전'" :type="'info'" :mode="'contained'"
-                            @onClick="prevStep" style="margin-right:10px" />
-                        <button-basic v-if="step < 3" :text="'다음'" :type="'success'" :mode="'contained'"
-                            @onClick="nextStep" />
-                        <button-basic v-if="step === 3" :text="'신 청'" :type="'success'" :mode="'contained'"
-                            @onClick="Creat" />
+                        <button-basic v-if="step > 0" text="이 전" type="info" mode="contained" @onClick="prevStep"
+                            style="margin-right:10px" />
+                        <button-basic v-if="step < 3" text="다음" type="default" mode="contained" @onClick="nextStep" />
+                        <button-basic v-if="step === 3" text="신 청" type="default" mode="contained" @onClick="Creat" />
                     </div>
                 </form>
             </div>
@@ -344,9 +341,7 @@ export default {
         const titleModal2 = ref("장기요양기관등록증")
         const router = useRouter();
         const facilityBizTypeCommon = FacilityBizType.all();
-        const plainOptions = ref({
-            ...plainOptionsUtil
-        })
+        const plainOptions = ref({ ...plainOptionsUtil })
         const textIDNo = ref("법인등록번호")
         const step = ref(0)
         const disableFormVal = ref(false)
@@ -354,24 +349,14 @@ export default {
         const checkAll = ref(false)
         const optionSale = ref()
         const statusMailValidate = ref(false)
-        const contractCreacted = reactive({
-            ...dataDefaultsUtil
-        });
+        const contractCreacted = reactive({ ...dataDefaultsUtil });
         const dataInputCallApi = reactive({
             dossier: 1,
             applicationService: 1,
         })
         var visibleModal = ref(false);
         const listDataConvert = ref();
-        const valueFacilityBusinesses = ref([{
-            longTermCareInstitutionNumber: 0,
-            facilityBizType: 0,
-            name: '',
-            startYearMonth: dayjs().format("YYYY-MM-DD"),
-            capacity: 0,
-            registrationCardFileStorageId: 0
-        }]);
-        const fileName = ref("");
+        const valueFacilityBusinesses = ref([]);
         const selectedItemKeys = ref(0)
         const arrayRadioCheck = ref({ ...arrayRadioCheckUtil })
         const arrayRadioWithdrawDay = ref({ ...arrayRadioWithdrawDayUtil })
@@ -688,8 +673,8 @@ export default {
             }
         }, { deep: true, });
         return {
-            facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, fileName, checkStepTwo, checkStepThree, checkStepFour, selectedItemKeys, titleModal, titleModal2, plainOptions,
-            contentReady, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep,
+            facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, selectedItemKeys, titleModal, titleModal2, plainOptions,
+            contentReady, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep
         };
     },
 };
