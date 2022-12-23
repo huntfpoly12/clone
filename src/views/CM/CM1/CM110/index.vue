@@ -114,12 +114,12 @@
                             </div>
                             <div class="dflex">
                                 <a-form-item label="생년월일" class="red" :label-col="labelCol"> 
-                                    <date-time-box style="width: 150px;"
-                                        v-model:valueDate="formState.extendInfo.president.birthday" value-format="YYYY-MM-DD"
+                                    <birth-day-box style="width: 150px;"
+                                        v-model:valueInput="formState.extendInfo.president.birthday" value-format="YYYY-MM-DD"
                                         :required="true"
                                         placeholder=""
                                         dateFormat="YYYY-MM-DD"
-                                    ></date-time-box> 
+                                    ></birth-day-box> 
                                 </a-form-item>
                             </div>
                             <div class="dflex">
