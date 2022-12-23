@@ -69,7 +69,7 @@
                                         <a-col :span="12" class="d-flex">
                                             <label class="red">사업자유형 :</label>
                                             <radio-group :arrayValue="arrayRadioCheck"
-                                                v-model:valueRadioCheck="valueRadioBox" layoutCustom="horizontal" />
+                                                v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
                                         </a-col>
                                         <a-col :span="12" class="d-flex">
                                             <div style="margin-right: 10px;">{{ textIDNo }} :</div>
@@ -147,7 +147,7 @@
                     <template v-if="step === 2">
                         <div class="form-group">
                             <label>1. 회계서비스 신청</label>
-                            <div class="list-checkbox">  
+                            <div class="list-checkbox">
                                 <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="valueRadioBox"
                                     :layoutCustom="'horizontal'" />
                             </div>
@@ -184,9 +184,9 @@
                                 </DxToolbar>
                                 <DxMasterDetail :enabled="true" template="detailTemplate" />
                                 <template #detailTemplate="{ data }">
-                                    <a-row>
+                                    <a-row :gutter="24">
                                         <a-col :span="12">
-                                            <a-form-item label="중간지급 퇴직급여">
+                                            <a-form-item label="사업분류">
                                                 <div class="d-flex-center">
                                                     <span class="pl-5">원</span>
                                                 </div>
@@ -358,8 +358,8 @@ export default {
         const listDataConvert = ref();
         const valueFacilityBusinesses = ref([]);
         const selectedItemKeys = ref(0)
-        const arrayRadioCheck = ref({ ...arrayRadioCheckUtil })
-        const arrayRadioWithdrawDay = ref({ ...arrayRadioWithdrawDayUtil })
+        const arrayRadioCheck = ref([...arrayRadioCheckUtil])
+        const arrayRadioWithdrawDay = ref([...arrayRadioWithdrawDayUtil])
         const valueRadioBox = ref(1)
         const valueAccountingService = ref(1)
         const valueSourceService = ref(1)
