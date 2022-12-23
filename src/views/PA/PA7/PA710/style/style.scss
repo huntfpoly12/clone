@@ -42,7 +42,9 @@
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            min-height: 700px;
+            height: 700px;
+            overflow:scroll;
+            overflow-x:hidden;
         }
     }
 

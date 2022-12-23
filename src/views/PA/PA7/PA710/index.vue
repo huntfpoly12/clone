@@ -37,13 +37,13 @@
                             <DxButton icon="plus" @click="formCreate" />
                         </template>
 
-                        <DxColumn caption="성명 (상호)" cell-template="company-name" :width="500" />
+                        <DxColumn caption="성명 (상호)" cell-template="company-name" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" :width="200" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" />
                         <DxColumn caption="소득부분" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
                             <income-type :typeCode="data.data.incomeTypeCode"
