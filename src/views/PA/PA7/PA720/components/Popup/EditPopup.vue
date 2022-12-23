@@ -5,7 +5,7 @@
             <div class="custom-modal-edit">
                 <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
                 <span>선택된 내역 지급일을</span>
-                <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="data.day"
+                <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
                     :spinButtons="true" />
                 <span>일로 변경하시겠습니까?</span>
             </div>
@@ -31,8 +31,8 @@ export default defineComponent({
             default: false,
         },
         data: {
-            type: Object,
-            default: {}
+            type: Array,
+            default: []
         }
     },
     components: {
@@ -55,7 +55,9 @@ export default defineComponent({
             notification('error', e.message)
         })
         const onSubmit = (e: any) => {
-            mutate(props.data)
+            props.data.map((item:any) => {
+                mutate({...item, day: dayValue.value})
+            })
         };
 
         return {
