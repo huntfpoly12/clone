@@ -48,7 +48,6 @@
             />
           </div>
         </div>
-
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
             <caret-left-outlined class="arrow-left"  v-if="isArrowScroll"    @click="tabLeft"/>
@@ -81,7 +80,6 @@
           :trigger="null"
           collapsible
         >
-        
           <a-menu
             v-model:selectedKeys="selectedKeys"
             theme="dark"
@@ -90,6 +88,7 @@
             :open-keys="openKeys"
             @openChange="onOpenChange"
           >
+            <!-- list main menu lavel 0 -->
             <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
               <template #icon>
                 <div id="icon-menu">
@@ -97,25 +96,44 @@
                 </div>
               </template>
               <template #title>{{ menuItem.title }}</template>
+              <!-- list sub menu level 1 -->
               <a-sub-menu
                 v-for="subMenu in menuItem.subMenus"
                 :key="subMenu.id"
                 :title="subMenu.title"
               >
-                <a-menu-item
-                  v-for="item in subMenu.items"
-                  :key="item.id"
-                  :class="[
-                    item.id === activeTab.id
-                      ? 'ant-menu-item-selected-active'
-                    : '',
-                     item.url == '#' ? 'not-done' : ''
-                    ]
-                  "
-                  @click.enter="addMenuTab(item.id)"
-                >
-                  <router-link :to="item.url" >{{ item.name }}</router-link>
-                </a-menu-item>
+                <!-- list sub menu level 3 if have subMenus -->
+                <template v-for="item in subMenu.items"  :key="'sub-'+item.id">
+                  <a-menu-item
+                      v-if="!item.hasOwnProperty('subMenus')"
+                      :class="[
+                      item.id === activeTab.id
+                        ? 'ant-menu-item-selected-active'
+                      : '',
+                      item.url == '#' ? 'not-done' : ''
+                        ]
+                      "
+                      @click.enter="addMenuTab(item.id)"
+                    >
+                    <router-link :to="item.url" >{{ item.name }}</router-link>
+                  </a-menu-item>
+                  <a-sub-menu v-else  :title="item.name">
+                    <a-menu-item 
+                      v-for="subMenu1 in item.subMenus"
+                      :key="subMenu1.id"
+                      :class="[
+                        subMenu1.id === activeTab.id
+                          ? 'ant-menu-item-selected-active'
+                        : '',
+                        subMenu1.url == '#' ? 'not-done' : ''
+                          ]
+                        "
+                      @click.enter="addMenuTab(subMenu1.id)"
+                    >
+                      <router-link :to="subMenu1.url" >{{ subMenu1.name }}</router-link>
+                    </a-menu-item>
+                  </a-sub-menu>
+                </template>
               </a-sub-menu>
             </a-sub-menu>
           </a-menu>
@@ -125,8 +143,7 @@
             :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
           >
             <div class="main-content">
-              <template v-if="activeTab">
-                
+              <template v-if="activeTab">      
                 <keep-alive>
                   <component v-bind:is="currentComponent" />
                 </keep-alive>
@@ -433,12 +450,12 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
+  
       let itemNew = [];
       itemNew = menuDatas.find(item => item.id === itemId);
       activeTab.value = menuDatas.find(item => item.id === itemId);
-      
+      store.state.common.activeTab = itemNew
       if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
-        store.state.common.activeTab = itemNew
         menuTab.value.push(itemNew);
         selectedItems.value = [];
         checkOverflow()
