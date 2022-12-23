@@ -271,13 +271,13 @@
         <ProcessStatus v-model:valueStatus="statusParam.status" @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
+        <DxButton class="ml-4" icon="plus" @click="resetForm" />
         <DxButton class="ml-3" @click="deleteItem">
           <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
         </DxButton>
         <DxButton @click="onSubmit($event)" size="large" class="ml-4" >
           <SaveOutlined style="font-size: 17px"/>
         </DxButton>
-        <DxButton class="ml-4" icon="plus" @click="resetForm" />
         
         <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true">
           <a-tooltip placement="top">
@@ -433,10 +433,9 @@ export default defineComponent({
       deleteIncomeExtrasParam.value.processKey = incomeExtrasParams.processKey;
     };
     const editItem = () => {
-      if (Object.keys(taxPayRef.value.paymentData).length !== 0) {
         modalEdit.value = true;
-        changeIncomeExtraPaymentDayParam.value = { ...incomeExtrasParams, ...taxPayRef.value.paymentData };
-      }
+        console.log(`output->`,taxPayRef.value.paymentData)
+        changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
     };
     const resetForm = () => {
       resetFormNum.value++;
