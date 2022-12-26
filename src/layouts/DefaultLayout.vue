@@ -144,7 +144,7 @@
           >
             <div class="main-content">
               <template v-if="activeTab">      
-                <keep-alive>
+                <keep-alive :include="menuTab">
                   <component v-bind:is="currentComponent" />
                 </keep-alive>
               </template>

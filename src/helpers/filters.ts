@@ -16,10 +16,12 @@ dayjs.extend(localeData);
 
 const filters = {
     formatCurrency(input: number) {
-        if (isNaN(input)) {
-            return "-";
-        }
-        return input.toLocaleString('ko-KR');
+        if(input){
+            if (isNaN(input)) {
+                return "-";
+            }
+            return input.toLocaleString('ko-KR');
+        } return '';
     },
     formatDate(date: any) {
         return dayjs(date).format('YYYY-MM-DD')
