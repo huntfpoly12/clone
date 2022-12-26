@@ -11,7 +11,7 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Select Box Common</div>
                     </div>
-                    <select-box-common :arrSelect="arraySelectBox" :required="true"
+                    <select-box-common :arrSelect="arraySelectBox" :required="true" :width="150"
                                     v-model:valueInput="valueSelectBox"/>
                 </td>
                 <td>

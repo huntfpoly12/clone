@@ -1,23 +1,14 @@
 <template>
-  <Datepicker
-    v-model="date"
-    autoApply
-    monthPicker
-    locale="ko"
-    :format-locale="ko"
-    :style="{height: $config_styles.HeightInput, width: width }"
-    :format="format"
-    :uid="id"
-    @update:modelValue="handleDate"
-    :readonly="readonly"
-  />
+  <Datepicker v-model="date" autoApply monthPicker locale="ko" :format-locale="ko"
+    :style="{ height: $config_styles.HeightInput, width: width }" :format="format" :uid="id"
+    @update:modelValue="handleDate" :readonly="readonly" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { ko } from "date-fns/locale";
-import { Dayjs } from "dayjs";
+// import { Dayjs } from "dayjs";
 
 export default defineComponent({
   props: {
@@ -27,7 +18,7 @@ export default defineComponent({
     },
     valueDate: {
       type: String,
-      default: new Date(),
+      // default: new Date(),
     },
     id: {
       type: String,
@@ -45,19 +36,25 @@ export default defineComponent({
     Datepicker,
   },
   setup(props, { emit }) {
-    var value = new Date(props.valueDate);
-    const date = ref({
-          month: value.getMonth(),
-          year: value.getFullYear(),
-        });
+    let date = ref()
+    let valueDate = ref()
+    if (props.valueDate) {
+      valueDate.value = new Date(props.valueDate);
+      date.value = {
+        month: valueDate.value.getMonth(),
+        year: valueDate.value.getFullYear(),
+      }
+    }
     watch(
       () => props.valueDate,
       (newValue) => {
-        value = new Date(newValue);
-        date.value = {
-          month: value.getMonth(),
-          year: value.getFullYear(),
-        };
+        if (newValue) {
+          valueDate.value = new Date(newValue);
+          date.value = {
+            month: valueDate.value.getMonth(),
+            year: valueDate.value.getFullYear(),
+          };
+        }
       }
     );
 
@@ -75,7 +72,6 @@ export default defineComponent({
     };
 
     return {
-      value,
       handleDate,
       date,
       format,

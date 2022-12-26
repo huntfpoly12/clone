@@ -1,5 +1,5 @@
 <template>
-  <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
+  <action-header title="기타소득자등록" @actionSave="onSubmit($event)" :buttonSave="false" />
   <div id="pa-720" class="page-content">
     <a-row>
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
@@ -271,37 +271,39 @@
         <ProcessStatus v-model:valueStatus="statusParam.status" @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
+        <DxButton class="ml-4" icon="plus" @click="resetForm" />
         <DxButton class="ml-3" @click="deleteItem">
           <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
         </DxButton>
-        <DxButton class="ml-3" icon="plus" @click="addItem" />
-        <DxButton class="ml-3" icon="edit" @click="editItem" />
-        <div class="custom-select-tab">
-          <router-link to="/dashboard/pa-710" style="color: white"> 기타소득자등록 </router-link>
+        <DxButton @click="onSubmit($event)" size="large" class="ml-4" >
+          <SaveOutlined style="font-size: 17px"/>
+        </DxButton>
+        
+        <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true">
+          <a-tooltip placement="top">
+            <template #title>근로소득자료 변경이력</template>
+            <div class="text-center">
+              <HistoryOutlined style="font-size: 16px" />
+            </div>
+          </a-tooltip>
+        </DxButton>
+        <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true">
+          <a-tooltip placement="top">
+            <template #title>근로소득 마감상태 변경이력</template>
+            <div class="text-center">
+              <img src="@/assets/images/icon_status_history.png" alt="" style="width: 16px; height: 16px" />
+            </div>
+          </a-tooltip>
+        </DxButton>
+        <DxButton @click="editItem" class="ml-4 custom-button-checkbox">
+          <div class="d-flex-center">
+            <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
+            <span class="fz-12 pl-5">지급일변경</span>
+          </div>
+        </DxButton>
+        <div class="custom-select-tab ml-4">
+          <button class="button-open-tab" @click="openTab({ name: '기타소득자등록', url: '/dashboard/pa-710', id: 'pa-710' })">기타소득자등록</button>
         </div>
-        <a-dropdown placement="bottom" class="ml-3">
-          <a-button>선택 <DownOutlined /></a-button>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <a-tooltip placement="left">
-                  <template #title>사업소득자료 변경이력</template>
-                  <div style="text-align: center" @click="modalHistory = true">
-                    <HistoryOutlined style="font-size: 20px" />
-                  </div>
-                </a-tooltip>
-              </a-menu-item>
-              <a-menu-item>
-                <a-tooltip placement="left">
-                  <template #title>사업소득 마감상태 변경이력</template>
-                  <div style="text-align: center" @click="modalHistoryStatus = true">
-                    <img src="@/assets/images/icon_status_history.png" alt="" style="width: 20px; height: 20px" />
-                  </div>
-                </a-tooltip>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
       </a-col>
     </a-row>
     <a-row class="content-btm">
@@ -319,16 +321,6 @@
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="" :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
   <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false" @loadingTableInfo="onLoadingTable" @dataAddIncomeProcess="onAddIncomeProcess" />
-  <PopupMessage
-    :modalStatus="popupAddStatus"
-    @closePopup="popupAddStatus = false"
-    :typeModal="'confirm'"
-    :title="'ban co muon xoa khong'"
-    :content="'Content notification'"
-    :keyAccept="'1234'"
-    :okText="'확인'"
-    @checkConfirm="onPopupComfirm"
-  />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from 'vue';
@@ -336,7 +328,7 @@ import DxButton from 'devextreme-vue/button';
 import dayjs from 'dayjs';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { companyId } from '@/helpers/commonFunction';
+import { companyId, openTab } from '@/helpers/commonFunction';
 import { DxDataGrid, DxColumn, DxMasterDetail } from 'devextreme-vue/data-grid';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import DeletePopup from './components/Popup/DeletePopup.vue';
@@ -344,12 +336,12 @@ import EditPopup from './components/Popup/EditPopup.vue';
 import ProcessStatus from '@/components/common/ProcessStatus.vue';
 import TaxPayInfo from './components/TaxPayInfo.vue';
 import FormTaxPayInfo from './components/FormTaxPayInfo.vue';
-import { dataActionUtils } from './utils/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import notification from '@/utils/notification';
-import { HistoryOutlined } from '@ant-design/icons-vue';
+import { HistoryOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import CopyMonth from './components/Popup/CopyMonth.vue';
 import { DownOutlined } from '@ant-design/icons-vue';
+import DxCheckBox from 'devextreme-vue/check-box';
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -364,6 +356,8 @@ export default defineComponent({
     HistoryOutlined,
     CopyMonth,
     DownOutlined,
+    DxCheckBox,
+    SaveOutlined,
   },
   setup() {
     const statusParam = ref<any>({ status: 10 });
@@ -439,15 +433,9 @@ export default defineComponent({
       deleteIncomeExtrasParam.value.processKey = incomeExtrasParams.processKey;
     };
     const editItem = () => {
-      if (Object.keys(taxPayRef.value.paymentData).length !== 0) {
         modalEdit.value = true;
-        changeIncomeExtraPaymentDayParam.value = { ...incomeExtrasParams, ...taxPayRef.value.paymentData };
-      }
-    };
-    const addItem = () => {
-      if (JSON.stringify(formTaxRef.value.dataAction.input) != JSON.stringify(dataActionUtils.input)) {
-        popupAddStatus.value = true;
-      }
+        console.log(`output->`,taxPayRef.value.paymentData)
+        changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
     };
     const resetForm = () => {
       resetFormNum.value++;
@@ -486,11 +474,6 @@ export default defineComponent({
     };
     const onAddIncomeProcess = (emit: any) => {
       dataAddIncomeProcess.value = emit;
-    };
-    const onPopupComfirm = (emit: Boolean) => {
-      if (emit) {
-        resetForm();
-      }
     };
     //compute data function
     const checkLen = (text: String) => {
@@ -614,7 +597,6 @@ export default defineComponent({
       editTax,
       editTaxParam,
       changeFommDone,
-      addItem,
       formTaxRef,
       resetFormNum,
       onFormDone,
@@ -634,9 +616,10 @@ export default defineComponent({
       onAddIncomeProcess,
       formatMonth,
       popupAddStatus,
-      onPopupComfirm,
+      resetForm,
       isRunOnce,
       month,
+      openTab,
     };
   },
 });
