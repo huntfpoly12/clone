@@ -3,7 +3,7 @@
         <a-form-item :label="title" v-if="!customrow">
             <a-row>
                 <a-col :span="12">
-                    <div v-if="disabledImg == false">
+                    <div v-if="disabledImg == false" style="display: flex;">
                         <div style="display: flex;">
                             <input class="custom-file-input" type="file" @change="onFileChange" />
                             <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
@@ -33,7 +33,7 @@
         <a-row v-else>
             <p><b>{{ title }}</b></p>
             <a-col :span="12">
-                <div v-if="disabledImg == false">
+                <div v-if="disabledImg == false" style="display: flex;">
                     <div style="display: flex;">
                         <input class="custom-file-input" type="file" @change="onFileChange" />
                         <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
