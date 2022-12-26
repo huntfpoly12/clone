@@ -129,7 +129,7 @@
                                 <div class="form-item">
                                     <label class="red">생년월일 :</label>
                                     <date-time-box width="200px" v-model:valueDate="contractCreacted.birthday"
-                                        dateFormat="YYYY-MM-DD" :required="true" />
+                                        dateFormat="YYYY-MM-DD" :required="true" :birthDay="true"/>
                                 </div>
                                 <div class="form-item">
                                     <label class="red">휴대폰번호:</label>
@@ -152,7 +152,7 @@
                                     :layoutCustom="'horizontal'" />
                             </div>
                             <div class="group-title">
-                                <p class="red">⁙ 운영사업</p>
+                                <p class="red" id="title-table-step3">⁙ 운영사업</p>
                             </div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
@@ -163,14 +163,12 @@
                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
                                     template="button-template" mode="cell">
                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                    <DxTexts addRow="추가" />
                                 </DxEditing>
                                 <DxToolbar>
                                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                                    <DxItem name="addRowButton" />
                                 </DxToolbar>
                                 <template #button-template>
-                                    <DxButton icon="plus" @click="addRow" />
+                                    <DxButton icon="plus" @click="addRow" text="추가" />
                                 </template>
                                 <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                     cell-template="indexCell" />
@@ -195,7 +193,7 @@
                                     <a-form-item label="사업명 (중복불가)">
                                         <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="서비스 시작년월">
+                                    <a-form-item label="서비스 시작년월"> 
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
                                             width="200px" />
                                     </a-form-item>
@@ -413,7 +411,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            // step.value = val - 1;
+            step.value = val - 1;
             if (val == 1) {
                 step.value = 0
             }
@@ -660,9 +658,12 @@ export default {
         const onSelectionClick = (value: any) => {
             dataActiveRow.value = value.data
         }
-        const addRow = () => {
+        const addRow = () => { 
             gridRefName.value.instance.addRow()
             gridRefName.value.instance.deselectAll()
+            setTimeout(() => {
+                (document.getElementById("title-table-step3") as HTMLInputElement).click()
+            }, 100);
         };
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
@@ -684,8 +685,8 @@ export default {
             }
         );
         watch(() => valueRadioWithdrawDay.value, (newVal) => {
-                contractCreacted.withdrawDay = newVal;
-            }
+            contractCreacted.withdrawDay = newVal;
+        }
         );
         watch(
             [() => contractCreacted.terms, () => contractCreacted.personalInfo, () => contractCreacted.accountingService, () => contractCreacted.withholdingService], (value) => {
@@ -718,4 +719,12 @@ export default {
     },
 };
 </script>
+
+
+
+
+
+
+
+
 <style lang="scss" scoped src="./style.scss"/>
