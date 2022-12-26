@@ -1,68 +1,48 @@
-<template>
-    <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
+<template> 
+    <a-row class="container_upload custom-flex clr" :gutter="[24]">
         <a-form-item :label="title" v-if="!customrow">
-            <a-row>
-                <a-col :span="12">
-                    <div v-if="disabledImg == false">
-                        <div style="display: flex;">
-                            <input class="custom-file-input" type="file" @change="onFileChange" />
-                            <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                        </div>
-
-                        <p v-if="messageUpload">{{ messageUpload }}</p>
-
-                    </div>
-                    <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
-                        <div style="display: flex;">
-                            <input class="custom-file-input" type="file" disabled />
-                            <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                        </div>
-                    </div>
-                </a-col>
-                <a-col :span="12">
-                    <a-space :size="10" style="margin-top: 8px">
-                        <div class="warring-modal">
-                            <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
-                            <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
-                            <p>파일용량 : 최대 5MB</p>
-                        </div>
-                    </a-space>
-                </a-col>
-            </a-row>
+            <div v-if="disabledImg == false">
+                <div class="d-flex">
+                    <input class="custom-file-input" type="file" @change="onFileChange" width="100px" />
+                    <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                </div>
+                <p v-if="messageUpload">{{ messageUpload }}</p>
+            </div>
+            <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
+                <div class="d-flex">
+                    <input class="custom-file-input" type="file" disabled width="100px" />
+                    <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                </div>
+            </div>
         </a-form-item>
-        <a-row v-else>
-            <p><b>{{ title }}</b></p>
-            <a-col :span="12">
-                <div v-if="disabledImg == false">
-                    <div style="display: flex;">
-                        <input class="custom-file-input" type="file" @change="onFileChange" />
-                        <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                    </div>
-
-                    <p v-if="messageUpload">{{ messageUpload }}</p>
-
+        <a-form-item :label="title" v-if="customrow">
+            <div v-if="disabledImg == false">
+                <div class="d-flex">
+                    <input class="custom-file-input" type="file" @change="onFileChange" />
+                    <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
-                <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
-                    <div style="display: flex;">
-                        <input class="custom-file-input" type="file" disabled />
-                        <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                    </div>
+                <p v-if="messageUpload">{{ messageUpload }}</p>
+            </div>
+            <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
+                <div class="d-flex">
+                    <input class="custom-file-input" type="file" disabled />
+                    <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
-            </a-col>
-            <a-col :span="12">
-                <a-space :size="8" style="margin-top: 8px">
-                    <div class="warring-modal">
-                        <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
-                        <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
-                        <p>파일용량 : 최대 5MB</p>
-                    </div>
-                </a-space>
-            </a-col>
-        </a-row>
-        <a-modal :visible="previewVisible" :title="title" :footer="null" @cancel="handleCancel" :mask-closable="false">
-            <img style="width: 100%" :src="imageUrl" />
-        </a-modal>
+            </div>
+        </a-form-item>
+
+        <a-space :size="10" style="margin-top: 8px">
+            <div class="warring-modal">
+                <span>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</span><br>
+                <span>파일형식 : JPG(JPEG), TIF, GIF, PNG</span><br>
+                <span>파일용량 : 최대 5MB</span>
+            </div>
+        </a-space>
+
     </a-row>
+    <a-modal :visible="previewVisible" :title="title" :footer="null" @cancel="handleCancel" :mask-closable="false">
+        <img style="width: 100%" :src="imageUrl" />
+    </a-modal>
 </template>
 
 <script src="" lang="ts">

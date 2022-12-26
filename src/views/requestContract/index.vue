@@ -129,7 +129,7 @@
                                 <div class="form-item">
                                     <label class="red">생년월일 :</label>
                                     <date-time-box width="200px" v-model:valueDate="contractCreacted.birthday"
-                                        dateFormat="YYYY-MM-DD" :required="true" :birthDay="true"/>
+                                        dateFormat="YYYY-MM-DD" :required="true" :birthDay="true" />
                                 </div>
                                 <div class="form-item">
                                     <label class="red">휴대폰번호:</label>
@@ -157,11 +157,11 @@
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                :column-auto-width="true" :repaint-changes-only="true" @content-ready="contentReady"
-                                ref="gridRefName" @selection-changed="onSelectionChanged"
-                                :onRowClick="onSelectionClick">
+                                :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
+                                @selection-changed="onSelectionChanged" :onRowClick="onSelectionClick"
+                                :focused-row-enabled="true" key-expr="rowIndex">
                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
-                                    template="button-template" mode="cell">
+                                    template="button-template" mode="cell" new-row-position="pageBottom">
                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                                 </DxEditing>
                                 <DxToolbar>
@@ -193,7 +193,7 @@
                                     <a-form-item label="사업명 (중복불가)">
                                         <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="서비스 시작년월"> 
+                                    <a-form-item label="서비스 시작년월">
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
                                             width="200px" />
                                     </a-form-item>
@@ -205,9 +205,11 @@
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                     </a-form-item>
-                                    <imgUpload :title="titleModal2" style="margin-top: 10px"
-                                        v-model:imageId="dataActiveRow.registrationCardFileStorageId"
-                                        @update-img="(res) => dataActiveRow.dataImg = res" />
+                                    <div class="pl-12">
+                                        <imgUpload :title="titleModal2" style="margin-top: 10px"
+                                            v-model:imageId="dataActiveRow.registrationCardFileStorageId"
+                                            @update-img="(res) => dataActiveRow.dataImg = res" />
+                                    </div>
                                 </a-col>
                                 <a-col :span="12">
                                     <div class="preview-img">
@@ -332,6 +334,8 @@ import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil } from "./utils";
 import dayjs from 'dayjs';
+import config from 'devextreme/core/config';
+
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
@@ -658,12 +662,9 @@ export default {
         const onSelectionClick = (value: any) => {
             dataActiveRow.value = value.data
         }
-        const addRow = () => { 
+        const addRow = () => {
             gridRefName.value.instance.addRow()
-            gridRefName.value.instance.deselectAll()
-            setTimeout(() => {
-                (document.getElementById("title-table-step3") as HTMLInputElement).click()
-            }, 100);
+            gridRefName.value.instance.deselectAll()  
         };
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
@@ -718,11 +719,7 @@ export default {
         };
     },
 };
-</script>
-
-
-
-
+</script> 
 
 
 
