@@ -56,7 +56,12 @@ const listTab: ListTab[] = [
         ID: 10,
         TabName: 'Action Header',
         layoutName: 'ActionHeader'
-    },
+  },
+  {
+      ID: 10,
+      TabName: 'Grid Prototype',
+      layoutName: 'GridPrototype'
+  },
 ];
 
 export default {
