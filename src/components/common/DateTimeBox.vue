@@ -1,10 +1,11 @@
 <template>
   <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
-    @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }">
+    @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
+    :max-date="birthDay ? new Date() : ''">
   </Datepicker>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, onMounted } from "vue";
 import DxDateBox from "devextreme-vue/date-box";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -27,6 +28,10 @@ export default defineComponent({
     },
     className: {
       type: String,
+    },
+    birthDay: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -34,7 +39,7 @@ export default defineComponent({
     Datepicker,
   },
   setup(props, { emit }) {
-    const date = ref(props.valueDate ? filters.formatDate(props.valueDate.toString()) : filters.formatDate(props.valueDate))
+    const date: any = ref(props.valueDate ? filters.formatDate(props.valueDate.toString()) : filters.formatDate(props.valueDate))
     watch(
       () => props.valueDate,
       (newValue) => {
@@ -44,6 +49,7 @@ export default defineComponent({
     const updateValue = () => {
       emit("update:valueDate", parseInt(dayjs(date.value).format('YYYYMMDD')));
     };
+
     return {
       updateValue,
       date,
