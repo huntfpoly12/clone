@@ -334,8 +334,6 @@ import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil } from "./utils";
 import dayjs from 'dayjs';
-import config from 'devextreme/core/config';
-
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
@@ -664,7 +662,7 @@ export default {
         }
         const addRow = () => {
             gridRefName.value.instance.addRow()
-            gridRefName.value.instance.deselectAll()  
+            gridRefName.value.instance.deselectAll()
         };
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
@@ -719,9 +717,5 @@ export default {
         };
     },
 };
-</script> 
-
-
-
-
+</script>  
 <style lang="scss" scoped src="./style.scss"/>
