@@ -41,11 +41,13 @@
 		font-weight: bold;
 		font-size: 18px;
 		margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
 
 		span {
 			display: flex;
 			align-items: center;
-			font-size: 13px;
 			color: white;
 			float: right;
 			padding-right: 20px;
