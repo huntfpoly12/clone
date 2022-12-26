@@ -59,6 +59,7 @@
                                 <HistoryOutlined @click="modalHistory" class="fz-18" />
                             </DxButton>
                         </template>
+                        <DxPaging :page-size="15"/>
                         <DxColumn caption="성명" cell-template="company-name" width="300px" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
@@ -83,7 +84,7 @@
                         </template>
                         <DxColumn cell-template="pupop" width="50" />
                         <template #pupop="{ data }" class="custom-action">
-                            <div class="custom-action text-center">
+                            <div v-if="data.data.deletable" class="custom-action text-center">
                                 <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                             </div>
                         </template>
@@ -92,7 +93,7 @@
             </a-col>
             <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
-                    v-if="actionChangeComponent == 1" />
+                    v-if="actionChangeComponent == 1" :key="resetAddComponent" />
                 <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
                     @editRowKey="activeRowKey" v-if="actionChangeComponent == 2" />
             </a-col>
@@ -206,7 +207,9 @@ export default defineComponent({
             }
         })
         // ======================= FUNCTION ================================
+        const resetAddComponent = ref<number>(1);
         const openAddNewModal = () => {
+            resetAddComponent.value++;
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
         }
@@ -272,6 +275,7 @@ export default defineComponent({
             openEditModal,
             statusComfirm,
             activeRowKey,
+            resetAddComponent,
         }
     },
 })
