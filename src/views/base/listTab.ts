@@ -7,10 +7,11 @@ interface ListTab {
 }
 
 const listTab: ListTab[] = [
+
     {
         ID: 1,
-        TabName: 'Select Box',
-        layoutName: 'SelectBox'
+        TabName: 'Grid Prototype',
+        layoutName: 'GridPrototype'
     },
     {
         ID: 2,
@@ -46,7 +47,7 @@ const listTab: ListTab[] = [
         ID: 8,
         TabName: 'Button Basic',
         layoutName: 'ButtonBasic'
-    }, 
+    },
     {
         ID: 9,
         TabName: 'Tag',
@@ -56,12 +57,12 @@ const listTab: ListTab[] = [
         ID: 10,
         TabName: 'Action Header',
         layoutName: 'ActionHeader'
-  },
-  {
-      ID: 10,
-      TabName: 'Grid Prototype',
-      layoutName: 'GridPrototype'
-  },
+    },
+    {
+        ID: 11,
+        TabName: 'Select Box',
+        layoutName: 'SelectBox'
+    },
 ];
 
 export default {

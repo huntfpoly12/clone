@@ -143,9 +143,8 @@
             :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
           >
             <div class="main-content">
-             {{cachedTab}} {{ menuTab }}
               <template v-if="activeTab">      
-                <keep-alive exclude="PA120">
+                <keep-alive :exclude="cachedTab">
              
                   <component :is="currentComponent" />
                 </keep-alive>
