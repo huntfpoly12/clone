@@ -25,7 +25,7 @@
             <div class="input-text">
                 <date-time-box width="150px" className="leavedAt" v-model:valueDate="dataCreated.leavedAt" />
                 <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                <span>
+                <span style="font-size: 10px; color: #888888">
                     마지막 근무한 날
                 </span>
             </div>
@@ -74,7 +74,7 @@
                 <mail-text-box width="200px" v-model:valueInput="dataCreated.email" placeholder="abc@example.com">
                 </mail-text-box>
                 <img src="@/assets/images/iconInfo.png" style="width: 16px;">
-                <span>
+                <span style="font-size: 10px; color: #888888">
                     원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                 </span>
             </div>
@@ -158,8 +158,8 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(res => {
-            emit("closePopup", true)
-            notification('success', '업데이트 완료!')
+            emit("closePopup", dataCreated.employeeId)
+            notification('success', '업데이트 완료!');
         })
         //============ WATCH =================================
         watch(() => dataCreated.foreigner, (value: any) => {
