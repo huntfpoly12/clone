@@ -57,7 +57,7 @@
                             <template #resident-id="{ data }" class="custom-action">
                                 <a-tooltip placement="top"
                                     v-if="data.data.residentId?.length == 14
-                                    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
                                     key="black">
                                     {{ data.data.residentId }}
                                 </a-tooltip>
@@ -155,7 +155,7 @@ import queries from "@/graphql/queries/PA/PA6/PA610/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { onExportingCommon } from "@/helpers/commonFunction"
-import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
+import { origindata, ArrForeigner, valueDefaultAction, dataActionUtil } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
@@ -165,7 +165,7 @@ export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, EditOutlined, HistoryOutlined, DxToolbar, DxEditing, DxGrouping, DxItem, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, ArrForeigner, DxButton, HistoryPopup
     },
-    setup() { 
+    setup() {
         const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
@@ -191,21 +191,9 @@ export default defineComponent({
             employeeId: null
         })
         const modalChangeRow = ref(false)
-        let dataAction = reactive({
-            companyId: companyId,
+        let dataAction: any = reactive({
             imputedYear: globalYear.value,
-            employeeId: null,
-            incomeTypeCode: '940100',
-            input: {
-                name: '',
-                foreigner: false,
-                nationality: '대한민국',
-                nationalityCode: 'KR',
-                stayQualification: 'C-4',
-                residentId: '',
-                incomeTypeName: '저술가',
-                email: '',
-            }
+            ...dataActionUtil
         })
         let disabledInput = ref(false)
         let disabledInput2 = ref(true)
@@ -251,7 +239,7 @@ export default defineComponent({
             onDone: updateDone,
         } = useMutation(mutations.updateEmployeeBusiness);
         updateDone(() => {
-            changeValueEit.value = false 
+            changeValueEit.value = false
             refetchData()
             notification('success', `업데이트 완료!`)
         })
@@ -382,16 +370,7 @@ export default defineComponent({
         }
         const addRow = () => {
             disabledInput.value = false
-            dataAction.employeeId = valueDefaultAction.employeeId
-            dataAction.input.name = valueDefaultAction.name
-            dataAction.input.foreigner = valueDefaultAction.foreigner
-            dataAction.input.nationality = valueDefaultAction.nationality
-            dataAction.input.nationalityCode = valueDefaultAction.nationalityCode
-            dataAction.input.stayQualification = valueDefaultAction.stayQualification
-            dataAction.input.residentId = valueDefaultAction.residentId
-            dataAction.incomeTypeCode = valueDefaultAction.incomeTypeCode
-            dataAction.input.incomeTypeName = valueDefaultAction.incomeTypeName
-            dataAction.input.email = valueDefaultAction.email
+            dataAction = valueDefaultAction
         }
         const actionDelete = (employeeId: any, incomeTypeCode: any) => {
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
