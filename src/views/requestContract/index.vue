@@ -153,6 +153,7 @@
                             </div>
                             <div class="group-title">
                                 <p class="red" id="title-table-step3">⁙ 운영사업</p>
+                                {{ valueFacilityBusinesses }}
                             </div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
@@ -412,8 +413,7 @@ export default {
             else if (step.value === 3) return "process";
             else return "finish";
         });
-        const changeStep = (val: number) => {
-            step.value = val - 1;
+        const changeStep = (val: number) => { 
             if (val == 1) {
                 step.value = 0
             }
@@ -663,6 +663,14 @@ export default {
         const addRow = () => {
             gridRefName.value.instance.addRow()
             gridRefName.value.instance.deselectAll()
+
+            gridRefName.value.instance.closeEditCell()
+            setTimeout(() => {
+                if (gridRefName.value.instance.totalCount() == 1) {
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
+                }
+            }, 100);
         };
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
@@ -718,4 +726,24 @@ export default {
     },
 };
 </script>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style lang="scss" scoped src="./style.scss"/>
