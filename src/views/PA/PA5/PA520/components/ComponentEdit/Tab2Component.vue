@@ -14,7 +14,7 @@
                         <div class="pr-5 pl-10">
                             <img src="@/assets/images/iconInfo.png" style="width: 16px;">
                         </div>
-                        <span class="style-note">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
+                        <span class="style-note" style="font-size: 10px; color: #888888">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
                         </span>
                     </div>
                 </a-form-item>
@@ -28,32 +28,28 @@
                 <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
-                        layoutCustom="horizontal" />
+                        layoutCustom="horizontal" :disabled="originDataUpdate.input.insuranceSupport"/>
                 </a-form-item>
                 <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.employeementInsuranceSupportPercent"
-                        layoutCustom="horizontal" />
+                        layoutCustom="horizontal"  :disabled="originDataUpdate.input.insuranceSupport"/>
                 </a-form-item>
             </a-col>
         </a-row>
         <div class="header-text-3">급여 (기본값)
             <span>
                 <img src="@/assets/images/iconInfoWrite.png" style="width: 16px;">
-                <p>급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
+                <p style="font-size: 10px; font-weight: 400;">급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
             </span>
         </div>
         <a-row :gutter="16">
-            <a-col :span="24"><b class="fz-20">차인지급액</b> <b>{{ $filters.formatCurrency(totalPayDifferen) }} </b> 원
+            <a-col :span="24"><b>차인지급액</b> <b>{{ $filters.formatCurrency(totalPayDifferen) }} </b> 원
             </a-col>
             <a-col :span="12">
                 <div class="header-text-0">월급여
-                    <span class="fz-12">
-                        {{ originDataUpdate.input.monthlyPaycheck == true ?
-                                $filters.formatCurrency(originDataUpdate.input.monthlyWage *
-                                    originDataUpdate.input.workingDays) :
-                                $filters.formatCurrency(originDataUpdate.input.monthlyWage)
-                        }} 원
+                    <span>
+                        {{$filters.formatCurrency(originDataUpdate.input.monthlyWage)}} 원
                     </span>
                 </div>
                 <div>
@@ -62,47 +58,46 @@
                             <switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
                                 v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
                             <number-box-money :min="0" width="200px" class="mr-5"
+                                v-if="!originDataUpdate.input.monthlyPaycheck"
                                 v-model:valueInput="originDataUpdate.input.monthlyWage"
-                                :placeholder="originDataUpdate.input.monthlyPaycheck == false ? '일급여' : '월급여'" />
+                                :placeholder="'일급여'" @changeInput="onChangeMonthlyWage"/>
+                            <number-box-money :min="0" width="200px" class="mr-5"
+                                v-else
+                                v-model:valueInput="originDataUpdate.input.dailyWage"
+                                :placeholder="'월급여'" @changeInput="onChangeDailyWage"/>
                         </div>
                     </a-form-item>
-                    <div class="pl-10">
+                    <div class="mb-5">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;">
-                        <span class="pl-5 fz-11">
-                            {{ messageMonthlySalary }}
+                        <span class="pl-5 fz-11" style="font-size: 10px; color: #888888">
+                            {{ originDataUpdate.input.monthlyPaycheck?messageMonthlySalary:messageDaylySalary }}
                         </span>
                     </div>
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
                             <number-box-money width="200px" class="mr-5" :min="0"
-                                v-model:valueInput="originDataUpdate.input.workingDays" />
+                                v-model:valueInput="originDataUpdate.input.workingDays" @changeInput="onChangeWorkingDays" />
                             <span class="ml-10">일</span>
                         </div>
                     </a-form-item>
                     <div>
-                        일급여 <b>
+                        일급여: <b>
                             {{
-                                    $filters.formatCurrency(originDataUpdate.input.monthlyPaycheck == false ?
-                                        originDataUpdate.input.monthlyWage :
-                                        Math.floor(originDataUpdate.input.workingDays > 0 ? originDataUpdate.input.monthlyWage /
-                                            originDataUpdate.input.workingDays : 0))
+                                    $filters.formatCurrency(originDataUpdate.input.dailyWage)
                             }}
                         </b> 원
                     </div>
                     <div>
-                        월급여 <b>
+                        월급여: <b>
                             {{
-                                    $filters.formatCurrency(originDataUpdate.input.monthlyPaycheck == false ?
-                                        originDataUpdate.input.monthlyWage :
-                                        originDataUpdate.input.monthlyWage * (originDataUpdate.input.workingDays > 0 ?
-                                            originDataUpdate.input.workingDays : 0))
+                                    $filters.formatCurrency(originDataUpdate.input.monthlyWage)
                             }}
                         </b> 원
                     </div>
                 </div>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-0">공제 항목 <span class="fz-12">{{ totalDeduction }} 원</span></div>
+                <div class="header-text-0">공제 항목 <span>{{ totalDeduction }} 원</span></div>
                 <a-spin :spinning="loading" size="large">
                     <div class="deduction-main">
                         <div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
@@ -152,7 +147,8 @@ export default defineComponent({
     setup(props, { emit }) {
         let arrEdit: any = []
         let dataReturn = ref()
-        const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수')
+        const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수');
+        const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
         const globalYear: any = computed(() => store.state.settings.globalYear);
         const totalDeduction = ref('0')
@@ -175,6 +171,10 @@ export default defineComponent({
             input: {
                 ...originDataInputUpdate
             },
+        })
+        const daylyPay = computed(()=> {
+            return Math.floor(originDataUpdate.value.input.workingDays > 0 ? originDataUpdate.value.input.monthlyWage /
+                originDataUpdate.value.input.workingDays : 0)
         })
         // ================== GRAPQL ====================================
         const {
@@ -239,7 +239,7 @@ export default defineComponent({
         })
         onDone(res => {
             emit('closePopup', false)
-            notification('success', '업데이트 완료!')
+            notification('success', '업그레이드가 완료되었습니다!')
         })
         // ================== WATCH ====================================
         watch(() => props.idRowEdit, (res) => {
@@ -345,6 +345,28 @@ export default defineComponent({
             })
             return arrReturn
         }
+// LOGIC FORM
+        const onChangeDailyWage = () => {
+            let monthlyWage = Math.floor(originDataUpdate.value.input.dailyWage * (originDataUpdate.value.input.workingDays > 0 ?
+            originDataUpdate.value.input.workingDays : 0));
+            originDataUpdate.value.input.monthlyWage=monthlyWage;
+        }
+        const onChangeMonthlyWage = () => {
+            let dailyWage = Math.floor(originDataUpdate.value.input.workingDays > 0 ? originDataUpdate.value.input.monthlyWage /
+            originDataUpdate.value.input.workingDays : 0)
+            originDataUpdate.value.input.dailyWage=dailyWage;
+        }
+        const onChangeWorkingDays = () => {
+            if(originDataUpdate.value.input.monthlyPaycheck){
+                let monthlyWage = Math.floor(originDataUpdate.value.input.dailyWage * (originDataUpdate.value.input.workingDays > 0 ?
+                originDataUpdate.value.input.workingDays : 0));
+                originDataUpdate.value.input.monthlyWage=monthlyWage;
+            } else {
+                let dailyWage = Math.floor(originDataUpdate.value.input.workingDays > 0 ? originDataUpdate.value.input.monthlyWage /
+                originDataUpdate.value.input.workingDays : 0)
+                originDataUpdate.value.input.dailyWage=dailyWage;
+            }
+        }
         return {
             originDataUpdate,
             messageMonthlySalary,
@@ -355,7 +377,12 @@ export default defineComponent({
             loading,
             totalAmountDifferencePayment,
             callFuncCalculate,
-            updateDeduction
+            updateDeduction,
+            daylyPay,
+            onChangeDailyWage,
+            onChangeMonthlyWage,
+            onChangeWorkingDays,
+            messageDaylySalary
         };
     },
 });
