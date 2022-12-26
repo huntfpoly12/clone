@@ -663,7 +663,6 @@ export default {
         const addRow = () => {
             gridRefName.value.instance.addRow()
             gridRefName.value.instance.deselectAll()
-
             gridRefName.value.instance.closeEditCell()
             setTimeout(() => {
                 if (gridRefName.value.instance.totalCount() == 1) {
@@ -726,24 +725,4 @@ export default {
     },
 };
 </script>  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style lang="scss" scoped src="./style.scss"/>
