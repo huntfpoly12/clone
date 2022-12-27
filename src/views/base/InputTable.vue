@@ -32,11 +32,10 @@ export default defineComponent({
   setup(props,{emit}) {
     const isShowInput = ref(false);
     const inputValue = ref(props.valueInput);
-    const inputName = ref(props.name);
-    const showInput = (e: any) => {
+    const showInput = (nameInput: any) => {
       isShowInput.value = true;
       setTimeout(() => {
-        document.getElementsByName(e)[0].focus();
+        document.getElementsByName(nameInput)[0].focus();
       }, 50);
     }
     const updateValue = (value: any) => {
@@ -51,12 +50,6 @@ export default defineComponent({
       }
     );
 
-    watch(
-      () => props.name,
-      (newValue) => {
-        inputName.value = newValue;
-      }
-    );
 
     return {
       isShowInput,
