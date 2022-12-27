@@ -34,7 +34,6 @@ export default defineComponent({
         const idRowEdit = ref(1)
         const setModalVisible = (param: any) => {
             emit('closePopup', false)
-            console.log(`output->emit`,param)
             idRowEdit.value = param;
             isEnabledTab2.value=false;
         }

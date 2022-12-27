@@ -42,7 +42,7 @@
               caption="주민등록번호"
               data-field="residentId"
             />
-            <DxColumn alignment="left" caption="나이" data-field="Age" />
+            <DxColumn alignment="left" caption="나이" cell-template="ageChange" />
             <DxColumn
               alignment="left"
               caption="기본공제"
@@ -91,12 +91,9 @@
               data-field="consignmentRelationship"
               cell-template="consignmentRelationshipChange"
             />
-            <!-- <DxColumn
-              alignment="left"
-              caption="세대주 여부 "
-              data-field="householder"
-            /> -->
-            <DxColumn :width="80" cell-template="pupop" />
+            <DxColumnFixing :enabled="true"/>
+            <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center"/>
+
             <template #pupop="{ data }" class="custom-action">
               <div class="custom-action">
                 <a-space :size="10">
@@ -110,11 +107,13 @@
             <template #foreignerChange="{ data: cellData }">
               <employee-info
                 :foreigner="cellData.value"
-                :status="hasStatus(cellData.value)"
               ></employee-info>
             </template>
             <template #womenChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
+            </template>
+            <template #ageChange="{data}">
+                {{convertAge(data.data.residentId)}}
             </template>
             <template #basicDeductionChange="{ data: cellData }">
               <div v-if="cellData.value == 0" key="basicDeductionChange">
@@ -292,13 +291,13 @@ import {
   reactive,
   watch,
   computed,
-  onMounted,
 } from 'vue';
 import {
   DxDataGrid,
   DxColumn,
   DxToolbar,
   DxItem,
+  DxColumnFixing
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
@@ -308,7 +307,7 @@ import { EditOutlined } from '@ant-design/icons-vue';
 
 import { useQuery } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
-import { companyId } from '@/helpers/commonFunction';
+import { companyId, convertAge } from '@/helpers/commonFunction';
 import BtnCheck from '@/views/PA/PA1/PA120/components/btnCheck/BtnCheck.vue';
 export default defineComponent({
   components: {
@@ -321,6 +320,7 @@ export default defineComponent({
     DxItem,
     DxButton,
     BtnCheck,
+    DxColumnFixing,
   },
   props: {
     employeeId: {
@@ -473,6 +473,7 @@ export default defineComponent({
       idRowIndex,
       idRowEdit,
       loading,
+      convertAge,
     };
   },
 });

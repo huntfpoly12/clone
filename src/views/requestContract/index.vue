@@ -152,8 +152,7 @@
                                     :layoutCustom="'horizontal'" />
                             </div>
                             <div class="group-title">
-                                <p class="red" id="title-table-step3">⁙ 운영사업</p>
-                                {{ valueFacilityBusinesses }}
+                                <p class="red" id="title-table-step3">⁙ 운영사업</p> 
                             </div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"

@@ -6,11 +6,11 @@
             <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능" />
           </a-form-item>
       
-          <a-form-item label="영업자코드" label-align="right">
+          <a-form-item label="대표자 여부 " label-align="right">
             <div class="input-text">
               <switch-basic v-model:valueSwitch="formStateTab1.president" textCheck="O" textUnCheck="X"
                 style="width: 80px"></switch-basic>
-              <span>
+              <span style="color: #888888; font-size:12px">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 대표자인 경우 고용보험 제외됩니다.
               </span>
             </div>
@@ -28,7 +28,7 @@
             <div class="input-text">
               <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt" dateFormat="YYYY-MM-DD">
               </date-time-box>
-              <span>
+              <span style="color: #888888; font-size:12px">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 마지막 근무한 날
               </span>
             </div>
@@ -38,13 +38,12 @@
             <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner"
               layoutCustom="horizontal"></radio-group>
           </a-form-item>
-  
-          <a-form-item label="외국인 국적" label-align="right" class="red">
-            <country-code-select-box v-model:valueCountry="formStateTab1.nationalityCode" :disabled="isForeigner" />
+          <a-form-item label="외국인 국적" label-align="right" :class="{red: foreigner==1}">
+            <country-code-select-box v-model:valueCountry="formStateTab1.nationalityCode" :disabled="foreigner == 0" />
           </a-form-item>
   
-          <a-form-item label="외국인 체류자격" label-align="right" class="red">
-            <stay-qualification-select-box v-model:valueStayQualifiction="formStateTab1.stayQualification" />
+          <a-form-item label="외국인 체류자격" label-align="right" :class="{red: foreigner==1}">
+            <stay-qualification-select-box v-model:valueStayQualifiction="formStateTab1.stayQualification" :disabled="foreigner == 0" />
           </a-form-item>
       
           <a-form-item :label="labelResidebId" label-align="right" class="red">
@@ -58,15 +57,15 @@
               </div>
             </div>
             <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="300px" :disabled="true" class="roadAddress"
-              placeholder="주소1" />
+              placeholder="도로명주소" />
 
-            <default-text-box v-model:valueInput="formStateTab1.addressExtend" width="300px" placeholder="주소2" />
+            <default-text-box v-model:valueInput="formStateTab1.addressExtend" width="300px" placeholder="상세 주소 입력" />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
           <div class="input-text">
             <mail-text-box v-model:valueInput="formStateTab1.email" width="200px" placeholder="abc@example.com">
             </mail-text-box>
-            <span>
+            <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요 서류를 메일로 전달
               가능합니다.
             </span>
@@ -77,7 +76,7 @@
             :arrSelect="arrDepartments"></custom-item-select-box>
         </a-form-item>
         <a-form-item label="직위" label-align="right">
-          <custom-item-select-box width="200px" v-model:valueInput="formStateTab1.responsibility"
+          <custom-item-select-box width="200px" v-model:valueInput="formStateTab1.responsibility" :id="'pa-120-2'"
             :arrSelect="arrResponsibility"></custom-item-select-box>
         </a-form-item>
         <a-row style="margin-top: 40px">
@@ -222,7 +221,7 @@ export default defineComponent({
 
     onDoneAdd((res) => {
        emit('setTabsStatus', false);
-      notification("success", `Create employee wage successfully! `);
+      notification("success", `업그레이드가 완료되었습니다! `);
     });
 
     onError((error) => {

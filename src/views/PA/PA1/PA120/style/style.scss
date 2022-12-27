@@ -1,6 +1,8 @@
 #pa-120 {
     margin-top: 10px;
-
+    #pa-120-gridContainer{
+        max-height: 695px;
+    }
     .total-user {
         background-color: #17375E;
         color: white;
@@ -24,7 +26,7 @@
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            min-height: 780px;
+            height: 100%;
         }
     }
     .current-user {
