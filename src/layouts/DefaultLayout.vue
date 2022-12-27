@@ -144,8 +144,9 @@
           >
             <div class="main-content">
               <template v-if="activeTab">      
-                <keep-alive :include="menuTab">
-                  <component v-bind:is="currentComponent" />
+                <keep-alive :exclude="cachedTab">
+             
+                  <component :is="currentComponent" />
                 </keep-alive>
               </template>
               <template v-else>
@@ -258,6 +259,8 @@ export default defineComponent({
   created() {
     menuData.forEach((item) => {
       if (this.$route.fullPath.includes(item.id)) {
+        // clear vuex value cachedTab 
+        this.$store.state.common.cachedTab.push(item.id.toUpperCase().replaceAll('-', ''))
         this.activeTab = item;
         this.$store.state.common.activeTab = item
         this.menuTab.push(item);
@@ -351,31 +354,31 @@ export default defineComponent({
     },
 
     currentComponent() {
-      if (this.activeTab.id === "bf-310") return BF310;
-      if (this.activeTab.id === "bf-320") return BF320;
-      if (this.activeTab.id === "bf-330") return BF330;
-      if (this.activeTab.id === "bf-340") return BF340;
-      if (this.activeTab.id === "bf-210") return BF210;
-      if (this.activeTab.id === "bf-220") return BF220;
-      if (this.activeTab.id === "cm-110") return CM110;
-      if (this.activeTab.id === "cm-130") return CM130;
-      if (this.activeTab.id === "pa-110") return PA110;
-      if (this.activeTab.id === "pa-120") return PA120;
-      if (this.activeTab.id === "pa-220") return PA220;
-      if (this.activeTab.id === "pa-230") return PA230;
-      if (this.activeTab.id === "pa-410") return PA410;
-      if (this.activeTab.id === "pa-420") return PA420;
-      if (this.activeTab.id === "pa-430") return PA430;
-      if (this.activeTab.id === "pa-610") return PA610;
-      if (this.activeTab.id === "pa-620") return PA620;
-      if (this.activeTab.id === "pa-630") return PA630;
-      if (this.activeTab.id === "pa-530") return PA530;
-      if (this.activeTab.id === "pa-520") return PA520;
-      if (this.activeTab.id === "pa-510") return PA510;
-      if (this.activeTab.id === "pa-710") return PA710;
-      if (this.activeTab.id === "pa-720") return PA720;
-      if (this.activeTab.id === "pa-730") return PA730;
-      if (this.activeTab.id === "example" || this.activeTab.id === "") return Example;
+      if (this.activeTab.id === "bf-310") return 'BF310';
+      if (this.activeTab.id === "bf-320") return 'BF320';
+      if (this.activeTab.id === "bf-330") return 'BF330';
+      if (this.activeTab.id === "bf-340") return 'BF340';
+      if (this.activeTab.id === "bf-210") return 'BF210';
+      if (this.activeTab.id === "bf-220") return 'BF220';
+      if (this.activeTab.id === "cm-110") return 'CM110';
+      if (this.activeTab.id === "cm-130") return 'CM130';
+      if (this.activeTab.id === "pa-110") return 'PA110';
+      if (this.activeTab.id === "pa-120") return 'PA120';
+      if (this.activeTab.id === "pa-220") return 'PA220';
+      if (this.activeTab.id === "pa-230") return 'PA230';
+      if (this.activeTab.id === "pa-410") return 'PA410';
+      if (this.activeTab.id === "pa-420") return 'PA420';
+      if (this.activeTab.id === "pa-430") return 'PA430';
+      if (this.activeTab.id === "pa-610") return 'PA610';
+      if (this.activeTab.id === "pa-620") return 'PA620';
+      if (this.activeTab.id === "pa-630") return 'PA630';
+      if (this.activeTab.id === "pa-530") return 'PA530';
+      if (this.activeTab.id === "pa-520") return 'PA520';
+      if (this.activeTab.id === "pa-510") return 'PA510';
+      if (this.activeTab.id === "pa-710") return 'PA710';
+      if (this.activeTab.id === "pa-720") return 'PA720';
+      if (this.activeTab.id === "pa-730") return 'PA730';
+      if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
   },
@@ -393,6 +396,7 @@ export default defineComponent({
     const collapsed = ref(false);
     const selectedItems = ref([]);
     const activeTab = ref();
+    const cachedTab = ref([]);
 
     /**
     * Check scroll tab if overflow
@@ -420,7 +424,9 @@ export default defineComponent({
        }
     }
 
-
+    /**
+     * init menuTab from vuex
+     */
     let menuTab = ref(store.state.common.menuTab);
     const filteredOptions = computed(() =>
       menuDatas.filter((o) => !selectedItems.value.includes(o))
@@ -455,6 +461,7 @@ export default defineComponent({
       itemNew = menuDatas.find(item => item.id === itemId);
       activeTab.value = menuDatas.find(item => item.id === itemId);
       store.state.common.activeTab = itemNew
+      store.state.common.cachedTab.push(itemNew.id.toUpperCase().replaceAll('-', ''))
       if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
         menuTab.value.push(itemNew);
         selectedItems.value = [];
@@ -462,7 +469,14 @@ export default defineComponent({
       }
 
     }
-    const removeItemTab  = (item)=>{
+    /**
+     * event when click icon close one tab
+     */
+    const removeItemTab = (item) => {
+      // clear vuex value cachedTab 
+      let tabName = menuTab.value[item].id.toUpperCase().replaceAll('-', '')
+      store.state.common.cachedTab = store.state.common.cachedTab.filter((item) => item != tabName )
+
       menuTab.value.splice(item, 1);
       activeTab.value = menuTab.value.slice(-1)[0];
       selectedItems.value = [];
@@ -481,13 +495,17 @@ export default defineComponent({
       }
       store.state.common.activeTab =  activeTab.value
     }
+    watch(()=>store.state.common.cachedTab, (newValue)=>{     
+        cachedTab.value = newValue;
+    }, { deep: true })
     const focusInput  = ()=>{
       state.value = false;
     }
 
     watch(()=>store.state.common.activeTab, (newValue)=>{     
         activeTab.value = newValue;
-    },{deep:true})
+    }, { deep: true })
+    
     const onOpenChange = (opKeys) => {
       const latestOpenKey = opKeys.find(
         (key) => openKeys.value.indexOf(key) === -1
@@ -554,7 +572,7 @@ export default defineComponent({
       scrollX,
       scroll_container,
       isArrowScroll,
-      tabLeft,tabRight
+      tabLeft,tabRight,cachedTab
     }
   },
 });
