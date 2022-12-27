@@ -8,9 +8,11 @@
             <table>
               <tr>
                 <td colspan="6" style="width: 30%">① 신고구분</td>
-                <td colspan="7" rowspan="2" style="width: 30%">
-                  []원 천 징 수 이 행 상 황 신 고 서<br />
-                  []원 천 징 수 세 액 확 급 신 청 서
+                <td colspan="7" rowspan="2" style="width: 39%">
+                  <div class="header-text">
+                    []원 천 징 수 이 행 상 황 신 고 서<br />
+                    []원 천 징 수 세 액 확 급 신 청 서
+                  </div>
                 </td>
                 <td colspan="3">②귀속연월</td>
                 <td colspan="2">년 월</td>
@@ -23,7 +25,7 @@
                 <td>소득<br />처분</td>
                 <td>환급<br />신청</td>
                 <td colspan="3">③지급연월</td>
-                <td colspan="2">년 월</td>
+                <td colspan="2" >년 월</td>
               </tr>
             </table>
             <table>
@@ -36,8 +38,8 @@
                 <td rowspan="2">&nbsp;</td>
                 <td rowspan="2">대표자(성명)</td>
                 <td rowspan="2">&nbsp;</td>
-                <td>일괄납부 여부</td>
-                <td>여, 부</td>
+                <td >일괄납부 여부</td>
+                <td style="width: 87px;">여, 부</td>
               </tr>
               <tr>
                 <td>사업자단위과세 여부</td>
@@ -48,9 +50,9 @@
                   사업자(주민)<br />
                   등록번호
                 </td>
-                <td rowspan="2">11</td>
+                <td rowspan="2" style="width: 140px;"></td>
                 <td rowspan="2">사업장소재지</td>
-                <td rowspan="2">11</td>
+                <td rowspan="2" style="width: 140px;"></td>
                 <td>전화번호</td>
                 <td>&nbsp;</td>
               </tr>
@@ -828,7 +830,16 @@
             <table cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td colspan="11">❷ 환급세액 조정 (단위:원)</td>
+                  <td colspan="11">
+                    <div class="header-detail-2">
+                       <div class="header-left-2">
+                        2. 환급세액 조정 
+                       </div>
+                       <div class="header-right-2">
+                        (단위:원)
+                       </div>
+                    </div>
+                  </td>
                 </tr>
                 <tr>
                   <td colspan="3">전월 미환급 세액의 계산</td>
@@ -902,17 +913,20 @@
               <tbody>
                 <tr>
                   <td rowspan="5">
-                    원천징수의무자는 「소득세법 시행령」 제185조제 항에 따라
-                    위의 내용을 제출<br />
-                    하며, 위 내용을 충분히 검토하였고 원천징수의무자가 알고 있는
-                    사실 그대로를<br />
-                    정확하게 적었음을 확인합니다. <br />
-                    년 월 일 <br />
-                    신고인 (서명 또는 인)
+                    <div class="footer-1">
+                      <div class="footer-content-1">
+                        <p style="text-indent: 20px;">원천징수의무자는 「소득세법 시행령」 제185조제 항에 따라 위의 내용을 제출<br>
+                        하며, 위 내용을 충분히 검토하였고 원천징수의무자가 알고 있는 사실 그대로를<br>
+                        정확하게 적었음을 확인합니다.</p>
+                      </div>
+                 
+                      <p class="date-month"> 년 월 일</p> <br />
+                      <div class="reporter-sign"><span  class="reporter">신고인</span><span class="sign">(서명 또는 인)</span></div>
+                    </div>  
                   </td>
                   <td colspan="2">
                     신고서 부표 등 작성 여부<br />
-                    ※ 해당란에 표시를 합니다 " " .
+                    ※ 해당란에 "&#9900;" 표시를 합니다  .
                   </td>
                 </tr>
                 <tr>
@@ -946,10 +960,15 @@
                 </tr>
                 <tr>
                   <td rowspan="5">
-                    세무대리인은 조세전문자격자로서 위 신고서를 성실하고
-                    공정하게 작성하였음을 확인<br />
-                    합니다. 세무대리인 (서명 또는 인 )<br />
-                    세 무 서 장 귀하
+                    <div class="footer-2">
+                      <p>세무대리인은 조세전문자격자로서 위 신고서를 성실하고
+                      공정하게 작성하였음을 확인 합니다.</p>
+                       <div class="tax-agent">
+                        <div>세무대리인귀하</div> 
+                        <div class="sign">(서명 또는 인 )</div>
+                      </div>
+                      <p class="dear">세 무 서 장</p>
+                    </div>
                   </td>
                   <td>전화번호</td>
                   <td>&nbsp;</td>
@@ -961,7 +980,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>예입처</td>
+                  <td style="width: 160px;">예입처</td>
                   <td>&nbsp;</td>
                 </tr>
                 <tr>

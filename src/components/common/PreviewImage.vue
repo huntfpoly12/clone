@@ -25,8 +25,9 @@ export default defineComponent({
         DeleteOutlined
     },
     setup(props, { emit }) {
-        const removeImg = () => {
+        const removeImg = () => { 
             emit("deleteImg", props.name)
+            emit("deleteImgRqContract", props.dataImage)
         }
         return {
             removeImg

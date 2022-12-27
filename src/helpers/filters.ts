@@ -15,13 +15,13 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 
 const filters = {
-    formatCurrency(input: number) {
+    formatCurrency(input: any) {
         if(input){
             if (isNaN(input)) {
                 return "-";
             }
             return input.toLocaleString('ko-KR');
-        } return '';
+        } return 0;
     },
     formatDate(date: any) {
         return dayjs(date).format('YYYY-MM-DD')

@@ -4,7 +4,6 @@
       <div @dblclick="isShowInput = true">
         <label >&nbsp;{{ $filters.formatCurrency(parseInt(valueInput)) }} </label>
       </div>
-     
     </div>
     <input
       name="name"
