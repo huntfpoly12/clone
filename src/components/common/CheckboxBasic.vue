@@ -16,7 +16,8 @@ export default defineComponent({
             type: Boolean,
         },
         size: {
-            type: String
+            type: String,
+            default: '12'
         },
         label:String
     },
