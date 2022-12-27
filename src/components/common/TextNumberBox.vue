@@ -26,7 +26,7 @@ export default defineComponent({
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: Number
+      type: [Number, String]
     },
     placeholder: String,
     readOnly: Boolean,
@@ -60,7 +60,9 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
-        value.value = newValue;
+        // console.log(typeof newValue);
+        
+        value.value = newValue?.toString();
       }
     );
     return {
