@@ -274,7 +274,6 @@ export default defineComponent({
     watch(
       dataAction.input,
       (newVal) => {
-        console.log(`output->newVal`,newVal)
         if (newVal.employeeId) {
           validations.employeeId = false;
         }
@@ -301,10 +300,10 @@ export default defineComponent({
           validations.employeeId = true;
         }
         if (!dataAction.input.paymentDay) {
-          validations.paymentAmount = true;
+          validations.paymentDay = true;
         }
         if (!dataAction.input.paymentAmount) {
-          validations.paymentDay = true;
+          validations.paymentAmount = true;
         }
         if (!dataAction.input.requiredExpenses) {
           validations.requiredExpenses = true;
