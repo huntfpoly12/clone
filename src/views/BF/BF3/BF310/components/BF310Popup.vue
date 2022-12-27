@@ -142,8 +142,8 @@
                                         </a-row>
                                         <a-row> </a-row>
                                     </a-form-item>
-                                    <div style="display: flex">
-                                        <div>
+                                    <a-row style="display: flex">
+                                        <a-col>
                                             <a-row :gutter="[16, 16]">
                                                 <a-col :span="15">
                                                     <a-form-item label="연락처" class="clr" label-align="left"
@@ -159,14 +159,13 @@
                                                     </a-form-item>
                                                 </a-col>
                                             </a-row>
-                                            <img-upload :title="titleModal" @update-img="getUrlLicenseFile"
-                                                style="margin-top: 10px" />
-                                        </div>
+                                            <img-upload :title="titleModal" @update-img="getUrlLicenseFile"/>
+                                        </a-col>
                                         <a-col :span="7">
                                             <preview-image :dataImage="{ url: imageLicenseFile, name: licenseFileName }"
                                                 @deleteImg="removeLicenseFile" :activePreview="true" />
                                         </a-col>
-                                    </div>
+                                    </a-row>
                                 </div>
                             </a-collapse-panel>
                             <a-collapse-panel key="3" header="대표자정보">
@@ -203,54 +202,66 @@
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                         <div id="data-grid-demo">
-                                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer" @selection-changed="selectionChanged"
-                                                @content-ready="contentReady"
-                                                :data-source="formState.content.accounting.facilityBusinesses"
-                                                :allow-column-reordering="move_column"
-                                                :allow-column-resizing="colomn_resize" :show-borders="true"
+                                            <DxDataGrid
+                                                :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer-pa-120"
+                                                :data-source="dataSource" :show-borders="true"
+                                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                                                :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
+                                                :onRowClick="onSelectionClick"
+                                                :focused-row-enabled="true" key-expr="rowIndex"
                                                 >
-                                                <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                                    :new-row-position="'pageBottom'"
-                                                    :allow-deleting="true" template="button-template" mode="cell">
-                                                    <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                                </DxEditing>
-                                                <template #button-template>
-                                                    <DxButton icon="plus" />
-                                                </template>
                                                 <DxPaging :enabled="false" />
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
                                                 <DxColumn data-field="facilityBizType" caption="사업분류">
-                                                    <DxLookup :data-source="facilityBizType" value-expr="v"
-                                                        display-expr="n" />
                                                 </DxColumn>
                                                 <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
                                                     :format="'yyyy-MM-dd'" />
                                                 <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
+                                                <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
+                                                    template="button-template" mode="cell" new-row-position="pageBottom">
+                                                    <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                                </DxEditing>
                                                 <DxToolbar>
-                                                    <DxItem name="addRowButton" />
+                                                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
                                                 </DxToolbar>
-                                                <DxMasterDetail :enabled="true" template="registrationCard" />
-                                                <template #registrationCard="{ data }">
-                                                    <a-form-item label="장기요양기관등록번호" class="clr">
-                                                        <default-text-box
-                                                            v-model:valueInput="data.data.longTermCareInstitutionNumber"
-                                                            :required="true" width="250px"
-                                                            nameInput="longTermCareInstitutionNumber" />
-                                                    </a-form-item>
-                                                    <div style="display: flex">
-                                                        <div>
-                                                            <imgUpload :title="titleModal" @update-img="getregCardFile"
-                                                                :name="data.data.name" style="margin-top: 10px" />
-                                                        </div>
-                                                        <a-col :span="7">
-                                                            <preview-image :activePreview="true" :dataImage="{
-                                                                url: data.data.registrationCard ? data.data.registrationCard.url : '',
-                                                                name: data.data.registrationCard ? data.data.registrationCard.name : ''
-                                                            }" :name="data.data.name" @deleteImg="removeRegCardFile" />
-                                                        </a-col>
-                                                    </div>
+                                                <template #button-template>
+                                                    <DxButton icon="plus" @click="addRow" text="추가" />
                                                 </template>
                                             </DxDataGrid>
+                                            <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow">
+                                                <a-col :span="12">
+                                                    <a-form-item label="사업분류">
+                                                        <select-box-common :arrSelect="facilityBizTypeCommon"
+                                                            v-model:valueInput="dataActiveRow.facilityBizType" displayeExpr="n"
+                                                            valueExpr="v" width="200px" />
+                                                    </a-form-item>
+                                                    <a-form-item label="사업분류">
+                                                        <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
+                                                    </a-form-item>
+                                                    <a-form-item label="서비스 시작년월">
+                                                        <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
+                                                            width="200px" />
+                                                    </a-form-item>
+                                                    <a-form-item label="정원수" style="display: inline-flex">
+                                                        <text-number-box width="200px" :required="true" 
+                                                            v-model:valueInput="dataActiveRow.capacity" /> 명
+                                                    </a-form-item>
+                                                    <a-form-item label="장기요양기관등록번호">
+                                                        <default-text-box width="200px" :required="true" 
+                                                            v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
+                                                    </a-form-item>
+                                                    <a-col class="pl-12">
+                                                        <img-upload :title="'장기요양기관등록증'" @update-img="getUrlLicenseFile"/>
+                                                    </a-col>
+                                                </a-col>
+                                                <a-col :span="12">
+                                                    <div class="preview-img">
+                                                        <!-- <preview-image :dataImage="dataActiveRow.dataImg" @deleteImg="removeLicenseFile"/> -->
+                                                        <preview-image :dataImage="{ url: imageLicenseFile, name: licenseFileName }"
+                                                            @deleteImg="removeLicenseFile" :activePreview="true" />
+                                                    </div>
+                                                </a-col>
+                                            </a-row>
                                         </div>
                                         <div>
                                             <a-row>
@@ -367,6 +378,7 @@ import imgUpload from "@/components/UploadImage.vue";
 import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import dayjs from 'dayjs'
+import { DxButton } from "devextreme-vue/button";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -395,6 +407,7 @@ export default defineComponent({
         DxItem,
         DxTexts,
         DxMasterDetail,
+        DxButton,
     },
     setup(props, { emit }) {
         // config grid
@@ -403,6 +416,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const labelCol = { style: { width: "150px" } };
         const facilityBizType = FacilityBizType.all();
+        const facilityBizTypeCommon = FacilityBizType.all();
         const imageLicenseFile = ref("");
         const licenseFileName = ref("");
         let visible = ref(false);
@@ -418,7 +432,8 @@ export default defineComponent({
         var dataStatus = initialDataStatus
         let objDataDefault = ref({ ...initialFormState });
         const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay]) 
-        var formState = ref({ ...initialFormState });
+        var formState = ref<any>({ ...initialFormState });
+        const dataSource = ref([]);
         // event close popup
         const setModalVisible = () => {
             if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState.value) == true)
@@ -502,6 +517,11 @@ export default defineComponent({
                 objDataDefault.value.institutionNumber =
                     value.getSubscriptionRequest.content.accounting.facilityBusinesses.length > 0
                         ? value.getSubscriptionRequest.content.accounting.facilityBusinesses[0].longTermCareInstitutionNumber : "";
+                dataSource.value = formState.value.content.accounting.facilityBusinesses.map((item: any, key: any) => {
+                    return {
+                        ...item, rowIndex: key
+                    }
+                })
                 // trigger query check if can be change business registration number
                 refetchCheckPer();
             }
@@ -575,8 +595,8 @@ export default defineComponent({
                         );
                 }
                 // process data befor handle update
-                let contentData = formState.value.content;
-                contentData.accounting.facilityBusinesses = customAccountingfacilityBusinesses;
+                let contentData : any = formState.value.content;
+                contentData.accounting.facilityBusinesses  = [...customAccountingfacilityBusinesses, dataActiveRow.value];
                 contentData.accounting.accountingServiceTypes.map((item: any) => {
                     item = item == true ? 1 : 0
                 })
@@ -611,8 +631,10 @@ export default defineComponent({
             formState.value.content.company.licenseFileStorageId = img.id;
             imageLicenseFile.value = img.url ? img.url : "";
             licenseFileName.value = img.fileName;
+            dataActiveRow.value.registrationCardFileStorageId=img.id;
         };
         const removeLicenseFile = () => {
+            dataActiveRow.value.dataImg=""
             imageLicenseFile.value = "";
             licenseFileName.value = "";
         };
@@ -648,6 +670,23 @@ export default defineComponent({
         const isNumeric = (value: any) => {
             return /^-?\d+$/.test(value);
         }
+        // change form 
+        const gridRefName: any = ref("grid");
+        const dataActiveRow = ref<any>({})
+        const onSelectionClick = (value: any) => {
+            dataActiveRow.value = value.data;
+        }
+        const addRow = () => {
+            gridRefName.value.instance.addRow()
+            gridRefName.value.instance.deselectAll()
+            gridRefName.value.instance.closeEditCell();
+            setTimeout(() => {
+                if (gridRefName.value.instance.totalCount() == 1) {
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
+                }
+            }, 100);
+        };
         return {
             selectionChanged,
             contentReady,
@@ -677,9 +716,17 @@ export default defineComponent({
             removeLicenseFile,
             arrayRadioWithdrawDay,
             dayjs,
-            isNumeric
+            isNumeric,
+            onSelectionClick,
+            dataActiveRow,
+            addRow,
+            gridRefName,
+            facilityBizTypeCommon,
+            dataSource
         };
     },
 });
 </script>   
-<style lang="scss" scoped src="../style/popupStyle.scss" />
+<style lang="scss" scoped src="../style/popupStyle.scss" >
+
+</style>
