@@ -177,16 +177,16 @@
                                         <td colspan="2">간이세액</td><td>A01</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td>
                                     </tr>
                                     <tr><td colspan="2">중도퇴사</td><td>A02</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td></tr>
-                                    <tr><td colspan="2">일용근로</td><td>A03</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td colspan="2">일용근로</td><td>A03</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td></tr>
                                     <tr>
                                         <td rowspan="3">
                                             연말<br>
                                             정산
                                         </td>
-                                        <td>합계</td><td>A04</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+                                        <td>합계</td><td>A04</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td>
                                     </tr>
-                                    <tr><td>분납신청</td><td>A05</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td>납부금액</td><td>A06</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                                    <tr><td>분납신청</td><td>A05</td><td>1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td>납부금액</td><td>A06</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td></tr>
                                     <tr><td colspan="2">가감계</td><td>A10</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
                                     <!---------------->
                                     <tr>
@@ -195,18 +195,18 @@
                                             소득
                                         </td>
                                         <td colspan="2">연금계좌</td>
-                                        <td>A21</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+                                        <td>A21</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td>
                                     </tr>
-                                    <tr><td colspan="2">그 외</td><td>A22</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td colspan="2">가감계</td><td>A20</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                                    <tr><td colspan="2">그 외</td><td>A22</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td colspan="2">가감계</td><td>A20</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td></tr>
                                     <tr>
                                         <td rowspan="3">
                                             사업<br>
                                             소득
                                         </td>
-                                        <td colspan="2">매월징수</td><td>A25</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+                                        <td colspan="2">매월징수</td><td>A25</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td>
                                     </tr>
-                                    <tr><td colspan="2">연말정산</td><td>A26</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                                    <tr><td colspan="2">연말정산</td><td>A26</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td></tr>
                                     <tr><td colspan="2">가감계</td><td>A30</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
                                     <!---------------->
                                     <tr>
@@ -214,16 +214,16 @@
                                             기타<br>
                                             소득
                                         </td>
-                                        <td colspan="2">연금계좌</td><td>A41</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                                        <td colspan="2">연금계좌</td><td>A41</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td></tr>
                                     <tr>
                                         <td rowspan="2">
                                             종교인<br>
                                             소득
                                         </td>
-                                        <td>매월징수</td><td>A43</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td>연말정산</td><td>A44</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td colspan="2">그 외</td><td>A42</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td colspan="2">가감계</td><td>A40</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                                        <td>매월징수</td><td>A43</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td>연말정산</td><td>A44</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td colspan="2">그 외</td><td>A42</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td colspan="2">가감계</td><td>A40</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td></tr>
                                     <!---------------->                                  
                                     <tr>
                                         <td rowspan="4">
@@ -232,17 +232,17 @@
                                             소<br>
                                             득
                                         </td>
-                                        <td colspan="2">연금계좌</td><td>A48</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+                                        <td colspan="2">연금계좌</td><td>A48</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td>
                                     </tr>
-                                    <tr><td colspan="2">공적연금 매월 (매월)</td><td>A45</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td colspan="2">연말정산</td><td>A46</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td colspan="2">가감계</td><td>A47</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                                    <tr><td colspan="2">공적연금 매월 (매월)</td><td>A45</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td colspan="2">연말정산</td><td>A46</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td colspan="2">가감계</td><td>A47</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td></tr>
                                     <tr><td colspan="3">이자소득</td><td>A50</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
                                     <tr><td colspan="3">배당소득</td><td>A60</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td colspan="3">저축 등 해지 추징세액 등</td><td>A69</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td colspan="3">비거주자 양도소득</td><td>A70</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td>법인</td><td colspan="3">내ㆍ외국법인원천</td><td>A80</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-                                    <tr><td colspan="4">수정신고 세액 (세액)</td><td>A90</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                                    <tr><td colspan="3">저축 등 해지 추징세액 등</td><td>A69</td><td>1</td><td class="disable-cell">1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td colspan="3">비거주자 양도소득</td><td>A70</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td>법인</td><td colspan="3">내ㆍ외국법인원천</td><td>A80</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td class="disable-cell">1</td></tr>
+                                    <tr><td colspan="4">수정신고 세액 (세액)</td><td>A90</td><td class="disable-cell">1</td><td class="disable-cell">1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
                                     <tr><td colspan="4">총 합 계</td><td>A99</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
                                 </tbody>
                             </table>
