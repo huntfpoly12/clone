@@ -15,7 +15,7 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 
 const filters = {
-    formatCurrency(input: number) {
+    formatCurrency(input: any) {
         if(input){
             if (isNaN(input)) {
                 return "-";
