@@ -204,7 +204,7 @@
             </a-spin>
             <PA530Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
                 :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
-                :receiptDate="dateSendEmail.toString()" @closePopup="closePopupSendMail" :companyId="companyId"
+                :receiptDate="dateSendEmail.toString()" @closePopup="modalStatus == false" :companyId="companyId"
                 :emailUserLogin="emailUserLogin" />
         </div>
     </div>
@@ -496,13 +496,13 @@ export default defineComponent({
                 notification('error', '조회 기간을 선택하세요!')
             }
         };
-        const openPopup = (res: any) => {
+        const openPopup = (res: any) => { 
             actionSendEmailGroup.value = false
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
-                receiverName: res.name,
-                receiverAddress: res.email,
-                employeeId: res.employeeId,
+                receiverName: res.employee.name,
+                receiverAddress: res.employee.email,
+                employeeId: res.employee.employeeId,
             }
             paymentYearMonthsModal.value = getArrPaymentYearMonth()
             modalStatus.value = true
@@ -561,7 +561,7 @@ export default defineComponent({
 
                 // Gets the row of checked data 
                 dataSource.value.map((val: any) => {
-                    if (selectedItemKeys.value.filter((item: any) => item == val.employee.employeeId).length > 0){
+                    if (selectedItemKeys.value.filter((item: any) => item == val.employee.employeeId).length > 0) {
                         dataCall.push({
                             senderName: sessionStorage.getItem("username"),
                             receiverName: val.employee.name,
@@ -569,7 +569,7 @@ export default defineComponent({
                             employeeId: val.employee.employeeId,
                         })
                     }
-                })  
+                })
                 dataCallModal.value = dataCall
                 paymentYearMonthsModal.value = getArrPaymentYearMonth()
                 modalStatus.value = true
@@ -579,14 +579,10 @@ export default defineComponent({
         }
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
-        }
-        const closePopupSendMail = () => {
-            modalStatus.value = false
-            refetchData()
-        }
+        } 
         return {
             emailUserLogin, actionSendEmailGroup, selectedItemKeys, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, customTextWithholdingLocalIncomeTax, customTextWithholdingIncomeTax, year1, year2, checkAllValue, arrCheckBoxSearch, textResidentId, popupData, modalHistoryStatus, loadingGetEmployeeBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, globalYear, loadingPrint,
-            closePopupSendMail, selectionChanged, sendMailGroup, actionPrint, openPopup, onExporting, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
+            selectionChanged, sendMailGroup, actionPrint, openPopup, onExporting, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
         };
     },
 });

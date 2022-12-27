@@ -84,7 +84,7 @@ export default defineComponent({
             modalStatus.value = false
             emit('closePopup', false)
         }
-        watch(() => props.dataPopup, (val) => {
+        watch(() => props.dataPopup, (val) => { 
             modalStatus.value = props.modalStatus
             if (props.groupSendMail == false)
                 email.value = val?.receiverAddress
