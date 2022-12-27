@@ -117,10 +117,10 @@ export default defineComponent({
                     }]
                 } else {
                     employeeInputsCall = props.dataPopup
-                    employeeInputsCall.map((val: any) => {
-                        if (val.receiverAddress == "")
+                    employeeInputsCall.map((val: any) => { 
+                        if (val.receiverAddress == null)
                             val.receiverAddress = email.value
-                    })
+                    }) 
                 }
                 let dataSendEmail = {
                     companyId: props.companyId,
