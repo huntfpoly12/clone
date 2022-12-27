@@ -152,8 +152,7 @@
                                     :layoutCustom="'horizontal'" />
                             </div>
                             <div class="group-title">
-                                <p class="red" id="title-table-step3">⁙ 운영사업</p>
-                                {{ valueFacilityBusinesses }}
+                                <p class="red" id="title-table-step3">⁙ 운영사업</p> 
                             </div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
@@ -663,7 +662,6 @@ export default {
         const addRow = () => {
             gridRefName.value.instance.addRow()
             gridRefName.value.instance.deselectAll()
-
             gridRefName.value.instance.closeEditCell()
             setTimeout(() => {
                 if (gridRefName.value.instance.totalCount() == 1) {
@@ -726,24 +724,4 @@ export default {
     },
 };
 </script>  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style lang="scss" scoped src="./style.scss"/>

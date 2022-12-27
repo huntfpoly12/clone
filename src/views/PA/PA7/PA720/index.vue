@@ -434,7 +434,6 @@ export default defineComponent({
     };
     const editItem = () => {
         modalEdit.value = true;
-        console.log(`output->`,taxPayRef.value.paymentData)
         changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
     };
     const resetForm = () => {

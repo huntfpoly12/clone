@@ -48,8 +48,7 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
-                        :focused-row-enabled="true" :onContentReady="onContentChange">
-                        <DxPaging :page-size="15" />
+                        :focused-row-enabled="true" :onContentReady="onContentChange" id="pa-120-gridContainer">
 
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -76,14 +75,15 @@
                                 <four-major-insurance :typeTag="1" :typeValue="1" />
                             </div>
                         </template>
-                        <DxColumn cell-template="pupop" width="100" />
+                        <DxColumn cell-template="pupop" width="100"/>
                         <template #pupop="{ data }" class="custom-action">
-                            <div class="custom-action" style="text-align: center;">
-                                <a-space :size="10">
+                            <div class="custom-action" style="text-align: center;" v-if="data.data.deletable">
+                                <a-space :size="10" >
                                     <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                                 </a-space>
                             </div>
                         </template>
+                        <DxScrolling column-rendering-mode="virtual"/>
                     </DxDataGrid>
                     </keep-alive>
                 </a-spin>
@@ -106,7 +106,7 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -127,7 +127,7 @@ export default defineComponent({
         DxToolbar, DxPaging,
         DxItem,
         DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,
-        PA120PopupAddNewVue, PA120PopupEdit
+        PA120PopupAddNewVue, PA120PopupEdit,DxScrolling
     },
     setup() {
         const actionChangeComponent = ref(1)
@@ -310,46 +310,8 @@ export default defineComponent({
     },
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style lang="scss" scoped src="./style/style.scss" />
+<style lang="scss" scoped src="./style/style.scss" >
+#pa-120-gridContainer{
+    height: 440px;
+}
+</style>

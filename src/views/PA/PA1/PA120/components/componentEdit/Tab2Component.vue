@@ -3,11 +3,20 @@
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-spin :spinning="loading" size="large">
     <a-row :gutter="16">
+        <a-col span="24" style="display: flex">
+            <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
+              <checkbox-basic size="18px" label="국민연금" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
+              <checkbox-basic size="18px" label="건강보험" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
+            </a-form-item>
+            <div class="input-text empl-ins">
+            <checkbox-basic size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.longTermCareInsuranceDeduction"></checkbox-basic>
+            <span>
+                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+                <p>본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.</p>
+            </span>
+            </div>
+        </a-col>
       <a-col :span="12">
-        <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
-          <checkbox-basic size="18px" label="국민연금" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
-          <checkbox-basic size="18px" label="건강보험" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
-        </a-form-item>
         <div class="header-text-2">두루누리사회보험 공제</div>
         <a-form-item label="두루누리사회보험 공제 여부" label-align="right" class="durunuri-insurance">
           <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" v-model:valueSwitch="formStateTab2.employeementInsuranceDeduction"></switch-basic>
@@ -22,13 +31,6 @@
         </a-form-item>
       </a-col>
       <a-col :span="12">
-        <div class="input-text empl-ins">
-          <checkbox-basic size="18px" label="고용보험" width="120px" v-model:valueCheckbox="formStateTab2.longTermCareInsuranceDeduction"></checkbox-basic>
-          <span>
-            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-            <p>본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.</p>
-          </span>
-        </div>
         <div class="header-text-2">중소기업취업 감면</div>
         <a-form-item label="중소기업취업 감면 여부" label-align="right" class="durunuri-insurance">
           <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" v-model:valueSwitch="formStateTab2.employeementReduction"></switch-basic>
@@ -545,8 +547,10 @@ export default defineComponent({
   }
 
   .empl-ins {
-    margin-bottom: 2px;
-
+    margin-left: 37px;
+    > div{
+        width: fit-content;
+    }
     span {
       display: flex;
       align-items: center;

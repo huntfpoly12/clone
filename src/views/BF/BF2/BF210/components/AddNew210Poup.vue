@@ -205,8 +205,8 @@ export default defineComponent({
                     type: value.toString()
                 }
 
-                formState.managerGrade = parseInt(products.value.filter((val: any) => val.id === data.value)[0].grade) 
-                formState.type = value 
+                formState.managerGrade = parseInt(products.value.filter((val: any) => val.id === data.value)[0].grade)
+                formState.type = value
                 originData.value.types = [value.toString()]
                 dataCallGroup.value = dataCall
             }, 100);
@@ -331,6 +331,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         creactDone(e => {
+            emit("createDone", true)
             notification('success', `신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!`)
             emit("closePopup", false)
         })
@@ -339,7 +340,7 @@ export default defineComponent({
             idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
         };
 
-        const creactUserNew = (e: any) => { 
+        const creactUserNew = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -397,6 +398,8 @@ export default defineComponent({
     },
 });
 </script>  
+
+
 
 
 
