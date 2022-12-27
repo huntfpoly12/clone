@@ -6,11 +6,13 @@ table {
   border-right: none;
   border-top: none;
 }
+
 .content {
   text-align: center;
   margin: 5px 400px;
   width: 100%;
 }
+
 #customers {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
@@ -21,6 +23,7 @@ table {
 #customers th {
   border: 0.5px solid #ddd;
 }
+
 #customers th {
   padding-top: 12px;
   padding-bottom: 12px;
@@ -33,9 +36,71 @@ table {
   background-color: gray;
 }
 
-.header-detail-1{
+.header-detail-1 {
   display: flex;
-  .header-left-1{
+  font-size: 14px;
+  margin-left: 5px;
+  font-weight: 600;
+
+  .header-left-1 {
     padding-right: 60%;
+  }
+}
+
+.header-detail-2 {
+  font-size: 14px;
+  margin-left: 5px;
+  font-weight: 600;
+  display: flex;
+
+  .header-left-2 {
+    padding-right: 60%;
+  }
+}
+.header-text{
+  font-size: 18px;
+  font-weight: 900;
+}
+.footer-1 {
+  text-align: left;
+  margin-left: 5px;
+  .footer-content-1{
+    p{
+      margin-bottom: 1px;
+    }
+  }
+  .date-month{
+    text-align: end;
+    letter-spacing: 16px;
+  }
+
+  .reporter-sign{
+    text-align: center;
+    .reporter{
+      margin-right: 100px;
+    }
+    .sign{
+      float: right;
+      margin-right: 20px;
+      color: gray;
+    }
+    
+  }
+}
+
+.footer-2{
+  .tax-agent{
+    display: flex;
+    padding-left: 127px;
+  }
+  .sign{
+    color: gray;
+    margin-left: 257px;
+  }
+  .dear{
+    float: left;
+    margin-left: 20px;
+    font-size: 17px;
+    font-weight: 800;
   }
 }
