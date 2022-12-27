@@ -40,7 +40,7 @@ export const initialFormState = {
 
 export const dataSearchIndex = {
     page: 1,
-    type: "m",
+    type: "r",
     groupCode: "",
     groupName: "",
     username: "",

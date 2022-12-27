@@ -5,7 +5,7 @@
   </Datepicker>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, onMounted } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import DxDateBox from "devextreme-vue/date-box";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";

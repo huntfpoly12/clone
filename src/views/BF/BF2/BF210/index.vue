@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="page-content">
-            <a-spin :spinning="spinning" size="large">
+            <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -86,9 +86,9 @@
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)">
                             {{ data.value == "m" ? "매니저" : (data.value == "c"
-                                    ? "고객사" :
-                                    (data.value == "p" ? "파트너" : "영업자"))
-                            }}</a-tag>
+        ? "고객사" :
+        (data.value == "p" ? "파트너" : "영업자"))
+}}</a-tag>
                     </template>
                     <DxColumn data-field="mobilePhone" caption="휴대폰" />
                     <DxColumn data-field="groupCode" caption="소속코드" />
@@ -120,9 +120,10 @@
             </a-spin>
         </div>
     </div>
-    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="count" />
-    <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData" 
-        :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
+    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="count"
+        @createDone="createSuccess" />
+    <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
+        :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" @updateDone="createSuccess"/>
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
         title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
     <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData" title="로그인이력"
@@ -176,7 +177,6 @@ export default defineComponent({
         const modalLoginStatus = ref(false)
         const modalEditStatus = ref<boolean>(false);
         let triggerSearching = ref<boolean>(false);
-        const spinning = ref<boolean>(false);
         const checkStatus = ref({
             checkBox1: true,
             checkBox2: false
@@ -195,17 +195,15 @@ export default defineComponent({
         const originData = ref()
         let products = ref([...productsValue])
         const dataSource = ref([])
-        const { refetch: refetchData, onResult } = useQuery(queries.searchUsers, originData, () => ({
+        const { refetch: refetchData, onResult, loading: loading } = useQuery(queries.searchUsers, originData, () => ({
             enabled: triggerSearching.value,
             fetchPolicy: "no-cache",
         }))
         onResult((res) => {
             rowTable.value = res.data.searchUsers.totalCount
             dataSource.value = res.data.searchUsers.datas
-            spinning.value = false;
         })
         const changePage = () => {
-            spinning.value = true;
             let dataNew = ref({
                 page: dataSearch.value.page,
                 rows: per_page,
@@ -223,7 +221,6 @@ export default defineComponent({
             }
         }
         const searching = () => {
-            spinning.value = true;
             let dataNew = ref()
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
                 dataNew.value = {
@@ -313,6 +310,11 @@ export default defineComponent({
         const changeValueType = (e: any) => {
             dataSearch.value.type = e.value
         }
+
+        const createSuccess = () => { 
+            triggerSearching.value = true
+            refetchData()
+        } 
         // Watch
         watch(() => modalEditStatus.value,
             () => {
@@ -320,6 +322,7 @@ export default defineComponent({
             }
         );
         return {
+            createSuccess,
             changePage,
             rowTable,
             changeValueType,
@@ -338,7 +341,6 @@ export default defineComponent({
             modalHistoryStatus,
             changeValueCheckBox,
             modalEditStatus,
-            spinning,
             dataSource,
             idRowEdit,
             refetchData,
@@ -348,9 +350,12 @@ export default defineComponent({
             rowChoose,
             checkStatus,
             products,
-            count
+            count,
+            loading
         }
     },
 });
-</script> 
+</script>  
+
+
 <style scoped lang="scss" src="./style/style.scss"/>
