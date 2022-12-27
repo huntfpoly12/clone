@@ -2,7 +2,7 @@
   <div >
     <div v-show="isShowInput == false">
       <div @dblclick="showInput(name)">
-        <label >&nbsp;&nbsp;&nbsp;&nbsp;{{ $filters.formatCurrency(parseInt(valueInput)) }} </label>
+        <label >&nbsp;&nbsp;&nbsp;&nbsp;{{ valueInput == '' ? '' : $filters.formatCurrency(parseInt(valueInput)) }} </label>
       </div>
     </div>
     <input
