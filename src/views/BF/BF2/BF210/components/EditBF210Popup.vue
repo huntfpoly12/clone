@@ -271,6 +271,7 @@ export default defineComponent({
             onError: onErrorUpdate
         } = useMutation(mutations.updateUser);
         onDoneUpdate((e) => { 
+            emit("updateDone", true)
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
         })

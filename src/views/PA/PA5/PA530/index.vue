@@ -224,17 +224,7 @@ import PA530Popup from "./components/PA530Popup.vue";
 import dayjs from 'dayjs';
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
-        EditOutlined,
-        HistoryOutlined,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
-        PA530Popup
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, PA530Popup
     },
     setup() {
         let popupData = ref([])
@@ -380,9 +370,9 @@ export default defineComponent({
             label: globalYear.value + 1 + '년 02월',
             value: true,
             subValue: globalYear.value + 1 + '-02'
-        }) 
+        })
         const modalStatus = ref(false)
-        const textResidentId = ref('주민등록번호') 
+        const textResidentId = ref('주민등록번호')
         const dataApiSearch = reactive({
             companyId: companyId,
             filter: {
@@ -403,6 +393,7 @@ export default defineComponent({
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
         })
+
         // QUERY NAME : getIncomeWageDailyWithholdingReceiptReportViewUrl
         const {
             refetch: refetchPrint,
@@ -424,7 +415,7 @@ export default defineComponent({
             emailUserLogin.value = e.data.getUser.email
         })
         // ================WATCHING============================================
-        watch(checkAllValue, (value) => {
+        watch(checkAllValue, (value) => { 
             arrCheckBoxSearch.quarter1.value = value
             arrCheckBoxSearch.quarter2.value = value
             arrCheckBoxSearch.quarter3.value = value
@@ -432,7 +423,39 @@ export default defineComponent({
             year1.value = value
             year2.value = value
         }, { deep: true });
-        watch(arrCheckBoxSearch, (val) => {
+
+        watch(() => year2.value, (val) => {
+            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year1.value == true)
+                checkAllValue.value = true
+            else
+                checkAllValue.value = false
+        })
+        watch(() => year1.value, (val) => { 
+            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year2.value == true)
+                checkAllValue.value = true
+            else
+                checkAllValue.value = false
+        })
+        watch(() => [
+            arrCheckBoxSearch.quarter1.value,
+            arrCheckBoxSearch.quarter2.value,
+            arrCheckBoxSearch.quarter3.value,
+            arrCheckBoxSearch.quarter4.value
+        ], ([val1, val2, val3, val4]) => { 
+            arrCheckBoxSearch.month1.value = val1
+            arrCheckBoxSearch.month2.value = val1
+            arrCheckBoxSearch.month3.value = val1
+            arrCheckBoxSearch.month4.value = val2
+            arrCheckBoxSearch.month5.value = val2
+            arrCheckBoxSearch.month6.value = val2
+            arrCheckBoxSearch.month7.value = val3
+            arrCheckBoxSearch.month8.value = val3
+            arrCheckBoxSearch.month9.value = val3
+            arrCheckBoxSearch.month10.value = val4
+            arrCheckBoxSearch.month11.value = val4
+            arrCheckBoxSearch.month12.value = val4
+        }, { deep: true });
+        watch(() => arrCheckBoxSearch, (val) => { 
             if (val.month1.value == true && val.month2.value == true && val.month3.value == true)
                 val.quarter1.value = true
             else
@@ -454,38 +477,6 @@ export default defineComponent({
             else
                 checkAllValue.value = false
         }, { deep: true });
-        watch(() => year2.value, (val) => {
-            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year1.value == true)
-                checkAllValue.value = true
-            else
-                checkAllValue.value = false
-        })
-        watch(() => year1.value, (val) => {
-            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year2.value == true)
-                checkAllValue.value = true
-            else
-                checkAllValue.value = false
-        })
-        watch(arrCheckBoxSearch.quarter1, (val) => {
-            arrCheckBoxSearch.month1.value = val.value
-            arrCheckBoxSearch.month2.value = val.value
-            arrCheckBoxSearch.month3.value = val.value
-        },);
-        watch(arrCheckBoxSearch.quarter2, (val) => {
-            arrCheckBoxSearch.month4.value = val.value
-            arrCheckBoxSearch.month5.value = val.value
-            arrCheckBoxSearch.month6.value = val.value
-        },);
-        watch(arrCheckBoxSearch.quarter3, (val) => {
-            arrCheckBoxSearch.month7.value = val.value
-            arrCheckBoxSearch.month8.value = val.value
-            arrCheckBoxSearch.month9.value = val.value
-        },);
-        watch(arrCheckBoxSearch.quarter4, (val) => {
-            arrCheckBoxSearch.month10.value = val.value
-            arrCheckBoxSearch.month11.value = val.value
-            arrCheckBoxSearch.month12.value = val.value
-        },);
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
@@ -534,12 +525,12 @@ export default defineComponent({
             triggerPrint.value = true
             refetchPrint()
         }
-        const sendMailGroup = () => {
+        const sendMailGroup = () => {  
             if (selectedItemKeys.value.length > 0) {
                 actionSendEmailGroup.value = true
                 let dataCall: any = []
-                dataDemoUltil.employee.map((val: any) => {
-                    if (check(val) == 1) {
+                dataDemoUltil.employee.map((val: any) => { 
+                    if (checkValEmail(val)) { 
                         dataCall.push({
                             senderName: sessionStorage.getItem("username"),
                             receiverName: val.name,
@@ -555,13 +546,9 @@ export default defineComponent({
                 notification('error', "일용직근로자들을 선택하세요!")
             }
         }
-        const check = (val: any) => {
-            let value = 0
-            selectedItemKeys.value.map((val: any) => {
-                if (val.employeeId == val)
-                    value = 1
-            })
-            return value
+        const checkValEmail = (key: any) => {
+            let value = selectedItemKeys.value.filter((item: any) => item == key.employeeId); 
+            return value.length
         }
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
