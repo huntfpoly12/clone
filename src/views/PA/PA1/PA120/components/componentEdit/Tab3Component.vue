@@ -21,7 +21,7 @@
                         <DxColumn alignment="left" caption="성명" data-field="name" />
                         <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
                         <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
-                        <DxColumn alignment="left" caption="나이" data-field="Age" />
+                        <DxColumn alignment="left" caption="나이" data-field="Age" cell-template="ageChange" />
                         <DxColumn alignment="left" caption="기본공제" data-field="basicDeduction"
                             cell-template="basicDeductionChange" />
                         <DxColumn alignment="left" caption="부녀자" data-field="women" cell-template="womenChange" />
@@ -36,8 +36,8 @@
                             cell-template="maternityAdoptionChange" />
                         <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
                             cell-template="consignmentRelationshipChange" />
-         
-                        <DxColumn :width="80" cell-template="pupop" />
+                        <DxColumnFixing :enabled="true"/>
+                        <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center"/>
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
@@ -50,11 +50,14 @@
                             </div>
                         </template>
                         <template #foreignerChange="{ data: cellData }">
-                            <employee-info :foreigner="cellData.value" :status="hasStatus(cellData.value)">
+                            <employee-info :foreigner="cellData.value">
                             </employee-info>
                         </template>
                         <template #womenChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #ageChange="{data}">
+                            {{convertAge(data.data.residentId)}}
                         </template>
                         <template #basicDeductionChange="{ data: cellData }">
                             <div v-if="cellData.value == 0">
@@ -169,11 +172,11 @@
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
-import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxColumnFixing } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, convertAge } from "@/helpers/commonFunction";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue'
 import PopupUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue'
@@ -190,7 +193,8 @@ export default defineComponent({
         DxColumn,
         DxToolbar,
         DxItem, BtnCheck,
-        DxButton, EditOutlined, DeleteOutlined
+        DxButton, EditOutlined, DeleteOutlined,
+        DxColumnFixing
     },
     props: {
         popupStatus: {
@@ -350,6 +354,7 @@ export default defineComponent({
             womenSummary2,
             singleParentSummary,
             maternityAdoptionSummary,
+            convertAge
         }
     },
 });
