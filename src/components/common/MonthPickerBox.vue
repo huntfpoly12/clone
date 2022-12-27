@@ -54,6 +54,8 @@ export default defineComponent({
             month: valueDate.value.getMonth(),
             year: valueDate.value.getFullYear(),
           };
+        } else {
+          date.value = null;
         }
       }
     );
