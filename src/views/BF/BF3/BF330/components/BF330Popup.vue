@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기"
             cancelText="그냥 나가기" @cancel="setModalVisible()" width="1200px">
-            <standard-form :label-col="labelCol" :wrapper-col="wrapperCol">
+            <standard-form  :wrapper-col="{span: 14}">
                 <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
                     <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
                         <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
@@ -11,7 +11,9 @@
                                     <a-col :span="12">
                                         <a-form-item label="총이용료" style="font-weight: bold">
                                             <p class="input-disble">
-                                                {{ $filters.formatCurrency(totalPrice) }}
+                                                {{ $filters.formatCurrency(formState.info.totalPrice =
+        formState.info.accountingPrice + formState.info.withholdingPrice)
+}}
                                             </p>
                                         </a-form-item>
                                     </a-col>
@@ -19,7 +21,7 @@
                                     <a-col :span="12">
                                         <a-form-item label="회계서비스 이용료" class="cusstom-label-padding">
                                             <p class="input-disble">
-                                                {{ $filters.formatCurrency(totalPriceAccountingService) }}
+                                                {{ $filters.formatCurrency(formState.info.accountingPrice) }}
                                             </p>
                                         </a-form-item>
                                     </a-col>
@@ -27,7 +29,7 @@
                                     <a-col :span="12">
                                         <a-form-item label="원천서비스 이용료" class="cusstom-label-padding">
                                             <p class="input-disble">
-                                                {{ $filters.formatCurrency(totalWithholdingService) }}
+                                                {{ $filters.formatCurrency(formState.info.withholdingPrice) }}
                                             </p>
                                         </a-form-item>
                                     </a-col>
@@ -37,30 +39,36 @@
                                 <a-row>
                                     <a-col :span="12">
                                         <a-form-item label="회계서비스" style="font-weight: bold">
-                                            <checkbox-basic v-model:valueCheckbox="formState.usedAccounting" size="14" label="회계서비스 신청" />
+                                            <checkbox-basic v-model:valueCheckbox="formState.info.usedAccounting"
+                                                size="14" label="회계서비스 신청" />
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
-                                <div :class=" formState.usedAccounting ? '' : 'disabled-div' ">
+                                <div :class="formState.info.usedAccounting ? '' : 'disabled-div'">
                                     <div>
                                         <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                     </div>
-                                    <DxDataGrid id="grid-container" :show-borders="true"
-                                        @selection-changed="selectionChanged" @content-ready="contentReady"
-                                        :data-source="formState.accountingfacilityBusinesses"
-                                        :show-row-lines="true"  :hoverStateEnabled="true"
-                                        key-expr="facilityBusinessId" :allow-column-reordering="move_column"
-                                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                                        :selected-row-keys="selectedItemKeys">
-                                        <DxEditing :use-icons="true" :allow-updating="true" :allow-adding="true"
-                                            :new-row-position="'pageBottom'" :allow-deleting="true" mode="cell" >
+                                    <!-- {{  formState.info.accounting }} -->
+                                    <DxDataGrid id="gridContainer" :show-borders="true" ref="gridRefName"
+                                        :data-source="formState.info.accounting"
+                                        key-expr="rowIndex" :allow-column-reordering="move_column"
+                                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :show-row-lines="true"
+                                        :focused-row-enabled="true" :onRowClick="onSelectionClick">
+                                        <DxEditing :use-icons="true" :allow-adding="true" template="button-template"
+                                            new-row-position="pageBottom" :allow-deleting="true" mode="cell">
                                             <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
-                                            </DxEditing>
-                                        <DxSelection mode="single" />
-                                        <DxPaging :enabled="false" />
-                                        <DxColumn :width="10" />
+                                        </DxEditing>
+                                        <DxToolbar>
+                                            <DxItem location="after" template="button-template"
+                                                css-class="cell-button-add" />
+                                        </DxToolbar>
+                                        <template #button-template>
+                                            <DxButton icon="plus" @click="addRow" />
+                                        </template>
+                                        <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                                            cell-template="indexCell" />
                                         <template #indexCell="{ data }">
                                             <div>{{ data.rowIndex + 1 }}</div>
                                         </template>
@@ -69,111 +77,132 @@
                                             <DxLookup :data-source="facilityBizType" value-expr="v" display-expr="n" />
                                         </DxColumn>
                                         <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
-                                            :format="'yyyy-MM-dd'" />
+                                            :format="'yyyy-MM'" />
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
-                                        <DxColumn :allow-editing="false" caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
+                                        <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
                                         <template #totalPrice="{ data }">
-                                            {{ $filters.formatCurrency(getTotalAmount(data)) }}
-                                        </template>
-                                        <DxToolbar>
-                                            <DxItem name="addRowButton" />
-                                        </DxToolbar>
-                                        <DxMasterDetail :enabled="true" template="detailTemplate" />
-                                        <template #detailTemplate="{ data }">
-                                            <a-row :gutter="24">
-                                                <a-col :span="10">
-                                                    <a-form-item label="회계서비스 이용료:" style=" font-weight: bold">
-                                                        <p class="input-disble" :id="'price-' + data.data.name">
-                                                            {{
-                                                                    $filters.formatCurrency(getTotalAmount(data))
-                                                            }}
-                                                        </p>
-                                                    </a-form-item>
-                                                    <div class="custom-money">
-                                                        <a-form-item label="기본이용료" >
-                                                            <number-box-money style="float:right" :width="185" v-model:valueInput="data.data.price"
-                                                                :spinButtons="false" />
-                                                        </a-form-item>
-                                                    </div>
-
-                                                    <div class="custom-money">
-                                                        <DxCheckBox :value="checkOption(data.data.options, 1)"
-                                                            text="입력대행" class="custom-checkbox"
-                                                            @value-changed="changeChecked($event.value, 1, data.data)" />
-                                                        <DxNumberBox :format="'#,###'" :min="0"
-                                                            :value="getPriceOption(data.data.options, 1)"
-                                                            :disabled="disableInput(data.data.options, 1)"
-                                                            @keyDown="changeValueInput($event.component, 1, data.data)" />
-                                                    </div>
-                                                    <div class="custom-money">
-                                                        <DxCheckBox :value="checkOption(data.data.options, 2)"
-                                                            text="계좌통합" class="custom-checkbox"
-                                                            @value-changed="changeChecked($event.value, 2, data.data)" />
-                                                        <DxNumberBox :format="'#,###'" :min="0"
-                                                            :value="getPriceOption(data.data.options, 2)"
-                                                            :disabled="disableInput(data.data.options, 2)"
-                                                            @keyDown="changeValueInput($event.component, 2, data.data)" />
-                                                    </div>
-                                                    <div class="custom-money">
-                                                        <DxCheckBox :value="checkOption(data.data.options, 3)"
-                                                            text="W4C" class="custom-checkbox"
-                                                            @value-changed="changeChecked($event.value, 3, data.data)" />
-                                                        <DxNumberBox :min="0" :format="'#,###'"
-                                                            :value="getPriceOption(data.data.options, 3)"
-                                                            :disabled="disableInput(data.data.options, 3)"
-                                                            @keyDown="changeValueInput($event.component, 3, data.data)" />
-                                                    </div>
-
-                                                </a-col>
-                                                <a-col :span="14">
-                                                    <div class="custom-money" style="padding-left: 0px">
-                                                        <div style="width: auto;padding-right: 10px;color:red">
-                                                            <b>장기요양기관등록번호 :</b>
-                                                        </div>
-                                                        <text-number-box
-                                                            v-model:valueInput="data.data.longTermCareInstitutionNumber"
-                                                            placeholder="‘-’없이 숫자만 입력" width="250px" :required="true"
-                                                            nameInput="formState-extendInfoCmsBankAccountNumber">
-                                                        </text-number-box>
-                                                    </div>
-                                                    <div style="display: flex">
-                                                        <div>
-                                                            <imgUpload :title="titleModal"
-                                                                @update-img="getImgUrl($event, data)" :customrow="1" />
-                                                        </div>
-                                                        <a-col>
-                                                            <preview-image :height="'250px'" :activePreview="true"
-                                                                :dataImage="data.data.registrationCard"
-                                                                :name="data.data.name" @deleteImg="removeImg" />
-                                                        </a-col>
-                                                    </div>
-                                                </a-col>
-                                            </a-row>
+                                            {{ $filters.formatCurrency(getTotalAmount(data.data)) }}
                                         </template>
                                     </DxDataGrid>
+                                    <a-row :gutter="24" class="data-row-accounting"
+                                        v-if="formState.info.accounting.length">
+                                        <a-col :span="8">
+                                            <div class="custom-money">
+                                                <a-form-item label="사업분류" class="red">
+                                                    <select-box-common style="float:right" :arrSelect="facilityBizType"
+                                                        :required="true" :width="150"
+                                                        v-model:valueInput="formState.info.accounting[rowIndex].facilityBizType"
+                                                        :value-expr="'v'" :display-expr="'n'" />
+                                                </a-form-item>
+                                            </div>
+                                            <div class="custom-money">
+                                                <a-form-item label="사업명 (중복불가) " class="red">
+                                                    <default-text-box style="float:right" :width="150"
+                                                        v-model:valueInput="formState.info.accounting[rowIndex].name" />
+                                                </a-form-item>
+                                            </div>
+                                            <div class="custom-money">
+                                                <a-form-item label="서비스 시작년월" class="red">
+                                                    <month-picker-box style="float:right" width="150px"
+                                                        v-model:valueDate="formState.info.accounting[rowIndex].startYearMonth" />
+                                                </a-form-item>
+                                            </div>
+                                            <div class="custom-money">
+                                                <a-form-item label="정원수" class="red">
+                                                    <number-box style="float:right" :width="150"
+                                                        v-model:valueInput="formState.info.accounting[rowIndex].capacity" />
+                                                </a-form-item>
+                                            </div>
+                                            <div class="custom-money">
+                                                <a-form-item label="장기요양기관등록번호" class="red">
+                                                    <default-text-box style="float:right" :width="150"
+                                                        v-model:valueInput="formState.info.accounting[rowIndex].longTermCareInstitutionNumber" />
+                                                </a-form-item>
+                                            </div>
+                                        </a-col>
+                                        <a-col :span="8">
+                                            <a-form-item label="회계서비스 이용료:" style=" font-weight: bold">
+                                                <p class="input-disble"
+                                                    :id="'price-' + formState.info.accounting[rowIndex].name">
+                                                    {{ $filters.formatCurrency(getTotalAmount(formState.info.accounting[rowIndex])) }}
+                                                </p>
+                                            </a-form-item>
+                                            <div class="custom-money">
+                                                <a-form-item label="기본이용료">
+                                                    <number-box-money style="float:right" :width="185"
+                                                        v-model:valueInput="formState.info.accounting[rowIndex].price"
+                                                        :spinButtons="false" />
+                                                </a-form-item>
+                                            </div>
+                                            <!-- {{ formState.info.accounting }} -->
+                                            <div class="custom-money">
+                                                <DxCheckBox
+                                                    :value="checkOption(formState.info.accounting[rowIndex].options, 1)"
+                                                    text="입력대행" class="custom-checkbox"
+                                                    @value-changed="changeChecked($event.value, 1, formState.info.accounting[rowIndex])" />
+                                                <DxNumberBox :format="'#,###'" :min="0"
+                                                    :value="getPriceOption(formState.info.accounting[rowIndex].options, 1)"
+                                                    :disabled="disableInput(formState.info.accounting[rowIndex].options, 1)"
+                                                    @keyDown="changeValueInput($event.component, 1, formState.info.accounting[rowIndex])" />
+                                            </div>
+                                            <div class="custom-money">
+                                                <DxCheckBox
+                                                    :value="checkOption(formState.info.accounting[rowIndex].options, 2)"
+                                                    text="계좌통합" class="custom-checkbox"
+                                                    @value-changed="changeChecked($event.value, 2, formState.info.accounting[rowIndex])" />
+                                                <DxNumberBox :format="'#,###'" :min="0"
+                                                    :value="getPriceOption(formState.info.accounting[rowIndex].options, 2)"
+                                                    :disabled="disableInput(formState.info.accounting[rowIndex].options, 2)"
+                                                    @keyDown="changeValueInput($event.component, 2, formState.info.accounting[rowIndex])" />
+                                            </div>
+                                            <div class="custom-money">
+                                                <DxCheckBox
+                                                    :value="checkOption(formState.info.accounting[rowIndex].options, 3)"
+                                                    text="W4C" class="custom-checkbox"
+                                                    @value-changed="changeChecked($event.value, 3, formState.info.accounting[rowIndex])" />
+                                                <DxNumberBox :min="0" :format="'#,###'"
+                                                    :value="getPriceOption(formState.info.accounting[rowIndex].options, 3)"
+                                                    :disabled="disableInput(formState.info.accounting[rowIndex].options, 3)"
+                                                    @keyDown="changeValueInput($event.component, 3, formState.info.accounting[rowIndex])" />
+                                            </div>
+                                        </a-col>
+                                        <a-col :span="8">
+                                            <a-col>
+                                                <preview-image :height="'250px'" :activePreview="true"
+                                                    :dataImage="formState.info.accounting[rowIndex].registrationCard"
+                                                    :name="formState.info.accounting[rowIndex]?.name"
+                                                    @deleteImg="removeImg" />
+                                            </a-col>
+                                            <div style="margin-top: 10px;">
+                                                <imgUpload :title="'사업자등록증'"
+                                                    @update-img="getImgUrl($event, formState.info.accounting[rowIndex])"
+                                                    :customrow="1" />
+                                            </div>
+                                        </a-col>
+                                    </a-row>
                                 </div>
                                 <hr />
                                 <a-row>
                                     <a-col :span="14">
                                         <a-form-item label="원천서비스" style="font-weight: bold"
                                             class="custom-label-select">
-                                            <checkbox-basic v-model:valueCheckbox="formState.usedWithholding"
+                                            <checkbox-basic v-model:valueCheckbox="formState.info.usedWithholding"
                                                 :disabled="false" size="14" label="원천서비스 신청" />
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
-                                <a-row :class="formState.usedWithholding ? '' : 'disabled-div' ">
+                                <a-row :class="formState.info.usedWithholding ? '' : 'disabled-div'">
                                     <a-col :span="14">
                                         <a-form-item label="서비스 시작년월" class="custom-label-select red">
-                                            <date-time-box width="150px" :required="true"
-                                                v-model:valueDate="formState.withholdingStartYearMonth"
+                                            <month-picker-box width="150px" :required="true"
+                                                v-model:valueDate="formState.info.withholding.startYearMonth"
                                                 date-format="MM/DD/YYYY" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="14">
                                         <a-form-item label="직 원 수 " class="custom-label-select red">
                                             <number-box-money width="150px" :min="0" :required="true"
-                                                v-model:valueInput="formState.withholdingCapacity"
+                                                v-model:valueInput="formState.info.withholding.capacity"
                                                 :spinButtons="false" />
                                         </a-form-item>
                                     </a-col>
@@ -188,8 +217,8 @@
                                     <a-col :span="14">
                                         <div style="display: flex; padding-left: 120px">
                                             <span style="width: 180px; line-height: 33px;">기본이용료</span>
-                                            <number-box-money  :min="0" width="180px"
-                                                v-model:valueInput="formState.usedServiceInfoWithholdingPrice"
+                                            <number-box-money :min="0" width="180px"
+                                                v-model:valueInput="formState.info.withholding.price"
                                                 :spinButtons="false" />
                                         </div>
                                     </a-col>
@@ -197,10 +226,11 @@
                                     <a-col :span="14">
                                         <div class="custom-service" style="">
                                             <checkbox-basic style="width: 180px"
-                                                v-model:valueCheckbox="formState.checkBoxMajorInsurance" size="14"
-                                                label="4대보험" @change="handleInputTexService" />
-                                            <number-box-money :min="0" v-model:valueInput="formState.fourMajorInsurance"
-                                                :disabled="formState.disableNumber6" width="180px"
+                                                v-model:valueCheckbox="withholdingServiceType" size="14" label="4대보험"
+                                                @change="handleInputTexService" />
+                                            <number-box-money :min="0"
+                                                v-model:valueInput="formState.info.withholding.options[0].price"
+                                                :disabled="!withholdingServiceType" width="180px"
                                                 :spinButtons="false" />
                                         </div>
                                     </a-col>
@@ -210,12 +240,12 @@
                         <a-collapse-panel key="2" header="담당매니저/ 영업자">
                             <a-form-item label="담당매니저" class="custom-label-select">
                                 <div style="width: 200px">
-                                    <list-manager-dropdown v-model:selected="formState.manageUserId" />
+                                    <list-manager-dropdown v-model:valueInput="formState.extra.manageUserId" />
                                 </div>
                             </a-form-item>
                             <a-form-item label="영업자" class="custom-label-select">
                                 <div style="width: 200px">
-                                    <list-sales-dropdown v-model:selected="formState.compactSalesRepresentativeId" />
+                                    <list-sales-dropdown v-model:valueInput="formState.extra.salesRepresentativeId" />
                                 </div>
                             </a-form-item>
                         </a-collapse-panel>
@@ -228,8 +258,8 @@
                                         <div class="title-note">
                                             <div>
                                                 {{ text.ownerName }} 수정
-                                                {{ formarDate(text.updatedAt) }} 게시
-                                                {{ formarDate(text.createdAt) }}
+                                                {{ dayjs(text.updatedAt).format("YYYY/MM/DD") }} 게시
+                                                {{ dayjs(text.createdAt).format("YYYY/MM/DD") }}
                                             </div>
                                             <div v-if="index == 0">
                                                 <PlusSquareOutlined :style="{ fontSize: '25px' }" @click="handleAdd" />
@@ -252,7 +282,7 @@
                     <div class="footer">
                         <button-basic text="그냥 나가기" type="default" mode="outlined" @onClick="setModalVisible" />
                         <button-basic text="저장하고 나가기" type="default" mode="contained"
-                            @onClick="updateServiceContract" />
+                            @onClick="actionUpdateServiceContract" />
                     </div>
                 </a-spin>
             </standard-form>
@@ -295,14 +325,13 @@ import {
     WarningFilled,
     PlusOutlined,
 } from "@ant-design/icons-vue";
-import type { UploadProps } from "ant-design-vue";
 import queries from "@/graphql/queries/BF/BF3/BF330/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF330/index";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import DxTextBox from 'devextreme-vue/text-box';
-import { initialState } from "../utils/index"
+import { initialState, initialFormStateMomes } from "../utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -321,7 +350,6 @@ export default defineComponent({
     },
     props: {
         modalStatus: Boolean,
-        modalStatusHistory: Boolean,
         idRowEdit: {
             type: Number,
             default: null,
@@ -333,42 +361,21 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const facilityBizType = FacilityBizType.all();
-        const titleModal = "사업자등록증";
-        const labelCol = ref({ style: { width: "150px" } });
-        const wrapperCol = ref({ span: 14 });
-        const imageValue = ref("");
-        const fileName = ref("");
+        const activeKey = ref([1]);
         const dataQuery = ref();
-        const selectedItemKeys = reactive([])
         const dataQueryMemos = ref();
+        const gridRefName: any = ref("grid");
+        
         const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
-        const fileList = ref<UploadProps["fileList"]>([]);
         let objDataDefault = reactive({ ...initialState });
-        const formStateMomes = ref([
-            {
-                memoId: null,
-                ownerUserId: 0,
-                ownerName: "",
-                ownerUsername: "",
-                memo: "",
-                createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                createdBy: "",
-                updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                updatedBy: "",
-                ip: "",
-                active: "",
-            },
-        ]);
-        const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
-                comfirmClosePopup(() => emit("closePopup", false))
-            else
-                emit("closePopup", false)
-        };
-        const activeKey = ref([1]);
 
-        const formState = reactive({ ...initialState });
+        const formStateMomes = ref([...initialFormStateMomes]);
+        const formState: any = reactive({ ...initialState });
+
+        const withholdingServiceType = ref(false)
+        
+        // ============ GRAPQL ===============================
         // get service contract
         const { result } = useQuery(
             queries.getServiceContract,
@@ -378,82 +385,6 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-        // process data after call getServiceContract api
-        watch(result, (value) => {
-            if (value && value.getServiceContract) {
-                imageValue.value = value.getServiceContract.usedServiceInfo.accounting.registrationCard ? value.getServiceContract.usedServiceInfo.accounting.registrationCard.url : ''
-                formState.id = value.getServiceContract.id;
-                formState.totalFee =
-                    value.getServiceContract.usedServiceInfo.totalPrice;
-                formState.accountingPrice =
-                    value.getServiceContract.usedServiceInfo.accountingPrice;
-                formState.withholdingPrice =
-                    value.getServiceContract.usedServiceInfo.withholdingPrice;
-                formState.accountingfacilityBusinesses =
-                    value.getServiceContract.usedServiceInfo.accounting;
-                formState.usedAccounting =
-                    value.getServiceContract.usedAccountingCount > 0 ? true : false;
-                formState.usedWithholding = value.getServiceContract.usedWithholding;
-                formState.withholdingStartYearMonth =
-                    value.getServiceContract.withholding.startYearMonth;
-                formState.withholdingCapacity =
-                    value.getServiceContract.withholding.capacity;
-                formState.compactSalesRepresentativeId =
-                    value.getServiceContract.salesRepresentativeId;
-                formState.manageUserId = value.getServiceContract.manageUserId;
-                // process price Company / Accounting facility business list
-                if (value.getServiceContract.usedServiceInfo.accounting.length > 0) {
-                    value.getServiceContract.usedServiceInfo.accounting.map((el: any) => {
-                        formState.usedServiceInfoAccountingPrice += el.price;
-                        formState.checkBoxAccBasicFee = true;
-                        if (el.options.length > 0) {
-                            el.options.map((value: any) => {
-                                switch (value.accountingServiceType) {
-                                    case 1:
-                                        formState.checkBoxAccInput = true;
-                                        formState.inputAgent += value.price;
-                                        break;
-                                    case 2:
-                                        formState.checkBoxAccConso = true;
-                                        formState.accountIntegration += value.price;
-                                        break;
-                                    case 3:
-                                        formState.checkBoxAcc4wc = true;
-                                        formState.sSIS += value.price;
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            });
-                        }
-                    });
-                }
-
-                // process price Company / Withholding information (사업자/원천정보)
-                formState.usedServiceInfoWithholdingPrice =
-                    value.getServiceContract.usedServiceInfo.withholding.price;
-                formState.disableNumber5 = value.getServiceContract.usedServiceInfo.withholding.price == 0 ? true : false;
-                formState.disableNumber6 = value.getServiceContract.usedServiceInfo.withholding.options.length == 0 ? true : false
-                if ( value.getServiceContract.usedServiceInfo.withholding.options.length > 0 ) {
-                    value.getServiceContract.usedServiceInfo.withholding.options.map(
-                        (val: any) => {
-                            switch (val.withholdingServiceType) {
-                                case 1:
-                                    formState.checkBoxMajorInsurance = true;
-                                    formState.fourMajorInsurance += val.price;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    );
-                }
-            }
-            setTimeout(() => {
-                objDataDefault = {...formState}
-            }, 500);
-        });
-        
         // get list memo of company
         const { result: resultMemo, refetch: refetchMemo } = useQuery(
             queries.getServiceContractManageMemos,
@@ -496,34 +427,6 @@ export default defineComponent({
         onDeleteMemo(() => {
             refetchMemo();
         });
-        const handleDeleteMemo = (key: number) => {
-            if (formStateMomes.value.length > 1) {
-                actionDeleteMemo({ companyId: formState.id, memoId: key });
-            }
-        };
-        const handleAdd = () => {
-            const newMemo: any = {
-                memoId: null,
-                ownerUserId: 0,
-                ownerName: "",
-                ownerUsername: "",
-                memo: "",
-                createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                createdBy: "",
-                updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                updatedBy: "",
-                ip: "",
-                active: "",
-            };
-            formStateMomes.value.unshift(newMemo);
-        };
-        const handleAddMemo = (note: any, mmId: any = null) => {
-            if (note !== "" && mmId == null) {
-                actionCreateMemo({ companyId: formState.id, memo: note });
-            } else {
-                actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
-            }
-        };
         // Update Service Contract
         const {
             mutate: actionUpdate,
@@ -538,164 +441,158 @@ export default defineComponent({
             notification('success', "업데이트 완료!")
             emit("closePopup", false)
         });
-        const updateServiceContract = (e: any) => {
-            var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                activeKey.value = [1]
-            } else {
-                let accountingInfor: any = [];
-                let arrayAccountingOptions: any = [];
 
-                if (formState.checkBoxAccInput) {
-                    arrayAccountingOptions.push({
-                        accountingServiceType:
-                            AccountingAdditionalServiceType.INPUT_AGENT.code,
-                        price: formState.inputAgent,
-                    });
+        // ========== WATCH ============================
+        // process data after call getServiceContract api
+        watch(result, (value) => {
+            if (value.getServiceContract) {
+                let data = JSON.parse(
+                    JSON.stringify(value.getServiceContract, (name, val) => {
+                        if (
+                            name === "__typename"
+                        ) {
+                            delete val[name];
+                        } else {
+                            return val;
+                        }
+                    })
+                );
+                formState.id = data.id;
+                formState.info = data.usedServiceInfo;
+                formState.info.usedAccounting = data.usedAccounting;
+                formState.info.usedWithholding = data.usedWithholding;
+                formState.extra.salesRepresentativeId = data.salesRepresentativeId;
+                formState.extra.manageUserId = data.manageUserId;
+                if (formState.info.withholding.options[0].withholdingServiceType) {
+                    withholdingServiceType.value = true
                 }
-                if (formState.checkBoxAccConso) {
-                    arrayAccountingOptions.push({
-                        accountingServiceType:
-                            AccountingAdditionalServiceType.ACCOUNT_INTEGRATION.code,
-                        price: formState.accountIntegration,
-                    });
-                }
-                if (formState.checkBoxAcc4wc) {
-                    arrayAccountingOptions.push({
-                        accountingServiceType: AccountingAdditionalServiceType.SSIS.code,
-                        price: formState.sSIS,
-                    });
-                }
-                if (formState.accountingfacilityBusinesses.length > 0) {
-                    formState.accountingfacilityBusinesses.map((e: any) => {
-                        e.options = e.options.map((val: any) => ({
-                            price: val.price,
-                            accountingServiceType: val.accountingServiceType,
-                        }))
-                        accountingInfor.push({
-                            longTermCareInstitutionNumber: e.longTermCareInstitutionNumber.toString(),
-                            facilityBizType: e.facilityBizType,
-                            name: e.name,
-                            startYearMonth: e.startYearMonth,
-                            capacity: e.capacity,
-                            registrationCardFileStorageId: e.registrationCardFileStorageId,
-                            facilityBusinessId: e.facilityBusinessId ? e.facilityBusinessId : 0,
-                            price: parseInt(e.price),
-                            options: e.options,
-                        })
-                    });
-                }
-                let arrayWithholdingOptions: any = [];
-                if (formState.checkBoxMajorInsurance) {
-                    arrayWithholdingOptions.push({
-                        withholdingServiceType:
-                            WithholdingAdditionalServiceType.MAJOR_INSURANCE.code,
-                        price: formState.fourMajorInsurance,
-                    });
-                }
-                let withholdingInfor = {
-                    startYearMonth: formState.withholdingStartYearMonth,
-                    capacity: parseInt(formState.withholdingCapacity),
-                    price: formState.usedServiceInfoWithholdingPrice,
-                    options: arrayWithholdingOptions,
-                };
-                let infoData = {
-                    totalPrice: totalPrice.value,
-                    accountingPrice: totalPriceAccountingService.value,
-                    withholdingPrice: totalWithholdingService.value,
-                    accounting: accountingInfor,
-                    withholding: withholdingInfor,
-                    usedAccounting: formState.usedAccounting,
-                    usedWithholding: formState.usedWithholding,
-                };
-                let extraData = {
-                    salesRepresentativeId: formState.compactSalesRepresentativeId,
-                    manageUserId: formState.manageUserId,
-                };
-                let variables = {
-                    id: formState.id,
-                    info: infoData,
-                    extra: extraData,
-                };
-                actionUpdate(variables);
+                formState.info.accounting?.map((element: any, index: number) => {
+                    element.rowIndex = index;
+                 })
+            }
+            setTimeout(() => {
+                objDataDefault = { ...formState }
+            }, 500);
+        });
+
+        // watch(dataGetTotalAmount, (value) => {
+        //     let price = 0
+        //     formState.info.accounting?.map((value: any) => {
+        //         value.options?.map((value: any) => {
+        //             price += value.price
+        //         })
+        //         price += value.price
+        //     })
+        //     formState.info.accountingPrice = price
+        // });
+
+        watch(() => formState.info.usedAccounting, (value) => {
+            if (!value) {
+                formState.info.accounting = []
+            }
+        })
+
+        
+        // ============= FUNCTION ==============================
+        const setModalVisible = () => {
+            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
+                comfirmClosePopup(() => emit("closePopup", false))
+            else
+                emit("closePopup", false)
+        };
+
+        const handleAdd = () => {
+            formStateMomes.value.unshift({
+                memoId: null,
+                ownerUserId: 0,
+                ownerName: "",
+                ownerUsername: "",
+                memo: "",
+                createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
+                createdBy: "",
+                updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
+                updatedBy: "",
+                ip: "",
+                active: "",
+            });
+        };
+        const handleAddMemo = (note: any, mmId: any = null) => {
+            if (note !== "" && mmId == null) {
+                actionCreateMemo({ companyId: formState.id, memo: note });
+            } else {
+                actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         };
-        const totalPriceAccountingService = computed(() => {
-            let ttPriceAcc = formState.usedServiceInfoAccountingPrice +
-                formState.inputAgent +
-                formState.accountIntegration +
-                formState.sSIS
-            return ttPriceAcc
-        });
-        const totalWithholdingService = computed(() => {
-            return (
-                formState.usedServiceInfoWithholdingPrice + formState.fourMajorInsurance
-            );
-        });
-        const totalPrice = computed(() => {
-            let ttPrice =
-                formState.usedServiceInfoAccountingPrice +
-                formState.inputAgent +
-                formState.accountIntegration +
-                formState.sSIS +
-                formState.usedServiceInfoWithholdingPrice +
-                formState.fourMajorInsurance;
-            return ttPrice
-        });
-        const formarDate = (date: any) => {
-            return dayjs(date).format("YYYY/MM/DD");
+        const handleDeleteMemo = (key: number) => {
+            if (formStateMomes.value.length > 1) {
+                actionDeleteMemo({ companyId: formState.id, memoId: key });
+            }
         };
+        
+        const actionUpdateServiceContract = (e: any) => {
+            var variables = JSON.parse(JSON.stringify({...formState}));
+            variables.info.accounting?.map((value: any) => {
+                delete value.registrationCard
+                delete value.rowIndex
+            })
+            actionUpdate(variables);
+        };
+
+        const totalWithholdingService = computed(() => {
+            let ttwithholdingPrice = 0
+            if (formState.id) {
+                ttwithholdingPrice = formState.info.withholding.price + formState.info.withholding.options[0].price
+            }
+            formState.info.withholdingPrice = ttwithholdingPrice
+            return ttwithholdingPrice
+        });
+        // const dataGetTotalAmount = ref(0)
         const getTotalAmount = (data: any) => {
             let totalAmount = 0
-            if(data.data.options) {
-                data.data.options.map((e: any) => {
+            if (data.options) {
+                data.options?.map((e: any) => {
                     totalAmount += parseInt(e.price)
                 })
-                totalAmount += parseInt(data.data.price)
-                formState.usedServiceInfoAccountingPrice = data.data.price
-                let totalValuePrice = 0
-                data.data.options.map((val: any) => {
-                    totalValuePrice += val.price
-                })
-                formState.inputAgent = totalValuePrice
+                totalAmount += parseInt(data.price)
             }
-            
+            let price = 0
+            formState.info.accounting?.map((value: any) => {
+                value.options?.map((value: any) => {
+                    price += value.price
+                })
+                price += value.price
+            })
+            formState.info.accountingPrice = price
+            // dataGetTotalAmount.value = totalAmount
             return totalAmount
         }
         // Thay đổi giá trị option 
         const changeValueInput = (event: any, indexOP: any, val: any) => {
             setTimeout(() => {
-                // Nếu option có giá trị trả về là : 1,2,3
-                if (indexOP != 0) {
-                    // Tìm options đang thay đổi để update dữ liệu mới
-                    formState.accountingfacilityBusinesses.map((e: any) => {
-                        if (e.name == val.name) {
-                            e.options.map((k: any) => {
-                                if (indexOP == k.accountingServiceType) {
-                                    k.price = event._parsedValue
-                                }
-                            })
-                        }
-                    })
-                } else { //option đầu tiên và lấy price ngoài options
-                    formState.accountingfacilityBusinesses.map((e: any) => {
-                        if (e.name == val.name) {
-                            e.price = event._parsedValue
-                        }
-                    })
-                }
+                // Tìm options đang thay đổi để update dữ liệu mới
+                formState.info.accounting?.map((e: any) => {
+                    if (e.name == val.name) {
+                        e.options?.map((k: any) => {
+                            if (indexOP == k.accountingServiceType) {
+                                k.price = event._parsedValue
+                            }
+                        })
+                    }
+                })
             }, 100);
         }
         // Thay đổi trạng thái ô checkbox của  options
         const changeChecked = (valChange: any, optionChange: number, valOJ: any) => {
             // nếu checked thì thêm dòng mới trong mảng options để lưu giá trị
             if (valChange == true) {
-                formState.accountingfacilityBusinesses.map((e: any) => {
-                    if (e.name == valOJ.name) {
-                        e.options.push({
-                            accountingServiceType: optionChange,
-                            price: 0
-                        })
+                formState.info.accounting?.map((e: any) => {
+                    if (e.facilityBusinessId == valOJ.facilityBusinessId) {
+                        if (!e.options?.find((val: any) => val.accountingServiceType === optionChange)) {
+                            e.options.push({
+                                accountingServiceType: optionChange,
+                                price: 0
+                            })
+                        }
                     }
                 })
             }
@@ -703,15 +600,14 @@ export default defineComponent({
             else {
                 setTimeout(() => {
                     let arr: any = reactive({})
-                    formState.accountingfacilityBusinesses.map((e: any) => {
+                    formState.info.accounting?.map((e: any) => {
                         if (e.name == valOJ.name) {
-                            e.options = e.options.filter((k: any) => {
+                            e.options = e.options?.filter((k: any) => {
                                 return k.accountingServiceType !== optionChange;
                             });
                             arr = e
                         }
                     })
-                    getTotalAmount(arr)
                     getPriceOption(arr.options, optionChange)
                 }, 100);
             }
@@ -719,27 +615,25 @@ export default defineComponent({
         // Lấy số tiền trong option đang thay đổi
         const getPriceOption = (arr: any, value: number) => {
             let price = 0
-            if(arr) {
+            if (arr) {
                 arr.map((e: any) => {
                     if (e.accountingServiceType == value) {
                         price = e.price
                     }
                 })
             }
-            
             return price
         }
         // disable input khi unchecked
         const disableInput = (arr: any, value: number) => {
             let checked = ref(true)
-            if(arr) {
+            if (arr) {
                 arr.map((e: any) => {
                     if (e.accountingServiceType == value) {
                         checked.value = false
                     }
                 })
             }
-            
             return checked.value
         }
         // Kiểm tra checked của option ban đầu
@@ -752,7 +646,6 @@ export default defineComponent({
                     }
                 })
             }
-            
             if (count == 0) {
                 return false
             } else {
@@ -761,8 +654,8 @@ export default defineComponent({
         }
         // lấy img sau khi upload
         const getImgUrl = (img: any, data: any) => {
-            formState.accountingfacilityBusinesses.map((e: any) => {
-                if (e.name == data.data.name) {
+            formState.info.accounting?.map((e: any) => {
+                if (e.name == data.name) {
                     e.registrationCardFileStorageId = img.id
                     e.registrationCard = {
                         url: img.url,
@@ -771,21 +664,17 @@ export default defineComponent({
                 }
             })
         }
-        const checkValueLongTerm = (longTerm: any) => {
-            return parseInt(longTerm)
-        }
+        // const checkValueLongTerm = (longTerm: any) => {
+        //     return parseInt(longTerm)
+        // }
         const handleInputTexService = () => {
-            let basicFee =
-                formState.basicFee == "" ? 0 : parseInt(formState.basicFee);
-            let majorInsurance =
-                formState.majorInsurance == ""
-                    ? 0
-                    : parseInt(formState.majorInsurance);
-            formState.taxFeeSevice = basicFee + majorInsurance;
+            if (!withholdingServiceType.value) {
+                formState.info.withholding.options[0].price = 0
+            }
         }
         const removeImg = (name: any) => {
             setTimeout(() => {
-                formState.accountingfacilityBusinesses.map((e: any) => {
+                formState.info.accounting?.map((e: any) => {
                     if (e.name == name) {
                         e.registrationCard = null
                         e.registrationCardFileStorageId = null
@@ -793,13 +682,27 @@ export default defineComponent({
                 })
             }, 100);
         };
-        const contentReady = (e: any) => {
-            if (!e.component.getSelectedRowKeys().length) { e.component.selectRowsByIndexes(0); }
+
+        const rowIndex = ref<number>(0);
+        const onSelectionClick = (value: any) => {
+            getTotalAmount(value)
+            rowIndex.value = value.rowIndex
         }
-        const selectionChanged = (e: any) => {
-            e.component.collapseAll(-1);
-            e.component.expandRow(e.currentSelectedRowKeys[0]);
-        }
+        const addRow = () => {
+            gridRefName.value.instance.addRow()
+            // gridRefName.value.instance.deselectAll()
+            gridRefName.value.instance.closeEditCell()
+            // setTimeout(() => {
+            //     if (gridRefName.value.instance.totalCount() == 1) {
+            //         let a = document.body.querySelectorAll('[aria-rowindex]');
+            //         (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
+            //     }
+            // }, 100);
+            // rowIndex.value = formState.info.accounting.length - 1
+            formState.info.accounting[formState.info.accounting.length - 1].options = []
+            formState.info.accounting[formState.info.accounting.length - 1].facilityBusinessId = formState.info.accounting.length
+        };
+
         watch(resultMemo, (value) => {
             if (value && value.getServiceContractManageMemos.length > 0) {
                 formStateMomes.value = value.getServiceContractManageMemos;
@@ -831,84 +734,11 @@ export default defineComponent({
                 trigger.value = false;
             }
         });
-        watch(() => formState.accountingfacilityBusinesses, (newVal) => {
-            newVal.map((value: any) => {
-                if(!value.options) {
-                    value.options = []
-                    value.facilityBusinessId = newVal.length
-                }
-            })
-        },{ deep: true });
-        watch(() => formState.checkBoxAccBasicFee, (newVal) => {
-            if (newVal === false) {
-                formState.usedServiceInfoAccountingPrice = 0;
-                formState.disableNumber1 = true;
-                objDataDefault.usedServiceInfoAccountingPrice = 0;
-                objDataDefault.disableNumber1 = true;
-            } else {
-                formState.disableNumber1 = false;
-                objDataDefault.disableNumber1 = false;
-            }
-        });
-        watch(() => formState.usedAccounting, (newVal) => {
-            if(!newVal) {
-                formState.accountingfacilityBusinesses.map((e: any) => {
-                    e.price = 0
-                    e.options.map((value: any) => {
-                        value.price = 0
-                    })
-                })
-            }
-        });
-        watch(() => formState.usedWithholding, (newVal) => {
-            if(!newVal) {
-                formState.usedServiceInfoWithholdingPrice = 0
-                formState.fourMajorInsurance = 0
-            }
-        })
-        watch(() => formState.checkBoxAccInput, (newVal) => {
-            if (newVal === false) {
-                formState.inputAgent = 0;
-                formState.disableNumber2 = true;
-                objDataDefault.inputAgent = 0;
-                objDataDefault.disableNumber2 = true;
-            } else {
-                formState.disableNumber2 = false;
-                objDataDefault.disableNumber2 = false;
-            }
-        });
-        watch(() => formState.checkBoxAccConso, (newVal) => {
-            if (newVal === false) {
-                formState.accountIntegration = 0;
-                formState.disableNumber3 = true;
-            } else {
-                formState.disableNumber3 = false;
-            }
-        });
-        watch( () => formState.checkBoxAcc4wc, (newVal) => {
-            if (newVal === false) {
-                formState.sSIS = 0;
-                formState.disableNumber4 = true;
-            } else {
-                formState.disableNumber4 = false;
-            }
-        });
-        watch(() => formState.checkBoxMajorInsurance, (newVal) => {
-            if (newVal === false) {
-                formState.fourMajorInsurance = 0;
-                formState.disableNumber6 = true;
-            } else {
-                formState.disableNumber6 = false;
-            }
-        });
+        
         return {
-            contentReady,
-            selectionChanged,
             handleInputTexService,
-            selectedItemKeys,
             move_column,
             colomn_resize,
-            checkValueLongTerm,
             getImgUrl,
             checkOption,
             disableInput,
@@ -916,33 +746,25 @@ export default defineComponent({
             changeChecked,
             changeValueInput,
             getTotalAmount,
-            fileList,
             setModalVisible,
             loading,
             activeKey,
             formState,
-            labelCol,
-            wrapperCol,
-            titleModal,
-            PlusSquareOutlined,
-            PlusOutlined,
-            fileName,
             removeImg,
-            imageValue,
-            dataQuery,
-            result,
-            trigger,
             facilityBizType,
             formStateMomes,
-            formarDate,
             handleAdd,
             handleDeleteMemo,
             handleAddMemo,
-            updateServiceContract,
+            actionUpdateServiceContract,
             loadingUpdate,
-            totalPriceAccountingService,
             totalWithholdingService,
-            totalPrice,
+            onSelectionClick,
+            addRow,
+            gridRefName,
+            rowIndex,
+            withholdingServiceType,
+            dayjs,
         };
     },
 });
