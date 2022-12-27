@@ -130,7 +130,7 @@
                   <td colspan="2">간이세액</td>
                   <td>A01</td>
                   <td>
-                      <input-table name="A01C01" v-model:valueInput="data.A01C01"></input-table>
+                      <input-table name="A01C01" v-model:valueInput="data.A01C01" @keyup.enter="openInput"></input-table>
                   </td>
                   <td>
                     <input-table name="A01C02" v-model:valueInput="data.A01C02"></input-table>

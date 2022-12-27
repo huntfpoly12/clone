@@ -1,8 +1,8 @@
 <template>
-  <div >
+  <div class="ssssss">
     <div v-show="isShowInput == false">
-      <div @dblclick="showInput(name)">
-        <label >&nbsp;&nbsp;&nbsp;&nbsp;{{ valueInput == '' ? '' : $filters.formatCurrency(parseInt(valueInput)) }} </label>
+      <div @dblclick="showInput(name)" @click="oneClick(name)">
+        <label :id="name">&nbsp;&nbsp;&nbsp;&nbsp;{{ valueInput == '' ? '' : $filters.formatCurrency(parseInt(valueInput)) }} </label>
       </div>
     </div>
     <input
@@ -10,7 +10,6 @@
       v-show="isShowInput == true"
       v-model="inputValue"
       v-on:blur="updateValue(inputValue)"
-      
       style="width: 100px"
     />
   </div>
@@ -38,11 +37,17 @@ export default defineComponent({
         document.getElementsByName(nameInput)[0].focus();
       }, 50);
     }
+
     const updateValue = (value: any) => {
       isShowInput.value = false;
       emit("update:valueInput", value);
     };
 
+    const oneClick = (nameLabel: any) => {
+      setTimeout(() => {
+        document.getElementById(nameLabel)[0].focus();
+      }, 50);
+    }
     watch(
       () => props.valueInput,
       (newValue) => {
@@ -55,7 +60,8 @@ export default defineComponent({
       isShowInput,
       inputValue,
       updateValue,
-      showInput
+      showInput,
+      oneClick
     };
   },
 });
