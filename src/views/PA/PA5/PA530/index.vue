@@ -547,7 +547,7 @@ export default defineComponent({
                     imputedYear: globalYear,
                     paymentYearMonths: getArrPaymentYearMonth(),
                     type: valueSwitchChange.value == true ? 1 : 2,
-                    receiptDate: dateSendEmail.value
+                    receiptDate: dayjs(dateSendEmail.value).format("YYYY-MM-DD")
                 }
             }
             triggerPrint.value = true
