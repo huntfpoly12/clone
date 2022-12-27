@@ -131,78 +131,80 @@
                     </a-col>
                 </a-row>
             </div>
-            <a-spin :spinning="loadingGetEmployeeBusinesses" size="large">
+            <a-spin :spinning="loadingGetEmployeeBusinesses || loadingPrint" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" key-expr="employeeId" @exporting="onExporting"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    @selection-changed="selectionChanged" :column-auto-width="true">
-                    <DxScrolling column-rendering-mode="virtual" />
+                    :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged">
                     <DxToolbar>
-                        <DxItem location="after" template="pagination-table" />
                         <DxItem template="pagination-send-group-mail" />
                     </DxToolbar>
-                    <template #pagination-table>
-                        <div v-if="rowTable > originData.rows">
-                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                :total="rowTable" show-less-items />
-                        </div>
-                    </template>
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
-                            <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
+                            <DxButton>
+                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
                                     @click="sendMailGroup" />
                             </DxButton>
                         </div>
                     </template>
                     <DxSelection mode="multiple" />
-                    <DxColumn caption="성명 (상호)" cell-template="tag" width="300px" />
+                    <DxColumn caption="성명 (상호)" cell-template="tag" />
                     <template #tag="{ data }" class="custom-action">
-                        <div class="custom-action" v-if="data.data.employeeId != '-1'">
-                            <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                :idCardNumber="data.data.residentId" :status="data.data.status"
-                                :foreigner="data.data.foreigner" :checkStatus="false" />
+                        <div class="custom-action" v-if="data.data.employee.employeeId != '-1'">
+                            <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                                :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                                :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                         </div>
                         <div v-else>
-                            {{ data.data.summary }}
+                            {{ data.data.employee.summary }}
                         </div>
                     </template>
-                    <DxColumn caption="주민등록번호" data-field="residentId" width="150px" />
-                    <DxColumn caption="비고" cell-template="four-major" />
+                    <DxColumn caption="주민등록번호" data-field="employee.residentId" width="150px" />
+                    <DxColumn caption="비고" cell-template="four-major" width="300px" />
                     <template #four-major="{ data }" class="custom-action">
                         <div>
-                            <four-major-insurance :typeTag="1" :typeValue="1" />
+                            <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
+                                :typeValue="1" />
+                            <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
+                                :typeValue="1" />
+                            <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
+                                :typeValue="1" />
+                            <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
+                                :ratio="data.data.employee.nationalPensionSupportPercent" />
+                            <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent"
+                                :typeTag="7" :ratio="data.data.employee.employeementInsuranceSupportPercent" />
+                            <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent"
+                                :typeTag="8" :ratio="data.data.employee.employeementReductionRatePercent" />
+                            <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
+                                :ratio="data.data.employee.incomeTaxMagnification" />
                         </div>
                     </template>
-                    <DxColumn caption="과세소득" />
-                    <DxColumn caption="비과세소득" />
-                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" />
-                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" />
+                    <DxColumn caption="과세소득" data-field="totalTaxPay" format="#,###" width="150px" />
+                    <DxColumn caption="비과세소득" data-field="totalTaxfreePay" format="#,###" width="150px" />
+                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" width="200px" format="#,###" />
+                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" width="230px"
+                        format="#,###" />
                     <DxSummary>
                         <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
                         <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
                         <DxTotalItem :customize-text="customizeTotalTaxfreePay" show-in-column="비과세소득" />
                         <DxTotalItem :customize-text="customizeIncomeTax" column="withholdingIncomeTax" />
-                        <DxTotalItem :customize-text="customizeDateLocalIncomeTax" column="withholdingLocalIncomeTax" />
+                        <DxTotalItem :customize-text="customizeDateLocalIncomeTax" column="원천징수세액 지방소득세" />
                     </DxSummary>
-                    <DxColumn :width="80" cell-template="pupop" />
+                    <DxColumn width="100px" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="openPopup(data.data)" />
                             <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
-                                @click="actionPrint(data.data)" />
+                                @click="actionPrint(data.data.employee.employeeId)" />
                         </div>
                     </template>
                 </DxDataGrid>
-                <div class="pagination-table" v-if="rowTable > originData.rows">
-                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                        :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
-                </div>
             </a-spin>
             <PA530Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
                 :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
-                :receiptDate="dateSendEmail.toString()" @closePopup="closePopupSendMail" :companyId="companyId"
+                :receiptDate="dateSendEmail.toString()" @closePopup="modalStatus == false" :companyId="companyId"
                 :emailUserLogin="emailUserLogin" />
         </div>
     </div>
@@ -217,24 +219,15 @@ import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { onExportingCommon } from "@/helpers/commonFunction"
-import { origindata, dataDemo } from "./utils";
+import { origindata } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId, userId } from "@/../src/helpers/commonFunction";
 import PA530Popup from "./components/PA530Popup.vue";
 import dayjs from 'dayjs';
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
-        EditOutlined,
-        HistoryOutlined,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
-        PA530Popup
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, PA530Popup
     },
     setup() {
         let popupData = ref([])
@@ -257,7 +250,6 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(0);
         const originData = reactive({ ...origindata, rows: per_page });
-        const dataDemoUltil = reactive({ ...dataDemo })
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
         const globalYear: any = computed(() => store.state.settings.globalYear);
@@ -380,9 +372,9 @@ export default defineComponent({
             label: globalYear.value + 1 + '년 02월',
             value: true,
             subValue: globalYear.value + 1 + '-02'
-        }) 
+        })
         const modalStatus = ref(false)
-        const textResidentId = ref('주민등록번호') 
+        const textResidentId = ref('주민등록번호')
         const dataApiSearch = reactive({
             companyId: companyId,
             filter: {
@@ -397,22 +389,28 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            // dataSource.value = res.data.getEmployeeBusinesses  
-            dataSource.value = dataDemoUltil.employee
+            dataSource.value = res.data.searchIncomeWageDailyWithholdingReceipts
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
         })
+
         // QUERY NAME : getIncomeWageDailyWithholdingReceiptReportViewUrl
         const {
             refetch: refetchPrint,
             loading: loadingPrint,
-            onError,
-            onResult,
+            onError: errorPrint,
+            onResult: resPrint,
         } = useQuery(queries.print, dataCallApiPrint, () => ({
             enabled: triggerPrint.value,
             fetchPolicy: "no-cache",
         }));
+        resPrint(res => {
+            window.open(res.data.getIncomeWageDailyWithholdingReceiptReportViewUrl);
+        })
+        errorPrint(res => {
+            notification('error', res.message)
+        })
 
         // QUERY NAME : getUser
         const {
@@ -432,7 +430,39 @@ export default defineComponent({
             year1.value = value
             year2.value = value
         }, { deep: true });
-        watch(arrCheckBoxSearch, (val) => {
+
+        watch(() => year2.value, (val) => {
+            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year1.value == true)
+                checkAllValue.value = true
+            else
+                checkAllValue.value = false
+        })
+        watch(() => year1.value, (val) => {
+            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year2.value == true)
+                checkAllValue.value = true
+            else
+                checkAllValue.value = false
+        })
+        watch(() => [
+            arrCheckBoxSearch.quarter1.value,
+            arrCheckBoxSearch.quarter2.value,
+            arrCheckBoxSearch.quarter3.value,
+            arrCheckBoxSearch.quarter4.value
+        ], ([val1, val2, val3, val4]) => {
+            arrCheckBoxSearch.month1.value = val1
+            arrCheckBoxSearch.month2.value = val1
+            arrCheckBoxSearch.month3.value = val1
+            arrCheckBoxSearch.month4.value = val2
+            arrCheckBoxSearch.month5.value = val2
+            arrCheckBoxSearch.month6.value = val2
+            arrCheckBoxSearch.month7.value = val3
+            arrCheckBoxSearch.month8.value = val3
+            arrCheckBoxSearch.month9.value = val3
+            arrCheckBoxSearch.month10.value = val4
+            arrCheckBoxSearch.month11.value = val4
+            arrCheckBoxSearch.month12.value = val4
+        }, { deep: true });
+        watch(() => arrCheckBoxSearch, (val) => {
             if (val.month1.value == true && val.month2.value == true && val.month3.value == true)
                 val.quarter1.value = true
             else
@@ -454,76 +484,65 @@ export default defineComponent({
             else
                 checkAllValue.value = false
         }, { deep: true });
-        watch(() => year2.value, (val) => {
-            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year1.value == true)
-                checkAllValue.value = true
-            else
-                checkAllValue.value = false
-        })
-        watch(() => year1.value, (val) => {
-            if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year2.value == true)
-                checkAllValue.value = true
-            else
-                checkAllValue.value = false
-        })
-        watch(arrCheckBoxSearch.quarter1, (val) => {
-            arrCheckBoxSearch.month1.value = val.value
-            arrCheckBoxSearch.month2.value = val.value
-            arrCheckBoxSearch.month3.value = val.value
-        },);
-        watch(arrCheckBoxSearch.quarter2, (val) => {
-            arrCheckBoxSearch.month4.value = val.value
-            arrCheckBoxSearch.month5.value = val.value
-            arrCheckBoxSearch.month6.value = val.value
-        },);
-        watch(arrCheckBoxSearch.quarter3, (val) => {
-            arrCheckBoxSearch.month7.value = val.value
-            arrCheckBoxSearch.month8.value = val.value
-            arrCheckBoxSearch.month9.value = val.value
-        },);
-        watch(arrCheckBoxSearch.quarter4, (val) => {
-            arrCheckBoxSearch.month10.value = val.value
-            arrCheckBoxSearch.month11.value = val.value
-            arrCheckBoxSearch.month12.value = val.value
-        },);
         // ================FUNCTION============================================
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const searching = () => {
-            dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
-            refetchData()
+            if (getArrPaymentYearMonth().length > 0) {
+                dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
+                refetchData()
+            } else {
+                notification('error', '조회 기간을 선택하세요!')
+            }
         };
-        const openPopup = (res: any) => {
+        const openPopup = (res: any) => { 
             actionSendEmailGroup.value = false
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
-                receiverName: res.name,
-                receiverAddress: res.email,
-                employeeId: res.employeeId,
+                receiverName: res.employee.name,
+                receiverAddress: res.employee.email,
+                employeeId: res.employee.employeeId,
             }
             paymentYearMonthsModal.value = getArrPaymentYearMonth()
             modalStatus.value = true
         }
+
         const customizeIncomeTax = () => {
-            return dataDemoUltil.withholdingLocalIncomeTax
+            let total = 0
+            dataSource.value.map((val: any) => {
+                total += val.withholdingIncomeTax
+            })
+            return "원천징수세액 소득세합계: " + filters.formatCurrency(total)
         }
         const customizeDateLocalIncomeTax = () => {
-            return dataDemoUltil.withholdingIncomeTax
+            let total = 0
+            dataSource.value.map((val: any) => {
+                total += val.withholdingLocalIncomeTax
+            })
+            return "원천징수세액 지방소득세합계: " + filters.formatCurrency(total)
         }
         const customizeTotal = () => {
-            return dataSource.value.length
+            return "전체: " + dataSource.value.length
         }
         const customizeTotalTaxfreePay = () => {
-            return dataDemoUltil.totalTaxfreePay
+            let total = 0
+            dataSource.value.map((val: any) => {
+                total += val.totalTaxfreePay
+            })
+            return "과세소득합계: " + filters.formatCurrency(total)
         }
         const customizeTotalTaxPay = () => {
-            return dataDemoUltil.totalTaxPay
+            let total = 0
+            dataSource.value.map((val: any) => {
+                total += val.totalTaxPay
+            })
+            return "과세소득합계: " + filters.formatCurrency(total)
         }
         const actionPrint = (res: any) => {
             dataCallApiPrint.value = {
                 companyId: companyId,
-                employeeIds: [res.employeeId],
+                employeeIds: [res],
                 input: {
                     imputedYear: globalYear,
                     paymentYearMonths: getArrPaymentYearMonth(),
@@ -532,19 +551,22 @@ export default defineComponent({
                 }
             }
             triggerPrint.value = true
-            refetchPrint()
+            if (dataCallApiPrint.value.employeeIds.length > 0)
+                refetchPrint()
         }
         const sendMailGroup = () => {
             if (selectedItemKeys.value.length > 0) {
                 actionSendEmailGroup.value = true
                 let dataCall: any = []
-                dataDemoUltil.employee.map((val: any) => {
-                    if (check(val) == 1) {
+
+                // Gets the row of checked data 
+                dataSource.value.map((val: any) => {
+                    if (selectedItemKeys.value.filter((item: any) => item == val.employee.employeeId).length > 0) {
                         dataCall.push({
                             senderName: sessionStorage.getItem("username"),
-                            receiverName: val.name,
-                            receiverAddress: val.email,
-                            employeeId: val.employeeId,
+                            receiverName: val.employee.name,
+                            receiverAddress: val.employee.email,
+                            employeeId: val.employee.employeeId,
                         })
                     }
                 })
@@ -555,57 +577,12 @@ export default defineComponent({
                 notification('error', "일용직근로자들을 선택하세요!")
             }
         }
-        const check = (val: any) => {
-            let value = 0
-            selectedItemKeys.value.map((val: any) => {
-                if (val.employeeId == val)
-                    value = 1
-            })
-            return value
-        }
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
-        }
-        const closePopupSendMail = () => {
-            modalStatus.value = false
-            refetchData()
-        }
+        } 
         return {
-            emailUserLogin,
-            actionSendEmailGroup,
-            selectedItemKeys,
-            companyId,
-            paymentYearMonthsModal,
-            dataCallModal,
-            modalStatus,
-            valueSwitchChange,
-            dateSendEmail,
-            customTextWithholdingLocalIncomeTax, customTextWithholdingIncomeTax,
-            year1,
-            year2,
-            checkAllValue,
-            arrCheckBoxSearch,
-            textResidentId,
-            popupData,
-            modalHistoryStatus,
-            loadingGetEmployeeBusinesses,
-            rowTable,
-            dataSource,
-            per_page, move_column, colomn_resize,
-            originData,
-            globalYear,
-            closePopupSendMail,
-            selectionChanged,
-            sendMailGroup,
-            actionPrint,
-            openPopup,
-            onExporting,
-            searching,
-            customizeTotal,
-            customizeIncomeTax,
-            customizeDateLocalIncomeTax,
-            customizeTotalTaxPay,
-            customizeTotalTaxfreePay,
+            emailUserLogin, actionSendEmailGroup, selectedItemKeys, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, customTextWithholdingLocalIncomeTax, customTextWithholdingIncomeTax, year1, year2, checkAllValue, arrCheckBoxSearch, textResidentId, popupData, modalHistoryStatus, loadingGetEmployeeBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, globalYear, loadingPrint,
+            selectionChanged, sendMailGroup, actionPrint, openPopup, onExporting, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
         };
     },
 });

@@ -27,16 +27,8 @@ export default gql`
                     status
                     withholdingIncomeTax
                     withholdingLocalIncomeTax
-                    withholdingRuralSpecialTax
-                    createdAt
-                    createdBy
-                    updatedAt
-                    updatedBy
-                    ip
-                    active
-                    residentId
-                    joinedAt
-                    leavedAt
+                    withholdingRuralSpecialTax 
+                    residentId 
                     retirementIncome
                     weeklyWorkingHours
                     monthlyPaycheck
@@ -45,6 +37,11 @@ export default gql`
                     monthlyWage
                     totalDeduction
                     deletable 
+                    nationalPensionDeduction
+                    healthInsuranceDeduction
+                    employeementInsuranceDeduction
+                    nationalPensionSupportPercent
+                    employeementInsuranceSupportPercent 
                 }
             }
         }`

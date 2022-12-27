@@ -315,7 +315,6 @@ export default defineComponent({
     watch(result, (value) => {
       if (value) {
         // dataSource.values = value.searchIncomeExtraWithholdingReceipts;
-        console.log(`output->`,value.searchIncomeExtraWithholdingReceipts)
         trigger.value = false;
       }
     });

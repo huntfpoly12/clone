@@ -21,7 +21,7 @@ const filters = {
                 return "-";
             }
             return input.toLocaleString('ko-KR');
-        } return '';
+        } return 0;
     },
     formatDate(date: any) {
         return dayjs(date).format('YYYY-MM-DD')

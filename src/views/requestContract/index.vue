@@ -153,7 +153,6 @@
                             </div>
                             <div class="group-title">
                                 <p class="red" id="title-table-step3">⁙ 운영사업</p>
-                                {{ valueFacilityBusinesses }}
                             </div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
@@ -214,7 +213,7 @@
                                 </a-col>
                                 <a-col :span="12">
                                     <div class="preview-img">
-                                        <preview-image :dataImage="dataActiveRow.dataImg" @deleteImg="removeImgStep" />
+                                        <preview-image :dataImage="dataActiveRow.dataImg" @deleteImgRqContract="removeImgStep" />
                                     </div>
                                 </a-col>
                             </a-row>
@@ -413,7 +412,8 @@ export default {
             else if (step.value === 3) return "process";
             else return "finish";
         });
-        const changeStep = (val: number) => { 
+        const changeStep = (val: number) => {
+            // step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
@@ -558,9 +558,13 @@ export default {
             dataImg.value = "";
             contractCreacted.licenseFileStorageId = parseInt("");
         };
-        const removeImgStep = () => {
-            dataImgStep3.value = "";
-            contractCreacted.registrationCardFileStorageId = parseInt("");
+        const removeImgStep = (res: any) => {  
+            valueFacilityBusinesses.value.map((val:any)=>{
+                if(val.registrationCardFileStorageId == res.id){
+                    val.registrationCardFileStorageId = null
+                    val.dataImg = {}
+                }
+            }) 
         };
         const getImgUrlAccounting = (img: any) => {
             let resImg = {
@@ -725,4 +729,8 @@ export default {
     },
 };
 </script>  
+
+
+
+
 <style lang="scss" scoped src="./style.scss"/>
