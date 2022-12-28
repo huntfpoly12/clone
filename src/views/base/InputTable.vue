@@ -1,10 +1,10 @@
 <template>
     <input
       :name="name"
-     
       v-model="inputValue"
       v-on:blur="updateValue(inputValue)"
-      @keyup.enter="enterSubling($event)"
+      @keyup.enter="enterSubling(nextInput)"
+      @input="onInput"
     />
 </template>
 
@@ -20,6 +20,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    nextInput: {
+      type: String,
+      default: '',
+    }
     
   },
   setup(props,{emit}) {
@@ -34,20 +38,16 @@ export default defineComponent({
 
     const updateValue = (value: any) => {
       isShowInput.value = false;
+      value.replaceAll(/\D/g, '')
       emit("update:valueInput", value);
     };
 
-    // const oneClick = (nameLabel: any) => {
-    //   setTimeout(() => {
-    //    const input = document.querySelector('.label-'+nameLabel) as HTMLInputElement;
-    //     //input.select()
-    //     console.log( input,'dgdfgdf',nameLabel);
-        
-    //   }, 50);
-    // }
+    const onInput = (event: any) => {
+      inputValue.value = event.target.value.replaceAll(/\D/g, '');
+    }
 
-    const enterSubling = (event  : any)=>{
-      document.getElementsByName('A02C01')[0].focus();
+    const enterSubling = (nameIput  : any)=>{
+      document.getElementsByName(nameIput)[0].focus();
     }
     watch(
       () => props.valueInput,
@@ -62,8 +62,8 @@ export default defineComponent({
       inputValue,
       updateValue,
       showInput,
-      //oneClick,
-      enterSubling
+      enterSubling,
+      onInput
     };
   },
 });

@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content">{{ data }}
     <table id="customers" cellspacing="0" cellpadding="0">
       <tbody>
         <!-- Row A -->
@@ -130,19 +130,19 @@
                   <td colspan="2">간이세액</td>
                   <td>A01</td>
                   <td>
-                      <input-table name="A01C01" v-model:valueInput="data.A01C01" @keyup.enter="openInput"></input-table>
+                    <input-table name="A01C01" v-model:valueInput="data.A01C01"  nextInput="A01C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A01C02" v-model:valueInput="data.A01C02"></input-table>
+                    <input-table name="A01C02" v-model:valueInput="data.A01C02"  nextInput="A01C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A01C03" v-model:valueInput="data.A01C03"></input-table>
+                    <input-table name="A01C03" v-model:valueInput="data.A01C03"  nextInput="A01C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A01C04" v-model:valueInput="data.A01C04"></input-table>
+                    <input-table name="A01C04" v-model:valueInput="data.A01C04"  nextInput="A01C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A01C05" v-model:valueInput="data.A01C05"></input-table>
+                    <input-table name="A01C05" v-model:valueInput="data.A01C05"  nextInput="A02C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -152,19 +152,19 @@
                   <td colspan="2">중도퇴사</td>
                   <td>A02</td>
                   <td>
-                    <input-table name="A02C01" v-model:valueInput="data.A02C01"></input-table>
+                    <input-table name="A02C01" v-model:valueInput="data.A02C01"  nextInput="A02C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A02C02" v-model:valueInput="data.A02C02"></input-table>
+                    <input-table name="A02C02" v-model:valueInput="data.A02C02"  nextInput="A02C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A02C03" v-model:valueInput="data.A02C03"></input-table>
+                    <input-table name="A02C03" v-model:valueInput="data.A02C03"  nextInput="A02C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A02C04" v-model:valueInput="data.A02C04"></input-table>
+                    <input-table name="A02C04" v-model:valueInput="data.A02C04"  nextInput="A02C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A02C05" v-model:valueInput="data.A02C05"></input-table>
+                    <input-table name="A02C05" v-model:valueInput="data.A02C05"  nextInput="A03C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -174,17 +174,17 @@
                   <td colspan="2">일용근로</td>
                   <td>A03</td>
                   <td>
-                    <input-table name="A03C01" v-model:valueInput="data.A03C01"></input-table>
+                    <input-table name="A03C01" v-model:valueInput="data.A03C01"  nextInput="A03C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A03C02" v-model:valueInput="data.A03C02"></input-table>
+                    <input-table name="A03C02" v-model:valueInput="data.A03C02"  nextInput="A03C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A03C03" v-model:valueInput="data.A03C03"></input-table>
+                    <input-table name="A03C03" v-model:valueInput="data.A03C03"  nextInput="A03C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A03C05" v-model:valueInput="data.A03C05"></input-table>
+                    <input-table name="A03C05" v-model:valueInput="data.A03C05"  nextInput="A04C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -198,19 +198,19 @@
                   <td>합계</td>
                   <td>A04</td>
                   <td>
-                    <input-table name="A04C01" v-model:valueInput="data.A04C01"></input-table>
+                    <input-table name="A04C01" v-model:valueInput="data.A04C01"  nextInput="A04C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A04C02" v-model:valueInput="data.A04C02"></input-table>
+                    <input-table name="A04C02" v-model:valueInput="data.A04C02"  nextInput="A04C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A04C03" v-model:valueInput="data.A04C03"></input-table>
+                    <input-table name="A04C03" v-model:valueInput="data.A04C03"  nextInput="A04C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A04C04" v-model:valueInput="data.A04C04"></input-table>
+                    <input-table name="A04C04" v-model:valueInput="data.A04C04"  nextInput="A04C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A04C05" v-model:valueInput="data.A04C05"></input-table>
+                    <input-table name="A04C05" v-model:valueInput="data.A04C05"  nextInput="A05C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -220,17 +220,17 @@
                   <td>분납신청</td>
                   <td>A05</td>
                   <td>
-                    <input-table name="A05C01" v-model:valueInput="data.A05C01"></input-table>
+                    <input-table name="A05C01" v-model:valueInput="data.A05C01"  nextInput="A05C03"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A05C03" v-model:valueInput="data.A05C03"></input-table>
+                    <input-table name="A05C03" v-model:valueInput="data.A05C03"  nextInput="A05C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A05C04" v-model:valueInput="data.A05C04"></input-table>
+                    <input-table name="A05C04" v-model:valueInput="data.A05C04"  nextInput="A05C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A05C05" v-model:valueInput="data.A05C05"></input-table>
+                    <input-table name="A05C05" v-model:valueInput="data.A05C05"  nextInput="A06C03"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -242,13 +242,13 @@
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A06C03" v-model:valueInput="data.A06C03"></input-table>
+                    <input-table name="A06C03" v-model:valueInput="data.A06C03"  nextInput="A06C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A06C04" v-model:valueInput="data.A06C04"></input-table>
+                    <input-table name="A06C04" v-model:valueInput="data.A06C04"  nextInput="A06C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A06C05" v-model:valueInput="data.A06C05"></input-table>
+                    <input-table name="A06C05" v-model:valueInput="data.A06C05"  nextInput="A10C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -258,28 +258,28 @@
                   <td colspan="2">가감계</td>
                   <td>A10</td>
                   <td>
-                    <input-table name="A10C01" v-model:valueInput="data.A10C01"></input-table>
+                    <input-table name="A10C01" v-model:valueInput="data.A10C01"  nextInput="A10C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A10C02" v-model:valueInput="data.A10C02"></input-table>
+                    <input-table name="A10C02" v-model:valueInput="data.A10C02"  nextInput="A10C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A10C03" v-model:valueInput="data.A10C03"></input-table>
+                    <input-table name="A10C03" v-model:valueInput="data.A10C03"  nextInput="A10C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A10C04" v-model:valueInput="data.A10C04"></input-table>
+                    <input-table name="A10C04" v-model:valueInput="data.A10C04"  nextInput="A10C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A10C05" v-model:valueInput="data.A10C05"></input-table>
+                    <input-table name="A10C05" v-model:valueInput="data.A10C05"  nextInput="A10C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A10C06" v-model:valueInput="data.A10C06"></input-table>
+                    <input-table name="A10C06" v-model:valueInput="data.A10C06"  nextInput="A10C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A10C07" v-model:valueInput="data.A10C07"></input-table>
+                    <input-table name="A10C07" v-model:valueInput="data.A10C07"  nextInput="A10C08"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A10C08" v-model:valueInput="data.A10C08"></input-table>
+                    <input-table name="A10C08" v-model:valueInput="data.A10C08"  nextInput="A21C01"  ></input-table>
                   </td>
                 </tr>
                 <!---------------->
@@ -291,21 +291,21 @@
                   <td colspan="2">연금계좌</td>
                   <td>A21</td>
                   <td>
-                    <input-table name="A21C01" v-model:valueInput="data.A21C01"></input-table>
+                    <input-table name="A21C01" v-model:valueInput="data.A21C01"  nextInput="A21C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A21C02" v-model:valueInput="data.A21C02"></input-table>
+                    <input-table name="A21C02" v-model:valueInput="data.A21C02"  nextInput="A21C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A21C03" v-model:valueInput="data.A21C03"></input-table>
-                  </td>
-                  <td class="disable-cell"></td>
-                  <td>
-                    <input-table name="A21C04" v-model:valueInput="data.A21C04"></input-table>
+                    <input-table name="A21C03" v-model:valueInput="data.A21C03"  nextInput="A21C04"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A21C07" v-model:valueInput="data.A21C07"></input-table>
+                    <input-table name="A21C04" v-model:valueInput="data.A21C04"  nextInput="A21C07"  ></input-table>
+                  </td>
+                  <td class="disable-cell"></td>
+                  <td>
+                    <input-table name="A21C07" v-model:valueInput="data.A21C07"  nextInput="A22C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -313,21 +313,21 @@
                   <td colspan="2">그 외</td>
                   <td>A22</td>
                   <td>
-                    <input-table name="A22C01" v-model:valueInput="data.A22C01"></input-table>
+                    <input-table name="A22C01" v-model:valueInput="data.A22C01"  nextInput="A22C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A22C02" v-model:valueInput="data.A22C02"></input-table>
+                    <input-table name="A22C02" v-model:valueInput="data.A22C02"  nextInput="A22C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A22C03" v-model:valueInput="data.A22C03"></input-table>
-                  </td>
-                  <td class="disable-cell"></td>
-                  <td>
-                    <input-table name="A22C05" v-model:valueInput="data.A22C05"></input-table>
+                    <input-table name="A22C03" v-model:valueInput="data.A22C03"  nextInput="A22C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A22C07" v-model:valueInput="data.A22C07"></input-table>
+                    <input-table name="A22C05" v-model:valueInput="data.A22C05"  nextInput="A22C07"  ></input-table>
+                  </td>
+                  <td class="disable-cell"></td>
+                  <td>
+                    <input-table name="A22C07" v-model:valueInput="data.A22C07"  nextInput="A20C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -335,23 +335,23 @@
                   <td colspan="2">가감계</td>
                   <td>A20</td>
                   <td>
-                    <input-table name="A20C01" v-model:valueInput="data.A20C01"></input-table>
+                    <input-table name="A20C01" v-model:valueInput="data.A20C01"  nextInput="A20C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A20C02" v-model:valueInput="data.A20C02"></input-table>
+                    <input-table name="A20C02" v-model:valueInput="data.A20C02"  nextInput="A20C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A20C03" v-model:valueInput="data.A20C03"></input-table>
+                    <input-table name="A20C03" v-model:valueInput="data.A20C03"  nextInput="A20C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A20C05" v-model:valueInput="data.A20C05"></input-table>
+                    <input-table name="A20C05" v-model:valueInput="data.A20C05"  nextInput="A20C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A20C06" v-model:valueInput="data.A20C06"></input-table>
+                    <input-table name="A20C06" v-model:valueInput="data.A20C06"  nextInput="A20C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A20C07" v-model:valueInput="data.A20C07"></input-table>
+                    <input-table name="A20C07" v-model:valueInput="data.A20C07"  nextInput="A25C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -363,17 +363,17 @@
                   <td colspan="2">매월징수</td>
                   <td>A25</td>
                   <td>
-                    <input-table name="A25C01" v-model:valueInput="data.A25C01"></input-table>
+                    <input-table name="A25C01" v-model:valueInput="data.A25C01"  nextInput="A25C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A25C02" v-model:valueInput="data.A25C02"></input-table>
+                    <input-table name="A25C02" v-model:valueInput="data.A25C02"  nextInput="A25C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A25C03" v-model:valueInput="data.A25C03"></input-table>
+                    <input-table name="A25C03" v-model:valueInput="data.A25C03"  nextInput="A25C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A25C05" v-model:valueInput="data.A25C05"></input-table>
+                    <input-table name="A25C05" v-model:valueInput="data.A25C05"  nextInput="A26C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -383,19 +383,19 @@
                   <td colspan="2">연말정산</td>
                   <td>A26</td>
                   <td>
-                    <input-table name="A26C01" v-model:valueInput="data.A26C01"></input-table>
+                    <input-table name="A26C01" v-model:valueInput="data.A26C01"  nextInput="A26C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A26C02" v-model:valueInput="data.A26C02"></input-table>
+                    <input-table name="A26C02" v-model:valueInput="data.A26C02"  nextInput="A26C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A26C03" v-model:valueInput="data.A26C03"></input-table>
+                    <input-table name="A26C03" v-model:valueInput="data.A26C03"  nextInput="A26C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A26C04" v-model:valueInput="data.A26C04"></input-table>
+                    <input-table name="A26C04" v-model:valueInput="data.A26C04"  nextInput="A26C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A26C05" v-model:valueInput="data.A26C05"></input-table>
+                    <input-table name="A26C05" v-model:valueInput="data.A26C05"  nextInput="A30C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -405,28 +405,28 @@
                   <td colspan="2">가감계</td>
                   <td>A30</td>
                   <td>
-                    <input-table name="A30C01" v-model:valueInput="data.A30C01"></input-table>
+                    <input-table name="A30C01" v-model:valueInput="data.A30C01"  nextInput="A30C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A30C02" v-model:valueInput="data.A30C02"></input-table>
+                    <input-table name="A30C02" v-model:valueInput="data.A30C02"  nextInput="A30C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A30C03" v-model:valueInput="data.A30C03"></input-table>
+                    <input-table name="A30C03" v-model:valueInput="data.A30C03"  nextInput="A30C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A30C04" v-model:valueInput="data.A30C04"></input-table>
+                    <input-table name="A30C04" v-model:valueInput="data.A30C04"  nextInput="A30C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A30C05" v-model:valueInput="data.A30C05"></input-table>
+                    <input-table name="A30C05" v-model:valueInput="data.A30C05"  nextInput="A30C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A30C06" v-model:valueInput="data.A30C06"></input-table>
+                    <input-table name="A30C06" v-model:valueInput="data.A30C06"  nextInput="A30C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A30C07" v-model:valueInput="data.A30C07"></input-table>
+                    <input-table name="A30C07" v-model:valueInput="data.A30C07"  nextInput="A30C08"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A30C08" v-model:valueInput="data.A30C08"></input-table>
+                    <input-table name="A30C08" v-model:valueInput="data.A30C08"  nextInput="A41C01"  ></input-table>
                   </td>
                 </tr>
                 <!---------------->
@@ -438,21 +438,21 @@
                   <td colspan="2">연금계좌</td>
                   <td>A41</td>
                   <td>
-                    <input-table name="A41C01" v-model:valueInput="data.A41C01"></input-table>
+                    <input-table name="A41C01" v-model:valueInput="data.A41C01"  nextInput="A41C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A41C02" v-model:valueInput="data.A41C02"></input-table>
+                    <input-table name="A41C02" v-model:valueInput="data.A41C02"  nextInput="A41C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A41C03" v-model:valueInput="data.A41C03"></input-table>
-                  </td>
-                  <td class="disable-cell"></td>
-                  <td>
-                    <input-table name="A41C05" v-model:valueInput="data.A41C05"></input-table>
+                    <input-table name="A41C03" v-model:valueInput="data.A41C03"  nextInput="A41C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A41C07" v-model:valueInput="data.A41C07"></input-table>
+                    <input-table name="A41C05" v-model:valueInput="data.A41C05"  nextInput="A41C07"  ></input-table>
+                  </td>
+                  <td class="disable-cell"></td>
+                  <td>
+                    <input-table name="A41C07" v-model:valueInput="data.A41C07"  nextInput="A43C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -464,21 +464,21 @@
                   <td>매월징수</td>
                   <td>A43</td>
                   <td>
-                    <input-table name="A43C01" v-model:valueInput="data.A43C01"></input-table>
+                    <input-table name="A43C01" v-model:valueInput="data.A43C01"  nextInput="A43C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A43C02" v-model:valueInput="data.A43C02"></input-table>
+                    <input-table name="A43C02" v-model:valueInput="data.A43C02"  nextInput="A43C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A43C03" v-model:valueInput="data.A43C03"></input-table>
-                  </td>
-                  <td class="disable-cell"></td>
-                  <td>
-                    <input-table name="A43C05" v-model:valueInput="data.A43C05"></input-table>
+                    <input-table name="A43C03" v-model:valueInput="data.A43C03"  nextInput="A43C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A43C07" v-model:valueInput="data.A43C07"></input-table>
+                    <input-table name="A43C05" v-model:valueInput="data.A43C05"  nextInput="A43C07"  ></input-table>
+                  </td>
+                  <td class="disable-cell"></td>
+                  <td>
+                    <input-table name="A43C07" v-model:valueInput="data.A43C07"  nextInput="A44C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -486,21 +486,21 @@
                   <td>연말정산</td>
                   <td>A44</td>
                   <td>
-                    <input-table name="A44C01" v-model:valueInput="data.A44C01"></input-table>
+                    <input-table name="A44C01" v-model:valueInput="data.A44C01"  nextInput="A44C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A44C02" v-model:valueInput="data.A44C02"></input-table>
+                    <input-table name="A44C02" v-model:valueInput="data.A44C02"  nextInput="A44C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A44C03" v-model:valueInput="data.A44C03"></input-table>
-                  </td>
-                  <td class="disable-cell"></td>
-                  <td>
-                    <input-table name="A44C05" v-model:valueInput="data.A44C05"></input-table>
+                    <input-table name="A44C03" v-model:valueInput="data.A44C03"  nextInput="A44C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A44C07" v-model:valueInput="data.A44C07"></input-table>
+                    <input-table name="A44C05" v-model:valueInput="data.A44C05"  nextInput="A44C07"  ></input-table>
+                  </td>
+                  <td class="disable-cell"></td>
+                  <td>
+                    <input-table name="A44C07" v-model:valueInput="data.A44C07"  nextInput="A42C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -508,21 +508,21 @@
                   <td colspan="2">그 외</td>
                   <td>A42</td>
                   <td>
-                    <input-table name="A42C01" v-model:valueInput="data.A42C01"></input-table>
+                    <input-table name="A42C01" v-model:valueInput="data.A42C01"  nextInput="A42C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A42C02" v-model:valueInput="data.A42C02"></input-table>
+                    <input-table name="A42C02" v-model:valueInput="data.A42C02"  nextInput="A42C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A42C03" v-model:valueInput="data.A42C03"></input-table>
-                  </td>
-                  <td class="disable-cell"></td>
-                  <td>
-                    <input-table name="A42C05" v-model:valueInput="data.A42C05"></input-table>
+                    <input-table name="A42C03" v-model:valueInput="data.A42C03"  nextInput="A42C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A42C07" v-model:valueInput="data.A42C07"></input-table>
+                    <input-table name="A42C05" v-model:valueInput="data.A42C05"  nextInput="A42C07"  ></input-table>
+                  </td>
+                  <td class="disable-cell"></td>
+                  <td>
+                    <input-table name="A42C07" v-model:valueInput="data.A42C07"  nextInput="A40C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -530,23 +530,23 @@
                   <td colspan="2">가감계</td>
                   <td>A40</td>
                   <td>
-                    <input-table name="A40C01" v-model:valueInput="data.A40C01"></input-table>
+                    <input-table name="A40C01" v-model:valueInput="data.A40C01"  nextInput="A40C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A40C02" v-model:valueInput="data.A40C02"></input-table>
+                    <input-table name="A40C02" v-model:valueInput="data.A40C02"  nextInput="A40C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A40C03" v-model:valueInput="data.A40C03"></input-table>
+                    <input-table name="A40C03" v-model:valueInput="data.A40C03"  nextInput="A40C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A40C05" v-model:valueInput="data.A40C05"></input-table>
+                    <input-table name="A40C05" v-model:valueInput="data.A40C05"  nextInput="A40C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A40C06" v-model:valueInput="data.A40C06"></input-table>
+                    <input-table name="A40C06" v-model:valueInput="data.A40C06"  nextInput="A40C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A40C07" v-model:valueInput="data.A40C07"></input-table>
+                    <input-table name="A40C07" v-model:valueInput="data.A40C07"  nextInput="A48C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -561,17 +561,17 @@
                   <td colspan="2">연금계좌</td>
                   <td>A48</td>
                   <td>
-                    <input-table name="A48C01"  v-model:valueInput="data.A48C01"></input-table>
+                    <input-table name="A48C01"  v-model:valueInput="data.A48C01"  nextInput="A48C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A48C02" v-model:valueInput="data.A48C02"></input-table>
+                    <input-table name="A48C02" v-model:valueInput="data.A48C02"  nextInput="A48C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A48C03" v-model:valueInput="data.A48C03"></input-table>
+                    <input-table name="A48C03" v-model:valueInput="data.A48C03"  nextInput="A48C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A48C05" v-model:valueInput="data.A48C05"></input-table>
+                    <input-table name="A48C05" v-model:valueInput="data.A48C05"  nextInput="A45C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -581,17 +581,17 @@
                   <td colspan="2">공적연금 매월 (매월)</td>
                   <td>A45</td>
                   <td>
-                    <input-table name="A45C01" v-model:valueInput="data.A45C01"></input-table>
+                    <input-table name="A45C01" v-model:valueInput="data.A45C01"  nextInput="A45C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A45C02" v-model:valueInput="data.A45C02"></input-table>
+                    <input-table name="A45C02" v-model:valueInput="data.A45C02"  nextInput="A45C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A45C03" v-model:valueInput="data.A45C03"></input-table>
+                    <input-table name="A45C03" v-model:valueInput="data.A45C03"  nextInput="A45C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A45C05" v-model:valueInput="data.A45C05"></input-table>
+                    <input-table name="A45C05" v-model:valueInput="data.A45C05"  nextInput="A46C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -601,17 +601,17 @@
                   <td colspan="2">연말정산</td>
                   <td>A46</td>
                   <td>
-                    <input-table name="A46C01" v-model:valueInput="data.A46C01"></input-table>
+                    <input-table name="A46C01" v-model:valueInput="data.A46C01"  nextInput="A46C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A46C02" v-model:valueInput="data.A46C02"></input-table>
+                    <input-table name="A46C02" v-model:valueInput="data.A46C02"  nextInput="A46C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A46C03" v-model:valueInput="data.A46C03"></input-table>
+                    <input-table name="A46C03" v-model:valueInput="data.A46C03"  nextInput="A46C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A46C05" v-model:valueInput="data.A46C05"></input-table>
+                    <input-table name="A46C05" v-model:valueInput="data.A46C05"  nextInput="A47C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
@@ -621,23 +621,23 @@
                   <td colspan="2">가감계</td>
                   <td>A47</td>
                   <td>
-                    <input-table name="A47C01" v-model:valueInput="data.A47C01"></input-table>
+                    <input-table name="A47C01" v-model:valueInput="data.A47C01"  nextInput="A47C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A47C02" v-model:valueInput="data.A47C02"></input-table>
+                    <input-table name="A47C02" v-model:valueInput="data.A47C02"  nextInput="A47C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A47C03" v-model:valueInput="data.A47C03"></input-table>
+                    <input-table name="A47C03" v-model:valueInput="data.A47C03"  nextInput="A47C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A47C05" v-model:valueInput="data.A47C05"></input-table>
+                    <input-table name="A47C05" v-model:valueInput="data.A47C05"  nextInput="A47C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A47C06" v-model:valueInput="data.A47C06"></input-table>
+                    <input-table name="A47C06" v-model:valueInput="data.A47C06"  nextInput="A47C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A47C07" v-model:valueInput="data.A47C07"></input-table>
+                    <input-table name="A47C07" v-model:valueInput="data.A47C07"  nextInput="A50C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -645,77 +645,77 @@
                   <td colspan="3">이자소득</td>
                   <td>A50</td>
                   <td>
-                    <input-table name="A50C01" v-model:valueInput="data.A50C01"></input-table>
+                    <input-table name="A50C01" v-model:valueInput="data.A50C01"  nextInput="A50C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A50C02" v-model:valueInput="data.A50C02"></input-table>
+                    <input-table name="A50C02" v-model:valueInput="data.A50C02"  nextInput="A50C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A50C03" v-model:valueInput="data.A50C03"></input-table>
+                    <input-table name="A50C03" v-model:valueInput="data.A50C03"  nextInput="A50C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A50C04" v-model:valueInput="data.A50C04"></input-table>
+                    <input-table name="A50C04" v-model:valueInput="data.A50C04"  nextInput="A50C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A50C05" v-model:valueInput="data.A50C05"></input-table>
+                    <input-table name="A50C05" v-model:valueInput="data.A50C05"  nextInput="A50C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A50C06" v-model:valueInput="data.A50C06"></input-table>
+                    <input-table name="A50C06" v-model:valueInput="data.A50C06"  nextInput="A50C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A50C07" v-model:valueInput="data.A50C07"></input-table>
+                    <input-table name="A50C07" v-model:valueInput="data.A50C07"  nextInput="A50C08"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A50C08" v-model:valueInput="data.A50C08"></input-table>
+                    <input-table name="A50C08" v-model:valueInput="data.A50C08"  nextInput="A60C01"  ></input-table>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="3">배당소득</td>
                   <td>A60</td>
                   <td>
-                    <input-table name="A60C01" v-model:valueInput="data.A60C01"></input-table>
+                    <input-table name="A60C01" v-model:valueInput="data.A60C01"  nextInput="A60C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A60C02" v-model:valueInput="data.A60C02"></input-table>
+                    <input-table name="A60C02" v-model:valueInput="data.A60C02"  nextInput="A60C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A60C03" v-model:valueInput="data.A60C03"></input-table>
+                    <input-table name="A60C03" v-model:valueInput="data.A60C03"  nextInput="A60C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A60C04" v-model:valueInput="data.A60C04"></input-table>
+                    <input-table name="A60C04" v-model:valueInput="data.A60C04"  nextInput="A60C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A60C05" v-model:valueInput="data.A60C05"></input-table>
+                    <input-table name="A60C05" v-model:valueInput="data.A60C05"  nextInput="A60C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A60C06" v-model:valueInput="data.A60C06"></input-table>
+                    <input-table name="A60C06" v-model:valueInput="data.A60C06"  nextInput="A60C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A60C07" v-model:valueInput="data.A60C07"></input-table>
+                    <input-table name="A60C07" v-model:valueInput="data.A60C07"  nextInput="A60C08"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A60C08" v-model:valueInput="data.A60C08"></input-table>
+                    <input-table name="A60C08" v-model:valueInput="data.A60C08"  nextInput="A69C01"  ></input-table>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="3">저축 등 해지 추징세액 등</td>
                   <td>A69</td>
                   <td>
-                    <input-table name="A69C01" v-model:valueInput="data.A69C01"></input-table>
+                    <input-table name="A69C01" v-model:valueInput="data.A69C01"  nextInput="A69C03"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A69C03" v-model:valueInput="data.A69C03"></input-table>
+                    <input-table name="A69C03" v-model:valueInput="data.A69C03"  nextInput="A69C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A69C05" v-model:valueInput="data.A69C05"></input-table>
+                    <input-table name="A69C05" v-model:valueInput="data.A69C05"  nextInput="A69C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A69C06" v-model:valueInput="data.A69C06"></input-table>
+                    <input-table name="A69C06" v-model:valueInput="data.A69C06"  nextInput="A69C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A69C07" v-model:valueInput="data.A69C07"></input-table>
+                    <input-table name="A69C07" v-model:valueInput="data.A69C07"  nextInput="A70C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -723,23 +723,23 @@
                   <td colspan="3">비거주자 양도소득</td>
                   <td>A70</td>
                   <td>
-                    <input-table name="A70C01" v-model:valueInput="data.A70C01"></input-table>
+                    <input-table name="A70C01" v-model:valueInput="data.A70C01"  nextInput="A70C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A70C02" v-model:valueInput="data.A70C02"></input-table>
+                    <input-table name="A70C02" v-model:valueInput="data.A70C02"  nextInput="A70C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A70C03" v-model:valueInput="data.A70C03"></input-table>
+                    <input-table name="A70C03" v-model:valueInput="data.A70C03"  nextInput="A70C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A70C05" v-model:valueInput="data.A70C05"></input-table>
+                    <input-table name="A70C05" v-model:valueInput="data.A70C05"  nextInput="A70C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A70C06" v-model:valueInput="data.A70C06"></input-table>
+                    <input-table name="A70C06" v-model:valueInput="data.A70C06"  nextInput="A70C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A70C07" v-model:valueInput="data.A70C07"></input-table>
+                    <input-table name="A70C07" v-model:valueInput="data.A70C07"  nextInput="A80C01"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -748,23 +748,23 @@
                   <td colspan="3">내ㆍ외국법인원천</td>
                   <td>A80</td>
                   <td>
-                    <input-table name="A80C01" v-model:valueInput="data.A80C01"></input-table>
+                    <input-table name="A80C01" v-model:valueInput="data.A80C01"  nextInput="A80C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A80C02" v-model:valueInput="data.A80C02"></input-table>
+                    <input-table name="A80C02" v-model:valueInput="data.A80C02"  nextInput="A80C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A80C03" v-model:valueInput="data.A80C03"></input-table>
+                    <input-table name="A80C03" v-model:valueInput="data.A80C03"  nextInput="A80C05"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A80C05" v-model:valueInput="data.A80C05"></input-table>
+                    <input-table name="A80C05" v-model:valueInput="data.A80C05"  nextInput="A80C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A80C06" v-model:valueInput="data.A80C06"></input-table>
+                    <input-table name="A80C06" v-model:valueInput="data.A80C06"  nextInput="A80C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A80C07" v-model:valueInput="data.A80C07"></input-table>
+                    <input-table name="A80C07" v-model:valueInput="data.A80C07"  nextInput="A90C03"  ></input-table>
                   </td>
                   <td class="disable-cell"></td>
                 </tr>
@@ -774,50 +774,50 @@
                   <td class="disable-cell"></td>
                   <td class="disable-cell"></td>
                   <td>
-                    <input-table name="A90C03" v-model:valueInput="data.A90C03"></input-table>
+                    <input-table name="A90C03" v-model:valueInput="data.A90C03"  nextInput="A90C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A90C04" v-model:valueInput="data.A90C04"></input-table>
+                    <input-table name="A90C04" v-model:valueInput="data.A90C04"  nextInput="A90C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A90C05" v-model:valueInput="data.A90C05"></input-table>
+                    <input-table name="A90C05" v-model:valueInput="data.A90C05"  nextInput="A90C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A90C06" v-model:valueInput="data.A90C06"></input-table>
+                    <input-table name="A90C06" v-model:valueInput="data.A90C06"  nextInput="A90C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A90C07" v-model:valueInput="data.A90C07"></input-table>
+                    <input-table name="A90C07" v-model:valueInput="data.A90C07"  nextInput="A90C08"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A90C08" v-model:valueInput="data.A90C08"></input-table>
+                    <input-table name="A90C08" v-model:valueInput="data.A90C08"  nextInput="A99C01"  ></input-table>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="4">총 합 계</td>
                   <td>A99</td>
                   <td>
-                    <input-table name="A99C01" v-model:valueInput="data.A99C01"></input-table>
+                    <input-table name="A99C01" v-model:valueInput="data.A99C01"  nextInput="A99C02"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A99C02" v-model:valueInput="data.A99C02"></input-table>
+                    <input-table name="A99C02" v-model:valueInput="data.A99C02"  nextInput="A99C03"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A99C03" v-model:valueInput="data.A99C03"></input-table>
+                    <input-table name="A99C03" v-model:valueInput="data.A99C03"  nextInput="A99C04"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A99C04" v-model:valueInput="data.A99C04"></input-table>
+                    <input-table name="A99C04" v-model:valueInput="data.A99C04"  nextInput="A99C05"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A99C05" v-model:valueInput="data.A99C05"></input-table>
+                    <input-table name="A99C05" v-model:valueInput="data.A99C05"  nextInput="A99C06"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A99C06" v-model:valueInput="data.A99C06"></input-table>
+                    <input-table name="A99C06" v-model:valueInput="data.A99C06"  nextInput="A99C07"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A99C07" v-model:valueInput="data.A99C07"></input-table>
+                    <input-table name="A99C07" v-model:valueInput="data.A99C07"  nextInput="A99C08"  ></input-table>
                   </td>
                   <td>
-                    <input-table name="A99C08" v-model:valueInput="data.A99C08"></input-table>
+                    <input-table name="A99C08" v-model:valueInput="data.A99C08"  nextInput="A99C08"  ></input-table>
                   </td>
                 </tr>
               </tbody>
