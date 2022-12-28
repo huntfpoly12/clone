@@ -7,64 +7,64 @@ interface ListTab {
 const listTab: ListTab[] = [
   {
     ID: 1,
-    TabName: "Grid Prototype",
+    TabName: "Grid Prototype Option 1",
     layoutName: "GridPrototype",
   },
   {
     ID: 2,
+    TabName: "Grid Prototype Option 2",
+    layoutName: "GridPrototype2",
+  },
+  {
+    ID: 3,
     TabName: "Text Box",
     layoutName: "TextBoxFrom",
   },
   {
-    ID: 3,
+    ID: 4,
     TabName: "Number Box",
     layoutName: "NumberBoxForm",
   },
   {
-    ID: 4,
+    ID: 5,
     TabName: "Date Time Box",
     layoutName: "DateTimeBoxForm",
   },
   {
-    ID: 5,
+    ID: 6,
     TabName: "Check Box",
     layoutName: "CheckBoxFrom",
   },
   {
-    ID: 6,
+    ID: 7,
     TabName: "Modal Message",
     layoutName: "ModalMessage",
   },
   {
-    ID: 7,
+    ID: 8,
     TabName: "Preview Image",
     layoutName: "PreviewImage",
   },
   {
-    ID: 8,
+    ID: 9,
     TabName: "Button Basic",
     layoutName: "ButtonBasic",
   },
   {
-    ID: 9,
+    ID: 10,
     TabName: "Tag",
     layoutName: "TagBox",
   },
   {
-    ID: 10,
+    ID: 11,
     TabName: "Action Header",
     layoutName: "ActionHeader",
   },
   {
-    ID: 11,
+    ID: 12,
     TabName: "Select Box",
     layoutName: "SelectBox",
-  },
-  {
-    ID: 12,
-    TabName: "Grid TestTable",
-    layoutName: "TestTable",
-  },
+  }
 ];
 
 export default {
