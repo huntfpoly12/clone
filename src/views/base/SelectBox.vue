@@ -12,7 +12,7 @@
                         <div class="dx-field-label">Select Box Common</div>
                     </div>
                     <select-box-common :arrSelect="arraySelectBox" :required="true" :width="150"
-                                    v-model:valueInput="valueSelectBox"/>
+                        v-model:valueInput="valueSelectBox" />
                 </td>
                 <td>
                     <ul>
@@ -38,9 +38,45 @@
             <tr>
                 <td>
                     <div class="dx-field">
+                        <div class="dx-field-label">
+                            Common Select Box
+                            <br>
+                            Imputed Year Month
+                        </div>
+                    </div>
+                    <imputed-year-month-select-box :dataSelect="arraySelectBox" width="150px" :required="true"
+                        type="1" />
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li>
+                            <strong>valueInput:</strong> {type: Number}
+                        </li>
+                        <li><strong>dataSelect:</strong> {type: Array}</li>
+                        <li><strong>type:</strong> {type: String}  1 : backgroud -> gray </li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
+
+                &lt;imputed-year-month-select-box :dataSelect="arraySelectBox" width="150px" 
+                :required="true" type="1"/&gt;
+        </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
                         <div class="dx-field-label">Employ Select </div>
                     </div>
-                    <employ-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="valueEmploy" width="350px" :required="true" />
+                    <employ-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="valueEmploy" width="350px"
+                        :required="true" />
                 </td>
                 <td>
                     <ul>
@@ -451,140 +487,137 @@
                 <td>
                     <pre class="mycode">
                 &lt; subs-req-status-process-bar / &gt;
-              </pre
-          >
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <div class="dx-field">
-            <div class="dx-field-label">Select Employee Extra income</div>
-            <div class="dx-field-value">
-              <type-code-select-box
-                v-model:valueInput="valueTypeCodeSelectSelectBox"
-                :disabled="false">
-              </type-code-select-box>
-            </div>
-          </div>
-        </td>
-        <td>
-          <ul>
-            <li><strong>disabled:</strong> Boolean (option)</li>
-            <li><strong>valueInput:</strong> {type: String}</li>
-          </ul>
-        </td>
-        <td>
-            <pre class="mycode">
+              </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Select Employee Extra income</div>
+                        <div class="dx-field-value">
+                            <type-code-select-box v-model:valueInput="valueTypeCodeSelectSelectBox" :disabled="false">
+                            </type-code-select-box>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <ul>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li><strong>valueInput:</strong> {type: String}</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
                 &lt; type-code-select-box v-model:valueInput="valueTypeCodeSelectSelectBox"
                 :required="true" &gt; &lt;/ type-code-select-box &gt;
             </pre>
-        </td>
-      </tr>
+                </td>
+            </tr>
 
-      <tr>
-        <td>
-          <div class="dx-field">
-            <div class="dx-field-label">Custom Item SelectBox</div>
-            <div class="dx-field-value">
-                <custom-item-select-box width="200px" v-model:valueInput="valTest"></custom-item-select-box>
-            </div>
-          </div>
-        </td>
-        <td>
-            <ul>
-                <li><strong>arrSelect:</strong> {type: Array}</li>
-                <li>
-                    <strong>required:</strong> {type: Boolean,default: false,}
-                    (option)
-                </li>
-                <li>
-                    <strong>messRequired:</strong> { type: String, default: "Input is
-                    required!",} (option)
-                </li>
-                <li><strong>width:</strong> String (option)</li>
-                <li><strong>clearButton:</strong> Boolean (option)</li>
-                <li><strong>disabled:</strong> Boolean (option)</li>
-                <li>
-                    <strong>valueInput:</strong> {type: [String, Number],default: "",}
-                </li>
-                <li><strong>readOnly:</strong> Boolean (option)</li>
-                <li><strong>Note:</strong> Có thể thêm item select bằng cách nhập tại input rồi ấn enter</li>
-            </ul>
-        </td>
-        <td>
-          <pre class="mycode">
+            <tr>
+                <td>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Custom Item SelectBox</div>
+                        <div class="dx-field-value">
+                            <custom-item-select-box width="200px" v-model:valueInput="valTest"></custom-item-select-box>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <ul>
+                        <li><strong>arrSelect:</strong> {type: Array}</li>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li>
+                            <strong>messRequired:</strong> { type: String, default: "Input is
+                            required!",} (option)
+                        </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>clearButton:</strong> Boolean (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li>
+                            <strong>valueInput:</strong> {type: [String, Number],default: "",}
+                        </li>
+                        <li><strong>readOnly:</strong> Boolean (option)</li>
+                        <li><strong>Note:</strong> Có thể thêm item select bằng cách nhập tại input rồi ấn enter</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
                 &lt; custom-item-select-box v-model:valueInput="valTest"
                 :required="true" &gt; &lt;/ custom-item-select-box &gt;
-              </pre
-          >
-        </td>
-      </tr>
-      <tr>
-        <td>
-            <div class="dx-field">
-                <div class="dx-field-label">Dependants Relation select box</div>
-                <div class="dx-field-value">
-                    <dependants-relation-select-box width="150px" :required="true"></dependants-relation-select-box>
-                </div>
-            </div>
-        </td>
-        <td>
-            <ul>
-                <li>
-                    <strong>required:</strong> {type: Boolean,default: false,}
-                    (option)
-                </li>
-                <li>
-                    <strong>messRequired:</strong> { type: String, default: "Input is
-                    required!",} (option)
-                </li>
-                <li><strong>width:</strong> String (option)</li>
-                <li><strong>clearButton:</strong> Boolean (option)</li>
-                <li><strong>disabled:</strong> Boolean (option)</li>
-                <li><strong>valueInput:</strong> {type: Number,}</li>
-                <li><strong>readOnly:</strong> Boolean (option)</li>
-            </ul>
-        </td>
-        <td>
-            <pre class="mycode">
+              </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Dependants Relation select box</div>
+                        <div class="dx-field-value">
+                            <dependants-relation-select-box width="150px"
+                                :required="true"></dependants-relation-select-box>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li>
+                            <strong>messRequired:</strong> { type: String, default: "Input is
+                            required!",} (option)
+                        </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>clearButton:</strong> Boolean (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li><strong>valueInput:</strong> {type: Number,}</li>
+                        <li><strong>readOnly:</strong> Boolean (option)</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
         &lt; dependants-relation-select-box width="150px" :required="true" / &gt;
     </pre>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div class="dx-field">
-                <div class="dx-field-label">Basic Deduction select box</div>
-                <div class="dx-field-value">
-                    <basic-deduction-select-box width="150px" :required="true"></basic-deduction-select-box>
-                </div>
-            </div>
-        </td>
-        <td>
-            <ul>
-                <li>
-                    <strong>required:</strong> {type: Boolean,default: false,}
-                    (option)
-                </li>
-                <li>
-                    <strong>messRequired:</strong> { type: String, default: "Input is
-                    required!",} (option)
-                </li>
-                <li><strong>width:</strong> String (option)</li>
-                <li><strong>clearButton:</strong> Boolean (option)</li>
-                <li><strong>disabled:</strong> Boolean (option)</li>
-                <li><strong>valueInput:</strong> {type: Number,}</li>
-                <li><strong>readOnly:</strong> Boolean (option)</li>
-            </ul>
-        </td>
-        <td>
-            <pre class="mycode">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Basic Deduction select box</div>
+                        <div class="dx-field-value">
+                            <basic-deduction-select-box width="150px" :required="true"></basic-deduction-select-box>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li>
+                            <strong>messRequired:</strong> { type: String, default: "Input is
+                            required!",} (option)
+                        </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>clearButton:</strong> Boolean (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li><strong>valueInput:</strong> {type: Number,}</li>
+                        <li><strong>readOnly:</strong> Boolean (option)</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
         &lt; basic-deduction-select-box width="150px" :required="true" / &gt;
     </pre>
-        </td>
-    </tr>
-    </table>
-  </form>
+                </td>
+            </tr>
+        </table>
+    </form>
 </template>
 
 <script>
