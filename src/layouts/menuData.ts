@@ -21,7 +21,7 @@ export default [
   { name: "4대보험업무관리", url: "/dashboard/bf-530", id: "bf-530" },
   { name: "제본/배송관리", url: "/dashboard/bf-310", id: "bf-540" },
 
-  { name: "원천마감관리", url: "/dashboard/bf-310", id: "bf-610" },
+  { name: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610" },
   { name: "원천세/지방소득세전자신고", url: "/dashboard/bf-310", id: "bf-620" },
   {
     name: "지급명세서전자신고(연말정산)",

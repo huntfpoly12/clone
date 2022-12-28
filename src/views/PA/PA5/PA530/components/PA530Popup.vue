@@ -84,7 +84,7 @@ export default defineComponent({
             modalStatus.value = false
             emit('closePopup', false)
         }
-        watch(() => props.dataPopup, (val) => { 
+        watch(() => props.dataPopup, (val) => {
             modalStatus.value = props.modalStatus
             if (props.groupSendMail == false)
                 email.value = val?.receiverAddress
@@ -117,10 +117,10 @@ export default defineComponent({
                     }]
                 } else {
                     employeeInputsCall = props.dataPopup
-                    employeeInputsCall.map((val: any) => { 
+                    employeeInputsCall.map((val: any) => {
                         if (val.receiverAddress == null)
                             val.receiverAddress = email.value
-                    }) 
+                    })
                 }
                 let dataSendEmail = {
                     companyId: props.companyId,

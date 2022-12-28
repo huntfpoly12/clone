@@ -49,7 +49,7 @@ export default [
         title: "원천업무",
         id: "bf-600",
         items: [
-          { name: "원천마감관리", url: "#", id: "bf-610" },
+          { name: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610" },
           { name: "원천세/지방소득세전자신고", url: "#", id: "bf-620" },
           { name: "지급명세서전자신고(연말정산)", url: "#", id: "bf-630" },
           { name: "간이지급명세서전자신고", url: "#", id: "bf-640" },

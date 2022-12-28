@@ -102,7 +102,7 @@
                 :key="subMenu.id"
                 :title="subMenu.title"
               >
-                <!-- list sub menu level 3 if have subMenus -->
+                <!-- list sub menu level 3 if have subMenus --> 
                 <template v-for="item in subMenu.items"  :key="'sub-'+item.id">
                   <a-menu-item
                       v-if="!item.hasOwnProperty('subMenus')"
@@ -114,10 +114,10 @@
                         ]
                       "
                       @click.enter="addMenuTab(item.id)"
-                    >
+                    > 
                     <router-link :to="item.url" >{{ item.name }}</router-link>
                   </a-menu-item>
-                  <a-sub-menu v-else  :title="item.name">
+                  <a-sub-menu v-else  :title="item.name"> 
                     <a-menu-item 
                       v-for="subMenu1 in item.subMenus"
                       :key="subMenu1.id"
@@ -173,6 +173,7 @@ import {
   BF330,
   BF340,
   BF210,
+  BF610,
   BF220,
   CM110,
   CM130,
@@ -224,6 +225,7 @@ export default defineComponent({
     BF330,
     BF340,
     BF210,
+    BF610,
     BF220,
     CM110,
     CM130,
@@ -360,6 +362,7 @@ export default defineComponent({
       if (this.activeTab.id === "bf-340") return 'BF340';
       if (this.activeTab.id === "bf-210") return 'BF210';
       if (this.activeTab.id === "bf-220") return 'BF220';
+      if (this.activeTab.id === "bf-610") return 'BF610';
       if (this.activeTab.id === "cm-110") return 'CM110';
       if (this.activeTab.id === "cm-130") return 'CM130';
       if (this.activeTab.id === "pa-110") return 'PA110';
