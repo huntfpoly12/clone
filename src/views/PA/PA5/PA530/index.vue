@@ -218,8 +218,6 @@ import queries from "@/graphql/queries/PA/PA5/PA530/index";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
-import { onExportingCommon } from "@/helpers/commonFunction"
-import { origindata } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId, userId } from "@/../src/helpers/commonFunction";
 import PA530Popup from "./components/PA530Popup.vue";
@@ -229,27 +227,20 @@ export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, PA530Popup
     },
-    setup() {
-        let popupData = ref([])
-        let modalHistoryStatus = ref<boolean>(false)
+    setup() {  
         let dataCallApiPrint = ref()
         let paymentYearMonthsModal: any = ref()
         let dataCallModal: any = ref()
-        let checkAllValue = ref(true)
-        let customTextWithholdingLocalIncomeTax = ref('')
-        let customTextWithholdingIncomeTax = ref('')
+        let checkAllValue = ref(true) 
         let selectedItemKeys = ref([])
         const emailUserLogin = ref()
         const actionSendEmailGroup = ref(false)
         const dateSendEmail = ref(new Date)
         const valueSwitchChange = ref(true)
         const dataSource: any = ref([]);
-        const store = useStore();
-        const per_page = computed(() => store.state.settings.per_page);
+        const store = useStore(); 
         const move_column = computed(() => store.state.settings.move_column);
-        const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rowTable = ref(0);
-        const originData = reactive({ ...origindata, rows: per_page });
+        const colomn_resize = computed(() => store.state.settings.colomn_resize); 
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
         const globalYear: any = computed(() => store.state.settings.globalYear);
@@ -373,12 +364,11 @@ export default defineComponent({
             value: true,
             subValue: globalYear.value + 1 + '-02'
         })
-        const modalStatus = ref(false)
-        const textResidentId = ref('주민등록번호')
+        const modalStatus = ref(false) 
         const dataApiSearch = reactive({
             companyId: companyId,
             filter: {
-                imputedYear: parseInt(dayjs().format('YYYY')),
+                imputedYear: globalYear.value,
                 paymentYearMonths: getArrPaymentYearMonth()
             }
         })
@@ -394,7 +384,6 @@ export default defineComponent({
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
         })
-
         // QUERY NAME : getIncomeWageDailyWithholdingReceiptReportViewUrl
         const {
             refetch: refetchPrint,
@@ -411,7 +400,6 @@ export default defineComponent({
         errorPrint(res => {
             notification('error', res.message)
         })
-
         // QUERY NAME : getUser
         const {
             onResult: onResultUserInf
@@ -430,7 +418,6 @@ export default defineComponent({
             year1.value = value
             year2.value = value
         }, { deep: true });
-
         watch(() => year2.value, (val) => {
             if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year1.value == true)
                 checkAllValue.value = true
@@ -484,10 +471,7 @@ export default defineComponent({
             else
                 checkAllValue.value = false
         }, { deep: true });
-        // ================FUNCTION============================================
-        const onExporting = (e: any) => {
-            onExportingCommon(e.component, e.cancel, '영업자관리')
-        };
+        // ================FUNCTION============================================ 
         const searching = () => {
             if (getArrPaymentYearMonth().length > 0) {
                 dataApiSearch.filter.paymentYearMonths = getArrPaymentYearMonth()
@@ -507,7 +491,6 @@ export default defineComponent({
             paymentYearMonthsModal.value = getArrPaymentYearMonth()
             modalStatus.value = true
         }
-
         const customizeIncomeTax = () => {
             let total = 0
             dataSource.value.map((val: any) => {
@@ -547,7 +530,7 @@ export default defineComponent({
                     imputedYear: globalYear,
                     paymentYearMonths: getArrPaymentYearMonth(),
                     type: valueSwitchChange.value == true ? 1 : 2,
-                    receiptDate: dateSendEmail.value
+                    receiptDate: dayjs(dateSendEmail.value).format("YYYY-MM-DD")
                 }
             }
             triggerPrint.value = true
@@ -558,7 +541,6 @@ export default defineComponent({
             if (selectedItemKeys.value.length > 0) {
                 actionSendEmailGroup.value = true
                 let dataCall: any = []
-
                 // Gets the row of checked data 
                 dataSource.value.map((val: any) => {
                     if (selectedItemKeys.value.filter((item: any) => item == val.employee.employeeId).length > 0) {
@@ -581,12 +563,10 @@ export default defineComponent({
             selectedItemKeys.value = data.selectedRowKeys
         } 
         return {
-            emailUserLogin, actionSendEmailGroup, selectedItemKeys, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, customTextWithholdingLocalIncomeTax, customTextWithholdingIncomeTax, year1, year2, checkAllValue, arrCheckBoxSearch, textResidentId, popupData, modalHistoryStatus, loadingGetEmployeeBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, globalYear, loadingPrint,
-            selectionChanged, sendMailGroup, actionPrint, openPopup, onExporting, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
+            emailUserLogin, actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
+            selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
         };
     },
 });
 </script>  
-<style scoped lang="scss" src="./style/style.scss">
-
-</style>
+<style scoped lang="scss" src="./style/style.scss"/>
