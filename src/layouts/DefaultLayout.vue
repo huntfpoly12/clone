@@ -299,6 +299,12 @@ export default defineComponent({
           if (newValue.id.includes("bf-4")) {
             this.openKeys = ["bf-000", "bf-400"];
           }
+          if (newValue.id.includes("bf-5")) {
+            this.openKeys = ["bf-000", "bf-500"];
+          }
+          if (newValue.id.includes("bf-6")) {
+            this.openKeys = ["bf-000", "bf-600"];
+          }
           if (newValue.id.includes("cm-1")) {
             this.openKeys = ["cm-000", "cm-100"];
           }
