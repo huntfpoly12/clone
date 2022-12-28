@@ -1,18 +1,11 @@
 <template>
-  <div class="ssssss">
-    <div v-show="isShowInput == false">
-      <div @dblclick="showInput(name)" @click="oneClick(name)">
-        <label :id="name">&nbsp;&nbsp;&nbsp;&nbsp;{{ valueInput == '' ? '' : $filters.formatCurrency(parseInt(valueInput)) }} </label>
-      </div>
-    </div>
     <input
       :name="name"
-      v-show="isShowInput == true"
+     
       v-model="inputValue"
       v-on:blur="updateValue(inputValue)"
-      style="width: 100px"
+      @keyup.enter="enterSubling($event)"
     />
-  </div>
 </template>
 
 <script lang="ts">
@@ -27,6 +20,7 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    
   },
   setup(props,{emit}) {
     const isShowInput = ref(false);
@@ -43,10 +37,17 @@ export default defineComponent({
       emit("update:valueInput", value);
     };
 
-    const oneClick = (nameLabel: any) => {
-      setTimeout(() => {
-        document.getElementById(nameLabel)[0].focus();
-      }, 50);
+    // const oneClick = (nameLabel: any) => {
+    //   setTimeout(() => {
+    //    const input = document.querySelector('.label-'+nameLabel) as HTMLInputElement;
+    //     //input.select()
+    //     console.log( input,'dgdfgdf',nameLabel);
+        
+    //   }, 50);
+    // }
+
+    const enterSubling = (event  : any)=>{
+      document.getElementsByName('A02C01')[0].focus();
     }
     watch(
       () => props.valueInput,
@@ -61,7 +62,8 @@ export default defineComponent({
       inputValue,
       updateValue,
       showInput,
-      oneClick
+      //oneClick,
+      enterSubling
     };
   },
 });
