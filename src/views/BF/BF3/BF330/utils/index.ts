@@ -34,52 +34,8 @@ export const initialState = {
     salesRepresentativeId: null,
     manageUserId: null,
   },
-
-
-//   accountingfacilityBusinesses: [],
-  
-//   usedServiceInfoAccountingPrice: 0,
-//   inputAgent: 0,
-//   accountIntegration: 0,
-//   sSIS: 0,
-  
-//   withholdingStartYearMonth: "",
-//   withholdingCapacity: "",
-//   usedServiceInfoWithholdingPrice: 0,
-//   fourMajorInsurance: 0,
-//   compactSalesRepresentativeId: 0,
-//   manageUserId: 0,
-//   name: "",
-//   name2: "",
-//   name3: "",
-//   delivery: false,
-//   type: [],
-//   resource: "",
-//   desc: "",
-//   totalService: 0,
-//   accFeeService: 0,
-//   accBasicFee: "",
-//   accInput: "",
-//   accConsolidation: "",
-//   acc4wc: "",
-//   basicFee: "",
-//   majorInsurance: "",
-//   taxFeeSevice: 0,
-//   checkBox: false,
-//   checkBoxAccBasicFee: false,
-//   checkBoxAccInput: false,
-//   checkBoxAccConso: false,
-//   checkBoxAcc4wc: false,
-//   checkBoxMajorInsurance: false,
-//   checkBoxBasicFee: false,
-//   disableNumber1: false,
-//   disableNumber2: false,
-//   disableNumber3: false,
-//   disableNumber4: false,
-//   disableNumber5: false,
-//   disableNumber6: false,
 };
-export const initialFormStateMomes = [
+export const initialFormStateMomes = 
   {
     memoId: null,
     ownerUserId: 0,
@@ -92,5 +48,4 @@ export const initialFormStateMomes = [
     updatedBy: "",
     ip: "",
     active: "",
-  },
-];
+  };

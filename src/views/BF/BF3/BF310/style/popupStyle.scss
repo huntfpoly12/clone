@@ -177,10 +177,16 @@
     margin: 5px 0 10px 0 !important;
     padding: 10px 0px;
 
-
-    label {
-        color: red;
-        width: 170px;
+    .ant-form-item{
+        label {
+            color: red;
+            width: 170px;
+        }
+    }
+    .text-color{
+        label{
+            color: black;
+        }
     }
 
     .dp__input_icon_pad {

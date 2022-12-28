@@ -1,5 +1,5 @@
 <template>
-  <div class="content">{{ data }}
+  <div class="content">
     <table id="customers" cellspacing="0" cellpadding="0">
       <tbody>
         <!-- Row A -->
@@ -845,25 +845,25 @@
                   <td colspan="3">전월 미환급 세액의 계산</td>
                   <td colspan="4">당월 발생 환급세액</td>
                   <td rowspan="3">
-                    󰊉󰊚 󰊉󰊚<br />
+                    ⑱<br />
                     조정대상<br />
                     환급세액<br />
-                    ( + ⑭ 󰊉󰊗 󰊉󰊘<br />
-                    󰊉󰊙)
+                    (⑭+⑮+⑯+<br />
+                    ⑰)
                   </td>
                   <td rowspan="3">
-                    󰊉󰊛<br />
+                    ⑲<br />
                     당월조정 환<br />
                     급세액계
                   </td>
                   <td rowspan="3">
-                    󰊊󰊒<br />
+                    ⑳<br />
                     차월이월<br />
                     환급세액<br />
-                    (󰊉󰊚 󰊉󰊛)
+                    (⑱-⑲)
                   </td>
                   <td rowspan="3">
-                    󰊊󰊓<br />
+                    ㉑<br />
                     전월<br />
                     신청액
                   </td>
@@ -886,12 +886,12 @@
                     환급
                   </td>
                   <td rowspan="2">
-                    󰊉󰊘 신탁재산<br />
+                    ⑯ 신탁재산<br />
                     (금융<br />
                     회사 등)
                   </td>
                   <td colspan="2">
-                    󰊉󰊙 그 밖의 환급<br />
+                    ⑰ 그 밖의 환급<br />
                     세액
                   </td>
                 </tr>
