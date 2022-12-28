@@ -142,7 +142,7 @@
           <a-layout-content
             :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
           >
-            <div class="main-content">{{ activeTab }}
+            <div class="main-content">
               <template v-if="activeTab">      
                 <keep-alive :exclude="cachedTab">
              
