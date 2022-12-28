@@ -1,8 +1,6 @@
-import getEmployeeBusinesses from "./getEmployeeBusinesses";
-import getEmployeeBusiness from "./getEmployeeBusiness";
+import search from "./searchTaxWithholdingStatusReports"; 
 
-const queries = {
-    getEmployeeBusinesses: getEmployeeBusinesses,
-    getEmployeeBusiness: getEmployeeBusiness
+const queries = { 
+    search : search
 };
 export default queries;

@@ -1,7 +1,6 @@
 <template>
     <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
-        value-expr="employeeId" display-expr="employeeId"
-        :value="valueEmploy" :name="nameInput"
+        value-expr="employeeId" display-expr="employeeId" :value="valueEmploy" :name="nameInput"
         field-template="field-data" @value-changed="updateValue" @change="eventItemClick"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
@@ -12,12 +11,12 @@
                 <span>{{ data.name }}</span>
                 <span
                     v-if="data.idCardNumber?.length == 14
-                    && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
+    && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
                     {{ convertBirthDay(data.idCardNumber) }}
                 </span>
                 <span class="tag-status" v-if="data.status == 0">퇴</span>
                 <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-                <span class="tag-type-20" v-if="data.type == 20">일용</span>
+                <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span>
                 <DxTextBox style="display: none;" />
             </div>
             <div v-else style="padding: 4px">
@@ -32,14 +31,14 @@
             <span>{{ data.name }}</span>
             <span
                 v-if="data.idCardNumber?.length == 14
-                && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
+    && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
                 {{ convertBirthDay(data.idCardNumber) }}
             </span>
             <span class="tag-status" v-if="data.status == 0">퇴</span>
             <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-            <span class="tag-type-20" v-if="data.type == 20">일용</span>
+            <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span>
         </template>
-        
+
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
@@ -73,6 +72,10 @@ export default defineComponent({
             type: String,
             default: "",
         },
+        activeType20: {
+            type: Boolean,
+            default: true
+        }
     },
     components: {
         DxSelectBox,
@@ -141,6 +144,7 @@ export default defineComponent({
     border-radius: 5px;
     margin: 0 5px;
 }
+
 .tag-type-20 {
     background-color: rgb(255, 255, 255);
     color: black;
