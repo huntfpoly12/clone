@@ -1,10 +1,10 @@
 <template>
     <a-spin :spinning="loading" size="large">
         <action-header title="" @actionSearch="searching" />
-        <div id="bf-430">
+        <div id="pa-230">
             <div class="search-form">
                 <a-row>
-                    <a-col :span="22">
+                    <a-col :span="12">
                         <a-row :gutter="[24, 8]">
                             <a-col>
                                 <div class="dflex custom-flex">
@@ -21,11 +21,11 @@
                             </a-col>
                         </a-row>
                     </a-col>
-                    <a-col :span="2">
-                        <div class="send-mail-230">
-                            <img src="@/assets/images/email.png" alt="" height="40" class="mail-230"
+                    <a-col :span="12">
+                        <div class="d-flex-center" style="justify-content: flex-end;">
+                            <img src="@/assets/images/email.svg" alt="" height="30" class="mail-230"
                                 @click="sendMail('mail')" />
-                            <img src="@/assets/images/group.png" alt="" height="33" class="group-mail-230"
+                            <img src="@/assets/images/print.svg" alt="" height="28" class="group-mail-230 ml-5"
                                 @click="sendMail('groupMail')" />
                         </div>
                     </a-col>
@@ -33,7 +33,7 @@
             </div>
             <div class="page-content">
                 <a-row>
-                    <a-col :span="12"> 
+                    <a-col :span="12">
                         <a-form-item label="휴대폰" class="red">
                             <div class="format-settings-text">
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
