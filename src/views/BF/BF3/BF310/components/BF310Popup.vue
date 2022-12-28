@@ -142,7 +142,7 @@
                                         </a-row>
                                         <a-row> </a-row>
                                     </a-form-item>
-                                    <a-row style="display: flex">
+                                    <a-row style="display: flex; color: black">
                                         <a-col>
                                             <a-row :gutter="[16, 16]">
                                                 <a-col :span="15">
@@ -201,6 +201,9 @@
                                         <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
+                                        <div class="option">
+                                        </div>
+                                        <br/>
                                         <div id="data-grid-demo">
                                             <DxDataGrid
                                                 :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer-pa-120"
@@ -208,7 +211,12 @@
                                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                                 :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
                                                 :onRowClick="onSelectionClick"
-                                                :focused-row-enabled="true" key-expr="rowIndex"
+                                                :focused-row-enabled="true" 
+                                                key-expr="rowIndex"
+                                                @init-new-row="onInitRow"
+                                                :auto-navigate-to-focused-row="true"
+                                                :focused-row-key="focusedRowKey"
+                                                @focused-row-changed="onFocusedRowChanged"
                                                 >
                                                 <DxPaging :enabled="false" />
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
@@ -250,7 +258,7 @@
                                                         <default-text-box width="200px" :required="true" 
                                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                                     </a-form-item>
-                                                    <a-col class="pl-12">
+                                                    <a-col class="pl-12 text-color">
                                                         <img-upload :title="'장기요양기관등록증'" @update-img="getUrlLicenseFile"/>
                                                     </a-col>
                                                 </a-col>
@@ -363,7 +371,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed } from "vue";
+import { ref, defineComponent, reactive, watch, computed, onMounted, onUpdated } from "vue";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxToolbar, DxItem, DxTexts, DxMasterDetail } from "devextreme-vue/data-grid";
 import { UploadOutlined, MinusCircleOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons-vue";
@@ -420,7 +428,7 @@ export default defineComponent({
         const imageLicenseFile = ref("");
         const licenseFileName = ref("");
         let visible = ref(false);
-        let activeKey = ref(1);
+        let activeKey = ref(4);
         const dataQuery = ref();
         const dataQueryCheckPer = ref({});
         let trigger = ref<boolean>(false);
@@ -672,21 +680,39 @@ export default defineComponent({
         }
         // change form 
         const gridRefName: any = ref("grid");
-        const dataActiveRow = ref<any>({})
+        const dataActiveRow = ref<any>(dataSource.value[0])
+        const focusedRowKey = ref(0)
+        const initRow = {
+            longTermCareInstitutionNumber: '',
+            capacity: null,
+            facilityBizType: null,
+            name: null,
+            startYearMonth: null,
+            registrationCardFileStorageId: null,
+            rowIndex: null
+        }
         const onSelectionClick = (value: any) => {
             dataActiveRow.value = value.data;
         }
-        const addRow = () => {
-            gridRefName.value.instance.addRow()
-            gridRefName.value.instance.deselectAll()
+        const addRow = async() => {
+            await gridRefName.value.instance.addRow()
             gridRefName.value.instance.closeEditCell();
             setTimeout(() => {
                 if (gridRefName.value.instance.totalCount() == 1) {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
                     (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
                 }
+                let keyNew = gridRefName.value.instance.getKeyByRowIndex(dataSource.value.length-1);
+                focusedRowKey.value = keyNew;
             }, 100);
         };
+        const onInitRow = (e: any) => {
+            e.data = initRow;
+        }
+        const onFocusedRowChanged=(e:any)=> {
+            const data = e.row && e.row.data;
+            dataActiveRow.value = data;
+        }
         return {
             selectionChanged,
             contentReady,
@@ -722,7 +748,10 @@ export default defineComponent({
             addRow,
             gridRefName,
             facilityBizTypeCommon,
-            dataSource
+            dataSource,
+            onInitRow,
+            focusedRowKey,
+            onFocusedRowChanged,
         };
     },
 });
