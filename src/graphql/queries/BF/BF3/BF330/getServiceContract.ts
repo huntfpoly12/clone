@@ -7,6 +7,7 @@ query getServiceContract($id: Int!) {
     accountingPrice
     withholdingPrice
     usedAccountingCount
+    usedAccounting
     usedWithholding
     usedServiceInfo {
       totalPrice
