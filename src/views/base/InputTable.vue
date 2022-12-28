@@ -4,6 +4,7 @@
       v-model="inputValue"
       v-on:blur="updateValue(inputValue)"
       @keyup.enter="enterSubling(nextInput)"
+      @focus="onFocus(name)"
       @input="onInput"
       style="text-align:right;"
     />
@@ -48,6 +49,11 @@ export default defineComponent({
       inputValue.value = filters.formatCurrency(parseInt(event.target.value.replaceAll(/\D/g, '')));
     }
 
+    const onFocus = (nameIput: any) => {
+      let el = document.getElementsByName(nameIput)[0] as HTMLInputElement;
+      el.select();
+    }
+    
     const enterSubling = (nameIput  : any)=>{
       document.getElementsByName(nameIput)[0].focus();
     }
@@ -65,7 +71,8 @@ export default defineComponent({
       updateValue,
       showInput,
       enterSubling,
-      onInput
+      onInput,
+      onFocus
     };
   },
 });
