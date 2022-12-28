@@ -77,7 +77,9 @@ const ActionHeader = defineAsyncComponent(() =>
 const GridPrototype = defineAsyncComponent(() =>
   import("../base/GridPrototype.vue")
 );
-
+const TestTable = defineAsyncComponent(() =>
+  import("../base/TestTable.vue")
+);
 const allListTab = service.getListTab();
 export default defineComponent({
   components: {
@@ -95,7 +97,8 @@ export default defineComponent({
     CheckBoxFrom,
     TagBox,
     ActionHeader,
-    GridPrototype
+    GridPrototype,
+    TestTable
   },
   setup() {
     const allTab = ref(allListTab);

@@ -1,72 +1,74 @@
-
-
 interface ListTab {
-    ID: number,
-    TabName: string,
-    layoutName: string
+  ID: number;
+  TabName: string;
+  layoutName: string;
 }
 
 const listTab: ListTab[] = [
-
-    {
-        ID: 1,
-        TabName: 'Grid Prototype',
-        layoutName: 'GridPrototype'
-    },
-    {
-        ID: 2,
-        TabName: 'Text Box',
-        layoutName: 'TextBoxFrom'
-    },
-    {
-        ID: 3,
-        TabName: 'Number Box',
-        layoutName: 'NumberBoxForm'
-    },
-    {
-        ID: 4,
-        TabName: 'Date Time Box',
-        layoutName: 'DateTimeBoxForm'
-    },
-    {
-        ID: 5,
-        TabName: 'Check Box',
-        layoutName: 'CheckBoxFrom'
-    },
-    {
-        ID: 6,
-        TabName: 'Modal Message',
-        layoutName: 'ModalMessage'
-    },
-    {
-        ID: 7,
-        TabName: 'Preview Image',
-        layoutName: 'PreviewImage'
-    },
-    {
-        ID: 8,
-        TabName: 'Button Basic',
-        layoutName: 'ButtonBasic'
-    },
-    {
-        ID: 9,
-        TabName: 'Tag',
-        layoutName: 'TagBox'
-    },
-    {
-        ID: 10,
-        TabName: 'Action Header',
-        layoutName: 'ActionHeader'
-    },
-    {
-        ID: 11,
-        TabName: 'Select Box',
-        layoutName: 'SelectBox'
-    },
+  {
+    ID: 1,
+    TabName: "Grid Prototype",
+    layoutName: "GridPrototype",
+  },
+  {
+    ID: 2,
+    TabName: "Text Box",
+    layoutName: "TextBoxFrom",
+  },
+  {
+    ID: 3,
+    TabName: "Number Box",
+    layoutName: "NumberBoxForm",
+  },
+  {
+    ID: 4,
+    TabName: "Date Time Box",
+    layoutName: "DateTimeBoxForm",
+  },
+  {
+    ID: 5,
+    TabName: "Check Box",
+    layoutName: "CheckBoxFrom",
+  },
+  {
+    ID: 6,
+    TabName: "Modal Message",
+    layoutName: "ModalMessage",
+  },
+  {
+    ID: 7,
+    TabName: "Preview Image",
+    layoutName: "PreviewImage",
+  },
+  {
+    ID: 8,
+    TabName: "Button Basic",
+    layoutName: "ButtonBasic",
+  },
+  {
+    ID: 9,
+    TabName: "Tag",
+    layoutName: "TagBox",
+  },
+  {
+    ID: 10,
+    TabName: "Action Header",
+    layoutName: "ActionHeader",
+  },
+  {
+    ID: 11,
+    TabName: "Select Box",
+    layoutName: "SelectBox",
+  },
+  {
+    ID: 12,
+    TabName: "Grid TestTable",
+    layoutName: "TestTable",
+  },
 ];
 
 export default {
-    getListTab() {
-        return listTab;
-    },
+  getListTab() {
+    return listTab;
+  },
 };
