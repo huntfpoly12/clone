@@ -1,19 +1,11 @@
 <template>
-  <div >
-    <div v-show="isShowInput == false">
-      <div @dblclick="showInput(name)">
-        <label >&nbsp;&nbsp;&nbsp;&nbsp;{{ valueInput == '' ? '' : $filters.formatCurrency(parseInt(valueInput)) }} </label>
-      </div>
-    </div>
     <input
       :name="name"
-      v-show="isShowInput == true"
       v-model="inputValue"
       v-on:blur="updateValue(inputValue)"
-      
-      style="width: 100px"
+      @keyup.enter="enterSubling(nextInput)"
+      @input="onInput"
     />
-  </div>
 </template>
 
 <script lang="ts">
@@ -28,6 +20,11 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    nextInput: {
+      type: String,
+      default: '',
+    }
+    
   },
   setup(props,{emit}) {
     const isShowInput = ref(false);
@@ -38,11 +35,20 @@ export default defineComponent({
         document.getElementsByName(nameInput)[0].focus();
       }, 50);
     }
+
     const updateValue = (value: any) => {
       isShowInput.value = false;
+      value.replaceAll(/\D/g, '')
       emit("update:valueInput", value);
     };
 
+    const onInput = (event: any) => {
+      inputValue.value = event.target.value.replaceAll(/\D/g, '');
+    }
+
+    const enterSubling = (nameIput  : any)=>{
+      document.getElementsByName(nameIput)[0].focus();
+    }
     watch(
       () => props.valueInput,
       (newValue) => {
@@ -55,7 +61,9 @@ export default defineComponent({
       isShowInput,
       inputValue,
       updateValue,
-      showInput
+      showInput,
+      enterSubling,
+      onInput
     };
   },
 });
