@@ -1,5 +1,5 @@
 <template>
-  <div class="content">{{ data }}
+  <div class="content">
     <table id="customers" cellspacing="0" cellpadding="0">
       <tbody>
         <!-- Row A -->
