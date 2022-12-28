@@ -5,11 +5,13 @@
       v-on:blur="updateValue(inputValue)"
       @keyup.enter="enterSubling(nextInput)"
       @input="onInput"
+      style="text-align:right;"
     />
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
+import filters from "@/helpers/filters";
 export default defineComponent({
   props: {
     valueInput: {
@@ -43,7 +45,7 @@ export default defineComponent({
     };
 
     const onInput = (event: any) => {
-      inputValue.value = event.target.value.replaceAll(/\D/g, '');
+      inputValue.value = filters.formatCurrency(parseInt(event.target.value.replaceAll(/\D/g, '')));
     }
 
     const enterSubling = (nameIput  : any)=>{
