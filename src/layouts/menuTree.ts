@@ -49,7 +49,7 @@ export default [
         title: "원천업무",
         id: "bf-600",
         items: [
-          { name: "원천마감관리", url: "#", id: "bf-610" },
+          { name: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610" },
           { name: "원천세/지방소득세전자신고", url: "#", id: "bf-620" },
           { name: "지급명세서전자신고(연말정산)", url: "#", id: "bf-630" },
           { name: "간이지급명세서전자신고", url: "#", id: "bf-640" },
@@ -164,7 +164,7 @@ export default [
         items: [
           { name: "원천징수이행상황신고서", url: "#", id: "pa-210" },
           { name: "근로소득원천징수영수증", url: "#", id: "pa-220" },
-          { name: "소득자별근로소득원천징수부", url: "#", id: "pa-230" },
+          { name: "소득자별근로소득원천징수부", url: "/dashboard/pa-230", id: "pa-230" },
           { name: "연말정산간소화입력", url: "#", id: "pa-240" },
           { name: "의료비지급명세서", url: "#", id: "pa-250" },
           { name: "기부금명세서", url: "#", id: "pa-260" },
