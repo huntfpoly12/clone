@@ -214,10 +214,9 @@
     margin-left: 0 !important; 
     margin-right: 0 !important;
 }
-::v-deep .ant-row.data-row-accounting {
-    // margin-left: 0 !important;
-    // margin-right: 0 !important;
-}
 ::v-deep .delete_group span:first-child {
     width: 200px;
+}
+::v-deep input.dp__input.dp__input_icon_pad {
+    height: 34px;
 }
