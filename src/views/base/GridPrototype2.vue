@@ -13,14 +13,6 @@ import filters from "@/helpers/filters";
 // register Handsontable's modules
 registerAllModules();
 const firstRowRenderer = (instance, td, row, col, prop, value, cellProperties)=>{
-    
-  console.log(instance);
-    console.log(td,'td');
-    console.log(row,'row');
-    console.log(col,'ffff');
-    console.log(prop,'prop');
-    console.log(value,'xxxx');
-    console.log(cellProperties,'yyyy');
   if (row === 4) {
       td.style.fontWeight = 'bold';
       td.innerHTML = `<p style="color:red;margin: unset;float: right;">${filters.formatCurrency(parseInt(cellProperties.oldValue))}</p><p style="margin: unset;float: right;">${filters.formatCurrency(parseInt(value))}</p>`
