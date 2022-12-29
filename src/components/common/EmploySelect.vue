@@ -1,7 +1,8 @@
 <template>
     <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
-        value-expr="employeeId" display-expr="employeeId" :value="valueEmploy" :name="nameInput"
-        field-template="field-data" @value-changed="updateValue" @change="eventItemClick"
+        value-expr="employeeId" display-expr="employeeId"
+        :value="valueEmploy" :name="nameInput"
+        field-template="field-data" @value-changed="updateValue" @closed="eventItemClick"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
             <div v-if="data" style="padding: 4px">
@@ -111,6 +112,8 @@ export default defineComponent({
         );
 
         const eventItemClick = () => {
+            emit('onChange')
+            console.log(`outpu`)
         }
         return {
             updateValue,

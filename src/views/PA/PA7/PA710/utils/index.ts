@@ -1,7 +1,7 @@
 export const initialState = {
         name: "",
         foreigner: false,
-        nationality: "베트남",
+        nationality: null,
         nationalityCode: null,
         stayQualification: null,
         residentId: "",

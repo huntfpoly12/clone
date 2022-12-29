@@ -187,6 +187,9 @@
       color: blue;
     }
   }
+  ::v-deep .dx-button-mode-contained {
+    height: 34px;
+  }
   .button-open-tab {
     color: #fff;
     background-color: #00f;
@@ -208,7 +211,7 @@
     align-items: center;
     height: 91.5%;
   }
-  .validate{
+  .validate {
     color: red;
     font-size: 12px;
   }

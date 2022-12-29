@@ -5,13 +5,15 @@
         </div>
         <div style="display: flex;align-items: flex-end;">
             <a-tooltip placement="top"
-                v-if="idCardNumber?.length == 14
-                && parseInt(idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(idCardNumber.split('-')[0].slice(4, 6)) < 32"
-                :title="convertBirthDay(idCardNumber)" key="black">
-                {{ name }}
-            </a-tooltip>
-            <a-tooltip placement="top" v-else>
-                {{ name }}
+                v-if="idCardNumber && name"
+                key="black" :color="convertBirthDay(idCardNumber)??'red'">
+                <template #title>
+                    <div v-if="convertBirthDay(idCardNumber)">{{ convertBirthDay(idCardNumber) }}</div>
+                    <div v-else class="error">date error</div>
+                </template>
+                <div class="text-center">
+                    {{ name }}
+                </div>
             </a-tooltip>
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
@@ -21,7 +23,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import DxButton from 'devextreme-vue/button';
 
 export default defineComponent({
@@ -54,10 +56,14 @@ export default defineComponent({
         const convertBirthDay = (birthDay: any) => {
             let newBirthDay = birthDay.split("-")[0]
             let typeYear = birthDay.split("-")[1].charAt(0)
-            if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
-                return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
-            else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
-                return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+            if(props.idCardNumber?.length == 14
+                && parseInt(props.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(props.idCardNumber.split('-')[0].slice(4, 6)) < 32){
+                if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
+                    return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+                else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
+                    return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+            }
+            return null;
         }
         return {
             convertBirthDay
@@ -119,6 +125,9 @@ export default defineComponent({
 
 .jtf-center {
     justify-content: center;
+}
+.error {
+    color: #ffffff;
 }
 </style>
 

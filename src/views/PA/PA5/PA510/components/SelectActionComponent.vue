@@ -2,8 +2,33 @@
     <DxButton class="ml-3" @click="deleteItem">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-3" icon="plus" @click="actionAddItem" />
-    <DxButton class="ml-3" icon="edit" @click="editItem" />
+    <DxButton class="ml-4" icon="plus" @click="actionAddItem" />
+    <DxButton @click="onSubmit($event)" size="large" class="ml-4" >
+        <SaveOutlined style="font-size: 17px"/>
+    </DxButton>
+    
+    <DxButton class="ml-4" style="cursor: pointer; display: inline-flex;" @click="onItemClick({itemData:{event:'History'}})">
+        <a-tooltip placement="top">
+        <template #title>근로소득자료 변경이력</template>
+        <div class="text-center">
+            <HistoryOutlined style="font-size: 16px" />
+        </div>
+        </a-tooltip>
+    </DxButton>
+    <DxButton class="ml-4" style="cursor: pointer" @click="onItemClick({itemData:{event:'HistoryStatus'}})">
+        <a-tooltip placement="top">
+        <template #title>근로소득 마감상태 변경이력</template>
+        <div class="text-center">
+            <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history"/>
+        </div>
+        </a-tooltip>
+    </DxButton>
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox">
+        <div class="d-flex-center">
+        <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
+        <span class="fz-12 pl-5">지급일변경</span>
+        </div>
+    </DxButton>
     <button class="button-open-tab" @click="openTab({url: '/dashboard/pa-520',name: '일용직사원등록', id: 'pa-520' })">일용직사원등록</button>
 
     <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
@@ -27,21 +52,8 @@
                 <img v-if="data.id == 2" src="@/assets/images/email.png" alt=""
                     style="width: 25px; height: 25px;" />
                 <img v-if="data.id == 3" src="@/assets/images/group_email.png" alt=""
-                    style="width: 25px; height: 25px;" />
+                    style="width: auto; height: 25px; margin-left: 6px;" />
                 </div>
-        </template>
-    </DxDropDownButton>
-    
-    <DxDropDownButton class="ml-3" :items="arrDropDown" display-expr="title" text="선택" style="width: 120px;"
-        @item-click="onItemClick" item-template="item-field">
-        <template #item-field="{ data }">
-            <div style="text-align: center;">
-                <HistoryOutlined v-if="data.function == 'History'" class="mr-5" style="font-size: 18px" />
-                <div v-if="data.function == 'HistoryStatus'" style="text-align: center;">
-                    <img src="@/assets/images/icon_status_history.png" alt=""
-                        style="width: 20px; height: 20px;" />
-                </div>
-            </div>
         </template>
     </DxDropDownButton>
 
@@ -70,7 +82,7 @@ import EditPopup from "./Popup/EditPopup.vue"
 import EmailSinglePayrollRegisterPopup from "./Popup/EmailSinglePayrollRegisterPopup.vue"
 import EmailMultiPopup from "./Popup/EmailMultiPopup.vue"
 import EmailSinglePopup from "./Popup/EmailSinglePopup.vue"
-import { HistoryOutlined } from "@ant-design/icons-vue"
+import { HistoryOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import { companyId, openTab } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import { useQuery } from "@vue/apollo-composable";
@@ -86,7 +98,8 @@ export default defineComponent({
         EmailSinglePayrollRegisterPopup,
         EmailMultiPopup,
         EmailSinglePopup,
-        HistoryOutlined
+        HistoryOutlined,
+        SaveOutlined,
     },
     props: {
         modalStatus: {
@@ -207,7 +220,8 @@ export default defineComponent({
                     break;
                 case 'History':
                     modalHistory.value = true;
-                    popupDataHistory.value = {...processKey.value}
+                    popupDataHistory.value = {...processKey.value};
+                    console.log(`output-`)
                     break;
                 case 'HistoryStatus':
                     modalHistoryStatus.value = true;
@@ -232,6 +246,9 @@ export default defineComponent({
         const loadingTableInfo = () => {
             emit("loadingTableInfo", true)
         }
+        const onSubmit = (e: any) => {
+            emit('onSubmit')
+        };
 
         return {
             deleteItem,
@@ -258,6 +275,7 @@ export default defineComponent({
             popupDataEdit,
             loadingTableInfo,
             openTab,
+            onSubmit
         };
     },
 });

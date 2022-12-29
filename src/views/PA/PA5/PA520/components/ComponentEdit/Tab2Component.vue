@@ -172,10 +172,6 @@ export default defineComponent({
                 ...originDataInputUpdate
             },
         })
-        const daylyPay = computed(()=> {
-            return Math.floor(originDataUpdate.value.input.workingDays > 0 ? originDataUpdate.value.input.monthlyWage /
-                originDataUpdate.value.input.workingDays : 0)
-        })
         // ================== GRAPQL ====================================
         const {
             loading: loading,
@@ -378,7 +374,6 @@ export default defineComponent({
             totalAmountDifferencePayment,
             callFuncCalculate,
             updateDeduction,
-            daylyPay,
             onChangeDailyWage,
             onChangeMonthlyWage,
             onChangeWorkingDays,

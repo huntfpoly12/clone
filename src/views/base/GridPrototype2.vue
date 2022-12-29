@@ -1,6 +1,6 @@
 <template>
   <p style="font-size: 18px;font-weight: 500;margin: 20px;"> This is the table created by the library <a href="https://handsontable.com/demo" target="_blank">handsontable</a> </p>
-  <hot-table :settings="hotSettings"></hot-table>
+  <hot-table ref="wrapper" :settings="hotSettings"></hot-table>
 </template>
 
 <script>
@@ -18,7 +18,7 @@ const firstRowRenderer = (instance, td, row, col, prop, value, cellProperties)=>
       td.innerHTML = `<p style="color:red;margin: unset;float: right;">${filters.formatCurrency(parseInt(cellProperties.oldValue))}</p><p style="margin: unset;float: right;">${filters.formatCurrency(parseInt(value))}</p>`
       return td;
     }
-  }
+}
 export default defineComponent({
   data() {
     return {
@@ -27,12 +27,19 @@ export default defineComponent({
         fillHandle: true,
          colWidths: 100,
         height: 120,
-        beforeKeyDown: function (e) {
-          var reg = /\D/g;
-          if (reg.test(e.key)) {
-            e.preventDefault()
+        beforeKeyDown:  (e)=>{
+          var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
+          if (!reg.test(e.key) && e.key != 'Backspace' &&  e.key != '-') {
+              e.preventDefault()
           }
         },
+        afterValidate: (isValid, value, row, prop, source) => {
+          let hot = this.$refs.wrapper.hotInstance;
+          if (isValid == false) {
+            hot.setDataAtCell(row, hot.propToCol(prop), null);
+          }
+        },
+        hotRef: null,
         data: [
           ["1. 원천징수 내역 및 납부세액", "", "", "", "", "", "", "", "", "", "", "", ""],
           ["", "소득자 소득구분", "", "", "코드", "원 천 징 수 명 세", "", "", "", "", "⑨<br> 당월 조정<br>환급세액", "납부 세액", ""],
@@ -220,7 +227,7 @@ export default defineComponent({
           { row: 32, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
 
 
-          { oldValue:'220000', row: 4, col: 5  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },renderer: firstRowRenderer},
+          { row: 4, col: 5  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },oldValue:'220000',renderer: firstRowRenderer},
           { row: 4, col: 6  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
           { row: 4, col: 7  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
           { row: 4, col: 8  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
