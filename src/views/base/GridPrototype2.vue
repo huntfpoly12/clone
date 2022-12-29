@@ -1,4 +1,5 @@
 <template>
+  <p style="font-size: 18px;font-weight: 500;margin: 20px;"> This is the table created by the library <a href="https://handsontable.com/demo" target="_blank">handsontable</a> </p>
   <hot-table :settings="hotSettings"></hot-table>
 </template>
 
