@@ -3,7 +3,8 @@
     <standard-form action="" name="delete-510">
       <div class="custom-modal-delete">
         <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px" />
-        <span>선택된 내역({{ data.incomeIds.length }}건) 삭제합니다. 그래도 진행하시겠습니까?</span>
+        <span v-if="data.incomeIds.length">선택된 내역({{ data.incomeIds.length }}건) 삭제합니다. 그래도 진행하시겠습니까?</span>
+        <span v-else>항목을 하나 선택해야합니다</span>
       </div>
       <div class="text-align-center mt-30">
         <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined" @onClick="setModalVisible" />

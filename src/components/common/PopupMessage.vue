@@ -5,7 +5,7 @@
             <a-col :span="4">
                 <warning-outlined :style="{ fontSize: '70px', color: '#faad14', paddingTop: '20px' }" />
             </a-col>
-            <a-col :span="20">
+            <a-col :span="20" class="centent-wrap">
                 <h3><b>{{ title }}</b></h3>
                 <p> {{ content }}</p>
             </a-col>
@@ -147,5 +147,10 @@ export default defineComponent({
 <style lang="scss">
 .ant-modal-confirm-body svg {
     font-size: 50px;
+}
+.centent-wrap{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <action-header title="일용직근로소득원천징수영수증" />
+    <action-header title="일용직근로소득원천징수영수증" @actionSearch="onSearch" />
     <div id="pa-220">
         <div class="search-form">
             <a-row :gutter="[24, 8]">
@@ -33,7 +33,7 @@
                         </div>
                         <div class="title-body-left-2">
                             <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
-                                :layoutCustom="'vetical'" />
+                                :layoutCustom="'vetical'" valueExpr = "id"/>
                         </div>
                     </a-col>
                     <a-col :span="12">
@@ -106,7 +106,7 @@ import { useQuery } from "@vue/apollo-composable";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
-import { radioDivision, radioType } from "./utils/index"
+import { radioLeaved, radioType } from "./utils/index"
 import {
     companyId,
     onExportingCommon,
@@ -119,7 +119,7 @@ export default defineComponent({
     },
     setup() {
         const globalYear = computed(() => store.state.settings.globalYear);
-        const arrayRadioDivision = ref([...radioDivision])
+        const arrayRadioDivision = ref([...radioLeaved])
         const arrayRadioType = ref([ ...radioType ])
         const formSearch = ref({
             division: 1,
@@ -179,10 +179,15 @@ export default defineComponent({
         }));
         
         watch(resultSearch, (newData)=> {
+            searchTrigger.value = false;
             searchData.value = newData.searchIncomeWageWithholdingReceipts;
             viewUrlParam.input.type = newData.searchIncomeWageWithholdingReceipts?.employee?.type ?? 1;
             searchParam.filter.leaved = newData.searchIncomeWageWithholdingReceipts?.leaved ?? null;
         })
+        const onSearch =()=> {
+            searchTrigger.value = true;
+            refetchSearch()
+        }
         
 // PRINT VIEW URL
         const viewUrlParam = reactive({
@@ -299,6 +304,7 @@ export default defineComponent({
             onOpenPopUpMultiMail,
             popupMailGroup,
             searchParam,
+            onSearch,
         };
     },
 });
