@@ -14,6 +14,7 @@
       v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
       @row-click="actionEditFuc"
+      @focused-row-changed="onFocusedRowChanged"
     >
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
@@ -107,6 +108,10 @@ export default defineComponent({
       type: Number,
     },
     isRunOnce: Boolean,
+    isChangeRow: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     let dataSourceDetail = ref([]);
@@ -170,19 +175,22 @@ export default defineComponent({
     );
 
     // ================FUNCTION============================================
-
+    const firsTimeRow = ref(true);
     const actionEditFuc = (data: any) => {
-      updateParam = {
-        companyId: companyId,
-        processKey: {
-          imputedYear: dataTableDetail.value.processKey?.imputedYear,
-          imputedMonth: dataTableDetail.value.processKey?.imputedMonth,
-          paymentYear: dataTableDetail.value.processKey?.paymentYear,
-          paymentMonth: dataTableDetail.value.processKey?.paymentMonth,
-        },
-        incomeId: data.data.incomeId,
-      };
-      emit('editTax', updateParam);
+    //   if (props.isChangeRow) {
+        updateParam = {
+          companyId: companyId,
+          processKey: {
+            imputedYear: dataTableDetail.value.processKey?.imputedYear,
+            imputedMonth: dataTableDetail.value.processKey?.imputedMonth,
+            paymentYear: dataTableDetail.value.processKey?.paymentYear,
+            paymentMonth: dataTableDetail.value.processKey?.paymentMonth,
+          },
+          incomeId: data.data.incomeId,
+        // };
+      }
+      emit('editTax', updateParam, firsTimeRow.value);
+      firsTimeRow.value = false;
     };
 
     const checkLen = (text: String) => {
@@ -206,11 +214,15 @@ export default defineComponent({
         return item.incomeId;
       });
       paymentData.value = data.selectedRowsData.map((item: { incomeId: number; paymentDay: number }) => {
-        return { incomeId: item.incomeId, day: item.paymentDay,...dataTableDetail.value };
+        return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
       });
     };
     // highlight row
     const focusedRowKey = ref<Number>(0);
+    const onFocusedRowChanged=(e:any)=> {
+        const data = e.row && e.row.data;
+        // console.log(`output->data`,data)
+    }
     return {
       dataAction,
       rowTable,
@@ -230,6 +242,7 @@ export default defineComponent({
       triggerDetail,
       dataTableDetail,
       focusedRowKey,
+      onFocusedRowChanged
     };
   },
 });

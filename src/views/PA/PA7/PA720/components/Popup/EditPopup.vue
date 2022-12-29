@@ -2,13 +2,14 @@
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
         <standard-form action="" name="edit-510">
-            <div class="custom-modal-edit">
+            <div class="custom-modal-edit" v-if="data.length">
                 <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
                 <span>선택된 내역 지급일을</span>
                 <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
                     :spinButtons="true" />
                 <span>일로 변경하시겠습니까?</span>
             </div>
+            <div v-else class="text-center">항목을 하나 선택해야합니다</div>
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible" />
