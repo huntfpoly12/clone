@@ -86,12 +86,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, computed } from "vue";
+import { defineComponent, reactive, ref, computed, watch } from "vue";
 import { dataSearchUtil } from "./utils/index";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useQuery } from "@vue/apollo-composable";
-import queries from "@/graphql/queries/PA/PA6/PA610/index";
+import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
 import { useStore } from 'vuex'
 export default defineComponent({
@@ -250,6 +250,11 @@ export default defineComponent({
         /*
          * ============== WATCHING ============== 
          */
+
+        watch(() => reportType, (value) => {
+
+        }, { deep: true })
+
 
 
         /*
