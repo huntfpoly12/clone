@@ -203,10 +203,9 @@
                                         </a-card>
                                         <div class="option">
                                         </div>
-                                        <br/>
                                         <div id="data-grid-demo">
                                             <DxDataGrid
-                                                :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer-pa-120"
+                                                :show-row-lines="true" :hoverStateEnabled="true"
                                                 :data-source="dataSource" :show-borders="true"
                                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                                 :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
@@ -217,8 +216,10 @@
                                                 :auto-navigate-to-focused-row="true"
                                                 :focused-row-key="focusedRowKey"
                                                 @focused-row-changed="onFocusedRowChanged"
+                                                id="bf-320-popup-datagrid"
                                                 >
                                                 <DxPaging :enabled="false" />
+                                                <DxColumn data-field="name" caption="사업명 (중복불가)" />
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
                                                 <DxColumn data-field="facilityBizType" caption="사업분류">
                                                 </DxColumn>
@@ -235,6 +236,7 @@
                                                 <template #button-template>
                                                     <DxButton icon="plus" @click="addRow" text="추가" />
                                                 </template>
+                                                <DxScrolling column-rendering-mode="virtual"/>
                                             </DxDataGrid>
                                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow">
                                                 <a-col :span="12">
@@ -264,7 +266,6 @@
                                                 </a-col>
                                                 <a-col :span="12">
                                                     <div class="preview-img">
-                                                        <!-- <preview-image :dataImage="dataActiveRow.dataImg" @deleteImg="removeLicenseFile"/> -->
                                                         <preview-image :dataImage="{ url: imageLicenseFile, name: licenseFileName }"
                                                             @deleteImg="removeLicenseFile" :activePreview="true" />
                                                     </div>
@@ -371,9 +372,9 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed, onMounted, onUpdated } from "vue";
+import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxToolbar, DxItem, DxTexts, DxMasterDetail } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxToolbar, DxItem, DxTexts, DxMasterDetail, DxScrolling } from "devextreme-vue/data-grid";
 import { UploadOutlined, MinusCircleOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
@@ -399,24 +400,25 @@ export default defineComponent({
         },
     },
     components: {
-        DxDropDownBox,
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxSelection,
-        UploadOutlined,
-        MinusCircleOutlined,
-        DeleteOutlined,
-        PlusOutlined,
-        imgUpload,
-        DxEditing,
-        DxLookup,
-        DxToolbar,
-        DxItem,
-        DxTexts,
-        DxMasterDetail,
-        DxButton,
-    },
+    DxDropDownBox,
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxSelection,
+    UploadOutlined,
+    MinusCircleOutlined,
+    DeleteOutlined,
+    PlusOutlined,
+    imgUpload,
+    DxEditing,
+    DxLookup,
+    DxToolbar,
+    DxItem,
+    DxTexts,
+    DxMasterDetail,
+    DxButton,
+    DxScrolling
+},
     setup(props, { emit }) {
         // config grid
         const store = useStore();
@@ -604,7 +606,9 @@ export default defineComponent({
                 }
                 // process data befor handle update
                 let contentData : any = formState.value.content;
-                contentData.accounting.facilityBusinesses  = [...customAccountingfacilityBusinesses, dataActiveRow.value];
+                let newObj = JSON.parse(JSON.stringify(dataActiveRow.value));
+                delete newObj.rowIndex;
+                contentData.accounting.facilityBusinesses  = [...customAccountingfacilityBusinesses, newObj];
                 contentData.accounting.accountingServiceTypes.map((item: any) => {
                     item = item == true ? 1 : 0
                 })
@@ -693,6 +697,8 @@ export default defineComponent({
         }
         const onSelectionClick = (value: any) => {
             dataActiveRow.value = value.data;
+            licenseFileName.value = value.data.registrationCard?.name ?? "";
+            imageLicenseFile.value=value.data.registrationCard?.url ?? "";
         }
         const addRow = async() => {
             await gridRefName.value.instance.addRow()
