@@ -1,13 +1,14 @@
 <template>
     <standard-form action="" name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px;">
+        <a-spin :spinning="loading">
         <a-row>
-            <a-col :span="12">
-                <a-form-item label="근무일수">
+            <a-col :span="12" style="padding-right: 10px">
+                <a-form-item label="일용직사원">
                     <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
-                        v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" width="316px" :required="true" :activeType20="false"/>
+                        v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true" @onChange="onChange" :activeType20="false"/>
                 </a-form-item>
                 <a-form-item label="지급일">
-                    <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWageDaily.paymentDay"
+                    <number-box :required="true" :min="1" v-model="dataIncomeWageDaily.paymentDay"
                         :max="31" :spinButtons="true" :disabled="!actionAddItem" />
                 </a-form-item>
             </a-col>
@@ -109,6 +110,7 @@
                 </a-spin>
             </a-col>
         </a-row>
+    </a-spin>
         <div class="text-align-center mt-50">
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
@@ -136,6 +138,7 @@ import DxButton from "devextreme-vue/button"
 import notification from "@/utils/notification";
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
+import query520 from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
@@ -359,9 +362,10 @@ export default defineComponent({
 
                 if (val.deductionItemCode == 1004)
                     val.priceNew = total4
-
                 if (val.deductionItemCode == 1011 && Number.isInteger(objectData.incomeAmount))
                     val.priceNew = objectData.incomeAmount
+                if (val.deductionItemCode == 1012 && Number.isInteger(objectData.localIncomeTax))
+                    val.priceNew = objectData.localIncomeTax
             })
 
 
@@ -371,7 +375,7 @@ export default defineComponent({
         }
         const updateDataDeduction = () => {
             arrDeduction.value?.map((val: any) => {
-                if ([1001, 1002, 1003, 1004, 1011].includes(val.deductionItemCode))
+                if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.deductionItemCode))
                     val.price = val.priceNew
             })
         }
@@ -385,6 +389,37 @@ export default defineComponent({
         const actionInsurance = () => {
             modalInsurance.value = true;
         }
+//  QUERY WHEN CHANGE EMPLOYEE
+        const employeeWageDailyTrigger = ref<boolean>(false);
+        let employeeWageDailyParam = ref({
+                companyId: companyId,
+                imputedYear: globalYear.value,
+                employeeId: 1
+        });
+        const {result: resultEmployeeWageDaily, refetch: refetchEmployeeWageDaily, loading} = useQuery(query520.getEmployeeWageDaily,employeeWageDailyParam.value, ()=>({
+            enabled: employeeWageDailyTrigger.value,
+            fetchPolicy: 'no-cache'
+        }))
+        watch(resultEmployeeWageDaily,(res: any)=>{
+            
+            console.log(`onResultEmployeeWageDaily`,res)
+            dataIncomeWageDaily.value.actualPayment = res.getEmployeeWageDaily.actualPayment;
+            dataIncomeWageDaily.value.monthlyWage = res.getEmployeeWageDaily.monthlyWage;
+            dataIncomeWageDaily.value.workingDays = res.getEmployeeWageDaily.workingDays;
+            dataIncomeWageDaily.value.totalDeduction = res.getEmployeeWageDaily.totalDeduction;
+            dataIncomeWageDaily.value.paymentDay = res.getEmployeeWageDaily.paymentDay;
+            dataIncomeWageDaily.value.deductionItems = res.getEmployeeWageDaily.deductionItems;
+            dataIncomeWageDaily.value.employee.monthlyPaycheck = res.getEmployeeWageDaily.monthlyPaycheck;
+            dataIncomeWageDaily.value.employee.employeeId = res.getEmployeeWageDaily.employeeId;
+            employeeWageDailyTrigger.value = false;
+        }, {deep: true})
+        const onChange = () => {
+            employeeWageDailyTrigger.value = true;
+            console.log(`onChange`)
+            employeeWageDailyParam.value.employeeId= dataIncomeWageDaily.value.employee.employeeId;
+            
+            refetchEmployeeWageDaily();
+        }
         return {
             dataIncomeWageDaily,
             arrDeduction,
@@ -396,6 +431,8 @@ export default defineComponent({
             actionInsurance,
             updateDataDeduction,
             totalDeduction,
+            onChange,
+            loading
         };
     },
 });

@@ -194,7 +194,7 @@
             </a-col>
             <a-col class="">
                 <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
-                    @loadingTableInfo="loadingTableInfo" />
+                    @loadingTableInfo="loadingTableInfo" @onSubmit="actionAddItem ? onSubmit($event) : updateData($event)"/>
             </a-col>
         </a-row>
         <a-row>

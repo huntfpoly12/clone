@@ -1,4 +1,5 @@
 <template>
+  <p style="font-size: 18px;font-weight: 500;margin: 20px;"> This is the table created by the library <a href="https://handsontable.com/demo" target="_blank">handsontable</a> </p>
   <hot-table :settings="hotSettings"></hot-table>
 </template>
 
@@ -7,10 +8,17 @@ import { defineComponent } from "vue";
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
+import filters from "@/helpers/filters";
 
 // register Handsontable's modules
 registerAllModules();
-
+const firstRowRenderer = (instance, td, row, col, prop, value, cellProperties)=>{
+  if (row === 4) {
+      td.style.fontWeight = 'bold';
+      td.innerHTML = `<p style="color:red;margin: unset;float: right;">${filters.formatCurrency(parseInt(cellProperties.oldValue))}</p><p style="margin: unset;float: right;">${filters.formatCurrency(parseInt(value))}</p>`
+      return td;
+    }
+  }
 export default defineComponent({
   data() {
     return {
@@ -19,12 +27,18 @@ export default defineComponent({
         fillHandle: true,
          colWidths: 100,
         height: 120,
+        beforeKeyDown: function (e) {
+          var reg = /\D/g;
+          if (reg.test(e.key)) {
+            e.preventDefault()
+          }
+        },
         data: [
           ["1. 원천징수 내역 및 납부세액", "", "", "", "", "", "", "", "", "", "", "", ""],
           ["", "소득자 소득구분", "", "", "코드", "원 천 징 수 명 세", "", "", "", "", "⑨<br> 당월 조정<br>환급세액", "납부 세액", ""],
           ["", "", "", "", "", "소 득 지 급 <br>(과세 미달, 비과세 포함)	", "", "징수세액", "", "", "", "⑩<br>소득세 등<br>(가산세 포함)", "⑪ <br>농어촌<br> 특별세"],
           ["", "", "", "", "", "④인원", "⑤총지급액", "⑥소득세 등", "⑦농어촌<br>특별세", "⑧가산세", "", "", ""],
-          ["개<br>인<br>⁀<br>거주<br>자ㆍ<br>비거<br>주자<br>⌣", "근로<br>소득", "간이세액", "", "A01", "", "", "", "", "", "", "", ""],
+          ["개<br>인<br>⁀<br>거주<br>자ㆍ<br>비거<br>주자<br>⌣", "근로<br>소득", "간이세액", "", "A01","300000", "", "", "", "", "", "", ""],
           ["", "", "중도퇴사", "", "A02", "", "", "", "", "", "", "", ""],
           ["", "", "일용근로", "", "A03", "", "", "", "", "", "", "", ""],
           ["", "", "연말<br>정산", "합계", "A04", "", "", "", "", "", "", "", ""],
@@ -206,7 +220,7 @@ export default defineComponent({
           { row: 32, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
 
 
-          { row: 4, col: 5  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' }},
+          { oldValue:'220000', row: 4, col: 5  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },renderer: firstRowRenderer},
           { row: 4, col: 6  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
           { row: 4, col: 7  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
           { row: 4, col: 8  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},

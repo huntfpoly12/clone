@@ -16,10 +16,13 @@
             <a-col :span="21"></a-col>
             <a-col :span="16" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
-                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="listEmployeeExtra"
-                        :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true" style="width: 100%;"
-                        :onRowClick="editData" :focused-row-enabled="true">
+                    <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
+                        :data-source="listEmployeeExtra" :show-borders="true" key-expr="employeeId"
+                        :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                        :column-auto-width="true" style="width: 100%;" :onRowClick="editData"
+                        v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
+                        <DxScrolling mode="infinite" />
+                        <DxSorting mode="none" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -136,6 +139,9 @@
                 </a-spin>
             </a-col>
         </a-row>
+        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
+            title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요"
+            @checkConfirm="statusComfirm" />
     </div>
 </template>
 <script lang="ts">
@@ -143,7 +149,7 @@ import { defineComponent, ref, watch, reactive, createVNode, computed } from "vu
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxSorting, } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, ExclamationCircleOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import { Modal } from 'ant-design-vue';
@@ -171,27 +177,30 @@ export default defineComponent({
         DxButton,
         HistoryPopup,
         SaveOutlined,
+        DxScrolling, DxSorting,
     },
     setup() {
         // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const globalYear = computed(() => store.state.settings.globalYear)
         const loadingForm = ref(false)
         let checkForm = ref(false)
         let disabledSelect = ref(true)
         const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
         let popupData = ref();
-
+        const focusedRowKey = ref()
+        const modalStatus = ref(false)
+        let dataRowOld = reactive({ ...initialState })
         let trigger = ref(true);
         const listEmployeeExtra = ref([])
-
         let formState = reactive({ ...initialState });
-
+        let dataRow = reactive({ ...initialState });
         const originData = {
             companyId: companyId,
-            imputedYear: parseInt(dayjs().format('YYYY')),
+            imputedYear: globalYear.value,
         }
         const optionsRadio = ref([...initialOptionsRadio]);
         const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd } = useMutation(
@@ -214,7 +223,9 @@ export default defineComponent({
         onDoneAdd(() => {
             trigger.value = true;
             refetchData();
-            Object.assign(formState, initialState);
+            focusedRowKey.value = formState.employeeId
+            dataRowOld = { ...formState }
+            checkForm.value = true;
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorAdd((e) => {
@@ -224,8 +235,8 @@ export default defineComponent({
         onDoneDelete(() => {
             trigger.value = true;
             refetchData();
+            changeFormData({...initialState})
         });
-
 
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
@@ -234,7 +245,7 @@ export default defineComponent({
             } else {
                 let dataCreate = {
                     companyId: companyId,
-                    imputedYear: parseInt(dayjs().format("YYYY")),
+                    imputedYear: globalYear.value,
                     input: {
                         employeeId: formState.employeeId,
                         incomeTypeCode: formState.incomeTypeCode,
@@ -256,98 +267,77 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                arrEdit.map((item: any) => {
-                    let dataUpdate = {
-                        companyId: companyId,
-                        imputedYear: parseInt(dayjs().format("YYYY")),
-                        employeeId: item.employeeId,
-                        incomeTypeCode: item.incomeTypeCode,
-                        input: {
-                            name: item.name,
-                            foreigner: item.foreigner,
-                            nationality: item.nationality,
-                            nationalityCode: item.nationalityCode,
-                            stayQualification: item.stayQualification,
-                            residentId: item.residentId,
-                            email: item.email,
-                            incomeTypeName: item.incomeTypeName,
-                        }
-                    };
-                    updateEmployeeExtra(dataUpdate);
-                })
+                let dataUpdate = {
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    employeeId: formState.employeeId,
+                    incomeTypeCode: formState.incomeTypeCode,
+                    input: {
+                        name: formState.name,
+                        foreigner: formState.foreigner,
+                        nationality: formState.nationality,
+                        nationalityCode: formState.nationalityCode,
+                        stayQualification: formState.stayQualification,
+                        residentId: formState.residentId,
+                        email: formState.email,
+                        incomeTypeName: formState.incomeTypeName,
+                    }
+                };
+                updateEmployeeExtra(dataUpdate);
             }
         };
         onDoneUpdate(() => {
-            console.log(1);
-            
             trigger.value = true;
             refetchData();
-            checkForm.value = false;
-            Object.assign(formState, initialState);
+            dataRowOld = { ...formState }
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorUpdate((e) => {
-            console.log(2);
             notification('error', e.message)
         });
 
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = companyId
         }
-        const textCountry = (e: any) => {
-            formState.nationality = e
+        const textCountry = (val: any) => {
+            formState.nationality = val ? val : null;
         }
         const textTypeCode = (e: any) => {
             formState.incomeTypeName = e
         }
-        const rowEditData = ref({});
-        let arrEdit: any = []
+
         const editData = (data: any) => {
             checkForm.value = true;
-            formState.name = data.data.name
-            formState.foreigner = data.data.foreigner
-            formState.nationality = data.data.nationality
-            formState.nationalityCode = data.data.nationalityCode
-            formState.stayQualification = data.data.stayQualification
-            formState.residentId = data.data.residentId
-            formState.email = data.data.email
-            formState.employeeId = data.data.employeeId
-            formState.incomeTypeCode = data.data.incomeTypeCode
-            formState.incomeTypeName = data.data.incomeTypeName
-            rowEditData.value = { ...formState }
-        }
-        watch(() => JSON.parse(JSON.stringify(formState)), (newValue, old) => {
-            if (checkForm.value == true) {
-                if (JSON.stringify(rowEditData.value) != JSON.stringify(formState)) {
-                    let activeRow: any = document.body.querySelector('.dx-row-focused')
-                    activeRow.classList.add('active-row-key');
-
-                    arrEdit?.map((val: any, index: any) => {
-                        if (val.employeeId == newValue.employeeId)
-                            arrEdit.splice(index, 1);
-                    })
-                    arrEdit.push(newValue)
-                    listEmployeeExtra.value.map((val: any) => {
-                        if (val.employeeId == newValue.employeeId) {
-                            val.foreigner = newValue.foreigner
-                            val.incomeTypeCode = newValue.incomeTypeCode
-                            val.incomeTypeName = newValue.incomeTypeName
-                            val.name = newValue.name
-                            val.residentId = newValue.residentId
-                        }
-                    })
-                }
+            if (JSON.stringify(dataRowOld) !== JSON.stringify(formState)) {
+                modalStatus.value = true;
+                dataRow = data.data
+            } else {
+                changeFormData(data.data)
             }
-        }, { deep: true });
+        }
+        const changeFormData = (data: any) => {
+            formState.name = data.name
+            formState.foreigner = data.foreigner
+            formState.nationality = data.nationality
+            formState.nationalityCode = data.nationalityCode
+            formState.stayQualification = data.stayQualification
+            formState.residentId = data.residentId
+            formState.email = data.email
+            formState.employeeId = data.employeeId
+            formState.incomeTypeCode = data.incomeTypeCode
+            formState.incomeTypeName = data.incomeTypeName
+            dataRowOld = { ...formState }
+        }
         const formCreate = (e: any) => {
+            focusedRowKey.value = null;
             checkForm.value = false;
-            Object.assign(formState, initialState);
+            changeFormData({...initialState})
         }
         const deleteData = (data: any) => {
             Modal.confirm({
                 title: '삭제하겠습니까?',
-                icon: createVNode(ExclamationCircleOutlined),
-                okText: '네',
+                icon: createVNode(DeleteOutlined),
+                okText: '네. 삭제합니다',
                 cancelText: '아니요',
                 onOk() {
                     let variables = {
@@ -360,6 +350,16 @@ export default defineComponent({
                 },
                 class: 'confirm',
             });
+        }
+
+        const statusComfirm = (val: any) => {
+            if (val) {
+                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+                focusedRowKey.value = formState.employeeId;
+            }
+            else {
+                changeFormData(dataRow)
+            }
         }
 
         watch(result, (value) => {
@@ -400,6 +400,9 @@ export default defineComponent({
             listEmployeeExtra,
             DeleteOutlined,
             deleteData,
+            modalStatus,
+            statusComfirm,
+            focusedRowKey,
         };
     },
 });

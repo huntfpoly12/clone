@@ -221,6 +221,7 @@ export default defineComponent({
       loading: loadingIncomeExtra,
       onResult: onResultIncomeExtra,
       onError: onErrorIncomeExtra,
+      result: resultIncomeExtra,
     } = useQuery(queries.getIncomeExtra, incomeExtraParam, () => ({
       enabled: triggerIncomeExtra.value,
       fetchPolicy: 'no-cache',
@@ -401,6 +402,7 @@ export default defineComponent({
       localIncomeTax,
       isResetComponent,
       validations,
+      resultIncomeExtra
     };
   },
 });
