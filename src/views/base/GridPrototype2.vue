@@ -20,6 +20,12 @@ export default defineComponent({
         fillHandle: true,
          colWidths: 100,
         height: 120,
+        beforeKeyDown: function (e) {
+          var reg = /^\d+$/;
+          if (!reg.test(e.key)) {
+            e.preventDefault()
+          }
+        },
         data: [
           ["1. 원천징수 내역 및 납부세액", "", "", "", "", "", "", "", "", "", "", "", ""],
           ["", "소득자 소득구분", "", "", "코드", "원 천 징 수 명 세", "", "", "", "", "⑨<br> 당월 조정<br>환급세액", "납부 세액", ""],
