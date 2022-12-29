@@ -4,7 +4,7 @@
             <a-col :span="12">
                 <a-form-item label="근무일수">
                     <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
-                        v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" width="316px" :required="true" />
+                        v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" width="316px" :required="true" :activeType20="false"/>
                 </a-form-item>
                 <a-form-item label="지급일">
                     <number-box width="200px" :required="true" :min="1" v-model="dataIncomeWageDaily.paymentDay"

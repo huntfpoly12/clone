@@ -2,7 +2,7 @@
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기"
             cancelText="그냥 나가기" @cancel="setModalVisible()" width="1200px">
-            <standard-form  :wrapper-col="{span: 14}">
+            <standard-form :wrapper-col="{ span: 14 }">
                 <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
                     <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
                         <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
@@ -44,18 +44,19 @@
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
-                                <div :class="formState.info.usedAccounting ? '' : 'disabled-div'">
+                                <div>
                                     <div>
                                         <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
                                     </div>
-                                    <!-- {{  formState.info.accounting }} -->
-                                    <DxDataGrid id="gridContainer" :show-borders="true" ref="gridRefName"
-                                        :data-source="formState.info.accounting"
+                                    <DxDataGrid v-if="formState.info.usedAccounting" id="gridContainer"
+                                        :show-borders="true" ref="gridRefName" :data-source="dataSource"
                                         key-expr="rowIndex" :allow-column-reordering="move_column"
-                                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :show-row-lines="true"
-                                        :focused-row-enabled="true" :onRowClick="onSelectionClick">
+                                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                                        :show-row-lines="true" :focused-row-enabled="true" @row-removing="removingRow"
+                                        @focused-row-changed="onFocusedRowChanged" :focused-row-key="focusedRowKey"
+                                        @init-new-row="onInitRow">
                                         <DxEditing :use-icons="true" :allow-adding="true" template="button-template"
                                             new-row-position="pageBottom" :allow-deleting="true" mode="cell">
                                             <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -84,99 +85,104 @@
                                             {{ $filters.formatCurrency(getTotalAmount(data.data)) }}
                                         </template>
                                     </DxDataGrid>
-                                    <a-row :gutter="24" class="data-row-accounting"
-                                        v-if="formState.info.accounting.length">
-                                        <a-col :span="8">
+                                    <DxDataGrid v-else id="gridContainer" :show-borders="true" ref="gridRefName"
+                                        disabled="true">
+                                        <DxEditing :use-icons="true" :allow-adding="true">
+                                        </DxEditing>
+                                        <DxColumn :allow-editing="false" :width="50" caption="#" />
+                                        <DxColumn caption="사업명 (중복불가)" />
+                                        <DxColumn caption="사업분류"></DxColumn>
+                                        <DxColumn caption="서비스시작년월" />
+                                        <DxColumn caption="정원수 (명)" />
+                                        <DxColumn caption="회계서비스이용료" />
+                                    </DxDataGrid>
+                                    {{ dataActiveRow }}
+                                    <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length">
+                                        <a-col :span="6.5">
                                             <div class="custom-money">
                                                 <a-form-item label="사업분류" class="red">
                                                     <select-box-common style="float:right" :arrSelect="facilityBizType"
-                                                        :required="true" :width="150"
-                                                        v-model:valueInput="formState.info.accounting[rowIndex].facilityBizType"
+                                                        :required="true" :width="120"
+                                                        v-model:valueInput="dataActiveRow.facilityBizType"
                                                         :value-expr="'v'" :display-expr="'n'" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="사업명 (중복불가) " class="red">
-                                                    <default-text-box style="float:right" :width="150"
-                                                        v-model:valueInput="formState.info.accounting[rowIndex].name" />
+                                                    <default-text-box style="float:right" :width="120" :required="true"
+                                                        v-model:valueInput="dataActiveRow.name" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="서비스 시작년월" class="red">
-                                                    <month-picker-box style="float:right" width="150px"
-                                                        v-model:valueDate="formState.info.accounting[rowIndex].startYearMonth" />
+                                                    <month-picker-box style="float:right" width="120px" :required="true"
+                                                        v-model:valueDate="dataActiveRow.startYearMonth" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="정원수" class="red">
-                                                    <number-box style="float:right" :width="150"
-                                                        v-model:valueInput="formState.info.accounting[rowIndex].capacity" />
+                                                    <number-box style="float:right" :width="120" :required="true"
+                                                        v-model:valueInput="dataActiveRow.capacity" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="장기요양기관등록번호" class="red">
-                                                    <default-text-box style="float:right" :width="150"
-                                                        v-model:valueInput="formState.info.accounting[rowIndex].longTermCareInstitutionNumber" />
+                                                    <default-text-box style="float:right" :width="120" :required="true"
+                                                        v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                                 </a-form-item>
                                             </div>
                                         </a-col>
-                                        <a-col :span="8">
+                                        <a-col :span="6.5">
                                             <a-form-item label="회계서비스 이용료:" style=" font-weight: bold">
-                                                <p class="input-disble"
-                                                    :id="'price-' + formState.info.accounting[rowIndex].name">
-                                                    {{ $filters.formatCurrency(getTotalAmount(formState.info.accounting[rowIndex])) }}
+                                                <p class="input-disble" :id="'price-' + dataActiveRow.name">
+                                                    {{
+        $filters.formatCurrency(getTotalAmount(dataActiveRow))
+}}
                                                 </p>
                                             </a-form-item>
                                             <div class="custom-money">
                                                 <a-form-item label="기본이용료">
-                                                    <number-box-money style="float:right" :width="185"
-                                                        v-model:valueInput="formState.info.accounting[rowIndex].price"
-                                                        :spinButtons="false" />
+                                                    <number-box-money style="float:right" :width="135"
+                                                        v-model:valueInput="dataActiveRow.price" :spinButtons="false" />
                                                 </a-form-item>
                                             </div>
-                                            <!-- {{ formState.info.accounting }} -->
                                             <div class="custom-money">
-                                                <DxCheckBox
-                                                    :value="checkOption(formState.info.accounting[rowIndex].options, 1)"
-                                                    text="입력대행" class="custom-checkbox"
-                                                    @value-changed="changeChecked($event.value, 1, formState.info.accounting[rowIndex])" />
+                                                <DxCheckBox :value="checkOption(dataActiveRow.options, 1)" text="입력대행"
+                                                    class="custom-checkbox"
+                                                    @value-changed="changeChecked($event.value, 1, dataActiveRow)" />
                                                 <DxNumberBox :format="'#,###'" :min="0"
-                                                    :value="getPriceOption(formState.info.accounting[rowIndex].options, 1)"
-                                                    :disabled="disableInput(formState.info.accounting[rowIndex].options, 1)"
-                                                    @keyDown="changeValueInput($event.component, 1, formState.info.accounting[rowIndex])" />
+                                                    :value="getPriceOption(dataActiveRow.options, 1)"
+                                                    :disabled="disableInput(dataActiveRow.options, 1)"
+                                                    @keyDown="changeValueInput($event.component, 1, dataActiveRow)" />
                                             </div>
                                             <div class="custom-money">
-                                                <DxCheckBox
-                                                    :value="checkOption(formState.info.accounting[rowIndex].options, 2)"
-                                                    text="계좌통합" class="custom-checkbox"
-                                                    @value-changed="changeChecked($event.value, 2, formState.info.accounting[rowIndex])" />
+                                                <DxCheckBox :value="checkOption(dataActiveRow.options, 2)" text="계좌통합"
+                                                    class="custom-checkbox"
+                                                    @value-changed="changeChecked($event.value, 2, dataActiveRow)" />
                                                 <DxNumberBox :format="'#,###'" :min="0"
-                                                    :value="getPriceOption(formState.info.accounting[rowIndex].options, 2)"
-                                                    :disabled="disableInput(formState.info.accounting[rowIndex].options, 2)"
-                                                    @keyDown="changeValueInput($event.component, 2, formState.info.accounting[rowIndex])" />
+                                                    :value="getPriceOption(dataActiveRow.options, 2)"
+                                                    :disabled="disableInput(dataActiveRow.options, 2)"
+                                                    @keyDown="changeValueInput($event.component, 2, dataActiveRow)" />
                                             </div>
                                             <div class="custom-money">
-                                                <DxCheckBox
-                                                    :value="checkOption(formState.info.accounting[rowIndex].options, 3)"
-                                                    text="W4C" class="custom-checkbox"
-                                                    @value-changed="changeChecked($event.value, 3, formState.info.accounting[rowIndex])" />
+                                                <DxCheckBox :value="checkOption(dataActiveRow.options, 3)" text="W4C"
+                                                    class="custom-checkbox"
+                                                    @value-changed="changeChecked($event.value, 3, dataActiveRow)" />
                                                 <DxNumberBox :min="0" :format="'#,###'"
-                                                    :value="getPriceOption(formState.info.accounting[rowIndex].options, 3)"
-                                                    :disabled="disableInput(formState.info.accounting[rowIndex].options, 3)"
-                                                    @keyDown="changeValueInput($event.component, 3, formState.info.accounting[rowIndex])" />
+                                                    :value="getPriceOption(dataActiveRow.options, 3)"
+                                                    :disabled="disableInput(dataActiveRow.options, 3)"
+                                                    @keyDown="changeValueInput($event.component, 3, dataActiveRow)" />
                                             </div>
                                         </a-col>
-                                        <a-col :span="8">
-                                            <a-col>
-                                                <preview-image :height="'250px'" :activePreview="true"
-                                                    :dataImage="formState.info.accounting[rowIndex].registrationCard"
-                                                    :name="formState.info.accounting[rowIndex]?.name"
-                                                    @deleteImg="removeImg" />
-                                            </a-col>
-                                            <div style="margin-top: 10px;">
-                                                <imgUpload :title="'사업자등록증'"
-                                                    @update-img="getImgUrl($event, formState.info.accounting[rowIndex])"
-                                                    :customrow="1" />
+                                        <a-col :span="11" style="padding-right: 0;">
+                                            <div style="display: flex;">
+                                                <imgUpload :title="'사업자등록증'" style="width: 100px;"
+                                                    @update-img="getImgUrl($event, dataActiveRow)" :customrow="1" />
+                                                <div>
+                                                    <preview-image :height="'250px'" :activePreview="true"
+                                                        :dataImage="dataActiveRow.registrationCard"
+                                                        :name="dataActiveRow.name" @deleteImg="removeImg" />
+                                                </div>
                                             </div>
                                         </a-col>
                                     </a-row>
@@ -191,12 +197,11 @@
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
-                                <a-row :class="formState.info.usedWithholding ? '' : 'disabled-div'">
+                                <a-row v-if="formState.info.usedWithholding">
                                     <a-col :span="14">
                                         <a-form-item label="서비스 시작년월" class="custom-label-select red">
                                             <month-picker-box width="150px" :required="true"
-                                                v-model:valueDate="formState.info.withholding.startYearMonth"
-                                                date-format="MM/DD/YYYY" />
+                                                v-model:valueDate="formState.info.withholding.startYearMonth" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="14">
@@ -269,7 +274,7 @@
                                             <text-area-box placeholder="전달사항입력" v-model:valueInput="text.memo" />
                                         </div>
                                         <a-space :size="8" style="margin-top: 7px">
-                                            <save-outlined :style="{ fontSize: '20px' }"
+                                            <SaveOutlined :style="{ fontSize: '20px' }"
                                                 @click="handleAddMemo(text.memo, text.memoId)" />
                                             <DeleteOutlined :style="{ fontSize: '20px' }"
                                                 @click="handleDeleteMemo(text.memoId)" />
@@ -297,34 +302,13 @@ import {
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
-import DxDropDownBox from "devextreme-vue/drop-down-box";
 import imgUpload from "@/components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
-import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxEditing,
-    DxSelection,
-    DxLookup,
-    DxToolbar,
-    DxItem,
-    DxTexts,
-    DxMasterDetail,
-} from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxEditing, DxLookup, DxToolbar, DxItem, DxTexts } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
-import {
-    UploadOutlined,
-    MinusCircleOutlined,
-    ZoomInOutlined,
-    SaveOutlined,
-    DeleteOutlined,
-    PlusSquareOutlined,
-    WarningFilled,
-    PlusOutlined,
-} from "@ant-design/icons-vue";
+import { DeleteOutlined, PlusSquareOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import queries from "@/graphql/queries/BF/BF3/BF330/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF330/index";
 import dayjs from "dayjs";
@@ -335,18 +319,10 @@ import { initialState, initialFormStateMomes } from "../utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import DateTimeBox from "@/components/common/DateTimeBox.vue";
 import notification from '@/utils/notification';
 export default defineComponent({
     components: {
-        DxTextBox, DxDropDownBox, DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxButton, DxToolbar, DxItem, DxNumberBox, DxTexts, DxMasterDetail, DxCheckBox,
-        UploadOutlined,
-        MinusCircleOutlined,
-        ZoomInOutlined, SaveOutlined, DeleteOutlined, PlusSquareOutlined,
-        WarningFilled,
-        imgUpload,
-        PlusOutlined,
-        DateTimeBox
+        DxTextBox, DxDataGrid, DxColumn, DxEditing, DxLookup, DxButton, DxToolbar, DxItem, DxNumberBox, DxTexts, DxCheckBox, DeleteOutlined, PlusSquareOutlined, imgUpload, SaveOutlined
     },
     props: {
         modalStatus: Boolean,
@@ -365,16 +341,19 @@ export default defineComponent({
         const dataQuery = ref();
         const dataQueryMemos = ref();
         const gridRefName: any = ref("grid");
-        
+
         const loading = ref<boolean>(false);
         let trigger = ref<boolean>(false);
         let objDataDefault = reactive({ ...initialState });
 
-        const formStateMomes = ref([...initialFormStateMomes]);
+        const formStateMomes = ref([{ ...initialFormStateMomes }]);
         const formState: any = reactive({ ...initialState });
 
+        const dataSource = ref([]);
+        const dataActiveRow = ref<any>({ ...initialState.info.accounting[0] })
         const withholdingServiceType = ref(false)
-        
+        const rowIndex = ref<number>(0);
+        const focusedRowKey = ref(0)
         // ============ GRAPQL ===============================
         // get service contract
         const { result } = useQuery(
@@ -463,36 +442,56 @@ export default defineComponent({
                 formState.info.usedWithholding = data.usedWithholding;
                 formState.extra.salesRepresentativeId = data.salesRepresentativeId;
                 formState.extra.manageUserId = data.manageUserId;
-                if (formState.info.withholding.options[0].withholdingServiceType) {
+                if (formState.info.withholding.options[0]?.withholdingServiceType) {
                     withholdingServiceType.value = true
                 }
-                formState.info.accounting?.map((element: any, index: number) => {
-                    element.rowIndex = index;
-                 })
+                dataSource.value = formState.info.accounting?.map((item: any, key: any) => {
+                    return {
+                        ...item, rowIndex: key
+                    }
+                })
+                dataActiveRow.value = dataSource.value[0]
             }
             setTimeout(() => {
                 objDataDefault = { ...formState }
             }, 500);
         });
 
-        // watch(dataGetTotalAmount, (value) => {
-        //     let price = 0
-        //     formState.info.accounting?.map((value: any) => {
-        //         value.options?.map((value: any) => {
-        //             price += value.price
-        //         })
-        //         price += value.price
-        //     })
-        //     formState.info.accountingPrice = price
-        // });
-
         watch(() => formState.info.usedAccounting, (value) => {
-            if (!value) {
-                formState.info.accounting = []
+            if (value) {
+                getTotalAccounting()
+            } else {
+                dataSource.value = []
+                formState.info.accountingPrice = 0
             }
         })
+        watch(() => formState.info.usedWithholding, (value) => {
+            if (value) {
+                if (formState.id) {
+                    formState.info.withholdingPrice = formState.info.withholding.price + formState.info.withholding.options[0]?.price
+                }
+            } else {
+                formState.info.withholdingPrice = 0
+            }
+        })
+        watch(resultMemo, (value) => {
+            if (value && value.getServiceContractManageMemos.length > 0) {
+                formStateMomes.value = value.getServiceContractManageMemos;
+            }
+        });
+        watch(() => props.modalStatus, (newValue) => {
+            trigger.value = true;
+            if (newValue) {
+                dataQuery.value = { id: props.idRowEdit };
+                dataQueryMemos.value = { companyId: props.idRowEdit };
+                refetchMemo();
+            } else {
+                formStateMomes.value = [{ ...initialFormStateMomes }];
+                Object.assign(formState, initialState);
+                trigger.value = false;
+            }
+        });
 
-        
         // ============= FUNCTION ==============================
         const setModalVisible = () => {
             if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
@@ -502,19 +501,7 @@ export default defineComponent({
         };
 
         const handleAdd = () => {
-            formStateMomes.value.unshift({
-                memoId: null,
-                ownerUserId: 0,
-                ownerName: "",
-                ownerUsername: "",
-                memo: "",
-                createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                createdBy: "",
-                updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                updatedBy: "",
-                ip: "",
-                active: "",
-            });
+            formStateMomes.value.unshift({ ...initialFormStateMomes });
         };
         const handleAddMemo = (note: any, mmId: any = null) => {
             if (note !== "" && mmId == null) {
@@ -528,49 +515,65 @@ export default defineComponent({
                 actionDeleteMemo({ companyId: formState.id, memoId: key });
             }
         };
-        
+
         const actionUpdateServiceContract = (e: any) => {
-            var variables = JSON.parse(JSON.stringify({...formState}));
-            variables.info.accounting?.map((value: any) => {
-                delete value.registrationCard
-                delete value.rowIndex
-            })
-            actionUpdate(variables);
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                var variables = JSON.parse(JSON.stringify({ ...formState }));
+                if (variables.info.usedAccounting) {
+                    variables.info.accounting = [...dataSource.value]
+                    variables.info.accounting.map((value: any, key: any) => {
+                        value.facilityBusinessId = key + 1
+                        delete value.registrationCard
+                        delete value.rowIndex
+                    })
+                } else {
+                    delete variables.info.accounting
+                }
+                if (!variables.info.usedWithholding) {
+                    delete variables.info.withholding
+                }
+                actionUpdate(variables);
+            }
         };
 
         const totalWithholdingService = computed(() => {
             let ttwithholdingPrice = 0
             if (formState.id) {
-                ttwithholdingPrice = formState.info.withholding.price + formState.info.withholding.options[0].price
+                ttwithholdingPrice = formState.info.withholding.price + formState.info.withholding.options[0]?.price
             }
             formState.info.withholdingPrice = ttwithholdingPrice
             return ttwithholdingPrice
         });
-        // const dataGetTotalAmount = ref(0)
         const getTotalAmount = (data: any) => {
             let totalAmount = 0
             if (data.options) {
                 data.options?.map((e: any) => {
                     totalAmount += parseInt(e.price)
                 })
+                console.log(data.price);
                 totalAmount += parseInt(data.price)
             }
+            getTotalAccounting()
+            return totalAmount
+        }
+        const getTotalAccounting = () => {
             let price = 0
-            formState.info.accounting?.map((value: any) => {
-                value.options?.map((value: any) => {
-                    price += value.price
+            dataSource.value.map((value: any) => {
+                value.options?.map((data: any) => {
+                    price += data.price
                 })
-                price += value.price
+                price += value.price ? value.price : 0
             })
             formState.info.accountingPrice = price
-            // dataGetTotalAmount.value = totalAmount
-            return totalAmount
         }
         // Thay đổi giá trị option 
         const changeValueInput = (event: any, indexOP: any, val: any) => {
             setTimeout(() => {
                 // Tìm options đang thay đổi để update dữ liệu mới
-                formState.info.accounting?.map((e: any) => {
+                dataSource.value?.map((e: any) => {
                     if (e.name == val.name) {
                         e.options?.map((k: any) => {
                             if (indexOP == k.accountingServiceType) {
@@ -585,7 +588,7 @@ export default defineComponent({
         const changeChecked = (valChange: any, optionChange: number, valOJ: any) => {
             // nếu checked thì thêm dòng mới trong mảng options để lưu giá trị
             if (valChange == true) {
-                formState.info.accounting?.map((e: any) => {
+                dataSource.value?.map((e: any) => {
                     if (e.facilityBusinessId == valOJ.facilityBusinessId) {
                         if (!e.options?.find((val: any) => val.accountingServiceType === optionChange)) {
                             e.options.push({
@@ -600,7 +603,7 @@ export default defineComponent({
             else {
                 setTimeout(() => {
                     let arr: any = reactive({})
-                    formState.info.accounting?.map((e: any) => {
+                    dataSource.value?.map((e: any) => {
                         if (e.name == valOJ.name) {
                             e.options = e.options?.filter((k: any) => {
                                 return k.accountingServiceType !== optionChange;
@@ -654,87 +657,43 @@ export default defineComponent({
         }
         // lấy img sau khi upload
         const getImgUrl = (img: any, data: any) => {
-            formState.info.accounting?.map((e: any) => {
-                if (e.name == data.name) {
-                    e.registrationCardFileStorageId = img.id
-                    e.registrationCard = {
-                        url: img.url,
-                        name: img.fileName
-                    }
-                }
-            })
+            data.registrationCardFileStorageId = img.id
+            data.registrationCard = {
+                url: img.url,
+                name: img.fileName
+            }
         }
-        // const checkValueLongTerm = (longTerm: any) => {
-        //     return parseInt(longTerm)
-        // }
         const handleInputTexService = () => {
             if (!withholdingServiceType.value) {
                 formState.info.withholding.options[0].price = 0
             }
         }
-        const removeImg = (name: any) => {
-            setTimeout(() => {
-                formState.info.accounting?.map((e: any) => {
-                    if (e.name == name) {
-                        e.registrationCard = null
-                        e.registrationCardFileStorageId = null
-                    }
-                })
-            }, 100);
+        const removeImg = () => {
+            dataActiveRow.value.registrationCard = null
+            dataActiveRow.value.registrationCardFileStorageId = null
         };
 
-        const rowIndex = ref<number>(0);
-        const onSelectionClick = (value: any) => {
-            getTotalAmount(value)
-            rowIndex.value = value.rowIndex
-        }
         const addRow = () => {
             gridRefName.value.instance.addRow()
-            // gridRefName.value.instance.deselectAll()
             gridRefName.value.instance.closeEditCell()
-            // setTimeout(() => {
-            //     if (gridRefName.value.instance.totalCount() == 1) {
-            //         let a = document.body.querySelectorAll('[aria-rowindex]');
-            //         (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
-            //     }
-            // }, 100);
-            // rowIndex.value = formState.info.accounting.length - 1
-            formState.info.accounting[formState.info.accounting.length - 1].options = []
-            formState.info.accounting[formState.info.accounting.length - 1].facilityBusinessId = formState.info.accounting.length
+            setTimeout(() => {
+                let keyNew = gridRefName.value.instance.getKeyByRowIndex(dataSource.value.length - 1);
+                focusedRowKey.value = keyNew;
+            }, 100);
         };
+        const removingRow = (data: any) => {
+            if (data.data.rowIndex == rowIndex.value) {
+                rowIndex.value = 0
+            }
+        }
+        const onFocusedRowChanged = (e: any) => {
+            const data = e.row && e.row.data;
+            dataActiveRow.value = data
+        }
+        const onInitRow = (e: any) => {
+            e.data = { ...initialState.info.accounting[0] };
+        }
 
-        watch(resultMemo, (value) => {
-            if (value && value.getServiceContractManageMemos.length > 0) {
-                formStateMomes.value = value.getServiceContractManageMemos;
-            }
-        });
-        watch(() => props.modalStatus, (newValue) => {
-            trigger.value = true;
-            if (newValue) {
-                dataQuery.value = { id: props.idRowEdit };
-                dataQueryMemos.value = { companyId: props.idRowEdit };
-                refetchMemo();
-            } else {
-                formStateMomes.value = [
-                    {
-                        memoId: null,
-                        ownerUserId: 0,
-                        ownerName: "",
-                        ownerUsername: "",
-                        memo: "",
-                        createdAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                        createdBy: "",
-                        updatedAt: dayjs(new Date()).format("YYYY/MM/DD"),
-                        updatedBy: "",
-                        ip: "",
-                        active: "",
-                    },
-                ];
-                Object.assign(formState, initialState);
-                trigger.value = false;
-            }
-        });
-        
         return {
             handleInputTexService,
             move_column,
@@ -759,12 +718,17 @@ export default defineComponent({
             actionUpdateServiceContract,
             loadingUpdate,
             totalWithholdingService,
-            onSelectionClick,
             addRow,
             gridRefName,
             rowIndex,
             withholdingServiceType,
             dayjs,
+            focusedRowKey,
+            removingRow,
+            onFocusedRowChanged,
+            dataSource,
+            dataActiveRow,
+            onInitRow,
         };
     },
 });

@@ -413,7 +413,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            // step.value = val - 1 // Debug
+            step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
@@ -668,12 +668,12 @@ export default {
             gridRefName.value.instance.addRow()
             gridRefName.value.instance.deselectAll()
             gridRefName.value.instance.closeEditCell()
-            setTimeout(() => {
-                if (gridRefName.value.instance.totalCount() == 1) {
-                    let a = document.body.querySelectorAll('[aria-rowindex]');
-                    (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
-                }
-            }, 100);
+            // setTimeout(() => {
+            //     if (gridRefName.value.instance.totalCount() == 1) {
+            //         let a = document.body.querySelectorAll('[aria-rowindex]');
+            //         (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
+            //     }
+            // }, 100);
         };
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
