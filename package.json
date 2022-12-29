@@ -11,6 +11,7 @@
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@bankda/jangbuda-common": "^0.7.3",
+    "@handsontable/vue3": "^12.3.0",
     "@trandung1291/common-tsv": "^0.0.4",
     "@types/file-saver-es": "^2.0.1",
     "@vue/apollo-composable": "^4.0.0-alpha.19",
@@ -28,6 +29,7 @@
     "file-saver-es": "^2.0.5",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
+    "handsontable": "^12.3.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "sass": "^1.54.8",
