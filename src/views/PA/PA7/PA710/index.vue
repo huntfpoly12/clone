@@ -95,21 +95,21 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item label="외국인 국적 " :label-col="labelCol" :class="disabledSelect ? '' : 'red'">
+                            <a-form-item label="외국인 국적 " :label-col="labelCol" :class="!formState.foreigner ? '' : 'red'">
                                 <country-code-select-box style="width: 310px"
                                     v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
-                                    :required="!disabledSelect" :disabled="disabledSelect" />
+                                    :required="formState.foreigner" :disabled="!formState.foreigner" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item label="외국인 체류자격 " :label-col="labelCol" :class="disabledSelect ? '' : 'red'">
-                                <stay-qualification-select-box style="width: 310px" :required="!disabledSelect"
-                                    :disabled="disabledSelect"
+                            <a-form-item label="외국인 체류자격 " :label-col="labelCol" :class="!formState.foreigner ? '' : 'red'">
+                                <stay-qualification-select-box style="width: 310px" :required="formState.foreigner"
+                                    :disabled="!formState.foreigner"
                                     v-model:valueStayQualifiction="formState.stayQualification" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item :label="disabledSelect ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol"
+                            <a-form-item :label="!formState.foreigner ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol"
                                 class="red">
                                 <id-number-text-box :width="150" v-model:valueInput="formState.residentId"
                                     :required="true"></id-number-text-box>
@@ -140,8 +140,7 @@
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
-            title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요"
-            @checkConfirm="statusComfirm" />
+            title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     </div>
 </template>
 <script lang="ts">
@@ -150,15 +149,10 @@ import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxSorting, } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, ExclamationCircleOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import { Modal } from 'ant-design-vue';
-import dayjs, { Dayjs } from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
 import { initialState, initialOptionsRadio } from "./utils/index"
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
 import queries from "@/graphql/queries/PA/PA7/PA710/index";
 import DxButton from "devextreme-vue/button";
@@ -187,7 +181,6 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear)
         const loadingForm = ref(false)
         let checkForm = ref(false)
-        let disabledSelect = ref(true)
         const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
         let popupData = ref();
@@ -235,7 +228,7 @@ export default defineComponent({
         onDoneDelete(() => {
             trigger.value = true;
             refetchData();
-            changeFormData({...initialState})
+            changeFormData({ ...initialState })
         });
 
         const onSubmit = (e: any) => {
@@ -312,8 +305,13 @@ export default defineComponent({
                 modalStatus.value = true;
                 dataRow = data.data
             } else {
+                loadingForm.value = true;
                 changeFormData(data.data)
+                setTimeout(() => {
+                    loadingForm.value = false;
+                }, 500);
             }
+
         }
         const changeFormData = (data: any) => {
             formState.name = data.name
@@ -331,7 +329,7 @@ export default defineComponent({
         const formCreate = (e: any) => {
             focusedRowKey.value = null;
             checkForm.value = false;
-            changeFormData({...initialState})
+            changeFormData({ ...initialState })
         }
         const deleteData = (data: any) => {
             Modal.confirm({
@@ -342,7 +340,7 @@ export default defineComponent({
                 onOk() {
                     let variables = {
                         companyId: companyId,
-                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        imputedYear: globalYear.value,
                         employeeId: data.data.employeeId,
                         incomeTypeCode: data.data.incomeTypeCode
                     };
@@ -369,10 +367,7 @@ export default defineComponent({
             }
         });
         watch(() => formState.foreigner, (newValue) => {
-            if (newValue) {
-                disabledSelect.value = false;
-            } else {
-                disabledSelect.value = true;
+            if (!newValue) {
                 formState.nationalityCode = null
                 formState.stayQualification = null
             }
@@ -393,7 +388,6 @@ export default defineComponent({
             optionsRadio,
             onSubmit,
             onUpdate,
-            disabledSelect,
             checkForm,
             modalHistory,
             popupData,
