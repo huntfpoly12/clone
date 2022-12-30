@@ -14,7 +14,7 @@ export const initialState = {
         capacity: null,
         registrationCardFileStorageId: null,
         facilityBusinessId: null,
-        price: null,
+        price: 0,
         options: [],
         registrationCard: {}
     }],

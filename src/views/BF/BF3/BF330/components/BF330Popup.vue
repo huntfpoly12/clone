@@ -96,7 +96,6 @@
                                         <DxColumn caption="정원수 (명)" />
                                         <DxColumn caption="회계서비스이용료" />
                                     </DxDataGrid>
-                                    {{ dataActiveRow }}
                                     <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length">
                                         <a-col :span="6.5">
                                             <div class="custom-money">
@@ -314,7 +313,6 @@ import mutations from "@/graphql/mutations/BF/BF3/BF330/index";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import DxTextBox from 'devextreme-vue/text-box';
 import { initialState, initialFormStateMomes } from "../utils/index"
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -322,7 +320,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from '@/utils/notification';
 export default defineComponent({
     components: {
-        DxTextBox, DxDataGrid, DxColumn, DxEditing, DxLookup, DxButton, DxToolbar, DxItem, DxNumberBox, DxTexts, DxCheckBox, DeleteOutlined, PlusSquareOutlined, imgUpload, SaveOutlined
+        DxDataGrid, DxColumn, DxEditing, DxLookup, DxButton, DxToolbar, DxItem, DxNumberBox, DxTexts, DxCheckBox, DeleteOutlined, PlusSquareOutlined, imgUpload, SaveOutlined
     },
     props: {
         modalStatus: Boolean,
@@ -350,7 +348,7 @@ export default defineComponent({
         const formState: any = reactive({ ...initialState });
 
         const dataSource = ref([]);
-        const dataActiveRow = ref<any>({ ...initialState.info.accounting[0] })
+        const dataActiveRow = ref<any>( JSON.parse(JSON.stringify({...initialState.info.accounting[0]})) )
         const withholdingServiceType = ref(false)
         const rowIndex = ref<number>(0);
         const focusedRowKey = ref(0)
@@ -453,8 +451,8 @@ export default defineComponent({
                 dataActiveRow.value = dataSource.value[0]
             }
             setTimeout(() => {
-                objDataDefault = { ...formState }
-            }, 500);
+                objDataDefault = JSON.parse(JSON.stringify({ ...formState }))
+            }, 1000);
         });
 
         watch(() => formState.info.usedAccounting, (value) => {
@@ -553,7 +551,6 @@ export default defineComponent({
                 data.options?.map((e: any) => {
                     totalAmount += parseInt(e.price)
                 })
-                console.log(data.price);
                 totalAmount += parseInt(data.price)
             }
             getTotalAccounting()
@@ -573,13 +570,9 @@ export default defineComponent({
         const changeValueInput = (event: any, indexOP: any, val: any) => {
             setTimeout(() => {
                 // Tìm options đang thay đổi để update dữ liệu mới
-                dataSource.value?.map((e: any) => {
-                    if (e.name == val.name) {
-                        e.options?.map((k: any) => {
-                            if (indexOP == k.accountingServiceType) {
-                                k.price = event._parsedValue
-                            }
-                        })
+                dataActiveRow.value.options?.map((k: any) => {
+                    if (indexOP == k.accountingServiceType) {
+                        k.price = event._parsedValue
                     }
                 })
             }, 100);
@@ -588,29 +581,23 @@ export default defineComponent({
         const changeChecked = (valChange: any, optionChange: number, valOJ: any) => {
             // nếu checked thì thêm dòng mới trong mảng options để lưu giá trị
             if (valChange == true) {
-                dataSource.value?.map((e: any) => {
-                    if (e.facilityBusinessId == valOJ.facilityBusinessId) {
-                        if (!e.options?.find((val: any) => val.accountingServiceType === optionChange)) {
-                            e.options.push({
-                                accountingServiceType: optionChange,
-                                price: 0
-                            })
-                        }
+                if (dataActiveRow.value.facilityBusinessId == valOJ.facilityBusinessId) {
+                    if (!dataActiveRow.value.options?.find((val: any) => val.accountingServiceType === optionChange)) {
+                        dataActiveRow.value.options.push({
+                            accountingServiceType: optionChange,
+                            price: 0
+                        })
                     }
-                })
+                }
             }
             // nếu unchecked thì xóa dòng đó trong options
             else {
                 setTimeout(() => {
                     let arr: any = reactive({})
-                    dataSource.value?.map((e: any) => {
-                        if (e.name == valOJ.name) {
-                            e.options = e.options?.filter((k: any) => {
-                                return k.accountingServiceType !== optionChange;
-                            });
-                            arr = e
-                        }
-                    })
+                    dataActiveRow.value.options = dataActiveRow.value.options?.filter((k: any) => {
+                        return k.accountingServiceType !== optionChange;
+                    });
+                    arr = dataActiveRow.value
                     getPriceOption(arr.options, optionChange)
                 }, 100);
             }
@@ -691,7 +678,8 @@ export default defineComponent({
             dataActiveRow.value = data
         }
         const onInitRow = (e: any) => {
-            e.data = { ...initialState.info.accounting[0] };
+            e.data = JSON.parse(JSON.stringify({...initialState.info.accounting[0]}));
+            dataActiveRow.value = e.data
         }
 
         return {
@@ -733,5 +721,9 @@ export default defineComponent({
     },
 });
 </script>  
+
+
+
+
 
 <style src="../style/stylePopup.scss" scoped />
