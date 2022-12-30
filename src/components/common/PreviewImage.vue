@@ -1,6 +1,6 @@
 <template>
     <div class="img-preview-group"> 
-        <div v-if="dataImage.name && dataImage.url" class="">
+        <div v-if="dataImage && dataImage?.url" class="">
             <a-image v-if="activePreview || activePreview == true" :src="dataImage.url"
                 :style="{ width: width, height: height }" />
             <img v-else :src="dataImage.url" :style="{ width: width, height: height }" />
@@ -9,7 +9,7 @@
             <img src="@/assets/images/imgdefault.jpg" :style="{ width: width, height: height }" />
         </div>
     </div>
-    <div v-if="dataImage.name && dataImage.url" class="delete_group">
+    <div v-if="dataImage?.name && dataImage?.url" class="delete_group">
         <span>{{ dataImage.name }}</span>
         <delete-outlined @click="removeImg" style="color: red; cursor: pointer" />
     </div>

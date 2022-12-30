@@ -1,116 +1,116 @@
 <template>
     <standard-form action="" name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px;">
         <a-spin :spinning="loading">
-        <a-row>
-            <a-col :span="12" style="padding-right: 10px">
-                <a-form-item label="일용직사원">
-                    <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
-                        v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true" @onChange="onChange" :activeType20="false"/>
-                </a-form-item>
-                <a-form-item label="지급일">
-                    <number-box :required="true" :min="1" v-model="dataIncomeWageDaily.paymentDay"
-                        :max="31" :spinButtons="true" :disabled="!actionAddItem" />
-                </a-form-item>
-            </a-col>
-            <a-col :span="12">
-                <div class="top-content">
-                    <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
-                </div>
-                <a-form-item label="근무일수">
-                    <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
-                        width="200px" :required="true" />
-                </a-form-item>
-                <a-form-item label="월급여">
-                    <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.monthlyWage"
-                        width="200px" :required="true" />
-                </a-form-item>
-                <a-form-item label="공제합계">
-                    <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.totalDeduction"
-                        width="200px" :required="true" />
-                </a-form-item>
-                <a-form-item label="차인지급액">
-                    <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.actualPayment"
-                        width="200px" :required="true" />
-                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span class="style-note">
-                        급여합계 - 공제합계
-                    </span>
-                </a-form-item>
-            </a-col>
-            <a-col :span="24">
-                <div class="top-content">
-                    <a-typography-title :level="5" style="margin-bottom: 0;">급여 / 공제</a-typography-title>
-                </div>
-            </a-col>
-            <a-col :span="10" style="padding-right: 5px;">
-                <div class="top-content">
-                    <a-typography-title :level="5" style="margin-bottom: 0;">
-                        월급여 {{ dataIncomeWageDaily.employee.monthlyPaycheck ?
-                                $filters.formatCurrency(dataIncomeWageDaily.monthlyWage) :
-                                $filters.formatCurrency(dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays)
-                        }}
-                        원</a-typography-title>
-                </div>
-                <div class="input-text">
-                    <span>일급/월급:</span>
-                    <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'월급'"
-                        :textUnCheck="'일급'" />
-                    <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
-                        placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
-                    <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
-                        v-model:valueInput="dataIncomeWageDaily.dailyWage" />
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 / 근무일수</span>
-                    <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
-                </div>
-                <a-form-item label="근무일수">
-                    <text-number-box width="150px" :required="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
-                        :min="1" :max="30" :spinButtons="true"></text-number-box>
-                </a-form-item>
-                <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
-                        $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage / dataIncomeWageDaily.workingDays))
-                }}원</span>
-                <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
-                <br>
-                <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
-                        $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
-                }}원</span>
-                <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
-                        dataIncomeWageDaily.workingDays)
-                }}원</span>
-            </a-col>
-            <a-col :span="14" style="padding-leftt: 5px;">
-                <div class="top-content">
-                    <a-typography-title :level="5" style="margin-bottom: 0;">월급여 {{ totalDeduction }}
-                        원</a-typography-title>
-                </div>
-                <a-spin :spinning="loadingDeductionItem" size="large">
-                    <div class="deduction-main">
-                        <div v-for="(item, index) in arrDeduction" :key="index" class="custom-deduction">
-                            <span>
-                                <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                    :name="item.name" :type="1" :width="'150px'" subName="과세" />
-                                <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                    :name="item.name" :type="2" :width="'150px'" subName="상여(과세)" />
-                                <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                    :name="item.name" :type="3" :width="'150px'"
-                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-                                <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                    :name="item.name" :type="4" :width="'150px'" subName="과세" />
-                            </span>
-                            <div>
-                                <number-box-money min="0" width="130px" :spinButtons="false"
-                                    v-model:valueInput="item.price" :disabled="true" />
-                                <span class="pl-5">원</span>
+            <a-row>
+                <a-col :span="12" style="padding-right: 10px">
+                    <a-form-item label="일용직사원">
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
+                            v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true" @onChange="onChange" :activeType20="false"/>
+                    </a-form-item>
+                    <a-form-item label="지급일">
+                        <number-box :required="true" :min="1" v-model="dataIncomeWageDaily.paymentDay"
+                            :max="31" :spinButtons="true" :disabled="!actionAddItem" />
+                    </a-form-item>
+                </a-col>
+                <a-col :span="12">
+                    <div class="top-content">
+                        <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
+                    </div>
+                    <a-form-item label="근무일수">
+                        <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
+                            width="200px" :required="true" />
+                    </a-form-item>
+                    <a-form-item label="월급여">
+                        <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.monthlyWage"
+                            width="200px" :required="true" />
+                    </a-form-item>
+                    <a-form-item label="공제합계">
+                        <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.totalDeduction"
+                            width="200px" :required="true" />
+                    </a-form-item>
+                    <a-form-item label="차인지급액">
+                        <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.actualPayment"
+                            width="200px" :required="true" />
+                        <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                        <span class="style-note">
+                            급여합계 - 공제합계
+                        </span>
+                    </a-form-item>
+                </a-col>
+                <a-col :span="24">
+                    <div class="top-content">
+                        <a-typography-title :level="5" style="margin-bottom: 0;">급여 / 공제</a-typography-title>
+                    </div>
+                </a-col>
+                <a-col :span="10" style="padding-right: 5px;">
+                    <div class="top-content">
+                        <a-typography-title :level="5" style="margin-bottom: 0;">
+                            월급여 {{ dataIncomeWageDaily.employee.monthlyPaycheck ?
+                                    $filters.formatCurrency(dataIncomeWageDaily.monthlyWage) :
+                                    $filters.formatCurrency(dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays)
+                            }}
+                            원</a-typography-title>
+                    </div>
+                    <div class="input-text">
+                        <span>일급/월급:</span>
+                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'월급'"
+                            :textUnCheck="'일급'" />
+                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
+                            placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
+                        <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
+                            v-model:valueInput="dataIncomeWageDaily.dailyWage" />
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                        <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 / 근무일수</span>
+                        <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
+                    </div>
+                    <a-form-item label="근무일수">
+                        <text-number-box width="150px" :required="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
+                            :min="1" :max="30" :spinButtons="true"></text-number-box>
+                    </a-form-item>
+                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
+                            $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage / dataIncomeWageDaily.workingDays))
+                    }}원</span>
+                    <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
+                    <br>
+                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
+                            $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
+                    }}원</span>
+                    <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
+                            dataIncomeWageDaily.workingDays)
+                    }}원</span>
+                </a-col>
+                <a-col :span="14" style="padding-leftt: 5px;">
+                    <div class="top-content">
+                        <a-typography-title :level="5" style="margin-bottom: 0;">월급여 {{ totalDeduction }}
+                            원</a-typography-title>
+                    </div>
+                    <a-spin :spinning="loadingDeductionItem" size="large">
+                        <div class="deduction-main">
+                            <div v-for="(item, index) in arrDeduction" :key="index" class="custom-deduction">
+                                <span>
+                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                                        :name="item.name" :type="1" :width="'150px'" subName="과세" />
+                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                                        :name="item.name" :type="2" :width="'150px'" subName="상여(과세)" />
+                                    <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                                        :name="item.name" :type="3" :width="'150px'"
+                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                    <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                                        :name="item.name" :type="4" :width="'150px'" subName="과세" />
+                                </span>
+                                <div>
+                                    <number-box-money min="0" width="130px" :spinButtons="false"
+                                        v-model:valueInput="item.price" :disabled="true" />
+                                    <span class="pl-5">원</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </a-spin>
-            </a-col>
-        </a-row>
-    </a-spin>
+                    </a-spin>
+                </a-col>
+            </a-row>
+        </a-spin>
         <div class="text-align-center mt-50">
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
@@ -133,7 +133,7 @@
     <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch, reactive } from "vue";
+import { defineComponent, ref, computed, watch, reactive, watchEffect } from "vue";
 import DxButton from "devextreme-vue/button"
 import notification from "@/utils/notification";
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -171,6 +171,7 @@ export default defineComponent({
             type: Number,
             default: 0
         },
+        isTaxhasData: Boolean,
     },
     setup(props, { emit }) {
         const store = useStore()
@@ -244,7 +245,13 @@ export default defineComponent({
                 },
             })
         })
-
+        watch(()=> props.isTaxhasData,
+            (newVal)=>{
+                if(!newVal){
+                    dataIncomeWageDaily.value = { ...sampleDataIncomeWageDaily }
+                }
+            }
+        )
 
         const originData = ref({
             companyId: companyId,
@@ -432,7 +439,8 @@ export default defineComponent({
             updateDataDeduction,
             totalDeduction,
             onChange,
-            loading
+            loading,
+            sampleDataIncomeWageDaily
         };
     },
 });
