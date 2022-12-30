@@ -141,6 +141,8 @@
         </a-row>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+            <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+            title="양식을 재설정하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
     </div>
 </template>
 <script lang="ts">
@@ -186,6 +188,7 @@ export default defineComponent({
         let popupData = ref();
         const focusedRowKey = ref()
         const modalStatus = ref(false)
+        const modalStatusAdd = ref(false)
         let dataRowOld = reactive({ ...initialState })
         let trigger = ref(true);
         const listEmployeeExtra = ref([])
@@ -283,7 +286,11 @@ export default defineComponent({
         onDoneUpdate(() => {
             trigger.value = true;
             refetchData();
-            dataRowOld = { ...formState }
+            if(formState.employeeId != dataRow.employeeId) {
+                changeFormData(dataRow)
+            } else {
+                dataRowOld = { ...formState }
+            }
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorUpdate((e) => {
@@ -301,13 +308,13 @@ export default defineComponent({
         }
 
         const editData = (data: any) => {
+            dataRow = data.data
             checkForm.value = true;
             if (JSON.stringify(dataRowOld) !== JSON.stringify(formState)) {
                 modalStatus.value = true;
-                dataRow = data.data
             } else {
                 loadingForm.value = true;
-                changeFormData(data.data)
+                changeFormData(dataRow)
                 setTimeout(() => {
                     loadingForm.value = false;
                 }, 500);
@@ -328,10 +335,14 @@ export default defineComponent({
             dataRowOld = { ...formState }
         }
         const formCreate = (e: any) => {
-            resetFormNum.value++;
-            focusedRowKey.value = null;
-            checkForm.value = false;
-            changeFormData({ ...initialState })
+            if(JSON.stringify({ ...initialState }) !== JSON.stringify(formState) && checkForm.value == false) {
+                modalStatusAdd.value = true
+            } else {
+                resetFormNum.value++;
+                focusedRowKey.value = null;
+                checkForm.value = false;
+                changeFormData({ ...initialState })
+            }
         }
         const deleteData = (data: any) => {
             Modal.confirm({
@@ -355,10 +366,17 @@ export default defineComponent({
         const statusComfirm = (val: any) => {
             if (val) {
                 (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
-                focusedRowKey.value = formState.employeeId;
             }
             else {
                 changeFormData(dataRow)
+            }
+        }
+        const statusComfirmAdd = (val: any) => {
+            if (val) {
+                resetFormNum.value++;
+                focusedRowKey.value = null;
+                checkForm.value = false;
+                changeFormData({ ...initialState })
             }
         }
 
@@ -400,6 +418,8 @@ export default defineComponent({
             statusComfirm,
             focusedRowKey,
             resetFormNum,
+            modalStatusAdd,
+            statusComfirmAdd,
         };
     },
 });
