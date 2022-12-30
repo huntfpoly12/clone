@@ -22,53 +22,61 @@
                         <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
                     </a-form-item>
                     <a-form-item label="신고구분" label-align="left" class="mb-0">
-                        <checkbox-basic size="14" label="전체" class="mr-10" />
-                        <checkbox-basic size="14" label="정기" class="mr-10" />
-                        <checkbox-basic size="14" label="수정" class="mr-10" />
-                        <checkbox-basic size="14" label="기한후" />
+                        <checkbox-basic size="14" label="전체" class="mr-10"
+                            v-model:valueCheckbox="checkAllTypeFication" />
+                        <checkbox-basic size="14" label="정기" class="mr-10"
+                            v-model:valueCheckbox="dataSearch.filter.regular" />
+                        <checkbox-basic size="14" label="수정" class="mr-10"
+                            v-model:valueCheckbox="dataSearch.filter.revised" />
+                        <checkbox-basic size="14" label="기한후" v-model:valueCheckbox="dataSearch.filter.afterDeadline" />
                     </a-form-item>
                 </a-col>
                 <a-col>
-                    <a-form-item label="신고주기" label-align="left" class="mb-0">
+                    <a-form-item label="마감상태" label-align="left" class="mb-0">
                         <div class="mb-10">
-                            <checkbox-basic size="14" label="전체" class="mr-10 custom-checkbox1"
+                            <checkbox-basic size="14" label="입력중" class="mr-10 custom-checkbox1"
                                 v-model:valueCheckbox="statuses.checkbox1" />
-                            <checkbox-basic size="14" label="전체" class="mr-10 custom-checkbox2"
+                            <checkbox-basic size="14" label="입력마감" class="mr-10 custom-checkbox2"
                                 v-model:valueCheckbox="statuses.checkbox2" />
                         </div>
                         <div>
-                            <checkbox-basic size="14" label="전체" class="mr-10 custom-checkbox3"
+                            <checkbox-basic size="14" label="조정중" class="mr-10 custom-checkbox3"
                                 v-model:valueCheckbox="statuses.checkbox3" />
-                            <checkbox-basic size="14" label="전체" class="mr-10 custom-checkbox4"
+                            <checkbox-basic size="14" label="조정마감" class="mr-10 custom-checkbox4"
                                 v-model:valueCheckbox="statuses.checkbox4" />
                         </div>
                     </a-form-item>
                 </a-col>
                 <a-col>
                     <a-form-item label="사업자코드" label-align="left" class="mb-0 label-select">
-                        <biz-number-text-box width="150px" />
+                        <biz-number-text-box width="150px" v-model:valueInput="dataSearch.filter.companyCode" />
                     </a-form-item>
                     <a-form-item label="상호" label-align="left" class="mb-0 label-select">
-                        <default-text-box width="150px" />
+                        <default-text-box width="150px" v-model:valueInput="dataSearch.filter.companyName" />
                     </a-form-item>
                 </a-col>
                 <a-col>
                     <a-form-item label="매니저리스트" label-align="left" class="mb-0 label-select">
-                        <list-sales-dropdown :arrSelect="arraySelectBox" width="150px" />
+                        <list-manager-dropdown :arrSelect="arraySelectBox"
+                            v-model:valueInput="dataSearch.filter.manageUserId" width="150px" />
                     </a-form-item>
                     <a-form-item label="영업자명" label-align="left" class="mb-0 label-select">
-                        <list-manager-dropdown :arrSelect="arraySelectBox" width="150px" />
+                        <list-sales-dropdown :arrSelect="arraySelectBox"
+                            v-model:valueInput="dataSearch.filter.salesRepresentativeId" width="150px" />
                     </a-form-item>
                 </a-col>
                 <a-col>
-                    <switch-basic textCheck="해지제외" textUnCheck="해지포함" />
+                    <switch-basic textCheck="해지제외" textUnCheck="해지포함"
+                        v-model:valueSwitch="dataSearch.filter.excludeCancel" />
                 </a-col>
             </a-row>
         </div>
         <div class="page-content">
             <a-spin :spinning="loadingTable" size="large">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" key-expr="employee.employeeId" class="wf-100">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource.datas"
+                    :show-borders="true" key-expr="companyId" class="wf-100" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxScrolling mode="virtual" />
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
                     </DxToolbar>
@@ -77,31 +85,129 @@
                             <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
                         </DxButton>
                     </template>
-                    <DxSelection mode="multiple" />
-                    <DxColumn caption="과세소득" data-field="totalTaxPay" format="#,###" width="150px" />
+
+                    <DxSelection mode="multiple" :fixed="true" />
+                    <DxColumn caption="사업자코드" data-field="company.code" />
+                    <DxColumn caption="상호 주소" cell-template="company" width="100" />
+                    <template #company="{ data }">
+                        <a-tooltip placement="topLeft">
+                            <template #title>{{ data.data.company.name + " " + data.data.company.address }}</template>
+                            {{ data.data.company.name + " " + data.data.company.address }}
+                        </a-tooltip>
+                    </template>
+                    <DxColumn caption="마감 현황" cell-template="status" width="140" />
+                    <template #status="{ data }">
+                        <div class="d-flex-center"> 
+                            <process-status v-model:valueStatus="data.data.status" :edit="false"
+                                style="width: 100px;" />
+                            <div class="pl-5 pr-5">
+                                <a-tooltip placement="topLeft">
+                                    <template #title>소득별 마감현황</template> 
+                                    <plus-outlined @click="openModalStatus(data.data)" />
+                                </a-tooltip>
+                            </div>
+                        </div>
+                    </template>
+                    <DxColumn caption="귀속연월" cell-template="imputed" />
+                    <template #imputed="{ data }">
+                        <span class="tag-custom-1">
+                            {{ data.data.imputedYear + "-" + data.data.imputedMonth }}
+                        </span>
+                    </template>
+                    <DxColumn caption="지급연월" cell-template="payment" />
+                    <template #payment="{ data }">
+                        <span class="tag-custom-2">
+                            {{ data.data.paymentYear + "-" + data.data.paymentMonth }}
+                        </span>
+                    </template>
+                    <DxColumn caption="신고 주기" cell-template="reportType" />
+                    <template #reportType="{ data }">
+                        <span :class="data.data.reportType == 6 ? 'tag-custom-1' : 'tag-custom-2'">
+                            {{ data.data.reportType == 6 ? '반기' : '매월' }}
+                        </span>
+                    </template>
+                    <DxColumn caption="신고 종류" cell-template="afterDeadline" />
+                    <template #afterDeadline="{ data }">
+                        <span
+                            :class="data.data.index == 0 && data.data.afterDeadline == true ? 'tag-custom-2' : (data.data.index == 0 && data.data.afterDeadline == false ? 'tag-custom-4' : 'tag-custom-3')">
+                            {{ data.data.index == 0 && data.data.afterDeadline == true ? '기한후' : data.data.index == 0 &&
+        data.data.afterDeadline == false ? '정기' : '수정 ' + data.data.index
+}}
+                        </span>
+                    </template>
+                    <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
+                    <template #yearEndTaxAdjustment="{ data }">
+                        {{ data.data.yearEndTaxAdjustment == false ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="환급" cell-template="refund" />
+                    <template #refund="{ data }">
+                        {{ data.data.refund == false ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="근로 간이" cell-template="wageIncomeSimplified" />
+                    <template #wageIncomeSimplified="{ data }">
+                        {{ data.data.wageIncomeSimplified == 0 ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="근로 중도" cell-template="yearEndAdjustmentRetirement" />
+                    <template #yearEndAdjustmentRetirement="{ data }">
+                        {{ data.data.yearEndAdjustmentRetirement == 0 ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="근로 일용" cell-template="dailyWageIncome" />
+                    <template #dailyWageIncome="{ data }">
+                        {{ data.data.dailyWageIncome == 0 ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="근로 연말" cell-template="yearEndAdjustment" />
+                    <template #yearEndAdjustment="{ data }">
+                        {{ data.data.yearEndAdjustment == 0 ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="퇴직 소득" cell-template="retirementIncome" />
+                    <template #retirementIncome="{ data }">
+                        {{ data.data.retirementIncome == 0 ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="사업 소득" cell-template="businessIncome" />
+                    <template #businessIncome="{ data }">
+                        {{ data.data.businessIncome == 0 ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="기타 소득" cell-template="extraIncome" />
+                    <template #extraIncome="{ data }">
+                        {{ data.data.extraIncome == 0 ? '' : 'o' }}
+                    </template>
+                    <DxColumn caption="총지급액 (A99)" data-field="totalPayment" format="#,###" />
+                    <DxColumn caption="납부세액 소득세등 (A99)" data-field="totalCollectedTaxAmount" format="#,###" />
+                    <DxColumn caption="(20) 차월이월 환급세액계" data-field="nextMonthRefundTaxAmount" format="#,###" />
+                    <DxColumn caption="(21) 환급 신청액" data-field="refundApplicationAmount" format="#,###" />
+                    <DxColumn caption="출력 메일" cell-template="action" />
+                    <template #action="{ data }">
+                        <img src="@/assets/images/print.svg" alt="" style="width: 25px;">
+                        <img src="@/assets/images/email.svg" alt="" style="width: 25px;" />
+                    </template>
                 </DxDataGrid>
             </a-spin>
         </div>
     </div>
+    <PopupAddStatus :modalStatus="modalStatus" @closePopup="closePopup" :dataCall="dataCall" />
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive, ref, computed, watch } from "vue";
 import { dataSearchUtil } from "./utils/index";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
 import { useStore } from 'vuex'
+import { PlusOutlined, } from "@ant-design/icons-vue";
+import PopupAddStatus from "./components/PopupAddStatus.vue";
+
 export default defineComponent({
     components: {
-        DxDataGrid, DxToolbar, DxSelection, DxButton, DxColumn, DxItem
+        DxDataGrid, DxToolbar, DxSelection, DxButton, DxColumn, DxItem, DxScrolling, PlusOutlined
+        , PopupAddStatus
     },
     setup() {
-        let dataSource = reactive([])
-        let trigger = ref(false)
-        let dataSearch = reactive({ ...dataSearchUtil })
+        let dataSource: any = ref([])
+        let trigger = ref(true)
+        let dataSearch: any = reactive({ ...dataSearchUtil })
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         let arraySelectBox = reactive([
@@ -223,9 +329,11 @@ export default defineComponent({
             checkbox2: true,
             checkbox3: true,
         })
-
-
-
+        let checkAllTypeFication = ref(false)
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const modalStatus = ref(false)
+        const dataCall = ref()
         /*
          * ============== API ============== 
          */
@@ -241,7 +349,8 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable(res => {
-            console.log(res);
+            dataSource.value = res.data.searchTaxWithholdingStatusReports
+            trigger.value = false
         })
         errorTable(res => {
             notification('error', res.message)
@@ -251,11 +360,31 @@ export default defineComponent({
          * ============== WATCHING ============== 
          */
 
-        watch(() => reportType, (value) => {
-
+        watch(() => checkAllTypeFication, (newVal: any) => {
+            dataSearch.filter.regular = newVal.value
+            dataSearch.filter.revised = newVal.value
+            dataSearch.filter.afterDeadline = newVal.value
         }, { deep: true })
-
-
+        watch(() => [
+            dataSearch.filter.regular,
+            dataSearch.filter.revised,
+            dataSearch.filter.afterDeadline
+        ], ([val1, val2, val3]) => {
+            if (val1 == true && val2 == true && val3 == true)
+                checkAllTypeFication.value = true
+            else
+                checkAllTypeFication.value = false
+        }, { deep: true })
+        watch(() => reportType.checkbox1, (newVal: any) => {
+            reportType.checkbox2 = newVal
+            reportType.checkbox3 = newVal
+        }, { deep: true })
+        watch(() => reportType, (newVal: any) => {
+            if (newVal.checkbox2 == true && newVal.checkbox3 == true)
+                newVal.checkbox1 = true
+            else
+                newVal.checkbox1 = false
+        }, { deep: true })
 
         /*
          * ============== FUNCTION ============== 
@@ -265,12 +394,44 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                console.log('1234124');
+                // Import data to reportType (1, 6, null)
+                if (reportType.checkbox2 == true && reportType.checkbox3 == false)
+                    dataSearch.filter.reportType = 1
+                else if (reportType.checkbox3 == true && reportType.checkbox2 == false)
+                    dataSearch.filter.reportType = 6
+                else
+                    dataSearch.filter.reportType = null
+
+                // Add value to array statuses
+                dataSearch.filter.statuses = []
+                if (statuses.checkbox1 == true)
+                    dataSearch.filter.statuses.push(10)
+                if (statuses.checkbox2 == true)
+                    dataSearch.filter.statuses.push(20)
+                if (statuses.checkbox3 == true)
+                    dataSearch.filter.statuses.push(30)
+                if (statuses.checkbox4 == true)
+                    dataSearch.filter.statuses.push(40)
+                trigger.value = true
+                refetchTable()
             }
         }
+
+        const closePopup = () => {
+            modalStatus.value = false
+        }
+
+        const openModalStatus = (data: any) => {
+            dataCall.value = {
+                reportId: data.reportId,
+                companyId: data.companyId,
+                imputedYear: data.imputedYear,
+            } 
+            modalStatus.value = true
+        }
         return {
-            arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType,
-            searching
+            arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, checkAllTypeFication, move_column, colomn_resize, modalStatus, dataCall,
+            searching, closePopup, openModalStatus,
         }
     }
 })
