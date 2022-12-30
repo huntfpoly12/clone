@@ -9,10 +9,12 @@ export default gql`
                 page
                 rows
                 datas {
+                    index
+                    reportId
                     company{
-                    code
-                    name
-                    address
+                        code
+                        name
+                        address
                     }
                     companyId
                     status
