@@ -97,13 +97,13 @@
                     </template>
                     <DxColumn caption="마감 현황" cell-template="status" width="140" />
                     <template #status="{ data }">
-                        <div class="d-flex-center">
+                        <div class="d-flex-center"> 
                             <process-status v-model:valueStatus="data.data.status" :edit="false"
                                 style="width: 100px;" />
                             <div class="pl-5 pr-5">
                                 <a-tooltip placement="topLeft">
-                                    <template #title>소득별 마감현황</template>
-                                    <plus-outlined @click="openModalStatus(data.data.reportId)" />
+                                    <template #title>소득별 마감현황</template> 
+                                    <plus-outlined @click="openModalStatus(data.data)" />
                                 </a-tooltip>
                             </div>
                         </div>
@@ -184,7 +184,7 @@
             </a-spin>
         </div>
     </div>
-    <PopupAddStatus :modalStatus="modalStatus" @closePopup="closePopup" :rowId="rowId" />
+    <PopupAddStatus :modalStatus="modalStatus" @closePopup="closePopup" :dataCall="dataCall" />
 </template>
 
 <script lang="ts">
@@ -333,7 +333,7 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalStatus = ref(false)
-        const rowId = ref()
+        const dataCall = ref()
         /*
          * ============== API ============== 
          */
@@ -422,11 +422,15 @@ export default defineComponent({
         }
 
         const openModalStatus = (data: any) => {
-            rowId.value = data
+            dataCall.value = {
+                reportId: data.reportId,
+                companyId: data.companyId,
+                imputedYear: data.imputedYear,
+            } 
             modalStatus.value = true
         }
         return {
-            arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, checkAllTypeFication, move_column, colomn_resize, modalStatus, rowId,
+            arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, checkAllTypeFication, move_column, colomn_resize, modalStatus, dataCall,
             searching, closePopup, openModalStatus,
         }
     }
