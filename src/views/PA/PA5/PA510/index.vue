@@ -264,7 +264,7 @@
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
                 <FormDataComponent :data="dataIncomeWageDaily" @loadingTableInfo="loadingTableInfo"
                     :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem"
-                    :actionUpdateItem="actionUpdateItem" />
+                    :actionUpdateItem="actionUpdateItem" :isTaxhasData="isTaxhasData"/>
             </a-col>
         </a-row>
         <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
@@ -436,13 +436,16 @@ export default defineComponent({
                 showDetailSelected(obj)
             }
         })
-
+        const isTaxhasData = ref(false);
         watch(resultTaxPayInfo, (value) => {
             dataTaxPayInfo.value = value.getIncomeWageDailies;
             focusedRowKey.value = value.getIncomeWageDailies[0]?.employeeId ?? 1;
             let firstDataParam = { data: value.getIncomeWageDailies[0], rowType:'data' };
             if(firstDataParam.data){
+                isTaxhasData.value = true;
                 actionEditTaxPay(firstDataParam);
+            }else{
+                isTaxhasData.value = false;
             }
             dataTaxPayInfo.value.map((value: any) => {
                 arrayEmploySelect.value.push({
@@ -540,6 +543,7 @@ export default defineComponent({
             statusComfirm,
             month,
             focusedRowKey,
+            isTaxhasData
         }
 
     },

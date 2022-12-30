@@ -37,11 +37,11 @@
             <div v-if="validations.paymentDay" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="지급액">
-            <number-box-money width="150px" :min="0" :max="2147483647" v-model:valueInput="dataAction.input.paymentAmount" :required="true"></number-box-money>
+            <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput" v-model:valueInput="dataAction.input.paymentAmount" :required="true"></number-box-money>
             <div v-if="validations.paymentAmount" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="필요경비">
-            <number-box-money width="150px" :min="0" max="2147483647" :required="true" v-model:valueInput="dataAction.input.requiredExpenses"></number-box-money>
+            <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput" v-model:valueInput="dataAction.input.requiredExpenses"></number-box-money>
             <div v-if="validations.requiredExpenses" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="세율">
@@ -130,6 +130,9 @@ export default defineComponent({
     addNewIncomeExtra: {
       type: Object,
     },
+    isLoadNewForm: {
+      type: Boolean,
+    },
   },
   setup(props, { emit }) {
     const incomeExtraParam = ref<any>({
@@ -175,33 +178,24 @@ export default defineComponent({
     let localIncomeTax = ref(0);
     //watch for changes
     watch(
-      () => dataAction.input,
-      () => {
-        let objIncomeAmount: any = Formula.getExtraEmployeeIncomeAmount(dataAction.input.paymentAmount, dataAction.input.requiredExpenses);
-        let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, dataAction.input.taxRate);
-        incomeAmount.value = objIncomeAmount;
-        dataAction.input.withholdingIncomeTax = objIncomeTax.incomeTax;
-        dataAction.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
-      },
-      { deep: true }
-    );
-    watch(
-      () => props.editTax,
-      (newValue) => {
-        newDateLoading.value = true;
-        if (newValue.incomeId) {
-          incomeExtraParam.value = newValue;
-          dataAction.companyId = newValue.companyId;
-          triggerIncomeExtra.value = true;
-          let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
-          let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
-          month1.value = dayjs(date1).format('YYYY-MM');
-          month2.value = dayjs(date2).format('YYYY-MM');
-          incomeArr.value = [];
-          isEdit.value = true;
-          refetchIncomeExtra();
-        } else {
-          newDateLoading.value = false;
+      [() => props.editTax,()=>props.isLoadNewForm],
+      ([newValue, newValue2]:[any,boolean]) => {
+        if (newValue2) {
+          newDateLoading.value = true;
+          if (newValue.incomeId) {
+            incomeExtraParam.value = newValue;
+            dataAction.companyId = newValue.companyId;
+            triggerIncomeExtra.value = true;
+            let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
+            let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
+            month1.value = dayjs(date1).format('YYYY-MM');
+            month2.value = dayjs(date2).format('YYYY-MM');
+            incomeArr.value = [];
+            isEdit.value = true;
+            refetchIncomeExtra();
+          } else {
+            newDateLoading.value = false;
+          }
         }
       },
       { deep: true }
@@ -226,7 +220,7 @@ export default defineComponent({
       enabled: triggerIncomeExtra.value,
       fetchPolicy: 'no-cache',
     }));
-    const {result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+    const { result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
       fetchPolicy: 'no-cache',
       enabled: getEmployeeExtrasTrigger.value,
     }));
@@ -258,11 +252,11 @@ export default defineComponent({
         incomeTypeName: data.employee.incomeTypeName,
       });
       newDateLoading.value = loadingIncomeExtra.value;
-      validations.employeeId=false;
-      validations.taxRate=false;
-      validations.paymentDay=false;
-      validations.paymentAmount=false;
-      validations.requiredExpenses=false;
+      validations.employeeId = false;
+      validations.taxRate = false;
+      validations.paymentDay = false;
+      validations.paymentAmount = false;
+      validations.requiredExpenses = false;
     });
     // validate
     const validations = reactive({
@@ -293,7 +287,7 @@ export default defineComponent({
       },
       { deep: true }
     );
-// SUBMIT FORM
+    // SUBMIT FORM
     watch(
       () => props.actionSave,
       () => {
@@ -313,6 +307,7 @@ export default defineComponent({
           validations.taxRate = true;
         }
         if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
+          
           return;
         }
         dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
@@ -331,7 +326,7 @@ export default defineComponent({
         createIncomeExtra(dataAction);
       }
     );
-// GET FORM 
+    // GET FORM
     watch(resultEmployeeExtras, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeExtras;
       getEmployeeExtrasTrigger.value = false;
@@ -343,12 +338,12 @@ export default defineComponent({
       }
       return text;
     };
-// GET INCOMETYPECODE
+    // GET INCOMETYPECODE
     const changeIncomeTypeCode = (res: string) => {
       dataAction.input.incomeTypeCode = res;
     };
 
-// AFTER ACTION FORM
+    // AFTER ACTION FORM
     createIncomeExtraDone((res) => {
       emit('changeFommDone');
       notification('success', `업데이트 완료!`);
@@ -379,8 +374,19 @@ export default defineComponent({
         value: 30,
       },
     ];
+    const caclInput = () => {
+      let objIncomeAmount: any = Formula.getExtraEmployeeIncomeAmount(dataAction.input.paymentAmount, dataAction.input.requiredExpenses);
+      let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, dataAction.input.taxRate);
+      incomeAmount.value = objIncomeAmount;
+      dataAction.input.withholdingIncomeTax = objIncomeTax.incomeTax;
+      dataAction.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
+    };
     const updateValue = (value: any) => {
       dataAction.input.taxRate = value.value;
+      caclInput();
+    };
+    const onChangeInput = () => {
+      caclInput();
     };
     return {
       checkLen,
@@ -402,7 +408,8 @@ export default defineComponent({
       localIncomeTax,
       isResetComponent,
       validations,
-      resultIncomeExtra
+      resultIncomeExtra,
+      onChangeInput,
     };
   },
 });

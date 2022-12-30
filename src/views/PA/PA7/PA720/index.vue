@@ -1,5 +1,5 @@
 <template>
-  <action-header title="기타소득자료입력" @actionSave="onSubmit($event)" :buttonSave="false" />
+  <action-header title="기타소득자료입력" @actionSave="onSubmit" :buttonSave="false" />
   <div id="pa-720" class="page-content">
     <a-row>
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
@@ -275,7 +275,7 @@
         <DxButton class="ml-3" @click="deleteItem">
           <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
         </DxButton>
-        <DxButton @click="onSubmit($event)" size="large" class="ml-4">
+        <DxButton @click="onSubmit" size="large" class="ml-4">
           <SaveOutlined style="font-size: 17px" />
         </DxButton>
 
@@ -311,25 +311,34 @@
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax" :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" />
       </a-col>
       <a-col :span="11" class="custom-layout" style="padding-right: 0px">
-        <FormTaxPayInfo ref="formTaxRef" :actionSave="actionSave" :editTax="editTaxParam" @changeFommDone="onFormDone" :key="resetFormNum" :addNewIncomeExtra="dataAddIncomeProcess" />
+        <FormTaxPayInfo
+          ref="formTaxRef"
+          :actionSave="actionSave"
+          :editTax="editTaxParam"
+          :isLoadNewForm="isLoadNewForm"
+          @changeFommDone="onFormDone"
+          :key="resetFormNum"
+          :addNewIncomeExtra="dataAddIncomeProcess"
+        />
       </a-col>
     </a-row>
   </div>
   <DeletePopup @delDone="changeFommDone++" :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="deleteIncomeExtrasParam" />
 
   <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720" />
-  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="" :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720-status" />
+  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
   <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false" @loadingTableInfo="onLoadingTable" @dataAddIncomeProcess="onAddIncomeProcess" />
   <PopupMessage
     :modalStatus="popupAddStatus"
     @closePopup="popupAddStatus = false"
     :typeModal="'confirm'"
-    :title="'waring'"
-    :content="'변경 내용을 저장하시겠습니까?'"
+    :title="titleModalConfirm"
+    :content="''"
     :cancelText="'아니요 '"
     :okText="'네 '"
     @checkConfirm="onPopupComfirm"
+    :isConfirmIcon="false"
   />
 </template>
 <script lang="ts">
@@ -452,14 +461,13 @@ export default defineComponent({
         formTaxRef.value.isResetComponent = !formTaxRef.value.isResetComponent;
       }, 200);
     };
-    const onSubmit = (e: any) => {
+    const onSubmit = () => {
       actionSave.value++;
+      isLoadNewForm.value = true;
+      taxPayRef.value.firsTimeRow = true;
     };
-    const onFormDone = () => {
-      changeFommDone.value++;
-      resetForm();
-    };
-    onDoneChangeIncomeProcessExtraStatusDone((res) => {
+    const onFormDone = () => changeFommDone.value++;
+    onDoneChangeIncomeProcessExtraStatusDone(() => {
       notification('success', `업데이트 완료!`);
       trigger.value = true;
       refetchIncomeProcessExtras();
@@ -479,38 +487,45 @@ export default defineComponent({
       trigger.value = true;
       refetchIncomeProcessExtras();
     };
-    const onAddIncomeProcess = (emit: any) => {
-      dataAddIncomeProcess.value = emit;
-    };
+    const onAddIncomeProcess = (emit: any) => (dataAddIncomeProcess.value = emit);
     const addItem = () => {
       if (JSON.stringify(formTaxRef.value.dataAction.input) != JSON.stringify(dataActionUtils.input)) {
         popupAddStatus.value = true;
+        titleModalConfirm.value="Do you want to reset your form?"
       }
     };
-    const taxRowChange = ref(true);
+    //does save when data and row change ?
+    const titleModalConfirm = ref('Do you want to reset your form?');
     const onPopupComfirm = (e: any) => {
       if (e) {
-        if(taxRowChange){
-            
-        }else{
-            resetForm();
+        if (!isLoadNewForm.value) {
+          onSubmit();
+        } else {
+          resetForm();
         }
+      } else {
+        isLoadNewForm.value = true;
       }
     };
-    const editTax = (emit: any, isFirst: boolean) => {
+    // enable load form when row change
+    const isLoadNewForm = ref(false);
+    const editTax = (emit: any, firsTimeRow: boolean) => {
       editTaxParam.value = emit;
-        console.log(`output->isFirst`,isFirst)
-      if(isFirst) {
-        console.log(`output->isFirst`,isFirst)
-        return
+      if (firsTimeRow) {
+        isLoadNewForm.value = true;
+        return;
       }
       const { employeeId, incomeTypeCode, paymentAmount, paymentDay, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax } = formTaxRef.value?.resultIncomeExtra.getIncomeExtra;
       let formInputInit = { paymentDay, employeeId, incomeTypeCode, paymentAmount, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax };
       let formInputData = formTaxRef.value.dataAction.input;
-      console.log(`output->formInputInit`,JSON.stringify(formInputInit))
-      console.log(`output->formInputInit`,JSON.stringify(formInputData))
+      console.log(`output->`, JSON.stringify(formInputData));
+      console.log(`output->`, JSON.stringify(formInputInit));
       if (JSON.stringify(formInputData) != JSON.stringify(formInputInit)) {
+        isLoadNewForm.value = false;
+        titleModalConfirm.value="변경 내용을 저장하시겠습니까?"
         popupAddStatus.value = true;
+      } else {
+        editTaxParam.value = emit;
       }
     };
     //compute data function
@@ -530,6 +545,7 @@ export default defineComponent({
     const month = ref<number>(0);
     // fnc click month
     const showDetailSelected = (obj: any) => {
+      taxPayRef.value.firsTimeRow = true;
       incomeExtrasParams.processKey.imputedMonth = obj.imputedMonth;
       incomeExtrasParams.processKey.imputedYear = obj.imputedYear;
       incomeExtrasParams.processKey.paymentYear = obj.paymentYear;
@@ -660,6 +676,8 @@ export default defineComponent({
       openTab,
       onPopupComfirm,
       addItem,
+      isLoadNewForm,
+      titleModalConfirm,
     };
   },
 });

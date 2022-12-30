@@ -75,7 +75,7 @@ export default defineComponent({
             }
         );
         const onChange = (e: any) => {
-            emit("changeInput",e)
+            emit("changeInput",e);
         }
 
         return {
