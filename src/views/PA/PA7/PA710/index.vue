@@ -67,7 +67,7 @@
             </a-col>
             <a-col :span="8" class="custom-layout">
                 <a-spin :spinning="loadingForm" size="large">
-                    <a-row :gutter="24" class="pa-710-popup-add">
+                    <a-row :gutter="24" class="pa-710-popup-add" :key="resetFormNum">
                         <a-col :span="24">
                             <a-form-item label="코드" :label-col="labelCol" class="red">
                                 <div class="custom-note">
@@ -191,6 +191,7 @@ export default defineComponent({
         const listEmployeeExtra = ref([])
         let formState = reactive({ ...initialState });
         let dataRow = reactive({ ...initialState });
+        const resetFormNum = ref(1);
         const originData = {
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -327,6 +328,7 @@ export default defineComponent({
             dataRowOld = { ...formState }
         }
         const formCreate = (e: any) => {
+            resetFormNum.value++;
             focusedRowKey.value = null;
             checkForm.value = false;
             changeFormData({ ...initialState })
@@ -397,6 +399,7 @@ export default defineComponent({
             modalStatus,
             statusComfirm,
             focusedRowKey,
+            resetFormNum,
         };
     },
 });

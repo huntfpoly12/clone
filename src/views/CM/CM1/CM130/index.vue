@@ -265,7 +265,7 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    <AddCM130Popup :modalStatus="modalAddNewStatus" :itemCodeMax="itemCodeMax" @closePopup="onCloseAddNewModal" title="원천설정" />
+                    <AddCM130Popup :modalStatus="modalAddNewStatus" :itemCodeMax="itemCodeMax" :key="resetFormNum" @closePopup="onCloseAddNewModal" title="원천설정" />
                     <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="onCloseEditModal" :data="popupData"
                         title="원천설정" :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -384,14 +384,9 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
-import dayjs, { Dayjs } from "dayjs";
 import { optionsRadioReportType, optionsRadioPaymentType } from "./utils/data";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
 import { initialFormState, initialFormStateDeduction } from "./utils/data";
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 export default defineComponent({
     components: {
         DxNumberBox,
@@ -416,7 +411,7 @@ export default defineComponent({
     setup() {
         // config grid
         const store = useStore();
-
+        const globalYear = computed(() => store.state.settings.globalYear)
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const popupData = ref([]);
@@ -435,7 +430,8 @@ export default defineComponent({
         const dataSource = ref([]);
         const dataSourceDeduction = ref([]);
         let itemCodeMax = ref(0);
-        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
+        const resetFormNum = ref(1);
+        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: globalYear.value });
         //================================================= FUNCTION============================================
         const showModal = () => {
             isShow.value = true;
@@ -446,10 +442,8 @@ export default defineComponent({
             isShow.value = false;
         };
         const trigger = ref(false)
-        // reportType: 1 or 6
-        // paymentType: 1 or 2
         // get config
-        const dataQuery = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
         const { result: resultConfig, loading, refetch: refetchConfig } = useQuery(
             queries.getWithholdingConfig,
             dataQuery,
@@ -480,7 +474,7 @@ export default defineComponent({
             }
         });
 
-        const dataQueryDeduction = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
+        const dataQueryDeduction = ref({ companyId: companyId, imputedYear: globalYear.value });
         const { result: resultConfigDeduction, loading: loadingDeduction, refetch: refetchConfigDeduction } = useQuery(
             queries.getWithholdingConfigDeductionItems,
             dataQueryDeduction,
@@ -518,7 +512,7 @@ export default defineComponent({
         const onSubmitConfig = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: parseInt(dayjs().format('YYYY')),
+                imputedYear: globalYear.value,
                 input: {
                     reportType: formState.reportType,
                     paymentType: formState.paymentType,
@@ -545,7 +539,7 @@ export default defineComponent({
         const onSubmitConfigDeduction = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: parseInt(dayjs().format('YYYY')),
+                imputedYear: globalYear.value,
                 itemCode: formStateDeduction.itemCode,
                 input: {
                     formula: formStateDeduction.formula
@@ -614,7 +608,7 @@ export default defineComponent({
                 onOk() {
                     let variables = {
                         companyId: companyId,
-                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        imputedYear: globalYear.value,
                         itemCode: data.data.itemCode
                     };
                     actionDelete(variables);
@@ -644,6 +638,7 @@ export default defineComponent({
         }
         const openAddNewModal = () => {
             if (dataSource.value.length <= 20) {
+                resetFormNum.value++;
                 modalAddNewStatus.value = true;
             } else {
                 notification('error', `이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
@@ -750,6 +745,7 @@ export default defineComponent({
             onExporting,
             dataPublicInstitution,
             itemCodeMax,
+            resetFormNum,
         };
     },
 });
