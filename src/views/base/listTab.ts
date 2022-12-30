@@ -8,12 +8,12 @@ const listTab: ListTab[] = [
   {
     ID: 1,
     TabName: "Grid Prototype Option 1",
-    layoutName: "GridPrototype",
+    layoutName: "GridPrototype2",
   },
   {
     ID: 2,
     TabName: "Grid Prototype Option 2",
-    layoutName: "GridPrototype2",
+    layoutName: "GridPrototype",
   },
   {
     ID: 3,
