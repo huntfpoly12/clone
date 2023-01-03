@@ -47,7 +47,7 @@ export default defineComponent({
             type: String,
             default: "이해했다"
         },
-        isConfirmIcon:{
+        isConfirmIcon: {
             type: Boolean,
             default: false
         }
@@ -59,7 +59,7 @@ export default defineComponent({
         const inputAccep = ref()
         const visibleConfirm = ref<boolean>(false);
         let visible = ref(false);
-        const icon = reactive(props.isConfirmIcon?{}:{icon:null})
+        const icon = reactive(props.isConfirmIcon ? {} : { icon: null })
         watch(
             () => props.modalStatus,
             (newValue, old) => {
@@ -110,15 +110,15 @@ export default defineComponent({
                             okText: props.okText,
                             cancelText: props.cancelText,
                             ...icon,
-                            class:props.isConfirmIcon?'':'noIcon',
-                            onOk() { 
+                            class: props.isConfirmIcon ? '' : 'noIcon',
+                            onOk() {
                                 emit("closePopup", false)
                                 emit("checkConfirm", true)
                             },
-                            onCancel() { 
+                            onCancel() {
                                 emit("closePopup", false)
                                 emit("checkConfirm", false)
-                            }, 
+                            },
                         });
                     else if (props.typeModal == "acceptInput") {
                         visibleConfirm.value = true
@@ -151,11 +151,12 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" >
 .ant-modal-confirm-body svg {
     font-size: 50px;
 }
-.noIcon{
+
+.noIcon {
     text-align: center;
 }
 </style>

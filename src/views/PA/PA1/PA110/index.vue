@@ -7,7 +7,7 @@
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true">
           <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
-          <template #imputed-year="{ data }">
+          <template #imputed-year="{ }">
             <span>지급연월</span>
           </template>
           <DxColumn width="100px" caption="01" cell-template="imputed-month1" />
@@ -119,7 +119,7 @@
             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
           </template>
           <DxMasterDetail class="table-detail" :enabled="true" template="row-detail" />
-          <template #row-detail="{ data }">
+          <template #row-detail="{ }">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
               :show-borders="true" :column-auto-width="true" :show-column-headers="false">
               <DxColumn cell-template="col-first" data-type="string" />
@@ -182,18 +182,21 @@
         </DxDataGrid>
       </a-spin>
     </a-row>
-    <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
-      <a-col>
-        <DxButton :text="'귀' + processKey.paymentYear + '-' + processKey.paymentMonth"
+    <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
+      <a-col :span="5">
+        <div style="display: flex;">
+          <DxButton :text="'귀' + processKey.paymentYear + '-' + processKey.paymentMonth"
           :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-        <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
-          :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
-        <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
-
+          <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
+            :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+          <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
+        </div>
       </a-col>
-      <a-col class="">
-        <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
+      <a-col :span="9">
+        <div style="float: right;display: flex;">
+          <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
           @loadingTableInfo="loadingTableInfo" />
+        </div>
       </a-col>
     </a-row>
     <a-row>

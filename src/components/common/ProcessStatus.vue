@@ -13,7 +13,7 @@
         </template>
         <div v-for="item in arrayRadioManager" :key="item.id">
             <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
-                class="buttonModal" @onClick="clickButton"></button-basic>
+                class="buttonModal" @onClick="clickButton" />
         </div>
     </a-tooltip>
 </template>

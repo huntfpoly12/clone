@@ -14,7 +14,8 @@
                         <div class="pr-5 pl-10">
                             <img src="@/assets/images/iconInfo.png" style="width: 16px;">
                         </div>
-                        <span class="style-note" style="font-size: 10px; color: #888888">본 항목은 공제 계산을 위한 설정으로 실제 4대보험 <br> 신고 여부와는 무관합니다.
+                        <span class="style-note" style="font-size: 10px; color: #888888">본 항목은 공제 계산을 위한 설정으로 실제 4대보험
+                            <br> 신고 여부와는 무관합니다.
                         </span>
                     </div>
                 </a-form-item>
@@ -28,12 +29,12 @@
                 <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
-                        layoutCustom="horizontal" :disabled="originDataUpdate.input.insuranceSupport"/>
+                        layoutCustom="horizontal" :disabled="originDataUpdate.input.insuranceSupport" />
                 </a-form-item>
                 <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.employeementInsuranceSupportPercent"
-                        layoutCustom="horizontal"  :disabled="originDataUpdate.input.insuranceSupport"/>
+                        layoutCustom="horizontal" :disabled="originDataUpdate.input.insuranceSupport" />
                 </a-form-item>
             </a-col>
         </a-row>
@@ -48,8 +49,8 @@
             </a-col>
             <a-col :span="12">
                 <div class="header-text-0">월급여
-                    <span>
-                        {{$filters.formatCurrency(originDataUpdate.input.monthlyWage)}} 원
+                    <span class="fz-14">
+                        {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
                     </span>
                 </div>
                 <div>
@@ -59,45 +60,37 @@
                                 v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
                             <number-box-money :min="0" width="200px" class="mr-5"
                                 v-if="!originDataUpdate.input.monthlyPaycheck"
-                                v-model:valueInput="originDataUpdate.input.monthlyWage"
-                                :placeholder="'일급여'" @changeInput="onChangeMonthlyWage"/>
-                            <number-box-money :min="0" width="200px" class="mr-5"
-                                v-else
-                                v-model:valueInput="originDataUpdate.input.dailyWage"
-                                :placeholder="'월급여'" @changeInput="onChangeDailyWage"/>
+                                v-model:valueInput="originDataUpdate.input.monthlyWage" :placeholder="'일급여'"
+                                @changeInput="onChangeMonthlyWage" />
+                            <number-box-money :min="0" width="200px" class="mr-5" v-else
+                                v-model:valueInput="originDataUpdate.input.dailyWage" :placeholder="'월급여'"
+                                @changeInput="onChangeDailyWage" />
                         </div>
                     </a-form-item>
                     <div class="mb-5">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;">
                         <span class="pl-5 fz-11" style="font-size: 10px; color: #888888">
-                            {{ originDataUpdate.input.monthlyPaycheck?messageMonthlySalary:messageDaylySalary }}
+                            {{ originDataUpdate.input.monthlyPaycheck ? messageMonthlySalary : messageDaylySalary }}
                         </span>
                     </div>
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
                             <number-box-money width="200px" class="mr-5" :min="0"
-                                v-model:valueInput="originDataUpdate.input.workingDays" @changeInput="onChangeWorkingDays" />
+                                v-model:valueInput="originDataUpdate.input.workingDays"
+                                @changeInput="onChangeWorkingDays" />
                             <span class="ml-10">일</span>
                         </div>
                     </a-form-item>
                     <div>
-                        일급여: <b>
-                            {{
-                                    $filters.formatCurrency(originDataUpdate.input.dailyWage)
-                            }}
-                        </b> 원
+                        일급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.dailyWage) }} </b> 원
                     </div>
                     <div>
-                        월급여: <b>
-                            {{
-                                    $filters.formatCurrency(originDataUpdate.input.monthlyWage)
-                            }}
-                        </b> 원
+                        월급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원</b>
                     </div>
                 </div>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-0">공제 항목 <span>{{ totalDeduction }} 원</span></div>
+                <div class="header-text-0">공제 항목 <span class="fz-14">{{ totalDeduction }} 원</span></div>
                 <a-spin :spinning="loading" size="large">
                     <div class="deduction-main">
                         <div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
@@ -124,9 +117,13 @@
         </a-row>
         <div class="button-action">
             <button-basic text="공제계산" type="default" mode="contained" @onClick="callFuncCalculate" />
-            <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction" />
+            <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction"
+                id="action-update" />
         </div>
     </div>
+    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
+        title="Title Notification" content="Content notification" okText="확인" cancelText="OK"
+        @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
@@ -137,7 +134,6 @@ import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
-import filters from "@/helpers/filters";
 import { Formula } from "@bankda/jangbuda-common";
 export default defineComponent({
     props: {
@@ -145,8 +141,8 @@ export default defineComponent({
         idRowEdit: Number
     },
     setup(props, { emit }) {
-        let arrEdit: any = []
         let dataReturn = ref()
+        const modalStatusChange = ref(false)
         const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수');
         const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
@@ -172,6 +168,7 @@ export default defineComponent({
                 ...originDataInputUpdate
             },
         })
+        let indexChange = ref(0)
         // ================== GRAPQL ====================================
         const {
             loading: loading,
@@ -195,9 +192,10 @@ export default defineComponent({
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
             fetchPolicy: "no-cache",
         }))
-        resApiGetEmployeeWageDaily(e => {
+        resApiGetEmployeeWageDaily((e: any) => {  
             if (e.data) {
-                let res = e.data.getEmployeeWageDaily
+                let res = e.data.getEmployeeWageDaily 
+                originDataUpdate.value.employeeId = res.employeeId
                 originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
                 originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
                 originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
@@ -211,20 +209,25 @@ export default defineComponent({
                 originDataUpdate.value.input.monthlyWage = res.monthlyWage
                 dataReturn.value = res.deductionItems
                 let dataAddDedution: any = []
-                arrDeduction.value?.map((val: any) => {
-                    let arrReturn = addDedution(val.itemCode)
-                    if (arrReturn.itemCode) {
-                        val.price = arrReturn.amount
-                        dataAddDedution.push(addDedution(val.itemCode))
-                    }
-                    else {
-                        dataAddDedution.push({ itemCode: val.itemCode, amount: 0 })
-                    }
-                })
-                if (dataAddDedution)
-                    originDataUpdate.value.input.deductionItems = dataAddDedution
+
+                // delay push data to form caculate 
+                setTimeout(() => {
+                    arrDeduction.value?.map((val: any) => {
+                        let arrReturn = addDedution(val.itemCode)
+                        if (arrReturn.itemCode) {
+                            val.price = arrReturn.amount
+                            dataAddDedution.push(addDedution(val.itemCode))
+                        }
+                        else {
+                            dataAddDedution.push({ itemCode: val.itemCode, amount: 0 })
+                        }
+                    })
+                    if (dataAddDedution)
+                        originDataUpdate.value.input.deductionItems = dataAddDedution
+                }, 100);
             }
         })
+
         const {
             mutate,
             onError,
@@ -233,64 +236,28 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-        onDone(res => {
+        onDone(() => {
             emit('closePopup', false)
             notification('success', '업그레이드가 완료되었습니다!')
         })
         // ================== WATCH ====================================
         watch(() => props.idRowEdit, (res) => {
-            let countArr = 0
-            let arr: any = []
-            arrEdit.map((val: any) => {
-                if (res == val.employeeId) {
-                    countArr = 1
-                    arr = val
-                }
-            })
-            if (countArr == 0) {
+            if (indexChange.value <= 3) {
                 originDataDetail.value.employeeId = res
-                originDataUpdate.value.employeeId = res
                 refectchDetail()
-            } else {
-                originDataUpdate.value.employeeId = arr.employeeId
-                originDataUpdate.value.input.nationalPensionDeduction = arr.input.nationalPensionDeduction
-                originDataUpdate.value.input.healthInsuranceDeduction = arr.input.healthInsuranceDeduction
-                originDataUpdate.value.input.longTermCareInsuranceDeduction = arr.input.longTermCareInsuranceDeduction
-                originDataUpdate.value.input.employeementInsuranceDeduction = arr.input.employeementInsuranceDeduction
-                originDataUpdate.value.input.insuranceSupport = arr.input.insuranceSupport
-                originDataUpdate.value.input.nationalPensionSupportPercent = arr.input.nationalPensionSupportPercent ? arr.input.nationalPensionSupportPercent : 0
-                originDataUpdate.value.input.employeementInsuranceSupportPercent = arr.input.employeementInsuranceSupportPercent ? arr.input.employeementInsuranceSupportPercent : 0
-                originDataUpdate.value.input.monthlyPaycheck = arr.input.monthlyPaycheck
-                originDataUpdate.value.input.workingDays = arr.input.workingDays
-                originDataUpdate.value.input.dailyWage = arr.input.dailyWage
-                originDataUpdate.value.input.monthlyWage = arr.input.monthlyWage
-                originDataUpdate.value.input.deductionItems = arr.input.deductionItems
-                arrDeduction.value?.map((val: any) => {
-                    val.price = funcCheckPrice(val.itemCode)
-                })
-            }
+                indexChange.value = 0
+            } else
+                modalStatusChange.value = true
         }, { deep: true })
-        watch(() => arrDeduction, (res) => {
-            let total = 0
-            res.value.map((val: any) => {
-                total += val.price
-            })
-            totalPayDifferen.value = total + totalAmountDifferencePayment.value
-            totalDeduction.value = filters.formatCurrency(total)
+
+        watch(originDataUpdate, (res) => {
+            indexChange.value++
         }, { deep: true })
-        watch(() => JSON.parse(JSON.stringify(originDataUpdate.value)), (newVal, oldVal) => {
-            arrEdit.map((val: any, index: any) => {
-                if (val.employeeId == newVal.employeeId) {
-                    arrEdit.splice(index, 1);
-                }
-            })
-            arrEdit.push(newVal)
-        })
+
+
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
-            arrEdit.map((val: any) => {
-                mutate(val)
-            })
+            mutate(originDataUpdate.value)
         }
         const callFuncCalculate = () => {
             let dataDefault = originDataUpdate.value.input
@@ -315,7 +282,7 @@ export default defineComponent({
                 if (val.deductionItemCode == 1011)
                     val.price = total5
                 if (val.deductionItemCode == 1012)
-                val.price = total6
+                    val.price = total6
                 arrCallApi.push({
                     itemCode: val.deductionItemCode,
                     amount: val.price
@@ -341,46 +308,44 @@ export default defineComponent({
             })
             return arrReturn
         }
-// LOGIC FORM
+        // LOGIC FORM
         const onChangeDailyWage = () => {
             let monthlyWage = Math.floor(originDataUpdate.value.input.dailyWage * (originDataUpdate.value.input.workingDays > 0 ?
-            originDataUpdate.value.input.workingDays : 0));
-            originDataUpdate.value.input.monthlyWage=monthlyWage;
+                originDataUpdate.value.input.workingDays : 0));
+            originDataUpdate.value.input.monthlyWage = monthlyWage;
         }
         const onChangeMonthlyWage = () => {
             let dailyWage = Math.floor(originDataUpdate.value.input.workingDays > 0 ? originDataUpdate.value.input.monthlyWage /
-            originDataUpdate.value.input.workingDays : 0)
-            originDataUpdate.value.input.dailyWage=dailyWage;
+                originDataUpdate.value.input.workingDays : 0)
+            originDataUpdate.value.input.dailyWage = dailyWage;
         }
         const onChangeWorkingDays = () => {
-            if(originDataUpdate.value.input.monthlyPaycheck){
+            if (originDataUpdate.value.input.monthlyPaycheck) {
                 let monthlyWage = Math.floor(originDataUpdate.value.input.dailyWage * (originDataUpdate.value.input.workingDays > 0 ?
-                originDataUpdate.value.input.workingDays : 0));
-                originDataUpdate.value.input.monthlyWage=monthlyWage;
+                    originDataUpdate.value.input.workingDays : 0));
+                originDataUpdate.value.input.monthlyWage = monthlyWage;
             } else {
                 let dailyWage = Math.floor(originDataUpdate.value.input.workingDays > 0 ? originDataUpdate.value.input.monthlyWage /
-                originDataUpdate.value.input.workingDays : 0)
-                originDataUpdate.value.input.dailyWage=dailyWage;
+                    originDataUpdate.value.input.workingDays : 0)
+                originDataUpdate.value.input.dailyWage = dailyWage;
             }
         }
+
+        const statusComfirm = (res: any) => {
+            if (res == true)
+                document.getElementById('action-update')?.click()
+            originDataDetail.value.employeeId = props.idRowEdit
+            refectchDetail()
+            indexChange.value = 2
+
+        }
         return {
-            originDataUpdate,
-            messageMonthlySalary,
-            totalPayDifferen,
-            totalDeduction,
-            arrDeduction,
-            radioCheckPersenPension,
-            loading,
-            totalAmountDifferencePayment,
-            callFuncCalculate,
-            updateDeduction,
-            onChangeDailyWage,
-            onChangeMonthlyWage,
-            onChangeWorkingDays,
-            messageDaylySalary
+            originDataUpdate, messageMonthlySalary, totalPayDifferen, totalDeduction, arrDeduction, radioCheckPersenPension, loading, totalAmountDifferencePayment, messageDaylySalary, modalStatusChange,
+            statusComfirm, callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,
         };
     },
 });
 </script>
 <style lang="scss" scoped src="../../style/tab2.scss">
+
 </style>
