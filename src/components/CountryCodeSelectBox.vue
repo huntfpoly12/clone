@@ -68,7 +68,7 @@ export default defineComponent({
 			type: String,
 			default: "",
 		},
-		hidden: {
+		hiddenOptionKR: {
 			type: Boolean,
 			default: false
 		}
@@ -92,7 +92,7 @@ export default defineComponent({
 			key: "key",
 		});
 
-		if (props.hidden) {
+		if (props.hiddenOptionKR) {
 			enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
 				if (codeCountry != "KR") {
 					dataSelect.value.push({ key: codeCountry, value: nameCountry });
