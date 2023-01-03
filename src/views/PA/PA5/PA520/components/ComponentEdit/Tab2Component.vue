@@ -55,15 +55,16 @@
                 </div>
                 <div>
                     <a-form-item label="일급/월급">
-                        <div class="d-flex-center"> 
+                        <div class="d-flex-center">
+                            {{ originDataUpdate.input.monthlyPaycheck }}
                             <switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
                                 v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
                             <number-box-money :min="0" width="200px" class="mr-5"
                                 v-if="!originDataUpdate.input.monthlyPaycheck"
-                                v-model:valueInput="originDataUpdate.input.monthlyWage" :placeholder="'일급여'"
+                                v-model:valueInput="originDataUpdate.input.monthlyWage" placeholder="일급여"
                                 @changeInput="onChangeMonthlyWage" />
                             <number-box-money :min="0" width="200px" class="mr-5" v-else
-                                v-model:valueInput="originDataUpdate.input.dailyWage" :placeholder="'월급여'"
+                                v-model:valueInput="originDataUpdate.input.dailyWage" placeholder="월급여"
                                 @changeInput="onChangeDailyWage" />
                         </div>
                     </a-form-item>
@@ -122,8 +123,7 @@
         </div>
     </div>
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        title="Title Notification" content="Content notification" okText="확인" cancelText="OK"
-        @checkConfirm="statusComfirm" />
+        content="처음부터 다시 입력하겠습니까" okText="네" cancelText="아니오" @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
@@ -135,6 +135,7 @@ import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEm
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
 import { Formula } from "@bankda/jangbuda-common";
+import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -210,22 +211,21 @@ export default defineComponent({
                 dataReturn.value = res.deductionItems
 
                 // delay push data to form caculate 
-                setTimeout(() => {
-                    let dataAddDedution: any = []
-                    arrDeduction.value?.map((val: any) => {
-                        let arrReturn = addDedution(val.itemCode)
-                        if (arrReturn.itemCode) {
-                            val.price = arrReturn.amount  
-                            dataAddDedution.push({ itemCode: arrReturn.itemCode, amount: arrReturn.amount })
-                        } else {
-                            val.price = 0
-                            dataAddDedution.push({ itemCode: val.itemCode, amount: 0 })
-                        }
-                    }) 
-                    if (dataAddDedution) {  
-                        originDataUpdate.value.input.deductionItems = dataAddDedution
+
+                let dataAddDedution: any = []
+                arrDeduction.value?.map((val: any) => {
+                    let arrReturn = addDedution(val.itemCode)
+                    if (arrReturn.itemCode) {
+                        val.price = arrReturn.amount
+                        dataAddDedution.push({ itemCode: arrReturn.itemCode, amount: arrReturn.amount })
+                    } else {
+                        val.price = 0
+                        dataAddDedution.push({ itemCode: val.itemCode, amount: 0 })
                     }
-                }, 100);
+                })
+                if (dataAddDedution)
+                    originDataUpdate.value.input.deductionItems = dataAddDedution
+
             }
         })
 
@@ -243,18 +243,28 @@ export default defineComponent({
         })
         // ================== WATCH ====================================
         watch(() => props.idRowEdit, (res) => {
-            if (indexChange.value <= 3) {
+            console.log(res);``
+
+            if (indexChange.value < 2) {
                 originDataDetail.value.employeeId = res
                 refectchDetail()
-                indexChange.value = 0
             } else
                 modalStatusChange.value = true
+            indexChange.value = 0
         }, { deep: true })
 
         watch(originDataUpdate, (res) => {
             indexChange.value++
         }, { deep: true })
 
+        watch(() => arrDeduction, (res) => {
+            let total = 0
+            res.value.map((val: any) => {
+                total += val.price
+            })
+            totalPayDifferen.value = total + totalAmountDifferencePayment.value
+            totalDeduction.value = filters.formatCurrency(total)
+        }, { deep: true })
 
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
@@ -337,8 +347,7 @@ export default defineComponent({
                 document.getElementById('action-update')?.click()
             originDataDetail.value.employeeId = props.idRowEdit
             refectchDetail()
-            indexChange.value = 2
-
+            indexChange.value = 0
         }
         return {
             originDataUpdate, messageMonthlySalary, totalPayDifferen, totalDeduction, arrDeduction, radioCheckPersenPension, loading, totalAmountDifferencePayment, messageDaylySalary, modalStatusChange,

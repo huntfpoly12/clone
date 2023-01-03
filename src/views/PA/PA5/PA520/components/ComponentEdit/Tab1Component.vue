@@ -94,8 +94,7 @@
         </standard-form>
     </a-spin>
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        title="Title Notification" content="Content notification" okText="확인" cancelText="OK"
-        @checkConfirm="statusComfirm" />
+        content="처음부터 다시 입력하겠습니까" okText="네" cancelText="아니오" @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
