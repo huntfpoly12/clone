@@ -8,14 +8,14 @@
     <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
-            <div style="text-align: center;"><img :src="'../../../../../../src/assets/images/' + data.img" alt=""
+            <div style="text-align: center;"><img :src="'@/assets/images/' + data.img" alt=""
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
     <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
-            <div style="text-align: center;"><img :src="'../../../../../../src/assets/images/' + data.img" alt=""
+            <div style="text-align: center;"><img :src="'@/assets/images/' + data.img" alt=""
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
@@ -58,7 +58,7 @@ import EmailSinglePayrollRegisterPopup from "./Popup/EmailSinglePayrollRegisterP
 import EmailMultiPopup from "./Popup/EmailMultiPopup.vue"
 import EmailSinglePopup from "./Popup/EmailSinglePopup.vue"
 import { HistoryOutlined } from "@ant-design/icons-vue"
-import { companyId } from "@/helpers/commonFunction"
+import { companyId,openTab } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA1/PA110/index";
@@ -136,7 +136,7 @@ export default defineComponent({
                 popupDataEdit.value = props.dataRows[0]
 
             } else {
-                notification('error', `항목을 하나만 선택하십시오`)
+                notification('error', `항목을 하나 이상 선택해야합니다`)
             }
         };
         const arrDropDownPayrollRegister = [
@@ -149,11 +149,11 @@ export default defineComponent({
             { id: 3, img: 'group_email.png', event: 'EmailMultiSalaryStatement' },
         ];
         const arrDropDown = [
-            { id: 1, url: '520', event: '520', title: '' },
+            { id: 1, url: 'pa-120', event: 'pa-120', title: '' },
             { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
             { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
         ]
-        const onItemClick = (value: any) => {
+      const onItemClick = (value: any) => {
             switch (value.itemData.event) {
                 case 'PrintPayrollRegister':
                     modalPrintPayrollRegister.value = true;
@@ -163,7 +163,7 @@ export default defineComponent({
                         popupDataEmailSinglePayrollRegister.value = props.dataRows[0]
                         modalEmailSinglePayrollRegister.value = true;
                     } else {
-                        notification('error', `항목을 하나만 선택하십시오`)
+                        notification('error', `항목을 하나 이상 선택해야합니다`)
                     }
                     break;
                 case 'PrintSalaryStatement':
@@ -182,7 +182,7 @@ export default defineComponent({
                         popupDataEmailSingle.value = props.dataRows[0]
                         modalEmailSingle.value = true;
                     } else {
-                        notification('error', `항목을 하나만 선택하십시오`)
+                        notification('error', `항목을 하나 이상 선택해야합니다`)
                     }
                     break;
                 case 'EmailMultiSalaryStatement':
@@ -203,6 +203,9 @@ export default defineComponent({
                 case 'HistoryStatus':
                     modalHistoryStatus.value = true;
                     popupDataHistoryStatus.value = { ...processKey.value }
+                    break;
+                case 'pa-120':
+                    openTab({ name: "사원등록", url: "/dashboard/pa-120", id: "pa-120" })
                     break;
             }
         }
