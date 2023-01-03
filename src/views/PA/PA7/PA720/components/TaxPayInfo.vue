@@ -13,7 +13,6 @@
       :auto-navigate-to-focused-row="true"
       v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
-      @row-click="actionEditFuc"
       @focused-row-changed="onFocusedRowChanged"
     >
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
@@ -144,14 +143,14 @@ export default defineComponent({
     }));
     resIncomeExtras((res) => {
       dataSourceDetail.value = res.data.getIncomeExtras;
-      focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
-      let firstDataParam = { data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } };
-      actionEditFuc(firstDataParam);
+      if (firsTimeRow.value) {
+        focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
+        onFocusedRowChanged({ row: { data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } } });
+      }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
     });
     errorIncomeExtras((res) => {
-      // notification('error', res.message);
       triggerDetail.value = false;
     });
 
@@ -171,27 +170,12 @@ export default defineComponent({
       () => {
         triggerDetail.value = true;
         refetchIncomeExtras();
+        firsTimeRow.value = false;
       }
     );
 
     // ================FUNCTION============================================
     const firsTimeRow = ref(true);
-    const actionEditFuc = (data: any) => {
-    //   if (props.isChangeRow) {
-        updateParam = {
-          companyId: companyId,
-          processKey: {
-            imputedYear: dataTableDetail.value.processKey?.imputedYear,
-            imputedMonth: dataTableDetail.value.processKey?.imputedMonth,
-            paymentYear: dataTableDetail.value.processKey?.paymentYear,
-            paymentMonth: dataTableDetail.value.processKey?.paymentMonth,
-          },
-          incomeId: data.data.incomeId,
-        // };
-      }
-      emit('editTax', updateParam, firsTimeRow.value);
-      firsTimeRow.value = false;
-    };
 
     const checkLen = (text: String) => {
       if (text.length > 10) {
@@ -217,12 +201,24 @@ export default defineComponent({
         return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
       });
     };
-    // highlight row
-    const focusedRowKey = ref<Number>(0);
-    const onFocusedRowChanged=(e:any)=> {
-        const data = e.row && e.row.data;
-        // console.log(`output->data`,data)
-    }
+    const focusedRowKey = ref<Number>(1);
+    const onFocusedRowChanged = (e: any) => {
+      const data = e.row && e.row.data;
+      updateParam = {
+        companyId: companyId,
+        processKey: {
+          imputedYear: dataTableDetail.value.processKey?.imputedYear,
+          imputedMonth: dataTableDetail.value.processKey?.imputedMonth,
+          paymentYear: dataTableDetail.value.processKey?.paymentYear,
+          paymentMonth: dataTableDetail.value.processKey?.paymentMonth,
+        },
+        incomeId: data.incomeId,
+      };
+      emit('editTax', updateParam, firsTimeRow.value);
+      setTimeout(() => {
+        firsTimeRow.value = false;
+      }, 100);
+    };
     return {
       dataAction,
       rowTable,
@@ -230,7 +226,6 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSourceDetail,
-      actionEditFuc,
       checkLen,
       loadingIncomeExtras,
       customTextSummary,
@@ -242,7 +237,8 @@ export default defineComponent({
       triggerDetail,
       dataTableDetail,
       focusedRowKey,
-      onFocusedRowChanged
+      onFocusedRowChanged,
+      firsTimeRow,
     };
   },
 });
