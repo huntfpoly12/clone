@@ -1,5 +1,5 @@
 <template>
-    <a-tooltip placement="top" key="black">
+    <a-tooltip placement="top" key="black" @visibleChange="visibleChange">
         <template #title>
             <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
                 v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
@@ -58,6 +58,11 @@ export default defineComponent({
             emit("checkConfirm", true)
             emit("dataRow", props.dataRow);
         }
+        const visibleChange = (data: any) => {
+            // tooltip open
+            if (data == true)
+                value.value = props.valueStatus
+        }
         watch(
             () => props.valueStatus,
             (valueNew) => {
@@ -71,7 +76,7 @@ export default defineComponent({
             arrayRadioUser,
             arrayRadioManager,
             setModalVisible,
-            clickButton,
+            clickButton, visibleChange,
             showModal,
             submit,
             userType
@@ -124,10 +129,4 @@ export default defineComponent({
 ::v-deep .dx-button-mode-outlined {
     border: 1px solid white !important;
 }
-</style>
-<style>
-.ant-tooltip-inner {
-    background-color: black !important;
-    color: white!important;
-}
-</style>
+</style> 
