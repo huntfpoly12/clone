@@ -1,6 +1,8 @@
 <template>
+  <div :key="globalYear">
+
   <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
-  <div id="pa-110" class="page-content">
+  <div id="pa-110" class="page-content">{{ processKey }}
     <a-row>
       <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
@@ -256,6 +258,8 @@
         @dataAddIncomeProcess="dataAddIncomeProcess" />
     </a-row>
   </div>
+  
+</div>
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from "vue"
@@ -280,6 +284,7 @@ import DeductionPopup from "./components/Popup/DeductionPopup.vue"
 import InsurancePopup from "./components/Popup/InsurancePopup.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
 import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
+import { log } from "handsontable/helpers";
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -317,10 +322,11 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
-    const globalYear = computed(() => store.state.settings.globalYear)
+    const globalYear = computed(()=> store.state.settings.globalYear)
     const per_page = computed(() => store.state.settings.per_page)
     const move_column = computed(() => store.state.settings.move_column)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
+
     let statusButton = ref()
     const modalCopy = ref<boolean>(false);
     const triggerIncomeWage = ref<boolean>(true)
@@ -334,13 +340,23 @@ export default defineComponent({
     const arrDataPoint: any = ref([])
 
     store.state.common.processKeyPA110 = {
-      imputedYear: globalYear,
+      imputedYear: globalYear.value,
       imputedMonth: dayjs().month() + 1,
       paymentYear: globalYear.value,
       paymentMonth: dayjs().month() + 1,
-
     }
-    const processKey = computed(() => store.state.common.processKeyPA110)
+
+    watch(globalYear, (newValue)=>{
+      processKey.imputedYear = globalYear.value;
+      processKey.paymentYear = globalYear.value;
+ 
+    })
+    const processKey = reactive({
+      imputedYear: globalYear.value,
+      imputedMonth: dayjs().month() + 1,
+      paymentYear: globalYear.value,
+      paymentMonth: dayjs().month() + 1,
+      })
     let dataCustomRes: any = ref([])
     const dataIncomeWage: any = ref({ ...sampleDataIncomeWage })
 
@@ -353,17 +369,17 @@ export default defineComponent({
     const arrayEmploySelect: any = ref([])
     const originDataProcessIncome = ref({
       companyId: companyId,
-      imputedYear: globalYear,
+      imputedYear: globalYear.value,
       // imputedMonth: dayjs().month(),
     })
-    const originDataIncomeWage = ref({
+    const originDataIncomeWage = reactive({
       companyId: companyId,
-      processKey: processKey.value,
+      processKey: processKey,
       incomeId: 0,
     })
     let originDataIncomeWages = reactive({
       companyId: companyId,
-      processKey: processKey.value,
+      processKey: processKey,
     })
     let popupData = ref([])
     // ======================= GRAPQL ================================
@@ -449,7 +465,7 @@ export default defineComponent({
             paymentYear: val.paymentYear,
             paymentMonth: val.paymentMonth,
           }
-          if (JSON.stringify(dataAdd) == JSON.stringify(processKey.value)) {
+          if (JSON.stringify(dataAdd) == JSON.stringify(processKey)) {
             status.value = val.status
           }
           dataSource.value[0]['month' + val.imputedMonth] = val
@@ -546,7 +562,7 @@ export default defineComponent({
     const statusComfirm = () => {
       actionChangeIncomeProcess({
         companyId: companyId,
-        processKey: { ...processKey.value },
+        processKey: { ...processKey },
         status: status.value
       })
     }
