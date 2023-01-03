@@ -1,5 +1,5 @@
 <template>
-    <a-tooltip placement="top" key="black" v-if="edit == true">
+    <a-tooltip placement="top" key="black">
         <template #title>
             <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
                 v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
@@ -11,24 +11,15 @@
                     :mode="'contained'" @onClick="submit" />
             </div>
         </template>
-
         <div v-for="item in arrayRadioManager" :key="item.id">
             <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
                 class="buttonModal" @onClick="clickButton"></button-basic>
         </div>
-
     </a-tooltip>
-
-    <div v-else v-for="item in arrayRadioManager" :key="item.id">
-        <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
-            class="buttonModal" @onClick="clickButton"></button-basic>
-    </div>
-
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import { userType } from "@/helpers/commonFunction";
-
 export default defineComponent({
     props: {
         valueStatus: {
@@ -37,11 +28,7 @@ export default defineComponent({
         },
         dataRow: {
             type: Object
-        },
-        edit: {
-            type: Boolean,
-            default: true
-        },
+        }, 
     },
     setup(props, { emit }) {
         const value = ref(props.valueStatus);
@@ -61,17 +48,14 @@ export default defineComponent({
             value.value = props.valueStatus
             showModal.value = false;
         };
-
         const clickButton = () => {
             showModal.value = true;
         }
-
         const submit = () => {
             showModal.value = false;
             currentBt.value = value.value
             emit("update:valueStatus", value.value);
-            emit("checkConfirm", true)
-            emit("newStatus", value.value);
+            emit("checkConfirm", true) 
             emit("dataRow", props.dataRow);
         }
         watch(
@@ -81,7 +65,6 @@ export default defineComponent({
                 currentBt.value = valueNew
             }
         );
-
         return {
             value,
             currentBt,
@@ -102,52 +85,40 @@ export default defineComponent({
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 0px;
     border: 1px solid #4A7EBB;
 }
-
 .input {
     background-color: #376092;
     border: 3px solid #558ED5 !important;
 }
-
 .adjusting {
     background-color: #BB3835;
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
     border: 1px solid #BE4B48 !important;
 }
-
 .adjusted {
     background-color: #C00000;
     border: 3px solid #953735 !important;
 }
-
 .show {
     display: block !important;
 }
-
 .buttonModal {
     color: white;
     border: none;
     border-radius: 6px;
 }
-
 ::v-deep .dx-button-text {
     line-height: inherit;
 }
-
 ::v-deep .dx-item-content,
 ::v-deep .dx-button-text {
     color: white;
 }
-
-
 ::v-deep .dx-button-mode-outlined {
     border: 1px solid white !important;
 }
 </style>
-
 <style>
 .ant-tooltip-content {
     background-color: white !important
 }
 </style>
-    
-    

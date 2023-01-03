@@ -219,7 +219,11 @@
                                                 id="bf-320-popup-datagrid"
                                                 >
                                                 <DxPaging :enabled="false" />
-                                                <DxColumn data-field="name" caption="사업명 (중복불가)" />
+                                                <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
+                                                    cell-template="indexCell" />
+                                                <template #indexCell="{ data }">
+                                                    <div>{{ data.rowIndex + 1 }}</div>
+                                                </template>
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
                                                 <DxColumn data-field="facilityBizType" caption="사업분류">
                                                 </DxColumn>
@@ -266,7 +270,7 @@
                                                 </a-col>
                                                 <a-col :span="12">
                                                     <div class="preview-img">
-                                                        <preview-image :dataImage="{ url: imageLicenseFile, name: licenseFileName }"
+                                                        <preview-image :dataImage="dataActiveRow.registrationCard"
                                                             @deleteImg="removeLicenseFile" :activePreview="true" />
                                                     </div>
                                                 </a-col>
@@ -430,7 +434,7 @@ export default defineComponent({
         const imageLicenseFile = ref("");
         const licenseFileName = ref("");
         let visible = ref(false);
-        let activeKey = ref(4);
+        let activeKey = ref(1);
         const dataQuery = ref();
         const dataQueryCheckPer = ref({});
         let trigger = ref<boolean>(false);
@@ -590,25 +594,14 @@ export default defineComponent({
                     }
                 })
             } else {
-                let customAccountingfacilityBusinesses: any = [];
-                if (formState.value.content.accounting.facilityBusinesses) {
-                    customAccountingfacilityBusinesses =
-                        formState.value.content.accounting.facilityBusinesses.map(
-                            (val: any) => ({
-                                longTermCareInstitutionNumber: val.longTermCareInstitutionNumber,
-                                capacity: val.capacity,
-                                facilityBizType: val.facilityBizType,
-                                name: val.name,
-                                startYearMonth: val.startYearMonth,
-                                registrationCardFileStorageId: val.registrationCardFileStorageId
-                            })
-                        );
-                }
                 // process data befor handle update
                 let contentData : any = formState.value.content;
-                let newObj = JSON.parse(JSON.stringify(dataActiveRow.value));
-                delete newObj.rowIndex;
-                contentData.accounting.facilityBusinesses  = [...customAccountingfacilityBusinesses, newObj];
+                let newObj = JSON.parse(JSON.stringify(dataSource.value));
+                newObj.map((item: any) =>{
+                    delete item.rowIndex;
+                    return {item}
+                })
+                contentData.accounting.facilityBusinesses  = [...newObj];
                 contentData.accounting.accountingServiceTypes.map((item: any) => {
                     item = item == true ? 1 : 0
                 })
@@ -644,6 +637,7 @@ export default defineComponent({
             imageLicenseFile.value = img.url ? img.url : "";
             licenseFileName.value = img.fileName;
             dataActiveRow.value.registrationCardFileStorageId=img.id;
+            dataActiveRow.value.registrationCard=img;
         };
         const removeLicenseFile = () => {
             dataActiveRow.value.dataImg=""

@@ -96,7 +96,7 @@
                                         <DxColumn caption="정원수 (명)" />
                                         <DxColumn caption="회계서비스이용료" />
                                     </DxDataGrid>
-                                    <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length">
+                                    <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length" :key="resetFormNum">
                                         <a-col :span="6.5">
                                             <div class="custom-money">
                                                 <a-form-item label="사업분류" class="red">
@@ -346,7 +346,7 @@ export default defineComponent({
 
         const formStateMomes = ref([{ ...initialFormStateMomes }]);
         const formState: any = reactive({ ...initialState });
-
+        const resetFormNum = ref(1);
         const dataSource = ref([]);
         const dataActiveRow = ref<any>( JSON.parse(JSON.stringify({...initialState.info.accounting[0]})) )
         const withholdingServiceType = ref(false)
@@ -674,6 +674,7 @@ export default defineComponent({
             }
         }
         const onFocusedRowChanged = (e: any) => {
+            resetFormNum.value++;
             const data = e.row && e.row.data;
             dataActiveRow.value = data
         }
@@ -717,6 +718,7 @@ export default defineComponent({
             dataSource,
             dataActiveRow,
             onInitRow,
+            resetFormNum,
         };
     },
 });
