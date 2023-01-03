@@ -22,6 +22,8 @@
     ::v-deep .ant-form-item-label>label {
         width: 180px;
         padding-left: 10px;
+    }
+    ::v-deep .red .ant-form-item-label>label {
         color: red;
     }
 

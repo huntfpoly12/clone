@@ -19,7 +19,8 @@
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                             :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true">
+                            v-model:focused-row-key="focusedRowKey" :column-auto-width="true" :onRowClick="actionEdit"
+                            :focused-row-enabled="true">
                             <DxScrolling column-rendering-mode="virtual" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -89,9 +90,9 @@
                 </a-col>
                 <a-col :span="8" class="custom-layout">
                     <a-spin :spinning="loadingGetEmployeeBusinessesDetail || loadingUpdate || loadingCreated"
-                        size="large">
-                        <a-form-item label="영업자코드" label-align="right">
-                            <div class="custom-note">
+                        size="large" :key="resetFormNum">
+                        <a-form-item label="영업자코드" label-align="right" class="red">
+                            <div class="custom-note ">
                                 <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
                                     placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
                                 <span>
@@ -100,33 +101,36 @@
                                 </span>
                             </div>
                         </a-form-item>
-                        <a-form-item label="성명(상호)" label-align="right">
-                            <default-text-box v-model:valueInput="dataAction.input.name" width="200px"
+                        <a-form-item label="성명(상호)" label-align="right" class="red">
+                            <default-text-box v-model:valueInput="dataAction.name" width="200px"
                                 placeholder="한글,영문(대문자) 입력 가능" :required="true" />
                         </a-form-item>
-                        <a-form-item label="내/외국인" label-align="right">
+                        <a-form-item label="내/외국인" label-align="right" class="red">
                             <radio-group :arrayValue="arrForeigner" width="200px"
-                                v-model:valueRadioCheck="dataAction.input.foreigner" layoutCustom="horizontal" />
+                                v-model:valueRadioCheck="dataAction.foreigner" layoutCustom="horizontal" />
                         </a-form-item>
-                        <a-form-item label="외국인 국적" label-align="right">
-                            <country-code-select-box v-model:valueCountry="dataAction.input.nationalityCode"
-                                @textCountry="changeTextCountry" width="200px" :disabled="disabledInput2" />
+                        <a-form-item label="외국인 국적" label-align="right" :class="disabledInput2 ? '' : 'red'">
+                            <country-code-select-box v-if="dataAction.foreigner"
+                                v-model:valueCountry="dataAction.nationalityCode" @textCountry="changeTextCountry"
+                                width="200px" :hiddenOptionKR="true" :required="true" />
+                            <country-code-select-box v-else v-model:valueCountry="dataAction.nationalityCode"
+                                @textCountry="changeTextCountry" width="200px" :disabled="true" :required="true" />
                         </a-form-item>
-                        <a-form-item label="외국인 체류자격" label-align="right">
-                            <stay-qualification-select-box :disabled="disabledInput2"
-                                v-model:valueStayQualifiction="dataAction.input.stayQualification" width="200px" />
+                        <a-form-item label="외국인 체류자격" label-align="right" :class="disabledInput2 ? '' : 'red'">
+                            <stay-qualification-select-box :disabled="disabledInput2" :required="dataAction.foreigner"
+                                v-model:valueStayQualifiction="dataAction.stayQualification" width="200px" />
                         </a-form-item>
-                        <a-form-item :label="textResidentId" label-align="right">
-                            <id-number-text-box v-model:valueInput="dataAction.input.residentId" width="200px"
+                        <a-form-item :label="textResidentId" label-align="right" class="red">
+                            <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px"
                                 placeholder="숫자 13자리" :required="true" />
                         </a-form-item>
-                        <a-form-item label="소득구분" label-align="right">
+                        <a-form-item label="소득구분" label-align="right" class="red">
                             <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
                                 @textTypeCode="changeTextTypeCode" :disabled="disabledInput" />
                         </a-form-item>
-                        <a-form-item label="이메일" label-align="right">
+                        <a-form-item label="이메일" label-align="right" class="red">
                             <div class="custom-note">
-                                <mail-text-box width="300px" v-model:valueInput="dataAction.input.email"
+                                <mail-text-box width="300px" v-model:valueInput="dataAction.email"
                                     placeholder="abc@example.com" :required="true" />
                                 <span>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등
@@ -144,7 +148,9 @@
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
         title="변경이력" typeHistory="pa-610" />
     <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
-        content="변경사항을 저장하지 않은채 종료하시겠습니까?" okText="네" cancelText="취소" @checkConfirm="statusComfirmChange" />
+        title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmChange" />
+    <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+        title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
@@ -155,7 +161,7 @@ import queries from "@/graphql/queries/PA/PA6/PA610/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { onExportingCommon } from "@/helpers/commonFunction"
-import { origindata, ArrForeigner, valueDefaultAction, dataActionUtil } from "./utils";
+import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
@@ -168,8 +174,11 @@ export default defineComponent({
     setup() {
         const contentDelete = Message.getMessage('PA120', '002').message
         let popupData = ref([])
+        const focusedRowKey = ref()
+        const modalStatusAdd = ref(false)
         let modalHistoryStatus = ref<boolean>(false)
         const dataSource = ref([]);
+        const resetFormNum = ref(1);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -182,24 +191,28 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear)
         const valueCallApiGetEmployeeBusinesses = reactive({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
         })
         let valueCallApiGetEmployeeBusiness = reactive({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             incomeTypeCode: '',
             employeeId: null
         })
         const modalChangeRow = ref(false)
         let dataAction: any = reactive({
-            imputedYear: globalYear.value,
-            ...dataActionUtil
+            // imputedYear: globalYear,
+            ...valueDefaultAction
+        })
+        let dataRowOld = reactive({
+            // imputedYear: globalYear,
+            ...valueDefaultAction
         })
         let disabledInput = ref(false)
         let disabledInput2 = ref(true)
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
-        let changeValueEit = ref(false)
+        // let changeValueEit = ref(false)
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
             enabled: trigger.value,
@@ -218,15 +231,19 @@ export default defineComponent({
         resEmployeeBusinessesDetail(res => {
             if (res.data) {
                 dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
-                dataAction.input.name = res.data.getEmployeeBusiness.name
-                dataAction.input.foreigner = res.data.getEmployeeBusiness.foreigner
-                dataAction.input.nationality = res.data.getEmployeeBusiness.nationality
-                dataAction.input.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
-                dataAction.input.stayQualification = res.data.getEmployeeBusiness.stayQualification
-                dataAction.input.residentId = res.data.getEmployeeBusiness.residentId
+                dataAction.name = res.data.getEmployeeBusiness.name
+                dataAction.foreigner = res.data.getEmployeeBusiness.foreigner
+                dataAction.nationality = res.data.getEmployeeBusiness.nationality
+                dataAction.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
+                dataAction.stayQualification = res.data.getEmployeeBusiness.stayQualification
+                dataAction.residentId = res.data.getEmployeeBusiness.residentId
                 dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
-                dataAction.input.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
-                dataAction.input.email = res.data.getEmployeeBusiness.email
+                dataAction.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
+                dataAction.email = res.data.getEmployeeBusiness.email
+
+                dataRowOld.employeeId = res.data.getEmployeeBusiness.employeeId
+                dataRowOld.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
+                dataRowOld = { ...dataAction }
             }
         })
         errorGetEmployeeBusinessesDetail(res => {
@@ -239,8 +256,10 @@ export default defineComponent({
             onDone: updateDone,
         } = useMutation(mutations.updateEmployeeBusiness);
         updateDone(() => {
-            changeValueEit.value = false
+            valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.incomeTypeCode
+            valueCallApiGetEmployeeBusiness.employeeId = dataAction.employeeId
             refetchData()
+            refetchDataDetail()
             notification('success', `업데이트 완료!`)
         })
         upadateErr(res => {
@@ -254,6 +273,12 @@ export default defineComponent({
         } = useMutation(mutations.createEmployeeBusiness);
         createdDone(() => {
             refetchData()
+            focusedRowKey.value = dataAction.employeeId
+            disabledInput.value = true
+            triggerDetail.value = true
+            valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.incomeTypeCode
+            valueCallApiGetEmployeeBusiness.employeeId = dataAction.employeeId
+            refetchDataDetail()
             notification('success', `업데이트 완료!`)
         })
         createdErr(res => {
@@ -270,31 +295,21 @@ export default defineComponent({
         })
         deleteDone(() => {
             refetchData()
+            resetFormNum.value++;
+            focusedRowKey.value = null;
+            disabledInput.value = false
+            Object.assign(dataAction, valueDefaultAction);
             notification('success', `업데이트 완료!`)
         })
         // ================WATCHING============================================
-        watch(() => JSON.parse(JSON.stringify(dataAction)), (newValue, oldValue) => {
-            if (newValue.employeeId == oldValue.employeeId) {
-                changeValueEit.value = true
-                dataSource.value.map((val: any) => {
-                    if (val.employeeId == newValue.employeeId) {
-                        let newID = newValue.input.residentId.replace('-', '')
-                        val.foreigner = newValue.input.foreigner
-                        val.incomeTypeCode = newValue.incomeTypeCode
-                        val.incomeTypeName = newValue.input.incomeTypeName
-                        val.name = newValue.input.name
-                        val.residentId = newID.slice(0, 6) + '-' + newID.slice(6, 13)
-                    }
-                })
-            }
-            else
-                changeValueEit.value = false
-        }, { deep: true });
-        watch(() => dataAction.input.foreigner, (newValue) => {
+        watch(() => dataAction.foreigner, (newValue) => {
             if (newValue == false) {
+                dataAction.nationalityCode = 'KR'
+                dataAction.stayQualification = null
                 disabledInput2.value = true
                 textResidentId.value = '주민등록번호'
             } else {
+                dataAction.nationalityCode = dataAction.nationalityCode == 'KR' ? null : dataAction.nationalityCode
                 disabledInput2.value = false
                 textResidentId.value = '외국인번호 유효성'
             }
@@ -306,44 +321,46 @@ export default defineComponent({
         let rowEdit = ref()
         const actionEdit = (data: any) => {
             rowEdit.value = data.data
-            if (changeValueEit.value == true)
+
+            if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction) && disabledInput.value == true)
                 modalChangeRow.value = true
             else {
-                disabledInput.value = true
                 triggerDetail.value = true
                 valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
                 valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
                 refetchDataDetail()
             }
+            disabledInput.value = true
         }
         const changeTextCountry = (text: any) => {
-            dataAction.input.nationality = text
+            dataAction.nationality = text
         }
         const changeTextTypeCode = (text: any) => {
-            dataAction.input.incomeTypeName = text
+            dataAction.incomeTypeName = text
         }
         const saving = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
+                focusedRowKey.value = dataAction.employeeId
                 res.brokenRules[0].validator.focus();
             } else {
                 // if form disabled => action edit 
                 if (disabledInput.value == true) {
-                    let residentId = dataAction.input.residentId.replace('-', '')
+                    let residentId = dataAction.residentId.replace('-', '')
                     let dataActionedit = {
                         companyId: companyId,
                         imputedYear: globalYear.value,
                         employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
                         incomeTypeCode: dataAction.incomeTypeCode,
                         input: {
-                            name: dataAction.input.name,
-                            foreigner: dataAction.input.foreigner,
-                            nationality: dataAction.input.nationality,
-                            nationalityCode: dataAction.input.nationalityCode,
-                            stayQualification: dataAction.input.stayQualification,
+                            name: dataAction.name,
+                            foreigner: dataAction.foreigner,
+                            nationality: dataAction.nationality,
+                            nationalityCode: dataAction.nationalityCode,
+                            stayQualification: dataAction.stayQualification,
                             residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                            email: dataAction.input.email,
-                            incomeTypeName: dataAction.input.incomeTypeName,
+                            email: dataAction.email,
+                            incomeTypeName: dataAction.incomeTypeName,
                         }
                     }
                     actionUpdate(dataActionedit)
@@ -352,16 +369,16 @@ export default defineComponent({
                         companyId: companyId,
                         imputedYear: globalYear.value,
                         input: {
-                            name: dataAction.input.name,
-                            foreigner: dataAction.input.foreigner,
-                            nationality: dataAction.input.nationality,
-                            nationalityCode: dataAction.input.nationalityCode,
-                            stayQualification: dataAction.input.stayQualification,
-                            residentId: dataAction.input.residentId.slice(0, 6) + '-' + dataAction.input.residentId.slice(6, 13),
-                            email: dataAction.input.email,
+                            name: dataAction.name,
+                            foreigner: dataAction.foreigner,
+                            nationality: dataAction.nationality,
+                            nationalityCode: dataAction.nationalityCode,
+                            stayQualification: dataAction.stayQualification,
+                            residentId: dataAction.residentId.slice(0, 6) + '-' + dataAction.residentId.slice(6, 13),
+                            email: dataAction.email,
                             employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
                             incomeTypeCode: dataAction.incomeTypeCode,
-                            incomeTypeName: dataAction.input.incomeTypeName,
+                            incomeTypeName: dataAction.incomeTypeName,
                         }
                     }
                     actionCreated(dataCreat)
@@ -369,8 +386,23 @@ export default defineComponent({
             }
         }
         const addRow = () => {
-            disabledInput.value = false
-            dataAction = valueDefaultAction
+            if (JSON.stringify({ ...valueDefaultAction }) !== JSON.stringify(dataAction) && disabledInput.value == false) {
+                modalStatusAdd.value = true
+            } else {
+                resetFormNum.value++;
+                focusedRowKey.value = null;
+                disabledInput.value = false
+                Object.assign(dataAction, valueDefaultAction);
+                // dataAction = { ...valueDefaultAction }
+            }
+            // disabledInput.value = false
+
+        }
+        const statusComfirmAdd = (val: any) => {
+            if (val) {
+                resetFormNum.value++;
+                Object.assign(dataAction, valueDefaultAction);
+            }
         }
         const actionDelete = (employeeId: any, incomeTypeCode: any) => {
             valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
@@ -382,19 +414,23 @@ export default defineComponent({
                 actionDeleteApi(valueCallApiGetEmployeeBusiness)
         }
         const statusComfirmChange = (res: any) => {
-            if (res == true) {
-                refetchData()
-                disabledInput.value = true
+            if (res) {
+                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+            } else {
                 triggerDetail.value = true
                 valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
                 valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
-                refetchDataDetail()
             }
         }
         const modalHistory = () => {
             modalHistoryStatus.value = true;
         }
         return {
+            resetFormNum,
+            dataRowOld,
+            focusedRowKey,
+            modalStatusAdd,
+            statusComfirmAdd,
             textResidentId, disabledInput2, popupData, modalHistoryStatus, loadingCreated, disabledInput, loadingGetEmployeeBusinessesDetail, loadingGetEmployeeBusinesses, arrForeigner, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataAction, loadingUpdate, loadingDelete, modalStatus, contentDelete, modalChangeRow,
             statusComfirm, actionDelete, addRow, changeTextTypeCode, actionEdit, onExporting, changeTextCountry, modalHistory, saving, statusComfirmChange
         };
@@ -402,4 +438,5 @@ export default defineComponent({
 });
 </script>  
 <style scoped lang="scss" src="./style/style.scss" >
+
 </style>

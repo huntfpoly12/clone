@@ -99,7 +99,7 @@
                                 :class="!formState.foreigner ? '' : 'red'">
                                 <country-code-select-box v-if="formState.foreigner" style="width: 310px"
                                     v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
-                                    :required="formState.foreigner" :disabled="!formState.foreigner" :hidden="true" />
+                                    :required="formState.foreigner" :disabled="!formState.foreigner" :hiddenOptionKR="true" />
                                 <country-code-select-box v-else style="width: 310px"
                                     v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
                                     :required="formState.foreigner" :disabled="!formState.foreigner" />
@@ -314,8 +314,7 @@ export default defineComponent({
 
         const editData = (data: any) => {
             dataRow = data.data
-            checkForm.value = true;
-            if (JSON.stringify(dataRowOld) !== JSON.stringify(formState)) {
+            if (JSON.stringify(dataRowOld) !== JSON.stringify(formState) && checkForm.value == true) {
                 modalStatus.value = true;
             } else {
                 loadingForm.value = true;
@@ -324,6 +323,7 @@ export default defineComponent({
                     loadingForm.value = false;
                 }, 500);
             }
+            checkForm.value = true;
 
         }
         const changeFormData = (data: any) => {
@@ -379,8 +379,8 @@ export default defineComponent({
         const statusComfirmAdd = (val: any) => {
             if (val) {
                 resetFormNum.value++;
-                focusedRowKey.value = null;
-                checkForm.value = false;
+                // focusedRowKey.value = null;
+                // checkForm.value = false;
                 changeFormData({ ...initialState })
             }
         }
