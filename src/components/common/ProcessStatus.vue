@@ -1,5 +1,5 @@
 <template>
-    <a-tooltip placement="top" key="black">
+    <a-tooltip placement="top" key="black" @visibleChange="visibleChange">
         <template #title>
             <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
                 v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
@@ -28,7 +28,7 @@ export default defineComponent({
         },
         dataRow: {
             type: Object
-        }, 
+        },
     },
     setup(props, { emit }) {
         const value = ref(props.valueStatus);
@@ -55,8 +55,13 @@ export default defineComponent({
             showModal.value = false;
             currentBt.value = value.value
             emit("update:valueStatus", value.value);
-            emit("checkConfirm", true) 
+            emit("checkConfirm", true)
             emit("dataRow", props.dataRow);
+        }
+        const visibleChange = (data: any) => {
+            // tooltip open
+            if (data == true)
+                value.value = props.valueStatus
         }
         watch(
             () => props.valueStatus,
@@ -71,7 +76,7 @@ export default defineComponent({
             arrayRadioUser,
             arrayRadioManager,
             setModalVisible,
-            clickButton,
+            clickButton, visibleChange,
             showModal,
             submit,
             userType
@@ -85,40 +90,43 @@ export default defineComponent({
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 0px;
     border: 1px solid #4A7EBB;
 }
+
 .input {
     background-color: #376092;
     border: 3px solid #558ED5 !important;
 }
+
 .adjusting {
     background-color: #BB3835;
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
     border: 1px solid #BE4B48 !important;
 }
+
 .adjusted {
     background-color: #C00000;
     border: 3px solid #953735 !important;
 }
+
 .show {
     display: block !important;
 }
+
 .buttonModal {
     color: white;
     border: none;
     border-radius: 6px;
 }
+
 ::v-deep .dx-button-text {
     line-height: inherit;
 }
+
 ::v-deep .dx-item-content,
 ::v-deep .dx-button-text {
     color: white;
 }
+
 ::v-deep .dx-button-mode-outlined {
     border: 1px solid white !important;
 }
-</style>
-<style>
-.ant-tooltip-content {
-    background-color: white !important
-}
-</style>
+</style> 
