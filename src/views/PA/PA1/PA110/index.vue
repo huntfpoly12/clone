@@ -193,7 +193,7 @@
         </div>
       </a-col>
       <a-col :span="9">
-        <div style="float: right;">
+        <div style="float: right;display: flex;">
           <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
           @loadingTableInfo="loadingTableInfo" />
         </div>
