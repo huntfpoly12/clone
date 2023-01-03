@@ -139,8 +139,14 @@ $lenght: 50;
   color: gray;
   padding-left: 5px;
 }
-.icon_status_history{
-    width: 18px;
-    height: 18px;
-    margin-top: -1px;
+
+.icon_status_history {
+  width: 18px;
+  height: 18px;
+  margin-top: -1px;
+}
+
+.ant-tooltip-inner {
+  background-color: black !important;
+  color: white !important;
 }

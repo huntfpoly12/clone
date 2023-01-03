@@ -1,5 +1,5 @@
 <template>
-    <a-tooltip placement="top" key="black" v-if="edit == true">
+    <a-tooltip placement="top" key="black" @visibleChange="visibleChange">
         <template #title>
             <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
                 v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
@@ -11,24 +11,15 @@
                     :mode="'contained'" @onClick="submit" />
             </div>
         </template>
-
         <div v-for="item in arrayRadioManager" :key="item.id">
             <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
                 class="buttonModal" @onClick="clickButton"></button-basic>
         </div>
-
     </a-tooltip>
-
-    <div v-else v-for="item in arrayRadioManager" :key="item.id">
-        <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
-            class="buttonModal" @onClick="clickButton"></button-basic>
-    </div>
-
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import { userType } from "@/helpers/commonFunction";
-
 export default defineComponent({
     props: {
         valueStatus: {
@@ -37,10 +28,6 @@ export default defineComponent({
         },
         dataRow: {
             type: Object
-        },
-        edit: {
-            type: Boolean,
-            default: true
         },
     },
     setup(props, { emit }) {
@@ -61,18 +48,20 @@ export default defineComponent({
             value.value = props.valueStatus
             showModal.value = false;
         };
-
         const clickButton = () => {
             showModal.value = true;
         }
-
         const submit = () => {
             showModal.value = false;
             currentBt.value = value.value
             emit("update:valueStatus", value.value);
             emit("checkConfirm", true)
-            emit("newStatus", value.value);
             emit("dataRow", props.dataRow);
+        }
+        const visibleChange = (data: any) => {
+            // tooltip open
+            if (data == true)
+                value.value = props.valueStatus
         }
         watch(
             () => props.valueStatus,
@@ -81,14 +70,13 @@ export default defineComponent({
                 currentBt.value = valueNew
             }
         );
-
         return {
             value,
             currentBt,
             arrayRadioUser,
             arrayRadioManager,
             setModalVisible,
-            clickButton,
+            clickButton, visibleChange,
             showModal,
             submit,
             userType
@@ -138,16 +126,7 @@ export default defineComponent({
     color: white;
 }
 
-
 ::v-deep .dx-button-mode-outlined {
     border: 1px solid white !important;
 }
-</style>
-
-<style>
-.ant-tooltip-content {
-    background-color: white !important
-}
-</style>
-    
-    
+</style> 

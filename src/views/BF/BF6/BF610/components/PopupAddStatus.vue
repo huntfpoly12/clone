@@ -1,6 +1,6 @@
 <template>
     <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="소득별 마감현황" okText="저장하고 나가기"
-        cancelText="그냥 나가기" @cancel="setModalVisible()" width="1200px">
+        cancelText="그냥 나가기" @cancel="setModalVisible" width="992px">
         <a-spin :spinning="loadingTable || loadingChangeStatus" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="companyId" class="wf-100" :column-auto-width="true">
@@ -16,7 +16,7 @@
                         {{ data.data.paymentYear + "-" + data.data.paymentMonth }}
                     </span>
                 </template>
-                <DxColumn caption="소득종류" data-field="type" />
+                <DxColumn caption="소득종류" data-field="type" data-type="string"/>
                 <DxColumn caption="총지급액" data-field="totalPayment" />
                 <DxColumn caption="인원" cell-template="인원" />
                 <DxColumn caption="마감현황" cell-template="status" />
@@ -29,15 +29,13 @@
         </a-spin>
     </a-modal>
 </template>
-
 <script lang="ts">
-import { defineComponent, ref, watch, reactive } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import mutations from "@/graphql/mutations/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
-
 export default defineComponent({
     components: {
         DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
@@ -51,15 +49,10 @@ export default defineComponent({
     setup(props, { emit }) {
         let trigger = ref(false)
         const dataSource = ref()
-        const setModalVisible = () => {
-            emit("closePopup", true)
-        }
         let dataSearch = ref()
-
         /*
         * ============== API ============== 
         */
-
         //  QUERY : getIncomProcessesInTaxWithholdingStatusReport
         let {
             refetch: refetchTable,
@@ -70,28 +63,25 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
-        resTable(res => {
-            console.log(res.data.getIncomProcessesInTaxWithholdingStatusReport);
+        resTable(res => { 
             dataSource.value = res.data.getIncomProcessesInTaxWithholdingStatusReport
         })
         errorTable(res => {
             notification('error', res.message)
         })
-
-        //  Mutation : changeTaxWithholdingStatusReportStatus
+        //  Mutation : changeIncomeProcessStatus
         const {
             mutate: actionChangeStatus,
             loading: loadingChangeStatus,
             onDone: doneChangeStatus,
             onError: errChangeStatus
-        } = useMutation(mutations.changeTaxWithholdingStatusReportStatus);
+        } = useMutation(mutations.changeIncomeProcessStatus);
         doneChangeStatus(() => {
             notification('success', `새러운 영업자 추가 완료!`)
         })
         errChangeStatus((error) => {
             notification('error', error.message)
         })
-
         /*
          * ============== WATCHING ============== 
          */
@@ -107,21 +97,25 @@ export default defineComponent({
                     refetchTable()
             }
         }, { deep: true })
-
         /*
          * ============== FUNCTION ============== 
          */
         const changeStatus = (data: any) => {
-            // console.log(data);
             let dataChangeStatus = {
                 "companyId": data.companyId,
-                "imputedYear": data.imputedYear,
-                "reportId": props.dataCall?.reportId,
+                "type": data.type,
+                "processKey": {
+                    imputedMonth: data.imputedMonth,
+                    imputedYear: data.imputedYear,
+                    paymentMonth: data.paymentMonth,
+                    paymentYear: data.paymentYear,
+                },
                 "status": data.status
             }
-
-            // actionChangeStatus(dataChangeStatus)
-
+            actionChangeStatus(dataChangeStatus)
+        }
+        const setModalVisible = () => {
+            emit("closePopup", true)
         }
         return {
             dataSource, loadingTable, loadingChangeStatus,
@@ -130,7 +124,6 @@ export default defineComponent({
     }
 })
 </script>
-
 <style  scoped lang="scss">
 .tag-custom-2 {
     background-color: black;
