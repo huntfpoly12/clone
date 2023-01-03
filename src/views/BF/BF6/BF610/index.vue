@@ -74,19 +74,17 @@
         <div class="page-content">
             <a-spin :spinning="loadingTable" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource.datas"
-                    :show-borders="true" key-expr="companyId" class="wf-100" :allow-column-reordering="move_column"
+                    :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="virtual" />
-                    <DxToolbar>
-                        <DxItem template="pagination-send-group-mail" />
-                    </DxToolbar>
-                    <template #pagination-send-group-mail>
-                        <DxButton class="print-group">
-                            <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
-                        </DxButton>
-                    </template>
-
                     <DxSelection mode="multiple" :fixed="true" />
+                    <DxColumn caption="출력 메일" cell-template="action" />
+                    <template #action="{ data }">
+                        <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
+                            @click="actionPrint(data.data)">
+                        <img src="@/assets/images/email.svg" alt="" style="width: 25px;"
+                            @click="actionSendEmail(data.data)" />
+                    </template>
                     <DxColumn caption="사업자코드" data-field="company.code" />
                     <DxColumn caption="상호 주소" cell-template="company" width="100" />
                     <template #company="{ data }">
@@ -97,12 +95,12 @@
                     </template>
                     <DxColumn caption="마감 현황" cell-template="status" width="140" />
                     <template #status="{ data }">
-                        <div class="d-flex-center"> 
-                            <process-status v-model:valueStatus="data.data.status" :edit="false"
-                                style="width: 100px;" />
+                        <div class="d-flex-center">
+                            <process-status v-model:valueStatus="data.data.status" style="width: 100px;"
+                                :dataRow="data.data" @dataRow="changeStatus" />
                             <div class="pl-5 pr-5">
                                 <a-tooltip placement="topLeft">
-                                    <template #title>소득별 마감현황</template> 
+                                    <template #title>소득별 마감현황</template>
                                     <plus-outlined @click="openModalStatus(data.data)" />
                                 </a-tooltip>
                             </div>
@@ -175,16 +173,13 @@
                     <DxColumn caption="납부세액 소득세등 (A99)" data-field="totalCollectedTaxAmount" format="#,###" />
                     <DxColumn caption="(20) 차월이월 환급세액계" data-field="nextMonthRefundTaxAmount" format="#,###" />
                     <DxColumn caption="(21) 환급 신청액" data-field="refundApplicationAmount" format="#,###" />
-                    <DxColumn caption="출력 메일" cell-template="action" />
-                    <template #action="{ data }">
-                        <img src="@/assets/images/print.svg" alt="" style="width: 25px;">
-                        <img src="@/assets/images/email.svg" alt="" style="width: 25px;" />
-                    </template>
                 </DxDataGrid>
             </a-spin>
         </div>
     </div>
     <PopupAddStatus :modalStatus="modalStatus" @closePopup="closePopup" :dataCall="dataCall" />
+    <PopupPrint :modalStatus="modalPrint" @closePopup="closePopupPrint" :dataCall="dataCall" />
+    <PopupSendEmail :modalStatus="modalSendEmail" @closePopup="closeSendEmail" :dataCall="dataCall" />
 </template>
 
 <script lang="ts">
@@ -192,17 +187,19 @@ import { defineComponent, reactive, ref, computed, watch } from "vue";
 import { dataSearchUtil } from "./utils/index";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
 import { useStore } from 'vuex'
 import { PlusOutlined, } from "@ant-design/icons-vue";
 import PopupAddStatus from "./components/PopupAddStatus.vue";
-
+import PopupPrint from "./components/PopupPrint.vue";
+import PopupSendEmail from "./components/PopupSendEmail.vue";
+import mutations from "@/graphql/mutations/BF/BF6/BF610/index";
 export default defineComponent({
     components: {
         DxDataGrid, DxToolbar, DxSelection, DxButton, DxColumn, DxItem, DxScrolling, PlusOutlined
-        , PopupAddStatus
+        , PopupAddStatus, PopupPrint, PopupSendEmail
     },
     setup() {
         let dataSource: any = ref([])
@@ -333,6 +330,8 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalStatus = ref(false)
+        const modalPrint = ref(false)
+        const modalSendEmail = ref(false)
         const dataCall = ref()
         /*
          * ============== API ============== 
@@ -355,6 +354,23 @@ export default defineComponent({
         errorTable(res => {
             notification('error', res.message)
         })
+
+
+        //  Mutation : changeTaxWithholdingStatusReportStatus
+        const {
+            mutate: actionChangeStatus,
+            onDone: doneChangeStatus,
+            onError: errChangeStatus
+        } = useMutation(mutations.changeTaxWithholdingStatusReportStatus);
+        doneChangeStatus(() => {
+            notification('success', `새러운 영업자 추가 완료!`)
+            trigger.value = true
+            refetchTable()
+        })
+        errChangeStatus((error) => {
+            notification('error', error.message)
+        })
+
 
         /*
          * ============== WATCHING ============== 
@@ -419,6 +435,16 @@ export default defineComponent({
 
         const closePopup = () => {
             modalStatus.value = false
+            trigger.value = true
+            refetchTable()
+        }
+
+        const closePopupPrint = () => {
+            modalPrint.value = false
+        }
+
+        const closeSendEmail = () => {
+            modalSendEmail.value = false
         }
 
         const openModalStatus = (data: any) => {
@@ -426,12 +452,39 @@ export default defineComponent({
                 reportId: data.reportId,
                 companyId: data.companyId,
                 imputedYear: data.imputedYear,
-            } 
+            }
             modalStatus.value = true
         }
+
+        const changeStatus = (data: any) => {
+            let dataChangeStatus = {
+                "companyId": data.companyId,
+                "imputedYear": data.imputedYear,
+                "reportId": data.reportId,
+                "status": data.status
+            }
+            actionChangeStatus(dataChangeStatus)
+        }
+
+        const actionPrint = (data: any) => {
+            dataCall.value = {
+                reportId: data.reportId,
+                companyId: data.companyId,
+                imputedYear: data.imputedYear,
+            }
+            modalPrint.value = true
+        }
+        const actionSendEmail = (data: any) => {
+            dataCall.value = {
+                reportId: data.reportId,
+                companyId: data.companyId,
+                imputedYear: data.imputedYear,
+            }
+            modalSendEmail.value = true
+        }
         return {
-            arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, checkAllTypeFication, move_column, colomn_resize, modalStatus, dataCall,
-            searching, closePopup, openModalStatus,
+            modalSendEmail, arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, checkAllTypeFication, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
+            searching, closePopup, openModalStatus, changeStatus, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
         }
     }
 })

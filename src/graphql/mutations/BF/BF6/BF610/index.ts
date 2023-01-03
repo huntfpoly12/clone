@@ -1,6 +1,8 @@
 import changeTaxWithholdingStatusReportStatus from "./changeTaxWithholdingStatusReportStatus"
+import changeIncomeProcessStatus from "./changeIncomeProcessStatus"
 const mutations = {
-    changeTaxWithholdingStatusReportStatus : changeTaxWithholdingStatusReportStatus
+    changeTaxWithholdingStatusReportStatus : changeTaxWithholdingStatusReportStatus,
+    changeIncomeProcessStatus : changeIncomeProcessStatus
 };
 
 export default mutations;
