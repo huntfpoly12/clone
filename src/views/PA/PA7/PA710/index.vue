@@ -1,6 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="checkForm ? onUpdate($event) : onSubmit($event)"
-        :buttonDelete="false" />
+    <action-header title="기타소득자등록" @actionSave="actionSave($event)" :buttonDelete="false" />
     <div id="pa-710" class="page-content">
         <a-row>
             <a-col :span="3" class="total-user">
@@ -71,9 +70,10 @@
                         <a-col :span="24">
                             <a-form-item label="코드" :label-col="labelCol" class="red">
                                 <div class="custom-note">
-                                    <number-box :required="true" :width="150" v-model:valueInput="formState.employeeId"
-                                        placeholder="숫자만 입력 가능" :disabled="checkForm">
-                                    </number-box>
+                                    <text-number-box :required="true" :width="150"
+                                        v-model:valueInput="formState.employeeId" placeholder="숫자만 입력 가능"
+                                        :disabled="checkForm">
+                                    </text-number-box>
                                     <span>
                                         <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                         <span class="style-note"></span> 최초 저장된 이후 수정 불가
@@ -95,14 +95,19 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item label="외국인 국적 " :label-col="labelCol" :class="!formState.foreigner ? '' : 'red'">
-                                <country-code-select-box style="width: 310px"
+                            <a-form-item label="외국인 국적 " :label-col="labelCol"
+                                :class="!formState.foreigner ? '' : 'red'">
+                                <country-code-select-box v-if="formState.foreigner" style="width: 310px"
+                                    v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
+                                    :required="formState.foreigner" :disabled="!formState.foreigner" :hidden="true" />
+                                <country-code-select-box v-else style="width: 310px"
                                     v-model:valueCountry="formState.nationalityCode" @textCountry="textCountry"
                                     :required="formState.foreigner" :disabled="!formState.foreigner" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="24">
-                            <a-form-item label="외국인 체류자격 " :label-col="labelCol" :class="!formState.foreigner ? '' : 'red'">
+                            <a-form-item label="외국인 체류자격 " :label-col="labelCol"
+                                :class="!formState.foreigner ? '' : 'red'">
                                 <stay-qualification-select-box style="width: 310px" :required="formState.foreigner"
                                     :disabled="!formState.foreigner"
                                     v-model:valueStayQualifiction="formState.stayQualification" />
@@ -141,8 +146,8 @@
         </a-row>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-            <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
-            title="양식을 재설정하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
+        <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+            title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
     </div>
 </template>
 <script lang="ts">
@@ -192,7 +197,7 @@ export default defineComponent({
         let dataRowOld = reactive({ ...initialState })
         let trigger = ref(true);
         const listEmployeeExtra = ref([])
-        let formState = reactive({ ...initialState });
+        let formState: any = reactive({ ...initialState });
         let dataRow = reactive({ ...initialState });
         const resetFormNum = ref(1);
         const originData = {
@@ -231,62 +236,62 @@ export default defineComponent({
 
         onDoneDelete(() => {
             trigger.value = true;
+            resetFormNum.value++;
+            checkForm.value = false;
             refetchData();
             changeFormData({ ...initialState })
         });
 
-        const onSubmit = (e: any) => {
+        const actionSave = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                focusedRowKey.value = formState.employeeId
             } else {
-                let dataCreate = {
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    input: {
+                let residentId = formState.residentId.replace('-', '')
+                if (checkForm.value) {
+                    let dataUpdate = {
+                        companyId: companyId,
+                        imputedYear: globalYear.value,
                         employeeId: formState.employeeId,
                         incomeTypeCode: formState.incomeTypeCode,
-                        name: formState.name,
-                        foreigner: formState.foreigner,
-                        nationality: formState.nationality,
-                        nationalityCode: formState.nationalityCode,
-                        stayQualification: formState.stayQualification,
-                        residentId: formState.residentId.slice(0, 6) + '-' + formState.residentId.slice(6, 13),
-                        email: formState.email,
-                        incomeTypeName: formState.incomeTypeName,
-                    },
-                };
-                createEmployeeExtra(dataCreate);
-            }
-        };
-        const onUpdate = (e: any) => {
-            var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
-                let dataUpdate = {
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    employeeId: formState.employeeId,
-                    incomeTypeCode: formState.incomeTypeCode,
-                    input: {
-                        name: formState.name,
-                        foreigner: formState.foreigner,
-                        nationality: formState.nationality,
-                        nationalityCode: formState.nationalityCode,
-                        stayQualification: formState.stayQualification,
-                        residentId: formState.residentId,
-                        email: formState.email,
-                        incomeTypeName: formState.incomeTypeName,
-                    }
-                };
-                updateEmployeeExtra(dataUpdate);
+                        input: {
+                            name: formState.name,
+                            foreigner: formState.foreigner,
+                            nationality: formState.nationality,
+                            nationalityCode: formState.nationalityCode,
+                            stayQualification: formState.stayQualification,
+                            residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
+                            email: formState.email,
+                            incomeTypeName: formState.incomeTypeName,
+                        }
+                    };
+                    updateEmployeeExtra(dataUpdate);
+                } else {
+                    let dataCreate = {
+                        companyId: companyId,
+                        imputedYear: globalYear.value,
+                        input: {
+                            employeeId: formState.employeeId,
+                            incomeTypeCode: formState.incomeTypeCode,
+                            name: formState.name,
+                            foreigner: formState.foreigner,
+                            nationality: formState.nationality,
+                            nationalityCode: formState.nationalityCode,
+                            stayQualification: formState.stayQualification,
+                            residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
+                            email: formState.email,
+                            incomeTypeName: formState.incomeTypeName,
+                        },
+                    };
+                    createEmployeeExtra(dataCreate);
+                }
             }
         };
         onDoneUpdate(() => {
             trigger.value = true;
             refetchData();
-            if(formState.employeeId != dataRow.employeeId) {
+            if (formState.employeeId != dataRow.employeeId) {
                 changeFormData(dataRow)
             } else {
                 dataRowOld = { ...formState }
@@ -335,7 +340,7 @@ export default defineComponent({
             dataRowOld = { ...formState }
         }
         const formCreate = (e: any) => {
-            if(JSON.stringify({ ...initialState }) !== JSON.stringify(formState) && checkForm.value == false) {
+            if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState) && checkForm.value == false) {
                 modalStatusAdd.value = true
             } else {
                 resetFormNum.value++;
@@ -388,8 +393,11 @@ export default defineComponent({
         });
         watch(() => formState.foreigner, (newValue) => {
             if (!newValue) {
-                formState.nationalityCode = null
+                formState.nationalityCode = 'KR'
                 formState.stayQualification = null
+            } else {
+                resetFormNum.value++;
+                formState.nationalityCode = formState.nationalityCode == 'KR' ? null : formState.nationalityCode
             }
         });
         watch(globalYear, (value) => {
@@ -409,8 +417,7 @@ export default defineComponent({
             labelCol: { style: { width: "150px" } },
             formState,
             optionsRadio,
-            onSubmit,
-            onUpdate,
+            actionSave,
             checkForm,
             modalHistory,
             popupData,
