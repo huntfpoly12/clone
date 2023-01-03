@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <action-header title="일용직사원등록" @actionSave="onSubmit($event)" />
+    <action-header title="일용직사원등록" @actionSave="actionSave++" />
     <div id="pa-520" class="page-content">
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
@@ -95,13 +95,14 @@
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" :key="resetAddComponent" />
                 <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
-                    @editRowKey="activeRowKey" v-if="actionChangeComponent == 2" />
+                    v-if="actionChangeComponent == 2" :actionSave="actionSave" />
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
             :idRowEdit="idRowEdit" typeHistory="pa-520" />
+
     </div>
 </template>
 <script lang="ts">
@@ -110,7 +111,7 @@ import DxButton from "devextreme-vue/button"
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid"
+import { DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxTotalItem } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import notification from "@/utils/notification"
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
@@ -120,23 +121,14 @@ import mutations from "@/graphql/mutations/PA/PA5/PA520/index"
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
-        EditOutlined,
-        HistoryOutlined,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
-        PA520PopupAddNew,
-        PA520PopupEdit
+        DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
+        PA520PopupAddNew, PA520PopupEdit
     },
     setup() {
         const actionChangeComponent = ref(1)
+        const actionSave = ref(0)
         const contentDelete = Message.getMessage('PA120', '002').message
-        const modalStatus = ref(false)
+        const modalStatus = ref(false) 
         const dataSource = ref([])
         const store = useStore()
         const totalUserOnl = ref(0)
@@ -148,7 +140,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear.value - 1,
+            imputedYear: globalYear.value,
         })
         const idAction = ref()
         const modalAddNewStatus = ref<boolean>(false)
@@ -206,10 +198,11 @@ export default defineComponent({
                 refetchData()
             }
         })
-        watch(() => globalYear.value, (value) => {
-            console.log(value);
-            
-        })
+        watch(globalYear, (value) => {
+            trigger.value = true
+            originData.value.imputedYear = value
+            refetchData()
+        });
         // ======================= FUNCTION ================================
         const resetAddComponent = ref<number>(1);
         const openAddNewModal = () => {
@@ -217,10 +210,13 @@ export default defineComponent({
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
         }
+        let activeChangeRow = ref(true)
         const openEditModal = (val: any) => {
-            actionChangeComponent.value = 2
-            idRowEdit.value = val.data.employeeId
-            modalEditStatus.value = true
+            if (activeChangeRow.value == true) {
+                actionChangeComponent.value = 2
+                idRowEdit.value = val.data.employeeId
+                modalEditStatus.value = true
+            }
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
@@ -228,8 +224,6 @@ export default defineComponent({
         const actionDeleteFuc = (data: any) => {
             idAction.value = data
             modalStatus.value = true
-        }
-        const onSubmit = (e: any) => {
         }
         const statusComfirm = (res: any) => {
             if (res == true)
@@ -244,20 +238,9 @@ export default defineComponent({
             refetchData()
         }
 
-        const activeRowKey = (id: any) => {
-            let indexActive = 0
-            dataSource.value.map((val: any, index: any) => {
-                if (val.employeeId == id)
-                    indexActive = index
-            })
-            //Add class row choose
-            let a = document.body.querySelectorAll('[aria-rowindex]')
-            a[indexActive].classList.add("active-row-key");
-        }
-
         return {
-            resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalEditStatus, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
-            closeAction, refetchData, onSubmit, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm, activeRowKey,
+            actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalEditStatus, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
+            closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
         }
     },
 })

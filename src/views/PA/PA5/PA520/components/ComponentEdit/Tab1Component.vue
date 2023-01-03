@@ -87,11 +87,15 @@
                 <custom-item-select-box v-model:valueInput="dataEdited.responsibility" :arrSelect="selectBoxData2"
                     width="200px" />
             </a-form-item>
-            <div  class="wf-100 text-center mt-30">
-                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)" />
+            <div class="wf-100 text-center mt-30">
+                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)"
+                    id="action-update" />
             </div>
         </standard-form>
     </a-spin>
+    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
+        title="Title Notification" content="Content notification" okText="확인" cancelText="OK"
+        @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -105,15 +109,12 @@ import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 export default defineComponent({
     props: {
-        idRowEdit: {
-            type: Number
-        },
-        openPopup: {
-            type: Number
-        }
+        idRowEdit: Number,
+        openPopup: Number,
+        actionSave: Number
     },
     setup(props, { emit }) {
-        let arrEdit: any = []
+        const modalStatusChange = ref(false)
         const labelResident = ref('외국인번호 유효성')
         const activeLabel = ref(true)
         const disabledSelectBox = ref(true)
@@ -132,13 +133,14 @@ export default defineComponent({
             imputedYear: globalYear.value,
             employeeId: props.idRowEdit
         })
+        let indexChange = ref(0)
         // ============ GRAPQL ===============================
         const {
             onResult: resGetDepartments,
         } = useQuery(queries.getDepartments, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-        resGetDepartments(res => { 
+        resGetDepartments(res => {
             let valArr: any = []
             res.data.getDepartments.map((v: any) => {
                 valArr.push({
@@ -199,54 +201,21 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-        onDone(res => {
+        onDone(() => {
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================
-        watch(() => props.idRowEdit, (value) => {
-            let checked = 0
-            let arr: any = []
-            arrEdit.map((val: any) => {
-                if (val.employeeId == value) {
-                    checked++
-                    arr = val
-                }
-            })
-            if (checked == 0) {
-                originDataDetail.value.employeeId = value
-                refetchValueDetail()
-            } else {
-                dataEdited.name = arr.name
-                dataEdited.foreigner = arr.foreigner
-                dataEdited.nationality = arr.nationality
-                dataEdited.nationalityCode = arr.nationalityCode
-                dataEdited.stayQualification = arr.stayQualification
-                dataEdited.residentId = arr.residentId.replace("-", "")
-                dataEdited.zipcode = ''
-                dataEdited.roadAddress = arr.roadAddress
-                dataEdited.addressExtend = arr.addressExtend
-                dataEdited.email = arr.email
-                dataEdited.employeeId = arr.employeeId
-                dataEdited.joinedAt = arr.joinedAt ? dayjs(arr.joinedAt.toString()).format('YYYY-MM-DD') : ''
-                dataEdited.leavedAt = arr.leavedAt ? dayjs(arr.leavedAt.toString()).format('YYYY-MM-DD') : ''
-                dataEdited.retirementIncome = arr.retirementIncome
-                dataEdited.weeklyWorkingHours = arr.weeklyWorkingHours
-                dataEdited.department = arr.department
-                dataEdited.responsibility = arr.responsibility
-            }
+        watch(() => props.idRowEdit, (newVal) => {
+            indexChange.value = 0
+            originDataDetail.value.employeeId = newVal
+            refetchValueDetail()
+            // if (indexChange.value == 0) {
+            // } else {
+            //     modalStatusChange.value = true
+            // }
         })
-        watch(() => JSON.parse(JSON.stringify(dataEdited)), (newVal, oldVal) => {
-            arrEdit.map((val: any, index: any) => {
-                if (val.employeeId == newVal.employeeId) {
-                    arrEdit.splice(index, 1);
-                }
-            })
-            if (newVal.employeeId == oldVal.employeeId) { 
-                emit("editRowKey", newVal.employeeId)
-            }
-            arrEdit.push(newVal)
-        }, { deep: true })
+
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
@@ -261,6 +230,17 @@ export default defineComponent({
                 dataEdited.stayQualification = 'C-4'
             }
         })
+
+        watch(() => props.actionSave, () => {
+            document.getElementById('action-update')?.click()
+        })
+
+        watch(() => dataEdited, (valNew, oldVal) => {
+            console.log(valNew.employeeId);
+            console.log(oldVal.employeeId);
+
+            indexChange.value++
+        }, { deep: true })
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataEdited.zipcode = data.zonecode;
@@ -271,40 +251,34 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                arrEdit.map((val: any) => {
-                    let newValDataEdit = {
-                        ...val,
-                        joinedAt: typeof e.joinedAt == "string" ? parseInt(e.joinedAt.replaceAll('-', '')) : e.joinedAt,
-                        leavedAt: typeof e.leavedAt == "string" ? parseInt(e.leavedAt.replaceAll('-', '')) : e.leavedAt,
-                        residentId: e.residentId.slice(0, 6) + '-' + e.residentId.slice(6, 14)
-                    };
-                    delete newValDataEdit.employeeId;
-                    delete newValDataEdit.zipcode;
-                    let dataCallCreat = {
-                        companyId: companyId,
-                        imputedYear: globalYear.value,
-                        employeeId: e.employeeId,
-                        input: newValDataEdit
-                    };
-                    mutate(dataCallCreat)
-                })
+                let newValDataEdit = {
+                    ...dataEdited,
+                    joinedAt: typeof dataEdited.joinedAt == "string" ? parseInt(dataEdited.joinedAt.replaceAll('-', '')) : dataEdited.joinedAt,
+                    leavedAt: typeof dataEdited.leavedAt == "string" ? parseInt(dataEdited.leavedAt.replaceAll('-', '')) : dataEdited.leavedAt,
+                    residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
+                };
+                delete newValDataEdit.employeeId;
+                delete newValDataEdit.zipcode;
+                let dataCallCreat = {
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    employeeId: dataEdited.employeeId,
+                    input: newValDataEdit
+                };
+                mutate(dataCallCreat)
             }
         }
+        const statusComfirm = (res: any) => {
+            console.log(res);
+
+        }
         return {
-            activeLabel,
-            labelResident,
-            disabledSelectBox,
-            loading,
-            actionUpdated,
-            dataEdited,
-            funcAddress,
-            radioCheckForeigner,
-            activeKey: 1,
-            selectBoxData1,
-            selectBoxData2
+            modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
+            actionUpdated, funcAddress, statusComfirm
         };
     },
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
+
 </style>
