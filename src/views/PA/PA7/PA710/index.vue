@@ -197,7 +197,7 @@ export default defineComponent({
         const resetFormNum = ref(1);
         const originData = {
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
         }
         const optionsRadio = ref([...initialOptionsRadio]);
         const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd } = useMutation(
@@ -391,6 +391,9 @@ export default defineComponent({
                 formState.nationalityCode = null
                 formState.stayQualification = null
             }
+        });
+        watch(globalYear, (value) => {
+            trigger.value = true;
         });
         return {
             move_column,
