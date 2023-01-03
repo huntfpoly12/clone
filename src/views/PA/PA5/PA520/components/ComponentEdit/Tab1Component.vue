@@ -207,13 +207,13 @@ export default defineComponent({
         })
         // ============ WATCH ================================
         watch(() => props.idRowEdit, (newVal) => {
-            indexChange.value = 0
-            originDataDetail.value.employeeId = newVal
-            refetchValueDetail()
-            // if (indexChange.value == 0) {
-            // } else {
-            //     modalStatusChange.value = true
-            // }
+            if (indexChange.value > 2) {
+                modalStatusChange.value = true
+            } else {
+                originDataDetail.value.employeeId = newVal
+                refetchValueDetail()
+                indexChange.value = 1
+            }
         })
 
         watch(() => dataEdited.foreigner, (value: any) => {
@@ -235,10 +235,7 @@ export default defineComponent({
             document.getElementById('action-update')?.click()
         })
 
-        watch(() => dataEdited, (valNew, oldVal) => {
-            console.log(valNew.employeeId);
-            console.log(oldVal.employeeId);
-
+        watch(dataEdited, () => {
             indexChange.value++
         }, { deep: true })
         // ============ FUNCTION =============================
@@ -269,7 +266,11 @@ export default defineComponent({
             }
         }
         const statusComfirm = (res: any) => {
-            console.log(res);
+            if (res == true)
+                document.getElementById('action-update')?.click()
+            originDataDetail.value.employeeId = props.idRowEdit
+            refetchValueDetail()
+            indexChange.value = 1
 
         }
         return {
