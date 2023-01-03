@@ -59,7 +59,7 @@
                                 <HistoryOutlined @click="modalHistory" class="fz-18" />
                             </DxButton>
                         </template>
-                        <DxPaging :page-size="15"/>
+                        <DxPaging :page-size="15" />
                         <DxColumn caption="성명" cell-template="company-name" width="300px" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
@@ -148,7 +148,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: globalYear.value - 1,
         })
         const idAction = ref()
         const modalAddNewStatus = ref<boolean>(false)
@@ -206,6 +206,10 @@ export default defineComponent({
                 refetchData()
             }
         })
+        watch(() => globalYear.value, (value) => {
+            console.log(value);
+            
+        })
         // ======================= FUNCTION ================================
         const resetAddComponent = ref<number>(1);
         const openAddNewModal = () => {
@@ -251,31 +255,9 @@ export default defineComponent({
             a[indexActive].classList.add("active-row-key");
         }
 
-
         return {
-            actionChangeComponent,
-            idRowEdit,
-            totalUserOff,
-            totalUserOnl,
-            modalStatus,
-            loading,
-            modalEditStatus,
-            modalDeleteStatus,
-            dataSource,
-            modalHistoryStatus,
-            modalAddNewStatus,
-            per_page, move_column, colomn_resize,
-            contentDelete,
-            closeAction,
-            refetchData,
-            onSubmit,
-            actionDeleteFuc,
-            modalHistory,
-            openAddNewModal,
-            openEditModal,
-            statusComfirm,
-            activeRowKey,
-            resetAddComponent,
+            resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalEditStatus, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
+            closeAction, refetchData, onSubmit, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm, activeRowKey,
         }
     },
 })
