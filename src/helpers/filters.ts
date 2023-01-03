@@ -42,6 +42,10 @@ const filters = {
             return '0' + day;
         }
         return day;
+    },
+    useImage(url: string){
+      return new URL(`/src/assets/images/${url}`, import.meta.url).href;
     }
+    
 }
 export default filters;
