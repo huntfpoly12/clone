@@ -19,19 +19,25 @@
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
-    <DxDropDownButton class="ml-3" :items="arrDropDown" display-expr="title" text="선택" style="width: 120px;"
-        @item-click="onItemClick" item-template="item-field">
-        <template #item-field="{ data }">
-            <div style="text-align: center;">
-                <HistoryOutlined v-if="data.function == 'History'" class="mr-5" style="font-size: 18px" />
-                <div v-if="data.function == 'HistoryStatus'" style="text-align: center;">
-                    <img src="@/assets/images/icon_status_history.png" alt="" style="width: 20px; height: 20px;" />
-                </div>
-                <button v-else-if="data.url" class="button-open-tab">일용직사원등록</button>
-            </div>
-        </template>
-    </DxDropDownButton>
-
+    <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="showHistory">
+      <a-tooltip placement="top">
+        <template #title>근로소득자료 변경이력</template>
+        <div class="text-center">
+          <HistoryOutlined style="font-size: 16px" />
+        </div>
+      </a-tooltip>
+    </DxButton>
+    <DxButton class="ml-4" style="cursor: pointer" @click="showHistoryStatus">
+      <a-tooltip placement="top">
+        <template #title>근로소득 마감상태 변경이력</template>
+        <div class="text-center">
+          <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
+        </div>
+      </a-tooltip>
+    </DxButton>
+    <div class="custom-select-tab ml-4">
+      <button class="button-open-tab" @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">일용직사원등록</button>
+    </div>
     <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" @loadingTableInfo="loadingTableInfo"
         :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
@@ -150,11 +156,6 @@ export default defineComponent({
         { id: 2, img: 'email.png', event: 'EmailSalaryStatement' },
         { id: 3, img: 'group_email.png', event: 'EmailMultiSalaryStatement' },
     ];
-    const arrDropDown = [
-        { id: 1, url: 'pa-120', event: 'pa-120', title: '' },
-        { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
-        { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
-    ]
   const onItemClick = (value: any) => {
         switch (value.itemData.event) {
             case 'PrintPayrollRegister':
@@ -198,17 +199,6 @@ export default defineComponent({
             case 'EmailPayrollRegister':
                 modalPrintPayrollRegister.value = true;
                 break;
-            case 'History':
-                modalHistory.value = true;
-                popupDataHistory.value = { ...processKey.value }
-                break;
-            case 'HistoryStatus':
-                modalHistoryStatus.value = true;
-                popupDataHistoryStatus.value = { ...processKey.value }
-                break;
-            case 'pa-120':
-                openTab({ name: "사원등록", url: "/dashboard/pa-120", id: "pa-120" })
-                break;
         }
     }
     const { refetch, result, loading
@@ -226,9 +216,20 @@ export default defineComponent({
         emit("loadingTableInfo", true)
     }
 
+    const showHistory = () => {
+        modalHistory.value = true;
+        popupDataHistory.value = { ...processKey.value }
+    }
+
+    const showHistoryStatus = () => {
+        modalHistoryStatus.value = true;
+        popupDataHistoryStatus.value = { ...processKey.value }
+    }
+
     return {
         deleteItem,
         editItem,
+        openTab,
         modalDelete,
         modalEdit,
         modalEmailSingle,
@@ -243,13 +244,14 @@ export default defineComponent({
         onItemClick,
         arrDropDownPayrollRegister,
         arrDropDownSalaryStatement,
-        arrDropDown,
         popupDataHistory,
         popupDataHistoryStatus,
         popupDataDelete,
         actionAddItem,
         popupDataEdit,
         loadingTableInfo,
+        showHistory,
+        showHistoryStatus
     };
     },
 });
