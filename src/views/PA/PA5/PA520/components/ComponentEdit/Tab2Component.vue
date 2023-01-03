@@ -55,7 +55,7 @@
                 </div>
                 <div>
                     <a-form-item label="일급/월급">
-                        <div class="d-flex-center">
+                        <div class="d-flex-center"> 
                             <switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
                                 v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
                             <number-box-money :min="0" width="200px" class="mr-5"
@@ -192,9 +192,9 @@ export default defineComponent({
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
             fetchPolicy: "no-cache",
         }))
-        resApiGetEmployeeWageDaily((e: any) => {  
+        resApiGetEmployeeWageDaily((e: any) => {
             if (e.data) {
-                let res = e.data.getEmployeeWageDaily 
+                let res = e.data.getEmployeeWageDaily
                 originDataUpdate.value.employeeId = res.employeeId
                 originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
                 originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
@@ -208,22 +208,23 @@ export default defineComponent({
                 originDataUpdate.value.input.dailyWage = res.dailyWage
                 originDataUpdate.value.input.monthlyWage = res.monthlyWage
                 dataReturn.value = res.deductionItems
-                let dataAddDedution: any = []
 
                 // delay push data to form caculate 
                 setTimeout(() => {
+                    let dataAddDedution: any = []
                     arrDeduction.value?.map((val: any) => {
                         let arrReturn = addDedution(val.itemCode)
                         if (arrReturn.itemCode) {
-                            val.price = arrReturn.amount
-                            dataAddDedution.push(addDedution(val.itemCode))
-                        }
-                        else {
+                            val.price = arrReturn.amount  
+                            dataAddDedution.push({ itemCode: arrReturn.itemCode, amount: arrReturn.amount })
+                        } else {
+                            val.price = 0
                             dataAddDedution.push({ itemCode: val.itemCode, amount: 0 })
                         }
-                    })
-                    if (dataAddDedution)
+                    }) 
+                    if (dataAddDedution) {  
                         originDataUpdate.value.input.deductionItems = dataAddDedution
+                    }
                 }, 100);
             }
         })
