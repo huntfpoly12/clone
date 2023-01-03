@@ -74,16 +74,16 @@
         <div class="page-content">
             <a-spin :spinning="loadingTable" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource.datas"
-                    :show-borders="true" key-expr="companyId" class="mt-10"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                    :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="virtual" />
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="출력 메일" cell-template="action" />
                     <template #action="{ data }">
                         <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
                             @click="actionPrint(data.data)">
-                        <img src="@/assets/images/email.svg" alt="" style="width: 25px;" />
+                        <img src="@/assets/images/email.svg" alt="" style="width: 25px;"
+                            @click="actionSendEmail(data.data)" />
                     </template>
                     <DxColumn caption="사업자코드" data-field="company.code" />
                     <DxColumn caption="상호 주소" cell-template="company" width="100" />
@@ -173,13 +173,13 @@
                     <DxColumn caption="납부세액 소득세등 (A99)" data-field="totalCollectedTaxAmount" format="#,###" />
                     <DxColumn caption="(20) 차월이월 환급세액계" data-field="nextMonthRefundTaxAmount" format="#,###" />
                     <DxColumn caption="(21) 환급 신청액" data-field="refundApplicationAmount" format="#,###" />
-
                 </DxDataGrid>
             </a-spin>
         </div>
     </div>
     <PopupAddStatus :modalStatus="modalStatus" @closePopup="closePopup" :dataCall="dataCall" />
-    <PopupSendMail :modalStatus="modalSendMail" @closePopup="closePopupSendMail" :dataCall="dataCall" />
+    <PopupPrint :modalStatus="modalPrint" @closePopup="closePopupPrint" :dataCall="dataCall" />
+    <PopupSendEmail :modalStatus="modalSendEmail" @closePopup="closeSendEmail" :dataCall="dataCall" />
 </template>
 
 <script lang="ts">
@@ -193,12 +193,13 @@ import notification from "@/utils/notification"
 import { useStore } from 'vuex'
 import { PlusOutlined, } from "@ant-design/icons-vue";
 import PopupAddStatus from "./components/PopupAddStatus.vue";
-import PopupSendMail from "./components/PopupSendMail.vue";
+import PopupPrint from "./components/PopupPrint.vue";
+import PopupSendEmail from "./components/PopupSendEmail.vue";
 import mutations from "@/graphql/mutations/BF/BF6/BF610/index";
 export default defineComponent({
     components: {
         DxDataGrid, DxToolbar, DxSelection, DxButton, DxColumn, DxItem, DxScrolling, PlusOutlined
-        , PopupAddStatus, PopupSendMail
+        , PopupAddStatus, PopupPrint, PopupSendEmail
     },
     setup() {
         let dataSource: any = ref([])
@@ -329,7 +330,8 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalStatus = ref(false)
-        const modalSendMail = ref(false)
+        const modalPrint = ref(false)
+        const modalSendEmail = ref(false)
         const dataCall = ref()
         /*
          * ============== API ============== 
@@ -437,8 +439,12 @@ export default defineComponent({
             refetchTable()
         }
 
-        const closePopupSendMail = () => {
-            modalSendMail.value = false
+        const closePopupPrint = () => {
+            modalPrint.value = false
+        }
+
+        const closeSendEmail = () => {
+            modalSendEmail.value = false
         }
 
         const openModalStatus = (data: any) => {
@@ -466,11 +472,19 @@ export default defineComponent({
                 companyId: data.companyId,
                 imputedYear: data.imputedYear,
             }
-            modalSendMail.value = true
+            modalPrint.value = true
+        }
+        const actionSendEmail = (data: any) => {
+            dataCall.value = {
+                reportId: data.reportId,
+                companyId: data.companyId,
+                imputedYear: data.imputedYear,
+            }
+            modalSendEmail.value = true
         }
         return {
-            arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, checkAllTypeFication, move_column, colomn_resize, modalStatus, modalSendMail, dataCall,
-            searching, closePopup, openModalStatus, changeStatus, closePopupSendMail, actionPrint,
+            modalSendEmail, arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, checkAllTypeFication, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
+            searching, closePopup, openModalStatus, changeStatus, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
         }
     }
 })
