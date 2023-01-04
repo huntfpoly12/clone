@@ -3,7 +3,7 @@
         <a-spin :spinning="loading" size="large">
             <a-row>
                 <a-col :span="24">
-                    <a-form-item label="근무일수">
+                    <a-form-item label="사원">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
                             v-model:valueEmploy="dataIW.employee.employeeId" width="316px" />
                     </a-form-item>
@@ -25,23 +25,23 @@
                             사원별 급여명세서에 표시 됩니다.
                         </span>
                     </div>
-                    <a-form-item label="일하는 날" label-align="right">
-                        <text-number-box width="200px" v-model:valueInput="dataIW.workingDays"
-                            placeholder="일하는 날" />
-                    </a-form-item>
                     <a-form-item label="총근로시간" label-align="right">
-                        <text-number-box width="200px" v-model:valueInput="dataIW.totalWorkingHours"
-                            placeholder="총근로시간" />
+                        <div style="display: flex;align-items: center;">
+                            <text-number-box width="200px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                        </div>
                     </a-form-item>
                     <a-form-item label="연장근로시간" label-align="right">
-                        <text-number-box width="200px" v-model:valueInput="dataIW.overtimeWorkingHours"
-                            placeholder="연장근로시간" />
+                         <div style="display: flex;align-items: center;">
+                            <text-number-box width="200px" v-model:valueInput="dataIW.overtimeWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                        </div>
                     </a-form-item> <a-form-item label="야간근로시간" label-align="right">
-                        <text-number-box width="200px" v-model:valueInput="dataIW.workingHoursAtNight"
-                            placeholder="야간근로시간" />
+                         <div style="display: flex;align-items: center;">
+                            <text-number-box width="200px" v-model:valueInput="dataIW.workingHoursAtNight"/><span style="padding-left: 5px;">시간</span>
+                        </div>
                     </a-form-item> <a-form-item label="휴일근로시간" label-align="right">
-                        <text-number-box width="200px" v-model:valueInput="dataIW.workingHoursOnHolidays"
-                            placeholder="휴일근로시간" />
+                         <div style="display: flex;align-items: center;">
+                            <text-number-box width="200px" v-model:valueInput="dataIW.workingHoursOnHolidays" /><span style="padding-left: 5px;">시간</span>
+                        </div>
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">

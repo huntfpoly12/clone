@@ -284,7 +284,6 @@ import DeductionPopup from "./components/Popup/DeductionPopup.vue"
 import InsurancePopup from "./components/Popup/InsurancePopup.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
 import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
-import { log } from "handsontable/helpers";
 export default defineComponent({
   components: {
     DxMasterDetail,
