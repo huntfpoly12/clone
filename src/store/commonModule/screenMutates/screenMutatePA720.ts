@@ -1,15 +1,15 @@
 const screenMutatePA720 = {
-    hasError(state: any, data: Boolean) {
-        state.isErrorForm = data;
+    isErrorFormPA720(state: any, data: Boolean) {
+        state.isErrorFormPA720 = data;
     },
-    changeKeyActive(state: any,data: Number){
-        state.keyActive = data;
+    keyActivePA720(state: any,data: Number){
+        state.keyActivePA720 = data;
     },
-    pending(state:any) {
-        state.pending = true;
+    actionSavePA720(state:any) {
+        state.actionSavePA720++;
     },
-    actionSave(state:any) {
-        state.pending++;
+    actionSaveTypePA720(state:any, payload: 0 | 1) {
+        state.actionSaveTypePA720 = payload;
     }
 };
   

@@ -20,5 +20,4 @@ const commonModule = {
     mutations,
     actions
 };
-console.log(`output->commonModule`,commonModule.state)
 export default commonModule;

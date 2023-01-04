@@ -1,6 +1,5 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    {{ focusedRowKey }}
     <DxDataGrid
       :show-row-lines="true"
       :hoverStateEnabled="true"
@@ -56,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, computed, reactive, watchEffect } from 'vue';
+import { ref, defineComponent, watch, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { useQuery } from '@vue/apollo-composable';
 import {
@@ -101,9 +100,6 @@ export default defineComponent({
     dataCallTableDetail: {
       type: Object,
     },
-    actionSave: {
-      type: Number,
-    },
     changeFommDone: {
       type: Number,
     },
@@ -130,6 +126,8 @@ export default defineComponent({
     });
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>([]);
+    const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
+
     // ================GRAPQL==============================================
 
     // API QUERY TABLE SMALL LEFT SIDE
@@ -147,7 +145,8 @@ export default defineComponent({
       if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
-        store.commit('changeKeyActive', res.data.getIncomeExtras[0]?.employeeId ?? 1);
+        // store.commit('changeKeyActive', res.data.getIncomeExtras[0]?.employeeId ?? 1);
+        store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -203,18 +202,19 @@ export default defineComponent({
         return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
       });
     };
-    const isErrorForm = computed(() => store.getters.isErrorForm);
-    const keyActive = computed(() => store.getters.keyActive);
+    // set key again
+    const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
+    const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
+    const actionSaveTypePA720Commit = store.commit('common/actionSaveTypePA720');
     const focusedRowKey = ref<Number>(1);
-    watch(focusedRowKey, () => {
-      console.log(`output->keyActive.value`, keyActive.value);
-      if(store.state.pending)
-      if (isErrorForm.value) {
-        focusedRowKey.value = keyActive.value;
-      }
+    watch(actionSavePA720, () => {
+      setTimeout(() => {
+        if (isErrorFormPA720.value || store.state.common.actionSaveTypePA720 === 1) {
+          focusedRowKey.value = keyActivePA720.value;
+        }
+      }, 100);
     });
     const onRowClick = (e: any) => {
-      console.log(`output->e`, e);
       const data = e.data && e.data;
       updateParam = {
         companyId: companyId,

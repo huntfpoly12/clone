@@ -275,7 +275,7 @@
         <DxButton class="ml-3" @click="deleteItem">
           <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
         </DxButton>
-        <DxButton @click="onSubmit" size="large" class="ml-4">
+        <DxButton @click="onSave" size="large" class="ml-4">
           <SaveOutlined style="font-size: 17px" />
         </DxButton>
 
@@ -308,18 +308,10 @@
     </a-row>
     <a-row class="content-btm">
       <a-col :span="13" class="custom-layout">
-        <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax" :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" />
+        <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax" :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" :dataAddIncomeProcess="dataAddIncomeProcess" />
       </a-col>
       <a-col :span="11" class="custom-layout" style="padding-right: 0px">
-        <FormTaxPayInfo
-          ref="formTaxRef"
-          :actionSave="actionSave"
-          :editTax="editTaxParam"
-          :isLoadNewForm="isLoadNewForm"
-          @changeFommDone="onFormDone"
-          :key="resetFormNum"
-          :addNewIncomeExtra="dataAddIncomeProcess"
-        />
+        <FormTaxPayInfo ref="formTaxRef" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm" @changeFommDone="onFormDone" :key="resetFormNum" :addNewIncomeExtra="dataAddIncomeProcess" />
       </a-col>
     </a-row>
   </div>
@@ -397,7 +389,6 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear,
     });
-    let actionSave = ref(0);
     const editTaxParam = ref<any>({});
     const changeFommDone = ref(1);
     const formTaxRef = ref();
@@ -462,17 +453,24 @@ export default defineComponent({
       }, 200);
     };
     //submit
-    const PA720IsErrorForm = computed(() => store.getters['common/actionSavePA720']);
-    console.log(`output->PA720IsErrorForm.value`,PA720IsErrorForm.value)
+    const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const onSubmit = () => {
-      actionSave.value++;
-      if(store.state.pending)
-      if (!PA720IsErrorForm.value) {
-        isLoadNewForm.value = true;
-        taxPayRef.value.firsTimeRow = true;
-      }
+      store.commit('common/actionSavePA720');
+      setTimeout(() => {
+        if (!isErrorFormPA720.value) {
+          isLoadNewForm.value = true;
+          taxPayRef.value.firsTimeRow = true;
+        }
+      }, 100);
     };
-    const onFormDone = () => changeFommDone.value++;
+    const onSave = () => {
+      store.commit('common/actionSaveTypePA720', 1);
+      onSubmit();
+    };
+    const onFormDone = () => {
+      changeFommDone.value++;
+      formTaxRef.value.isEdit = true;
+    };
     onDoneChangeIncomeProcessExtraStatusDone(() => {
       notification('success', `업데이트 완료!`);
       trigger.value = true;
@@ -485,19 +483,28 @@ export default defineComponent({
       }
       modalEdit.value = false;
     };
-    const onAddMonth = (month: number) => {
-      dataModalCopy.value = month;
+    const onAddMonth = (val: number) => {
+      dataModalCopy.value = val;
       modalCopy.value = true;
+      month.value = val;
     };
     const onLoadingTable = () => {
       trigger.value = true;
       refetchIncomeProcessExtras();
     };
-    const onAddIncomeProcess = (emit: any) => (dataAddIncomeProcess.value = emit);
+    const onAddIncomeProcess = (emit: any) => {
+      resetForm();
+      dataAddIncomeProcess.value = emit;
+      incomeExtrasParams.processKey = { ...emit };
+    };
     const addItem = () => {
-      if (JSON.stringify(formTaxRef.value.dataAction.input) != JSON.stringify(dataActionUtils.input)) {
-        popupAddStatus.value = true;
-        titleModalConfirm.value = 'Do you want to reset your form?';
+      if (!formTaxRef.value.isEdit) {
+        if (JSON.stringify(formTaxRef.value.dataAction.input) != JSON.stringify(dataActionUtils.input)) {
+          popupAddStatus.value = true;
+          titleModalConfirm.value = 'Do you want to reset your form?';
+        }
+      } else {
+        resetForm();
       }
     };
     //does save when data and row change ?
@@ -506,6 +513,7 @@ export default defineComponent({
       if (e) {
         if (!isLoadNewForm.value) {
           onSubmit();
+          store.commit('common/actionSaveTypePA720', 0);
         } else {
           resetForm();
         }
@@ -521,15 +529,18 @@ export default defineComponent({
         isLoadNewForm.value = true;
         return;
       }
-      const { employeeId, incomeTypeCode, paymentAmount, paymentDay, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax } = formTaxRef.value?.resultIncomeExtra.getIncomeExtra;
-      let formInputInit = { paymentDay, employeeId, incomeTypeCode, paymentAmount, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax };
+      let formInputInit:any;
+      if (formTaxRef.value?.resultIncomeExtra?.getIncomeExtra != undefined) {
+        let { employeeId, incomeTypeCode, paymentAmount, paymentDay, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax } = formTaxRef.value?.resultIncomeExtra.getIncomeExtra;
+        formInputInit = { paymentDay, employeeId, incomeTypeCode, paymentAmount, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax };
+      }else{
+        formInputInit = store.state.common.formInputInit;
+      }
       let formInputData = formTaxRef.value.dataAction.input;
       if (JSON.stringify(formInputData) != JSON.stringify(formInputInit)) {
         isLoadNewForm.value = false;
         titleModalConfirm.value = '변경 내용을 저장하시겠습니까?';
         popupAddStatus.value = true;
-      } else {
-        editTaxParam.value = emit;
       }
     };
     //compute data function
@@ -653,7 +664,6 @@ export default defineComponent({
       IncomeProcessExtrasCustom,
       columnData,
       incomeExtrasParams,
-      actionSave,
       editTax,
       editTaxParam,
       changeFommDone,
@@ -684,6 +694,7 @@ export default defineComponent({
       addItem,
       isLoadNewForm,
       titleModalConfirm,
+      onSave,
     };
   },
 });

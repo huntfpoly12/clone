@@ -10,5 +10,4 @@ const store : any= createStore({
     common: { ...commonModule, namespaced: true}
   },
 });
-console.log(`output->common, PA720`,commonModule, PA720)
 export default store;
