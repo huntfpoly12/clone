@@ -25,7 +25,6 @@
           <date-time-box width="150px" v-model:valueDate="formStateTab1.joinedAt">
           </date-time-box>
         </a-form-item>
-        {{ formStateTab1.leavedAt }}
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
             <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt">

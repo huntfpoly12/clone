@@ -1,6 +1,7 @@
 <template>
   <standard-form name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px">
     <a-spin :spinning="newDateLoading" size="large">
+      {{ dataAction }}
       <a-row>
         <a-col :span="24">
           <a-form-item label="사업소득자" label-align="right">
@@ -106,7 +107,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, reactive } from 'vue';
+import { ref, defineComponent, watch, reactive, computed } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -115,6 +116,7 @@ import DxSelectBox from 'devextreme-vue/select-box';
 import notification from '@/utils/notification';
 import { companyId } from '@/helpers/commonFunction';
 import { Formula } from '@bankda/jangbuda-common';
+import { useStore } from 'vuex';
 export default defineComponent({
   components: {
     DxSelectBox,
@@ -135,6 +137,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    const store = useStore();
     const incomeExtraParam = ref<any>({
       ...props.editTax,
     });
@@ -178,8 +181,8 @@ export default defineComponent({
     let localIncomeTax = ref(0);
     //watch for changes
     watch(
-      [() => props.editTax,()=>props.isLoadNewForm],
-      ([newValue, newValue2]:[any,boolean]) => {
+      [() => props.editTax, () => props.isLoadNewForm],
+      ([newValue, newValue2]: [any, boolean]) => {
         if (newValue2) {
           newDateLoading.value = true;
           if (newValue.incomeId) {
@@ -291,6 +294,8 @@ export default defineComponent({
     watch(
       () => props.actionSave,
       () => {
+        store.commit('changeKeyActive', dataAction.input.employeeId);
+        store.commit('pending');
         if (!dataAction.input.employeeId) {
           validations.employeeId = true;
         }
@@ -307,9 +312,11 @@ export default defineComponent({
           validations.taxRate = true;
         }
         if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
-          
+          store.commit('hasError', true);
+          console.log(`output-`);
           return;
         }
+        store.commit('hasError', false);
         dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
         dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0]);
         dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1]);
