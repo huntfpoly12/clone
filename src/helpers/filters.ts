@@ -40,12 +40,6 @@ const filters = {
         })
         return obj[0].label;
     },
-    formatDay(day: number){
-        if(day<10) {
-            return '0' + day;
-        }
-        return day;
-    },
     useImage(url: string){
       return new URL(`/src/assets/images/${url}`, import.meta.url).href;
     }

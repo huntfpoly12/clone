@@ -384,11 +384,6 @@ export default defineComponent({
     const dataSource = ref<[]>([]);
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
-    const PA720 = computed(() => store.getters.isErrorForm);
-    const PA730 = computed(() => store.state.PA730);
-    const total = computed(() => store.getters)
-    console.log(`output->PA720`, total.value);
-    console.log(`output->PA720`, PA730.value);
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const trigger = ref<boolean>(true);
@@ -467,12 +462,12 @@ export default defineComponent({
       }, 200);
     };
     //submit
-    const isErrorForm = computed(() => store.getters.PAisErrorForm);
-    console.log(`output->isErrorForm.value`,isErrorForm.value)
+    const PA720IsErrorForm = computed(() => store.getters['common/actionSavePA720']);
+    console.log(`output->PA720IsErrorForm.value`,PA720IsErrorForm.value)
     const onSubmit = () => {
       actionSave.value++;
       if(store.state.pending)
-      if (!isErrorForm.value) {
+      if (!PA720IsErrorForm.value) {
         isLoadNewForm.value = true;
         taxPayRef.value.firsTimeRow = true;
       }

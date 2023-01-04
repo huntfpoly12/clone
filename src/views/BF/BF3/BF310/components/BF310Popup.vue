@@ -268,8 +268,7 @@
                                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                                     </a-form-item>
                                                     <a-col class="pl-12 text-color">
-                                                        <img-upload :title="'장기요양기관등록증'"
-                                                            @update-img="getUrlLicenseFile" />
+                                                        <img-upload :title="'장기요양기관등록증'" @update-img="getUrlLicenseFile" :key="dataActiveRow.rowIndex ?? 99"/>
                                                     </a-col>
                                                 </a-col>
                                                 <a-col :span="12">
@@ -604,7 +603,12 @@ export default defineComponent({
                 let newObj = JSON.parse(JSON.stringify(dataSource.value));
                 newObj.map((item: any) => {
                     delete item.rowIndex;
-                    return { item }
+                    delete item.dataImg;
+                    if(item?.registrationCardFileStorageId.length<1){
+                        delete item.registrationCardFileStorageId;
+                    }
+                    item.startYearMonth.toString()
+                    return {item}
                 })
                 contentData.accounting.facilityBusinesses = [...newObj];
                 contentData.accounting.accountingServiceTypes.map((item: any) => {
@@ -648,6 +652,8 @@ export default defineComponent({
             dataActiveRow.value.dataImg = ""
             imageLicenseFile.value = "";
             licenseFileName.value = "";
+            dataActiveRow.value.registrationCardFileStorageId="";
+            dataActiveRow.value.registrationCard="";
         };
         // handle registration CardFile Storage upload
         const getregCardFile = (img: any) => {
@@ -687,7 +693,7 @@ export default defineComponent({
         const focusedRowKey = ref(0)
         const initRow = {
             longTermCareInstitutionNumber: '',
-            capacity: null,
+            capacity: "",
             facilityBizType: null,
             name: null,
             startYearMonth: null,
