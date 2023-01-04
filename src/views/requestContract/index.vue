@@ -413,7 +413,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            step.value = val - 1 // Debug
+            //step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
@@ -591,8 +591,8 @@ export default {
             valueFacilityBusinesses.value.map((val: any) => {
                 delete val.__KEY__
                 delete val.rowIndex
-                delete val.dataImg
-                val.startYearMonth = dayjs(val.startYearMonth).format('YYYY-MM-DD')
+                delete val.dataImg 
+                val.startYearMonth = parseInt(dayjs(val.startYearMonth).format('YYYYMMDD'))
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
             let dataCallCreated = {
@@ -639,7 +639,7 @@ export default {
                         accountingServiceTypes: contractCreacted.accountingServiceTypes,
                     },
                     withholding: {
-                        startYearMonth: contractCreacted.startYearMonthHolding,
+                        startYearMonth: parseInt(dayjs(contractCreacted.startYearMonthHolding).format('YYYYMM')),
                         capacity: contractCreacted.capacityHolding,
                         withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
                     },
