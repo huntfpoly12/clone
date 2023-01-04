@@ -476,7 +476,7 @@ export default defineComponent({
                 actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         }
-        watch(result, (value) => {
+        watch(result, (value) => { 
             if (value && value.getCompany) {
                 formState.id = value.getCompany.id;
                 formState.decryptedResidentId = value.getCompany.decryptedResidentId;
@@ -507,8 +507,8 @@ export default defineComponent({
                 formState.extendInfoDetailFax = value.getCompany.extendInfo.detail.fax;
                 formState.extendInfoDetailLicenseFileStorageId = value.getCompany.extendInfo.detail.licenseFileStorageId;
                 dataImg.value = {
-                    name: value.getCompany.extendInfo.detail.license.name,
-                    url: value.getCompany.extendInfo.detail.license.url,
+                    name: value.getCompany.extendInfo.detail.license?.name,
+                    url: value.getCompany.extendInfo.detail.license?.url,
                 }
                 formState.extendInfoPresidentName = value.getCompany.extendInfo.president.name;
                 formState.extendInfoPresidentBirthday = value.getCompany.extendInfo.president.birthday;

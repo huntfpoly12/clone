@@ -135,13 +135,12 @@ export const inputInCollapse = [
 ];
 
 // Data index
-
 // Data searching default
 export const dataSearchIndex = {
   page: 1,
   salesRepresentativeId: 0,
-  startDate: "",
-  finishDate: "",
+  startDate: 0,
+  finishDate: 0,
   accounting: true,
   withholding: true,
   companyName: "",

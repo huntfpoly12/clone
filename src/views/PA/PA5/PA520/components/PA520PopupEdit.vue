@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="false" size="large">
+    <a-spin :spinning="false" size="large"> 
         <div id="pa-520" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1">
@@ -30,7 +30,7 @@ export default defineComponent({
         actionSave: Number
 
     },
-    setup(props, { emit }) {
+    setup(props, { emit }) { 
         // ============ FUNCTION ============================= 
         const setModalVisible = () => {
             emit('closePopup', false)
@@ -45,10 +45,11 @@ export default defineComponent({
         const activeRowKey = (id: any) => {
             emit("editRowKey", id)
         }
+
         return {
             activeRowKey,
             setModalVisible,
-            activeKey
+            activeKey,
         };
     },
 });
