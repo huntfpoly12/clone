@@ -126,11 +126,10 @@
                     </template>
                     <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                     <template #afterDeadline="{ data }">
-                        <span
-                            :class="data.data.index == 0 && data.data.afterDeadline == true ? 'tag-custom-2' : (data.data.index == 0 && data.data.afterDeadline == false ? 'tag-custom-4' : 'tag-custom-3')">
-                            {{ data.data.index == 0 && data.data.afterDeadline == true ? '기한후' : data.data.index == 0 &&
-        data.data.afterDeadline == false ? '정기' : '수정 ' + data.data.index
-}}
+                        <span :class="data.data.index == 0 && data.data.afterDeadline == true ? 'tag-custom-2' : (data.data.index == 0 && data.data.afterDeadline == false ? 'tag-custom-4' : 'tag-custom-3')">
+                            {{ 
+                                data.data.index == 0 && data.data.afterDeadline == true ? '기한후' : data.data.index == 0 && data.data.afterDeadline == false ? '정기' : '수정 ' + data.data.index
+                            }}
                         </span>
                     </template>
                     <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
@@ -474,7 +473,7 @@ export default defineComponent({
             }
             modalPrint.value = true
         }
-        const actionSendEmail = (data: any) => {
+        const actionSendEmail = (data: any) => { 
             dataCall.value = {
                 reportId: data.reportId,
                 companyId: data.companyId,

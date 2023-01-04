@@ -26,6 +26,9 @@ const filters = {
     formatDate(date: any) {
         return dayjs(date).format('YYYY-MM-DD')
     },
+    formatDateToInterger(date: any) {
+        return parseInt(dayjs(date).format('YYYYMMDD'))
+    },
 
     formatDateScalar(date : any) {
         return moment(date, "YYYYMMDD").format('YYYY-MM-DD');
