@@ -590,6 +590,7 @@ export default {
         const Creat = () => {
             valueFacilityBusinesses.value.map((val: any) => {
                 delete val.__KEY__
+                delete val.rowIndex
                 delete val.dataImg
                 val.startYearMonth = dayjs(val.startYearMonth).format('YYYY-MM-DD')
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
