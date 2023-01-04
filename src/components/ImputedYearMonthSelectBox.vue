@@ -80,9 +80,7 @@ export default defineComponent({
 		if (props.messRequired != "") {
 			messageRequired.value = props.messRequired;
 		}
-		const onValueChanged = (val: any) => {
-			console.log(val.value);
-
+		const onValueChanged = (val: any) => { 
 			emit('update:valueInput', val.value)
 		}
 

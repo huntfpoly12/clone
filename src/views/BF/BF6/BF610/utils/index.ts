@@ -2,8 +2,8 @@ export const dataSearchUtil = {
     "filter": {
         "page": 1,
         "rows": 10,
-        "imputedYearMonth": "2022-06",
-        "paymentYearMonth": "2022-01",
+        "imputedYearMonth": 202206,
+        "paymentYearMonth": 202201,
         "reportType": null, //1 or 6
         "regular": false,
         "revised": false,

@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSave++" />
     <div id="pa-520" class="page-content">
@@ -172,15 +171,12 @@ export default defineComponent({
             refetchData()
         })
         // ======================= WATCH ==================================
-        watch(error, (value) => {
-            console.log(value?.message);
+        watch(error, (value) => { 
             if (value?.message === 'Response not successful: Received status code 400') {
                 notification('error','Có mỗi cái id mà ko nhập được')
             }
         })
         watch(result, (value) => {
-            console.log(value);
-
             if (value) {
                 dataSource.value = value.getEmployeeWageDailies
                 totalUserOnl.value = 0

@@ -169,7 +169,8 @@ export default defineComponent({
                 ...originDataInputUpdate
             },
         })
-        let indexChange = ref(0)
+        let indexChange = ref(1)
+        let trigger = ref(true)
         // ================== GRAPQL ====================================
         const {
             loading: loading,
@@ -191,9 +192,11 @@ export default defineComponent({
             refetch: refectchDetail,
             onResult: resApiGetEmployeeWageDaily,
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
         resApiGetEmployeeWageDaily((e: any) => {
+            trigger.value = false
             if (e.data) {
                 let res = e.data.getEmployeeWageDaily
                 originDataUpdate.value.employeeId = res.employeeId
@@ -209,9 +212,7 @@ export default defineComponent({
                 originDataUpdate.value.input.dailyWage = res.dailyWage
                 originDataUpdate.value.input.monthlyWage = res.monthlyWage
                 dataReturn.value = res.deductionItems
-
                 // delay push data to form caculate 
-
                 let dataAddDedution: any = []
                 arrDeduction.value?.map((val: any) => {
                     let arrReturn = addDedution(val.itemCode)
@@ -225,7 +226,6 @@ export default defineComponent({
                 })
                 if (dataAddDedution)
                     originDataUpdate.value.input.deductionItems = dataAddDedution
-
             }
         })
 
@@ -242,20 +242,20 @@ export default defineComponent({
             notification('success', '업그레이드가 완료되었습니다!')
         })
         // ================== WATCH ====================================
-        watch(() => props.idRowEdit, (res) => {
-            console.log(res);``
-
-            if (indexChange.value < 2) {
-                originDataDetail.value.employeeId = res
-                refectchDetail()
-            } else
-                modalStatusChange.value = true
-            indexChange.value = 0
-        }, { deep: true })
-
         watch(originDataUpdate, (res) => {
             indexChange.value++
         }, { deep: true })
+
+        watch(() => props.idRowEdit, (res) => {
+            if (indexChange.value <= 2) {
+                originDataDetail.value.employeeId = res
+            } else
+                modalStatusChange.value = true
+            indexChange.value = 1
+
+        }, { deep: true })
+
+
 
         watch(() => arrDeduction, (res) => {
             let total = 0
@@ -347,7 +347,6 @@ export default defineComponent({
                 document.getElementById('action-update')?.click()
             originDataDetail.value.employeeId = props.idRowEdit
             refectchDetail()
-            indexChange.value = 0
         }
         return {
             originDataUpdate, messageMonthlySalary, totalPayDifferen, totalDeduction, arrDeduction, radioCheckPersenPension, loading, totalAmountDifferencePayment, messageDaylySalary, modalStatusChange,
