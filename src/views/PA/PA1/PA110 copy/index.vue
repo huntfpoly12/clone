@@ -1,13 +1,14 @@
 <template>
   <div>
+
   <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
-  <div id="pa-110" class="page-content">
+  <div id="pa-110" class="page-content">{{ dataSource }}
     <a-row>
       <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true">
-          <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
+          <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year="{ }">
             <span>지급연월</span>
           </template>
@@ -202,6 +203,7 @@
     </a-row>
     <a-row>
       <a-col :span="12" class="custom-layout">
+        <a-spin :spinning="loadingTaxPayInfo" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
             :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
@@ -243,11 +245,17 @@
               <DxTotalItem column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" />
             </DxSummary>
           </DxDataGrid>
+        </a-spin>
       </a-col>
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-        <FormDataComponent :dataIncomeWage="dataIncomeWage" :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem"/>
+        <FormDataComponent :dataIncomeWage="dataIncomeWage" :arrayEmploySelect="arrayEmploySelect"
+          :actionUpdateItem="actionUpdateItem" :actionAddItem="actionAddItem" :statusButton="statusButton"
+          @createdDone="createdDone" :updateData="updateData" :actionSaveItem="actionSaveItem"
+          @loadingTableInfo="loadingTableInfo" />
       </a-col>
- 
+      <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
+        @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
+        @dataAddIncomeProcess="dataAddIncomeProcess" />
     </a-row>
   </div>
   
@@ -261,17 +269,22 @@ import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
+import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent2.vue"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
+import { sampleDataIncomeWage, sampleFormIncomeWage } from "./utils/index"
 import filters from "@/helpers/filters";
 import notification from "@/utils/notification"
+const actionSaveItem: any = ref<number>(0)
+import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
+import DeductionPopup from "./components/Popup/DeductionPopup.vue"
+import InsurancePopup from "./components/Popup/InsurancePopup.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
 import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
-import { sampleDataIncomeWage } from "./utils/index"
-import { WithholdingStatusReport } from "@bankda/jangbuda-common";
+import { log } from "handsontable/helpers";
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -289,8 +302,20 @@ export default defineComponent({
     DxButton,
     DxSummary,
     DxTotalItem,
+    EditOutlined,
+    HistoryOutlined,
+    SearchOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    MailOutlined,
+    PrinterOutlined,
+    DeleteOutlined,
+    SaveOutlined,
     SelectActionComponent,
+    EmploySelect,
     ProcessStatus,
+    DeductionPopup,
+    InsurancePopup,
     FormDataComponent,
     CopyMonth,
     EmployeeInfoSettment
@@ -301,89 +326,80 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page)
     const move_column = computed(() => store.state.settings.move_column)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
-    const processKey = computed(() =>store.state.common.processKeyPA110)
-    const dataSource = ref<any>([])
-    const dataCustomRes = ref<any>([])
-    const dataTaxPayInfo = ref<any>([])
-    const dataIncomeWage = ref({...sampleDataIncomeWage})
+
+    let statusButton = ref()
+    const modalCopy = ref<boolean>(false);
     const triggerIncomeWage = ref<boolean>(true)
+    const triggerProcessIncomeWages = ref<boolean>(true)
+    const triggerIncomeWages = ref<boolean>(true)
     const triggeraxPayInfo = ref<boolean>(true)
-    const actionAddItem = ref<boolean>(true)
-    const dataRows = ref([])
-    const actionSaveItem= ref<number>(0)
-    // call api getIncomeProcessWages for first table 
+    const dataRows: any = ref([])
+    const actionAddItem: any = ref<boolean>(true)
+    const actionUpdateItem: any = ref<number>(1)
+    const dataModalCopy: any = ref()
+    const arrDataPoint: any = ref([])
+
+    store.state.common.processKeyPA110 = {
+      imputedYear: globalYear.value,
+      imputedMonth: dayjs().month() + 1,
+      paymentYear: globalYear.value,
+      paymentMonth: dayjs().month() + 1,
+    }
+
+    watch(globalYear, (newValue)=>{
+      processKey.imputedYear = globalYear.value;
+      processKey.paymentYear = globalYear.value;
+ 
+    })
+    const processKey = reactive({
+      imputedYear: globalYear.value,
+      imputedMonth: dayjs().month() + 1,
+      paymentYear: globalYear.value,
+      paymentMonth: dayjs().month() + 1,
+      })
+    let dataCustomRes: any = ref([])
+    const dataIncomeWage: any = ref({ ...sampleDataIncomeWage })
+
+    const dataSource: any = ref([])
+    let status: any = ref()
+    const dataTaxPayInfo: any = ref([])
+    const formIncomeWageDaily = reactive({ ...sampleFormIncomeWage })
+    const imputedYear = ref('')
+    const imputedMonth = ref('')
+    const arrayEmploySelect: any = ref([])
+    const originDataProcessIncome = ref({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      // imputedMonth: dayjs().month(),
+    })
+    const originDataIncomeWage = reactive({
+      companyId: companyId,
+      processKey: processKey,
+      incomeId: 0,
+    })
+    let originDataIncomeWages = reactive({
+      companyId: companyId,
+      processKey: processKey,
+    })
+    let popupData = ref([])
+    // ======================= GRAPQL ================================
     const {
       refetch: refetchDataProcessIncomeWages,
       result: resIncomeProcessWages,
       loading: loadingIncomeProcessWages
-    } = useQuery(queries.getIncomeProcessWages, {
-      companyId: companyId,
-      imputedYear: globalYear,
-      imputedMonth: dayjs().month() + 1,
-    }, () => ({
+    } = useQuery(queries.getIncomeProcessWages, originDataProcessIncome, () => ({
+      enabled: triggerProcessIncomeWages.value,
       fetchPolicy: "no-cache",
     }))
-    // get data table detail getIncomeProcessWages
-    watch(resIncomeProcessWages, (value) => {
-      if (value) { 
-        // set first row in table Income Process Wages
-        dataSource.value = [{
-          companyId: companyId,
-        }]
-
-        dataCustomRes.value = [
-          { id: 1, name: "재직(퇴사)" },
-          { id: 2, name: "과세급여", },
-          { id: 3, name: "비과세급여", },
-          { id: 4, name: "급여총액", },
-          { id: 5, name: "국민연금", },
-          { id: 6, name: "건강보험", },
-          { id: 7, name: "장기요양", },
-          { id: 8, name: "고용보험", },
-          { id: 9, name: "소득세", },
-          { id: 10, name: "지방소득세", },
-          { id: 11, name: "공제총액", },
-          { id: 12, name: "차인지급액", },
-        ]
-        value.getIncomeProcessWages.forEach((data: any) => {
-          dataSource.value['month' + data.imputedMonth] = data
-
-        });
-      }
-    }
-    )
-
-    // get getIncomeWages table
     const {
-      refetch: refetchDataTaxPayInfo,
-      result: resultTaxPayInfo,
-      loading: loadingTaxPayInfo,
-    } = useQuery(queries.getIncomeWages, {
-      companyId: companyId,
-      processKey: {
-        imputedYear: globalYear,
-        imputedMonth: dayjs().month() + 1,
-        paymentYear: globalYear,
-        paymentMonth: dayjs().month() + 1,
-      },
-    }, () => ({
+      refetch: refetchDataIncomeWages,
+      result: resIncomeWages,
+      loading: loadingIncomeWages
+    } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
+      enabled: triggerIncomeWages.value,
       fetchPolicy: "no-cache",
     }))
-    watch(resultTaxPayInfo, (value) => {
-      dataTaxPayInfo.value = value.getIncomeWages
-    })
 
-    // get data detail row  getIncomeWages table 
-    const originDataIncomeWage = reactive({
-      companyId: companyId,
-      processKey:{
-        imputedYear: globalYear,
-        imputedMonth: dayjs().month() + 1,
-        paymentYear: globalYear,
-        paymentMonth: dayjs().month() + 1,
-      },
-      incomeId: 0,
-    })
     const {
       refetch: refetchDataIncomeWage,
       result: resultIncomeWage,
@@ -392,54 +408,14 @@ export default defineComponent({
       enabled: triggerIncomeWage.value,
       fetchPolicy: "no-cache",
     }))
-    watch(resultIncomeWage, (value) => {
-      if (value) {
-        dataIncomeWage.value = value.getIncomeWage
-      }
-    })
-    /**
-     * action edit employ tax pay
-     */
-    const actionEditTaxPay = (data: any) => {
-      dataIncomeWage.value = data.data
-      actionAddItem.value = false
-    }
-    const selectionChanged = (data: any) => {
-      dataRows.value = data.selectedRowsData
-    }
-    // 
-    /**
-     *  Add new value
-     */
-    const onSubmit = (e: any) => {
-      actionSaveItem.value++
-    }
-    /**
-     *  Update value 
-     */
-    const updateData = (e: any) => {
-
-    }
-    /**
-     * show detail value of month
-     * @param month 
-     */
-    const showDetailSelected = (month : any) => {
-      
-    }
-    /**
-     * copy data from other month
-     * @param month 
-     */
-    const copyMonth = (month: number) => {
-    }
-
-    const loadingTableInfo = () => {
-      refetchDataTaxPayInfo()
-      refetchDataProcessIncomeWages()
-    }
-
-
+    const {
+      refetch: refetchDataTaxPayInfo,
+      result: resultTaxPayInfo,
+      loading: loadingTaxPayInfo,
+    } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
+      enabled: triggeraxPayInfo.value,
+      fetchPolicy: "no-cache",
+    }))
     const {
       mutate: actionChangeIncomeProcess,
       onError: errorChangeIncomeProcess,
@@ -452,37 +428,203 @@ export default defineComponent({
       notification('success', `업데이트 완료!`)
       refetchDataProcessIncomeWages()
     })
+    // ======================= WATCH ==================================
+    // get data table detail getIncomeProcessWages
+    watch(resIncomeProcessWages, (value) => {
+      arrDataPoint.value = [];
+      if (value) {
+
+        let respon = value.getIncomeProcessWages
+        dataSource.value = [{
+          companyId: companyId,
+        }]
+        dataCustomRes.value = [
+          { id: 1, name: "재직(퇴사) " },
+          { id: 2, name: "과세급여", },
+          { id: 3, name: "비과세급여", },
+          { id: 4, name: "급여총액", },
+          { id: 5, name: "국민연금", },
+          { id: 6, name: "건강보험", },
+          { id: 7, name: "장기요양", },
+          { id: 8, name: "고용보험", },
+          { id: 9, name: "소득세", },
+          { id: 10, name: "지방소득세", },
+          { id: 11, name: "공제총액", },
+          { id: 12, name: "차인지급액", },
+        ]
+        respon.forEach((val: any, index: any) => {
+          arrDataPoint.value.push({
+            imputedYear: val.imputedYear,
+            imputedMonth: val.imputedMonth,
+            paymentYear: val.paymentYear,
+            paymentMonth: val.paymentMonth,
+          })
+          status.value = respon[0].status
+          let dataAdd = {
+            imputedYear: val.imputedYear,
+            imputedMonth: val.imputedMonth,
+            paymentYear: val.paymentYear,
+            paymentMonth: val.paymentMonth,
+          }
+          if (JSON.stringify(dataAdd) == JSON.stringify(processKey)) {
+            status.value = val.status
+          }
+          dataSource.value[0]['month' + val.imputedMonth] = val
+
+          // data table detail
+          dataCustomRes.value[0]['month' + val.imputedMonth] = {
+            value: `${[val.value].reduce((total, status) => (status != 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })} (${[val].reduce((total, status) => (status == 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })})`,
+            ...dataAdd
+          }
+          dataCustomRes.value[1]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
+            ...dataAdd
+          }
+          dataCustomRes.value[2]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.totalTaxPay),
+            ...dataAdd
+          }
+          dataCustomRes.value[3]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.totalTaxfreePay),
+            ...dataAdd
+          }
+          dataCustomRes.value[4]['month' + val.imputedMonth] = {
+
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+            ...dataAdd
+          }
+          dataCustomRes.value[5]['month' + val.imputedMonth] = {
+            value: 0,
+            ...dataAdd
+          }
+          dataCustomRes.value[6]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+            ...dataAdd
+          }
+          dataCustomRes.value[7]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+            ...dataAdd
+          }
+          dataCustomRes.value[8]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+            ...dataAdd
+          }
+          dataCustomRes.value[9]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
+            ...dataAdd
+          }
+          dataCustomRes.value[10]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+            ...dataAdd
+          }
+          dataCustomRes.value[11]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.totalDeduction),
+            ...dataAdd
+          }
+          dataCustomRes.value[11]['month' + val.imputedMonth] = {
+            value: filters.formatCurrency(val.incomeStat?.actualPayment),
+            ...dataAdd
+          }
+        })
+      }
+    })
+    watch(resultIncomeWage, (value) => {
+      if (value) {
+        dataIncomeWage.value = value.getIncomeWage
+      }
+    })
+    watch(resultTaxPayInfo, (value) => {
+      dataTaxPayInfo.value = value.getIncomeWages
+      dataTaxPayInfo.value.map((value: any) => {
+        arrayEmploySelect.value.push({
+          employeeId: value.employee.employeeId,
+          name: value.employee.name,
+          idCardNumber: value.employee.idCardNumber,
+          status: value.employee.status,
+          foreigner: value.employee.foreigner,
+          midTermSettlement: value.midTermSettlement
+        }
+        )
+      })
+    })
+
+    const customizeTotalItemCode1 = (data: any) => {
+      let totalItemCode1: any = 0
+      dataTaxPayInfo.value.map((val: any) => {
+      })
+      return `1${filters.formatCurrency(totalItemCode1)}`;
+    }
+    const loadingTableInfo = () => {
+      refetchDataTaxPayInfo()
+      refetchDataProcessIncomeWages()
+    }
+    // ======================= FUNCTION ================================
+    // function get total item code
     const statusComfirm = () => {
       actionChangeIncomeProcess({
         companyId: companyId,
         processKey: { ...processKey },
-        status: ''
+        status: status.value
       })
     }
+
+    const updateData = (e: any) => {
+      actionUpdateItem.value++
+    }
+    const onSubmit = (e: any) => {
+      actionSaveItem.value++
+    }
+    const actionEditTaxPay = (data: any) => {
+      dataIncomeWage.value = data.data
+      actionAddItem.value = false
+    }
+    const addMonth = (month: number) => {
+      modalCopy.value = true
+    }
+    const actionCopySuccess = () => {
+      modalCopy.value = false
+    }
+    const selectionChanged = (data: any) => {
+      dataRows.value = data.selectedRowsData
+    }
+    const copyMonth = (month: number) => {
+      dataModalCopy.value = month
+      modalCopy.value = true
+
+    }
+    const dataAddIncomeProcess = (data: any) => {
+      dataSource.value[0]['month' + data.imputedMonth] = data
+      dataSource.value[0]['month' + data.imputedMonth].status = 10
+
+    }
+    const createdDone = () => {
+      triggerProcessIncomeWages.value = true
+      refetchDataIncomeWages()
+    }
+    const showDetailSelected = (data: any) => {
+      status.value = data.status
+      store.state.common.processKeyPA110.paymentYear = data.paymentYear
+      store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
+      store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
+    }
     return {
-      globalYear,
-      per_page,
-      move_column,
-      colomn_resize,
-      processKey,
+      loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
+      status, processKey,
+      dataSource, originDataIncomeWages,originDataIncomeWage, globalYear, statusButton,
+      per_page, move_column, colomn_resize,
+      refetchDataProcessIncomeWages, refetchDataIncomeWages,
       onSubmit,
-      updateData,
-      dataSource,
-      dataCustomRes,
-      showDetailSelected,
-      actionAddItem,
-      loadingIncomeProcessWages,
-      copyMonth,
-      originDataIncomeWage,
-      loadingTaxPayInfo,
-      dataTaxPayInfo,
-      actionEditTaxPay,
-      selectionChanged,
       dataIncomeWage,
-      loadingTableInfo,
-      dataRows,
-      statusComfirm,
-      actionSaveItem
+      popupData,
+      selectionChanged,
+      arrayEmploySelect,
+      imputedYear,
+      imputedMonth,
+      dataCustomRes, actionSaveItem,
+      formIncomeWageDaily, copyMonth, dataModalCopy, arrDataPoint, statusComfirm, dataAddIncomeProcess, customizeTotalItemCode1,
+      showDetailSelected,
+      dataTaxPayInfo, dataRows, actionAddItem, loadingTableInfo, updateData, actionUpdateItem, createdDone,
+      actionEditTaxPay, modalCopy, actionCopySuccess, addMonth
     }
 
   },
