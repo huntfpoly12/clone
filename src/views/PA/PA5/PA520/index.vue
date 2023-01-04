@@ -128,7 +128,7 @@ export default defineComponent({
         const actionChangeComponent = ref(1)
         const actionSave = ref(0)
         const contentDelete = Message.getMessage('PA120', '002').message
-        const modalStatus = ref(false) 
+        const modalStatus = ref(false)
         const dataSource = ref([])
         const store = useStore()
         const totalUserOnl = ref(0)
@@ -153,6 +153,7 @@ export default defineComponent({
             refetch: refetchData,
             result,
             loading,
+            error,
         } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
@@ -171,7 +172,15 @@ export default defineComponent({
             refetchData()
         })
         // ======================= WATCH ==================================
+        watch(error, (value) => {
+            console.log(value?.message);
+            if (value?.message === 'Response not successful: Received status code 400') {
+                notification('error','Có mỗi cái id mà ko nhập được')
+            }
+        })
         watch(result, (value) => {
+            console.log(value);
+
             if (value) {
                 dataSource.value = value.getEmployeeWageDailies
                 totalUserOnl.value = 0

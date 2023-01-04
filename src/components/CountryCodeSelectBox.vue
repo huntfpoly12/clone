@@ -32,7 +32,7 @@
 	</DxSelectBox>
 </template>
 <script lang="ts">
-import { defineComponent, ref, getCurrentInstance } from "vue";
+import { defineComponent, ref, getCurrentInstance, watch } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 import DxSelectBox from "devextreme-vue/select-box";
 import ArrayStore from "devextreme/data/array_store";
@@ -68,6 +68,10 @@ export default defineComponent({
 			type: String,
 			default: "",
 		},
+		hiddenOptionKR: {
+			type: Boolean,
+			default: false
+		}
 	},
 	components: {
 		DxSelectBox,
@@ -87,10 +91,18 @@ export default defineComponent({
 			data: dataSelect.value,
 			key: "key",
 		});
-		enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
-			dataSelect.value.push({ key: codeCountry, value: nameCountry });
-		});
 
+		if (props.hiddenOptionKR) {
+			enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
+				if (codeCountry != "KR") {
+					dataSelect.value.push({ key: codeCountry, value: nameCountry });
+				}
+			});
+		} else {
+			enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
+				dataSelect.value.push({ key: codeCountry, value: nameCountry });
+			});
+		}
 		const onValueChanged = (val: any) => {
 			emit('textCountry', getEnumValue(CountryCode, val.value))
 			emit('update:valueCountry', val.value)
