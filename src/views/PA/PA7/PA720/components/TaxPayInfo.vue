@@ -1,5 +1,6 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
+    {{ focusedRowKey }}
     <DxDataGrid
       :show-row-lines="true"
       :hoverStateEnabled="true"
@@ -13,7 +14,7 @@
       :auto-navigate-to-focused-row="true"
       v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
-      @focused-row-changed="onFocusedRowChanged"
+      :onRowClick="onRowClick"
     >
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
@@ -55,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, computed, reactive } from 'vue';
+import { ref, defineComponent, watch, computed, reactive, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useQuery } from '@vue/apollo-composable';
 import {
@@ -143,9 +144,10 @@ export default defineComponent({
     }));
     resIncomeExtras((res) => {
       dataSourceDetail.value = res.data.getIncomeExtras;
-      if (firsTimeRow.value) {
+      if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
-        onFocusedRowChanged({ row: { data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } } });
+        onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
+        store.commit('changeKeyActive', res.data.getIncomeExtras[0]?.employeeId ?? 1);
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -201,9 +203,19 @@ export default defineComponent({
         return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
       });
     };
+    const isErrorForm = computed(() => store.getters.isErrorForm);
+    const keyActive = computed(() => store.getters.keyActive);
     const focusedRowKey = ref<Number>(1);
-    const onFocusedRowChanged = (e: any) => {
-      const data = e.row && e.row.data;
+    watch(focusedRowKey, () => {
+      console.log(`output->keyActive.value`, keyActive.value);
+      if(store.state.pending)
+      if (isErrorForm.value) {
+        focusedRowKey.value = keyActive.value;
+      }
+    });
+    const onRowClick = (e: any) => {
+      console.log(`output->e`, e);
+      const data = e.data && e.data;
       updateParam = {
         companyId: companyId,
         processKey: {
@@ -237,7 +249,7 @@ export default defineComponent({
       triggerDetail,
       dataTableDetail,
       focusedRowKey,
-      onFocusedRowChanged,
+      onRowClick,
       firsTimeRow,
     };
   },
