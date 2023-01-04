@@ -1,12 +1,12 @@
 export const initialState = {
         name: "",
         foreigner: false,
-        nationality: null,
-        nationalityCode: null,
+        nationality: '대한민국',
+        nationalityCode: 'KR',
         stayQualification: null,
         residentId: "",
         email: "",
-        employeeId: 0,
+        employeeId: null,
         incomeTypeCode: "940100",
         incomeTypeName: "저술가",
 }

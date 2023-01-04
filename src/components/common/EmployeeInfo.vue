@@ -9,7 +9,7 @@
                 key="black" :color="convertBirthDay(idCardNumber)??'red'">
                 <template #title>
                     <div v-if="convertBirthDay(idCardNumber)">{{ convertBirthDay(idCardNumber) }}</div>
-                    <div v-else class="error">date error</div>
+                    <div v-else class="error">Error</div>
                 </template>
                 <div class="text-center">
                     {{ name }}
