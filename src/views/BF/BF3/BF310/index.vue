@@ -229,8 +229,8 @@ export default defineComponent({
         }
         const searching = (e: any) => {
             originData.page = 1
-            originData.startDate = formarDate(rangeDate.value[0]);
-            originData.finishDate = formarDate(rangeDate.value[1]);
+            originData.startDate = parseInt(formarDate(rangeDate.value[0]))
+            originData.finishDate = parseInt(formarDate(rangeDate.value[1]))
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             refetchData()
@@ -238,8 +238,8 @@ export default defineComponent({
         }
         const changePage = (e: any) => {
             actionSearch.value = true
-            originData.startDate = formarDate(rangeDate.value[0]);
-            originData.finishDate = formarDate(rangeDate.value[1]);
+            originData.startDate = parseInt(formarDate(rangeDate.value[0]))
+            originData.finishDate = parseInt(formarDate(rangeDate.value[1]))
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             refetchData()
