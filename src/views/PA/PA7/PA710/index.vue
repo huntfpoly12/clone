@@ -123,7 +123,7 @@
                         <a-col :span="24">
                             <a-form-item label="외국인 체류자격 " :label-col="labelCol" class="red">
                                 <type-code-select-box style="width: 310px" v-model:valueInput="formState.incomeTypeCode"
-                                    @textTypeCode="textTypeCode" :required="true">
+                                    @textTypeCode="textTypeCode" :required="true" :disabled="checkForm">
                                 </type-code-select-box>
                             </a-form-item>
                         </a-col>
