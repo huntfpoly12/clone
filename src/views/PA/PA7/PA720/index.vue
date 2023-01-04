@@ -1,5 +1,5 @@
 <template>
-  <action-header title="기타소득자료입력" @actionSave="onSubmit" :buttonSave="false" />
+  <action-header title="기타소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-720" class="page-content">
     <a-row>
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
@@ -257,7 +257,7 @@
       </a-spin>
     </a-row>
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
-      <a-col>
+      <a-col style="display: flex">
         <DxButton
           :text="'귀' + incomeExtrasParams?.processKey?.imputedYear + '-' + formatMonth(incomeExtrasParams?.processKey?.imputedMonth)"
           :style="{ color: 'white', backgroundColor: 'gray' }"
@@ -384,6 +384,11 @@ export default defineComponent({
     const dataSource = ref<[]>([]);
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
+    const PA720 = computed(() => store.getters.isErrorForm);
+    const PA730 = computed(() => store.state.PA730);
+    const total = computed(() => store.getters)
+    console.log(`output->PA720`, total.value);
+    console.log(`output->PA720`, PA730.value);
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const trigger = ref<boolean>(true);
@@ -461,10 +466,16 @@ export default defineComponent({
         formTaxRef.value.isResetComponent = !formTaxRef.value.isResetComponent;
       }, 200);
     };
+    //submit
+    const isErrorForm = computed(() => store.getters.PAisErrorForm);
+    console.log(`output->isErrorForm.value`,isErrorForm.value)
     const onSubmit = () => {
       actionSave.value++;
-      isLoadNewForm.value = true;
-      taxPayRef.value.firsTimeRow = true;
+      if(store.state.pending)
+      if (!isErrorForm.value) {
+        isLoadNewForm.value = true;
+        taxPayRef.value.firsTimeRow = true;
+      }
     };
     const onFormDone = () => changeFommDone.value++;
     onDoneChangeIncomeProcessExtraStatusDone(() => {
@@ -491,7 +502,7 @@ export default defineComponent({
     const addItem = () => {
       if (JSON.stringify(formTaxRef.value.dataAction.input) != JSON.stringify(dataActionUtils.input)) {
         popupAddStatus.value = true;
-        titleModalConfirm.value="Do you want to reset your form?"
+        titleModalConfirm.value = 'Do you want to reset your form?';
       }
     };
     //does save when data and row change ?
@@ -518,11 +529,9 @@ export default defineComponent({
       const { employeeId, incomeTypeCode, paymentAmount, paymentDay, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax } = formTaxRef.value?.resultIncomeExtra.getIncomeExtra;
       let formInputInit = { paymentDay, employeeId, incomeTypeCode, paymentAmount, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax };
       let formInputData = formTaxRef.value.dataAction.input;
-      console.log(`output->`, JSON.stringify(formInputData));
-      console.log(`output->`, JSON.stringify(formInputInit));
       if (JSON.stringify(formInputData) != JSON.stringify(formInputInit)) {
         isLoadNewForm.value = false;
-        titleModalConfirm.value="변경 내용을 저장하시겠습니까?"
+        titleModalConfirm.value = '변경 내용을 저장하시겠습니까?';
         popupAddStatus.value = true;
       } else {
         editTaxParam.value = emit;
@@ -546,7 +555,7 @@ export default defineComponent({
     // fnc click month
     const showDetailSelected = (obj: any) => {
       taxPayRef.value.firsTimeRow = true;
-      incomeExtrasParams.processKey.imputedMonth = obj.imputedMonth;
+      incomeExtrasParams.processKey.imputedMonth = obj?.imputedMonth && obj?.imputedMonth;
       incomeExtrasParams.processKey.imputedYear = obj.imputedYear;
       incomeExtrasParams.processKey.paymentYear = obj.paymentYear;
       incomeExtrasParams.processKey.paymentMonth = obj.paymentMonth;
@@ -625,7 +634,9 @@ export default defineComponent({
       });
       if (isRunOnce.value) {
         isRunOnce.value = false;
-        showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
+        if (columnData.value[0]['month_' + `${dayjs().month() + 1}`]) {
+          showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
+        }
       }
     });
     return {
