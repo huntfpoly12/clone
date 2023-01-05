@@ -1,7 +1,6 @@
 <template>
   <standard-form name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px">
     <a-spin :spinning="newDateLoading" size="large">
-      {{ dataAction }}
       <a-row>
         <a-col :span="24">
           <a-form-item label="사업소득자" label-align="right">
@@ -122,9 +121,6 @@ export default defineComponent({
     DxSelectBox,
   },
   props: {
-    actionSave: {
-      type: Number,
-    },
     editTax: {
       required: true,
       type: Object,
@@ -179,6 +175,8 @@ export default defineComponent({
     let incomeAmount = ref(0);
     let incomeTax = ref(0);
     let localIncomeTax = ref(0);
+    //store
+    const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
     //watch for changes
     watch(
       [() => props.editTax, () => props.isLoadNewForm],
@@ -270,7 +268,7 @@ export default defineComponent({
       requiredExpenses: false,
     });
     watch(
-      dataAction.input,
+      ()=>dataAction.input,
       (newVal) => {
         if (newVal.employeeId) {
           validations.employeeId = false;
@@ -291,11 +289,12 @@ export default defineComponent({
       { deep: true }
     );
     // SUBMIT FORM
+
     watch(
-      () => props.actionSave,
+      actionSavePA720,
       () => {
-        store.commit('changeKeyActive', dataAction.input.employeeId);
-        store.commit('pending');
+        store.commit('common/keyActivePA720', dataAction.input.employeeId);
+        // store.commit('pending');
         if (!dataAction.input.employeeId) {
           validations.employeeId = true;
         }
@@ -312,11 +311,10 @@ export default defineComponent({
           validations.taxRate = true;
         }
         if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
-          store.commit('hasError', true);
-          console.log(`output-`);
+          store.commit('common/isErrorFormPA720', true);
           return;
         }
-        store.commit('hasError', false);
+        store.commit('common/isErrorFormPA720', false);
         dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
         dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0]);
         dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1]);
@@ -331,6 +329,8 @@ export default defineComponent({
           return;
         }
         createIncomeExtra(dataAction);
+        let dataActionFake = JSON.parse(JSON.stringify(dataAction.input));
+        store.state.common.formInputInit = dataActionFake;
       }
     );
     // GET FORM
@@ -417,6 +417,7 @@ export default defineComponent({
       validations,
       resultIncomeExtra,
       onChangeInput,
+      actionSavePA720
     };
   },
 });
