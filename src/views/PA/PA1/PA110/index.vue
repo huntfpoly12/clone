@@ -259,7 +259,7 @@
           </a-spin>
       </a-col>
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-        <FormDataComponent :dataIncomeWage="dataIncomeWage" :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem" :actionUpdateItem="actionUpdateItem"/>
+        <FormDataComponent :dataIncomeWage="dataIncomeWage" :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem" :actionUpdateItem="actionUpdateItem"  @createdDone="createdDone" @loadingTableInfo="loadingTableInfo" />
       </a-col>
       <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
         @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
@@ -560,7 +560,9 @@ export default defineComponent({
             return monthClicked.value == monthInputed
     }
 
-
+    const createdDone = () => {
+      refetchDataTaxPayInfo()
+    }
     return {
       globalYear,
       per_page,
@@ -590,7 +592,8 @@ export default defineComponent({
       arrDataPoint,
       dataAddIncomeProcess,
       status,
-      setUnderline
+      setUnderline,
+      createdDone
     }
 
   },
