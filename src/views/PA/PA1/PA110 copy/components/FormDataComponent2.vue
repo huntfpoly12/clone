@@ -3,16 +3,16 @@
         <a-spin :spinning="loading" size="large">
             <a-row>
                 <a-col :span="24">
-                    <a-form-item label="사원">
+                    <a-form-item label="근무일수">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
-                            v-model:valueEmploy="dataIW.employee.employeeId" width="316px" />
+                            v-model:valueEmploy="dataIncomeWage.employee.employeeId" width="316px" />
                     </a-form-item>
                 </a-col>
             </a-row>
             <a-row>
                 <a-col :span="24">
                     <a-form-item label="지급일">
-                        <number-box width="200px" :min="1" v-model="dataIW.paymentDay" :max="31"
+                        <number-box width="200px" :min="1" v-model="dataIncomeWage.paymentDay" :max="31"
                             :spinButtons="true" />
                     </a-form-item>
                 </a-col>
@@ -25,23 +25,24 @@
                             사원별 급여명세서에 표시 됩니다.
                         </span>
                     </div>
+
+                    <a-form-item label="일하는 날" label-align="right">
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.workingDays"
+                            placeholder="일하는 날" />
+                    </a-form-item>
                     <a-form-item label="총근로시간" label-align="right">
-                        <div style="display: flex;align-items: center;">
-                            <text-number-box width="200px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
-                        </div>
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.totalWorkingHours"
+                            placeholder="총근로시간" />
                     </a-form-item>
                     <a-form-item label="연장근로시간" label-align="right">
-                         <div style="display: flex;align-items: center;">
-                            <text-number-box width="200px" v-model:valueInput="dataIW.overtimeWorkingHours" /><span style="padding-left: 5px;">시간</span>
-                        </div>
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.overtimeWorkingHours"
+                            placeholder="연장근로시간" />
                     </a-form-item> <a-form-item label="야간근로시간" label-align="right">
-                         <div style="display: flex;align-items: center;">
-                            <text-number-box width="200px" v-model:valueInput="dataIW.workingHoursAtNight"/><span style="padding-left: 5px;">시간</span>
-                        </div>
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.workingHoursAtNight"
+                            placeholder="야간근로시간" />
                     </a-form-item> <a-form-item label="휴일근로시간" label-align="right">
-                         <div style="display: flex;align-items: center;">
-                            <text-number-box width="200px" v-model:valueInput="dataIW.workingHoursOnHolidays" /><span style="padding-left: 5px;">시간</span>
-                        </div>
+                        <text-number-box width="200px" v-model:valueInput="dataIncomeWage.workingHoursOnHolidays"
+                            placeholder="휴일근로시간" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -52,6 +53,7 @@
                         <div class="text2">수당 비과세 합계 {{ $filters.formatCurrency(totalPayItemTaxFree) }}원</div>
                         <div class="text3">공제 합계 {{ $filters.formatCurrency(totalDeduction) }}원 </div>
                         <div>
+
                         </div>
                         <div class="text4">차인지급액 {{ $filters.formatCurrency(subPayment) }}원 </div>
                         <div class="text5">
@@ -64,7 +66,10 @@
 
                 </a-col>
             </a-row>
+
+
             <div class="header-text-3">급여 / 공제
+
             </div>
             <a-row :gutter="16">
                 <a-col :span="12">
@@ -147,6 +152,7 @@
             <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false" />
         </a-spin>
     </div>
+
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref, watch, computed, onMounted } from "vue";
@@ -210,19 +216,23 @@ export default defineComponent({
         let month1: any = ref(dayjs().format("YYYY-MM"))
         let month2: any = ref(dayjs().format("YYYY-MM"))
         const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
-        const dataIW: any = ref({ ...props.dataIncomeWage })
+        const dataIncomeWage: any = ref({ ...props.dataIncomeWage })
         const processKey = computed(() => store.state.common.processKeyPA110)
         const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
         const store = useStore();
         const dataConfigPayItems = ref();
         const dataConfigDeduction = ref();
+        let arrRefresh = ref()
         const triggerDetail = ref<boolean>(false);
         const triggerCalcIncome = ref<boolean>(false);
         const globalYear = computed(() => store.state.settings.globalYear);
         let formState2 = reactive<any>({
             ...initFormState2,
         });
-
+        const originData = ref({
+            companyId: companyId,
+            imputedYear: globalYear,
+        });
         const arrDeduction: any = ref()
         const calculateVariables = {
             companyId: companyId,
@@ -235,18 +245,19 @@ export default defineComponent({
         const {
             loading: loadingEmployeeWage,
             onResult: resEmployeeWage,
-        } = useQuery(queries.getEmployeeWages, {
-            companyId: companyId,
-            imputedYear: globalYear,
-        }, () => ({
+        } = useQuery(queries.getEmployeeWages, originData, () => ({
             fetchPolicy: "no-cache",
         }))
         resEmployeeWage(value => {
             arrayEmploySelect.value = value.data.getEmployeeWages
         })
-
+        // get WithholdingConfigPayItems
+        const originDataDetail = ref({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+        })
         watch(() => props.dataIncomeWage, (value) => {
-            dataIW.value = value
+            dataIncomeWage.value = value
             refetchConfigPayItems()
             refetchConfigDeduction()
         })
@@ -255,10 +266,7 @@ export default defineComponent({
             refetch: refetchConfigPayItems,
             result: resConfigPayItems,
             loading: loading1
-        } = useQuery(queries.getWithholdingConfigPayItems, {
-            companyId: companyId,
-            imputedYear: globalYear,
-        }, () => ({
+        } = useQuery(queries.getWithholdingConfigPayItems, originDataDetail, () => ({
             fetchPolicy: "no-cache",
         }))
         watch(resConfigPayItems, (value) => {
@@ -287,10 +295,7 @@ export default defineComponent({
             result: resConfigDeduction,
             loading: loading2,
             refetch: refetchConfigDeduction,
-        } = useQuery(queries.getWithholdingConfigDeductionItems, {
-            companyId: companyId,
-            imputedYear: globalYear,
-        }, () => ({
+        } = useQuery(queries.getWithholdingConfigDeductionItems, originDataDetail, () => ({
             fetchPolicy: "no-cache",
         }))
         watch(resConfigDeduction, (value) => {
@@ -472,7 +477,7 @@ export default defineComponent({
         // refresh value
         const addRow = () => {
 
-            dataIW.value = { ...initFormState1 }
+            dataIncomeWage.value = { ...initFormState1 }
             dataConfigDeduction.value.map((data: any) => {
                 data.value = 0
             })
@@ -489,11 +494,11 @@ export default defineComponent({
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
                 input: {
-                    workingDays: dataIW.value.workingDays,
-                    totalWorkingHours: dataIW.value.totalWorkingHours,
-                    overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
-                    workingHoursAtNight: dataIW.value.workingHoursAtNight,
-                    workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
+                    workingDays: dataIncomeWage.value.workingDays,
+                    totalWorkingHours: dataIncomeWage.value.totalWorkingHours,
+                    overtimeWorkingHours: dataIncomeWage.value.overtimeWorkingHours,
+                    workingHoursAtNight: dataIncomeWage.value.workingHoursAtNight,
+                    workingHoursOnHolidays: dataIncomeWage.value.workingHoursOnHolidays,
                     payItems: formState2.payItems,
                     deductionItems: formState2.deductionItems,
                 }
@@ -508,13 +513,13 @@ export default defineComponent({
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
                 input: {
-                    workingDays: dataIW.value.workingDays,
-                    totalWorkingHours: dataIW.value.totalWorkingHours,
-                    overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
-                    workingHoursAtNight: dataIW.value.workingHoursAtNight,
-                    workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
-                    paymentDay: dataIW.value.paymentDay,
-                    employeeId: dataIW.value.employee.employeeId,
+                    workingDays: dataIncomeWage.value.workingDays,
+                    totalWorkingHours: dataIncomeWage.value.totalWorkingHours,
+                    overtimeWorkingHours: dataIncomeWage.value.overtimeWorkingHours,
+                    workingHoursAtNight: dataIncomeWage.value.workingHoursAtNight,
+                    workingHoursOnHolidays: dataIncomeWage.value.workingHoursOnHolidays,
+                    paymentDay: dataIncomeWage.value.paymentDay,
+                    employeeId: dataIncomeWage.value.employee.employeeId,
                     payItems: formState2.payItems,
                     deductionItems: formState2.deductionItems
                 }
@@ -522,7 +527,7 @@ export default defineComponent({
             actionCreated(variables)
         }
         watch(() => props.dataIncomeWage, (newValue) => {
-            dataIW.value = newValue
+            dataIncomeWage.value = newValue
             triggerDetail.value = true
         }, { deep: true })
         // action add new
@@ -554,10 +559,10 @@ export default defineComponent({
         }
         return {
             formState2, loading1, loading2, loading,
-            rangeDate, modalDeductions,globalYear,
+            rangeDate, modalDeductions,
             modalInsurance, modalDeteleTaxpay, modalDeteleMidTerm,
             totalPayItem, totalPayItemTaxFree, totalPayItemTax,
-            totalDeduction, dataIW,
+            totalDeduction, dataIncomeWage,
             subPayment, arrayEmploySelect,
             calculateTax, loadingEmployeeWage, arrDeduction,
             updateIncomeWage, actionUpdate, calculate, createWage, popupCompareData,

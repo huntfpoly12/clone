@@ -94,7 +94,6 @@ import { defineComponent, reactive, ref, watch, computed, onUnmounted } from "vu
 import { useStore } from "vuex";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-
 import mutations from "@/graphql/mutations/PA/PA1/PA120/index";
 import queries from "@/graphql/queries/common/index";
 import notification from "@/utils/notification";
@@ -104,7 +103,7 @@ import {
   initFormStateTab1,
 } from "../../utils/index";
 import { companyId } from "@/helpers/commonFunction";
-
+import filters from "@/helpers/filters";
 export default defineComponent({
   components: {
   },
@@ -239,6 +238,8 @@ export default defineComponent({
           imputedYear: globalYear.value,
           input: {
             ...formStateTab1,
+            joinedAt: filters.formatDateToInt(formStateTab1.joinedAt),
+            leavedAt : filters.formatDateToInt(formStateTab1.leavedAt)
           },
         };
         createEmployeeWage(dataNew);

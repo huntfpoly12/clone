@@ -33,6 +33,9 @@ const filters = {
     formatDateScalar(date : any) {
         return moment(date, "YYYYMMDD").format('YYYY-MM-DD');
     },
+    formatDateToInt(date : any) {
+      return parseInt(dayjs(date).format('YYYY-MM-DD'))
+    },
     formatRelation(idRelation: number) {
         const obj = dependantsRelation.filter((item: any) => {
             let check = item.label.charAt(0) == idRelation;
