@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="false" size="large"> 
+    <a-spin :spinning="false" size="large">
         <div id="pa-520" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1">
@@ -7,7 +7,8 @@
                         :actionSave="actionSave" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여/공제">
-                    <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" :actionSave="actionSave" />
+                    <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" :actionSave="actionSave"
+                        :changeValueTest="changeVal" />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -18,6 +19,7 @@ import { defineComponent, ref, watch } from "vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import Tab1Component from "./ComponentEdit/Tab1Component.vue";
 import Tab2Component from "./ComponentEdit/Tab2Component.vue";
+import { useStore } from 'vuex';
 export default defineComponent({
     components: {
         DxSelectBox,
@@ -30,12 +32,13 @@ export default defineComponent({
         actionSave: Number
 
     },
-    setup(props, { emit }) { 
+    setup(props, { emit }) {
+        const store = useStore();
         // ============ FUNCTION ============================= 
         const setModalVisible = () => {
             emit('closePopup', false)
         }
-        const activeKey = ref()
+        const activeKey = ref('1')
         watch(() => props.idRowEdit, (value) => {
             if (value) {
                 activeKey.value = '1'
@@ -46,10 +49,16 @@ export default defineComponent({
             emit("editRowKey", id)
         }
 
+        const changeVal = ref(0)
+        watch(() => store.state.common.idRowChangePa520, (value) => {
+            changeVal.value++
+
+        }, { deep: true })
+
         return {
             activeRowKey,
             setModalVisible,
-            activeKey,
+            store, activeKey, changeVal
         };
     },
 });

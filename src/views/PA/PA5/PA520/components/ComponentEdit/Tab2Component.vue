@@ -1,6 +1,7 @@
-<template> 
+<template>
     <div id="tab2-pa520">
         <div class="header-text-1">공제</div>
+        <!-- {{ originDataUpdate }} -->
         <a-row :gutter="16">
             <a-col :span="24">
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -56,7 +57,6 @@
                 <div>
                     <a-form-item label="일급/월급">
                         <div class="d-flex-center">
-                            {{ originDataUpdate.input.monthlyPaycheck }}
                             <switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
                                 v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
                             <number-box-money :min="0" width="200px" class="mr-5"
@@ -139,7 +139,8 @@ import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
-        idRowEdit: Number
+        idRowEdit: Number,
+        changeValueTest: Number
     },
     setup(props, { emit }) {
         let dataReturn = ref()
@@ -155,6 +156,7 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear.value,
         })
+
         const totalAmountDifferencePayment = ref(0)
         const originDataDetail = ref({
             companyId: companyId,
@@ -170,7 +172,7 @@ export default defineComponent({
             },
         })
         let indexChange = ref(1)
-        let trigger = ref(true)
+        let trigger = ref(false)
         // ================== GRAPQL ====================================
         const {
             loading: loading,
@@ -196,7 +198,6 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
         resApiGetEmployeeWageDaily((e: any) => {
-            trigger.value = false
             if (e.data) {
                 let res = e.data.getEmployeeWageDaily
                 originDataUpdate.value.employeeId = res.employeeId
@@ -227,6 +228,8 @@ export default defineComponent({
                 if (dataAddDedution)
                     originDataUpdate.value.input.deductionItems = dataAddDedution
             }
+            indexChange.value = 0
+            trigger.value = false
         })
 
         const {
@@ -238,30 +241,36 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(() => {
+            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
             trigger.value = true
             refectchDetail()
             emit('closePopup', false)
             notification('success', '업그레이드가 완료되었습니다!')
         })
         // ================== WATCH ====================================
-        watch(originDataUpdate, (res) => {
-            indexChange.value++
-        }, { deep: true }) 
-
-        watch(() => store.state.common.idRowPa520, (res) => {
+        watch(() => props.changeValueTest, (res) => {
             console.log(res);
             
-
-        }, { deep: true })
-
-        watch(() => props.idRowEdit, (res) => {
+            originDataDetail.value.employeeId = res
             trigger.value = true
             refectchDetail()
-            if (indexChange.value <= 2) {
+        })
+
+        watch(() => store.state.common.idRowChangePa520, (res, resOld) => {
+
+            if (indexChange.value <= 1) {
                 originDataDetail.value.employeeId = res
-            } else
+                trigger.value = true
+                refectchDetail()
+            } else {
+                console.log(indexChange.value);
                 modalStatusChange.value = true
-            indexChange.value = 1
+                console.log(trigger.value, 'trigger');
+            }
+        }, { deep: true })
+
+        watch(originDataUpdate, (res) => {
+            indexChange.value++
         }, { deep: true })
 
         watch(() => arrDeduction, (res) => {
@@ -352,7 +361,9 @@ export default defineComponent({
         const statusComfirm = (res: any) => {
             if (res == true)
                 document.getElementById('action-update')?.click()
-            originDataDetail.value.employeeId = props.idRowEdit
+
+            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
+            trigger.value = true
             refectchDetail()
         }
         return {

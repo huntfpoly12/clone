@@ -1,6 +1,6 @@
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSave++" />
-    <div id="pa-520" class="page-content">
+    <div id="pa-520" class="page-content"> 
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
                 <div class="total-user">
@@ -93,11 +93,12 @@
             <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" :key="resetAddComponent" />
+
                 <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 2" :actionSave="actionSave" />
             </a-col>
         </a-row>
-
+ 
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
@@ -125,7 +126,7 @@ export default defineComponent({
         PA520PopupAddNew, PA520PopupEdit
     },
     setup() {
-        const actionChangeComponent = ref(1)
+        const actionChangeComponent = ref(2)
         const actionSave = ref(0)
         const contentDelete = Message.getMessage('PA120', '002').message
         const modalStatus = ref(false)
@@ -216,16 +217,13 @@ export default defineComponent({
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
         }
-        let activeChangeRow = ref(true)
-        const openEditModal = (val: any) => {
-            if (activeChangeRow.value == true) {
-                actionChangeComponent.value = 2
-                idRowEdit.value = val.data.employeeId
-                modalEditStatus.value = true
-                // console.log(val.data.employeeId);
-                
-                store.state.common.idRowPa520 = val.data.employeeId
-            }
+
+        const openEditModal = (val: any) => {     
+            actionChangeComponent.value = 2
+            idRowEdit.value = val.data.employeeId
+            modalEditStatus.value = true 
+           
+            store.state.common.idRowChangePa520 = val.data.employeeId
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
@@ -248,7 +246,7 @@ export default defineComponent({
         }
 
         return {
-            actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalEditStatus, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
+            store,actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalEditStatus, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
             closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
         }
     },

@@ -205,8 +205,7 @@ export default defineComponent({
             notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================
-        watch(store.state.common.idRowPa520, (res) => {
-            console.log(res);
+        watch(() => store.state.common.idRowChangePa520, (res, resOld) => {  
             
         }, { deep: true })
 

@@ -59,6 +59,10 @@ export const arrayRadioCheckUtil = [
     { id: 1, text: '법인사업자' },
     { id: 2, text: '개인사업자' },
 ]
+export const arrayRadioCheckUtilStep3 = [
+    { id: 1, text: '신청합니다' },
+    { id: 2, text: '신청하지 않습니다' },
+]
 
 export const arrayRadioWithdrawDayUtil = [
     { id: '매월 5일', text: '매월 5일' },
