@@ -1,7 +1,8 @@
 <template>
   <div>
+
   <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
-  <div id="pa-110" class="page-content">
+  <div id="pa-110" class="page-content">{{ dataSource }}
     <a-row>
       <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
@@ -593,8 +594,8 @@ export default defineComponent({
     const dataAddIncomeProcess = (data: any) => {
       dataSource.value[0]['month' + data.imputedMonth] = data
       dataSource.value[0]['month' + data.imputedMonth].status = 10
+
     }
-    
     const createdDone = () => {
       triggerProcessIncomeWages.value = true
       refetchDataIncomeWages()

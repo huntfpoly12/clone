@@ -221,7 +221,6 @@ export default defineComponent({
                 case 'History':
                     modalHistory.value = true;
                     popupDataHistory.value = {...processKey.value};
-                    console.log(`output-`)
                     break;
                 case 'HistoryStatus':
                     modalHistoryStatus.value = true;

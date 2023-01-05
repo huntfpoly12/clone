@@ -408,8 +408,6 @@ export default defineComponent({
             fetchPolicy: 'no-cache'
         }))
         watch(resultEmployeeWageDaily,(res: any)=>{
-            
-            console.log(`onResultEmployeeWageDaily`,res)
             dataIncomeWageDaily.value.actualPayment = res.getEmployeeWageDaily.actualPayment;
             dataIncomeWageDaily.value.monthlyWage = res.getEmployeeWageDaily.monthlyWage;
             dataIncomeWageDaily.value.workingDays = res.getEmployeeWageDaily.workingDays;
