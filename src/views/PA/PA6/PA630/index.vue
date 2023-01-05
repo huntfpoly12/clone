@@ -119,11 +119,8 @@ import {
     DxTotalItem,
     DxSummary,
 } from "devextreme-vue/data-grid";
-import {
-    companyId,
-    onExportingCommon,
-    userId,
-} from "@/helpers/commonFunction";
+import { companyId, onExportingCommon, userId } from "@/helpers/commonFunction";
+import dayjs, { Dayjs } from 'dayjs';
 import queries from "@/graphql/queries/PA/PA6/PA630/index";
 import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 import EmailMultiPopup from "./components/EmailMultiPopup.vue";
@@ -170,7 +167,7 @@ export default defineComponent({
             input: {
                 imputedYear: globalYear,
                 type: 1,
-                receiptDate: new Date().toJSON().slice(0, 10),
+                receiptDate: parseInt(dayjs().format('YYYYMMDD')),
             },
             employeeKeys: {
                 employeeId: 0,
@@ -252,7 +249,7 @@ export default defineComponent({
         const isClickRow = ref<boolean>(false);
         const selectionChanged = (data: any) => {
             isClickRow.value = true;
-            isOnlyEmployee.value = data.selectedRowKeys.length < 2;
+            isOnlyEmployee.value = data.selectedRowKeys.length < 1;
             if (!isOnlyEmployee.value) {
                 data.selectedRowKeys.forEach((data: any) => {
                     dataSelect.value.push({

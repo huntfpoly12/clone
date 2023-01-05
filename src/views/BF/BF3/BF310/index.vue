@@ -253,7 +253,6 @@ export default defineComponent({
         });
         // Get api when page is changed
         const onChangePage = (page: any, pageSize:any) => {
-            console.log(`output->page, pageSize`,page, pageSize)
             originData.page = page;
             trigger.value = true;
             refetchData();

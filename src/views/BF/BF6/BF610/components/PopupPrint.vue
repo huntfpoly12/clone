@@ -1,7 +1,7 @@
 <template>
-    <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="소득별 마감현황" okText="저장하고 나가기"
+    <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="" okText="저장하고 나가기"
         cancelText="그냥 나가기" @cancel="setModalVisible" width="576px">
-        <a-row :gutter="24">
+        <a-row :gutter="24"  class="mt-20">
             <a-col :span="12">
                 <checkbox-basic size="14" label="원천징수이행상황신고서" v-model:valueCheckbox="dataForm.row1.checkbox" />
             </a-col>
@@ -43,6 +43,7 @@ import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } fro
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
 import dayjs from "dayjs";
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
@@ -78,7 +79,7 @@ export default defineComponent({
         * ============== API ============== 
         */
 
-        //  QUERY : searchTaxWithholdingStatusReports
+        //  QUERY : getTaxWithholdingStatusReportViewUrl
         let {
             refetch: refetchPrint,
             onError: errorPrint,
@@ -88,8 +89,9 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resPrint(res => {
-            console.log(res);
+            window.open(res.data.getTaxWithholdingStatusReportViewUrl);
             trigger.value = false
+            emit('closePopup', true)
         })
         errorPrint(res => {
             notification('error', res.message)
@@ -108,19 +110,19 @@ export default defineComponent({
 
         watch(() => dataForm, (newVal: any) => {
             if (newVal.row1.checkbox == true)
-                newVal.row1.date = dayjs()
+                newVal.row1.date = dayjs().format('YYYYMMDD')
             else
                 newVal.row1.date = ""
             if (newVal.row2.checkbox == true)
-                newVal.row2.date = dayjs()
+                newVal.row2.date = dayjs().format('YYYYMMDD')
             else
                 newVal.row2.date = ""
             if (newVal.row3.checkbox == true)
-                newVal.row3.date = dayjs()
+                newVal.row3.date = dayjs().format('YYYYMMDD')
             else
                 newVal.row3.date = ""
             if (newVal.row4.checkbox == true)
-                newVal.row4.date = dayjs()
+                newVal.row4.date = dayjs().format('YYYYMMDD')
             else
                 newVal.row4.date = ""
         }, { deep: true })
@@ -136,25 +138,24 @@ export default defineComponent({
             dataPrint.value.formInputs = []
             if (dataForm.row1.checkbox == true)
                 dataPrint.value.formInputs.push({
-                    "createDate": dataForm.row1.date.toString(),
+                    "createDate": filters.formatDateToInterger(dataForm.row1.date),
                     "type": 1
                 })
             if (dataForm.row2.checkbox == true)
                 dataPrint.value.formInputs.push({
-                    "createDate": dataForm.row2.date.toString(),
+                    "createDate": filters.formatDateToInterger(dataForm.row2.date),
                     "type": 2
                 })
             if (dataForm.row3.checkbox == true)
                 dataPrint.value.formInputs.push({
-                    "createDate": dataForm.row3.date.toString(),
+                    "createDate": filters.formatDateToInterger(dataForm.row3.date),
                     "type": 3
                 })
             if (dataForm.row4.checkbox == true)
                 dataPrint.value.formInputs.push({
-                    "createDate": dataForm.row4.date.toString(),
+                    "createDate": filters.formatDateToInterger(dataForm.row4.date),
                     "type": 4
                 })
-
             trigger.value = true
             if (dataPrint.value.formInputs.length > 0)
                 refetchPrint()

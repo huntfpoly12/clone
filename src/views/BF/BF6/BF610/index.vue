@@ -96,7 +96,7 @@
                     <DxColumn caption="마감 현황" cell-template="status" width="140" />
                     <template #status="{ data }">
                         <div class="d-flex-center">
-                            <process-status v-model:valueStatus="data.data.status" style="width: 100px;"
+                            <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
                                 :dataRow="data.data" @dataRow="changeStatus" />
                             <div class="pl-5 pr-5">
                                 <a-tooltip placement="topLeft">
@@ -128,9 +128,10 @@
                     <template #afterDeadline="{ data }">
                         <span
                             :class="data.data.index == 0 && data.data.afterDeadline == true ? 'tag-custom-2' : (data.data.index == 0 && data.data.afterDeadline == false ? 'tag-custom-4' : 'tag-custom-3')">
-                            {{ data.data.index == 0 && data.data.afterDeadline == true ? '기한후' : data.data.index == 0 &&
-        data.data.afterDeadline == false ? '정기' : '수정 ' + data.data.index
-}}
+                            {{
+                                data.data.index == 0 && data.data.afterDeadline == true ? '기한후' : data.data.index == 0 &&
+                                    data.data.afterDeadline == false ? '정기' : '수정 ' + data.data.index
+                            }}
                         </span>
                     </template>
                     <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
@@ -184,7 +185,6 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref, computed, watch } from "vue";
-import { dataSearchUtil } from "./utils/index";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -204,114 +204,131 @@ export default defineComponent({
     setup() {
         let dataSource: any = ref([])
         let trigger = ref(true)
-        let dataSearch: any = reactive({ ...dataSearchUtil })
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
+        let dataSearch: any = reactive({
+            "filter": {
+                "page": 1,
+                "rows": 10,
+                "imputedYearMonth": parseInt(globalYear.value + "01"),
+                "paymentYearMonth": parseInt(globalYear.value + "01"),
+                "reportType": null, //1 or 6
+                "regular": false,
+                "revised": false,
+                "afterDeadline": false,
+                "statuses": [10, 20, 30, 40],
+                "companyCode": null,
+                "companyName": null,
+                "manageUserId": null,
+                "salesRepresentativeId": null,
+                "excludeCancel": true
+            }
+        })
         let arraySelectBox = reactive([
             {
-                key: globalYear.value + "-01",
+                key: parseInt(globalYear.value + "01"),
                 value: "귀 " + globalYear.value + "-01"
             },
             {
-                key: globalYear.value + "-02",
+                key: parseInt(globalYear.value + "02"),
                 value: "귀 " + globalYear.value + "-02"
             },
             {
-                key: globalYear.value + "-03",
+                key: parseInt(globalYear.value + "03"),
                 value: "귀 " + globalYear.value + "-03"
             },
             {
-                key: globalYear.value + "-04",
+                key: parseInt(globalYear.value + "04"),
                 value: "귀 " + globalYear.value + "-04"
             },
             {
-                key: globalYear.value + "-05",
+                key: parseInt(globalYear.value + "05"),
                 value: "귀 " + globalYear.value + "-05"
             },
             {
-                key: globalYear.value + "-06",
+                key: parseInt(globalYear.value + "06"),
                 value: "귀 " + globalYear.value + "-06"
             },
             {
-                key: globalYear.value + "-07",
+                key: parseInt(globalYear.value + "07"),
                 value: "귀 " + globalYear.value + "-07"
             },
             {
-                key: globalYear.value + "-08",
+                key: parseInt(globalYear.value + "08"),
                 value: "귀 " + globalYear.value + "-08"
             },
             {
-                key: globalYear.value + "-09",
+                key: parseInt(globalYear.value + "09"),
                 value: "귀 " + globalYear.value + "-09"
             },
             {
-                key: globalYear.value + "-10",
+                key: parseInt(globalYear.value + "10"),
                 value: "귀 " + globalYear.value + "-10"
             },
             {
-                key: globalYear.value + "-11",
+                key: parseInt(globalYear.value + "11"),
                 value: "귀 " + globalYear.value + "-11"
             },
             {
-                key: globalYear.value + "-12",
+                key: parseInt(globalYear.value + "12"),
                 value: "귀 " + globalYear.value + "-12"
             },
             {
-                key: globalYear.value + 1 + "-01",
-                value: "귀 " + globalYear.value + 1 + "-01"
+                key: parseInt(globalYear.value + 1 + "01"),
+                value: "귀 " + globalYear.value + 1 + "01"
             },
         ])
         let arraySelectBox2 = reactive([
             {
-                key: globalYear.value + "-01",
+                key: parseInt(globalYear.value + "01"),
                 value: "지 " + globalYear.value + "-01"
             },
             {
-                key: globalYear.value + "-02",
+                key: parseInt(globalYear.value + "02"),
                 value: "지 " + globalYear.value + "-02"
             },
             {
-                key: globalYear.value + "-03",
+                key: parseInt(globalYear.value + "03"),
                 value: "지 " + globalYear.value + "-03"
             },
             {
-                key: globalYear.value + "-04",
+                key: parseInt(globalYear.value + "04"),
                 value: "지 " + globalYear.value + "-04"
             },
             {
-                key: globalYear.value + "-05",
+                key: parseInt(globalYear.value + "05"),
                 value: "지 " + globalYear.value + "-05"
             },
             {
-                key: globalYear.value + "-06",
+                key: parseInt(globalYear.value + "06"),
                 value: "지 " + globalYear.value + "-06"
             },
             {
-                key: globalYear.value + "-07",
+                key: parseInt(globalYear.value + "07"),
                 value: "지 " + globalYear.value + "-07"
             },
             {
-                key: globalYear.value + "-08",
+                key: parseInt(globalYear.value + "08"),
                 value: "지 " + globalYear.value + "-08"
             },
             {
-                key: globalYear.value + "-09",
+                key: parseInt(globalYear.value + "09"),
                 value: "지 " + globalYear.value + "-09"
             },
             {
-                key: globalYear.value + "-10",
+                key: parseInt(globalYear.value + "10"),
                 value: "지 " + globalYear.value + "-10"
             },
             {
-                key: globalYear.value + "-11",
+                key: parseInt(globalYear.value + "11"),
                 value: "지 " + globalYear.value + "-11"
             },
             {
-                key: globalYear.value + "-12",
+                key: parseInt(globalYear.value + "12"),
                 value: "지 " + globalYear.value + "-12"
             },
             {
-                key: globalYear.value + 1 + "-01",
+                key: parseInt(globalYear.value + 1 + "01"),
                 value: "지 " + globalYear.value + 1 + "-01"
             },
         ])
@@ -355,7 +372,6 @@ export default defineComponent({
             notification('error', res.message)
         })
 
-
         //  Mutation : changeTaxWithholdingStatusReportStatus
         const {
             mutate: actionChangeStatus,
@@ -363,7 +379,7 @@ export default defineComponent({
             onError: errChangeStatus
         } = useMutation(mutations.changeTaxWithholdingStatusReportStatus);
         doneChangeStatus(() => {
-            notification('success', `새러운 영업자 추가 완료!`)
+            notification('success', `업부상태 변경되었습니다!`)
             trigger.value = true
             refetchTable()
         })

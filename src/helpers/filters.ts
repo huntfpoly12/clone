@@ -26,6 +26,9 @@ const filters = {
     formatDate(date: any) {
         return dayjs(date).format('YYYY-MM-DD')
     },
+    formatDateToInterger(date: any) {
+        return parseInt(dayjs(date).format('YYYYMMDD'))
+    },
 
     formatDateScalar(date : any) {
         return moment(date, "YYYYMMDD").format('YYYY-MM-DD');
@@ -39,12 +42,6 @@ const filters = {
             return check;
         })
         return obj[0].label;
-    },
-    formatDay(day: number){
-        if(day<10) {
-            return '0' + day;
-        }
-        return day;
     },
     useImage(url: string){
       return new URL(`/src/assets/images/${url}`, import.meta.url).href;

@@ -256,8 +256,8 @@ export default defineComponent({
             onDone: updateDone,
         } = useMutation(mutations.updateEmployeeBusiness);
         updateDone(() => {
-            valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.incomeTypeCode
-            valueCallApiGetEmployeeBusiness.employeeId = dataAction.employeeId
+            valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
+            valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
             refetchData()
             refetchDataDetail()
             notification('success', `업데이트 완료!`)
@@ -321,7 +321,6 @@ export default defineComponent({
         let rowEdit = ref()
         const actionEdit = (data: any) => {
             rowEdit.value = data.data
-
             if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction) && disabledInput.value == true)
                 modalChangeRow.value = true
             else {
@@ -393,10 +392,7 @@ export default defineComponent({
                 focusedRowKey.value = null;
                 disabledInput.value = false
                 Object.assign(dataAction, valueDefaultAction);
-                // dataAction = { ...valueDefaultAction }
             }
-            // disabledInput.value = false
-
         }
         const statusComfirmAdd = (val: any) => {
             if (val) {

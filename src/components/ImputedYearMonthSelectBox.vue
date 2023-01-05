@@ -36,7 +36,7 @@ import {
 export default defineComponent({
 	props: {
 		valueInput: {
-			type: String,
+			type: Number,
 		},
 		width: {
 			type: String,
@@ -81,8 +81,6 @@ export default defineComponent({
 			messageRequired.value = props.messRequired;
 		}
 		const onValueChanged = (val: any) => {
-			console.log(val.value);
-
 			emit('update:valueInput', val.value)
 		}
 

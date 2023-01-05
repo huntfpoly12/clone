@@ -1,4 +1,4 @@
-<template> 
+<template>
     <a-row class="container_upload custom-flex clr" :gutter="[24]">
         <a-form-item :label="title" v-if="!customrow">
             <div v-if="disabledImg == false">
@@ -110,24 +110,11 @@ export default defineComponent({
         PlusSquareOutlined,
         WarningFilled,
     },
-    data() {
-        return {
-            uploadedFileName: null,
-        };
-    },
     methods: {
         onFileChange(e: any) {
             const file = e.target.files[0];
             this.imageUrl = URL.createObjectURL(file);
-        },
-
-        typeFIle(file: any) {
-            const isJpgOrPng =
-                file.type === "image/png" ||
-                file.type === "image/jpg" ||
-                file.type === "image/jpeg";
-            return isJpgOrPng;
-        },
+        }, 
     },
     setup(props: any, { emit }) {
         const fileList = ref<UploadProps["fileList"]>([]);
@@ -137,33 +124,28 @@ export default defineComponent({
         const file = ref<any>("");
         const fileName = ref<any>("");
         const previewVisible = ref(false);
-        var showImg = ref<boolean>(true);
-
+        var showImg = ref<boolean>(true);  
         const onRemove = () => {
             showImg.value = false;
-            imageUrl.value = "";
-            //@ts-ignore
+            imageUrl.value = ""; 
             props.srcimg = "";
             fileName.value = "";
         };
         let preview = ref<any>("");
-        const onFileChange = async (e: {
-            [x: string]: any;
-            target: { files: any[] };
-        }) => {
+        const onFileChange = async (e: { [x: string]: any; target: { files: any[] } }) => { 
             const file = e.target.files[0];
             if (file.size > 1024 * 1024 * 5) {
                 e.preventDefault();
-                messageUpload = "File must smaller than 5MB!";
+                messageUpload = "File must smaller than 5MB!"; 
                 return;
             }
             const formData = new FormData();
             formData.append("category", "SubscriptionRequestCompanyLicense");
             formData.append("file", file);
-            fileName.value = file.name;
-            try {
+            fileName.value = file.name; 
+            try { 
                 loading.value = true;
-                const data = await uploadRepository.public(formData);
+                const data = await uploadRepository.public(formData); 
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
                     loading.value = false;
@@ -182,7 +164,7 @@ export default defineComponent({
 
                     });
                 });
-            } catch (error) {
+            } catch (error) { 
                 console.log(error);
             }
         };
@@ -200,7 +182,6 @@ export default defineComponent({
             handlePreview,
             imageUrl,
             loading,
-            // handleChange,
             messageUpload,
             fileList,
             onRemove,
