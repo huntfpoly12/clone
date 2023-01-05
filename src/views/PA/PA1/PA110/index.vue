@@ -15,6 +15,7 @@
           <template #imputed-month1="{ data }">
             <div v-if="data.data.month1">
               <colorful-badge class="hover-underlined" :value="data.data.month1.status"
+              :class="setUnderline(data.data.month1.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month1)" :year="data.data.month1.paymentYear"
                 :month="data.data.month1.paymentMonth" />
             </div>
@@ -24,6 +25,7 @@
           <template #imputed-month2="{ data }">
             <div v-if="data.data.month2">
               <colorful-badge class="hover-underlined" :value="data.data.month2.status"
+              :class="setUnderline(data.data.month2.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month2)" :year="data.data.month2.paymentYear"
                 :month="data.data.month2.paymentMonth" />
             </div>
@@ -33,6 +35,7 @@
           <template #imputed-month3="{ data }">
             <div v-if="data.data.month3">
               <colorful-badge class="hover-underlined" :value="data.data.month3.status"
+              :class="setUnderline(data.data.month3.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month3)" :year="data.data.month3.paymentYear"
                 :month="data.data.month3.paymentMonth" />
             </div>
@@ -42,6 +45,7 @@
           <template #imputed-month4="{ data }">
             <div v-if="data.data.month4">
               <colorful-badge class="hover-underlined" :value="data.data.month4.status"
+              :class="setUnderline(data.data.month4.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month4)" :year="data.data.month4.paymentYear"
                 :month="data.data.month4.paymentMonth" />
             </div>
@@ -51,6 +55,7 @@
           <template #imputed-month5="{ data }">
             <div v-if="data.data.month5">
               <colorful-badge class="hover-underlined" :value="data.data.month5.status"
+              :class="setUnderline(data.data.month5.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month5)" :year="data.data.month5.paymentYear"
                 :month="data.data.month5.paymentMonth" />
             </div>
@@ -60,6 +65,7 @@
           <template #imputed-month6="{ data }">
             <div v-if="data.data.month6">
               <colorful-badge class="hover-underlined" :value="data.data.month6.status"
+              :class="setUnderline(data.data.month6.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month6)" :year="data.data.month6.paymentYear"
                 :month="data.data.month6.paymentMonth" />
             </div>
@@ -69,6 +75,7 @@
           <template #imputed-month7="{ data }">
             <div v-if="data.data.month7">
               <colorful-badge class="hover-underlined" :value="data.data.month7.status"
+              :class="setUnderline(data.data.month7.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month7)" :year="data.data.month7.paymentYear"
                 :month="data.data.month7.paymentMonth" />
             </div>
@@ -78,6 +85,7 @@
           <template #imputed-month8="{ data }">
             <div v-if="data.data.month8">
               <colorful-badge class="hover-underlined" :value="data.data.month8.status"
+              :class="setUnderline(data.data.month8.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month8)" :year="data.data.month8.paymentYear"
                 :month="data.data.month8.paymentMonth" />
             </div>
@@ -87,6 +95,7 @@
           <template #imputed-month9="{ data }">
             <div v-if="data.data.month9">
               <colorful-badge class="hover-underlined" :value="data.data.month9.status"
+              :class="setUnderline(data.data.month9.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month9)" :year="data.data.month9.paymentYear"
                 :month="data.data.month9.paymentMonth" />
             </div>
@@ -96,6 +105,7 @@
           <template #imputed-month10="{ data }">
             <div v-if="data.data.month10">
               <colorful-badge class="hover-underlined" :value="data.data.month10.status"
+              :class="setUnderline(data.data.month10.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month10)" :year="data.data.month10.paymentYear"
                 :month="data.data.month10.paymentMonth" />
             </div>
@@ -105,6 +115,7 @@
           <template #imputed-month11="{ data }">
             <div v-if="data.data.month11">
               <colorful-badge class="hover-underlined" :value="data.data.month11.status"
+              :class="setUnderline(data.data.month11.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month11)" :year="data.data.month11.paymentYear"
                 :month="data.data.month11.paymentMonth" />
             </div>
@@ -114,6 +125,7 @@
           <template #imputed-month12="{ data }">
             <div v-if="data.data.month12">
               <colorful-badge class="hover-underlined" :value="data.data.month12.status"
+              :class="setUnderline(data.data.month12.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month12)" :year="data.data.month12.paymentYear"
                 :month="data.data.month12.paymentMonth" />
             </div>
@@ -304,7 +316,8 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page)
     const move_column = computed(() => store.state.settings.move_column)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
-    const processKey = computed(() =>store.state.common.processKeyPA110)
+    const processKey = computed(() => store.state.common.processKeyPA110)
+    const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
     const dataSource = ref<any>([])
     const dataCustomRes = ref<any>([])
     const dataTaxPayInfo = ref<any>([])
@@ -334,7 +347,6 @@ export default defineComponent({
     watch(resIncomeProcessWages, (value) => {
       arrDataPoint.value = [];
       if (value) { 
-  
         // set first row in table Income Process Wages
         dataSource.value = [{
           companyId: companyId,
@@ -424,6 +436,16 @@ export default defineComponent({
             value: filters.formatCurrency(data.incomeStat?.actualPayment),
             ...dataAdd
           }
+          if (data.imputedMonth == (dayjs().month() + 1)) {
+                status.value = data.status
+                if(actionUpdateItem.value == 0){
+                    store.state.common.processKeyPA110.imputedYear = data.imputedYear
+                    store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
+                    store.state.common.processKeyPA110.paymentYear = data.paymentYear
+                    store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
+                }          
+              }
+          
         });
       }
     }
@@ -436,12 +458,7 @@ export default defineComponent({
       loading: loadingTaxPayInfo,
     } = useQuery(queries.getIncomeWages, {
       companyId: companyId,
-      processKey: {
-        imputedYear: globalYear,
-        imputedMonth: dayjs().month() + 1,
-        paymentYear: globalYear,
-        paymentMonth: dayjs().month() + 1,
-      },
+      processKey: processKey,
     }, () => ({
       fetchPolicy: "no-cache",
     }))
@@ -449,30 +466,6 @@ export default defineComponent({
       dataTaxPayInfo.value = value.getIncomeWages
     })
 
-    // get data detail row  getIncomeWages table 
-    const originDataIncomeWage = reactive({
-      companyId: companyId,
-      processKey:{
-        imputedYear: globalYear,
-        imputedMonth: dayjs().month() + 1,
-        paymentYear: globalYear,
-        paymentMonth: dayjs().month() + 1,
-      },
-      incomeId: 0,
-    })
-    const {
-      refetch: refetchDataIncomeWage,
-      result: resultIncomeWage,
-      loading: loadingIncomeWage,
-    } = useQuery(queries.getIncomeWage, originDataIncomeWage, () => ({
-      enabled: triggerIncomeWage.value,
-      fetchPolicy: "no-cache",
-    }))
-    watch(resultIncomeWage, (value) => {
-      if (value) {
-        dataIncomeWage.value = value.getIncomeWage
-      }
-    })
     /**
      * action edit employ tax pay
      */
@@ -559,6 +552,15 @@ export default defineComponent({
       dataSource.value[0]['month' + data.imputedMonth].status = 10
 
     }
+    /**
+     * underlined set of selected month
+     * @param monthInputed 
+     */
+    const setUnderline = (monthInputed : any)=>{
+            return monthClicked.value == monthInputed
+    }
+
+
     return {
       globalYear,
       per_page,
@@ -573,7 +575,6 @@ export default defineComponent({
       actionAddItem,
       loadingIncomeProcessWages,
       copyMonth,
-      originDataIncomeWage,
       loadingTaxPayInfo,
       dataTaxPayInfo,
       dataModalCopy,
@@ -588,7 +589,8 @@ export default defineComponent({
       actionUpdateItem,
       arrDataPoint,
       dataAddIncomeProcess,
-      status
+      status,
+      setUnderline
     }
 
   },
