@@ -54,7 +54,6 @@ import notification from '@/utils/notification';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
-import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     modalStatus: {

@@ -105,15 +105,12 @@
                                     <tel-text-box width="180px" placeholder="‘-’ 없이 슷자입력"
                                         v-model:value="contractCreacted.fax" />
                                 </div>
-                                <div class="d-flex">
-                                    <div style="display: flex">
-                                        <div>
-                                            <imgUpload :title="titleModal" @update-img="getImgUrl"
-                                                style="margin-top: 10px" />
-                                        </div>
-                                        <div>
-                                            <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
-                                        </div>
+                                <div class="d-flex mt-10 pl-10">
+                                    <div>
+                                        <imgUpload :title="titleModal" @update-img="getImgUrl" class="mt-10" />
+                                    </div>
+                                    <div>
+                                        <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
                                     </div>
                                 </div>
                             </div>
@@ -127,9 +124,8 @@
                                         :required="true" width="200px" />
                                 </div>
                                 <div class="form-item">
-                                    <label class="red">생년월일 :</label>
-                                    <date-time-box width="200px" v-model:valueDate="contractCreacted.birthday"
-                                        dateFormat="YYYY-MM-DD" :required="true" :birthDay="true" />
+                                    <label class="red">생년월일 :</label> 
+                                    <birth-day-box v-model:valueInput="contractCreacted.birthday" width="200px" />
                                 </div>
                                 <div class="form-item">
                                     <label class="red">휴대폰번호:</label>
@@ -153,16 +149,17 @@
                             </div>
                             <div class="group-title">
                                 <p class="red" id="title-table-step3">⁙ 운영사업</p>
-                            </div>
+                            </div> 
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                                 :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
                                 @selection-changed="onSelectionChanged" :onRowClick="onSelectionClick"
-                                :focused-row-enabled="true" key-expr="rowIndex">
+                                :focused-row-enabled="true" key-expr="rowIndex" :focused-row-key="focusedRowKey"
+                                :auto-navigate-to-focused-row="true">
                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
                                     template="button-template" mode="cell" new-row-position="pageBottom">
-                                    <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
+                                    <DxTexts confirmDeleteMessage="삭제하겠습니까?" cancelRowChanges="123124" />
                                 </DxEditing>
                                 <DxToolbar>
                                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -183,7 +180,8 @@
                                     format="yyyy-MM" />
                                 <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
                             </DxDataGrid>
-                            <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow">
+                            <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
+                                :key="dataActiveRow.rowIndex">
                                 <a-col :span="12">
                                     <a-form-item label="사업분류">
                                         <select-box-common :arrSelect="facilityBizTypeCommon"
@@ -206,6 +204,9 @@
                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                     </a-form-item>
                                     <div class="pl-12">
+                                        <!-- <imgUpload :title="titleModal2" style="margin-top: 10px"
+                                            v-model:imageId="dataActiveRow.registrationCardFileStorageId"
+                                            @update-img="uploadImg" /> -->
                                         <imgUpload :title="titleModal2" style="margin-top: 10px"
                                             v-model:imageId="dataActiveRow.registrationCardFileStorageId"
                                             @update-img="(res) => dataActiveRow.dataImg = res" />
@@ -213,7 +214,8 @@
                                 </a-col>
                                 <a-col :span="12">
                                     <div class="preview-img">
-                                        <preview-image :dataImage="dataActiveRow.dataImg" @deleteImgRqContract="removeImgStep" />
+                                        <preview-image :dataImage="dataActiveRow.dataImg"
+                                            @deleteImgRqContract="removeImgStep" />
                                     </div>
                                 </a-col>
                             </a-row>
@@ -364,6 +366,7 @@ export default {
         const valueRadioBox = ref(1);
         const valueAccountingService = ref(1);
         const valueSourceService = ref(1);
+        const focusedRowKey = ref(0)
         let dataImg = ref();
         let dataImgStep3 = ref();
         let valueRadioWithdrawDay = ref("매월 5일");
@@ -558,13 +561,13 @@ export default {
             dataImg.value = "";
             contractCreacted.licenseFileStorageId = parseInt("");
         };
-        const removeImgStep = (res: any) => {  
-            valueFacilityBusinesses.value.map((val:any)=>{
-                if(val.registrationCardFileStorageId == res.id){
+        const removeImgStep = (res: any) => {
+            valueFacilityBusinesses.value.map((val: any) => {
+                if (val.registrationCardFileStorageId == res.id) {
                     val.registrationCardFileStorageId = null
                     val.dataImg = {}
                 }
-            }) 
+            })
         };
         const getImgUrlAccounting = (img: any) => {
             let resImg = {
@@ -585,16 +588,19 @@ export default {
             if (!e.component.getSelectedRowKeys().length) {
                 e.component.selectRowsByIndexes(0);
             }
-        };
+        }; 
+
         const gridRefName: any = ref("grid");
-        const Creat = () => {
-            valueFacilityBusinesses.value.map((val: any) => {
+        const Creat = () => { 
+            let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
+            dataFacility.map((val: any) => {
                 delete val.__KEY__
                 delete val.rowIndex
-                delete val.dataImg 
+                delete val.dataImg
                 val.startYearMonth = parseInt(dayjs(val.startYearMonth).format('YYYYMMDD'))
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
+
             let dataCallCreated = {
                 content: {
                     agreements: {
@@ -635,7 +641,7 @@ export default {
                         email: contractCreacted.email,
                     },
                     accounting: {
-                        facilityBusinesses: valueFacilityBusinesses.value,
+                        facilityBusinesses: dataFacility,
                         accountingServiceTypes: contractCreacted.accountingServiceTypes,
                     },
                     withholding: {
@@ -669,13 +675,19 @@ export default {
             gridRefName.value.instance.addRow()
             gridRefName.value.instance.deselectAll()
             gridRefName.value.instance.closeEditCell()
-            // setTimeout(() => {
-            //     if (gridRefName.value.instance.totalCount() == 1) {
-            //         let a = document.body.querySelectorAll('[aria-rowindex]');
-            //         (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
-            //     }
-            // }, 100);
+            setTimeout(() => {
+                let a = document.body.querySelectorAll('[aria-rowindex]');
+                (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
+                let keyNew = gridRefName.value.instance.getKeyByRowIndex(valueFacilityBusinesses.value.length - 1);
+                focusedRowKey.value = keyNew;
+            }, 100);
         };
+
+        const uploadImg = (res: any) => {
+            console.log(res);
+            console.log(dataActiveRow.value.registrationCardFileStorageId);
+
+        }
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
             (newVal) => {
@@ -724,10 +736,12 @@ export default {
             optionSale.value = dataOption;
         });
         return {
-            dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
-            contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
+            focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
+            uploadImg, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
 };
 </script>  
-<style lang="scss" scoped src="./style.scss"/>
+<style lang="scss" scoped src="./style.scss">
+
+</style>

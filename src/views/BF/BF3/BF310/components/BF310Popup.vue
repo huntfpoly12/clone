@@ -15,13 +15,15 @@
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="신청" label-align="left" :label-col="labelCol">
-                                            <default-text-box :valueInput="isNumeric(formState.createdAt)?$filters.formatDate(formState.createdAt):''" :disabled="true"
-                                                width="200px" />
+                                            <default-text-box
+                                                :valueInput="isNumeric(formState.createdAt) ? $filters.formatDate(formState.createdAt) : ''"
+                                                :disabled="true" width="200px" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="심사중" label-align="left" :label-col="labelCol">
-                                            <default-text-box :valueInput="isNumeric(formState.processedAt)?$filters.formatDate(formState.processedAt):''"
+                                            <default-text-box
+                                                :valueInput="isNumeric(formState.processedAt) ? $filters.formatDate(formState.processedAt) : ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
@@ -31,8 +33,9 @@
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="반려" label-align="left" :label-col="labelCol">
-                                            <default-text-box :valueInput="isNumeric(formState.rejectedAt)?$filters.formatDate(formState.rejectedAt):''" :disabled="true"
-                                                width="200px" />
+                                            <default-text-box
+                                                :valueInput="isNumeric(formState.rejectedAt) ? $filters.formatDate(formState.rejectedAt) : ''"
+                                                :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
                                             <default-text-box v-model:valueInput="formState.rejectedBy" :disabled="true"
@@ -41,8 +44,9 @@
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="승인" label-align="left" :label-col="labelCol">
-                                            <default-text-box :valueInput="isNumeric(formState.approvedAt)?$filters.formatDate(formState.approvedAt ?? ''):''" :disabled="true"
-                                                width="200px" />
+                                            <default-text-box
+                                                :valueInput="isNumeric(formState.approvedAt) ? $filters.formatDate(formState.approvedAt ?? '') : ''"
+                                                :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
                                             <default-text-box v-model:valueInput="formState.approvedBy" :disabled="true"
@@ -159,7 +163,7 @@
                                                     </a-form-item>
                                                 </a-col>
                                             </a-row>
-                                            <img-upload :title="titleModal" @update-img="getUrlLicenseFile"/>
+                                            <img-upload :title="titleModal" @update-img="getUrlLicenseFile" />
                                         </a-col>
                                         <a-col :span="7">
                                             <preview-image :dataImage="{ url: imageLicenseFile, name: licenseFileName }"
@@ -204,20 +208,15 @@
                                         <div class="option">
                                         </div>
                                         <div id="data-grid-demo">
-                                            <DxDataGrid
-                                                :show-row-lines="true" :hoverStateEnabled="true"
+                                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                                                 :data-source="dataSource" :show-borders="true"
-                                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                                :column-auto-width="true" :repaint-changes-only="true" ref="gridRefName"
-                                                :onRowClick="onSelectionClick"
-                                                :focused-row-enabled="true" 
-                                                key-expr="rowIndex"
-                                                @init-new-row="onInitRow"
-                                                :auto-navigate-to-focused-row="true"
-                                                :focused-row-key="focusedRowKey"
-                                                @focused-row-changed="onFocusedRowChanged"
-                                                id="bf-320-popup-datagrid"
-                                                >
+                                                :allow-column-reordering="move_column"
+                                                :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                                                :repaint-changes-only="true" ref="gridRefName"
+                                                :onRowClick="onSelectionClick" :focused-row-enabled="true"
+                                                key-expr="rowIndex" @init-new-row="onInitRow"
+                                                :auto-navigate-to-focused-row="true" :focused-row-key="focusedRowKey"
+                                                @focused-row-changed="onFocusedRowChanged" id="bf-320-popup-datagrid">
                                                 <DxPaging :enabled="false" />
                                                 <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                                     cell-template="indexCell" />
@@ -231,37 +230,41 @@
                                                     :format="'yyyy-MM-dd'" />
                                                 <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
                                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
-                                                    template="button-template" mode="cell" new-row-position="pageBottom">
+                                                    template="button-template" mode="cell"
+                                                    new-row-position="pageBottom">
                                                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                                                 </DxEditing>
                                                 <DxToolbar>
-                                                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                                                    <DxItem location="after" template="button-template"
+                                                        css-class="cell-button-add" />
                                                 </DxToolbar>
                                                 <template #button-template>
                                                     <DxButton icon="plus" @click="addRow" text="추가" />
                                                 </template>
-                                                <DxScrolling column-rendering-mode="virtual"/>
+                                                <DxScrolling column-rendering-mode="virtual" />
                                             </DxDataGrid>
-                                            <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow">
+                                            <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow" :key="dataActiveRow.rowIndex ?? 99">
                                                 <a-col :span="12">
                                                     <a-form-item label="사업분류">
                                                         <select-box-common :arrSelect="facilityBizTypeCommon"
-                                                            v-model:valueInput="dataActiveRow.facilityBizType" displayeExpr="n"
-                                                            valueExpr="v" width="200px" />
+                                                            v-model:valueInput="dataActiveRow.facilityBizType"
+                                                            displayeExpr="n" valueExpr="v" width="200px" />
                                                     </a-form-item>
                                                     <a-form-item label="사업분류">
-                                                        <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
+                                                        <default-text-box v-model:valueInput="dataActiveRow.name"
+                                                            width="200px" />
                                                     </a-form-item>
                                                     <a-form-item label="서비스 시작년월">
-                                                        <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
+                                                        <month-picker-box
+                                                            v-model:valueDate="dataActiveRow.startYearMonth"
                                                             width="200px" />
                                                     </a-form-item>
                                                     <a-form-item label="정원수" style="display: inline-flex">
-                                                        <text-number-box width="200px" :required="true" 
+                                                        <text-number-box width="200px" :required="true"
                                                             v-model:valueInput="dataActiveRow.capacity" /> 명
                                                     </a-form-item>
                                                     <a-form-item label="장기요양기관등록번호">
-                                                        <default-text-box width="200px" :required="true" 
+                                                        <default-text-box width="200px" :required="true"
                                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                                     </a-form-item>
                                                     <a-col class="pl-12 text-color">
@@ -338,7 +341,8 @@
                                         v-model:valueInput="formState.content.cmsBank.ownerBizNumber"
                                         nameInput="cmsBank-ownerBizNumber" />
                                     <div class="noteImage">
-                                        <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px; margin-top: 0px;" />
+                                        <img src="@/assets/images/iconInfo.png"
+                                            style="width: 14px; height: 14px; margin-top: 0px;" />
                                         <div class="noteText">
                                             <p>예금주의 사업자등록번호 또는 주민등록번호입니다.</p>
                                         </div>
@@ -404,25 +408,25 @@ export default defineComponent({
         },
     },
     components: {
-    DxDropDownBox,
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxSelection,
-    UploadOutlined,
-    MinusCircleOutlined,
-    DeleteOutlined,
-    PlusOutlined,
-    imgUpload,
-    DxEditing,
-    DxLookup,
-    DxToolbar,
-    DxItem,
-    DxTexts,
-    DxMasterDetail,
-    DxButton,
-    DxScrolling
-},
+        DxDropDownBox,
+        DxDataGrid,
+        DxColumn,
+        DxPaging,
+        DxSelection,
+        UploadOutlined,
+        MinusCircleOutlined,
+        DeleteOutlined,
+        PlusOutlined,
+        imgUpload,
+        DxEditing,
+        DxLookup,
+        DxToolbar,
+        DxItem,
+        DxTexts,
+        DxMasterDetail,
+        DxButton,
+        DxScrolling
+    },
     setup(props, { emit }) {
         // config grid
         const store = useStore();
@@ -445,7 +449,7 @@ export default defineComponent({
         const titleModal = ref("장기요양기관등록증")
         var dataStatus = initialDataStatus
         let objDataDefault = ref({ ...initialFormState });
-        const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay]) 
+        const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay])
         var formState = ref<any>({ ...initialFormState });
         const dataSource = ref([]);
         // event close popup
@@ -595,13 +599,18 @@ export default defineComponent({
                 })
             } else {
                 // process data befor handle update
-                let contentData : any = formState.value.content;
+                let contentData: any = formState.value.content;
                 let newObj = JSON.parse(JSON.stringify(dataSource.value));
-                newObj.map((item: any) =>{
+                newObj.map((item: any) => {
                     delete item.rowIndex;
+                    delete item.dataImg;
+                    if(item?.registrationCardFileStorageId?.length<1){
+                        delete item.registrationCardFileStorageId;
+                    }
+                    item.startYearMonth.toString()
                     return {item}
                 })
-                contentData.accounting.facilityBusinesses  = [...newObj];
+                contentData.accounting.facilityBusinesses = [...newObj];
                 contentData.accounting.accountingServiceTypes.map((item: any) => {
                     item = item == true ? 1 : 0
                 })
@@ -636,13 +645,15 @@ export default defineComponent({
             formState.value.content.company.licenseFileStorageId = img.id;
             imageLicenseFile.value = img.url ? img.url : "";
             licenseFileName.value = img.fileName;
-            dataActiveRow.value.registrationCardFileStorageId=img.id;
-            dataActiveRow.value.registrationCard=img;
+            dataActiveRow.value.registrationCardFileStorageId = img.id;
+            dataActiveRow.value.registrationCard = img;
         };
         const removeLicenseFile = () => {
-            dataActiveRow.value.dataImg=""
+            dataActiveRow.value.dataImg = ""
             imageLicenseFile.value = "";
             licenseFileName.value = "";
+            dataActiveRow.value.registrationCardFileStorageId="";
+            dataActiveRow.value.registrationCard="";
         };
         // handle registration CardFile Storage upload
         const getregCardFile = (img: any) => {
@@ -681,20 +692,20 @@ export default defineComponent({
         const dataActiveRow = ref<any>(dataSource.value[0])
         const focusedRowKey = ref(0)
         const initRow = {
-            longTermCareInstitutionNumber: '',
-            capacity: null,
-            facilityBizType: null,
-            name: null,
-            startYearMonth: null,
-            registrationCardFileStorageId: null,
+            // longTermCareInstitutionNumber: '',
+            // capacity: "",
+            // facilityBizType: null,
+            // name: null,
+            // startYearMonth: null,
+            // registrationCardFileStorageId: null,
             rowIndex: null
         }
         const onSelectionClick = (value: any) => {
             dataActiveRow.value = value.data;
             licenseFileName.value = value.data.registrationCard?.name ?? "";
-            imageLicenseFile.value=value.data.registrationCard?.url ?? "";
+            imageLicenseFile.value = value.data.registrationCard?.url ?? "";
         }
-        const addRow = async() => {
+        const addRow = async () => {
             await gridRefName.value.instance.addRow()
             gridRefName.value.instance.closeEditCell();
             setTimeout(() => {
@@ -702,14 +713,14 @@ export default defineComponent({
                     let a = document.body.querySelectorAll('[aria-rowindex]');
                     (a[gridRefName.value.instance.totalCount() - 1] as HTMLInputElement).click();
                 }
-                let keyNew = gridRefName.value.instance.getKeyByRowIndex(dataSource.value.length-1);
+                let keyNew = gridRefName.value.instance.getKeyByRowIndex(dataSource.value.length - 1);
                 focusedRowKey.value = keyNew;
             }, 100);
         };
         const onInitRow = (e: any) => {
             e.data = initRow;
         }
-        const onFocusedRowChanged=(e:any)=> {
+        const onFocusedRowChanged = (e: any) => {
             const data = e.row && e.row.data;
             dataActiveRow.value = data;
         }
