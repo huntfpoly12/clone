@@ -172,9 +172,9 @@ export default defineComponent({
         })
         // ======================= WATCH ==================================
         watch(error, (value) => { 
-            if (value?.message === 'Response not successful: Received status code 400') {
-                notification('error','Có mỗi cái id mà ko nhập được')
-            }
+            // if (value?.message === 'Response not successful: Received status code 400') {
+            //     notification('error','Có mỗi cái id mà ko nhập được')
+            // }
         })
         watch(result, (value) => {
             if (value) {
