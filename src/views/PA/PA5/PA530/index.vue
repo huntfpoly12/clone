@@ -227,20 +227,20 @@ export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, PA530Popup
     },
-    setup() {  
+    setup() {
         let dataCallApiPrint = ref()
         let paymentYearMonthsModal: any = ref()
         let dataCallModal: any = ref()
-        let checkAllValue = ref(true) 
+        let checkAllValue = ref(true)
         let selectedItemKeys = ref([])
         const emailUserLogin = ref()
         const actionSendEmailGroup = ref(false)
         const dateSendEmail = ref(new Date)
         const valueSwitchChange = ref(true)
         const dataSource: any = ref([]);
-        const store = useStore(); 
+        const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
-        const colomn_resize = computed(() => store.state.settings.colomn_resize); 
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
         const globalYear: any = computed(() => store.state.settings.globalYear);
@@ -264,62 +264,62 @@ export default defineComponent({
             month1: {
                 label: "01월",
                 value: true,
-                subValue: globalYear.value + "-01"
+                subValue: parseInt(globalYear.value + "01")
             },
             month2: {
                 label: "02월",
                 value: true,
-                subValue: globalYear.value + "-02"
+                subValue: parseInt(globalYear.value + "02")
             },
             month3: {
                 label: "03월",
                 value: true,
-                subValue: globalYear.value + "-03"
+                subValue: parseInt(globalYear.value + "03")
             },
             month4: {
                 label: "04월",
                 value: true,
-                subValue: globalYear.value + "-04"
+                subValue: parseInt(globalYear.value + "04")
             },
             month5: {
                 label: "05월",
                 value: true,
-                subValue: globalYear.value + "-05"
+                subValue: parseInt(globalYear.value + "05")
             },
             month6: {
                 label: "06월",
                 value: true,
-                subValue: globalYear.value + "-06"
+                subValue: parseInt(globalYear.value + "06")
             },
             month7: {
                 label: "07월",
                 value: true,
-                subValue: globalYear.value + "-07"
+                subValue: parseInt(globalYear.value + "07")
             },
             month8: {
                 label: "08월",
                 value: true,
-                subValue: globalYear.value + "-08"
+                subValue: parseInt(globalYear.value + "08")
             },
             month9: {
                 label: "09월",
                 value: true,
-                subValue: globalYear.value + "-09"
+                subValue: parseInt(globalYear.value + "09")
             },
             month10: {
                 label: "10월",
                 value: true,
-                subValue: globalYear.value + "-10"
+                subValue: parseInt(globalYear.value + "10")
             },
             month11: {
                 label: "11월",
                 value: true,
-                subValue: globalYear.value + "-11"
+                subValue: parseInt(globalYear.value + "11")
             },
             month12: {
                 label: "12월",
                 value: true,
-                subValue: globalYear.value + "-12"
+                subValue: parseInt(globalYear.value + "12")
             },
         })
         const getArrPaymentYearMonth = () => {
@@ -357,14 +357,14 @@ export default defineComponent({
         const year1 = reactive({
             label: globalYear.value + 1 + '년 01월',
             value: true,
-            subValue: globalYear.value + 1 + '-01'
+            subValue:  parseInt(globalYear.value + 1 + '01')
         })
         const year2 = reactive({
             label: globalYear.value + 1 + '년 02월',
             value: true,
-            subValue: globalYear.value + 1 + '-02'
+            subValue:  parseInt(globalYear.value + 1 + '02')
         })
-        const modalStatus = ref(false) 
+        const modalStatus = ref(false)
         const dataApiSearch = reactive({
             companyId: companyId,
             filter: {
@@ -480,7 +480,7 @@ export default defineComponent({
                 notification('error', '조회 기간을 선택하세요!')
             }
         };
-        const openPopup = (res: any) => { 
+        const openPopup = (res: any) => {
             actionSendEmailGroup.value = false
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
@@ -561,7 +561,7 @@ export default defineComponent({
         }
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
-        } 
+        }
         return {
             emailUserLogin, actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
             selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
@@ -569,4 +569,6 @@ export default defineComponent({
     },
 });
 </script>  
+
+
 <style scoped lang="scss" src="./style/style.scss"/>

@@ -1,4 +1,4 @@
-<template>
+<template> 
     <div id="tab2-pa520">
         <div class="header-text-1">공제</div>
         <a-row :gutter="16">
@@ -238,24 +238,31 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(() => {
+            trigger.value = true
+            refectchDetail()
             emit('closePopup', false)
             notification('success', '업그레이드가 완료되었습니다!')
         })
         // ================== WATCH ====================================
         watch(originDataUpdate, (res) => {
             indexChange.value++
+        }, { deep: true }) 
+
+        watch(() => store.state.common.idRowPa520, (res) => {
+            console.log(res);
+            
+
         }, { deep: true })
 
         watch(() => props.idRowEdit, (res) => {
+            trigger.value = true
+            refectchDetail()
             if (indexChange.value <= 2) {
                 originDataDetail.value.employeeId = res
             } else
                 modalStatusChange.value = true
             indexChange.value = 1
-
         }, { deep: true })
-
-
 
         watch(() => arrDeduction, (res) => {
             let total = 0
@@ -349,7 +356,7 @@ export default defineComponent({
             refectchDetail()
         }
         return {
-            originDataUpdate, messageMonthlySalary, totalPayDifferen, totalDeduction, arrDeduction, radioCheckPersenPension, loading, totalAmountDifferencePayment, messageDaylySalary, modalStatusChange,
+            store, originDataUpdate, messageMonthlySalary, totalPayDifferen, totalDeduction, arrDeduction, radioCheckPersenPension, loading, totalAmountDifferencePayment, messageDaylySalary, modalStatusChange,
             statusComfirm, callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,
         };
     },

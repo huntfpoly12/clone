@@ -108,31 +108,31 @@
                     </template>
                     <DxColumn caption="귀속연월" cell-template="imputed" />
                     <template #imputed="{ data }">
-                        <span class="tag-custom-1">
+                        <div class="tag-custom-1">
                             {{ data.data.imputedYear + "-" + data.data.imputedMonth }}
-                        </span>
+                        </div>
                     </template>
                     <DxColumn caption="지급연월" cell-template="payment" />
                     <template #payment="{ data }">
-                        <span class="tag-custom-2">
+                        <div class="tag-custom-2">
                             {{ data.data.paymentYear + "-" + data.data.paymentMonth }}
-                        </span>
+                        </div>
                     </template>
                     <DxColumn caption="신고 주기" cell-template="reportType" />
                     <template #reportType="{ data }">
-                        <span :class="data.data.reportType == 6 ? 'tag-custom-1' : 'tag-custom-2'">
+                        <div :class="data.data.reportType == 6 ? 'tag-custom-1' : 'tag-custom-2'">
                             {{ data.data.reportType == 6 ? '반기' : '매월' }}
-                        </span>
+                        </div>
                     </template>
                     <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                     <template #afterDeadline="{ data }">
-                        <span
+                        <div
                             :class="data.data.index == 0 && data.data.afterDeadline == true ? 'tag-custom-2' : (data.data.index == 0 && data.data.afterDeadline == false ? 'tag-custom-4' : 'tag-custom-3')">
                             {{
                                 data.data.index == 0 && data.data.afterDeadline == true ? '기한후' : data.data.index == 0 &&
                                     data.data.afterDeadline == false ? '정기' : '수정 ' + data.data.index
                             }}
-                        </span>
+                        </div>
                     </template>
                     <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
                     <template #yearEndTaxAdjustment="{ data }">

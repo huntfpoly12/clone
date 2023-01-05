@@ -97,6 +97,7 @@
                     v-if="actionChangeComponent == 2" :actionSave="actionSave" />
             </a-col>
         </a-row>
+
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
@@ -171,7 +172,7 @@ export default defineComponent({
             refetchData()
         })
         // ======================= WATCH ==================================
-        watch(error, (value) => { 
+        watch(error, (value) => {
             // if (value?.message === 'Response not successful: Received status code 400') {
             //     notification('error','Có mỗi cái id mà ko nhập được')
             // }
@@ -221,6 +222,9 @@ export default defineComponent({
                 actionChangeComponent.value = 2
                 idRowEdit.value = val.data.employeeId
                 modalEditStatus.value = true
+                // console.log(val.data.employeeId);
+                
+                store.state.common.idRowPa520 = val.data.employeeId
             }
         }
         const modalHistory = () => {

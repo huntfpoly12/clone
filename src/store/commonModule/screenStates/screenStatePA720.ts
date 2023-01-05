@@ -1,4 +1,4 @@
-const statesPA720 = {
+let statesPA720 = {
     isErrorFormPA720: false,
     keyActivePA720: 1,
     actionSavePA720: 0,
