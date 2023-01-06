@@ -7,7 +7,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true">
-          <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
+          <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year="{ }">
             <span>지급연월</span>
           </template>
@@ -15,6 +15,7 @@
           <template #imputed-month1="{ data }">
             <div v-if="data.data.month1">
               <colorful-badge class="hover-underlined" :value="data.data.month1.status"
+              :class="setUnderline(data.data.month1.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month1)" :year="data.data.month1.paymentYear"
                 :month="data.data.month1.paymentMonth" />
             </div>
@@ -24,6 +25,7 @@
           <template #imputed-month2="{ data }">
             <div v-if="data.data.month2">
               <colorful-badge class="hover-underlined" :value="data.data.month2.status"
+              :class="setUnderline(data.data.month2.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month2)" :year="data.data.month2.paymentYear"
                 :month="data.data.month2.paymentMonth" />
             </div>
@@ -33,6 +35,7 @@
           <template #imputed-month3="{ data }">
             <div v-if="data.data.month3">
               <colorful-badge class="hover-underlined" :value="data.data.month3.status"
+              :class="setUnderline(data.data.month3.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month3)" :year="data.data.month3.paymentYear"
                 :month="data.data.month3.paymentMonth" />
             </div>
@@ -42,6 +45,7 @@
           <template #imputed-month4="{ data }">
             <div v-if="data.data.month4">
               <colorful-badge class="hover-underlined" :value="data.data.month4.status"
+              :class="setUnderline(data.data.month4.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month4)" :year="data.data.month4.paymentYear"
                 :month="data.data.month4.paymentMonth" />
             </div>
@@ -51,6 +55,7 @@
           <template #imputed-month5="{ data }">
             <div v-if="data.data.month5">
               <colorful-badge class="hover-underlined" :value="data.data.month5.status"
+              :class="setUnderline(data.data.month5.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month5)" :year="data.data.month5.paymentYear"
                 :month="data.data.month5.paymentMonth" />
             </div>
@@ -60,6 +65,7 @@
           <template #imputed-month6="{ data }">
             <div v-if="data.data.month6">
               <colorful-badge class="hover-underlined" :value="data.data.month6.status"
+              :class="setUnderline(data.data.month6.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month6)" :year="data.data.month6.paymentYear"
                 :month="data.data.month6.paymentMonth" />
             </div>
@@ -69,6 +75,7 @@
           <template #imputed-month7="{ data }">
             <div v-if="data.data.month7">
               <colorful-badge class="hover-underlined" :value="data.data.month7.status"
+              :class="setUnderline(data.data.month7.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month7)" :year="data.data.month7.paymentYear"
                 :month="data.data.month7.paymentMonth" />
             </div>
@@ -78,6 +85,7 @@
           <template #imputed-month8="{ data }">
             <div v-if="data.data.month8">
               <colorful-badge class="hover-underlined" :value="data.data.month8.status"
+              :class="setUnderline(data.data.month8.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month8)" :year="data.data.month8.paymentYear"
                 :month="data.data.month8.paymentMonth" />
             </div>
@@ -87,6 +95,7 @@
           <template #imputed-month9="{ data }">
             <div v-if="data.data.month9">
               <colorful-badge class="hover-underlined" :value="data.data.month9.status"
+              :class="setUnderline(data.data.month9.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month9)" :year="data.data.month9.paymentYear"
                 :month="data.data.month9.paymentMonth" />
             </div>
@@ -96,6 +105,7 @@
           <template #imputed-month10="{ data }">
             <div v-if="data.data.month10">
               <colorful-badge class="hover-underlined" :value="data.data.month10.status"
+              :class="setUnderline(data.data.month10.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month10)" :year="data.data.month10.paymentYear"
                 :month="data.data.month10.paymentMonth" />
             </div>
@@ -105,6 +115,7 @@
           <template #imputed-month11="{ data }">
             <div v-if="data.data.month11">
               <colorful-badge class="hover-underlined" :value="data.data.month11.status"
+              :class="setUnderline(data.data.month11.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month11)" :year="data.data.month11.paymentYear"
                 :month="data.data.month11.paymentMonth" />
             </div>
@@ -114,6 +125,7 @@
           <template #imputed-month12="{ data }">
             <div v-if="data.data.month12">
               <colorful-badge class="hover-underlined" :value="data.data.month12.status"
+              :class="setUnderline(data.data.month12.imputedMonth) ?'current-underlined':''"
                 @click="showDetailSelected(data.data.month12)" :year="data.data.month12.paymentYear"
                 :month="data.data.month12.paymentMonth" />
             </div>
@@ -202,7 +214,7 @@
     </a-row>
     <a-row>
       <a-col :span="12" class="custom-layout">
-        <a-spin :spinning="loadingTaxPayInfo" size="large">
+        <a-spin :spinning="(loadingTaxPayInfo)" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
             :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
@@ -244,13 +256,10 @@
               <DxTotalItem column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" />
             </DxSummary>
           </DxDataGrid>
-        </a-spin>
+          </a-spin>
       </a-col>
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-        <FormDataComponent :dataIncomeWage="dataIncomeWage" :arrayEmploySelect="arrayEmploySelect"
-          :actionUpdateItem="actionUpdateItem" :actionAddItem="actionAddItem" :statusButton="statusButton"
-          @createdDone="createdDone" :updateData="updateData" :actionSaveItem="actionSaveItem"
-          @loadingTableInfo="loadingTableInfo" />
+        <FormDataComponent :dataIncomeWage="dataIncomeWage" :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem" :actionUpdateItem="actionUpdateItem"  @createdDone="createdDone" @loadingTableInfo="loadingTableInfo" />
       </a-col>
       <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
         @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
@@ -268,21 +277,16 @@ import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent2.vue"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
-import { sampleDataIncomeWage, sampleFormIncomeWage } from "./utils/index"
 import filters from "@/helpers/filters";
 import notification from "@/utils/notification"
-const actionSaveItem: any = ref<number>(0)
-import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import DeductionPopup from "./components/Popup/DeductionPopup.vue"
-import InsurancePopup from "./components/Popup/InsurancePopup.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
 import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
+import { sampleDataIncomeWage } from "./utils/index"
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -300,20 +304,8 @@ export default defineComponent({
     DxButton,
     DxSummary,
     DxTotalItem,
-    EditOutlined,
-    HistoryOutlined,
-    SearchOutlined,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    MailOutlined,
-    PrinterOutlined,
-    DeleteOutlined,
-    SaveOutlined,
     SelectActionComponent,
-    EmploySelect,
     ProcessStatus,
-    DeductionPopup,
-    InsurancePopup,
     FormDataComponent,
     CopyMonth,
     EmployeeInfoSettment
@@ -324,120 +316,44 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page)
     const move_column = computed(() => store.state.settings.move_column)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
-
-    let statusButton = ref()
-    const modalCopy = ref<boolean>(false);
+    const processKey = computed(() => store.state.common.processKeyPA110)
+    const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
+    const dataSource = ref<any>([])
+    const dataCustomRes = ref<any>([])
+    const dataTaxPayInfo = ref<any>([])
+    const arrDataPoint = ref<any>([])
+    const dataModalCopy = ref()
+    const dataIncomeWage = ref({...sampleDataIncomeWage})
     const triggerIncomeWage = ref<boolean>(true)
-    const triggerProcessIncomeWages = ref<boolean>(true)
-    const triggerIncomeWages = ref<boolean>(true)
-    const triggeraxPayInfo = ref<boolean>(true)
-    const dataRows: any = ref([])
-    const actionAddItem: any = ref<boolean>(true)
-    const actionUpdateItem: any = ref<number>(1)
-    const dataModalCopy: any = ref()
-    const arrDataPoint: any = ref([])
-
-    store.state.common.processKeyPA110 = {
-      imputedYear: globalYear.value,
-      imputedMonth: dayjs().month() + 1,
-      paymentYear: globalYear.value,
-      paymentMonth: dayjs().month() + 1,
-    }
-
-    watch(globalYear, (newValue)=>{
-      processKey.imputedYear = globalYear.value;
-      processKey.paymentYear = globalYear.value;
- 
-    })
-    const processKey = reactive({
-      imputedYear: globalYear.value,
-      imputedMonth: dayjs().month() + 1,
-      paymentYear: globalYear.value,
-      paymentMonth: dayjs().month() + 1,
-      })
-    let dataCustomRes: any = ref([])
-    const dataIncomeWage: any = ref({ ...sampleDataIncomeWage })
-
-    const dataSource: any = ref([])
-    let status: any = ref()
-    const dataTaxPayInfo: any = ref([])
-    const formIncomeWageDaily = reactive({ ...sampleFormIncomeWage })
-    const imputedYear = ref('')
-    const imputedMonth = ref('')
-    const arrayEmploySelect: any = ref([])
-    const originDataProcessIncome = ref({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      // imputedMonth: dayjs().month(),
-    })
-    const originDataIncomeWage = reactive({
-      companyId: companyId,
-      processKey: processKey,
-      incomeId: 0,
-    })
-    let originDataIncomeWages = reactive({
-      companyId: companyId,
-      processKey: processKey,
-    })
-    let popupData = ref([])
-    // ======================= GRAPQL ================================
+    const actionAddItem = ref<boolean>(true)
+    const modalCopy = ref<boolean>(false);
+    const dataRows = ref([])
+    const actionSaveItem= ref<number>(0)
+    const actionUpdateItem= ref<number>(0)
+    let status = ref()
+    // call api getIncomeProcessWages for first table 
     const {
       refetch: refetchDataProcessIncomeWages,
       result: resIncomeProcessWages,
       loading: loadingIncomeProcessWages
-    } = useQuery(queries.getIncomeProcessWages, originDataProcessIncome, () => ({
-      enabled: triggerProcessIncomeWages.value,
+    } = useQuery(queries.getIncomeProcessWages, {
+      companyId: companyId,
+      imputedYear: globalYear,
+      imputedMonth: dayjs().month() + 1,
+    }, () => ({
       fetchPolicy: "no-cache",
     }))
-    const {
-      refetch: refetchDataIncomeWages,
-      result: resIncomeWages,
-      loading: loadingIncomeWages
-    } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
-      enabled: triggerIncomeWages.value,
-      fetchPolicy: "no-cache",
-    }))
-
-    const {
-      refetch: refetchDataIncomeWage,
-      result: resultIncomeWage,
-      loading: loadingIncomeWage,
-    } = useQuery(queries.getIncomeWage, originDataIncomeWage, () => ({
-      enabled: triggerIncomeWage.value,
-      fetchPolicy: "no-cache",
-    }))
-    const {
-      refetch: refetchDataTaxPayInfo,
-      result: resultTaxPayInfo,
-      loading: loadingTaxPayInfo,
-    } = useQuery(queries.getIncomeWages, originDataIncomeWages, () => ({
-      enabled: triggeraxPayInfo.value,
-      fetchPolicy: "no-cache",
-    }))
-    const {
-      mutate: actionChangeIncomeProcess,
-      onError: errorChangeIncomeProcess,
-      onDone: successChangeIncomeProcess,
-    } = useMutation(mutations.changeIncomeProcessWageStatus)
-    errorChangeIncomeProcess(e => {
-      notification('error', e.message)
-    })
-    successChangeIncomeProcess(e => {
-      notification('success', `업데이트 완료!`)
-      refetchDataProcessIncomeWages()
-    })
-    // ======================= WATCH ==================================
     // get data table detail getIncomeProcessWages
     watch(resIncomeProcessWages, (value) => {
       arrDataPoint.value = [];
-      if (value) {
-
-        let respon = value.getIncomeProcessWages
+      if (value) { 
+        // set first row in table Income Process Wages
         dataSource.value = [{
           companyId: companyId,
         }]
+
         dataCustomRes.value = [
-          { id: 1, name: "재직(퇴사) " },
+          { id: 1, name: "재직(퇴사)" },
           { id: 2, name: "과세급여", },
           { id: 3, name: "비과세급여", },
           { id: 4, name: "급여총액", },
@@ -450,179 +366,234 @@ export default defineComponent({
           { id: 11, name: "공제총액", },
           { id: 12, name: "차인지급액", },
         ]
-        respon.forEach((val: any, index: any) => {
+        value.getIncomeProcessWages.forEach((data: any) => {
+          // create data to copy
           arrDataPoint.value.push({
-            imputedYear: val.imputedYear,
-            imputedMonth: val.imputedMonth,
-            paymentYear: val.paymentYear,
-            paymentMonth: val.paymentMonth,
+            imputedYear: data.imputedYear,
+            imputedMonth: data.imputedMonth,
+            paymentYear: data.paymentYear,
+            paymentMonth: data.paymentMonth,
           })
-          status.value = respon[0].status
+          
           let dataAdd = {
-            imputedYear: val.imputedYear,
-            imputedMonth: val.imputedMonth,
-            paymentYear: val.paymentYear,
-            paymentMonth: val.paymentMonth,
+            imputedYear: data.imputedYear,
+            imputedMonth: data.imputedMonth,
+            paymentYear: data.paymentYear,
+            paymentMonth: data.paymentMonth,
           }
-          if (JSON.stringify(dataAdd) == JSON.stringify(processKey)) {
-            status.value = val.status
+          dataSource.value[0]['month' + data.imputedMonth] = data
+         // data table detail
+          dataCustomRes.value[0]['month' + data.imputedMonth] = {
+            value: `${[data.value].reduce((total, status) => (status != 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })} (${[data].reduce((total, status) => (status == 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })})`,
+            ...dataAdd
           }
-          dataSource.value[0]['month' + val.imputedMonth] = val
+          dataCustomRes.value[1]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.withholdingIncomeTax),
+            ...dataAdd
+          }
+          dataCustomRes.value[2]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.totalTaxPay),
+            ...dataAdd
+          }
+          dataCustomRes.value[3]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.totalTaxfreePay),
+            ...dataAdd
+          }
+          dataCustomRes.value[4]['month' + data.imputedMonth] = {
 
-          // data table detail
-          dataCustomRes.value[0]['month' + val.imputedMonth] = {
-            value: `${[val.value].reduce((total, status) => (status != 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })} (${[val].reduce((total, status) => (status == 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })})`,
+            value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
-          dataCustomRes.value[1]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
-            ...dataAdd
-          }
-          dataCustomRes.value[2]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.totalTaxPay),
-            ...dataAdd
-          }
-          dataCustomRes.value[3]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.totalTaxfreePay),
-            ...dataAdd
-          }
-          dataCustomRes.value[4]['month' + val.imputedMonth] = {
-
-            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
-            ...dataAdd
-          }
-          dataCustomRes.value[5]['month' + val.imputedMonth] = {
+          dataCustomRes.value[5]['month' + data.imputedMonth] = {
             value: 0,
             ...dataAdd
           }
-          dataCustomRes.value[6]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+          dataCustomRes.value[6]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
-          dataCustomRes.value[7]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+          dataCustomRes.value[7]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
-          dataCustomRes.value[8]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+          dataCustomRes.value[8]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
-          dataCustomRes.value[9]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
+          dataCustomRes.value[9]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.withholdingIncomeTax),
             ...dataAdd
           }
-          dataCustomRes.value[10]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+          dataCustomRes.value[10]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
             ...dataAdd
           }
-          dataCustomRes.value[11]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.totalDeduction),
+          dataCustomRes.value[11]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.totalDeduction),
             ...dataAdd
           }
-          dataCustomRes.value[11]['month' + val.imputedMonth] = {
-            value: filters.formatCurrency(val.incomeStat?.actualPayment),
+          dataCustomRes.value[11]['month' + data.imputedMonth] = {
+            value: filters.formatCurrency(data.incomeStat?.actualPayment),
             ...dataAdd
           }
-        })
+          if (data.imputedMonth == (dayjs().month() + 1)) {
+                status.value = data.status
+                if(actionUpdateItem.value == 0){
+                    store.state.common.processKeyPA110.imputedYear = data.imputedYear
+                    store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
+                    store.state.common.processKeyPA110.paymentYear = data.paymentYear
+                    store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
+                }          
+              }
+          
+        });
       }
-    })
-    watch(resultIncomeWage, (value) => {
-      if (value) {
-        dataIncomeWage.value = value.getIncomeWage
-      }
-    })
+    }
+    )
+
+    // get getIncomeWages table
+    const {
+      refetch: refetchDataTaxPayInfo,
+      result: resultTaxPayInfo,
+      loading: loadingTaxPayInfo,
+    } = useQuery(queries.getIncomeWages, {
+      companyId: companyId,
+      processKey: processKey,
+    }, () => ({
+      fetchPolicy: "no-cache",
+    }))
     watch(resultTaxPayInfo, (value) => {
       dataTaxPayInfo.value = value.getIncomeWages
-      dataTaxPayInfo.value.map((value: any) => {
-        arrayEmploySelect.value.push({
-          employeeId: value.employee.employeeId,
-          name: value.employee.name,
-          idCardNumber: value.employee.idCardNumber,
-          status: value.employee.status,
-          foreigner: value.employee.foreigner,
-          midTermSettlement: value.midTermSettlement
-        }
-        )
-      })
     })
 
-    const customizeTotalItemCode1 = (data: any) => {
-      let totalItemCode1: any = 0
-      dataTaxPayInfo.value.map((val: any) => {
-      })
-      return `1${filters.formatCurrency(totalItemCode1)}`;
-    }
-    const loadingTableInfo = () => {
-      refetchDataTaxPayInfo()
-      refetchDataProcessIncomeWages()
-    }
-    // ======================= FUNCTION ================================
-    // function get total item code
-    const statusComfirm = () => {
-      actionChangeIncomeProcess({
-        companyId: companyId,
-        processKey: { ...processKey },
-        status: status.value
-      })
-    }
-
-    const updateData = (e: any) => {
-      actionUpdateItem.value++
-    }
-    const onSubmit = (e: any) => {
-      actionSaveItem.value++
-    }
+    /**
+     * action edit employ tax pay
+     */
     const actionEditTaxPay = (data: any) => {
       dataIncomeWage.value = data.data
       actionAddItem.value = false
     }
-    const addMonth = (month: number) => {
-      modalCopy.value = true
-    }
-    const actionCopySuccess = () => {
-      modalCopy.value = false
-    }
     const selectionChanged = (data: any) => {
       dataRows.value = data.selectedRowsData
     }
-    const copyMonth = (month: number) => {
-      dataModalCopy.value = month
-      modalCopy.value = true
-
+    // 
+    /**
+     *  Add new value
+     *  Add one to change the props.
+     *  When the prop changes, the action will be taken to add or update the data 
+     *  */ 
+    const onSubmit = (e: any) => {
+      actionSaveItem.value++
     }
+    /**
+     *  Update value 
+     */
+    const updateData = (e: any) => {
+      actionUpdateItem.value++
+    }
+    /**
+     * show detail value of month
+     * @param month 
+     */
+    const showDetailSelected = (month: any) => {
+      status.value = month.status
+      store.state.common.processKeyPA110.paymentYear = month.paymentYear
+      store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
+      store.state.common.processKeyPA110.imputedMonth = month.imputedMonth
+    }
+    /**
+     * copy data from other month
+     * @param month 
+     */
+    const copyMonth = (month: number) => {
+        dataModalCopy.value = month
+        modalCopy.value = true
+    }
+
+    const loadingTableInfo = () => {
+      refetchDataTaxPayInfo()
+      refetchDataProcessIncomeWages()
+    }
+
+    /**
+     * change income process wage status
+     */
+    const {
+      mutate: actionChangeIncomeProcess,
+      onError: errorChangeIncomeProcess,
+      onDone: successChangeIncomeProcess,
+    } = useMutation(mutations.changeIncomeProcessWageStatus)
+    errorChangeIncomeProcess(e => {
+      notification('error', e.message)
+    })
+    successChangeIncomeProcess(e => {
+      notification('success', `업데이트 완료!`)
+      refetchDataProcessIncomeWages()
+    })
+
+    /**
+     * change income process wage status
+     */
+    const statusComfirm = () => {
+      actionChangeIncomeProcess({
+        companyId: companyId,
+        processKey: {
+        imputedYear: globalYear.value,
+        imputedMonth: dayjs().month() + 1,
+        paymentYear: globalYear.value,
+        paymentMonth: dayjs().month() + 1,
+        },
+        status: status.value
+      })
+    }
+
     const dataAddIncomeProcess = (data: any) => {
       dataSource.value[0]['month' + data.imputedMonth] = data
       dataSource.value[0]['month' + data.imputedMonth].status = 10
+
     }
-    
+    /**
+     * underlined set of selected month
+     * @param monthInputed 
+     */
+    const setUnderline = (monthInputed : any)=>{
+            return monthClicked.value == monthInputed
+    }
+
     const createdDone = () => {
-      triggerProcessIncomeWages.value = true
-      refetchDataIncomeWages()
-    }
-    const showDetailSelected = (data: any) => {
-      status.value = data.status
-      store.state.common.processKeyPA110.paymentYear = data.paymentYear
-      store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
-      store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
+      refetchDataTaxPayInfo()
     }
     return {
-      loadingIncomeProcessWages, loadingTaxPayInfo, loadingIncomeWages, loadingIncomeWage,
-      status, processKey,
-      dataSource, originDataIncomeWages,originDataIncomeWage, globalYear, statusButton,
-      per_page, move_column, colomn_resize,
-      refetchDataProcessIncomeWages, refetchDataIncomeWages,
+      globalYear,
+      per_page,
+      move_column,
+      colomn_resize,
+      processKey,
       onSubmit,
-      dataIncomeWage,
-      popupData,
-      selectionChanged,
-      arrayEmploySelect,
-      imputedYear,
-      imputedMonth,
-      dataCustomRes, actionSaveItem,
-      formIncomeWageDaily, copyMonth, dataModalCopy, arrDataPoint, statusComfirm, dataAddIncomeProcess, customizeTotalItemCode1,
+      updateData,
+      dataSource,
+      dataCustomRes,
       showDetailSelected,
-      dataTaxPayInfo, dataRows, actionAddItem, loadingTableInfo, updateData, actionUpdateItem, createdDone,
-      actionEditTaxPay, modalCopy, actionCopySuccess, addMonth
+      actionAddItem,
+      loadingIncomeProcessWages,
+      copyMonth,
+      loadingTaxPayInfo,
+      dataTaxPayInfo,
+      dataModalCopy,
+      modalCopy,
+      actionEditTaxPay,
+      selectionChanged,
+      dataIncomeWage,
+      loadingTableInfo,
+      dataRows,
+      statusComfirm,
+      actionSaveItem,
+      actionUpdateItem,
+      arrDataPoint,
+      dataAddIncomeProcess,
+      status,
+      setUnderline,
+      createdDone
     }
 
   },
