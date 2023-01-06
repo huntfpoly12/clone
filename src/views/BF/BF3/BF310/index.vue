@@ -153,6 +153,7 @@ import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
+import filters from "@/helpers/filters";
 
 export default defineComponent({
     components: {
@@ -228,8 +229,8 @@ export default defineComponent({
         }
         const searching = (e: any) => {
             originData.page = 1
-            originData.startDate = +dayjs(rangeDate.value[0]).format('YYYYMMDD')
-            originData.finishDate = +dayjs(rangeDate.value[1]).format('YYYYMMDD')
+            originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
+            originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             refetchData()
@@ -237,8 +238,8 @@ export default defineComponent({
         }
         const changePage = (e: any) => {
             actionSearch.value = true
-            originData.startDate = +dayjs(rangeDate.value[0]).format('YYYYMMDD')
-            originData.finishDate = +dayjs(rangeDate.value[1]).format('YYYYMMDD')
+            originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
+            originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             refetchData()
