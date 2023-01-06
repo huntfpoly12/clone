@@ -1,8 +1,8 @@
-<template>
+<template>{{ activeTab }} {{ menuTab }}
   <a-layout>
     <a-layout-header class="header">
       <div class="nav-logo">
-        <a :href="'/dashboard/'"><img src="../assets/images/logo.png" /></a>
+        <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
       </div>
       <div class="user-info" v-if="username">
         <year-header />
@@ -50,6 +50,7 @@
         </div>
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
+            <!-- hide or show scroll arrows left when page width is exceeded -->
             <caret-left-outlined class="arrow-left"  v-if="isArrowScroll"    @click="tabLeft"/>
             <ul ref="scroll_container" class="list-menu-tab">
               <li
@@ -68,6 +69,7 @@
                 />
               </li>
             </ul>
+            <!-- hide or show scroll arrows right when page width is exceeded -->
             <caret-right-outlined v-if="isArrowScroll" class="arrow-right"  @click="tabRight" />
           </nav>
           
@@ -144,8 +146,7 @@
           >
             <div class="main-content">
               <template v-if="activeTab">      
-                <keep-alive :exclude="cachedTab">
-             
+                <keep-alive :exclude="cachedTab">   
                   <component :is="currentComponent" />
                 </keep-alive>
               </template>
@@ -408,6 +409,7 @@ export default defineComponent({
     const collapsed = ref(false);
     const selectedItems = ref([]);
     const activeTab = ref();
+    // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
 
     /**
@@ -440,9 +442,6 @@ export default defineComponent({
      * init menuTab from vuex
      */
     let menuTab = ref(store.state.common.menuTab);
-    const filteredOptions = computed(() =>
-      menuDatas.filter((o) => !selectedItems.value.includes(o))
-    );
 
     const logout = ()=>{
       router.push("/login");
@@ -468,17 +467,25 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
-  
-      let itemNew = [];
-      itemNew = menuDatas.find(item => item.id === itemId);
-      activeTab.value = menuDatas.find(item => item.id === itemId);
-      store.state.common.activeTab = itemNew
-      store.state.common.cachedTab.push(itemNew.id.toUpperCase().replaceAll('-', ''))
-      if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
-        menuTab.value.push(itemNew);
-        selectedItems.value = [];
-        checkOverflow()
+      // If you select the logo, it will add a dashboard tab object
+      if (itemId == '' && !menuTab.value.some(item => item.name === 'Dashboard')) {
+        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
+        alert()
+        router.push("/dashboard");
+        menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
+      } else {
+        let itemNew = [];
+        itemNew = menuDatas.find(item => item.id === itemId);
+        activeTab.value = menuDatas.find(item => item.id === itemId);
+        store.state.common.activeTab = itemNew
+        store.state.common.cachedTab.push(itemNew.id.toUpperCase().replaceAll('-', ''))
+        if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
+          menuTab.value.push(itemNew);
+          selectedItems.value = [];
+          checkOverflow()
+        }
       }
+
 
     }
     /**
@@ -493,7 +500,7 @@ export default defineComponent({
       activeTab.value = menuTab.value.slice(-1)[0];
       selectedItems.value = [];
       if (menuTab.value.length === 0) {
-        activeTab.value = { name: "example", url: "/dashboard", id: "" };
+        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
         router.push("/dashboard");
         menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
       }
@@ -507,13 +514,19 @@ export default defineComponent({
       }
       store.state.common.activeTab =  activeTab.value
     }
+
+    /**
+     * monitor cachedtabs variable on vuex to blow cachedtab variable at component
+     */
     watch(()=>store.state.common.cachedTab, (newValue)=>{     
         cachedTab.value = newValue;
     }, { deep: true })
     const focusInput  = ()=>{
       state.value = false;
     }
-
+    /**
+     * monitor activeTab variable on vuex to blow activeTab variable at component
+     */
     watch(()=>store.state.common.activeTab, (newValue)=>{     
         activeTab.value = newValue;
     }, { deep: true })
@@ -578,7 +591,6 @@ export default defineComponent({
       menuTab,
       collapsed,
       selectedItems,
-      filteredOptions,
       selectedKeys,
       openKeys,
       scrollX,
