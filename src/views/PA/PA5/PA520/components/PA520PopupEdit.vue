@@ -7,8 +7,7 @@
                         :actionSave="actionSave" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여/공제">
-                    <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" :actionSave="actionSave"
-                        :changeValueTest="changeVal" />
+                    <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" :actionSave="actionSave" />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -49,16 +48,12 @@ export default defineComponent({
             emit("editRowKey", id)
         }
 
-        const changeVal = ref(0)
-        watch(() => store.state.common.idRowChangePa520, (value) => {
-            changeVal.value++
-
-        }, { deep: true })
+        
 
         return {
             activeRowKey,
             setModalVisible,
-            store, activeKey, changeVal
+            store, activeKey
         };
     },
 });

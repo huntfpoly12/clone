@@ -126,7 +126,7 @@ export default defineComponent({
         PA520PopupAddNew, PA520PopupEdit
     },
     setup() {
-        const actionChangeComponent = ref(2)
+        const actionChangeComponent = ref(1)
         const actionSave = ref(0)
         const contentDelete = Message.getMessage('PA120', '002').message
         const modalStatus = ref(false)
