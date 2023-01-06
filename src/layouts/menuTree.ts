@@ -162,7 +162,7 @@ export default [
         title: "세무신고,연말정산",
         id: "pa-200",
         items: [
-          { name: "원천징수이행상황신고서", url: "#", id: "pa-210" },
+          { name: "원천징수이행상황신고서", url: "/dashboard/pa-210", id: "pa-210" },
           { name: "근로소득원천징수영수증", url: "#", id: "pa-220" },
           { name: "소득자별근로소득원천징수부", url: "/dashboard/pa-230", id: "pa-230" },
           { name: "연말정산간소화입력", url: "#", id: "pa-240" },

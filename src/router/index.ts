@@ -91,6 +91,10 @@ const routes = [
         component: () => import("../views/BF/BF2/BF220/index.vue"),
       },
       {
+        path: "bf-220",
+        component: () => import("../views/BF/BF2/BF220/index.vue"),
+      },
+      {
         path: "bf-610",
         component: () => import("../views/BF/BF6/BF610/index.vue"),
       },
@@ -105,6 +109,14 @@ const routes = [
       {
         path: "pa-120",
         component: () => import("../views/PA/PA1/PA120/index.vue"),
+      },
+      {
+        path: "pa-210",
+        component: () => import("../views/PA/PA2/PA210/index.vue"),
+      },
+      {
+        path: "pa-220",
+        component: () => import("../views/PA/PA2/PA220/index.vue"),
       },
       {
         path: "pa-230",
@@ -153,10 +165,6 @@ const routes = [
       {
         path: "pa-730",
         component: () => import("../views/PA/PA7/PA730/index.vue"),
-      },
-      {
-        path: "pa-220",
-        component: () => import("../views/PA/PA2/PA220/index.vue"),
       },
       {
         path: "pa-110",
