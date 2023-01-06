@@ -56,8 +56,10 @@
                 </div>
         </template>
     </DxDropDownButton>
+    <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+        title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
 
-    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" @loadingTableInfo="loadingTableInfo"
+    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false"
         :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
     <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
@@ -129,7 +131,8 @@ export default defineComponent({
         const modalEmailSingle = ref(false)
         const modalEmailSinglePayrollRegister = ref(false)
         const modalEmailMulti = ref(false)
-        
+        const modalStatusAdd = ref(false)
+
         const originData: any = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -151,8 +154,15 @@ export default defineComponent({
                 notification('error', `항목을 최소 하나 이상 선택해야합니다`)
             }
         };
-        const actionAddItem = (value: any) => {
-            emit("actionAddItem", true)
+        const actionAddItem = () => {
+            if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
+                    modalStatusAdd.value = true
+            } else {
+                store.state.common.actionAddItem = true;
+                store.state.common.incomeId = null;
+                store.state.common.focusedRowKey = null;
+            }
+            
         }
         const editItem = (value: any) => {
             if (props.dataRows.length == 1) {
@@ -242,8 +252,10 @@ export default defineComponent({
                 window.open(value.getIncomeWageDailySalaryStatementViewUrl)
             }
         })
-        const loadingTableInfo = () => {
-            emit("loadingTableInfo", true)
+        const statusComfirmAdd = (val: any) => {
+            if (val) {
+                store.state.common.actionAddItem = 1;
+            }
         }
         const onSubmit = (e: any) => {
             emit('onSubmit')
@@ -272,9 +284,9 @@ export default defineComponent({
             popupDataDelete,
             actionAddItem,
             popupDataEdit,
-            loadingTableInfo,
+            modalStatusAdd, statusComfirmAdd,
             openTab,
-            onSubmit
+            onSubmit,
         };
     },
 });
