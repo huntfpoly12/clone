@@ -311,11 +311,7 @@ import { DeleteOutlined, PlusSquareOutlined, SaveOutlined } from "@ant-design/ic
 import queries from "@/graphql/queries/BF/BF3/BF330/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF330/index";
 import dayjs from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
 import { initialState, initialFormStateMomes } from "../utils/index"
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from '@/utils/notification';
 export default defineComponent({

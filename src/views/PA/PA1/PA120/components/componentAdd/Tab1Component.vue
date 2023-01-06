@@ -21,12 +21,12 @@
               placeholder="한글,영문(대문자) 입력 가능" />
           </a-form-item>
           <a-form-item label="입사년월일" label-align="right">
-            <date-time-box width="150px" v-model:valueDate="formStateTab1.joinedAt" dateFormat="YYYY-MM-DD">
+            <date-time-box width="150px" v-model:valueDate="formStateTab1.joinedAt">
             </date-time-box>
           </a-form-item>
           <a-form-item label="퇴사년월일" label-align="right">
             <div class="input-text">
-              <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt" dateFormat="YYYY-MM-DD">
+              <date-time-box width="150px" v-model:valueDate="formStateTab1.leavedAt">
               </date-time-box>
               <span style="color: #888888; font-size:12px">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 마지막 근무한 날
@@ -123,7 +123,7 @@ export default defineComponent({
     const labelResidebId = ref("주민(외국인)번호 ");
     const formStateTab1 = reactive<any>({
       ...initFormStateTab1,
-      joinedAt: dayjs().format("YYYY-MM-DD"),
+      joinedAt: dayjs().format("YYYYMMDD"),
       leavedAt: "",
     });
 
@@ -218,9 +218,11 @@ export default defineComponent({
       onError,
     } = useMutation(mutations.createEmployeeWage);
 
-    onDoneAdd((res) => {
+    onDoneAdd(() => {
        emit('setTabsStatus', false);
-      notification("success", `업그레이드가 완료되었습니다! `);
+       notification("success", `업그레이드가 완료되었습니다! `);
+       console.log(`outpu`)
+       store.commit('common/actionFormDonePA120')
     });
 
     onError((error) => {
@@ -238,14 +240,14 @@ export default defineComponent({
           imputedYear: globalYear.value,
           input: {
             ...formStateTab1,
-            joinedAt: filters.formatDateToInt(formStateTab1.joinedAt),
-            leavedAt : filters.formatDateToInt(formStateTab1.leavedAt)
+            joinedAt: +dayjs(formStateTab1.joinedAt).format("YYYYMMDD"),
+            leavedAt: +dayjs(formStateTab1.leavedAt).format("YYYYMMDD"),
           },
         };
         createEmployeeWage(dataNew);
       }
-
     };
+console.log(`output->formStateTab1.input`,+formStateTab1.joinedAt,)
 // compare data
     const compareData = () => {
       var formStateTab1Copy = reactive(formStateTab1);
@@ -261,6 +263,7 @@ export default defineComponent({
       }
       return true;
     }
+    const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
     return {
       companyId,
       loading,
@@ -279,7 +282,8 @@ export default defineComponent({
       createNewEmployeeWage,
       arrDepartments,
       arrResponsibility,
-      compareData
+      compareData,
+      actionFormDonePA120
     };
   },
 });

@@ -45,7 +45,7 @@
             </span>
         </div>
         <a-row :gutter="16">
-            <a-col :span="24"><b>차인지급액</b> <b>{{ $filters.formatCurrency(totalPayDifferen) }} </b> 원
+            <a-col :span="24"><b>차인지급액</b> <b>{{ $filters.formatCurrency(originDataUpdate.input.monthlyWage + totalDeduction) }} </b> 원
             </a-col>
             <a-col :span="12">
                 <div class="header-text-0">월급여
@@ -56,7 +56,6 @@
                 <div>
                     <a-form-item label="일급/월급">
                         <div class="d-flex-center">
-                            {{ originDataUpdate.input.monthlyPaycheck }}
                             <switch-basic textCheck="일급" textUnCheck="월급" class="mr-10"
                                 v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
                             <number-box-money :min="0" width="200px" class="mr-5"
@@ -91,7 +90,7 @@
                 </div>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-0">공제 항목 <span class="fz-14">{{ totalDeduction }} 원</span></div>
+                <div class="header-text-0">공제 항목 <span class="fz-14">{{  $filters.formatCurrency(totalDeduction) }} 원</span></div>
                 <a-spin :spinning="loading" size="large">
                     <div class="deduction-main">
                         <div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
@@ -134,8 +133,7 @@ import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
-import { Formula } from "@bankda/jangbuda-common";
-import filters from "@/helpers/filters";
+import { Formula } from "@bankda/jangbuda-common"; 
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -148,7 +146,7 @@ export default defineComponent({
         const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
         const globalYear: any = computed(() => store.state.settings.globalYear);
-        const totalDeduction = ref('0')
+        const totalDeduction = ref(0)
         const arrDeduction: any = ref()
         const totalPayDifferen = ref()
         const originData = ref({
@@ -170,7 +168,7 @@ export default defineComponent({
             },
         })
         let indexChange = ref(1)
-        let trigger = ref(true)
+        let trigger = ref(false)
         // ================== GRAPQL ====================================
         const {
             loading: loading,
@@ -237,38 +235,46 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-        onDone(() => {
+        onDone(() => { 
+            trigger.value = true
+            refectchDetail()
             emit('closePopup', false)
             notification('success', '업그레이드가 완료되었습니다!')
         })
         // ================== WATCH ====================================
-        watch(originDataUpdate, (res) => {
+
+        watch(() => originDataUpdate.value, (newVal, oldVal) => { 
             indexChange.value++
         }, { deep: true })
-
-        watch(() => props.idRowEdit, (res) => {
-            if (indexChange.value <= 2) {
-                originDataDetail.value.employeeId = res
+        // call api on tab 2 for the first time
+        if (store.state.common.idRowChangePa520 != 0) {
+            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
+            trigger.value = true
+            refectchDetail()
+        }
+        // call api on tab 2 next time
+        watch(() => store.state.common.idRowChangePa520, (res) => {
+            if (indexChange.value < 3) {
+                console.log('3');
+                originDataDetail.value.employeeId = store.state.common.idRowChangePa520
+                trigger.value = true
+                refectchDetail()
+                indexChange.value = 0
             } else
                 modalStatusChange.value = true
-            indexChange.value = 1
-
         }, { deep: true })
-
-
-
         watch(() => arrDeduction, (res) => {
             let total = 0
             res.value.map((val: any) => {
                 total += val.price
             })
             totalPayDifferen.value = total + totalAmountDifferencePayment.value
-            totalDeduction.value = filters.formatCurrency(total)
+            totalDeduction.value = total
         }, { deep: true })
-
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
             mutate(originDataUpdate.value)
+            indexChange.value = 0
         }
         const callFuncCalculate = () => {
             let dataDefault = originDataUpdate.value.input
@@ -276,9 +282,9 @@ export default defineComponent({
             let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
             let total2 = calculateHealthInsuranceEmployee(totalPrices)
             let total3 = calculateLongTermCareInsurance(totalPrices)
-            let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
-            let total5 = Formula.getDailyEmployeeTax(202210, originDataUpdate.value.input.workingDays, originDataUpdate.value.input.dailyWage, originDataUpdate.value.input.monthlyWage).incomeAmount
-            let total6 = Formula.getDailyEmployeeTax(202210, originDataUpdate.value.input.workingDays, originDataUpdate.value.input.dailyWage, originDataUpdate.value.input.monthlyWage).localIncomeTax
+            let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0 
+            let total5 = Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
+            let total6 = Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
             let arrCallApi: any = []
             arrDeduction.value?.map((val: any) => {
                 delete val.__typename
@@ -342,14 +348,18 @@ export default defineComponent({
             }
         }
 
+        // action save data when comfirm in modal
         const statusComfirm = (res: any) => {
             if (res == true)
-                document.getElementById('action-update')?.click()
+                updateDeduction()
             originDataDetail.value.employeeId = props.idRowEdit
+            trigger.value = true
             refectchDetail()
+            indexChange.value = 0
         }
+
         return {
-            originDataUpdate, messageMonthlySalary, totalPayDifferen, totalDeduction, arrDeduction, radioCheckPersenPension, loading, totalAmountDifferencePayment, messageDaylySalary, modalStatusChange,
+            store, originDataUpdate, messageMonthlySalary, totalPayDifferen, totalDeduction, arrDeduction, radioCheckPersenPension, loading, totalAmountDifferencePayment, messageDaylySalary, modalStatusChange,
             statusComfirm, callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,
         };
     },

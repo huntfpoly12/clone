@@ -153,6 +153,7 @@ import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
+import filters from "@/helpers/filters";
 
 export default defineComponent({
     components: {
@@ -193,6 +194,8 @@ export default defineComponent({
         const originData = reactive({
             ...dataSearchIndex,
             rows: per_page,
+            startDate:+dayjs().subtract(1, 'year').format('YYYYMMDD'),
+            finishDate:+dayjs().format('YYYYMMDD')
         })
 
         const setModalVisible = (data: any,) => {
@@ -224,13 +227,10 @@ export default defineComponent({
                 return { "name": "grey", "tag_name": "반려" };
             }
         }
-        const formarDate = (date: any) => {
-            return dayjs(date).format('YYYY-MM-DD')
-        }
         const searching = (e: any) => {
             originData.page = 1
-            originData.startDate = parseInt(formarDate(rangeDate.value[0]))
-            originData.finishDate = parseInt(formarDate(rangeDate.value[1]))
+            originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
+            originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             refetchData()
@@ -238,8 +238,8 @@ export default defineComponent({
         }
         const changePage = (e: any) => {
             actionSearch.value = true
-            originData.startDate = parseInt(formarDate(rangeDate.value[0]))
-            originData.finishDate = parseInt(formarDate(rangeDate.value[1]))
+            originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
+            originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             refetchData()
@@ -274,6 +274,7 @@ export default defineComponent({
             onExporting,
             actionSearch,
             onChangePage,
+            dayjs
         }
     },
 

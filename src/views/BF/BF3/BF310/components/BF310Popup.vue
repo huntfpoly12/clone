@@ -181,9 +181,7 @@
                                 </a-form-item>
                                 <a-form-item has-feedback label="생년월일" class="clr" label-align="left"
                                     :label-col="labelCol">
-                                    <date-time-box width="200px"
-                                        v-model:valueDate="formState.content.president.birthday"
-                                        dateFormat="YYYY-MM-DD" />
+                                    <birth-day-box v-model:valueInput="formState.content.president.birthday" width="200px" /> 
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr" label-align="left"
                                     :label-col="labelCol">
@@ -582,7 +580,6 @@ export default defineComponent({
                 actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
             }
             notification('success', `업데이트 완료!`)
-            setModalVisible();
         });
         onError((error) => {
             notification('error', error.message)

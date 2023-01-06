@@ -33,6 +33,12 @@ const PA110 = defineAsyncComponent(() =>
 const PA120 = defineAsyncComponent(() =>
 	import("@/views/PA/PA1/PA120/index.vue")
 );
+const PA210 = defineAsyncComponent(() =>
+	import("@/views/PA/PA2/PA210/index.vue")
+);
+const PA220 = defineAsyncComponent(() =>
+	import("@/views/PA/PA2/PA220/index.vue")
+);
 const PA230 = defineAsyncComponent(() =>
 	import("@/views/PA/PA2/PA230/index.vue")
 );
@@ -75,9 +81,7 @@ const Example = defineAsyncComponent(() =>
 const PA730 = defineAsyncComponent(() =>
 	import("@/views/PA/PA7/PA730/index.vue")
 );
-const PA220 = defineAsyncComponent(() =>
-	import("@/views/PA/PA2/PA220/index.vue")
-);
+
 const PA720 = defineAsyncComponent(() =>
 	import("@/views/PA/PA7/PA720/index.vue")
 );
@@ -94,6 +98,8 @@ export {
     CM130,
     PA110,
     PA120,
+    PA210,
+    PA220,
     PA230,
     PA410,
     PA420,
@@ -106,7 +112,6 @@ export {
     PA510,
     PA710,
     PA730,
-    PA220,
     PA720,
     Test,
     Example
