@@ -218,7 +218,7 @@
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
             :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
-            :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged">
+            :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey">
             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
             <DxColumn width="200" caption="사원" cell-template="tag" />
             <template #tag="{ data }" class="custom-action">
@@ -325,11 +325,12 @@ export default defineComponent({
     const dataModalCopy = ref()
     const dataIncomeWage = ref({...sampleDataIncomeWage})
     const triggerIncomeWage = ref<boolean>(true)
-    const actionAddItem = ref<boolean>(true)
+    const actionAddItem = ref<boolean>(false)
     const modalCopy = ref<boolean>(false);
     const dataRows = ref([])
     const actionSaveItem= ref<number>(0)
-    const actionUpdateItem= ref<number>(0)
+    const actionUpdateItem = ref<number>(0)
+    const focusedRowKey = ref<Number>(1);
     let status = ref()
     // call api getIncomeProcessWages for first table 
     const {
@@ -463,6 +464,11 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }))
     watch(resultTaxPayInfo, (value) => {
+      if (actionUpdateItem.value == 0) {
+        focusedRowKey.value = value.getIncomeWages[0]?.employeeId ?? 1;
+        dataIncomeWage.value = value.getIncomeWages[0]
+        actionAddItem.value = false
+      }
       dataTaxPayInfo.value = value.getIncomeWages
     })
 
@@ -557,7 +563,7 @@ export default defineComponent({
      * @param monthInputed 
      */
     const setUnderline = (monthInputed : any)=>{
-            return monthClicked.value == monthInputed
+        return monthClicked.value == monthInputed
     }
 
     const createdDone = () => {
@@ -593,7 +599,8 @@ export default defineComponent({
       dataAddIncomeProcess,
       status,
       setUnderline,
-      createdDone
+      createdDone,
+      focusedRowKey,
     }
 
   },
