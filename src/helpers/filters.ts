@@ -33,18 +33,15 @@ const filters = {
     formatDateScalar(date : any) {
         return moment(date, "YYYYMMDD").format('YYYY-MM-DD');
     },
+    formatDateToInt(date : any) {
+      return parseInt(dayjs(date).format('YYYY-MM-DD'))
+    },
     formatRelation(idRelation: number) {
         const obj = dependantsRelation.filter((item: any) => {
             let check = item.label.charAt(0) == idRelation;
             return check;
         })
         return obj[0].label;
-    },
-    formatDay(day: number){
-        if(day<10) {
-            return '0' + day;
-        }
-        return day;
     },
     useImage(url: string){
       return new URL(`/src/assets/images/${url}`, import.meta.url).href;

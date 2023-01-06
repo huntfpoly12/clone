@@ -97,6 +97,14 @@ $lenght: 50;
   .mb-#{$i} {
     margin-bottom: $i+ px;
   }
+  .mx-#{$i}{
+    margin-left: $i+ px;
+    margin-right: $i+ px;
+  }
+  .my-#{$i}{
+    margin-top: $i+ px;
+    margin-bottom: $i+ px;
+  }
 }
 
 .wf-100 {

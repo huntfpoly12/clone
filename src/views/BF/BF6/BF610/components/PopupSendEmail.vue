@@ -1,7 +1,7 @@
 <template>
-    <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="소득별 마감현황" okText="저장하고 나가기"
+    <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="" okText="저장하고 나가기"
         cancelText="그냥 나가기" @cancel="setModalVisible" width="576px">
-        <a-row :gutter="24">
+        <a-row :gutter="24" class="mt-20">
             <a-col :span="12">
                 <checkbox-basic size="14" label="원천징수이행상황신고서" v-model:valueCheckbox="dataForm.row1.checkbox" />
             </a-col>

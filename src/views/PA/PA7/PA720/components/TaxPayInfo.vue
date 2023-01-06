@@ -13,7 +13,7 @@
       :auto-navigate-to-focused-row="true"
       v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
-      @focused-row-changed="onFocusedRowChanged"
+      :onRowClick="onRowClick"
     >
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
@@ -100,9 +100,6 @@ export default defineComponent({
     dataCallTableDetail: {
       type: Object,
     },
-    actionSave: {
-      type: Number,
-    },
     changeFommDone: {
       type: Number,
     },
@@ -129,6 +126,8 @@ export default defineComponent({
     });
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>([]);
+    const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
+
     // ================GRAPQL==============================================
 
     // API QUERY TABLE SMALL LEFT SIDE
@@ -143,9 +142,11 @@ export default defineComponent({
     }));
     resIncomeExtras((res) => {
       dataSourceDetail.value = res.data.getIncomeExtras;
-      if (firsTimeRow.value) {
+      if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
-        onFocusedRowChanged({ row: { data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } } });
+        onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
+        // store.commit('changeKeyActive', res.data.getIncomeExtras[0]?.employeeId ?? 1);
+        store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -201,9 +202,20 @@ export default defineComponent({
         return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
       });
     };
+    // set key again
+    const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
+    const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
+    const actionSaveTypePA720Commit = store.commit('common/actionSaveTypePA720');
     const focusedRowKey = ref<Number>(1);
-    const onFocusedRowChanged = (e: any) => {
-      const data = e.row && e.row.data;
+    watch(actionSavePA720, () => {
+      setTimeout(() => {
+        if (isErrorFormPA720.value || store.state.common.actionSaveTypePA720 === 1) {
+          focusedRowKey.value = keyActivePA720.value;
+        }
+      }, 100);
+    });
+    const onRowClick = (e: any) => {
+      const data = e.data && e.data;
       updateParam = {
         companyId: companyId,
         processKey: {
@@ -237,7 +249,7 @@ export default defineComponent({
       triggerDetail,
       dataTableDetail,
       focusedRowKey,
-      onFocusedRowChanged,
+      onRowClick,
       firsTimeRow,
     };
   },

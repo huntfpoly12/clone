@@ -18,8 +18,8 @@
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer="" :width="600">
     <div class="mt-30 d-flex-center">
-      <span>과거내역</span>{{ month2 }}
-      <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data" field-template="field-data" @value-changed="updateValue" :disabled="false">
+      <span>과거내역 {{ month2 }} </span>
+      <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data" field-template="field-data" @value-changed="updateValue" :disabled="false">
         <template #field-data="{ data }">
           <span v-if="data" style="padding: 4px">
             귀 {{ data.imputedYear }}-{{ formatMonth(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{ formatMonth(data.paymentMonth) }}
@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed } from 'vue';
+import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
 import { companyId } from '@/helpers/commonFunction';
 import DxSelectBox from 'devextreme-vue/select-box';
@@ -54,7 +54,6 @@ import notification from '@/utils/notification';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
-import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -80,23 +79,27 @@ export default defineComponent({
       delete dataApiCopy.value.incomeCount;
       delete dataApiCopy.value.__typename;
     };
-    const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`);
+    const month2 = ref<String>(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`);
     const modalCopy = ref(false);
     const paymentDayCopy = ref();
-    const findIncomeProcessExtraStatViewsParam = ref<any>({ companyId: companyId, filter: { startImputedYearMonth: +(globalYear.value + `01`), finishImputedYearMonth: +(globalYear.value + `12`) } });
+    const findIncomeProcessExtraStatViewsParam = computed(() => ({
+      companyId: companyId,
+      filter: { startImputedYearMonth: 202200, finishImputedYearMonth: +(month2.value.substring(0, 4) + `12`) },
+    }));
     const findIncomeProcessExtraStatViewsTrigger = ref(true);
     const arrDataPoint = ref<[]>([]);
     const { mutate, onError, onDone } = useMutation(mutations.copyIncomeExtras);
     const {
       result: resultFindIncomeProcessExtraStatViews,
       loading: loadingFindIncomeProcessExtraStatViews,
-      onResult: onResultFindIncomeProcessExtraStatViews,
+      refetch: refetchFindIncomeProcessExtraStatViews,
     } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
       enabled: findIncomeProcessExtraStatViewsTrigger.value,
       fetchPolicy: 'no-cache',
     }));
     // watch
     watch(resultFindIncomeProcessExtraStatViews, (value) => {
+      findIncomeProcessExtraStatViewsTrigger.value = false;
       arrDataPoint.value = value.findIncomeProcessExtraStatViews;
     });
     onError((res) => {
@@ -151,6 +154,7 @@ export default defineComponent({
       }
       return month;
     };
+
     return {
       processKey,
       modalCopy,

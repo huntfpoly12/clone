@@ -1,4 +1,4 @@
-<template>
+<template> 
     <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="소득별 마감현황" okText="저장하고 나가기"
         cancelText="그냥 나가기" @cancel="setModalVisible" width="992px">
         <a-spin :spinning="loadingTable || loadingChangeStatus" size="large">
@@ -16,7 +16,7 @@
                         {{ data.data.paymentYear + "-" + data.data.paymentMonth }}
                     </span>
                 </template>
-                <DxColumn caption="소득종류" data-field="type" data-type="string"/>
+                <DxColumn caption="소득종류" data-field="type" data-type="string" />
                 <DxColumn caption="총지급액" data-field="totalPayment" />
                 <DxColumn caption="인원" cell-template="인원" />
                 <DxColumn caption="마감현황" cell-template="status" />
@@ -63,7 +63,7 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
-        resTable(res => { 
+        resTable(res => {
             dataSource.value = res.data.getIncomProcessesInTaxWithholdingStatusReport
         })
         errorTable(res => {
@@ -77,7 +77,7 @@ export default defineComponent({
             onError: errChangeStatus
         } = useMutation(mutations.changeIncomeProcessStatus);
         doneChangeStatus(() => {
-            notification('success', `새러운 영업자 추가 완료!`)
+            notification('success', `업부상태 변경되었습니다!`)
         })
         errChangeStatus((error) => {
             notification('error', error.message)

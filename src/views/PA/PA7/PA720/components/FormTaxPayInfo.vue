@@ -106,7 +106,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, reactive } from 'vue';
+import { ref, defineComponent, watch, reactive, computed } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -115,14 +115,12 @@ import DxSelectBox from 'devextreme-vue/select-box';
 import notification from '@/utils/notification';
 import { companyId } from '@/helpers/commonFunction';
 import { Formula } from '@bankda/jangbuda-common';
+import { useStore } from 'vuex';
 export default defineComponent({
   components: {
     DxSelectBox,
   },
   props: {
-    actionSave: {
-      type: Number,
-    },
     editTax: {
       required: true,
       type: Object,
@@ -135,6 +133,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    const store = useStore();
     const incomeExtraParam = ref<any>({
       ...props.editTax,
     });
@@ -176,10 +175,12 @@ export default defineComponent({
     let incomeAmount = ref(0);
     let incomeTax = ref(0);
     let localIncomeTax = ref(0);
+    //store
+    const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
     //watch for changes
     watch(
-      [() => props.editTax,()=>props.isLoadNewForm],
-      ([newValue, newValue2]:[any,boolean]) => {
+      [() => props.editTax, () => props.isLoadNewForm],
+      ([newValue, newValue2]: [any, boolean]) => {
         if (newValue2) {
           newDateLoading.value = true;
           if (newValue.incomeId) {
@@ -267,7 +268,7 @@ export default defineComponent({
       requiredExpenses: false,
     });
     watch(
-      dataAction.input,
+      ()=>dataAction.input,
       (newVal) => {
         if (newVal.employeeId) {
           validations.employeeId = false;
@@ -288,9 +289,12 @@ export default defineComponent({
       { deep: true }
     );
     // SUBMIT FORM
+
     watch(
-      () => props.actionSave,
+      actionSavePA720,
       () => {
+        store.commit('common/keyActivePA720', dataAction.input.employeeId);
+        // store.commit('pending');
         if (!dataAction.input.employeeId) {
           validations.employeeId = true;
         }
@@ -307,9 +311,10 @@ export default defineComponent({
           validations.taxRate = true;
         }
         if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
-          
+          store.commit('common/isErrorFormPA720', true);
           return;
         }
+        store.commit('common/isErrorFormPA720', false);
         dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
         dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0]);
         dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1]);
@@ -324,6 +329,8 @@ export default defineComponent({
           return;
         }
         createIncomeExtra(dataAction);
+        let dataActionFake = JSON.parse(JSON.stringify(dataAction.input));
+        store.state.common.formInputInit = dataActionFake;
       }
     );
     // GET FORM
@@ -410,6 +417,7 @@ export default defineComponent({
       validations,
       resultIncomeExtra,
       onChangeInput,
+      actionSavePA720
     };
   },
 });
