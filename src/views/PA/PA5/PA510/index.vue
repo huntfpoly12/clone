@@ -1,5 +1,5 @@
 <template>
-    <action-header title="일용직근로소득자료입력" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
+    <action-header title="일용직근로소득자료입력" @actionSave="onSubmit($event)" />
     <div id="pa-510" class="page-content">
         <a-row>
             <a-spin :spinning="loading" size="large">
@@ -193,8 +193,8 @@
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
             </a-col>
             <a-col class="">
-                <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
-                    @loadingTableInfo="loadingTableInfo" @onSubmit="actionAddItem ? onSubmit($event) : updateData($event)"/>
+                <SelectActionComponent :modalStatus="true" :dataRows="dataRows"
+                     @onSubmit="onSubmit($event)"/>
             </a-col>
         </a-row>
         <a-row>
@@ -204,7 +204,7 @@
                         :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged" 
-                        v-model:focused-row-key="focusedRowKey" :auto-navigate-to-focused-row="true">
+                        v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                         <DxColumn width="150" caption="일용직사원" cell-template="tag" />
                         <template #tag="{ data }" class="custom-action">
@@ -262,13 +262,13 @@
 
             </a-col>
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
-                <FormDataComponent :data="dataIncomeWageDaily" @loadingTableInfo="loadingTableInfo"
-                    :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem"
-                    :actionUpdateItem="actionUpdateItem" :isTaxhasData="isTaxhasData"/>
+                <FormDataComponent
+                    :actionSaveItem="actionSaveItem"
+                    :actionUpdateItem="actionUpdateItem"/>
             </a-col>
         </a-row>
         <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
-            @loadingTableInfo="loadingTableInfo" @dataAddIncomeProcess="dataAddIncomeProcess" />
+            @dataAddIncomeProcess="dataAddIncomeProcess" />
     </div>
 </template>
 <script lang="ts">
@@ -284,7 +284,7 @@ import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent.vue"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
-import { sampleDataIncomeWageDaily } from "./utils/index"
+// import { sampleDataIncomeWageDaily } from "./utils/index"
 import EmploySelect from "@/components/common/EmploySelect.vue"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
@@ -319,18 +319,18 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA510)
         const modalCopy = ref<boolean>(false);
         const amountFormat = ref({ useGrouping: true })
-        const actionAddItem: any = ref<boolean>(true)
+        // const actionAddItem: any = computed(() => store.state.common.actionAddItem)
         const actionSaveItem: any = ref<number>(0)
         const actionUpdateItem: any = ref<number>(0)
         let dataCustomRes: any = ref([])
-        const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
+        // const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
         const dataRows: any = ref([])
         const dataSource: any = ref([])
         let status: any = ref()
         const dataTaxPayInfo: any = ref([])
         const dataModalCopy: any = ref()
         const IncomeWageDailiesTrigger = ref<boolean>(false)
-        const arrayEmploySelect: any = ref([])
+        // const arrayEmploySelect: any = ref([])
 
         const originData = ref({
             companyId: companyId,
@@ -342,7 +342,7 @@ export default defineComponent({
         })
         const isRunOnce = ref<boolean>(true);
         const month = ref<number>(0);
-        const focusedRowKey = ref<Number>(1);
+        // const focusedRowKey: any = computed(() => store.state.common.focusedRowKey)
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -430,32 +430,39 @@ export default defineComponent({
                 })
             }
             if (isRunOnce.value) {
-                IncomeWageDailiesTrigger.value=true
                 isRunOnce.value = false;
                 const obj=dataSource.value[0]['month' + `${dayjs().month() + 1}`]
-                showDetailSelected(obj)
+                if(obj) {
+                    showDetailSelected(obj)
+                }
             }
         })
-        const isTaxhasData = ref(false);
+        // const isTaxhasData = ref(false);
         watch(resultTaxPayInfo, (value) => {
             dataTaxPayInfo.value = value.getIncomeWageDailies;
-            focusedRowKey.value = value.getIncomeWageDailies[0]?.employeeId ?? 1;
-            let firstDataParam = { data: value.getIncomeWageDailies[0], rowType:'data' };
-            if(firstDataParam.data){
-                isTaxhasData.value = true;
-                actionEditTaxPay(firstDataParam);
-            }else{
-                isTaxhasData.value = false;
+            if (value.getIncomeWageDailies[0]) {
+                console.log(2222, store.state.common.incomeId);
+                
+                if (store.state.common.employeeId) {
+                    store.state.common.focusedRowKey = store.state.common.employeeId
+                    // store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
+                } else {
+                    store.state.common.focusedRowKey = value.getIncomeWageDailies[0].employeeId
+                    store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
+                    store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
+                }
+            } else {
+                store.state.common.actionAddItem = true
+                store.state.common.focusedRowKey = null;
+                store.state.common.incomeId = null;
+                store.state.common.employeeId = null;
             }
-            dataTaxPayInfo.value.map((value: any) => {
-                arrayEmploySelect.value.push({
-                    employeeId: value.employee.employeeId,
-                    name: value.employee.name,
-                    idCardNumber: value.employee.idCardNumber,
-                    status: value.employee.status,
-                    foreigner: value.employee.foreigner
-                })
-            })
+            IncomeWageDailiesTrigger.value = false;
+        })
+        watch(() => store.state.common.loadingTableInfo, (newVal) => {
+            refetchData() //reset data table 1
+            IncomeWageDailiesTrigger.value = true;
+            refetchDataTaxPayInfo() //reset data table 2
         })
         // ======================= FUNCTION ================================
         const statusComfirm = () => {
@@ -465,21 +472,28 @@ export default defineComponent({
                 status: status.value
             })
         }
+        // action click save
         const onSubmit = (e: any) => {
-            actionSaveItem.value++
-        }
-        const updateData = (e: any) => {
-            actionUpdateItem.value++
+            if (store.state.common.actionAddItem) {
+                actionSaveItem.value++
+            } else {
+                actionUpdateItem.value++
+            }
         }
 
+        // action click row table 2
         const actionEditTaxPay = (data: any) => {
             if (data.rowType == "data") {
-                actionAddItem.value = false
-                dataIncomeWageDaily.value = { ...data.data }
+                store.state.common.actionAddItem = false
+                store.state.common.incomeId = data.data.incomeId
+                store.state.common.employeeId = data.data.employeeId
             }
         }
 
         const selectionChanged = (data: any) => {
+            store.state.common.actionAddItem = true
+            store.state.common.incomeId = null
+            store.state.common.focusedRowKey = null
             dataRows.value = data.selectedRowsData
         }
         const showDetailSelected = (data: any) => {
@@ -490,10 +504,10 @@ export default defineComponent({
             store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
             month.value = data.imputedMonth;
         }
-        const loadingTableInfo = () => {
-            refetchDataTaxPayInfo()
-            refetchData()
-        }
+        // const loadingTableInfo = () => {
+        //     refetchDataTaxPayInfo()
+        //     refetchData()
+        // }
         const customizeTotalMonthly = (data: any) => {
             let total: any = 0
             dataTaxPayInfo.value.map((val: any) => {
@@ -520,19 +534,16 @@ export default defineComponent({
             per_page, move_column, colomn_resize,
             refetchData,
             onSubmit,
-            updateData,
-            dataIncomeWageDaily,
+            // dataIncomeWageDaily,
             selectionChanged,
-            arrayEmploySelect,
+            // arrayEmploySelect,
             dataCustomRes,
             showDetailSelected,
             dataTaxPayInfo,
             actionEditTaxPay,
             dataRows,
-            actionAddItem,
             actionSaveItem,
             actionUpdateItem,
-            loadingTableInfo,
             loadingTaxPayInfo,
             customizeTotalMonthly,
             copyMonth,
@@ -542,8 +553,9 @@ export default defineComponent({
             dataAddIncomeProcess,
             statusComfirm,
             month,
-            focusedRowKey,
-            isTaxhasData
+            store,
+            // focusedRowKey,
+            // isTaxhasData
         }
 
     },

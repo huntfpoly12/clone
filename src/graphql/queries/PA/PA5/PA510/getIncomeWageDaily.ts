@@ -31,8 +31,36 @@ export default gql`
         totalDeduction
         workingDays
         actualPayment
-        employee
-        deductionItems
+        employee{
+          type
+          employeeId
+          incomeTypeCode
+          name
+          foreigner
+          nationality
+          nationalityCode
+          stayQualification
+          residentIdValidity
+          roadAddress
+          addressExtend
+          email
+          department
+          responsibility
+          status
+          withholdingIncomeTax
+          withholdingLocalIncomeTax
+          withholdingRuralSpecialTax
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          ip
+          active
+        }
+        deductionItems {
+          itemCode
+          amount
+        }
     }
   }
 `;

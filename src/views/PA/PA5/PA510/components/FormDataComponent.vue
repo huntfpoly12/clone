@@ -1,15 +1,17 @@
 <template>
+    ###{{  store.state.common.incomeId }}
     <standard-form action="" name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px;">
-        <a-spin :spinning="loading">
-            <a-row>
+        <a-spin :spinning="loading || loadingIncomeWageDaily">
+            <a-row :key="countKey">
                 <a-col :span="12" style="padding-right: 10px">
                     <a-form-item label="일용직사원">
-                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
-                            v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true" @onChange="onChange" :activeType20="false"/>
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.actionAddItem"
+                            v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true"
+                            @onChange="onChange" :activeType20="false" />
                     </a-form-item>
                     <a-form-item label="지급일">
-                        <number-box :required="true" :min="1" v-model="dataIncomeWageDaily.paymentDay"
-                            :max="31" :spinButtons="true" :disabled="!actionAddItem" />
+                        <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay"
+                            :max="31" :spinButtons="true" :disabled="!store.state.common.actionAddItem" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -45,7 +47,8 @@
                 <a-col :span="10" style="padding-right: 5px;">
                     <div class="top-content">
                         <a-typography-title :level="5" style="margin-bottom: 0;">
-                            월급여 {{ dataIncomeWageDaily.employee.monthlyPaycheck ?
+                            월급여 {{
+                                dataIncomeWageDaily.employee.monthlyPaycheck ?
                                     $filters.formatCurrency(dataIncomeWageDaily.monthlyWage) :
                                     $filters.formatCurrency(dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays)
                             }}
@@ -53,31 +56,36 @@
                     </div>
                     <div class="input-text">
                         <span>일급/월급:</span>
-                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'월급'"
-                            :textUnCheck="'일급'" />
-                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
-                            placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
+                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck"
+                            :textCheck="'월급'" :textUnCheck="'일급'" />
+                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px"
+                            :required="true" placeholder='월급여' :spinButtons="false"
+                            v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                         <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.dailyWage" />
                     </div>
                     <div style="margin-bottom: 10px;">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                        <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 / 근무일수</span>
+                        <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 /
+                            근무일수</span>
                         <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                     </div>
                     <a-form-item label="근무일수">
-                        <text-number-box width="150px" :required="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
-                            :min="1" :max="30" :spinButtons="true"></text-number-box>
+                        <text-number-box width="150px" :required="true"
+                            v-model:valueInput="dataIncomeWageDaily.workingDays" :min="1" :max="30"
+                            :spinButtons="true"></text-number-box>
                     </a-form-item>
                     <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
-                            $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage / dataIncomeWageDaily.workingDays))
+                        $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage /
+                            dataIncomeWageDaily.workingDays))
                     }}원</span>
                     <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
                     <br>
                     <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
-                            $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
+                        $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
                     }}원</span>
-                    <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
+                    <span v-else>일급여 {{
+                        $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
                             dataIncomeWageDaily.workingDays)
                     }}원</span>
                 </a-col>
@@ -97,7 +105,8 @@
                                     <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                         :name="item.name" :type="3" :width="'150px'"
                                         :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-                                    <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                                    <deduction-items
+                                        v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
                                         :name="item.name" :type="4" :width="'150px'" subName="과세" />
                                 </span>
                                 <div>
@@ -128,12 +137,14 @@
             </a-tooltip>
         </div>
     </standard-form>
+    <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
+        title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmChange" />
     <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" :data="arrDeduction"
         @updateDate="updateDataDeduction" />
     <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch, reactive, watchEffect } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import DxButton from "devextreme-vue/button"
 import notification from "@/utils/notification";
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -142,7 +153,6 @@ import query520 from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
-
 import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
 import { sampleDataIncomeWageDaily } from "../utils/index"
@@ -156,13 +166,6 @@ export default defineComponent({
         InsurancePopup,
     },
     props: {
-        data: {
-            type: Object
-        },
-        actionAddItem: {
-            type: Boolean,
-            default: false
-        },
         actionSaveItem: {
             type: Number,
             default: 0
@@ -179,29 +182,165 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA510)
         const modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
-        const dataIncomeWageDaily: any = ref({ ...props.data })
+        const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
         const arrayEmploySelect: any = ref([])
         const arrDeduction: any = ref([])
         const totalDeduction = ref('0')
         const triggerCalculateIncome: any = ref<boolean>(false)
         const triggerWithholdingConfigDeductionItems: any = ref<boolean>(true)
-        watch(() => props.data, (value: any) => {
-            dataIncomeWageDaily.value = value
+        const triggerIncomeWageDaily: any = ref<boolean>(false)
+        const countKey: any = ref(0)
+        const modalChangeRow = ref(false)
+        // const modalStatusAdd = ref(false)
+        const employeeWageDailyTrigger = ref<boolean>(false);
+
+        let employeeWageDailyParam = ref({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            employeeId: null,
+        });
+        const originData = ref({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+        })
+        const originDataCalculateIncome = ref({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            totalTaxPay: 10,
+            dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
+        })
+        const originDataIncomeWageDaily = ref({
+            companyId: companyId,
+            incomeId: store.state.common.incomeId,
+            processKey: store.state.common.processKeyPA510
+        })
+
+        // ============ GRAPQL ===============================
+        const {
+            loading: loadingDeductionItem,
+            onResult: resWithholdingConfigPayItems,
+        } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
+            enabled: triggerWithholdingConfigDeductionItems.value,
+            fetchPolicy: "no-cache",
+        }))
+        const {
+            loading: loadingEmployeeWage,
+            onResult: resEmployeeWage,
+        } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
+            fetchPolicy: "no-cache",
+        }))
+        const {
+            loading: loadingIncomeWageDaily,
+            onResult: resIncomeWageDaily,
+        } = useQuery(queries.getIncomeWageDaily, originDataIncomeWageDaily, () => ({
+            enabled: triggerIncomeWageDaily.value,
+            fetchPolicy: "no-cache",
+        }))
+        const {
+            loading: loadingCalculateIncome,
+            onResult: resCalculateIncome,
+        } = useQuery(queries.calculateIncomeWageTax, originDataCalculateIncome, () => ({
+            enabled: triggerCalculateIncome.value,
+            fetchPolicy: "no-cache",
+        }))
+        const {
+            mutate: mutateAdd,
+            onDone: onDoneAdd,
+            onError: onerrorAdd,
+        } = useMutation(mutations.createIncomeWageDaily);
+        const {
+            mutate: mutateUpdate,
+            onDone: onDoneUpdate,
+            onError: onerrorUpdate,
+        } = useMutation(mutations.updateIncomeWageDaily);
+        const { mutate: actionUpdateIncomeWageDaily, onDone: onDoneUpdated, onError: errorUpdate } = useMutation(
+            mutations.updateIncomeWageDaily
+        );
+        const { result: resultEmployeeWageDaily, refetch: refetchEmployeeWageDaily, loading } = useQuery(query520.getEmployeeWageDaily, employeeWageDailyParam.value, () => ({
+            enabled: employeeWageDailyTrigger.value,
+            fetchPolicy: 'no-cache'
+        }))
+
+        // ===================DONE GRAPQL==================================
+        onDoneAdd(() => {
+            store.state.common.actionAddItem = false;
+            // store.state.common.incomeId = dataIncomeWageDaily.value.incomeId
+            store.state.common.employeeId = dataIncomeWageDaily.value.employee.employeeId
+            store.state.common.loadingTableInfo++
+            notification('success', `업데이트 완료!`)
+        })
+        onerrorAdd((e: any) => {
+            notification('error', e.message)
+        })
+        onDoneUpdate(() => {
+            store.state.common.loadingTableInfo++
+            notification('success', `업데이트 완료!`)
+        })
+        onerrorUpdate((e: any) => {
+            notification('error', e.message)
+        })
+
+        resEmployeeWage(value => {
+            arrayEmploySelect.value = value.data.getEmployeeWageDailies
+        })
+        resWithholdingConfigPayItems(res => {
+            res.data.getWithholdingConfigDeductionItems.map((val: any) => {
+                let price = funcCheckPrice(val.itemCode)
+                arrDeduction.value.push({
+                    ...val,
+                    price: price
+                })
+            })
+            triggerWithholdingConfigDeductionItems.value = false
+        })
+        resIncomeWageDaily((value: any) => {
+            dataIncomeWageDaily.value = value.data.getIncomeWageDaily
             arrDeduction.value.map((data: any) => {
                 data.price = 0
-                value.deductionItems.forEach((val: any) => {
+                dataIncomeWageDaily.value.deductionItems.forEach((val: any) => {
                     if (val.itemCode == data.itemCode) {
                         data.price = val.amount
                     }
                 })
             })
+            triggerIncomeWageDaily.value = false;
         })
-        watch(() => props.actionAddItem, (value) => {
+
+        errorUpdate((error) => {
+            notification('error', error.message)
+        })
+        onDoneUpdated(() => {
+            notification('success', `업데이트 성공되었습니다!`)
+        });
+
+
+        // ===================WATCH==================================
+        watch(() => store.state.common.actionAddItem, (value) => {
             if (value) {
-                dataIncomeWageDaily.value = { ...sampleDataIncomeWageDaily }
+                countKey.value++;
+                employeeWageDailyParam.value.employeeId = null
+                dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
                 arrDeduction.value.map((data: any) => {
                     data.price = 0
                 })
+            }
+        })
+        watch(() => dataIncomeWageDaily.value, (value) => {
+            if (JSON.stringify({ ...sampleDataIncomeWageDaily }) !== JSON.stringify(dataIncomeWageDaily.value)) {
+                store.state.common.statusChangeFormAdd = true
+            } else {
+                store.state.common.statusChangeFormAdd = false
+            }
+        }, { deep: true })
+        watch(() => store.state.common.incomeId, (value) => {
+            if (value) {
+                originDataIncomeWageDaily.value.incomeId = store.state.common.incomeId
+                triggerIncomeWageDaily.value = true;
+            } else {
+                arrDeduction.value.map((data: any) => {
+                    data.price = 0
+                })
+                dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
             }
         })
         watch(() => props.actionSaveItem, (value) => {
@@ -245,93 +384,28 @@ export default defineComponent({
                 },
             })
         })
-        watch(()=> props.isTaxhasData,
-            (newVal)=>{
-                if(!newVal){
-                    dataIncomeWageDaily.value = { ...sampleDataIncomeWageDaily }
-                }
-            }
-        )
-
-        const originData = ref({
-            companyId: companyId,
-            imputedYear: globalYear.value,
-        })
-        const originDataCalculateIncome = ref({
-            companyId: companyId,
-            imputedYear: globalYear.value,
-            totalTaxPay: 10,
-            dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
-        })
-
-        const {
-            loading: loadingDeductionItem,
-            onResult: resWithholdingConfigPayItems,
-        } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
-            enabled: triggerWithholdingConfigDeductionItems.value,
-            fetchPolicy: "no-cache",
-        }))
-        const {
-            loading: loadingEmployeeWage,
-            onResult: resEmployeeWage,
-        } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
-            fetchPolicy: "no-cache",
-        }))
-        const {
-            loading: loadingCalculateIncome,
-            onResult: resCalculateIncome,
-        } = useQuery(queries.calculateIncomeWageTax, originDataCalculateIncome, () => ({
-            enabled: triggerCalculateIncome.value,
-            fetchPolicy: "no-cache",
-        }))
-        const {
-            mutate: mutateAdd,
-            onDone: onDoneAdd,
-            onError: onerrorAdd,
-        } = useMutation(mutations.createIncomeWageDaily);
-        const {
-            mutate: mutateUpdate,
-            onDone: onDoneUpdate,
-            onError: onerrorUpdate,
-        } = useMutation(mutations.updateIncomeWageDaily);
-        onDoneAdd(() => {
-            emit("loadingTableInfo", true)
-            notification('success', `업데이트 완료!`)
-        })
-        onerrorAdd((e: any) => {
-            notification('error', e.message)
-        })
-        onDoneUpdate(() => {
-            emit("loadingTableInfo", true)
-            notification('success', `업데이트 완료!`)
-        })
-        onerrorUpdate((e: any) => {
-            notification('error', e.message)
-        })
-
-        resEmployeeWage(value => {
-            arrayEmploySelect.value = value.data.getEmployeeWageDailies
-        })
-        resWithholdingConfigPayItems(res => {
-            res.data.getWithholdingConfigDeductionItems.map((val: any) => {
-                let price = funcCheckPrice(val.itemCode)
-                arrDeduction.value.push({
-                    ...val,
-                    price: price
-                })
+        watch(() => arrDeduction, (res) => {
+            let total = 0
+            res.value.map((val: any) => {
+                total += val.price
             })
-            triggerWithholdingConfigDeductionItems.value = false
-        })
-        const { mutate: actionUpdateIncomeWageDaily, onDone: onDoneUpdated, onError: errorUpdate } = useMutation(
-            mutations.updateIncomeWageDaily
-        );
-        errorUpdate((error) => {
-            notification('error', error.message)
-        })
-        onDoneUpdated(() => {
-            notification('success', `업데이트 성공되었습니다!`)
-        });
+            totalDeduction.value = filters.formatCurrency(total)
+        }, { deep: true })
+        watch(resultEmployeeWageDaily, (res: any) => {
+            employeeWageDailyTrigger.value = false;
+            let data = res.getEmployeeWageDaily;
+            dataIncomeWageDaily.value.actualPayment = data.actualPayment;
+            dataIncomeWageDaily.value.monthlyWage = data.monthlyWage;
+            dataIncomeWageDaily.value.workingDays = data.workingDays;
+            dataIncomeWageDaily.value.totalDeduction = data.totalDeduction;
+            dataIncomeWageDaily.value.paymentDay = data.paymentDay;
+            dataIncomeWageDaily.value.deductionItems = data.deductionItems;
+            dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck;
+            dataIncomeWageDaily.value.employee.employeeId = data.employeeId;
+        }, { deep: true })
 
+
+        // ===================FUNCTION==================================
         const funcCheckPrice = (id: any) => {
             let price = 0
             dataIncomeWageDaily.value.deductionItems.map((e: any) => {
@@ -340,7 +414,6 @@ export default defineComponent({
             })
             return price
         }
-
         const actionDedution = () => {
             let dataDefault = dataIncomeWageDaily.value.employee
             let totalPrices = parseInt(dataIncomeWageDaily.value.employee.monthlyPaycheck ?
@@ -360,13 +433,10 @@ export default defineComponent({
                 val.priceNew = 0
                 if (val.deductionItemCode == 1001)
                     val.priceNew = total1
-
                 if (val.deductionItemCode == 1002)
                     val.priceNew = total2
-
                 if (val.deductionItemCode == 1003)
                     val.priceNew = total3
-
                 if (val.deductionItemCode == 1004)
                     val.priceNew = total4
                 if (val.deductionItemCode == 1011 && Number.isInteger(objectData.incomeAmount))
@@ -374,10 +444,6 @@ export default defineComponent({
                 if (val.deductionItemCode == 1012 && Number.isInteger(objectData.localIncomeTax))
                     val.priceNew = objectData.localIncomeTax
             })
-
-
-
-
             modalDeductions.value = true;
         }
         const updateDataDeduction = () => {
@@ -386,46 +452,34 @@ export default defineComponent({
                     val.price = val.priceNew
             })
         }
-        watch(() => arrDeduction, (res) => {
-            let total = 0
-            res.value.map((val: any) => {
-                total += val.price
-            })
-            totalDeduction.value = filters.formatCurrency(total)
-        }, { deep: true })
+
         const actionInsurance = () => {
             modalInsurance.value = true;
         }
-//  QUERY WHEN CHANGE EMPLOYEE
-        const employeeWageDailyTrigger = ref<boolean>(false);
-        let employeeWageDailyParam = ref({
-                companyId: companyId,
-                imputedYear: globalYear.value,
-                employeeId: 1
-        });
-        const {result: resultEmployeeWageDaily, refetch: refetchEmployeeWageDaily, loading} = useQuery(query520.getEmployeeWageDaily,employeeWageDailyParam.value, ()=>({
-            enabled: employeeWageDailyTrigger.value,
-            fetchPolicy: 'no-cache'
-        }))
-        watch(resultEmployeeWageDaily,(res: any)=>{
-            
-            console.log(`onResultEmployeeWageDaily`,res)
-            dataIncomeWageDaily.value.actualPayment = res.getEmployeeWageDaily.actualPayment;
-            dataIncomeWageDaily.value.monthlyWage = res.getEmployeeWageDaily.monthlyWage;
-            dataIncomeWageDaily.value.workingDays = res.getEmployeeWageDaily.workingDays;
-            dataIncomeWageDaily.value.totalDeduction = res.getEmployeeWageDaily.totalDeduction;
-            dataIncomeWageDaily.value.paymentDay = res.getEmployeeWageDaily.paymentDay;
-            dataIncomeWageDaily.value.deductionItems = res.getEmployeeWageDaily.deductionItems;
-            dataIncomeWageDaily.value.employee.monthlyPaycheck = res.getEmployeeWageDaily.monthlyPaycheck;
-            dataIncomeWageDaily.value.employee.employeeId = res.getEmployeeWageDaily.employeeId;
-            employeeWageDailyTrigger.value = false;
-        }, {deep: true})
+        const statusComfirmChange = (res: any) => {
+            if (res) {
+                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+            } else {
+                // triggerDetail.value = true
+                // valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
+                // valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
+            }
+        }
+        // const statusComfirmAdd = (val: any) => {
+        //     if (val) {
+        //         countKey.value++;
+        //         Object.assign(dataIncomeWageDaily, sampleDataIncomeWageDaily);
+        //         arrDeduction.value.map((data: any) => {
+        //             data.price = 0
+        //         })
+        //     }
+        // }
+
         const onChange = () => {
-            employeeWageDailyTrigger.value = true;
-            console.log(`onChange`)
-            employeeWageDailyParam.value.employeeId= dataIncomeWageDaily.value.employee.employeeId;
-            
-            refetchEmployeeWageDaily();
+            if (employeeWageDailyParam.value.employeeId != dataIncomeWageDaily.value.employee.employeeId) {
+                employeeWageDailyTrigger.value = true;
+                employeeWageDailyParam.value.employeeId = dataIncomeWageDaily.value.employee.employeeId;
+            }
         }
         return {
             dataIncomeWageDaily,
@@ -440,7 +494,11 @@ export default defineComponent({
             totalDeduction,
             onChange,
             loading,
-            sampleDataIncomeWageDaily
+            loadingIncomeWageDaily,
+            store,
+            countKey,
+            modalChangeRow, statusComfirmChange,
+            // modalStatusAdd, statusComfirmAdd,
         };
     },
 });

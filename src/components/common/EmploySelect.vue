@@ -113,7 +113,6 @@ export default defineComponent({
 
         const eventItemClick = () => {
             emit('onChange')
-            console.log(`outpu`)
         }
         return {
             updateValue,

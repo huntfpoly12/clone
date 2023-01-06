@@ -142,7 +142,7 @@ export default defineComponent({
             setModalVisible()
             setModalVisibleCopy()
             notification('success', ` 완료!`)
-            emit('loadingTableInfo', true)
+            store.state.common.loadingTableInfo++
             store.state.common.processKeyPA510.imputedMonth = month.value
             store.state.common.processKeyPA510.paymentYear = dataApiCopy.value.paymentYear
             store.state.common.processKeyPA510.paymentMonth = dataApiCopy.value.paymentMonth
