@@ -80,7 +80,7 @@ export default [
 
   { name: "근로소득자료입력", url: "/dashboard/pa-110", id: "pa-110" },
   { name: "사원등록", url: "/dashboard/pa-120", id: "pa-120" },
-  { name: "원천징수이행상황신고서", url: "/dashboard/bf-310", id: "pa-210" },
+  { name: "원천징수이행상황신고서", url: "/dashboard/pa-210", id: "pa-210" },
   { name: "근로소득원천징수영수증", url: "/dashboard/pa-220", id: "pa-220" },
   {
     name: "소득자별근로소득원천징수부",

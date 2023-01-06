@@ -124,7 +124,7 @@
                                         :required="true" width="200px" />
                                 </div>
                                 <div class="form-item">
-                                    <label class="red">생년월일 :</label> 
+                                    <label class="red">생년월일 :</label>
                                     <birth-day-box v-model:valueInput="contractCreacted.birthday" width="200px" />
                                 </div>
                                 <div class="form-item">
@@ -142,14 +142,16 @@
                     </template>
                     <template v-if="step === 2">
                         <div class="form-group">
-                            <label>1. 회계서비스 신청</label>
-                            <div class="list-checkbox">
-                                <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="valueRadioBox"
-                                    :layoutCustom="'horizontal'" />
-                            </div>
+                            <label class="d-flex-center">
+                                <span>1. 회계서비스 신청</span>
+                                <div class="list-checkbox ml-10">
+                                    <radio-group :arrayValue="arrayRadioCheckStep3"
+                                        v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
+                                </div>
+                            </label>
                             <div class="group-title">
                                 <p class="red" id="title-table-step3">⁙ 운영사업</p>
-                            </div> 
+                            </div>
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -334,7 +336,7 @@ import mutations from "../../graphql/mutations/RqContract/index";
 import queries from "../../graphql/queries/common/index";
 import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
-import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil } from "./utils";
+import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3 } from "./utils";
 import dayjs from 'dayjs';
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
@@ -362,6 +364,7 @@ export default {
         var visibleModal = ref(false);
         const valueFacilityBusinesses: any = ref([]);
         const arrayRadioCheck = ref([...arrayRadioCheckUtil]);
+        const arrayRadioCheckStep3 = ref([...arrayRadioCheckUtilStep3]);
         const arrayRadioWithdrawDay = ref([...arrayRadioWithdrawDayUtil]);
         const valueRadioBox = ref(1);
         const valueAccountingService = ref(1);
@@ -416,7 +419,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            //step.value = val - 1 // Debug
+            // step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
@@ -588,10 +591,10 @@ export default {
             if (!e.component.getSelectedRowKeys().length) {
                 e.component.selectRowsByIndexes(0);
             }
-        }; 
+        };
 
         const gridRefName: any = ref("grid");
-        const Creat = () => { 
+        const Creat = () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
             dataFacility.map((val: any) => {
                 delete val.__KEY__
@@ -736,7 +739,7 @@ export default {
             optionSale.value = dataOption;
         });
         return {
-            focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
+            arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
             uploadImg, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },

@@ -205,6 +205,11 @@ export default defineComponent({
             notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================
+        watch(() => store.state.common.idRowChangePa520, (res, resOld) => {  
+            
+        }, { deep: true })
+
+
         watch(() => props.idRowEdit, (newVal) => {
             if (indexChange.value > 2) {
                 modalStatusChange.value = true

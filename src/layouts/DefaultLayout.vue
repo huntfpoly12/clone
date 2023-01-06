@@ -179,6 +179,8 @@ import {
   CM130,
   PA110,
   PA120,
+  PA210,
+  PA220,
   PA230,
   PA430,
   PA420,
@@ -191,7 +193,6 @@ import {
   PA510,
   PA710,
   PA730,
-  PA220,
   PA720,
   Test,
   Example,
@@ -231,6 +232,7 @@ export default defineComponent({
     CM130,
     PA110,
     PA120,
+    PA210,
     PA220,
     PA230,
     PA430,
@@ -373,6 +375,7 @@ export default defineComponent({
       if (this.activeTab.id === "cm-130") return 'CM130';
       if (this.activeTab.id === "pa-110") return 'PA110';
       if (this.activeTab.id === "pa-120") return 'PA120';
+      if (this.activeTab.id === "pa-210") return 'PA210';
       if (this.activeTab.id === "pa-220") return 'PA220';
       if (this.activeTab.id === "pa-230") return 'PA230';
       if (this.activeTab.id === "pa-410") return 'PA410';
