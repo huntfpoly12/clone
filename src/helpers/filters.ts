@@ -1,22 +1,16 @@
 
-import dayjs, { Dayjs } from 'dayjs';
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
+import dayjs from 'dayjs';
 import {
     DependantsRelation,
     enum2Entries,
 } from "@bankda/jangbuda-common";
-import moment from 'moment';
 var dependantsRelation = enum2Entries(DependantsRelation).map((value) => ({
     value: value[1],
     label: value[0],
 }));
-dayjs.extend(weekday);
-dayjs.extend(localeData);
-
 const filters = {
     formatCurrency(input: any) {
-        if(input){
+        if (input) {
             if (isNaN(input)) {
                 return "-";
             }
@@ -26,15 +20,14 @@ const filters = {
     formatDate(date: any) {
         return dayjs(date).format('YYYY-MM-DD')
     },
-    formatDateToInterger(date: any) {
-        return parseInt(dayjs(date).format('YYYYMMDD'))
-    },
-
-    formatDateScalar(date : any) {
-        return moment(date, "YYYYMMDD").format('YYYY-MM-DD');
-    },
-    formatDateToInt(date : any) {
-      return parseInt(dayjs(date).format('YYYY-MM-DD'))
+    formatDateToInterger(date: any) { 
+        let valueConver = 0
+        if (date.length >= 8) {
+            valueConver = parseInt(dayjs(date).format('YYYYMMDD'))
+        } else {
+            valueConver = parseInt(dayjs(date).format('YYYYMM'))
+        }
+        return valueConver
     },
     formatRelation(idRelation: number) {
         const obj = dependantsRelation.filter((item: any) => {
@@ -43,9 +36,8 @@ const filters = {
         })
         return obj[0].label;
     },
-    useImage(url: string){
-      return new URL(`/src/assets/images/${url}`, import.meta.url).href;
+    useImage(url: string) {
+        return new URL(`/src/assets/images/${url}`, import.meta.url).href;
     }
-    
 }
 export default filters;
