@@ -56,6 +56,28 @@ export default gql`
           updatedBy
           ip
           active
+          residentId
+          joinedAt
+          leavedAt
+          retirementIncome
+          nationalPensionDeduction
+          healthInsuranceDeduction
+          longTermCareInsuranceDeduction
+          employeementInsuranceDeduction
+          insuranceSupport
+          nationalPensionSupportPercent
+          employeementInsuranceSupportPercent
+          weeklyWorkingHours
+          monthlyPaycheck
+          workingDays
+          dailyWage
+          monthlyWage
+          totalDeduction
+          deletable
+          deductionItems{
+            itemCode
+            amount
+          }
         }
         deductionItems {
           itemCode

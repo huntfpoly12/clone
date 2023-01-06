@@ -1,5 +1,4 @@
 <template>
-    ###{{  store.state.common.incomeId }}
     <standard-form action="" name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px;">
         <a-spin :spinning="loading || loadingIncomeWageDaily">
             <a-row :key="countKey">
@@ -48,7 +47,7 @@
                     <div class="top-content">
                         <a-typography-title :level="5" style="margin-bottom: 0;">
                             월급여 {{
-                                dataIncomeWageDaily.employee.monthlyPaycheck ?
+                                dataIncomeWageDaily.monthlyPaycheck ?
                                     $filters.formatCurrency(dataIncomeWageDaily.monthlyWage) :
                                     $filters.formatCurrency(dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays)
                             }}
@@ -56,17 +55,17 @@
                     </div>
                     <div class="input-text">
                         <span>일급/월급:</span>
-                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck"
-                            :textCheck="'월급'" :textUnCheck="'일급'" />
-                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px"
-                            :required="true" placeholder='월급여' :spinButtons="false"
+                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.monthlyPaycheck" :textCheck="'월급'"
+                            :textUnCheck="'일급'" />
+                        <number-box-money v-if="dataIncomeWageDaily.monthlyPaycheck" width="110px" :required="true"
+                            placeholder='월급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                         <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.dailyWage" />
                     </div>
                     <div style="margin-bottom: 10px;">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                        <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 /
+                        <span class="style-note" v-if="dataIncomeWageDaily.monthlyPaycheck">월급 선택시, 일급 = 월급 /
                             근무일수</span>
                         <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                     </div>
@@ -75,13 +74,13 @@
                             v-model:valueInput="dataIncomeWageDaily.workingDays" :min="1" :max="30"
                             :spinButtons="true"></text-number-box>
                     </a-form-item>
-                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
+                    <span v-if="dataIncomeWageDaily.monthlyPaycheck">일급여 {{
                         $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage /
                             dataIncomeWageDaily.workingDays))
                     }}원</span>
                     <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
                     <br>
-                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
+                    <span v-if="dataIncomeWageDaily.monthlyPaycheck">월급여 {{
                         $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
                     }}원</span>
                     <span v-else>일급여 {{
@@ -137,8 +136,7 @@
             </a-tooltip>
         </div>
     </standard-form>
-    <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
-        title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmChange" />
+
     <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" :data="arrDeduction"
         @updateDate="updateDataDeduction" />
     <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
@@ -166,11 +164,7 @@ export default defineComponent({
         InsurancePopup,
     },
     props: {
-        actionSaveItem: {
-            type: Number,
-            default: 0
-        },
-        actionUpdateItem: {
+        actionSubmit: {
             type: Number,
             default: 0
         },
@@ -190,8 +184,6 @@ export default defineComponent({
         const triggerWithholdingConfigDeductionItems: any = ref<boolean>(true)
         const triggerIncomeWageDaily: any = ref<boolean>(false)
         const countKey: any = ref(0)
-        const modalChangeRow = ref(false)
-        // const modalStatusAdd = ref(false)
         const employeeWageDailyTrigger = ref<boolean>(false);
 
         let employeeWageDailyParam = ref({
@@ -264,7 +256,6 @@ export default defineComponent({
         // ===================DONE GRAPQL==================================
         onDoneAdd(() => {
             store.state.common.actionAddItem = false;
-            // store.state.common.incomeId = dataIncomeWageDaily.value.incomeId
             store.state.common.employeeId = dataIncomeWageDaily.value.employee.employeeId
             store.state.common.loadingTableInfo++
             notification('success', `업데이트 완료!`)
@@ -295,6 +286,7 @@ export default defineComponent({
         })
         resIncomeWageDaily((value: any) => {
             dataIncomeWageDaily.value = value.data.getIncomeWageDaily
+            store.state.common.dataRowOld = { ...value.data.getIncomeWageDaily }
             arrDeduction.value.map((data: any) => {
                 data.price = 0
                 dataIncomeWageDaily.value.deductionItems.forEach((val: any) => {
@@ -313,7 +305,6 @@ export default defineComponent({
             notification('success', `업데이트 성공되었습니다!`)
         });
 
-
         // ===================WATCH==================================
         watch(() => store.state.common.actionAddItem, (value) => {
             if (value) {
@@ -331,6 +322,11 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
+            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && store.state.common.actionAddItem == false && store.state.common.dataRowOld) {
+                store.state.common.statusChangeFormEdit = true
+            } else {
+                store.state.common.statusChangeFormEdit = false
+            }
         }, { deep: true })
         watch(() => store.state.common.incomeId, (value) => {
             if (value) {
@@ -343,7 +339,7 @@ export default defineComponent({
                 dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
             }
         })
-        watch(() => props.actionSaveItem, (value) => {
+        watch(() => props.actionSubmit, (value) => {
             let arrDeductionItems: any = []
             arrDeduction.value.forEach((value: any) => {
                 arrDeductionItems.push({
@@ -351,38 +347,30 @@ export default defineComponent({
                     amount: value.price,
                 })
             })
-            mutateAdd({
-                companyId: companyId,
-                processKey: { ...processKey.value },
-                input: {
-                    paymentDay: dataIncomeWageDaily.value.paymentDay,
-                    employeeId: dataIncomeWageDaily.value.employee.employeeId,
-                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
-                    monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
-                    workingDays: dataIncomeWageDaily.value.workingDays,
-                    deductionItems: arrDeductionItems,
-                },
-            })
-        })
-        watch(() => props.actionUpdateItem, (value) => {
-            let arrDeductionItems: any = []
-            arrDeduction.value.forEach((value: any) => {
-                arrDeductionItems.push({
-                    itemCode: value.itemCode,
-                    amount: value.price,
+            let input = {
+                dailyWage: dataIncomeWageDaily.value.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
+                monthlyWage: dataIncomeWageDaily.value.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
+                workingDays: dataIncomeWageDaily.value.workingDays,
+                deductionItems: arrDeductionItems,
+            }
+            if (store.state.common.actionAddItem) {
+                mutateAdd({
+                    companyId: companyId,
+                    processKey: { ...processKey.value },
+                    input: {
+                        paymentDay: dataIncomeWageDaily.value.paymentDay,
+                        employeeId: dataIncomeWageDaily.value.employee.employeeId,
+                        ...input
+                    },
                 })
-            })
-            mutateUpdate({
-                companyId: companyId,
-                processKey: { ...processKey.value },
-                incomeId: dataIncomeWageDaily.value.incomeId,
-                input: {
-                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
-                    monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
-                    workingDays: dataIncomeWageDaily.value.workingDays,
-                    deductionItems: arrDeductionItems,
-                },
-            })
+            } else {
+                mutateUpdate({
+                    companyId: companyId,
+                    processKey: { ...processKey.value },
+                    incomeId: dataIncomeWageDaily.value.incomeId,
+                    input: input,
+                })
+            }
         })
         watch(() => arrDeduction, (res) => {
             let total = 0
@@ -400,10 +388,9 @@ export default defineComponent({
             dataIncomeWageDaily.value.totalDeduction = data.totalDeduction;
             dataIncomeWageDaily.value.paymentDay = data.paymentDay;
             dataIncomeWageDaily.value.deductionItems = data.deductionItems;
-            dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck;
+            dataIncomeWageDaily.value.monthlyPaycheck = data.monthlyPaycheck;
             dataIncomeWageDaily.value.employee.employeeId = data.employeeId;
         }, { deep: true })
-
 
         // ===================FUNCTION==================================
         const funcCheckPrice = (id: any) => {
@@ -416,7 +403,7 @@ export default defineComponent({
         }
         const actionDedution = () => {
             let dataDefault = dataIncomeWageDaily.value.employee
-            let totalPrices = parseInt(dataIncomeWageDaily.value.employee.monthlyPaycheck ?
+            let totalPrices = parseInt(dataIncomeWageDaily.value.monthlyPaycheck ?
                 dataIncomeWageDaily.value.monthlyWage :
                 dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays)
             let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
@@ -456,25 +443,6 @@ export default defineComponent({
         const actionInsurance = () => {
             modalInsurance.value = true;
         }
-        const statusComfirmChange = (res: any) => {
-            if (res) {
-                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
-            } else {
-                // triggerDetail.value = true
-                // valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
-                // valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
-            }
-        }
-        // const statusComfirmAdd = (val: any) => {
-        //     if (val) {
-        //         countKey.value++;
-        //         Object.assign(dataIncomeWageDaily, sampleDataIncomeWageDaily);
-        //         arrDeduction.value.map((data: any) => {
-        //             data.price = 0
-        //         })
-        //     }
-        // }
-
         const onChange = () => {
             if (employeeWageDailyParam.value.employeeId != dataIncomeWageDaily.value.employee.employeeId) {
                 employeeWageDailyTrigger.value = true;
@@ -497,8 +465,6 @@ export default defineComponent({
             loadingIncomeWageDaily,
             store,
             countKey,
-            modalChangeRow, statusComfirmChange,
-            // modalStatusAdd, statusComfirmAdd,
         };
     },
 });

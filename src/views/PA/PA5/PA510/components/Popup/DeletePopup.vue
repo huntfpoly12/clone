@@ -67,6 +67,7 @@ export default defineComponent({
         successDelete(e => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
+            store.state.common.actionAddItem = true;
             store.state.common.loadingTableInfo++
         })
 

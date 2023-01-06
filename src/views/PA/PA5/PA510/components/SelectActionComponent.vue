@@ -287,7 +287,6 @@ export default defineComponent({
             modalStatusAdd, statusComfirmAdd,
             openTab,
             onSubmit,
-            store,
         };
     },
 });

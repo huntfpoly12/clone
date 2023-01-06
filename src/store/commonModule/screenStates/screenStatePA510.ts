@@ -6,6 +6,7 @@ const statesPA510 = {
         paymentYear: dayjs().year(),
         paymentMonth: dayjs().month() + 1,
     },
+    dataRowOld: null,
     incomeId: null,
     employeeId: null,
     actionAddItem: false,

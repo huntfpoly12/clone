@@ -96,7 +96,10 @@ export default defineComponent({
             month.value = val
         });
         const updateValue = (value: any) => {
-            dataApiCopy.value = value.value
+            dataApiCopy.value.paymentYear = value.value.paymentYear
+            dataApiCopy.value.paymentMonth = value.value.paymentMonth
+            dataApiCopy.value.imputedMonth = value.value.imputedMonth
+            dataApiCopy.value.imputedYear = value.value.imputedYear
         };
         const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
         const modalCopy = ref(false)
