@@ -1,5 +1,5 @@
 <template>
-    <div id="pa-110"><pre>{{dataIncomeWage}}</pre>
+    <div id="pa-110">
         <a-spin :spinning="loading" size="large">
             <a-row>
                 <a-col :span="24">
