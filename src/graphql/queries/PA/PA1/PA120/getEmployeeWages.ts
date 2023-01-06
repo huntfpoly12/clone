@@ -35,7 +35,20 @@ export default gql`
       deductionDependentCount
       incomeTaxMagnification
       incomePayment
+      nationalPensionDeduction
+      healthInsuranceDeduction
+      longTermCareInsuranceDeduction
+      employeementInsuranceDeduction
+      insuranceSupport
+      nationalPensionSupportPercent
+      employeementInsuranceSupportPercent
+      employeementReduction
+      employeementReductionStartDate
+      employeementReductionFinishDate
+      employeementReductionRatePercent
+      employeementReductionInput
       totalPay
+      totalDeduction
       # totalDeduction
       # totalReduction
       deletable

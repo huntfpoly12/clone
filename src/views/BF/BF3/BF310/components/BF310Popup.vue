@@ -580,7 +580,6 @@ export default defineComponent({
                 actionCreateCompany({ id: res.data.updateSubscriptionRequest.id });
             }
             notification('success', `업데이트 완료!`)
-            setModalVisible();
         });
         onError((error) => {
             notification('error', error.message)
