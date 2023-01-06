@@ -205,7 +205,6 @@ export default defineComponent({
     // set key again
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
-    const actionSaveTypePA720Commit = store.commit('common/actionSaveTypePA720');
     const focusedRowKey = ref<Number>(1);
     watch(actionSavePA720, () => {
       setTimeout(() => {

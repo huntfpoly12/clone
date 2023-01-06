@@ -6,7 +6,7 @@
         <div style="display: flex;align-items: flex-end;">
             <a-tooltip placement="top"
                 v-if="idCardNumber && name"
-                key="black" :color="convertBirthDay(idCardNumber)??'red'">
+                :color="convertBirthDay(idCardNumber)?'black':'red'" @visibleChange="onVisibleChange">
                 <template #title>
                     <div v-if="convertBirthDay(idCardNumber)">{{ convertBirthDay(idCardNumber) }}</div>
                     <div v-else class="error">Error</div>
@@ -52,7 +52,7 @@ export default defineComponent({
         DxButton
     },
 
-    setup(props) {
+    setup(props, {emit}) {
         const convertBirthDay = (birthDay: any) => {
             let newBirthDay = birthDay.split("-")[0]
             let typeYear = birthDay.split("-")[1].charAt(0)
@@ -65,8 +65,14 @@ export default defineComponent({
             }
             return null;
         }
+        const onVisibleChange = (e:any) => {
+            if(!convertBirthDay(props.idCardNumber)) {
+                emit('toolTopErorr', e)
+            }
+        }
         return {
-            convertBirthDay
+            convertBirthDay,
+            onVisibleChange
         }
     },
 });
@@ -128,6 +134,7 @@ export default defineComponent({
 }
 .error {
     color: #ffffff;
+    background: red;
 }
 </style>
 
