@@ -39,19 +39,14 @@ import {
 } from "devextreme-vue/data-grid";
 import queries from "../../src/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
-import dayjs, { Dayjs } from 'dayjs';
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
-dayjs.extend(weekday);
-dayjs.extend(localeData);
+import dayjs from 'dayjs';
 
 export default defineComponent({
     props: ['modalStatus', 'data', 'title', 'idRowEdit', 'typeHistory', 'companyId'],
     components: {
         DxDataGrid,
         DxColumn,
-        DxPaging,
-        Dayjs,
+        DxPaging, 
     },
 
     setup(props) {

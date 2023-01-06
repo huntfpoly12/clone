@@ -202,11 +202,7 @@ import imgUpload from "@/components/UploadImage.vue";
 import queries from "@/graphql/queries/BF/BF3/BF320/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF320/index";
 import notification from '@/utils/notification';
-import dayjs, { Dayjs } from 'dayjs';
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
-dayjs.extend(weekday);
-dayjs.extend(localeData);
+import dayjs from 'dayjs'; 
 import {
     DxDataGrid,
     DxColumn,
