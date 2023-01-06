@@ -22,10 +22,11 @@ const filters = {
     },
     formatDateToInterger(date: any) { 
         let valueConver = 0
-        if (date.length >= 8) {
-            valueConver = parseInt(dayjs(date).format('YYYYMMDD'))
-        } else {
+        console.log(`output->date`,date)
+        if (date.length <= 7) {
             valueConver = parseInt(dayjs(date).format('YYYYMM'))
+        } else {
+            valueConver = parseInt(dayjs(date).format('YYYYMMDD'))
         }
         return valueConver
     },

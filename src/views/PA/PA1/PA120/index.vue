@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <action-header title="기타소득자등록" @actionSave="onSubmit($event)" :buttonDelete="false" />
+    <action-header title="기타소득자등록" :buttonDelete="false" :buttonSave="false" :buttonSearch="false" :buttonPrint="false" />
     <div id="pa-120" class="page-content">
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
@@ -43,12 +43,10 @@
         <a-row>
             <a-col :span="10" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
-                    <keep-alive>
-
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
-                        :focused-row-enabled="true" :onContentReady="onContentChange" id="pa-120-gridContainer">
+                        :focused-row-enabled="true" id="pa-120-gridContainer">
 
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -66,13 +64,33 @@
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
-                                :foreigner="data.data.foreigner" :checkStatus="false" />
+                                :foreigner="data.data.foreigner" :checkStatus="false" @toolTopErorr="toolTopErorr"/>
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" width="130" />
+                        <DxColumn caption="주민등록번호" cell-template="residentId" width="130" />
+                        <template #residentId="{ data }">
+                            
+                            <div>
+                                <div v-if="isResidentIdError" class="toolTipError">Error</div>
+                                {{data.data.residentId}}
+                            </div>
+                        </template>
                         <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{}" class="custom-action">
-                            <div class="custom-grade-cell">
-                                <four-major-insurance :typeTag="1" :typeValue="1" />
+                        <template #grade-cell="{data}" class="custom-action">
+                            <div class="custom-action">
+                                <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1"
+                                    :typeValue="1" />
+                                <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2"
+                                    :typeValue="1" />
+                                <four-major-insurance v-if="data.data.employeementInsuranceDeduction"
+                                    :typeTag="4" :typeValue="1" />
+                                <four-major-insurance v-if="data.data.nationalPensionSupportPercent"
+                                    :typeTag="6" :ratio="data.data.nationalPensionSupportPercent" />
+                                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent"
+                                    :typeTag="7" :ratio="data.data.employeementInsuranceSupportPercent" />
+                                <four-major-insurance v-if="data.data.employeementReductionRatePercent"
+                                    :typeTag="8" :ratio="data.data.employeementReductionRatePercent" />
+                                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10"
+                                    :ratio="data.data.incomeTaxMagnification" />
                             </div>
                         </template>
                         <DxColumn cell-template="pupop" width="100"/>
@@ -85,7 +103,6 @@
                         </template>
                         <DxScrolling column-rendering-mode="virtual"/>
                     </DxDataGrid>
-                    </keep-alive>
                 </a-spin>
             </a-col>
             <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
@@ -153,7 +170,6 @@ export default defineComponent({
         const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false);
         const idRowEdit = ref()
-        let arrayRoweditedPA120 = ref<any>(store.state.common.arrayRoweditedPA120);
         const {
             refetch: refetchData,
             result,
@@ -192,9 +208,10 @@ export default defineComponent({
         }
         const openAddNewModal = async () => {
             actionChangeComponent.value = 1;
-            if (!addNew.value.compareData()) {
-                popupStatus.value = true;
-            }
+            // if (!addNew.value.compareData()) {
+            //     popupStatus.value = true;
+            // }
+            addComponentKey.value++;
         };
         
         watch(()=> store.state.common.reloadEmployeeList,() => {
@@ -233,8 +250,6 @@ export default defineComponent({
                 trigger.value = false
             }
         })
-        const onSubmit = (e: any) => {
-        };
 
         watch(() => modalEditStatus.value, (value) => {
             if (value == false) {
@@ -242,50 +257,29 @@ export default defineComponent({
                 refetchData()
             }
         })
-
-        // show row when edit
-        const rowEditData = ref('');
-        const rowIndex = ref<any>([]);
         const actionEdit = (data: any) => {
             actionChangeComponent.value = 2
             idRowEdit.value = data.data.employeeId
             modalEditStatus.value = true
-            rowEditData.value = data.data;
-            if (rowIndex.value.filter((e:any) => e.loadIndex === data.loadIndex+1).length == 0) {
-            rowIndex.value.push({loadIndex:data.loadIndex+1, key: data.key, isEdit: false});
-            }
         }
-        const changeClass = () => {
-            let listElementRow = document.body.querySelectorAll('[aria-rowindex]');
-            listElementRow.forEach((item:any, index:number) => {
-                rowIndex.value.forEach((val: any)=> {
-                    if(item.ariaRowIndex == val.loadIndex && val.isEdit) {
-                        item.classList.add('active-row-key');
-                    }
-                })
-            })
-        }
-        const onContentChange = (e:any) => {
-            changeClass();
-        }
-        watch(()=>rowEditData.value,()=> {
-            changeClass();
+        // when submit form done
+        const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
+        watch(actionFormDonePA120,()=> {
+            trigger.value = true;
+            refetchData();
         })
-        watch(()=> store.state.common.arrayRoweditedPA120,(newVal)=> {
-            rowIndex.value.find((item:any) => {
-                if(item.key==newVal[newVal.length-1]){
-                    item.isEdit = true;
-                }
-            })
-        })
-
+        //tooltip residentId
+        const isResidentIdError = ref(false)
+        const toolTopErorr = (val: boolean) => {
+            console.log(`output->val`,val)
+            isResidentIdError.value = val;
+        }
         return {
             loading,
             idRowEdit,
             actionChangeComponent,
             modalEditStatus,
             modalStatus,
-            onSubmit,
             dataSource,
             actionEdit,
             actionDelete,
@@ -303,9 +297,8 @@ export default defineComponent({
             popupStatus,
             addNew,
             arrRowEdit,
-            rowEditData,
-            onContentChange,
-            rowIndex,
+            toolTopErorr,
+            isResidentIdError
         }
     },
 });
@@ -313,5 +306,10 @@ export default defineComponent({
 <style lang="scss" scoped src="./style/style.scss" >
 #pa-120-gridContainer{
     height: 440px;
+    .toolTipError{
+        position: absolute;
+        top: 0;
+        transform: translateY(50%);
+    }
 }
 </style>

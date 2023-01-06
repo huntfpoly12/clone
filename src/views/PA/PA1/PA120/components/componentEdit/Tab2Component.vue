@@ -36,7 +36,7 @@
           <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" v-model:valueSwitch="formStateTab2.employeementReduction"></switch-basic>
         </a-form-item>
         <a-form-item label="감면기간" label-align="right" :label-col="{ style: { width: '85px' } }">
-          <a-range-picker v-model:value="rangeDate" :placeholder="['Start', 'End']"  :disabled="!formStateTab2.employeementReduction"/>
+          <a-range-picker v-model:value="rangeDate" :placeholder="['Start', 'End']" :disabled="!formStateTab2.employeementReduction"/>
         </a-form-item>
         <a-form-item label="감면율" label-align="right">
           <radio-group :arrayValue="radioCheckReductioRate" v-model:valueRadioCheck="formStateTab2.employeementReductionRatePercent" layoutCustom="horizontal" :disabled="!formStateTab2.employeementReduction">
@@ -194,8 +194,8 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear);
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,
-      employeementReductionStartDate : dayjs().format("YYYY-MM-DD"),
-      employeementReductionFinishDate: dayjs().format("YYYY-MM-DD")
+      employeementReductionStartDate : dayjs().format("YYYYMMDD"),
+      employeementReductionFinishDate: dayjs().format("YYYYMMDD")
       
     });
     const triggerCalcIncome = ref<boolean>(false);
@@ -288,8 +288,8 @@ export default defineComponent({
         formStateTab2.nationalPensionSupportPercent = value.getEmployeeWage.nationalPensionSupportPercent;
         formStateTab2.employeementInsuranceSupportPercent = value.getEmployeeWage.employeementInsuranceSupportPercent;
         formStateTab2.employeementReduction = value.getEmployeeWage.employeementReduction;
-        formStateTab2.employeementReductionStartDate = value.getEmployeeWage.employeementReductionStartDate;
-        formStateTab2.employeementReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate;
+        formStateTab2.employeementReductionStartDate = value.getEmployeeWage.employeementReductionStartDate ?? NaN;;
+        formStateTab2.employeementReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate ?? NaN;;
         formStateTab2.employeementReductionRatePercent = value.getEmployeeWage.employeementReductionRatePercent;
         formStateTab2.employeementReductionInput = value.getEmployeeWage.employeementReductionInput;
         formStateTab2.incomeTaxMagnification = value.getEmployeeWage.incomeTaxMagnification;
@@ -307,11 +307,13 @@ export default defineComponent({
               }            
           });
         })
-        let ReductionStartDate = value.getEmployeeWage.employeementReductionStartDate != null ? dayjs(value.getEmployeeWage.employeementReductionStartDate) : dayjs();
-        let ReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate != null ? dayjs(value.getEmployeeWage.employeementReductionFinishDate) : dayjs();
+        let ReductionStartDate = !Number.isNaN(value.getEmployeeWage.employeementReductionStartDate) ? dayjs(value.getEmployeeWage.employeementReductionStartDate) : dayjs();
+        let ReductionFinishDate = !Number.isNaN(value.getEmployeeWage.employeementReductionFinishDate) ? dayjs(value.getEmployeeWage.employeementReductionFinishDate) : dayjs();
         rangeDate.value = [ReductionStartDate, ReductionFinishDate]
         dependentCount.value = value.getEmployeeWage.dependents.length > 0 ? value.getEmployeeWage.dependents.length : 0;
         calculateTax();
+        console.log(`output->dayjs('2015/01/01', dateFormat),`,dayjs('2015/01/01', 'YYYY/MM/DD'),value.getEmployeeWage.employeementReductionFinishDate)
+        console.log(`output->dayjs('2015/01/01', dateFormat),`,dayjs(value.getEmployeeWage.employeementReductionStartDate), dayjs())
       }
     })
 
@@ -443,16 +445,19 @@ export default defineComponent({
 		onDone(res => {
 			emit('closePopup', false)
 			notification('success', '업데이트 완료!')
+            store.commit('common/actionFormDonePA120')
 		})
 
 		const updateDeduction = () => {
-      formStateTab2.employeementReductionStartDate = filters.formatDate(rangeDate.value[0]);
-      formStateTab2.employeementReductionFinishDate = filters.formatDate(rangeDate.value[1]);
         const variables = {
           companyId: companyId,
           imputedYear: globalYear.value,
           employeeId: employeeId.value,
-          input: formStateTab2
+          input: {
+            ...formStateTab2,
+            employeementReductionStartDate: +dayjs(rangeDate.value[0]).format('YYYYMMDD'),
+            employeementReductionFinishDate: +dayjs(rangeDate.value[0]).format('YYYYMMDD'),
+         }
         };
 				mutate(variables)
 		}

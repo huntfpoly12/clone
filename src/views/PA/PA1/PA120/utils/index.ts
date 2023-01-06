@@ -35,7 +35,7 @@ export const initFormStateTab1 = {
   roadAddress: "",
   addressExtend: "",
   email: "",
-  employeeId: 0,
+//   employeeId: 0,
   joinedAt: "",
   leavedAt: "",
   president: false,

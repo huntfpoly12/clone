@@ -1,9 +1,9 @@
 import gql from "graphql-tag";
 export default gql`
   query getEmployeeWage(
-    $companyId: Int!,
-    $imputedYear: Int!,
-    $employeeId: Int!,
+    $companyId: Int!
+    $imputedYear: Int!
+    $employeeId: Int!
   ) {
     getEmployeeWage(
       companyId: $companyId
@@ -57,6 +57,7 @@ export default gql`
       incomePayment
       totalPay
       totalDeduction
+      deletable
       deletable
       payItems {
         itemCode
