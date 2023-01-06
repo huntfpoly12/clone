@@ -107,9 +107,7 @@
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item has-feedback label="생년월일" class="clr">
-                                    <date-time-box v-model:valueDate="formState.extendInfoPresidentBirthday"
-                                        style="width: 200px" :required="true" dateFormat="YYYY-MM-DD"
-                                        nameInput="formState-extendInfoPresidentBirthday" />
+                                    <birth-day-box v-model:valueInput="formState.extendInfoPresidentBirthday" width="200px" /> 
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr">
                                     <tel-text-box width="200px"
@@ -204,11 +202,7 @@ import imgUpload from "@/components/UploadImage.vue";
 import queries from "@/graphql/queries/BF/BF3/BF320/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF320/index";
 import notification from '@/utils/notification';
-import dayjs, { Dayjs } from 'dayjs';
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
-dayjs.extend(weekday);
-dayjs.extend(localeData);
+import dayjs from 'dayjs'; 
 import {
     DxDataGrid,
     DxColumn,
