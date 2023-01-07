@@ -34,14 +34,14 @@
                 </div>
             </div>
             <div class="page-content">
-                <DxDataGrid :show-row-lines="true"  :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id" @exporting="onExporting"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling column-rendering-mode="virtual" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
-                        <DxItem location="after" template="pagination-table"/>
+                        <DxItem location="after" template="pagination-table" />
                         <DxItem name="searchPanel" />
                         <DxItem name="exportButton" />
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -55,7 +55,7 @@
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">
                             <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                                :total="rowTable" show-less-items  @change="searching" />
+                                :total="rowTable" show-less-items @change="searching" />
                         </div>
                     </template>
                     <DxColumn caption="영업자코드" data-field="code" />
@@ -73,8 +73,14 @@
                     <DxColumn caption="주소" data-field="address" />
                     <DxColumn caption="연락처" data-field="phone" />
                     <DxColumn caption="휴대폰" data-field="mobilePhone" />
-                    <DxColumn caption="가입일자" data-field="registerDate" data-type="date" />
-                    <DxColumn caption="해지일자" data-field="cancelDate" data-type="date" />
+                    <DxColumn caption="가입일자" cell-template="registerDate" />
+                    <template #registerDate="{ data }">
+                        {{ $filters.formatDate(data.data.registerDate.toString()) }}
+                    </template>
+                    <DxColumn caption="해지일자" cell-template="cancelDate" />
+                    <template #cancelDate="{ data }">
+                        {{ $filters.formatDate(data.data.cancelDate.toString()) }}
+                    </template>
                     <DxColumn caption="사업자수" data-field="companyCount" data-type="number" cell-template="grid-number" />
                     <template #grid-number="{ data }">
                         {{ $filters.formatCurrency(data.value) }}
@@ -101,7 +107,7 @@
                 </div>
                 <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
                 <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
-                    :idSaleEdit="idRowEdit" />
+                    :idSaleEdit="idRowEdit" @updateSuccess="updateDone" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-340" />
             </div>
@@ -113,8 +119,8 @@ import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import { SalesRepresentativeGrade, getEnumValue } from "@bankda/jangbuda-common";
 import { useQuery } from "@vue/apollo-composable";
-import DxButton from "devextreme-vue/button"; 
-import notification from "@/utils/notification"; 
+import DxButton from "devextreme-vue/button";
+import notification from "@/utils/notification";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import EditBF340Popup from "./components/EditBF340Popup.vue";
@@ -167,6 +173,7 @@ export default defineComponent({
         const rowTable = ref(0);
         const dataSource = ref([]);
         const trigger = ref<boolean>(true);
+        // ============= GRAPHQL ===========================
         const { refetch: refetchData, loading, onError, result } = useQuery(queries.getDataSale, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
@@ -174,6 +181,14 @@ export default defineComponent({
         onError((error) => {
             notification('error', error.message);
         });
+        watch(result, (value) => {
+            if (value) {
+                rowTable.value = value.searchSalesRepresentatives.totalCount;
+                dataSource.value = value.searchSalesRepresentatives.datas;
+                trigger.value = false;
+            }
+        });
+        // ============ FUNCTION ===========================
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
@@ -190,6 +205,10 @@ export default defineComponent({
             modalHistoryStatus.value = true;
             popupData.value = data;
         };
+        const updateDone = () => {
+            trigger.value = true;
+            refetchData()
+        };
         const getColorTag = (data: any) => {
             if (data === 1) {
                 return "#108ee9";
@@ -205,48 +224,24 @@ export default defineComponent({
             trigger.value = true;
             refetchData();
         };
+        // ============ WATCH =======================
         watch(modalEditStatus, (newValue, old) => {
             if (!newValue) {
+                trigger.value = true;
                 refetchData();
             }
         });
         watch(modalAddNewStatus, (newValue, old) => {
             if (!newValue) {
+                trigger.value = true;
                 refetchData();
             }
         });
-        watch(result, (value) => {
-            if (value) {
-                rowTable.value = value.searchSalesRepresentatives.totalCount;
-                dataSource.value = value.searchSalesRepresentatives.datas;
-                trigger.value = false;
-            }
-        });
         return {
-            loading,
-            move_column,
-            colomn_resize,
-            onExporting,
-            searching,
-            dataSource,
-            idRowEdit,
-            refetchData,
-            saleStatus,
-            saleGrade,
-            originData,
-            rowTable,
-            getColorTag,
-            modalHistory,
-            setModalEditVisible,
-            openAddNewModal,
-            popupData,
-            modalAddNewStatus,
-            modalEditStatus,
-            modalHistoryStatus,
-            getEnumValue,
-            SalesRepresentativeGrade
+            loading, move_column, colomn_resize, dataSource, idRowEdit, saleStatus, saleGrade, originData, rowTable, popupData, modalAddNewStatus, modalEditStatus, modalHistoryStatus, SalesRepresentativeGrade,
+            onExporting, searching, refetchData, getColorTag, modalHistory, setModalEditVisible, openAddNewModal, updateDone, getEnumValue,
         };
     },
 });
-</script> 
+</script>  
 <style scoped lang="scss" src="./style/style.scss" />
