@@ -466,29 +466,34 @@ export default defineComponent({
       state.value = !state.value;
     }
 
+    const gotoDashboard = () => {
+      activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
+      router.push("/dashboard");
+      menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
+    }
     const addMenuTab = (itemId) => {
-    
-      if (itemId != '' && menuTab.value.some(item => item.name === 'Dashboard')) {
+      if (itemId != '') {
         let itemNew = [];
         itemNew = menuDatas.find(item => item.id === itemId);
+        if (itemNew.url == '#') {
+          return
+        }
+
         activeTab.value = menuDatas.find(item => item.id === itemId);
         store.state.common.activeTab = itemNew
         store.state.common.cachedTab.push(itemNew.id.toUpperCase().replaceAll('-', ''))
+        //If the number of tabs exceeds 20, new tabs will not be added
         if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
           menuTab.value.push(itemNew);
           selectedItems.value = [];
           checkOverflow()
         }
       // If you select the logo, it will add a dashboard tab object
-      } else if(!menuTab.value.some(item => item.name === 'Dashboard')) {
-        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
-        router.push("/dashboard");
-        menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
+      } else if (!menuTab.value.some(item => item.name === 'Dashboard')) {
+        gotoDashboard()
       } else {
         activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
       }
-
-
     }
     /**
      * event when click icon close one tab
@@ -502,17 +507,14 @@ export default defineComponent({
       activeTab.value = menuTab.value.slice(-1)[0];
       selectedItems.value = [];
       if (menuTab.value.length === 0) {
-        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
-        router.push("/dashboard");
-        menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
+        gotoDashboard()
       }
       checkOverflow()
     }
     const changeActiveTab  = (item)=>{
       activeTab.value = item;
       if (menuTab.value.length === 0) {
-        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
-        menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
+        gotoDashboard()
       }
       store.state.common.activeTab =  activeTab.value
     }
