@@ -188,8 +188,8 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear);
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,
-      employeementReductionStartDate: dayjs().format('YYYYMMDD'),
-      employeementReductionFinishDate: dayjs().format('YYYYMMDD'),
+      employeementReductionStartDate:filters.formatDateToInterger(dayjs()),
+      employeementReductionFinishDate:filters.formatDateToInterger(dayjs()),
     });
     const triggerCalcIncome = ref<boolean>(false);
     const calculateVariables = {

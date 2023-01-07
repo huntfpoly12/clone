@@ -384,12 +384,23 @@ export default defineComponent({
             let data = res.getEmployeeWageDaily;
             dataIncomeWageDaily.value.actualPayment = data.actualPayment;
             dataIncomeWageDaily.value.monthlyWage = data.monthlyWage;
+            dataIncomeWageDaily.value.dailyWage = data.dailyWage;
             dataIncomeWageDaily.value.workingDays = data.workingDays;
             dataIncomeWageDaily.value.totalDeduction = data.totalDeduction;
-            dataIncomeWageDaily.value.paymentDay = data.paymentDay;
-            dataIncomeWageDaily.value.deductionItems = data.deductionItems;
             dataIncomeWageDaily.value.monthlyPaycheck = data.monthlyPaycheck;
             dataIncomeWageDaily.value.employee.employeeId = data.employeeId;
+            dataIncomeWageDaily.value.employee.name = data.name;
+            dataIncomeWageDaily.value.paymentDay = data.paymentDay;
+            arrDeduction.value.map((dataRow: any) => {
+                dataRow.price = 0
+                data.deductionItems?.forEach((val: any) => {
+                    if (val.itemCode == dataRow.itemCode) {
+                        dataRow.price = val.amount
+                    }
+                })
+            })
+            // 
+            
         }, { deep: true })
 
         // ===================FUNCTION==================================

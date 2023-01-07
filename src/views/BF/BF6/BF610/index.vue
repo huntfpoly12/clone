@@ -205,7 +205,7 @@ export default defineComponent({
         let dataSource: any = ref([])
         let trigger = ref(true)
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalYear: any = computed(() => store.state.settings.globalYear)
         let dataSearch: any = reactive({
             "filter": {
                 "page": 1,
@@ -224,7 +224,7 @@ export default defineComponent({
                 "excludeCancel": true
             }
         })
-        let arraySelectBox = reactive([
+        let arraySelectBox = computed(() => [
             {
                 key: parseInt(globalYear.value + "01"),
                 value: "귀 " + globalYear.value + "-01"
@@ -278,7 +278,7 @@ export default defineComponent({
                 value: "귀 " + globalYear.value + 1 + "01"
             },
         ])
-        let arraySelectBox2 = reactive([
+        let arraySelectBox2 = computed(() => [
             {
                 key: parseInt(globalYear.value + "01"),
                 value: "지 " + globalYear.value + "-01"
@@ -396,6 +396,13 @@ export default defineComponent({
             dataSearch.filter.regular = newVal.value
             dataSearch.filter.revised = newVal.value
             dataSearch.filter.afterDeadline = newVal.value
+        }, { deep: true })
+        watch(() => globalYear, (newVal: any) => {
+            dataSearch.filter.imputedYearMonth = parseInt(newVal.value + "01")
+            dataSearch.filter.paymentYearMonth = parseInt(newVal.value + "01")
+            trigger.value = true
+            refetchTable()
+
         }, { deep: true })
         watch(() => [
             dataSearch.filter.regular,

@@ -21,8 +21,7 @@ const filters = {
         return dayjs(date).format('YYYY-MM-DD')
     },
     formatDateToInterger(date: any) { 
-        let valueConver = 0
-        console.log(`output->date`,date)
+        let valueConver = 0 
         if (date.length <= 7) {
             valueConver = parseInt(dayjs(date).format('YYYYMM'))
         } else {

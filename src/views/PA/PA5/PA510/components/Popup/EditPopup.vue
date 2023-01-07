@@ -33,8 +33,8 @@ export default defineComponent({
             default: false,
         },
         data: {
-            type: Object,
-            default: {}
+            type: Array,
+            default: []
         }
     },
     components: {
@@ -59,12 +59,15 @@ export default defineComponent({
             notification('error', e.message)
         })
         const onSubmit = (e: any) => {
-            mutate({
-                companyId: companyId,
-                processKey: processKey.value,
-                incomeId: props.data.incomeId,
-                day: dayValue.value
+            props.data.forEach((data: any) => {
+                mutate({
+                    companyId: companyId,
+                    processKey: processKey.value,
+                    incomeId: data.incomeId,
+                    day: dayValue.value
+                })
             })
+
         };
 
         return {
