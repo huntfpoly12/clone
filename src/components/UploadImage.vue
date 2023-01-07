@@ -49,8 +49,7 @@
 import { ref, defineComponent } from "vue";
 import { Upload, UploadProps } from "ant-design-vue";
 import Repository from "../repositories/index";
-const uploadRepository = Repository.get("upload");
-
+const uploadRepository = Repository.get("upload"); 
 import {
     UploadOutlined,
     MinusCircleOutlined,
@@ -60,6 +59,7 @@ import {
     PlusSquareOutlined,
     WarningFilled,
 } from "@ant-design/icons-vue";
+import notification from "@/utils/notification";
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
     const reader = new FileReader();
@@ -165,7 +165,7 @@ export default defineComponent({
                     });
                 });
             } catch (error) { 
-                console.log(error);
+                notification('error', 'Có lỗi xảy ra trong quá trình upload image!')
             }
         };
 

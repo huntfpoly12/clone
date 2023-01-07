@@ -59,9 +59,7 @@ export default defineComponent({
 
     watch(
       () => props.valueInput,
-      (newValue) => {
-        // console.log(typeof newValue);
-        
+      (newValue) => { 
         value.value = newValue?.toString();
       }
     );
