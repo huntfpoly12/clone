@@ -96,7 +96,10 @@ export default defineComponent({
             month.value = val
         });
         const updateValue = (value: any) => {
-            dataApiCopy.value = value.value
+            dataApiCopy.value.paymentYear = value.value.paymentYear
+            dataApiCopy.value.paymentMonth = value.value.paymentMonth
+            dataApiCopy.value.imputedMonth = value.value.imputedMonth
+            dataApiCopy.value.imputedYear = value.value.imputedYear
         };
         const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
         const modalCopy = ref(false)
@@ -142,7 +145,7 @@ export default defineComponent({
             setModalVisible()
             setModalVisibleCopy()
             notification('success', ` 완료!`)
-            emit('loadingTableInfo', true)
+            store.state.common.loadingTableInfo++
             store.state.common.processKeyPA510.imputedMonth = month.value
             store.state.common.processKeyPA510.paymentYear = dataApiCopy.value.paymentYear
             store.state.common.processKeyPA510.paymentMonth = dataApiCopy.value.paymentMonth
