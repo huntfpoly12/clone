@@ -104,6 +104,7 @@
                                             </a-form-item>
                                         </a-col>
                                         <a-col :span="12">
+                                            {{  formState.content.company.residentId  }}
                                             <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                                 label-align="left" :label-col="labelCol">
                                                 <id-number-text-box :required="true"
@@ -222,10 +223,11 @@
                                                     <div>{{ data.rowIndex + 1 }}</div>
                                                 </template>
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
-                                                <DxColumn data-field="facilityBizType" caption="사업분류">
-                                                </DxColumn>
-                                                <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
-                                                    :format="'yyyy-MM-dd'" />
+                                                <DxColumn data-field="facilityBizType" caption="사업분류"/>
+                                                <DxColumn cell-template="startYearMonth" caption="서비스시작년월" data-type="date"/>
+                                                <template #startYearMonth="{ data }">
+                                                    {{ data.data.startYearMonth ? dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : '' }}
+                                                </template>
                                                 <DxColumn :width="100" data-field="capacity" caption="정원수 (명)" />
                                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
                                                     template="button-template" mode="cell"
@@ -244,16 +246,16 @@
                                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow" :key="dataActiveRow.rowIndex ?? 99">
                                                 <a-col :span="12">
                                                     <a-form-item label="사업분류">
-                                                        <select-box-common :arrSelect="facilityBizTypeCommon"
+                                                        <select-box-common :arrSelect="facilityBizTypeCommon" :required="true"
                                                             v-model:valueInput="dataActiveRow.facilityBizType"
                                                             displayeExpr="n" valueExpr="v" width="200px" />
                                                     </a-form-item>
                                                     <a-form-item label="사업분류">
-                                                        <default-text-box v-model:valueInput="dataActiveRow.name"
+                                                        <default-text-box v-model:valueInput="dataActiveRow.name" :required="true"
                                                             width="200px" />
                                                     </a-form-item>
                                                     <a-form-item label="서비스 시작년월">
-                                                        <month-picker-box
+                                                        <month-picker-box :required="true"
                                                             v-model:valueDate="dataActiveRow.startYearMonth"
                                                             width="200px" />
                                                     </a-form-item>
@@ -300,7 +302,7 @@
                                         <a-form-item label="서비스 시작년월" class="clr" label-align="left"
                                             :label-col="labelCol">
                                             <div style="width: 200px">
-                                                <month-picker-box
+                                                <month-picker-box :required="true"
                                                     v-model:valueDate="formState.content.withholding.startYearMonth"
                                                     className="0" />
                                             </div>
@@ -352,13 +354,14 @@
                                 </a-form-item>
                             </a-collapse-panel>
                             <a-collapse-panel key="7" header="기타">
+                                {{  formState.content.extra.salesRepresentativeId }}
                                 <a-form-item label="영업관리담당" label-align="left" :label-col="labelCol">
                                     <list-sales-dropdown
-                                        v-model:selected="formState.content.extra.salesRepresentativeId"
+                                        v-model:valueInput="formState.content.extra.salesRepresentativeId"
                                         width="200px" />
                                 </a-form-item>
                                 <a-form-item label="전달사항" label-align="left" :label-col="labelCol">
-                                    <text-area-box v-model:valueInput="formState.content.extra.comment"
+                                    <text-area-box v-model:valueInput="formState.content.extra.comment" :width="750" :height="70"
                                         placeholder="전달사항입력" />
                                 </a-form-item>
                             </a-collapse-panel>

@@ -1,6 +1,6 @@
 <template>
   <Datepicker v-model="date" autoApply monthPicker locale="ko" :format-locale="ko"
-    :style="{ height: $config_styles.HeightInput, width: width }" :format="format" :uid="id"
+    :style="{ height: $config_styles.HeightInput, width: width }" format="yyyy-MM" :uid="id"
     @update:modelValue="handleDate" :readonly="readonly" />
 </template>
 <script lang="ts">
@@ -8,7 +8,7 @@ import { defineComponent, ref, watch } from "vue";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { ko } from "date-fns/locale";
-// import { Dayjs } from "dayjs";
+import dayjs from 'dayjs';
 
 export default defineComponent({
   props: {
@@ -17,8 +17,8 @@ export default defineComponent({
       type: String,
     },
     valueDate: {
-      type: String,
-      // default: new Date(),
+      type: [Number, String],
+      default: parseInt(dayjs().format("YYYYMM")),
     },
     id: {
       type: String,
@@ -36,47 +36,38 @@ export default defineComponent({
     Datepicker,
   },
   setup(props, { emit }) {
-    let date = ref()
-    let valueDate = ref()
-    if (props.valueDate) {
-      valueDate.value = new Date(props.valueDate);
-      date.value = {
-        month: valueDate.value.getMonth(),
-        year: valueDate.value.getFullYear(),
-      }
-    }
+    const date: any = ref({
+      month: parseInt(dayjs(props.valueDate.toString()).format('MM')) - 1,
+      year: parseInt(dayjs(props.valueDate.toString()).format('YYYY')),
+    })
+
     watch(
       () => props.valueDate,
       (newValue) => {
         if (newValue) {
-          valueDate.value = new Date(newValue);
           date.value = {
-            month: valueDate.value.getMonth(),
-            year: valueDate.value.getFullYear(),
+            month: parseInt(dayjs(newValue.toString()).format('MM')) - 1,
+            year: parseInt(dayjs(newValue.toString()).format('YYYY')),
           };
         } else {
           date.value = null;
         }
       }
     );
-
-    // format date
-    const format = (date: any) => {
-      let day = date.month + 1;
-      day = day > 9 ? day : "0" + day.toString();
-      return `${date.year}-${day}`;
-    };
-
     const handleDate = (modelData: any) => {
-      let day = modelData.month + 1;
-      day = day > 9 ? day : "0" + day.toString();
-      emit("update:valueDate", `${modelData.year}-${day}`);
+      if (modelData) {
+        let day = modelData.month + 1;
+        day = day > 9 ? day : "0" + day.toString();
+        emit("update:valueDate", parseInt(`${modelData.year}${day}`));
+      } else {
+        emit("update:valueDate", null);
+      }
+
     };
 
     return {
       handleDate,
       date,
-      format,
       ko,
     };
   },

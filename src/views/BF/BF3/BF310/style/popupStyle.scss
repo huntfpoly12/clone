@@ -200,7 +200,7 @@
     align-items: center;
     column-gap: 5px;
 }
-::v-deep img{
+::v-deep img.ant-image-img{
     min-width: 60%;
     width: auto !important;
     margin-top: 0;
@@ -208,4 +208,7 @@
 }
 #bf-320-popup-datagrid{
     max-height: 141px;
+}
+::v-deep input.dp__input.dp__input_icon_pad {
+    height: 34px;
 }
