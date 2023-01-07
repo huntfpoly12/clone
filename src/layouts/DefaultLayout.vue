@@ -1,4 +1,4 @@
-<template>{{ activeTab }} {{ menuTab }}
+<template>
   <a-layout>
     <a-layout-header class="header">
       <div class="nav-logo">
@@ -467,13 +467,8 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
-      // If you select the logo, it will add a dashboard tab object
-      if (itemId == '' && !menuTab.value.some(item => item.name === 'Dashboard')) {
-        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
-        alert()
-        router.push("/dashboard");
-        menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
-      } else {
+    
+      if (itemId != '' && menuTab.value.some(item => item.name === 'Dashboard')) {
         let itemNew = [];
         itemNew = menuDatas.find(item => item.id === itemId);
         activeTab.value = menuDatas.find(item => item.id === itemId);
@@ -484,6 +479,13 @@ export default defineComponent({
           selectedItems.value = [];
           checkOverflow()
         }
+      // If you select the logo, it will add a dashboard tab object
+      } else if(!menuTab.value.some(item => item.name === 'Dashboard')) {
+        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
+        router.push("/dashboard");
+        menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
+      } else {
+        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
       }
 
 
