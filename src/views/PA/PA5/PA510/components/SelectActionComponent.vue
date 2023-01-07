@@ -165,11 +165,11 @@ export default defineComponent({
             
         }
         const editItem = (value: any) => {
-            if (props.dataRows.length == 1) {
+            if (props.dataRows.length) {
                 modalEdit.value = true;
-                popupDataEdit.value = props.dataRows[0]
+                popupDataEdit.value = props.dataRows
             } else {
-                notification('error', `항목을 하나만 선택하십시오`)
+                notification('error', `항목을 최소 하나 이상 선택해야합니다`)
             }
         };
         const arrDropDownPayrollRegister = [

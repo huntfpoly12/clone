@@ -9,6 +9,7 @@ export const initialState = {
         employeeId: null,
         incomeTypeCode: "940100",
         incomeTypeName: "저술가",
+        deletable: false,
 }
 export const initialOptionsRadio = [
         { id: false, text: "내국인" },
