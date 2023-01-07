@@ -1,39 +1,39 @@
 <template>
     <div id="components-modal-demo-position">
         <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="서비스관리 " centered okText="저장하고 나가기"
-            cancelText="그냥 나가기" @cancel="setModalVisible()" width="1200px">
+            cancelText="그냥 나가기" @cancel="setModalVisible()" width="80%">
             <standard-form :wrapper-col="{ span: 14 }">
                 <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
                     <a-collapse v-model:activeKey="activeKey" accordion :bordered="false">
                         <a-collapse-panel key="1" header="이용서비스" class="-scrollpopup">
-                            <div style="height: 500px;overflow-y: scroll;">
+                            <div style="height: 60vh;overflow-y: scroll;">
                                 <a-row>
-                                    <a-col :span="12">
+                                    <a-col :span="6">
                                         <a-form-item label="총이용료" style="font-weight: bold">
                                             <p class="input-disble">
-                                                {{ $filters.formatCurrency(formState.info.totalPrice =
-        formState.info.accountingPrice + formState.info.withholdingPrice)
-}}
+                                                {{
+                                                    $filters.formatCurrency(formState.info.totalPrice =
+                                                        formState.info.accountingPrice + formState.info.withholdingPrice)
+                                                }}
                                             </p>
                                         </a-form-item>
                                     </a-col>
-                                    <a-col :span="12"></a-col>
-                                    <a-col :span="12">
+                                    <a-col :span="18"></a-col>
+                                    <a-col :span="6">
                                         <a-form-item label="회계서비스 이용료" class="cusstom-label-padding">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(formState.info.accountingPrice) }}
                                             </p>
                                         </a-form-item>
                                     </a-col>
-                                    <a-col :span="12"></a-col>
-                                    <a-col :span="12">
+                                    <a-col :span="18"></a-col>
+                                    <a-col :span="6">
                                         <a-form-item label="원천서비스 이용료" class="cusstom-label-padding">
                                             <p class="input-disble">
                                                 {{ $filters.formatCurrency(formState.info.withholdingPrice) }}
                                             </p>
                                         </a-form-item>
-                                    </a-col>
-                                    <a-col :span="14"></a-col>
+                                    </a-col> 
                                 </a-row>
                                 <hr />
                                 <a-row>
@@ -98,57 +98,57 @@
                                         <DxColumn caption="정원수 (명)" />
                                         <DxColumn caption="회계서비스이용료" />
                                     </DxDataGrid>
-                                    <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length" :key="resetFormNum">
-                                        <a-col :span="6.5">
+                                    <a-row :gutter="24" class="data-row-accounting" v-if="dataSource.length"
+                                        :key="resetFormNum">
+                                        <a-col :span="7">
                                             <div class="custom-money">
                                                 <a-form-item label="사업분류" class="red">
                                                     <select-box-common style="float:right" :arrSelect="facilityBizType"
-                                                        :required="true" :width="120"
+                                                        :required="true" :width="150"
                                                         v-model:valueInput="dataActiveRow.facilityBizType"
                                                         :value-expr="'v'" :display-expr="'n'" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="사업명 (중복불가) " class="red">
-                                                    <default-text-box style="float:right" :width="120" :required="true"
+                                                    <default-text-box style="float:right" :width="150" :required="true"
                                                         v-model:valueInput="dataActiveRow.name" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
-                                                <a-form-item label="서비스 시작년월" class="red">
-                                                    {{ dataActiveRow.startYearMonth }}
-                                                    <month-picker-box style="float:right" width="120px" :required="true"
+                                                <a-form-item label="서비스 시작년월" class="red">  
+                                                    <month-picker-box style="float:right" width="150px" :required="true"
                                                         v-model:valueDate="dataActiveRow.startYearMonth" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="정원수" class="red">
-                                                    <number-box style="float:right" :width="120" :required="true"
+                                                    <number-box style="float:right" :width="150" :required="true"
                                                         v-model:valueInput="dataActiveRow.capacity" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="장기요양기관등록번호" class="red">
-                                                    <default-text-box style="float:right" :width="120" :required="true"
+                                                    <default-text-box style="float:right" :width="150" :required="true"
                                                         v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                                 </a-form-item>
                                             </div>
                                         </a-col>
-                                        <a-col :span="6.5">
+                                        <a-col :span="7">
                                             <a-form-item label="회계서비스 이용료:" style=" font-weight: bold">
                                                 <p class="input-disble" :id="'price-' + dataActiveRow.name">
                                                     {{
-        $filters.formatCurrency(getTotalAmount(dataActiveRow))
-}}
+                                                        $filters.formatCurrency(getTotalAmount(dataActiveRow))
+                                                    }}
                                                 </p>
                                             </a-form-item>
                                             <div class="custom-money">
                                                 <a-form-item label="기본이용료">
-                                                    <number-box-money style="float:right" :width="135"
+                                                    <number-box-money style="float:right" :width="197" class="input-float-right "
                                                         v-model:valueInput="dataActiveRow.price" :spinButtons="false" />
                                                 </a-form-item>
                                             </div>
-                                            <div class="custom-money">
+                                            <div class="custom-money input-float-right">
                                                 <DxCheckBox :value="checkOption(dataActiveRow.options, 1)" text="입력대행"
                                                     class="custom-checkbox"
                                                     @value-changed="changeChecked($event.value, 1, dataActiveRow)" />
@@ -157,7 +157,7 @@
                                                     :disabled="disableInput(dataActiveRow.options, 1)"
                                                     @keyDown="changeValueInput($event.component, 1, dataActiveRow)" />
                                             </div>
-                                            <div class="custom-money">
+                                            <div class="custom-money input-float-right">
                                                 <DxCheckBox :value="checkOption(dataActiveRow.options, 2)" text="계좌통합"
                                                     class="custom-checkbox"
                                                     @value-changed="changeChecked($event.value, 2, dataActiveRow)" />
@@ -166,7 +166,7 @@
                                                     :disabled="disableInput(dataActiveRow.options, 2)"
                                                     @keyDown="changeValueInput($event.component, 2, dataActiveRow)" />
                                             </div>
-                                            <div class="custom-money">
+                                            <div class="custom-money input-float-right">
                                                 <DxCheckBox :value="checkOption(dataActiveRow.options, 3)" text="W4C"
                                                     class="custom-checkbox"
                                                     @value-changed="changeChecked($event.value, 3, dataActiveRow)" />
@@ -176,7 +176,7 @@
                                                     @keyDown="changeValueInput($event.component, 3, dataActiveRow)" />
                                             </div>
                                         </a-col>
-                                        <a-col :span="11" style="padding-right: 0;">
+                                        <a-col :span="10" style="padding-right: 0;">
                                             <div style="display: flex;">
                                                 <imgUpload :title="'사업자등록증'" style="width: 100px;"
                                                     @update-img="getImgUrl($event, dataActiveRow)" :customrow="1" />
@@ -224,18 +224,18 @@
                                     <a-col :span="14">
                                         <div style="display: flex; padding-left: 120px">
                                             <span style="width: 180px; line-height: 33px;">기본이용료</span>
-                                            <number-box-money :min="0" width="180px"
+                                            <number-box-money :min="0" width="180px" class="input-float-right"
                                                 v-model:valueInput="formState.info.withholding.price"
                                                 :spinButtons="false" />
                                         </div>
                                     </a-col>
-                                    <a-coll :span="8"></a-coll>
                                     <a-col :span="14">
                                         <div class="custom-service" style="">
-                                            <checkbox-basic style="width: 180px"
-                                                v-model:valueCheckbox="withholdingServiceType" size="14" label="4대보험"
-                                                @change="handleInputTexService" />
-                                            <number-box-money :min="0"
+                                            <div style="width: 180px;">
+                                                <checkbox-basic v-model:valueCheckbox="withholdingServiceType" size="14"
+                                                    label="4대보험" @change="handleInputTexService" />
+                                            </div>
+                                            <number-box-money :min="0" class="input-float-right"
                                                 v-model:valueInput="formState.info.withholding.options[0].price"
                                                 :disabled="!withholdingServiceType" width="180px"
                                                 :spinButtons="false" />
@@ -297,10 +297,6 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    AccountingAdditionalServiceType,
-    WithholdingAdditionalServiceType,
-} from "@bankda/jangbuda-common";
 import { FacilityBizType } from "@bankda/jangbuda-common";
 import { ref, defineComponent, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
@@ -347,7 +343,7 @@ export default defineComponent({
         const formState: any = reactive({ ...initialState });
         const resetFormNum = ref(1);
         const dataSource = ref([]);
-        const dataActiveRow = ref<any>( JSON.parse(JSON.stringify({...initialState.info.accounting[0]})) )
+        const dataActiveRow = ref<any>(JSON.parse(JSON.stringify({ ...initialState.info.accounting[0] })))
         const withholdingServiceType = ref(false)
         const rowIndex = ref<number>(0);
         const focusedRowKey = ref(0)
@@ -678,53 +674,17 @@ export default defineComponent({
             dataActiveRow.value = data
         }
         const onInitRow = (e: any) => {
-            e.data = JSON.parse(JSON.stringify({...initialState.info.accounting[0]}));
+            e.data = JSON.parse(JSON.stringify({ ...initialState.info.accounting[0] }));
             dataActiveRow.value = e.data
         }
 
         return {
-            handleInputTexService,
-            move_column,
-            colomn_resize,
-            getImgUrl,
-            checkOption,
-            disableInput,
-            getPriceOption,
-            changeChecked,
-            changeValueInput,
-            getTotalAmount,
-            setModalVisible,
-            loading,
-            activeKey,
-            formState,
-            removeImg,
-            facilityBizType,
-            formStateMomes,
-            handleAdd,
-            handleDeleteMemo,
-            handleAddMemo,
-            actionUpdateServiceContract,
-            loadingUpdate,
-            totalWithholdingService,
-            addRow,
-            gridRefName,
-            rowIndex,
-            withholdingServiceType,
-            dayjs,
-            focusedRowKey,
-            removingRow,
-            onFocusedRowChanged,
-            dataSource,
-            dataActiveRow,
-            onInitRow,
-            resetFormNum,
+            handleInputTexService, getImgUrl, checkOption, disableInput, getPriceOption, changeChecked, changeValueInput, getTotalAmount, setModalVisible, removeImg, handleAdd, handleDeleteMemo, handleAddMemo, actionUpdateServiceContract, addRow, removingRow, onFocusedRowChanged, onInitRow,
+            move_column, colomn_resize, loading, activeKey, formState, facilityBizType, formStateMomes, loadingUpdate, totalWithholdingService, gridRefName, rowIndex, withholdingServiceType, dayjs, focusedRowKey, dataSource, dataActiveRow, resetFormNum,
         };
     },
 });
-</script>  
-
-
-
+</script>   
 
 
 <style src="../style/stylePopup.scss" scoped />
