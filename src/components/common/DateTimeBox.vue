@@ -45,7 +45,7 @@ export default defineComponent({
             }
         );
         const updateValue = () => {
-            emit("update:valueDate", parseInt(dayjs(date.value).format('YYYYMMDD')));
+            emit("update:valueDate", filters.formatDateToInterger(date.value));
         };
 
         return {
