@@ -77,8 +77,10 @@
                                         <DxColumn data-field="facilityBizType" caption="사업분류">
                                             <DxLookup :data-source="facilityBizType" value-expr="v" display-expr="n" />
                                         </DxColumn>
-                                        <DxColumn data-field="startYearMonth" caption="서비스시작년월" data-type="date"
-                                            :format="'yyyy-MM'" />
+                                        <DxColumn cell-template="startYearMonth" caption="서비스시작년월" data-type="date" />
+                                            <template #startYearMonth="{ data }">
+                                                {{ data.data.startYearMonth ? dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : '' }}
+                                                </template>
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
                                         <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
                                         <template #totalPrice="{ data }">
@@ -114,6 +116,7 @@
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="서비스 시작년월" class="red">
+                                                    {{ dataActiveRow.startYearMonth }}
                                                     <month-picker-box style="float:right" width="120px" :required="true"
                                                         v-model:valueDate="dataActiveRow.startYearMonth" />
                                                 </a-form-item>
