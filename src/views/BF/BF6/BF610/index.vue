@@ -205,7 +205,7 @@ export default defineComponent({
         let dataSource: any = ref([])
         let trigger = ref(true)
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalYear: any = computed(() => store.state.settings.globalYear)
         let dataSearch: any = reactive({
             "filter": {
                 "page": 1,
@@ -396,6 +396,13 @@ export default defineComponent({
             dataSearch.filter.regular = newVal.value
             dataSearch.filter.revised = newVal.value
             dataSearch.filter.afterDeadline = newVal.value
+        }, { deep: true })
+        watch(() => globalYear, (newVal: any) => { 
+            dataSearch.filter.imputedYearMonth = parseInt(newVal.value + "01")
+            dataSearch.filter.paymentYearMonth = parseInt(newVal.value + "01")
+            trigger.value = true
+            refetchTable()
+
         }, { deep: true })
         watch(() => [
             dataSearch.filter.regular,
