@@ -77,19 +77,15 @@
                                         <DxColumn data-field="facilityBizType" caption="사업분류">
                                             <DxLookup :data-source="facilityBizType" value-expr="v" display-expr="n" />
                                         </DxColumn>
-                                        <DxColumn cell-template="startYearMonth" caption="서비스시작년월" data-type="date"
-                                            format="yyyy-MM" />
-                                        <template #startYearMonth="{ data }">
-                                            {{ data.data.startYearMonth.toString().slice(0, 4) }}-{{
-                                            parseInt(data.data.startYearMonth.toString().slice(5, 6)) < 9 ? '0' +
-                                        parseInt(data.data.startYearMonth.toString().slice(5, 6)) :
-                                            parseInt(data.data.startYearMonth.toString().slice(5, 6)) }} </template>
-                                                <DxColumn data-field="capacity" caption="정원수 (명)" />
-                                                <DxColumn caption="회계서비스이용료" cell-template="totalPrice"
-                                                    data-type="number" />
-                                                <template #totalPrice="{ data }">
-                                                    {{ $filters.formatCurrency(getTotalAmount(data.data)) }}
+                                        <DxColumn cell-template="startYearMonth" caption="서비스시작년월" data-type="date" />
+                                            <template #startYearMonth="{ data }">
+                                                {{ data.data.startYearMonth ? dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : '' }}
                                                 </template>
+                                        <DxColumn data-field="capacity" caption="정원수 (명)" />
+                                        <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
+                                        <template #totalPrice="{ data }">
+                                            {{ $filters.formatCurrency(getTotalAmount(data.data)) }}
+                                        </template>
                                     </DxDataGrid>
                                     <DxDataGrid v-else id="gridContainer" :show-borders="true" ref="gridRefName"
                                         disabled="true">
@@ -121,8 +117,9 @@
                                             </div>
                                             <div class="custom-money">
                                                 <a-form-item label="서비스 시작년월" class="red">
-                                                    <date-time-box v-model:valueDate="dataActiveRow.startYearMonth"
-                                                        width="150px" :required="true" style="float:right" />
+                                                    {{ dataActiveRow.startYearMonth }}
+                                                    <month-picker-box style="float:right" width="120px" :required="true"
+                                                        v-model:valueDate="dataActiveRow.startYearMonth" />
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">

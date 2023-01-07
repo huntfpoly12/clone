@@ -75,9 +75,22 @@
                             </div>
                         </template>
                         <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{}" class="custom-action">
-                            <div class="custom-grade-cell">
-                                <four-major-insurance :typeTag="1" :typeValue="1" />
+                        <template #grade-cell="{data}" class="custom-action">
+                            <div class="custom-action">
+                                <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1"
+                                    :typeValue="1" />
+                                <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2"
+                                    :typeValue="1" />
+                                <four-major-insurance v-if="data.data.employeementInsuranceDeduction"
+                                    :typeTag="4" :typeValue="1" />
+                                <four-major-insurance v-if="data.data.nationalPensionSupportPercent"
+                                    :typeTag="6" :ratio="data.data.nationalPensionSupportPercent" />
+                                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent"
+                                    :typeTag="7" :ratio="data.data.employeementInsuranceSupportPercent" />
+                                <four-major-insurance v-if="data.data.employeementReductionRatePercent"
+                                    :typeTag="8" :ratio="data.data.employeementReductionRatePercent" />
+                                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10"
+                                    :ratio="data.data.incomeTaxMagnification" />
                             </div>
                         </template>
                         <DxColumn cell-template="pupop" width="100"/>
