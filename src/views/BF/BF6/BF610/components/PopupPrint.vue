@@ -110,19 +110,19 @@ export default defineComponent({
 
         watch(() => dataForm, (newVal: any) => {
             if (newVal.row1.checkbox == true)
-                newVal.row1.date = dayjs().format('YYYYMMDD')
+                newVal.row1.date =filters.formatDateToInterger(dayjs())
             else
                 newVal.row1.date = ""
             if (newVal.row2.checkbox == true)
-                newVal.row2.date = dayjs().format('YYYYMMDD')
+                newVal.row2.date =filters.formatDateToInterger(dayjs())
             else
                 newVal.row2.date = ""
             if (newVal.row3.checkbox == true)
-                newVal.row3.date = dayjs().format('YYYYMMDD')
+                newVal.row3.date =filters.formatDateToInterger(dayjs())
             else
                 newVal.row3.date = ""
             if (newVal.row4.checkbox == true)
-                newVal.row4.date = dayjs().format('YYYYMMDD')
+                newVal.row4.date =filters.formatDateToInterger(dayjs())
             else
                 newVal.row4.date = ""
         }, { deep: true })

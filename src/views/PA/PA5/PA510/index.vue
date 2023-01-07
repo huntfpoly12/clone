@@ -206,7 +206,7 @@
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-                        <DxColumn width="150" caption="일용직사원" cell-template="tag" />
+                        <DxColumn  caption="일용직사원" cell-template="tag" />
                         <template #tag="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <employee-info :idEmployee="data.data.employee.employeeId"
@@ -215,9 +215,9 @@
                                     :checkStatus="false" />
                             </div>
                         </template>
-                        <DxColumn width="80" caption="근무일수" data-field="workingDays" />
-                        <DxColumn width="100" caption="일급여" data-field="dailyWage" format="fixedPoint" />
-                        <DxColumn width="80" caption="공제" data-field="totalDeduction" cell-template="total-deduction" />
+                        <DxColumn width="75" caption="근무일수" data-field="workingDays" />
+                        <DxColumn width="85" caption="일급여" data-field="dailyWage" format="fixedPoint" />
+                        <DxColumn width="85" caption="공제" data-field="totalDeduction" cell-template="total-deduction" />
                         <template #total-deduction="{ data }">
                             <a-tooltip placement="top">
                                 <template #title>소득세 {{ $filters.formatCurrency(data.data.incomePayment) }} / 지방소득세
@@ -228,8 +228,8 @@
                                 </span>
                             </a-tooltip>
                         </template>
-                        <DxColumn width="117" caption="차인지급액" data-field="actualPayment" format="fixedPoint" />
-                        <DxColumn width="300" caption="비고" cell-template="four-major-insurance" />
+                        <DxColumn width="85" caption="차인지급액" data-field="actualPayment" format="fixedPoint" />
+                        <DxColumn caption="비고" cell-template="four-major-insurance" />
                         <template #four-major-insurance="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -248,7 +248,7 @@
                                     :ratio="data.data.employee.incomeTaxMagnification" />
                             </div>
                         </template>
-                        <DxColumn caption="지급일" data-field="paymentDay" width="70px" />
+                        <DxColumn caption="지급일" data-field="paymentDay" width="60px" />
                         <DxSummary>
                             <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />
                             <DxTotalItem column="일급여" :customize-text="customizeTotalMonthly" value-format="#,###" />

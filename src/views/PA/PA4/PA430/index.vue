@@ -81,8 +81,8 @@
                         css-class="cell-center" />
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)?.name">{{
-        getColorTag(data.value)?.tag_name
-}}</a-tag>
+                            getColorTag(data.value)?.tag_name
+                        }}</a-tag>
                     </template>
                     <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate"
                         cell-template="settlementStartDate" css-class="cell-center" :width="100" />
@@ -178,6 +178,7 @@ import EmailSinglePopup from "./components/EmailSinglePopup.vue";
 import EmailMultiPopup from "./components/EmailMultiPopup.vue";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import dayjs, { Dayjs } from 'dayjs';
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         DxButton, DxDataGrid, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxTotalItem, EmailSinglePopup, EmailMultiPopup
@@ -230,7 +231,7 @@ export default defineComponent({
             input: {
                 imputedYear: globalYear.value,
                 type: 3,
-                receiptDate: dayjs().format('YYYYMMDD')
+                receiptDate: filters.formatDateToInterger(dayjs())
             },
             incomeIds: Array()
         })
