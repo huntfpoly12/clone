@@ -165,7 +165,7 @@ export default defineComponent({
                     });
                 });
             } catch (error) { 
-                notification('error', 'Có lỗi xảy ra trong quá trình upload image!')
+                notification('error', '이미지를 업로드하는 동안 오류가 발생했습니다!')
             }
         };
 
