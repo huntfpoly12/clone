@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        style="top: 20px" width="1354px" :bodyStyle="{ height: '890px' }">
+        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
     <div class="report-grid">
       <div class="action-right">
         <button-basic  :width="150" text="새로불러오기" class="open-tab" ></button-basic>
@@ -10,7 +10,11 @@
           :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" 
           :focused-row-enabled="true">
-          <DxColumn caption="마감 현황"/>
+          <DxColumn caption="마감 현황" cell-template="status"/>
+          <template #status="{ data }">
+            <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
+                        :dataRow="data.data" @dataRow="changeStatus" />
+          </template>
           <DxColumn caption="귀속연월" />
           <DxColumn caption="지급연월" />
           <DxColumn caption="신고 종류" />
@@ -51,6 +55,7 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+
   },
   components: {
     HotTable,
@@ -58,6 +63,7 @@ export default defineComponent({
     DxColumn,
     DxToolbar, DxPaging,
     DxItem, DxScrolling
+
   },
   data() {
     return {
@@ -83,46 +89,7 @@ export default defineComponent({
         }
       },
       hotRef: null,
-      data: [
-        ["1. 원천징수 내역 및 납부세액", "", "", "", "", "", "", "", "", "", "", "", ""],
-        ["", "소득자 소득구분", "", "", "코드", "원 천 징 수 명 세", "", "", "", "", "⑨<br> 당월 조정<br>환급세액", "납부 세액", ""],
-        ["", "", "", "", "", "소 득 지 급 <br>(과세 미달, 비과세 포함)	", "", "징수세액", "", "", "", "⑩<br>소득세 등<br>(가산세 포함)", "⑪ <br>농어촌<br> 특별세"],
-        ["", "", "", "", "", "④인원", "⑤총지급액", "⑥소득세 등", "⑦농어촌<br>특별세", "⑧가산세", "", "", ""],
-        ["개<br>인<br>⁀<br>거주<br>자ㆍ<br>비거<br>주자<br>⌣", "근로<br>소득", "간이세액", "", "A01", "300000", "12000", "12000", "", "", "", "", ""],
-        ["", "", "중도퇴사", "", "A02", "12000", "12000", "12000", "", "", "", "", ""],
-        ["", "", "일용근로", "", "A03", "12000", "12000", "12000", "", "", "", "", ""],
-        ["", "", "연말<br>정산", "합계", "A04", "20000", "20000", "", "", "", "", "", ""],
-        ["", "", "", "분납신청", "A05", "", "", "", "", "", "", "", ""],
-        ["", "", "", "납부금액", "A06", "", "", "20000", "", "", "", "", ""],
-        ["", "", "가감계", "", "A10", "", "", "", "", "", "", "", ""],
-        ["", "퇴직<br>소득", "연금계좌", "", "A21", "", "", "", "", "", "", "", ""],
-        ["", "", "그 외	", "", "A22", "20000", "20000", "20000", "", "", "", "", ""],
-        ["", "", "가감계", "", "A20", "", "", "", "", "", "", "", ""],
-        ["", "사업<br>소득", "매월징수", "", "A25", "20000", "20000", "20000", "", "", "", "", ""],
-        ["", "", "연말정산", "", "A26", "", "", "", "", "", "", "", ""],
-        ["", "", "가감계", "", "A30", "", "", "", "", "", "", "", ""],
-        ["", "기타<br>소득", "연금계좌", "", "A41", "", "", "", "", "", "", "", ""],
-        ["", "", "종교인<br>소득", "매월징수", "A43", "", "", "", "", "", "", "", ""],
-        ["", "", "", "연말정산", "A44", "", "", "", "", "", "", "", ""],
-        ["", "", "그 외", "", "A42", "20000", "20000", "20000", "", "", "", "", ""],
-        ["", "", "가감계", "", "A40", "", "", "", "", "", "", "", ""],
-        ["", "연<br>금<br>소<br>득", "연금계좌", "", "A48", "", "", "", "", "", "", "", ""],
-        ["", "", "공적연금 매월 (매월)", "", "A45", "", "", "", "", "", "", "", ""],
-        ["", "", "연말정산", "", "A46", "", "", "", "", "", "", "", ""],
-        ["", "", "가감계", "", "A47", "", "", "", "", "", "", "", ""],
-        ["", "이자소득", "", "", "A50", "", "", "", "", "", "", "", ""],
-        ["", "배당소득", "", "", "A60", "", "", "", "", "", "", "", ""],
-        ["", "저축 등 해지 추징세액 등", "", "", "A69", "", "", "", "", "", "", "", ""],
-        ["", "비거주자 양도소득", "", "", "A70", "", "", "", "", "", "", "", ""],
-        ["법인", "내ㆍ외국법인원천", "", "", "A80", "", "", "", "", "", "", "", ""],
-        ["수정신고 세액 (세액)", "", "", "", "A90", "", "", "20000", "", "20000", "", "", ""],
-        ["총 합 계", "", "", "", "A99", "", "", "", "", "", "", "", ""],
-        ["2. 환급세액 조정", "", "", "", "", "", "", "", "", "", "", "", ""],
-        ["전월 미환급 세액의 계산", "", "", "", "", "당월 발생 환급세액", "", "", "", "⑱<br>조정대상<br>환급세액<br>(⑭+⑮+⑯+<br>⑰)", "⑲<br>당월조정 환<br>급세액계", "⑳<br>차월이월환급세액<br>(⑱-⑲)", "(21) 환급<br>신청액 "],
-        ["⑫ 전월<br>미환급세액", "", "⑬기환급<br>신청세액", "⑭ 차감잔액<br>(⑫ - ⑬) ", "", "⑮일반<br>환급", "⑯ 신탁재산<br>(금융<br>회사 등)", "⑰ 그 밖의 환급<br>세액", "", "", "", ""],
-        ["", "", "", "", "", "", "", "금융회사등", "합병 등", "", "", "", ""],
-        ["", "", "", "", "", "", "", "", "", "", "", "", ""],
-      ],
+      data: ,
       mergeCells: mergeCells,
       cell: [
         ...cellsSetting,
@@ -151,6 +118,16 @@ export default defineComponent({
     const setModalVisible = () => {
       emit('closePopup', false)
     }
+
+    const changeStatus = (data: any) => {
+            let dataChangeStatus = {
+                "companyId": data.companyId,
+                "imputedYear": data.imputedYear,
+                "reportId": data.reportId,
+                "status": data.status
+            }
+            // actionChangeStatus(dataChangeStatus)
+    }
     return {
       setModalVisible,
       hotSettings,
@@ -158,7 +135,8 @@ export default defineComponent({
       per_page,
       wrapper,
       move_column,
-      colomn_resize
+      colomn_resize,
+      changeStatus
     }
   }
 });
