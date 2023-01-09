@@ -1,5 +1,5 @@
 <template>
-    <a-tooltip placement="top" key="black" @visibleChange="visibleChange">
+    <a-tooltip  color="black" placement="top" key="black" @visibleChange="visibleChange">
         <template #title>
             <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
                 v-model:valueRadioCheck="value" layoutCustom="horizontal" />

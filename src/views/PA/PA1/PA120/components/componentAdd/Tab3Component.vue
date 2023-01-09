@@ -97,7 +97,7 @@
             <template #pupop="{ data }" class="custom-action">
               <div class="custom-action">
                 <a-space :size="10">
-                  <a-tooltip placement="top">
+                  <a-tooltip  color="black" placement="top">
                     <template #title>편집</template>
                     <EditOutlined @click="actionEdit(data.data.index)" />
                   </a-tooltip>
