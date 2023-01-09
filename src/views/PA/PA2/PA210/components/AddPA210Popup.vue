@@ -4,6 +4,10 @@
             :mask-closable="false" width="1000px" footer="">
             <standard-form formName="add-pa-210" class="pt-20">
                 <a-spin tip="Loading..." :spinning="loading">
+                    <a-form-item label="지방소득세환급청구서/납부내역서">
+                        <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="afterDeadline"
+                            :layoutCustom="'horizontal'" />
+                    </a-form-item>
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataReports"
                         :show-borders="true" key-expr="reportId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -71,9 +75,9 @@
                         :mode="'contained'" @onClick="onSubmit($event)" />
                 </div>
             </standard-form>
-            
         </a-modal>
-        <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"></report-grid>
+        <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
+            :dataReport="dataReport"></report-grid>
     </div>
 </template>
 
@@ -113,12 +117,17 @@ export default defineComponent({
 
         const loading = ref<Boolean>(false)
         const dataReports: any = ref([])
+        const dataReport: any = ref({})
         const reportGridStatus = ref(false)
-
+        const arrayRadioCheck = ref([
+            { id: false, text: "정기신고" },
+            { id: true, text: "기한후신고" },
+        ]);
+        const afterDeadline = ref(false)
         // ===================WATCH==================================
         watch(() => props.lastMonth, (value) => {
             dataReports.value = []
-            for (let i = value+1; i <= 12; i++) {
+            for (let i = value + 1; i <= 12; i++) {
                 dataReports.value.push({
                     reportId: i,
                     imputedYear: globalYear.value,
@@ -139,6 +148,7 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const onSubmit = (e: any) => {
+            dataReport.value.afterDeadline = afterDeadline.value
             reportGridStatus.value = true
         };
         const setModalVisible = () => {
@@ -154,17 +164,18 @@ export default defineComponent({
             return row;
         };
         const onSelectionChanged = (data: any) => {
-            console.log(data);
+            dataReport.value = data.selectedRowsData[0]
         };
         return {
             globalYear, move_column, colomn_resize, dayjs,
             onSelectionChanged,
             getText,
-            dataReports,
+            dataReports, dataReport,
             loading,
             onSubmit,
             setModalVisible,
-            reportGridStatus
+            reportGridStatus,
+            arrayRadioCheck, afterDeadline
         };
     },
 });
