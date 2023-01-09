@@ -3,7 +3,7 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 ||
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
@@ -90,6 +90,7 @@ export default defineComponent({
         let trigger720 = ref<boolean>(false);
         let triggerStatus720 = ref<boolean>(false);
         let triggerBf310 = ref<boolean>(false);
+        let triggerPA210 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
@@ -98,7 +99,7 @@ export default defineComponent({
         // const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
+        const globalYear = computed(() => store.state.settings.globalYear);
         watch(
             () => props.modalStatus,
             (newValue, old) => {
@@ -162,7 +163,7 @@ export default defineComponent({
                             break;
                         case 'pa-610':
                             dataQuery.value = {
-                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                imputedYear: globalYear,
                                 companyId: companyId
                             };
                             trigger610.value = true;
@@ -170,7 +171,7 @@ export default defineComponent({
                             break;
                         case 'cm-130':
                             dataQuery.value = {
-                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                imputedYear: globalYear,
                                 companyId: companyId
                             };
                             trigger130.value = true;
@@ -178,7 +179,7 @@ export default defineComponent({
                             break;
                         case 'cm-deduction-130':
                             dataQuery.value = {
-                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                imputedYear: globalYear,
                                 companyId: companyId
                             };
                             triggerDeduction130.value = true;
@@ -186,7 +187,7 @@ export default defineComponent({
                             break;
                         case 'pa-710':
                             dataQuery.value = {
-                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                imputedYear: globalYear,
                                 companyId: companyId
                             };
                             trigger710.value = true;
@@ -194,7 +195,7 @@ export default defineComponent({
                             break;
                         case 'pa-120':
                             dataQuery.value = {
-                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                imputedYear: globalYear,
                                 companyId: companyId
                             };
                             trigger120.value = true;
@@ -228,7 +229,7 @@ export default defineComponent({
                             break;
                         case 'pa-520':
                             dataQuery.value = {
-                                imputedYear: parseInt(dayjs().format('YYYY')),
+                                imputedYear: globalYear,
                                 companyId: companyId
                             };
                             trigger520.value = true;
@@ -343,6 +344,14 @@ export default defineComponent({
                             if (dataQuery.value.companyId)
                                 refetchStatusPA720();
                             break;
+                        case 'pa-210':
+                            dataQuery.value = {
+                                imputedYear: globalYear,
+                                companyId: companyId
+                            };
+                            triggerPA210.value = true;
+                            refetchPA210();
+                            break;
                         default:
                             break;
                     }
@@ -370,7 +379,7 @@ export default defineComponent({
                     trigger620.value = false;
                     triggerStatus620.value = false;
                     triggerStatus720.value = false;
-
+                    triggerPA210.value = false;
                 }
             }
         );
@@ -719,6 +728,21 @@ export default defineComponent({
             }
         });
 
+        // get getTaxWithholdingStatusReportsLogs pa-210
+        const { result: resultPA210, loading: loadingPA210, refetch: refetchPA210 } = useQuery(
+            queries.getTaxWithholdingStatusReportsLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerPA210.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA210, (value) => {
+            if (value && value.getTaxWithholdingStatusReportsLogs) {
+                dataTableShow.value = value.getTaxWithholdingStatusReportsLogs;
+            }
+        });
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -757,6 +781,7 @@ export default defineComponent({
             loadingPA420,
             loadingPA720,
             loadingStatusPA720,
+            loadingPA210,
         }
     },
 
