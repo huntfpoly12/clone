@@ -20,7 +20,7 @@
         </template>
     </DxDropDownButton>
     <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="showHistory">
-      <a-tooltip placement="top">
+      <a-tooltip  color="black" placement="top">
         <template #title>근로소득자료 변경이력</template>
         <div class="text-center">
           <HistoryOutlined style="font-size: 16px" />
@@ -28,7 +28,7 @@
       </a-tooltip>
     </DxButton>
     <DxButton class="ml-4" style="cursor: pointer" @click="showHistoryStatus">
-      <a-tooltip placement="top">
+      <a-tooltip  color="black" placement="top">
         <template #title>근로소득 마감상태 변경이력</template>
         <div class="text-center">
           <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />

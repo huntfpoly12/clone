@@ -193,15 +193,15 @@
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
-                                    <a-tooltip placement="top">
+                                    <a-tooltip  color="black" placement="top">
                                         <template #title>편집</template>
                                         <EditOutlined @click="openEditModal(data)" />
                                     </a-tooltip>
-                                    <a-tooltip placement="top">
+                                    <a-tooltip  color="black" placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
-                                    <a-tooltip placement="top">
+                                    <a-tooltip  color="black" placement="top">
                                         <template #title>로그인이력</template>
                                         <login-outlined @click="modalLogin(data)" />
                                     </a-tooltip>

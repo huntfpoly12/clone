@@ -100,7 +100,6 @@ export default defineComponent({
 			});
 		}
 
-
 		//============ WATCH =================================
 		watch(() => props.hiddenOptionKR, (newVal) => {
 			dataSelect.value = []

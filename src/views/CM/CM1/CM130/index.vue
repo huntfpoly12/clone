@@ -5,7 +5,7 @@
                 <template #rightExtra>
                     <div class="list-action">
                         <div v-if="activeKey == '1'">
-                            <a-tooltip>
+                            <a-tooltip  color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfig">
                                     <SaveOutlined />
@@ -14,19 +14,19 @@
                         </div>
                         <div v-if="activeKey == '2'">
                             <div class="btn-action">
-                                <a-tooltip>
+                                <a-tooltip  color="black">
                                     <template #title>삭제</template>
                                     <a-button>
                                         <SearchOutlined />
                                     </a-button>
                                 </a-tooltip>
-                                <a-tooltip>
+                                <a-tooltip  color="black">
                                     <template #title>삭제</template>
                                     <a-button>
                                         <DeleteOutlined />
                                     </a-button>
                                 </a-tooltip>
-                                <a-tooltip>
+                                <a-tooltip  color="black">
                                     <template #title>출력</template>
                                     <a-button>
                                         <PrinterOutlined />
@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div v-if="activeKey == '3'">
-                            <a-tooltip>
+                            <a-tooltip  color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfigDeduction">
                                     <SaveOutlined />
@@ -252,11 +252,11 @@
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
-                                    <a-tooltip v-if="data.data.editable" placement="top">
+                                    <a-tooltip  color="black" v-if="data.data.editable" placement="top">
                                         <template #title>편집</template>
                                         <EditOutlined @click="setModalEditVisible(data)" />
                                     </a-tooltip>
-                                    <a-tooltip placement="top">
+                                    <a-tooltip  color="black" placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
@@ -297,7 +297,7 @@
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space>
-                                    <a-tooltip placement="top">
+                                    <a-tooltip  color="black" placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>

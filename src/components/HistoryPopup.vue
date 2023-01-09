@@ -27,7 +27,7 @@
                     <DxColumn caption="상세" cell-template="detail" css-class="cell-center" :width="50" />
                     <template #detail="{}">
                         <a-space :size="8">
-                            <a-tooltip placement="top">
+                            <a-tooltip placement="top" color="black">
                                 <template #title>상세보기</template>
                                 <zoom-in-outlined :style="{ fontSize: '20px' }" />
                             </a-tooltip>
