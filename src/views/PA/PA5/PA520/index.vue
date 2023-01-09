@@ -1,6 +1,6 @@
 <template>
-    <action-header title="일용직사원등록" @actionSave="actionSave++" />
-    <div id="pa-520" class="page-content"> 
+    <action-header title="일용직사원등록" @actionSave="actionSaveFunc" />
+    <div id="pa-520" class="page-content">
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
                 <div class="total-user">
@@ -94,20 +94,21 @@
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" :key="resetAddComponent" />
 
-                <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
-                    v-if="actionChangeComponent == 2" :actionSave="actionSave" />
+                <PA520PopupEdit :idRowEdit="idRowEdit" @closePopup="closeAction" v-if="actionChangeComponent == 2"
+                    :actionSave="actionSave" />
             </a-col>
         </a-row>
- 
-        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-            :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-        <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-            :idRowEdit="idRowEdit" typeHistory="pa-520" />
-
     </div>
+    <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+        :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+        :idRowEdit="idRowEdit" typeHistory="pa-520" />
+
+    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
+        content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue"
+import { ref, defineComponent, watch, computed, reactive } from "vue"
 import DxButton from "devextreme-vue/button"
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -126,6 +127,7 @@ export default defineComponent({
         PA520PopupAddNew, PA520PopupEdit
     },
     setup() {
+        const modalStatusChange = ref(false)
         const actionChangeComponent = ref(1)
         const actionSave = ref(0)
         const contentDelete = Message.getMessage('PA120', '002').message
@@ -145,7 +147,6 @@ export default defineComponent({
         })
         const idAction = ref()
         const modalAddNewStatus = ref<boolean>(false)
-        const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
@@ -153,8 +154,7 @@ export default defineComponent({
         const {
             refetch: refetchData,
             result,
-            loading,
-            error,
+            loading, 
         } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
@@ -172,12 +172,7 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         })
-        // ======================= WATCH ==================================
-        watch(error, (value) => {
-            // if (value?.message === 'Response not successful: Received status code 400') {
-            //     notification('error','Có mỗi cái id mà ko nhập được')
-            // }
-        })
+        // ======================= WATCH ================================== 
         watch(result, (value) => {
             if (value) {
                 dataSource.value = value.getEmployeeWageDailies
@@ -199,12 +194,6 @@ export default defineComponent({
                 refetchData()
             }
         })
-        watch(() => modalEditStatus.value, (value) => {
-            if (value == false) {
-                trigger.value = true
-                refetchData()
-            }
-        })
         watch(globalYear, (value) => {
             trigger.value = true
             originData.value.imputedYear = value
@@ -216,14 +205,22 @@ export default defineComponent({
             resetAddComponent.value++;
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
+
+            //remove active row edit
+            const element = document.querySelector('.dx-row-focused');
+            (element as HTMLInputElement).classList.remove("dx-row-focused");
         }
 
-        const openEditModal = (val: any) => {     
+        let dataChange = ref(0)
+        const openEditModal = (val: any) => {
             actionChangeComponent.value = 2
-            idRowEdit.value = val.data.employeeId
-            modalEditStatus.value = true 
-           
-            store.state.common.idRowChangePa520 = val.data.employeeId
+            if (store.state.common.checkStatusChangeValue == true) {
+                modalStatusChange.value = true
+                dataChange.value = val.data.employeeId
+            } else {
+                store.state.common.idRowChangePa520 = val.data.employeeId
+                idRowEdit.value = val.data.employeeId
+            }
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
@@ -244,10 +241,21 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         }
+        const actionSaveFunc = () => {
+            actionSave.value++
+            store.state.common.actionSavePA520++
+        }
+
+        const statusComfirmSave = (res: any) => {
+            if (res == true)
+                actionSaveFunc() 
+            store.state.common.idRowChangePa520 = dataChange.value
+            idRowEdit.value = dataChange.value
+        }
 
         return {
-            store,actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalEditStatus, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
-            closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
+            modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
+            statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
         }
     },
 })

@@ -1,8 +1,4 @@
-#tab2-pa520 {
-	// ::v-deep .ant-form-item-label>label {
-	// 	padding-left: 10px;
-	// }
-
+#tab2-pa520 { 
 	.input-text {
 		display: flex;
 		align-items: center;
@@ -149,5 +145,9 @@
 		margin-top: 30px;
 		display: flex;
 		justify-content: center;
+	}
+
+	::v-deep .custom-switch.ant-switch {
+		background-color: #337ab7;
 	}
 }

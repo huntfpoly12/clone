@@ -17,6 +17,7 @@
                 </div>
             </standard-form>
         </a-modal>
+        <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false" ></report-grid>
     </div>
 </template>
 
@@ -28,21 +29,24 @@ import mutations from "@/graphql/mutations/CM/CM130/index";
 import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import dayjs, { Dayjs } from "dayjs";
+import ReportGrid from "./ReportGrid/ReportGrid.vue";
 
 export default defineComponent({
     props: ["modalStatus"],
 
     components: {
+      ReportGrid
     },
 
     setup(props, { emit }) {
         const loading = ref<Boolean>(false)
+        const reportGridStatus  = ref(false)
         watch(() => props.modalStatus, (value) => {
            
         })
     
         const onSubmit = (e: any) => {
-            
+          reportGridStatus.value = true
         };
         const setModalVisible = () => {
             // if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
@@ -55,6 +59,7 @@ export default defineComponent({
             labelCol: { style: { width: "150px" } },
             onSubmit,
             setModalVisible,
+            reportGridStatus
         };
     },
 });

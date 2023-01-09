@@ -25,8 +25,7 @@ export default defineComponent({
         Tab2Component,
         Tab1Component,
     },
-    props: {
-        modalStatus: Boolean,
+    props: { 
         idRowEdit: Number,
         actionSave: Number
 
