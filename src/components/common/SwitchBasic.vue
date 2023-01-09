@@ -1,6 +1,6 @@
 <template>
     <a-switch v-model:checked="dataDef" :checked-children="textCheck" :un-checked-children="textUnCheck"
-        :style="{ width: width }" />
+        :style="{ width: width }" @change="onChange"/>
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, ref, watch } from "vue";
@@ -36,10 +36,13 @@ export default defineComponent({
                 emit("update:valueSwitch", newValue);
             }
         );
-
+        const onChange = (e: any) => {
+            emit('onChange', e);
+        }
         return {
             dataDef,
-            styleCheckBox
+            styleCheckBox,
+            onChange
         }
     },
 });

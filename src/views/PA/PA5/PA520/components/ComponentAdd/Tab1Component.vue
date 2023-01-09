@@ -30,13 +30,13 @@
                 </span>
             </div>
         </a-form-item>
-        <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
+        <a-form-item label="내/외국인" label-align="right" class="label-custom-width"> 
             <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataCreated.foreigner"
                 layoutCustom="horizontal" />
         </a-form-item>
         <a-form-item label="외국인 국적" label-align="right"
             :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-            <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
+            <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode" :hiddenOptionKR="dataCreated.foreigner"
                 @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
                 width="200px" />
         </a-form-item>
@@ -189,8 +189,8 @@ export default defineComponent({
                 let newValDataCreat = {
                     ...dataCreated,
                     employeeId: parseInt(dataCreated.employeeId),
-                    joinedAt: typeof dataCreated.joinedAt == 'string' ? parseInt(dataCreated.joinedAt.replaceAll('-', '')) : dataCreated.joinedAt,
-                    leavedAt: typeof dataCreated.leavedAt == 'string' ? parseInt(dataCreated.leavedAt.replaceAll('-', '')) : dataCreated.leavedAt,
+                    joinedAt: dataCreated.joinedAt,
+                    leavedAt: dataCreated.leavedAt,
                     residentId: dataCreated.residentId.slice(0, 6) + '-' + dataCreated.residentId.slice(6, 14)
                 };
                 delete newValDataCreat.zipcode;

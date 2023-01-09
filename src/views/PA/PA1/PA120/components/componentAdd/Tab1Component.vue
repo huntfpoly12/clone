@@ -223,6 +223,7 @@ export default defineComponent({
        notification("success", `업그레이드가 완료되었습니다! `);
        console.log(`outpu`)
        store.commit('common/actionFormDonePA120')
+       store.commit('common/keyActivePA120', employeeId.value);
     });
 
     onError((error) => {
@@ -247,7 +248,6 @@ export default defineComponent({
         createEmployeeWage(dataNew);
       }
     };
-console.log(`output->formStateTab1.input`,+formStateTab1.joinedAt,)
 // compare data
     const compareData = () => {
       var formStateTab1Copy = reactive(formStateTab1);

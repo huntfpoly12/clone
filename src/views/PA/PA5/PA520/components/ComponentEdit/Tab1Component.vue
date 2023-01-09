@@ -2,8 +2,16 @@
     <a-spin :spinning="loading" size="large">
         <standard-form action="" name="add-page-210">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
-                <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
-                    placeholder="숫자만 입력 가능" :disabled="true" />
+                <div class="d-flex-center">
+                    <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
+                        placeholder="숫자만 입력 가능" :disabled="true" />
+                    <div class="pl-10">
+                        <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                        <span class="style-note">
+                            최초 저장된 이후 수정 불가
+                        </span>
+                    </div>
+                </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
                 <default-text-box width="200px" v-model:valueInput="dataEdited.name" :required="true"
@@ -26,7 +34,7 @@
                 <div class="input-text">
                     <date-time-box width="150px" className="leavedAt" v-model:valueDate="dataEdited.leavedAt" />
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span style="font-size: 10px; color: #888888">
+                    <span class="style-note">
                         마지막 근무한 날
                     </span>
                 </div>
@@ -37,7 +45,7 @@
             </a-form-item>
             <a-form-item label="외국인 국적" label-align="right"
                 :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-                <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
+                <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode" :hiddenOptionKR="dataEdited.foreigner"
                     @textCountry="(res: any) => { dataEdited.nationality = res }" :disabled="disabledSelectBox" />
             </a-form-item>
             <a-form-item label="외국인 체류자격" label-align="right"
@@ -74,7 +82,7 @@
                     <mail-text-box width="200px" v-model:valueInput="dataEdited.email" placeholder="abc@example.com">
                     </mail-text-box>
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;">
-                    <span style="font-size: 10px; color: #888888">
+                    <span class="style-note">
                         원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                     </span>
                 </div>
@@ -99,7 +107,6 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
 import { radioCheckForeigner, DataEdit } from "../../utils/index";
-import dayjs from 'dayjs';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -184,8 +191,8 @@ export default defineComponent({
                 dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
                 dataEdited.email = res.data.getEmployeeWageDaily.email
                 dataEdited.employeeId = res.data.getEmployeeWageDaily.employeeId
-                dataEdited.joinedAt = res.data.getEmployeeWageDaily.joinedAt ? dayjs(res.data.getEmployeeWageDaily.joinedAt.toString()).format('YYYY-MM-DD') : ''
-                dataEdited.leavedAt = res.data.getEmployeeWageDaily.leavedAt ? dayjs(res.data.getEmployeeWageDaily.leavedAt.toString()).format('YYYY-MM-DD') : ''
+                dataEdited.joinedAt = res.data.getEmployeeWageDaily.joinedAt
+                dataEdited.leavedAt = res.data.getEmployeeWageDaily.leavedAt
                 dataEdited.retirementIncome = res.data.getEmployeeWageDaily.retirementIncome
                 dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
                 dataEdited.department = res.data.getEmployeeWageDaily.department
@@ -205,9 +212,9 @@ export default defineComponent({
             notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================
-        watch(() => store.state.common.idRowChangePa520, (res, resOld) => {  
-            
-        }, { deep: true })
+        // watch(() => store.state.common.idRowChangePa520, (res, resOld) => {
+
+        // }, { deep: true })
 
 
         watch(() => props.idRowEdit, (newVal) => {
@@ -254,8 +261,8 @@ export default defineComponent({
             } else {
                 let newValDataEdit = {
                     ...dataEdited,
-                    joinedAt: typeof dataEdited.joinedAt == "string" ? parseInt(dataEdited.joinedAt.replaceAll('-', '')) : dataEdited.joinedAt,
-                    leavedAt: typeof dataEdited.leavedAt == "string" ? parseInt(dataEdited.leavedAt.replaceAll('-', '')) : dataEdited.leavedAt,
+                    joinedAt: dataEdited.joinedAt,
+                    leavedAt: dataEdited.leavedAt,
                     residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
                 };
                 delete newValDataEdit.employeeId;

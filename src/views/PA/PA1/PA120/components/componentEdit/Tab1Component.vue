@@ -205,7 +205,6 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(getValueDefault, (value) => {
-      console.log(`output->value`, value);
       formStateTab1.name = value.getEmployeeWage.name;
       formStateTab1.foreigner = value.getEmployeeWage.foreigner;
       formStateTab1.nationality = value.getEmployeeWage.nationality;

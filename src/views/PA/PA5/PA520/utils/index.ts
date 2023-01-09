@@ -40,7 +40,7 @@ export const DataCreated = {
     email: '',
     employeeId: null,
     joinedAt: dayjs().format('YYYY-MM-DD'),
-    leavedAt: dayjs().format('YYYY-MM-DD'),
+    leavedAt: null,
     retirementIncome: true,
     weeklyWorkingHours: null,
     department: '',
