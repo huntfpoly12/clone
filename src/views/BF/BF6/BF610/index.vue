@@ -224,7 +224,7 @@ export default defineComponent({
                 "excludeCancel": true
             }
         })
-        let arraySelectBox = reactive([
+        let arraySelectBox = computed(() => [
             {
                 key: parseInt(globalYear.value + "01"),
                 value: "귀 " + globalYear.value + "-01"
@@ -278,7 +278,7 @@ export default defineComponent({
                 value: "귀 " + globalYear.value + 1 + "01"
             },
         ])
-        let arraySelectBox2 = reactive([
+        let arraySelectBox2 = computed(() => [
             {
                 key: parseInt(globalYear.value + "01"),
                 value: "지 " + globalYear.value + "-01"
@@ -397,7 +397,7 @@ export default defineComponent({
             dataSearch.filter.revised = newVal.value
             dataSearch.filter.afterDeadline = newVal.value
         }, { deep: true })
-        watch(() => globalYear, (newVal: any) => { 
+        watch(() => globalYear, (newVal: any) => {
             dataSearch.filter.imputedYearMonth = parseInt(newVal.value + "01")
             dataSearch.filter.paymentYearMonth = parseInt(newVal.value + "01")
             trigger.value = true

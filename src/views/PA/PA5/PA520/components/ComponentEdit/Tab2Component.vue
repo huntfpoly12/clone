@@ -254,8 +254,7 @@ export default defineComponent({
         }
         // call api on tab 2 next time
         watch(() => store.state.common.idRowChangePa520, (res) => {
-            if (indexChange.value < 3) {
-                console.log('3');
+            if (indexChange.value < 3) { 
                 originDataDetail.value.employeeId = store.state.common.idRowChangePa520
                 trigger.value = true
                 refectchDetail()

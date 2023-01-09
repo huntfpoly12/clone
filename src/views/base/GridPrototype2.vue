@@ -9,7 +9,7 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 import filters from "@/helpers/filters";
-
+import { mergeCells, cellsSetting } from "./Gridsetting"
 // register Handsontable's modules
 registerAllModules();
 
@@ -94,159 +94,16 @@ export default defineComponent({
           ["법인", "내ㆍ외국법인원천", "", "", "A80", "", "", "", "", "", "", "", ""],
           ["수정신고 세액 (세액)", "", "", "", "A90", "", "", "20000", "", "20000", "", "", ""],
           ["총 합 계", "", "", "", "A99", "", "", "", "", "", "", "", ""],
+          ["2. 환급세액 조정", "", "", "", "", "", "", "", "", "", "", "", ""],
+          ["전월 미환급 세액의 계산", "", "", "", "", "당월 발생 환급세액", "", "", "", "⑱<br>조정대상<br>환급세액<br>(⑭+⑮+⑯+<br>⑰)", "⑲<br>당월조정 환<br>급세액계", "⑳<br>차월이월환급세액<br>(⑱-⑲)", "(21) 환급<br>신청액 "],
+          ["⑫ 전월<br>미환급세액","", "⑬기환급<br>신청세액", "⑭ 차감잔액<br>(⑫ - ⑬) ","", "⑮일반<br>환급", "⑯ 신탁재산<br>(금융<br>회사 등)", "⑰ 그 밖의 환급<br>세액", "", "", "", ""],
+          ["", "", "", "", "", "", "", "금융회사등", "합병 등", "", "", "", ""],
+          ["", "", "", "", "", "", "", "", "", "", "", "", ""],
         ],
-        mergeCells: [
-          { row: 0, col: 0, rowspan: 1, colspan: 13 },
-
-          { row: 1, col: 0, rowspan: 3, colspan: 1 },
-          { row: 1, col: 1, rowspan: 3, colspan: 3 },
-          { row: 1, col: 4, rowspan: 3, colspan: 1 },
-          { row: 1, col: 5, rowspan: 1, colspan: 5 },
-          { row: 1, col: 10, rowspan: 3, colspan: 1 },
-          { row: 1, col: 11, rowspan: 1, colspan: 2 },
-
-          { row: 2, col:5, rowspan: 1, colspan: 2 },
-          { row: 2, col: 7, rowspan: 1, colspan: 3 },
-
-          { row: 2, col:11, rowspan: 2, colspan: 1 },
-          { row: 2, col: 12, rowspan: 2, colspan: 1 },
-
-          { row: 4, col: 0, rowspan: 26, colspan: 1 },
-          { row: 4, col: 1, rowspan: 7, colspan: 1 },
-          { row: 4, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 5, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 6, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 7, col: 2, rowspan: 3, colspan: 1 },
-
-          { row: 10, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 11, col: 1, rowspan: 3, colspan: 1 },
-          { row: 11, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 12, col: 2, rowspan: 1, colspan: 2 },
-          { row: 13, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 14, col: 1, rowspan: 3, colspan: 1 },
-          { row: 14, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 15, col: 2, rowspan: 1, colspan: 2 },
-          { row: 16, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 17, col: 1, rowspan: 5, colspan: 1 },
-          { row: 17, col: 2, rowspan: 1, colspan: 2 },
-
-          { row: 18, col: 2, rowspan: 2, colspan: 1 },
-          { row: 20, col: 2, rowspan: 1, colspan: 2 },
-          { row: 21, col: 2, rowspan: 1, colspan: 2 },
-          { row: 22, col: 1, rowspan: 4, colspan: 1 },
-          { row: 22, col: 2, rowspan: 1, colspan: 2 },
-          { row: 23, col: 2, rowspan: 1, colspan: 2 },
-          { row: 24, col: 2, rowspan: 1, colspan: 2 },
-          { row: 25, col: 2, rowspan: 1, colspan: 2 },
-          { row: 26, col: 1, rowspan: 1, colspan: 3 },
-          { row: 27, col: 1, rowspan: 1, colspan: 3 },
-          { row: 28, col: 1, rowspan: 1, colspan: 3 },
-          { row: 29, col: 1, rowspan: 1, colspan: 3 },
-
-          { row: 30, col: 1, rowspan: 1, colspan: 3 },
-          { row: 31, col: 0, rowspan: 1, colspan: 4 },
-          { row: 32, col: 0, rowspan: 1, colspan: 4 },
-        ],
+        mergeCells: mergeCells,
         cell: [
-          { row: 0, col: 0, readOnly: true },
-
-          { row: 1, col: 0, readOnly: true , className: 'htMiddle',},
-          { row: 1, col: 1, readOnly: true , className: 'htCenter htMiddle' },
-          { row: 1, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 1, col: 5, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 1, col: 10, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 1, col: 11, readOnly: true  , className: 'htCenter htMiddle'},
-
-          { row: 2, col:5, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 2, col: 7, readOnly: true  , className: 'htCenter htMiddle'},
-
-          { row: 2, col:11, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 2, col: 12, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-
-          { row: 3, col: 5, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 3, col: 6, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 3, col: 7, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 3, col: 8, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 3, col: 9, readOnly: true  , className: 'htCenter htMiddle'},
-
-          { row: 4, col: 0, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 4, col: 1, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 4, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 4, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 5, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 5, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 6, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 6, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-
-          { row: 7, col: 2, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 7, col: 3, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 7, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 8, col: 3, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 8, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 9, col: 3, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 9, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 10, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 10, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 11, col: 1, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 11, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 11, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 12, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 12, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 13, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 13, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 14, col: 1, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 14, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 14, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 15, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 15, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 16, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 16, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 17, col: 1, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 17, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 17, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 18, col: 2, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 18, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 18, col: 3, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 19, col: 3, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 19, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 20, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 20, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 21, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 21, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 22, col: 1, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
-          { row: 22, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 22, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 23, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 23, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 24, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 24, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 25, col: 2, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 25, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 26, col: 1, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 26, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 27, col: 1, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 27, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 28, col: 1, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 28, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 29, col: 1, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 29, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 30, col: 0, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 30, col: 1, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 30, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 31, col: 0, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 31, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 32, col: 0, readOnly: true  , className: 'htCenter htMiddle'},
-          { row: 32, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
-
-
+          ...cellsSetting,
+          // cells to enter data
           { row: 4, col: 5  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },oldValue:'220000',renderer: CellRenderer,validator:cellValueGreaterThan0},
           { row: 4, col: 6  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },validator:cellValueGreaterThan0},
           { row: 4, col: 7  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },validator:cellValueGreaterThan0},
