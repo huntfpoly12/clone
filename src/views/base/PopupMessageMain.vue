@@ -114,8 +114,8 @@ export default defineComponent({
             typeModal.value = type
         }
 
-        const statusComfirm = (val) => {
-            console.log(val);
+        const statusComfirm = (val) => { 
+            
         }
 
         return {

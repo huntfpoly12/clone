@@ -154,7 +154,7 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from 'vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import notification from '@/utils/notification';
 import { initialFormState } from '../utils';
 import queries from "@/graphql/queries/BF/BF3/BF340/index";
@@ -178,7 +178,7 @@ export default defineComponent({
         // watch event modal popup
         watch(
             () => props.modalStatus,
-            (newValue, old) => {
+            (newValue) => {
                 if (newValue) {
                     visible.value = newValue;
                     dataQuery.value = { id: props.idSaleEdit };
@@ -280,6 +280,12 @@ export default defineComponent({
             notification('error', error.message);
         });
 
+        updateDone(() => {
+            notification('success', `업데이트가 완료되었습니다!`);
+            emit('closePopup', false)
+            emit('updateSuccess', true)
+        });
+
         const updateSale = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -293,11 +299,6 @@ export default defineComponent({
                 actionUpdate(variables);
             }
         }
-
-        updateDone((res) => {
-            notification('success', `업데이트가 완료되었습니다!`);
-            emit('closePopup', false)
-        });
 
         const funcAddress = (data: any) => {
             formState.zipcode = data.zonecode;

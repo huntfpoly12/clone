@@ -206,9 +206,6 @@
                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                     </a-form-item>
                                     <div class="pl-12">
-                                        <!-- <imgUpload :title="titleModal2" style="margin-top: 10px"
-                                            v-model:imageId="dataActiveRow.registrationCardFileStorageId"
-                                            @update-img="uploadImg" /> -->
                                         <imgUpload :title="titleModal2" style="margin-top: 10px"
                                             v-model:imageId="dataActiveRow.registrationCardFileStorageId"
                                             @update-img="(res) => dataActiveRow.dataImg = res" />
@@ -685,12 +682,6 @@ export default {
                 focusedRowKey.value = keyNew;
             }, 100);
         };
-
-        const uploadImg = (res: any) => {
-            console.log(res);
-            console.log(dataActiveRow.value.registrationCardFileStorageId);
-
-        }
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
             (newVal) => {
@@ -740,7 +731,7 @@ export default {
         });
         return {
             arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
-            uploadImg, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
+            contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
 };

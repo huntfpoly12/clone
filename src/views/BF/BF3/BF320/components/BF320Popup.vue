@@ -152,6 +152,7 @@
                                     </div>
                                 </a-form-item>
                                 <a-form-item label="자동이체출금일자" class="clr custom-flex">
+                                    {{ formState.extendInfoCmsBankWithdrawDay }}
                                     <radio-group :arrayValue="arrayRadioWithdrawDay"
                                         v-model:valueRadioCheck="formState.extendInfoCmsBankWithdrawDay" />
                                 </a-form-item>

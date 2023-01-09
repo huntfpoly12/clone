@@ -18,33 +18,7 @@
                 </a-col>
             </a-row>
             <a-row :gutter="16">
-                <a-col :span="12" class="input-items">
-                    <div class="header-text-2">근로시간
-                        <span class="d-flex-center fz-11 ml-10" style="color: gray;">
-                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            사원별 급여명세서에 표시 됩니다.
-                        </span>
-                    </div>
-                    <a-form-item label="총근로시간" label-align="right">
-                        <div style="display: flex;align-items: center;">
-                            <text-number-box width="200px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
-                        </div>
-                    </a-form-item>
-                    <a-form-item label="연장근로시간" label-align="right">
-                         <div style="display: flex;align-items: center;">
-                            <text-number-box width="200px" v-model:valueInput="dataIW.overtimeWorkingHours" /><span style="padding-left: 5px;">시간</span>
-                        </div>
-                    </a-form-item> <a-form-item label="야간근로시간" label-align="right">
-                         <div style="display: flex;align-items: center;">
-                            <text-number-box width="200px" v-model:valueInput="dataIW.workingHoursAtNight"/><span style="padding-left: 5px;">시간</span>
-                        </div>
-                    </a-form-item> <a-form-item label="휴일근로시간" label-align="right">
-                         <div style="display: flex;align-items: center;">
-                            <text-number-box width="200px" v-model:valueInput="dataIW.workingHoursOnHolidays" /><span style="padding-left: 5px;">시간</span>
-                        </div>
-                    </a-form-item>
-                </a-col>
-                <a-col :span="12">
+              <a-col :span="14">
                     <div class="header-text-2">요약</div>
                     <div class="summary">
                         <div class="text0">소득수당 합계 {{ $filters.formatCurrency(totalPayItem) }}원</div>
@@ -63,6 +37,33 @@
                     </div>
 
                 </a-col>
+                <a-col :span="10" class="input-items">
+                    <div class="header-text-2">근로시간
+                        <span class="d-flex-center fz-11 ml-10" style="color: gray;">
+                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                            사원별 급여명세서에 표시 됩니다.
+                        </span>
+                    </div>
+                    <a-form-item label="총근로시간" label-align="right">
+                        <div style="display: flex;align-items: center;">
+                            <text-number-box width="150px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                        </div>
+                    </a-form-item>
+                    <a-form-item label="연장근로시간" label-align="right">
+                         <div style="display: flex;align-items: center;">
+                            <text-number-box width="150px" v-model:valueInput="dataIW.overtimeWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                        </div>
+                    </a-form-item> <a-form-item label="야간근로시간" label-align="right">
+                         <div style="display: flex;align-items: center;">
+                            <text-number-box width="150px" v-model:valueInput="dataIW.workingHoursAtNight"/><span style="padding-left: 5px;">시간</span>
+                        </div>
+                    </a-form-item> <a-form-item label="휴일근로시간" label-align="right">
+                         <div style="display: flex;align-items: center;">
+                            <text-number-box width="150px" v-model:valueInput="dataIW.workingHoursOnHolidays" /><span style="padding-left: 5px;">시간</span>
+                        </div>
+                    </a-form-item>
+                </a-col>
+
             </a-row>
             <div class="header-text-3">급여 / 공제
             </div>
@@ -124,9 +125,7 @@
                 </a-col>
             </a-row>
             <a-row style="margin-top: 40px">
-
                 <a-col :offset="4" style="text-align: center;">
-
                     <div class="text-align-center ">
                         <DxButton @click="popupCompareData" :text="'공제 재계산'"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
@@ -149,11 +148,11 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed, onMounted } from "vue";
+import { defineComponent, reactive, ref, watch, computed } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
     initFormState1,
-    initFormState2, initRefreshDeduction
+    initFormState2,
 } from "../utils/index";
 import dayjs from 'dayjs';
 import { useStore } from "vuex";
@@ -230,6 +229,10 @@ export default defineComponent({
             totalTaxPay: totalPayItem.value,
             dependentCount: 1
         }
+
+      // watch(()=>dataIW.value.employee.employeeId, (newValue)=>{
+      //     alert(newValue)
+      // })
 
         // get employeewage
         const {
@@ -458,6 +461,7 @@ export default defineComponent({
             loading: loadingCreated,
             onDone: doneCreated,
         } = useMutation(mutations.createIncomeWage);
+
         doneCreated(res => {
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
@@ -465,13 +469,13 @@ export default defineComponent({
             triggerDetail.value = true
             refetchValueDetail()
         })
+
         errorCreated(res => {
             emit("loadingTableInfo", true)
             notification('error', res.message)
         })
         // refresh value
         const addRow = () => {
-
             dataIW.value = { ...initFormState1 }
             dataConfigDeduction.value.map((data: any) => {
                 data.value = 0
@@ -489,7 +493,6 @@ export default defineComponent({
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
                 input: {
-                    workingDays: dataIW.value.workingDays,
                     totalWorkingHours: dataIW.value.totalWorkingHours,
                     overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
                     workingHoursAtNight: dataIW.value.workingHoursAtNight,
@@ -508,7 +511,6 @@ export default defineComponent({
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
                 input: {
-                    workingDays: dataIW.value.workingDays,
                     totalWorkingHours: dataIW.value.totalWorkingHours,
                     overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
                     workingHoursAtNight: dataIW.value.workingHoursAtNight,
@@ -530,7 +532,6 @@ export default defineComponent({
             if (value) {
                 switchAction.value = true
                 addRow()
-
             }
         })
         // action update
@@ -603,7 +604,7 @@ export default defineComponent({
             align-items: center;
             font-size: 13px;
             float: right;
-            margin: 0px 50px 0px 0px;
+            margin: 0px 27px 0px 0px;
 
             p {
                 margin: 0px 0px 3px 10px;

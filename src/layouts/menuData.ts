@@ -92,7 +92,7 @@ export default [
   { name: "원천세,지방소득세신고", url: "#", id: "pa-310" },
   {
     name: "지급명세서전자신고(연말정산)",
-    url: "/dashboard/bf-320",
+    url: "#",
     id: "pa-320",
   },
   { name: "간이지급명세서전자신고", url: "#", id: "pa-330" },
