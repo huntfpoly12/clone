@@ -156,7 +156,7 @@ export default defineComponent({
             spinning.value = true;
             refetchData()
         }
-        const handleClosePopup = () => {
+        const handleClosePopup = () => { 
             modalStatus.value = false
             refetchData()
         }

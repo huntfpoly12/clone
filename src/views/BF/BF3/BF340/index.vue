@@ -225,12 +225,12 @@ export default defineComponent({
             refetchData();
         };
         // ============ WATCH =======================
-        watch(modalEditStatus, (newValue, old) => {
-            if (!newValue) {
-                trigger.value = true;
-                refetchData();
-            }
-        });
+        // watch(modalEditStatus, (newValue, old) => {
+        //     if (!newValue) {
+        //         trigger.value = true;
+        //         refetchData();
+        //     }
+        // });
         watch(modalAddNewStatus, (newValue, old) => {
             if (!newValue) {
                 trigger.value = true;
