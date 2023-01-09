@@ -19,11 +19,11 @@
           <DxColumn caption="지급연월" />
           <DxColumn caption="신고 종류" />
           <DxColumn caption="연말" />
-          <DxColumn caption="환급" cell-template="refund"/>
+          <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
           <template #refund="{ data }">
-            <switch-basic :valueSwitch="data.data.refund" :textCheck="'포함'" :textUnCheck="'제외'" />
+            <switch-basic :valueSwitch="data.data.refund" :textCheck="'X'" :textUnCheck="'O'" />
           </template>
-          <DxColumn caption="제출일" cell-template="submission-date" />
+          <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
           <template #submission-date="{ data }">
             <date-time-box :valueDate="data.data.submissionDate"></date-time-box>
           </template>
@@ -44,7 +44,7 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 
-import { mergeCells, cellsSetting } from "./Gridsetting"
+import { mergeCells, cellsSetting ,dataInit } from "./Gridsetting"
 import { useStore } from "vuex";
 // register Handsontable's modules
 registerAllModules();
@@ -89,7 +89,7 @@ export default defineComponent({
         }
       },
       hotRef: null,
-      data: ,
+      data: dataInit,
       mergeCells: mergeCells,
       cell: [
         ...cellsSetting,
@@ -112,7 +112,8 @@ export default defineComponent({
         afterDeadline: false,
         yearEndTaxAdjustment: 1200,
         refund: true,
-        submissionDate: 20221212
+        submissionDate: 20221212,
+        status: 10
       }
     ]);
     const setModalVisible = () => {
@@ -120,13 +121,7 @@ export default defineComponent({
     }
 
     const changeStatus = (data: any) => {
-            let dataChangeStatus = {
-                "companyId": data.companyId,
-                "imputedYear": data.imputedYear,
-                "reportId": data.reportId,
-                "status": data.status
-            }
-            // actionChangeStatus(dataChangeStatus)
+      
     }
     return {
       setModalVisible,
@@ -144,6 +139,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 :deep .ant-modal-body{
   padding-top: 30px;
+}
+:deep .cell-center {
+    text-align: center !important
 }
 .report-grid{
   padding: 20px 0px 0px 5px;
