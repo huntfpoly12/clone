@@ -1,4 +1,4 @@
-<template>
+<template> 
 	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueCountry"
 		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
 		:disabled="disabled" :required="required">
@@ -35,7 +35,6 @@
 import { defineComponent, ref, getCurrentInstance, watch } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
 import DxSelectBox from "devextreme-vue/select-box";
-import ArrayStore from "devextreme/data/array_store";
 import {
 	DxValidator,
 	DxRequiredRule,
@@ -71,7 +70,7 @@ export default defineComponent({
 		hiddenOptionKR: {
 			type: Boolean,
 			default: false
-		}
+		},
 	},
 	components: {
 		DxSelectBox,
@@ -80,6 +79,7 @@ export default defineComponent({
 		DxRequiredRule,
 	},
 	setup(props, { emit }) {
+
 		const app: any = getCurrentInstance()
 		const messages = app.appContext.config.globalProperties.$messages;
 		const messageRequired = ref(messages.getCommonMessage('102').message);
@@ -87,10 +87,6 @@ export default defineComponent({
 			messageRequired.value = props.messRequired;
 		}
 		let dataSelect = ref(Array());
-		const data = new ArrayStore({
-			data: dataSelect.value,
-			key: "key",
-		});
 
 		if (props.hiddenOptionKR) {
 			enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
@@ -103,12 +99,31 @@ export default defineComponent({
 				dataSelect.value.push({ key: codeCountry, value: nameCountry });
 			});
 		}
+
+
+		//============ WATCH =================================
+		watch(() => props.hiddenOptionKR, (newVal) => {
+			dataSelect.value = []
+			if (newVal) { 
+				enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
+					if (codeCountry != "KR") {
+						dataSelect.value.push({ key: codeCountry, value: nameCountry });
+					}
+				});
+				emit('update:valueCountry', 'GH')
+			} else { 
+				enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
+					dataSelect.value.push({ key: codeCountry, value: nameCountry });
+				});
+				emit('update:valueCountry', 'KR')
+			}
+		}, { deep: true })
+
 		const onValueChanged = (val: any) => {
 			emit('textCountry', getEnumValue(CountryCode, val.value))
 			emit('update:valueCountry', val.value)
 		}
-
-		return { dataSelect, data, onValueChanged, messageRequired };
+		return { dataSelect, onValueChanged, messageRequired };
 	},
 });
 </script>
