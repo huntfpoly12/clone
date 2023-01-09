@@ -55,7 +55,7 @@ export default gql`
           bizNumber
           bizType
           residentId
-          decryptedResidentId
+          residentId 
           license {
             name
             url
