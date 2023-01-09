@@ -44,20 +44,13 @@ export const initFormStateTab1 = {
   department: "",
   responsibility: "",
 };
-
 export const initFormStateTab2 = {
   nationalPensionDeduction: false,
   healthInsuranceDeduction: false,
   longTermCareInsuranceDeduction: false,
   employeementInsuranceDeduction: false,
   insuranceSupport: false,
-  nationalPensionSupportPercent: 0,
-  employeementInsuranceSupportPercent: 0,
   employeementReduction: false,
-  employeementReductionStartDate: "",
-  employeementReductionFinishDate: "",
-  employeementReductionRatePercent: 50,
-  employeementReductionInput: 1,
   incomeTaxMagnification: 100,
   payItems: [],
   deductionItems: [],

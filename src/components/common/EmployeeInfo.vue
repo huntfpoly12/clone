@@ -4,16 +4,18 @@
             {{ idEmployee }}
         </div>
         <div style="display: flex;align-items: flex-end;">
-            <a-tooltip placement="top" v-if="idCardNumber && name"
-                :color="convertBirthDay(idCardNumber) ? 'black' : 'red'" @visibleChange="onVisibleChange">
+            <a-tooltip 
+                placement="top" :color="convertBirthDay(idCardNumber) ? 'black' : 'red'"
+                v-if="idCardNumber && name && convertBirthDay(idCardNumber)"
+            >
                 <template #title>
                     <div v-if="convertBirthDay(idCardNumber)">{{ convertBirthDay(idCardNumber) }}</div>
-                    <div v-else>Error</div>
                 </template>
                 <div class="text-center">
                     {{ name }}
                 </div>
             </a-tooltip>
+            <div @mouseover="onMouseover" @mouseout="onMouseOut" v-else>{{ name }}</div>
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
             <span class="tag-forDailyUse" v-if="forDailyUse == true">일용</span>
@@ -22,7 +24,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import DxButton from 'devextreme-vue/button';
 
 export default defineComponent({
@@ -46,6 +48,7 @@ export default defineComponent({
             type: Boolean,
         },
         forDailyUse: Boolean,
+        employeeId: Number
     },
     components: {
         DxButton
@@ -64,14 +67,21 @@ export default defineComponent({
             }
             return null;
         }
-        const onVisibleChange = (e: any) => {
-            if (!convertBirthDay(props.idCardNumber)) {
-                emit('toolTopErorr', e)
+        const employeeId = ref(props.employeeId);
+        const onMouseover = () => {
+            if(!convertBirthDay(props.idCardNumber)) {
+                emit('toolTopErorr', {isError:true, id: employeeId.value})
+            }
+        }
+        const onMouseOut = () => {
+            if(!convertBirthDay(props.idCardNumber)) {
+                emit('toolTopErorr', {isError:false, id: employeeId.value})
             }
         }
         return {
             convertBirthDay,
-            onVisibleChange
+            onMouseover,
+            onMouseOut
         }
     },
 });
