@@ -12,7 +12,7 @@
         </DxButton>
         <button-basic  :width="150" text="새로불러오기" class="btn-get-income" ></button-basic>
       </div>
-      <div class="table-detail">
+      <div class="table-detail">{{ dataSource }}{{ dataReport }}
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
           :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" 
@@ -22,10 +22,20 @@
             <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
                         :dataRow="data.data" @dataRow="changeStatus" />
           </template>
-          <DxColumn caption="귀속연월" />
-          <DxColumn caption="지급연월" />
-          <DxColumn caption="신고 종류" />
-          <DxColumn caption="연말" />
+          <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" />
+          <template #imputedYear-imputedMonth="{ data }">
+            {{data.data.imputedYear}}- {{data.data.imputedMonth}}
+          </template>
+          <DxColumn caption="지급연월" cell-template="paymentYear-paymentMonth"/>
+          <template #paymentYear-paymentMonth="{ data }">
+            {{data.data.paymentYear}}- {{data.data.paymentMonth}}
+          </template>
+          <DxColumn caption="신고 종류" cell-template="afterDeadline-index"/>
+          <template #afterDeadline-index="{ data }">
+            {{data.data.afterDeadline}}<br>{{data.data.index}}
+          </template>
+          <DxColumn caption="연말" data-field="yearEndTaxAdjustment"/>
+     
           <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
           <template #refund="{ data }">
             <switch-basic :valueSwitch="data.data.refund" :textCheck="'X'" :textUnCheck="'O'" />
@@ -180,20 +190,7 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    let dataSource = ref([
-      {
-        index: 0,
-        inputedYear: 2022,
-        inputedMonth: 12,
-        paymentYear: 2022,
-        paymentMonth: 12,
-        afterDeadline: false,
-        yearEndTaxAdjustment: 1200,
-        refund: true,
-        submissionDate: 20221212,
-        status: 10
-      }
-    ]);
+    const dataSource = ref(props.dataReport);
     const setModalVisible = () => {
       emit('closePopup', false)
     }
