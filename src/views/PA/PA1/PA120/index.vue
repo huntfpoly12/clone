@@ -40,14 +40,15 @@
                 </div>
             </a-col>
         </a-row>
+        <!-- {{dataSource}} -->
         <a-row>
             <a-col :span="10" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
-                        :focused-row-enabled="true" id="pa-120-gridContainer">
-
+                        :focused-row-enabled="true" id="pa-120-gridContainer" :auto-navigate-to-focused-row="true"
+                        v-model:focused-row-key="focusedRowKey">
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -60,23 +61,22 @@
                                 <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
                             </DxButton>
                         </template>
-                        <DxColumn caption="성명" cell-template="company-name" />
+                        <DxColumn caption="성명" width="140" cell-template="company-name" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
-                                :foreigner="data.data.foreigner" :checkStatus="false" @toolTopErorr="toolTopErorr"/>
+                                :foreigner="data.data.foreigner" :checkStatus="false" @toolTopErorr="toolTopErorr" :employeeId="data.data.employeeId"/>
                         </template>
-                        <DxColumn caption="주민등록번호" cell-template="residentId" width="130" />
+                        <DxColumn caption="주민등록번호" cell-template="residentId" width="120"/>
                         <template #residentId="{ data }">
-                            
-                            <div>
-                                <div v-if="isResidentIdError" class="toolTipError">Error</div>
-                                {{data.data.residentId}}
+                            <div class="toolTipError_wrap">
+                                <div class="toolTipError" v-if="isResidentIdError[`${data.data.employeeId}`]">Error</div>
+                                <div>{{data.data.residentId}}</div>
                             </div>
                         </template>
                         <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{data}" class="custom-action">
-                            <div class="custom-action">
+                        <template #grade-cell="{data}">
+                            <div>
                                 <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1"
                                     :typeValue="1" />
                                 <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2"
@@ -93,7 +93,7 @@
                                     :ratio="data.data.incomeTaxMagnification" />
                             </div>
                         </template>
-                        <DxColumn cell-template="pupop" width="100"/>
+                        <DxColumn cell-template="pupop" width="30"/>
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action" style="text-align: center;" v-if="data.data.deletable">
                                 <a-space :size="10" >
@@ -109,7 +109,7 @@
                 <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
                      v-if="actionChangeComponent == 1" :key="addComponentKey" />
                 <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
-                    v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit"/>
+                    v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey"/>
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
@@ -122,7 +122,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue";
+import { ref, defineComponent, watch, computed, reactive } from "vue";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
@@ -257,10 +257,14 @@ export default defineComponent({
                 refetchData()
             }
         })
+        //rest resetActiveKey
+        const resetActiveKey = ref("1");
         const actionEdit = (data: any) => {
             actionChangeComponent.value = 2
             idRowEdit.value = data.data.employeeId
-            modalEditStatus.value = true
+            modalEditStatus.value = true;
+            resetActiveKey.value = "1";
+            store.commit('common/resetTabPA120', "1")
         }
         // when submit form done
         const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
@@ -269,11 +273,17 @@ export default defineComponent({
             refetchData();
         })
         //tooltip residentId
-        const isResidentIdError = ref(false)
-        const toolTopErorr = (val: boolean) => {
-            console.log(`output->val`,val)
-            isResidentIdError.value = val;
+        const isResidentIdError = reactive<any>({});
+        const toolTopErorr = (val: any) => {
+            isResidentIdError[val.id] = val.isError;
         }
+        //focus Row
+        const focusedRowKey = ref<Number>(0);
+        const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
+        const resetTabPA120 = computed(() => store.getters['common/resetTabPA120']);
+        watch(keyActivePA120,(newval: number)=> {
+            focusedRowKey.value = newval;
+        })
         return {
             loading,
             idRowEdit,
@@ -298,18 +308,14 @@ export default defineComponent({
             addNew,
             arrRowEdit,
             toolTopErorr,
-            isResidentIdError
+            isResidentIdError,
+            focusedRowKey,
+            resetActiveKey,
+            resetTabPA120,
+            keyActivePA120
         }
     },
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss" >
-#pa-120-gridContainer{
-    height: 440px;
-    .toolTipError{
-        position: absolute;
-        top: 0;
-        transform: translateY(50%);
-    }
-}
 </style>
