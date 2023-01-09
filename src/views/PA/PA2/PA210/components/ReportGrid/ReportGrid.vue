@@ -4,10 +4,16 @@
     <div class="report-grid">
       <div class="header-1">원천세신고서</div>
       <div class="action-right">
+        <DxButton class="ml-3">
+            <img style="width: 30px;" src="@/assets/images/icon_delete.png" alt="">
+        </DxButton>
+        <DxButton class="ml-3">
+            <img style="width: 34px;" src="@/assets/images/save_icon.svg" alt="">
+        </DxButton>
         <button-basic  :width="150" text="새로불러오기" class="btn-get-income" ></button-basic>
       </div>
       <div class="table-detail">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataReport"
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
           :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" 
           :focused-row-enabled="true">
@@ -121,7 +127,6 @@ import "handsontable/dist/handsontable.full.css";
 
 import { mergeCells, cellsSetting ,dataInit } from "./Gridsetting"
 import { useStore } from "vuex";
-import TextNumberBox from "@/components/common/TextNumberBox.vue";
 // register Handsontable's modules
 registerAllModules();
 
