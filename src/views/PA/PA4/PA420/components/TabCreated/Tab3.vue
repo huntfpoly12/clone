@@ -66,7 +66,9 @@
         </a-col>
         <a-col :span="12">
             <div class="header-text-2 mb-10">연금계좌입금명세
-                ({{ $filters.formatCurrency(dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.totalAmount =
+                ({{
+                    $filters.formatCurrency(dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.totalAmount
+                        =
                         dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount
                         +
                         dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount)
@@ -207,7 +209,11 @@
                     <span class="pl-5">원</span>
                 </div>
             </a-form-item>
-            <div>연금계좌입금명세 ({{ dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount ? $filters.formatCurrency(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount) : '' }} 원)</div>
+            <div>연금계좌입금명세 ({{
+                dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount ?
+                    $filters.formatCurrency(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount) :
+                    ''
+            }} 원)</div>
             <div class="d-flex">
                 <default-text-box
                     v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].pensionAccountHolder"

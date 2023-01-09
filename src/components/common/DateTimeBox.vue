@@ -1,7 +1,9 @@
 <template>
-    <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
-        @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
-        :max-date="birthDay ? new Date() : ''" :placeholder="placeholder">
+    {{ dayjs(startDate) }}
+    <Datepicker v-model="date"  textInput locale="ko" autoApply format="yyyy-MM-dd"
+        :format-locale="ko" @update:modelValue="updateValue"
+        :style="{ height: $config_styles.HeightInput, width: width }" :max-date="birthDay ? new Date() : ''"
+        :placeholder="placeholder">
     </Datepicker>
 </template>
 <script lang="ts">
@@ -35,7 +37,9 @@ export default defineComponent({
         placeholder: {
             type: String,
             default: ''
-        }
+        },
+        startDate: Number,
+        finishDate: Number,
     },
     components: {
         Datepicker,
@@ -51,7 +55,7 @@ export default defineComponent({
                     date.value = newValue;
             }
         );
-        const updateValue = () => { 
+        const updateValue = () => {
             if (date.value)
                 emit("update:valueDate", filters.formatDateToInterger(date.value));
             else
@@ -62,6 +66,7 @@ export default defineComponent({
             updateValue,
             date,
             ko,
+            dayjs,
         };
     },
 });
