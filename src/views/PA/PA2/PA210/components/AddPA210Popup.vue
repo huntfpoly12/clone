@@ -8,7 +8,7 @@
                         <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="afterDeadline"
                             :layoutCustom="'horizontal'" />
                     </a-form-item>
-                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataReports"
+                    <DxDataGrid class="pt-20" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataReports"
                         :show-borders="true" key-expr="reportId" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         @selection-changed="onSelectionChanged">
@@ -87,9 +87,6 @@ import {
     WageReportType,
     enum2Entries,
 } from "@bankda/jangbuda-common";
-import { companyId } from "@/helpers/commonFunction";
-import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/CM/CM130/index";
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import ReportGrid from "./ReportGrid/ReportGrid.vue";
@@ -126,6 +123,7 @@ export default defineComponent({
         const afterDeadline = ref(false)
         // ===================WATCH==================================
         watch(() => props.lastMonth, (value) => {
+            loading.value = true;
             dataReports.value = []
             for (let i = value + 1; i <= 12; i++) {
                 dataReports.value.push({
@@ -144,6 +142,7 @@ export default defineComponent({
                     imputedStartYearMonth: parseInt(dayjs().format("YYYYMMDD")),
                 })
             }
+            loading.value = false;
         })
 
         // ===================FUNCTION===============================
@@ -164,7 +163,7 @@ export default defineComponent({
             return row;
         };
         const onSelectionChanged = (data: any) => {
-            dataReport.value = data.selectedRowsData[0]
+            dataReport.value = [data.selectedRowsData[0]]
         };
         return {
             globalYear, move_column, colomn_resize, dayjs,
