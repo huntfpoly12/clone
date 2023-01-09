@@ -2,8 +2,15 @@
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
         style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
     <div class="report-grid">
+      <div class="header-1">원천세신고서</div>
       <div class="action-right">
-        <button-basic  :width="150" text="새로불러오기" class="open-tab" ></button-basic>
+        <DxButton class="ml-3">
+            <img style="width: 30px;" src="@/assets/images/icon_delete.png" alt="">
+        </DxButton>
+        <DxButton class="ml-3">
+            <img style="width: 34px;" src="@/assets/images/save_icon.svg" alt="">
+        </DxButton>
+        <button-basic  :width="150" text="새로불러오기" class="btn-get-income" ></button-basic>
       </div>
       <div class="table-detail">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -19,11 +26,11 @@
           <DxColumn caption="지급연월" />
           <DxColumn caption="신고 종류" />
           <DxColumn caption="연말" />
-          <DxColumn caption="환급" cell-template="refund"/>
+          <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
           <template #refund="{ data }">
-            <switch-basic :valueSwitch="data.data.refund" :textCheck="'포함'" :textUnCheck="'제외'" />
+            <switch-basic :valueSwitch="data.data.refund" :textCheck="'X'" :textUnCheck="'O'" />
           </template>
-          <DxColumn caption="제출일" cell-template="submission-date" />
+          <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
           <template #submission-date="{ data }">
             <date-time-box :valueDate="data.data.submissionDate"></date-time-box>
           </template>
@@ -32,7 +39,81 @@
       </div>
       <div class="table-grid">
         <hot-table ref="wrapper" :settings="hotSettings"></hot-table>
-      </div>  
+      </div> 
+      <div class="header-2">원천징수세액환급신청서 / 기납부세액명세서 검증 결과</div>
+      <div class="verification-result">
+        <div class="form-item">
+          <label for="">저장가능여부</label>
+          
+        </div>
+      </div>
+      <div class="header-text-3">
+        환급신청액 일치 여부
+        <span>
+          <img src="@/assets/images/iconInfo.png" style="width: 14px" />
+          <p>아래 내역들의 값이 일치해야 정상입니다.</p>
+        </span>
+      </div>
+      <a-row :gutter="[0, 10]">
+            <a-col span="10"> 원천세신고서 > (21)환급신청액</a-col>
+            <a-col span="12">
+              <text-number-box :disabled="true" width="150px"></text-number-box>
+            </a-col>
+            <a-col span="10">원천징수세액환급신청서 > 기납부원천징수세액 (2)계 (합계)</a-col>
+            <a-col span="12">
+              <text-number-box :disabled="true" width="150px"></text-number-box>
+            </a-col>
+      </a-row>
+      <div class="header-text-3">
+        징수세액과 기납부세액 일치 여부 (A04(연말정산) 포함된 경우 해당)
+        <span>
+          <img src="@/assets/images/iconInfo.png" style="width: 14px" />
+          <p>A04(연말정산) 포함된 경우 아래 내역들의 값이 일치해야 정상입니다.</p>
+        </span>
+      </div>
+      <a-row :gutter="[0, 10]">
+            <a-col span="10">원천징수세액환급신청서 > 기납부원천징수세액 (2)계 (A04)</a-col>
+            <a-col span="12">
+              <text-number-box :disabled="true" width="150px"></text-number-box>
+            </a-col>
+            <a-col span="10">기납부세액명세서 > 지급명세서기납부세액현황 (3)소득세등 (합계)</a-col>
+            <a-col span="12">
+              <text-number-box :disabled="true" width="150px"></text-number-box>
+            </a-col>
+      </a-row>
+      <div class="header-text-3">
+        기납부세액 차이조정현황
+        <span>
+          <img src="@/assets/images/iconInfo.png" style="width: 14px" />
+          <p>차이금액 > 0 이면, 사유가 있어야 합니다.</p>
+        </span>
+      </div>
+      <a-row :gutter="[0, 10]">
+            <a-col span="10">(1)소득세 등 합계 (징수세액)</a-col>
+            <a-col span="12">
+              <text-number-box :disabled="true" width="150px"></text-number-box>
+            </a-col>
+            <a-col span="10">(3)소득세 등 합계 (기납부세액)</a-col>
+            <a-col span="12">
+              <text-number-box :disabled="true" width="150px"></text-number-box>
+            </a-col>
+            <a-col span="10">(차이금액 ((3)-(1))</a-col>
+            <a-col span="12">
+              <text-number-box :disabled="true" width="150px"></text-number-box>
+            </a-col>
+            <a-col span="10">사유</a-col>
+            <a-col span="12">
+              <text-number-box :disabled="true" width="150px"></text-number-box>
+            </a-col>
+      </a-row>
+      <a-row style="margin-top: 20px;">
+        <a-col :span="16" :offset="9">
+            <button-basic text="저장 취소" :type="'default'" mode="outlined" 
+                :width="120" style="margin-right: 10px;" />
+            <button-basic text="저장" :type="'default'" mode="'contained'"
+                :width="120" />
+        </a-col>
+      </a-row>
     </div>
   </a-modal>
 </template>
@@ -44,7 +125,7 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 
-import { mergeCells, cellsSetting } from "./Gridsetting"
+import { mergeCells, cellsSetting ,dataInit } from "./Gridsetting"
 import { useStore } from "vuex";
 // register Handsontable's modules
 registerAllModules();
@@ -55,7 +136,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-
+    dataReport: {
+      type: Array,
+      default: [],
+    }
   },
   components: {
     HotTable,
@@ -63,12 +147,6 @@ export default defineComponent({
     DxColumn,
     DxToolbar, DxPaging,
     DxItem, DxScrolling
-
-  },
-  data() {
-    return {
-
-    };
   },
   setup(props, { emit }) {
     const wrapper = ref()
@@ -89,7 +167,7 @@ export default defineComponent({
         }
       },
       hotRef: null,
-      data: ,
+      data: dataInit,
       mergeCells: mergeCells,
       cell: [
         ...cellsSetting,
@@ -112,7 +190,8 @@ export default defineComponent({
         afterDeadline: false,
         yearEndTaxAdjustment: 1200,
         refund: true,
-        submissionDate: 20221212
+        submissionDate: 20221212,
+        status: 10
       }
     ]);
     const setModalVisible = () => {
@@ -120,13 +199,7 @@ export default defineComponent({
     }
 
     const changeStatus = (data: any) => {
-            let dataChangeStatus = {
-                "companyId": data.companyId,
-                "imputedYear": data.imputedYear,
-                "reportId": data.reportId,
-                "status": data.status
-            }
-            // actionChangeStatus(dataChangeStatus)
+      
     }
     return {
       setModalVisible,
@@ -145,6 +218,9 @@ export default defineComponent({
 :deep .ant-modal-body{
   padding-top: 30px;
 }
+:deep .cell-center {
+    text-align: center !important
+}
 .report-grid{
   padding: 20px 0px 0px 5px;
   overflow-y: scroll;
@@ -161,7 +237,7 @@ export default defineComponent({
   .table-detail{
     margin-bottom: 5px;
   }
-  .open-tab{
+  .btn-get-income{
       color: white;
       background-color: #558ED5;
       font-size: 14px;
@@ -177,9 +253,38 @@ export default defineComponent({
     width: 100% !important;
    }
 
-   :deep .ht_clone_left .wtHolder {
+  :deep .ht_clone_left .wtHolder {
       overflow:hidden;
+  }
+  .header-1{
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .header-2{
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .header-text-3 {
+    background-color: #C6D9F1;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    span {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      color: #b3b4b3;
+      float: right;
+
+      p {
+        margin: 5px 0px 3px 10px;
+      }
     }
+  }
 }
 
 </style>

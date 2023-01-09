@@ -101,6 +101,8 @@ export const mergeCells = [
     { row: 35, col: 7, rowspan: 1, colspan: 2 },
     { row: 36, col: 7, rowspan: 1, colspan: 1 },
     { row: 36, col: 8, rowspan: 1, colspan: 1 },
+    { row: 37, col: 0, rowspan: 1, colspan: 2 },
+    { row: 37, col: 3, rowspan: 1, colspan: 2 },
   ]
 
 export const cellsSetting = [
@@ -192,7 +194,8 @@ export const cellsSetting = [
     { row: 31, col: 0, readOnly: true  , className: 'htCenter htMiddle'},
     { row: 31, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
     { row: 32, col: 0, readOnly: true  , className: 'htCenter htMiddle'},
-    { row: 32, col: 4, readOnly: true  , className: 'htCenter htMiddle'},
+    { row: 32, col: 4, readOnly: true  , className: 'htCenter htMiddle' },
+    { row: 33, col: 0, readOnly: true  , renderer: 'html'},
     { row: 34, col: 0, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
     { row: 34, col: 0, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
     { row: 34, col: 5, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
@@ -208,7 +211,6 @@ export const cellsSetting = [
     { row: 35, col: 7, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
     { row: 36, col: 7, readOnly: true  , className: 'htCenter htMiddle',renderer: 'html'},
     { row: 36, col: 8, readOnly: true, className: 'htCenter htMiddle', renderer: 'html' },
-    
       // cells to enter data
     { row: 4, col: 5  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },validator:cellValueGreaterThan0},
     { row: 4, col: 6  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },validator:cellValueGreaterThan0},
