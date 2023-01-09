@@ -10,7 +10,12 @@
                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
                 </DxToolbar>
                 <template #button-template>
-                    <DxButton icon="plus" @click="openAddNewModal" />
+                    <a-tooltip>
+                        <template #title>정기(기한후)신고서 새로 작성</template>
+                        <div class="custom-grade-cell">
+                            <DxButton icon="plus" @click="openAddNewModal" />
+                        </div>
+                    </a-tooltip>
                 </template>
                 <template #button-history>
                     <DxButton>
@@ -19,26 +24,51 @@
                 </template>
                 <DxColumn caption="마감 현황" cell-template="process-status" width="100" />
                 <template #process-status="{ data }">
-                    <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
-                        :dataRow="data.data" @dataRow="changeStatus" />
+                    <process-status-tooltip v-model:valueStatus="data.data.status" :height="32" :dataRow="data.data"
+                        @dataRow="changeStatus" />
                 </template>
                 <DxColumn caption="귀속 연월" cell-template="imputed" />
                 <template #imputed="{ data }">
-                    <DxButton
-                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
-                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                    <a-tooltip>
+                        <template #title>
+                            귀속기간
+                            {{
+                                data.data.reportType == 1 ?
+                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
+                                    dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                            }}
+                        </template>
+                        <div class="custom-grade-cell">
+                            <DxButton
+                                :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                                :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                        </div>
+                    </a-tooltip>
                 </template>
                 <DxColumn caption="지급 연월" cell-template="payment" />
                 <template #payment="{ data }">
-                    <DxButton
-                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
-                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                    <a-tooltip>
+                        <template #title>
+                            귀속기간
+                            {{
+                                data.data.reportType == 1 ?
+                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
+                                    dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                            }}
+                        </template>
+                        <div class="custom-grade-cell">
+                            <DxButton
+                                :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                                :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                        </div>
+                    </a-tooltip>
                 </template>
                 <DxColumn caption="신고 주기" cell-template="reportType" />
                 <template #reportType="{ data }">
-                    <DxButton
-                    :text="getText(data.data.reportType)[0]"
-                    :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                    <DxButton :text="getText(data.data.reportType)[0]"
+                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
@@ -98,21 +128,31 @@
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" />
                 <template #add="{ data }">
-                    <div style="width: 100%;text-align: center;" >[+]</div>
+                    <a-tooltip>
+                        <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
+                        <div class="custom-grade-cell">
+                            <div style="width: 100%;text-align: center;">[+]</div>
+                        </div>
+                    </a-tooltip>
+                    
                 </template>
                 <DxColumn :width="80" cell-template="pupop" caption="출력 메일" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action" style="text-align: center; ">
-                        <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
+                        <img @click="openPopupPrint(data.data)" src="@/assets/images/print.svg" alt=""
                             style="width: 28px;" />
-                        <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
+                        <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
                             style="width: 28px; margin-left: 10px;" />
                     </div>
                 </template>
             </DxDataGrid>
         </a-spin>
     </div>
-    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false"/>
+    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :lastMonth="lastMonth" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+        title="변경이력" typeHistory="pa-210" />
+    <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
+    <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false" :dataCall="dataPopup" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, reactive, watch } from "vue";
@@ -120,11 +160,15 @@ import {
     WageReportType,
     enum2Entries,
 } from "@bankda/jangbuda-common";
+import dayjs from 'dayjs';
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from "vuex";
 import { useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
-import AddPA210Popup from "./components/AddPA210Popup.vue"
+import AddPA210Popup from "./components/AddPA210Popup.vue";
+import PopupPrint from "./components/PopupPrint.vue";
+import PopupSendEmail from "./components/PopupSendEmail.vue";
+import HistoryPopup from "@/components/HistoryPopup.vue";
 import { DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxTotalItem } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
@@ -132,7 +176,7 @@ import queries from "@/graphql/queries/PA/PA2/PA210/index";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
-        AddPA210Popup,
+        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail
     },
     setup() {
         const store = useStore();
@@ -142,10 +186,11 @@ export default defineComponent({
 
         const modalAddNewStatus = ref<boolean>(false);
         const modalHistoryStatus = ref<boolean>(false);
-        const modalEmailSingle = ref<boolean>(false);
-        const triggerPrint = ref<boolean>(false);
-        const dataSource: any = ref({})
-
+        const modalPrintStatus = ref<boolean>(false);
+        const modalSendEmailStatus = ref<boolean>(false);
+        const dataSource: any = ref([])
+        const dataPopup = ref()
+        const lastMonth = ref<number>(1);
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
@@ -156,7 +201,6 @@ export default defineComponent({
             result,
             loading,
         } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({
-            // enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
 
@@ -164,42 +208,32 @@ export default defineComponent({
         watch(result, (value) => {
             if (value) {
                 dataSource.value = value.getTaxWithholdingStatusReports;
-                // trigger.value = false;
             }
         });
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
-            // count.value++
+            lastMonth.value = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
             modalAddNewStatus.value = true;
         }
         const openModalHistory = (data: any) => {
-            // idRowEdit.value = data.data.id
             modalHistoryStatus.value = true;
-            // popupData.value = data;
         }
-        const actionOpenPopupEmailSingle = (data: any) => {
-            // popupDataEmailSingle.value = {
-            //     companyId: companyId,
-            //     input: {
-            //         imputedYear: globalYear,
-            //         type: valueDefaultIncomeBusiness.value.input.type,
-            //         receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
-            //     },
-            //     employeeInputs: {
-            //         senderName: sessionStorage.getItem("username"),
-            //         receiverName: data.employee.name,
-            //         receiverAddress: data.employee.email,
-            //         employeeId: data.employee.employeeId,
-            //         incomeTypeCode: data.employee.incomeTypeCode
-            //     }
-            // }
-            modalEmailSingle.value = true
+        const openPopupEmail = (data: any) => {
+            dataPopup.value = {
+                reportId: data.reportId,
+                companyId: data.companyId,
+                imputedYear: data.imputedYear,
+            }
+            modalSendEmailStatus.value = true
         }
-        const actionPrint = (data: any) => {
-            // valueDefaultIncomeBusiness.value.employeeKeys.employeeId = data.employee.employeeId
-            // valueDefaultIncomeBusiness.value.employeeKeys.incomeTypeCode = data.employee.incomeTypeCode
-            triggerPrint.value = true;
+        const openPopupPrint = (data: any) => {
+            dataPopup.value = {
+                reportId: data.reportId,
+                companyId: data.companyId,
+                imputedYear: data.imputedYear,
+            }
+            modalPrintStatus.value = true;
         }
         const changeStatus = (data: any) => {
             let dataChangeStatus = {
@@ -219,8 +253,8 @@ export default defineComponent({
             //     notification('error', `항목을 하나 이상 선택해야합니다`)
             // }
         };
-        var getText = (data?: any) => {
-            let row:any = ''
+        const getText = (data?: any) => {
+            let row: any = ''
             enum2Entries(WageReportType).map((value) => {
                 if (data == value[1]) {
                     row = value
@@ -230,14 +264,15 @@ export default defineComponent({
         };
 
         return {
-            globalYear, move_column, colomn_resize,
+            globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
             getText,
-
+            lastMonth,
             openAddNewModal, modalAddNewStatus,
-            openModalHistory,
-            actionOpenPopupEmailSingle,
-            actionPrint,
+            openModalHistory, modalHistoryStatus,
+            openPopupEmail, modalSendEmailStatus,
+            openPopupPrint, modalPrintStatus,
+            dataPopup,
             changeStatus,
             editRow,
         };
