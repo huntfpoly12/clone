@@ -383,9 +383,7 @@ export default defineComponent({
         const openNewTab = () => {
             window.open('pa-120')
         };
-        const submitForm = (e: any) => {
-            console.log(e.validationGroup.validate());
-            
+        const submitForm = (e: any) => { 
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();

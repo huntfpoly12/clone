@@ -373,8 +373,7 @@ export default defineComponent({
           employeementReductionStartDate: +dayjs(rangeDate.value[0]).format('YYYYMMDD'),
           employeementReductionFinishDate: +dayjs(rangeDate.value[1]).format('YYYYMMDD'),
         },
-      };
-      console.log(`output-variables`,variables)
+      }; 
       mutate(variables);
     };
     return {
