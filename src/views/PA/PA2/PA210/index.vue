@@ -53,9 +53,9 @@
                             귀속기간
                             {{
                                 data.data.reportType == 1 ?
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
+                                    dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -155,7 +155,7 @@
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false" :dataCall="dataPopup" />
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, reactive, watch } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import {
     WageReportType,
     enum2Entries,
@@ -191,11 +191,10 @@ export default defineComponent({
         const dataSource: any = ref([])
         const dataPopup = ref()
         const dataPopupAdd = ref({
-            lastMonth: 1,
-            reportType: 1,
-            paymentType: 1,
+            lastMonth: 0,
+            reportType: 0,
+            paymentType: 0,
         })
-        const lastMonth = ref<number>(1);
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
@@ -227,12 +226,15 @@ export default defineComponent({
             if (value) {
                 dataPopupAdd.value.reportType = value.getWithholdingConfig.reportType;
                 dataPopupAdd.value.paymentType = value.getWithholdingConfig.paymentType;
+                // dataPopupAdd.value.reportType = 1;
+                // dataPopupAdd.value.paymentType = 2;
             }
         });
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
             dataPopupAdd.value.lastMonth = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
+            // dataPopupAdd.value.lastMonth = 9;
             modalAddNewStatus.value = true;
         }
         const openModalHistory = (data: any) => {
