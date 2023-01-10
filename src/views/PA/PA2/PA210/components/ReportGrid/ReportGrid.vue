@@ -369,6 +369,7 @@ export default defineComponent({
 .report-grid{
   padding: 20px 0px 0px 5px;
   overflow-y: scroll;
+  overflow-x: hidden;
   height: 860px;
   :deep td.disable-cell {
     color: #fff;
