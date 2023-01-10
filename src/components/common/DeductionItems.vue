@@ -1,23 +1,23 @@
 <template>
     <div class="deduction">
-        <a-tooltip placement="top" v-if="name.split('').length > 4 ">
+        <a-tooltip  color="black" placement="top" v-if="name.split('').length > 4 ">
             <template #title>{{ name }}</template>
             <span class="deducation-name" :style="{ 'width': width }">{{ name }}</span>
         </a-tooltip>
         <span class="deducation-name" :style="{ 'width': width }" v-else>{{ name }}</span>
-        <a-tooltip placement="top" v-if="type == 1">
+        <a-tooltip  color="black" placement="top" v-if="type == 1">
             <template #title>{{ subName }}</template>
             <div class="deduction-tag deduction-tag-1">
                 <span>과</span>
             </div>
         </a-tooltip>
-        <a-tooltip placement="top" v-if="type == 2">
+        <a-tooltip  color="black" placement="top" v-if="type == 2">
             <template #title>{{ subName }}</template>
             <div class="deduction-tag deduction-tag-2">
                 <span>상</span>
             </div>
         </a-tooltip>
-        <a-tooltip placement="top" v-if="type == 3">
+        <a-tooltip  color="black" placement="top" v-if="type == 3">
             <template #title>
                 <span style="text-align: center;">
                     비과세 <br />{{ subName }}
@@ -27,7 +27,7 @@
                 <span>비</span>
             </div>
         </a-tooltip>
-        <a-tooltip placement="top" v-if="type == 4">
+        <a-tooltip  color="black" placement="top" v-if="type == 4">
             <template #title>{{ subName }}</template>
             <div class="deduction-tag deduction-tag-4">
                 <span>공</span>

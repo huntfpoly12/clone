@@ -31,6 +31,7 @@ import getIncomeRetirementsLogs from "./getIncomeRetirementsLogs";
 import getIncomeExtrasLogs from "./getIncomeExtrasLogs";
 import getIncomeProcessExtraLogs from "./getIncomeProcessExtraLogs";
 import getSubscriptionRequestLogs from "./getSubscriptionRequestLogs";
+import getTaxWithholdingStatusReportsLogs from "./getTaxWithholdingStatusReportsLogs";
 import searchUsers from "./searchUsers";
 const queries = {
   getUser: getUser,
@@ -68,6 +69,7 @@ const queries = {
   getIncomeProcessExtraLogs: getIncomeProcessExtraLogs,
   getSubscriptionRequestLogs: getSubscriptionRequestLogs,
   searchUsers: searchUsers,
+  getTaxWithholdingStatusReportsLogs: getTaxWithholdingStatusReportsLogs,
 };
 
 export default queries;

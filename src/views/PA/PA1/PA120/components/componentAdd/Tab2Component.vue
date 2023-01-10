@@ -2,7 +2,6 @@
   <div id="tab2-pa120">
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-row :gutter="16">
-        {{ formStateTab2 }}
       <a-col span="24" style="display: flex">
         <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
           <checkbox-basic size="18px" label="국민연금" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
@@ -18,59 +17,68 @@
       </a-col>
       <a-col :span="12">
         <div class="header-text-2">두루누리사회보험 공제</div>
-        <a-form-item label="두루누리사회보험 공제 여부" label-align="right" class="durunuri-insurance">
-          <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" v-model:valueSwitch="formStateTab2.employeementInsuranceDeduction"></switch-basic>
-        </a-form-item>
-        <a-form-item label="국민연금 적용율" label-align="right" class="pension">
-          <radio-group
-            :arrayValue="radioCheckPersenPension"
-            v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent"
-            layoutCustom="horizontal"
-            :disabled="!formStateTab2.employeementInsuranceDeduction"
-          >
-          </radio-group>
-        </a-form-item>
-        <a-form-item label="고용보험 적용율" label-align="right" class="pension">
-          <radio-group
-            :arrayValue="radioCheckPersenPension"
-            v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent"
-            layoutCustom="horizontal"
-            :disabled="!formStateTab2.employeementInsuranceDeduction"
-          >
-          </radio-group>
-        </a-form-item>
+
+        <a-row :gutter="[0,10]">
+           <a-col span="10">
+            두루누리사회보험 공제 여부:
+           </a-col> 
+           <a-col span="12">
+               <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" v-model:valueSwitch="formStateTab2.employeementInsuranceDeduction"></switch-basic>
+           </a-col>
+           <a-col span="10">
+            국민연금 적용율:
+           </a-col> 
+           <a-col span="12">
+               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.employeementInsuranceDeduction"></radio-group>
+           </a-col>
+           <a-col span="10">
+            고용보험 적용율:
+           </a-col> 
+           <a-col span="12">
+               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.employeementInsuranceDeduction"></radio-group>
+           </a-col>
+        </a-row>
       </a-col>
       <a-col :span="12">
         <div class="header-text-2">중소기업취업 감면</div>
-        <a-form-item label="중소기업취업 감면 여부" label-align="right" class="durunuri-insurance">
-          <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" v-model:valueSwitch="formStateTab2.employeementReduction"></switch-basic>
-        </a-form-item>
-        <a-form-item label="감면기간" label-align="right" :label-col="{ style: { width: '85px' } }">
-          <a-range-picker v-model:value="rangeDate" :placeholder="['Start', 'End']" :disabled="!formStateTab2.employeementReduction" />
-        </a-form-item>
-        <a-form-item label="감면율" label-align="right">
-          <radio-group
-            :arrayValue="radioCheckReductioRate"
-            v-model:valueRadioCheck="formStateTab2.employeementReductionRatePercent"
-            layoutCustom="horizontal"
-            :disabled="!formStateTab2.employeementReduction"
-          >
-          </radio-group>
-        </a-form-item>
-        <a-form-item label="감면입력" label-align="right" class="durunuri-insurance">
-          <radio-group
-            :arrayValue="radioCheckReductionInput"
-            v-model:valueRadioCheck="formStateTab2.employeementReductionInput"
-            layoutCustom="horizontal"
-            :disabled="!formStateTab2.employeementReduction"
-          >
-          </radio-group>
-        </a-form-item>
+        <a-row :gutter="[0,10]">
+           <a-col span="10">
+            중소기업취업 감면 여부:
+           </a-col> 
+           <a-col span="12">
+               <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" v-model:valueSwitch="formStateTab2.employeementReduction"></switch-basic>
+           </a-col>
+           <a-col span="10">
+            감면기간:
+           </a-col> 
+           <a-col span="12">
+               <a-range-picker v-model:value="rangeDate" :placeholder="['Start', 'End']" :disabled="!formStateTab2.employeementReduction"/>
+           </a-col>
+           <a-col span="10">
+            감면율:
+           </a-col> 
+           <a-col span="12">
+               <radio-group :arrayValue="radioCheckReductioRate" v-model:valueRadioCheck="formStateTab2.employeementReductionRatePercent" layoutCustom="horizontal" :disabled="!formStateTab2.employeementReduction"></radio-group>
+           </a-col>
+           <a-col span="10">
+            감면입력:
+           </a-col> 
+           <a-col span="12">
+               <radio-group :arrayValue="radioCheckReductionInput" v-model:valueRadioCheck="formStateTab2.employeementReductionInput" layoutCustom="horizontal" :disabled="!formStateTab2.employeementReduction"></radio-group>
+           </a-col>
+        </a-row>
       </a-col>
     </a-row>
-    <a-form-item label="소득세 적용율" label-align="right" class="income-tax-app-rate">
-      <radio-group :arrayValue="IncomeTaxAppRate" v-model:valueRadioCheck="formStateTab2.incomeTaxMagnification" layoutCustom="horizontal"></radio-group>
-    </a-form-item>
+    <a-col span="24">
+        <a-row>
+            <a-col span="5">
+                소득세 적용율:
+           </a-col> 
+           <a-col span="19" class="income-tax-app-rate">
+               <radio-group :arrayValue="IncomeTaxAppRate" v-model:valueRadioCheck="formStateTab2.incomeTaxMagnification" layoutCustom="horizontal"></radio-group>
+           </a-col>
+        </a-row>
+      </a-col >
     <div class="header-text-3">
       급여 (기본값)
       <span>
@@ -156,13 +164,14 @@
 import { defineComponent, reactive, ref, watch, computed } from 'vue';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import { radioCheckPersenPension, radioCheckReductioRate, radioCheckReductionInput, IncomeTaxAppRate, initFormStateTab2 } from '../../utils/index';
-import dayjs from 'dayjs';
 import { useStore } from 'vuex';
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from '@/helpers/commonFunction';
 import filters from '@/helpers/filters';
 import mutations from '@/graphql/mutations/PA/PA1/PA120/index';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
+import dayjs, { Dayjs } from 'dayjs';
+type RangeValue = [Dayjs, Dayjs];
 export default defineComponent({
   components: {},
   props: {
@@ -180,7 +189,7 @@ export default defineComponent({
     const totalDeduction = ref(0);
     const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
 
-    const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
+    const rangeDate =  ref<RangeValue>();
     const store = useStore();
     const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
@@ -361,6 +370,7 @@ export default defineComponent({
       emit('closePopup', false);
       notification('success', '업데이트 완료!');
       store.commit('common/actionFormDonePA120');
+      store.commit('common/keyActivePA120', props.employeeId);
     });
 
     const createDeduction = () => {
@@ -369,13 +379,35 @@ export default defineComponent({
         imputedYear: globalYear.value,
         employeeId: props.employeeId,
         input: {
-          ...formStateTab2,
-          employeementReductionStartDate: +dayjs(rangeDate.value[0]).format('YYYYMMDD'),
-          employeementReductionFinishDate: +dayjs(rangeDate.value[1]).format('YYYYMMDD'),
-        },
-      }; 
+            ...formStateTab2,
+        }
+      };
       mutate(variables);
     };
+    watch(()=>formStateTab2.employeementInsuranceDeduction,(newVal)=> {
+        if(newVal) {
+            formStateTab2.nationalPensionSupportPercent = 0;
+            formStateTab2.employeementInsuranceSupportPercent=0
+        }else {
+            delete formStateTab2.nationalPensionSupportPercent;
+            delete formStateTab2.employeementInsuranceSupportPercent
+        }
+    },{deep:true})
+    watch(()=>formStateTab2.employeementReduction,(newVal)=> {
+        if(newVal) {
+            formStateTab2.employeementReductionRatePercent = 50;
+            formStateTab2.employeementReductionInput= 1;
+            formStateTab2.employeementReductionStartDate= +dayjs().format("YYYYMMDD");
+            formStateTab2.employeementReductionFinishDate= +dayjs().format("YYYYMMDD");
+            rangeDate.value = [dayjs(), dayjs()]
+        }else {
+            delete formStateTab2.employeementReductionRatePercent;
+            delete formStateTab2.employeementReductionInput;
+            delete formStateTab2.employeementReductionStartDate;
+            delete formStateTab2.employeementReductionFinishDate;
+            rangeDate.value = undefined;
+        }
+    },{deep:true})
     return {
       formStateTab2,
       loading1,
@@ -465,12 +497,12 @@ export default defineComponent({
       padding-left: 10px;
     }
 
-    .switch-insurance {
-      margin-left: 72px;
+
+  }
+  .switch-insurance {
       width: 100px;
     }
   }
-
   .empl-ins {
     margin-left: 37px;
     > div {
@@ -496,7 +528,8 @@ export default defineComponent({
 
   .income-tax-app-rate {
     ::v-deep .dx-radiobutton {
-      margin: 0px 0px 0px 50px;
+        margin-right: 40px;
+        margin-left: -2px;
     }
   }
 
@@ -544,12 +577,8 @@ export default defineComponent({
   .summary {
     font-weight: bold;
 
-    .text1 {
-      margin-left: 50px;
-    }
-
-    .text2 {
-      margin-left: 50px;
+    div {
+        margin-bottom: 5px;
     }
 
     .text5 {
@@ -562,6 +591,5 @@ export default defineComponent({
         }
       }
     }
-  }
 }
 </style>

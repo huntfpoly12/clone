@@ -62,7 +62,7 @@
                                     key="black">
                                     {{ data.data.residentId }}
                                 </a-tooltip>
-                                <a-tooltip placement="top" v-else title="ERROR" color="red">
+                                <a-tooltip placement="top" v-else title="ERROR">
                                     {{ data.data.residentId }}
                                 </a-tooltip>
                             </template>

@@ -1,11 +1,11 @@
 <template>
     <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
         @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
-        :max-date="birthDay ? new Date() : ''">
+        :max-date="birthDay ? new Date() : ''" :placeholder="placeholder">
     </Datepicker>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue"; 
+import { defineComponent, ref, watch } from "vue";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { ko } from "date-fns/locale";
@@ -31,9 +31,13 @@ export default defineComponent({
         birthDay: {
             type: Boolean,
             default: false
+        },
+        placeholder: {
+            type: String,
+            default: ''
         }
     },
-    components: { 
+    components: {
         Datepicker,
     },
     setup(props, { emit }) {
@@ -41,11 +45,17 @@ export default defineComponent({
         watch(
             () => props.valueDate,
             (newValue) => {
-                date.value = filters.formatDate(newValue?.toString());
+                if (newValue)
+                    date.value = filters.formatDate(newValue?.toString());
+                else
+                    date.value = newValue;
             }
         );
-        const updateValue = () => {
-            emit("update:valueDate", filters.formatDateToInterger(date.value));
+        const updateValue = () => { 
+            if (date.value)
+                emit("update:valueDate", filters.formatDateToInterger(date.value));
+            else
+                emit("update:valueDate", date.value);
         };
 
         return {

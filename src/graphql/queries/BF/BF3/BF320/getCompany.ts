@@ -11,7 +11,7 @@ query getCompany ($id: Int!) {
     phone
     presidentName
     presidentMobilePhone
-    decryptedResidentId
+    residentId 
     extendInfo{
       detail{
         name

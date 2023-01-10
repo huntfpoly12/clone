@@ -4,17 +4,18 @@
             {{ idEmployee }}
         </div>
         <div style="display: flex;align-items: flex-end;">
-            <a-tooltip placement="top"
-                v-if="idCardNumber && name"
-                :color="convertBirthDay(idCardNumber)?'black':'red'" @visibleChange="onVisibleChange">
+            <a-tooltip 
+                placement="top" :color="convertBirthDay(idCardNumber) ? 'black' : 'red'"
+                v-if="idCardNumber && name && convertBirthDay(idCardNumber)"
+            >
                 <template #title>
                     <div v-if="convertBirthDay(idCardNumber)">{{ convertBirthDay(idCardNumber) }}</div>
-                    <div v-else class="error">Error</div>
                 </template>
                 <div class="text-center">
                     {{ name }}
                 </div>
             </a-tooltip>
+            <div @mouseover="onMouseover" @mouseout="onMouseOut" v-else>{{ name }}</div>
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
             <span class="tag-forDailyUse" v-if="forDailyUse == true">일용</span>
@@ -23,7 +24,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import DxButton from 'devextreme-vue/button';
 
 export default defineComponent({
@@ -47,17 +48,18 @@ export default defineComponent({
             type: Boolean,
         },
         forDailyUse: Boolean,
+        employeeId: Number
     },
     components: {
         DxButton
     },
 
-    setup(props, {emit}) {
+    setup(props, { emit }) {
         const convertBirthDay = (birthDay: any) => {
             let newBirthDay = birthDay.split("-")[0]
             let typeYear = birthDay.split("-")[1].charAt(0)
-            if(props.idCardNumber?.length == 14
-                && parseInt(props.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(props.idCardNumber.split('-')[0].slice(4, 6)) < 32){
+            if (props.idCardNumber?.length == 14
+                && parseInt(props.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(props.idCardNumber.split('-')[0].slice(4, 6)) < 32) {
                 if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
                     return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
                 else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
@@ -65,14 +67,21 @@ export default defineComponent({
             }
             return null;
         }
-        const onVisibleChange = (e:any) => {
+        const employeeId = ref(props.employeeId);
+        const onMouseover = () => {
             if(!convertBirthDay(props.idCardNumber)) {
-                emit('toolTopErorr', e)
+                emit('toolTopErorr', {isError:true, id: employeeId.value})
+            }
+        }
+        const onMouseOut = () => {
+            if(!convertBirthDay(props.idCardNumber)) {
+                emit('toolTopErorr', {isError:false, id: employeeId.value})
             }
         }
         return {
             convertBirthDay,
-            onVisibleChange
+            onMouseover,
+            onMouseOut
         }
     },
 });
@@ -122,7 +131,7 @@ export default defineComponent({
     border: 1px solid black;
     color: rgb(0, 0, 0);
     padding: 3px 10px;
-    border-radius: 5px; 
+    border-radius: 5px;
 }
 
 .display-none {
@@ -132,6 +141,7 @@ export default defineComponent({
 .jtf-center {
     justify-content: center;
 }
+
 .error {
     color: #ffffff;
     background: red;

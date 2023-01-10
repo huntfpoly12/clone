@@ -1,6 +1,6 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :mask-closable="false" footer="" v-model:visible="visible" title="사업자관리 " width="1000px"
+        <a-modal :mask-closable="false" footer="" centered :visible="visible" title="사업자관리 " width="1000px"
             @cancel="setModalVisible()">
             <a-spin tip="Loading..." :spinning="loading">
                 <standard-form action="your-action" name="edit-page-320">
@@ -31,7 +31,7 @@
                                     </a-col>
                                     <a-col :span="10">
                                         <a-form-item :label="changeTypeCompany(formState.bizType)">
-                                            <id-number-text-box v-model:valueInput="formState.decryptedResidentId"
+                                            <id-number-text-box v-model:valueInput="formState.residentId"
                                                 :disabled="true" />
                                         </a-form-item>
                                     </a-col>
@@ -107,7 +107,8 @@
                                     </default-text-box>
                                 </a-form-item>
                                 <a-form-item has-feedback label="생년월일" class="clr">
-                                    <birth-day-box v-model:valueInput="formState.extendInfoPresidentBirthday" width="200px" /> 
+                                    <birth-day-box v-model:valueInput="formState.extendInfoPresidentBirthday"
+                                        width="200px" :required="true" />
                                 </a-form-item>
                                 <a-form-item has-feedback label="휴대폰번호" class="clr">
                                     <tel-text-box width="200px"
@@ -123,7 +124,7 @@
                             </a-form>
                         </a-collapse-panel>
                         <a-collapse-panel key="3" header="CMS (자동이체출금) 계좌 정보 입력">
-                            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+                            <a-form>
                                 <a-form-item label="출금은행" class="clr">
                                     <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType"
                                         width="250px" />
@@ -147,7 +148,8 @@
                                         nameInput="formState-extendInfoCmsBankOwnerBizNumber">
                                     </default-text-box>
                                     <div class="warring-bank">
-                                        <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px; margin-top: 0px;" />
+                                        <img src="@/assets/images/iconInfo.png"
+                                            style="width: 14px; height: 14px; margin-top: 0px;" />
                                         <span class="pl-5">예금주의 사업자등록번호 또는 주민등록번호입니다.</span>
                                     </div>
                                 </a-form-item>
@@ -186,10 +188,9 @@
                         </a-collapse-panel>
                     </a-collapse>
                     <div class="custom-footer-modal">
-                        <button-basic :text="'저장하고 나가기'" :type="'info'" :mode="'contained'" @onClick="setModalVisible"
+                        <button-basic text="저장하고 나가기" type="info" mode="contained" @onClick="setModalVisible"
                             style="margin-right: 10px;" />
-                        <button-basic :text="'저장하고 나가기'" :type="'default'" :mode="'contained'"
-                            @onClick="updateCompany" />
+                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="updateCompany" />
                     </div>
                 </standard-form>
             </a-spin>
@@ -203,7 +204,7 @@ import imgUpload from "@/components/UploadImage.vue";
 import queries from "@/graphql/queries/BF/BF3/BF320/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF320/index";
 import notification from '@/utils/notification';
-import dayjs from 'dayjs'; 
+import dayjs from 'dayjs';
 import {
     DxDataGrid,
     DxColumn,
@@ -222,6 +223,7 @@ import {
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import { dataformStatePopup, formStateMomesUtils, inputInCollapseUtils, arrRadioTypeUtils, arrayRadioWithdrawDayUtils } from "../utils";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -248,19 +250,13 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const inputInCollapse = [
-            { key: 1, input_name: ['formState-name', 'formState-bizNumber', 'formState-extendInfoDetailZipcode', 'formState-extendInfoDetailRoadAddress', 'formState-extendInfoDetailPhone'] },
-            { key: 2, input_name: ['formState-extendInfoPresidentBirthday', 'formState-extendInfoPresidentMobilePhone', 'formState-extendInfoPresidentEmail', 'formState-extendInfoPresidentName'] },
-            { key: 3, input_name: ['formState-extendInfoCmsBankAccountNumber', 'formState-extendInfoCmsBankOwnerName', 'formState-extendInfoCmsBankOwnerBizNumber'] },
-            { key: 4, input_name: ['withholding-capacity'] },
+            ...inputInCollapseUtils
         ]
         const arrRadioType = reactive([
-            { id: 1, text: '법인사업자' },
-            { id: 2, text: '개인사업자' }
+            ...arrRadioTypeUtils
         ])
         const arrayRadioWithdrawDay = reactive([
-            { id: '매월 5일', text: '매월 5일' },
-            { id: '매월 12일', text: '매월 12일' },
-            { id: '매월 19일', text: '매월 19일' },
+            ...arrayRadioWithdrawDayUtils
         ])
         let visible = ref(false);
         const dataQuery = ref();
@@ -272,78 +268,12 @@ export default defineComponent({
         const fileList = ref<UploadProps["fileList"]>([]);
         const activeKey = ref([1]);
         const formState = reactive({
-            id: 0,
-            code: "",
-            name: "",
-            bizNumber: "",
-            bizType: 1,
-            address: "",
-            phone: "",
-            decryptedResidentId: '',
-            presidentName: "",
-            presidentMobilePhone: "",
-            extendInfoDetailName: "",
-            extendInfoDetailZipcode: "",
-            extendInfoDetailRoadAddress: "",
-            extendInfoDetailJibunAddress: "",
-            extendInfoDetailAddressExtend: "",
-            extendInfoDetailAddressDetailBcode: "",
-            extendInfoDetailAddressDetailBname: "",
-            extendInfoDetailAddressDetailBuildingCode: "",
-            extendInfoDetailAddressDetailBuildingName: "",
-            extendInfoDetailAddressDetailRoadname: "",
-            extendInfoDetailAddressDetailRoadnameCode: "",
-            extendInfoDetailAddressDetailSido: "",
-            extendInfoDetailAddressDetailSigungu: "",
-            extendInfoDetailAddressDetailSigunguCode: "",
-            extendInfoDetailAddressDetailZonecode: "",
-            extendInfoDetailPhone: "",
-            extendInfoDetailFax: "",
-            extendInfoDetailLicenseFileStorageId: "",
-            extendInfoPresidentName: "",
-            extendInfoPresidentBirthday: "",
-            extendInfoPresidentMobilePhone: "",
-            extendInfoPresidentEmail: "",
-            extendInfoCmsBankBankType: "",
-            extendInfoCmsBankAccountNumber: "",
-            extendInfoCmsBankOwnerBizNumber: "",
-            extendInfoCmsBankOwnerName: "",
-            extendInfoCmsBankWithdrawDay: "",
-            sealFileStorageId: null,
-            createdAt: 0,
-            createdBy: "",
-            updatedAt: 0,
-            updatedBy: "",
-            ip: "",
-            active: true,
-            seal: null,
-            canceledAt: null,
-            unpaidMonths: 0
+            ...dataformStatePopup
         });
         let dataImg = ref()
         let objDataDefault = reactive({});
-        const formStateMomes = ref([
-            {
-                memoId: null,
-                ownerUserId: 0,
-                ownerName: "",
-                ownerUsername: "",
-                memo: "",
-                createdAt: dayjs(new Date()).format('YYYY/MM/DD'),
-                createdBy: "",
-                updatedAt: dayjs(new Date()).format('YYYY/MM/DD'),
-                updatedBy: "",
-                ip: "",
-                active: "",
-            }
-        ]);
+        const formStateMomes = ref([...formStateMomesUtils]);
         const labelCol = ref({ style: { width: "150px" } });
-        const wrapperCol = ref({ span: 14 });
-        const radioStyle = ref({
-            display: "flex",
-            height: "30px",
-            lineHeight: "30px",
-        });
         const titleModal = "사업자등록증";
         const removeImg = () => {
             dataImg.value = ''
@@ -471,10 +401,10 @@ export default defineComponent({
                 actionUpdateMemo({ companyId: formState.id, memo: note, memoId: mmId });
             }
         }
-        watch(result, (value) => { 
+        watch(result, (value) => {
             if (value && value.getCompany) {
                 formState.id = value.getCompany.id;
-                formState.decryptedResidentId = value.getCompany.decryptedResidentId;
+                formState.residentId = value.getCompany.residentId;
                 formState.code = value.getCompany.code;
                 formState.name = value.getCompany.name;
                 formState.bizNumber = value.getCompany.bizNumber;
@@ -621,7 +551,7 @@ export default defineComponent({
             return dayjs(date).format('YYYY/MM/DD')
         };
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
+            if (JSON.stringify(objDataDefault) !== JSON.stringify(formState))
                 comfirmClosePopup(() => emit("closePopup", false))
             else
                 emit("closePopup", false)
@@ -644,8 +574,6 @@ export default defineComponent({
             activeKey,
             formState,
             labelCol,
-            wrapperCol,
-            radioStyle,
             titleModal,
             visible,
             changeTypeCompany,
@@ -666,4 +594,7 @@ export default defineComponent({
     },
 });
 </script> 
-<style lang="scss" scoped src="../style/popup/index.scss"/> 
+ 
+<style lang="scss" scoped src="../style/popup/index.scss">
+
+</style> 

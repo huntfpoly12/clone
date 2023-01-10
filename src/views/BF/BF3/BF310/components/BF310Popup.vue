@@ -1,7 +1,7 @@
 <template>
     <div id="modal-detail-bf-310">
         <a-modal :mask-closable="false" :visible="modalStatus" title="계약정보관리&심사 " centered @cancel="setModalVisible()"
-            width="1000px" :bodyStyle="{ height: '800px' }" :footer="null">
+            width="1000px" :bodyStyle="{ height: '800px' }" footer="">
             <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
                 <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
                     <div class="collapse-content">

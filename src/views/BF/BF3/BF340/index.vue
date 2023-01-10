@@ -89,11 +89,11 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
-                                <a-tooltip placement="top">
+                                <a-tooltip  color="black" placement="top">
                                     <template #title>편집</template>
                                     <EditOutlined @click="setModalEditVisible(data)" />
                                 </a-tooltip>
-                                <a-tooltip placement="top">
+                                <a-tooltip  color="black" placement="top">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
@@ -225,12 +225,12 @@ export default defineComponent({
             refetchData();
         };
         // ============ WATCH =======================
-        watch(modalEditStatus, (newValue, old) => {
-            if (!newValue) {
-                trigger.value = true;
-                refetchData();
-            }
-        });
+        // watch(modalEditStatus, (newValue, old) => {
+        //     if (!newValue) {
+        //         trigger.value = true;
+        //         refetchData();
+        //     }
+        // });
         watch(modalAddNewStatus, (newValue, old) => {
             if (!newValue) {
                 trigger.value = true;

@@ -9,7 +9,7 @@
         <span>{{ typeNameRes }} [{{ incomeTypeNameRes }}]</span>
     </div>
 
-    <a-tooltip v-else>
+    <a-tooltip v-else color="black">
         <template #title>{{ incomeTypeNameRes }}</template>
         <div class="custom-grade-cell">
             <div class="custom-grade-cell-tag">{{ typeCodeRes }}</div>

@@ -88,7 +88,7 @@
                     <DxColumn caption="사업자코드" data-field="company.code" />
                     <DxColumn caption="상호 주소" cell-template="company" width="100" />
                     <template #company="{ data }">
-                        <a-tooltip placement="topLeft">
+                        <a-tooltip  color="black" placement="topLeft">
                             <template #title>{{ data.data.company.name + " " + data.data.company.address }}</template>
                             {{ data.data.company.name + " " + data.data.company.address }}
                         </a-tooltip>
@@ -99,7 +99,7 @@
                             <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
                                 :dataRow="data.data" @dataRow="changeStatus" />
                             <div class="pl-5 pr-5">
-                                <a-tooltip placement="topLeft">
+                                <a-tooltip  color="black" placement="topLeft">
                                     <template #title>소득별 마감현황</template>
                                     <plus-outlined @click="openModalStatus(data.data)" />
                                 </a-tooltip>

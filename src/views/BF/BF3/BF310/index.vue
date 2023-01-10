@@ -93,7 +93,8 @@
                                     }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
                                     </a-table>
                                 </template>
-                                <a-tag v-if="data.data.simpleAccountingInfos">{{ data.data.simpleAccountingInfos.length
+                                <a-tag v-if="data.data.simpleAccountingInfos">{{
+                                    data.data.simpleAccountingInfos.length
                                 }}
                                 </a-tag>
                             </a-popover>
@@ -119,11 +120,11 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
-                                <a-tooltip placement="top">
+                                <a-tooltip placement="top" color="black">
                                     <template #title>편집</template>
                                     <EditOutlined @click="setModalVisible(data)" />
                                 </a-tooltip>
-                                <a-tooltip placement="top">
+                                <a-tooltip placement="top" color="black">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
@@ -133,7 +134,7 @@
                 </DxDataGrid>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                        :total="rowTable" show-less-items @change="changePage"/>
+                        :total="rowTable" show-less-items @change="changePage" />
                 </div>
                 <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -194,8 +195,8 @@ export default defineComponent({
         const originData = reactive({
             ...dataSearchIndex,
             rows: per_page,
-            startDate:+dayjs().subtract(1, 'year').format('YYYYMMDD'),
-            finishDate:+dayjs().format('YYYYMMDD')
+            startDate: +dayjs().subtract(1, 'year').format('YYYYMMDD'),
+            finishDate: +dayjs().format('YYYYMMDD')
         })
 
         const setModalVisible = (data: any,) => {
@@ -252,7 +253,7 @@ export default defineComponent({
             }
         });
         // Get api when page is changed
-        const onChangePage = (page: any, pageSize:any) => {
+        const onChangePage = (page: any, pageSize: any) => {
             originData.page = page;
             trigger.value = true;
             refetchData();
@@ -280,6 +281,8 @@ export default defineComponent({
 
 });
 </script>
+
+
 
 
 

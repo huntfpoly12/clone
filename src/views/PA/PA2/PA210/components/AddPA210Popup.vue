@@ -1,0 +1,187 @@
+<template>
+    <div id="add-pa-210">
+        <a-modal :visible="modalStatus" centered okText="네. 작성합니다" cancelText="아니요" @cancel="setModalVisible()"
+            :mask-closable="false" width="1000px" footer="">
+            <standard-form formName="add-pa-210" class="pt-20">
+                <a-spin tip="Loading..." :spinning="loading">
+                    <a-form-item label="지방소득세환급청구서/납부내역서">
+                        <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="afterDeadline"
+                            :layoutCustom="'horizontal'" />
+                    </a-form-item>
+                    <DxDataGrid class="pt-20" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataReports"
+                        :show-borders="true" key-expr="reportId" :allow-column-reordering="move_column"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        @selection-changed="onSelectionChanged">
+                        <DxSelection mode="single" />
+                        <DxColumn caption="귀속 연월" cell-template="imputed"/>
+                        <template #imputed="{ data }">
+                            <a-tooltip>
+                                <template #title>
+                                    귀속기간
+                                    {{
+                                        data.data.reportType == 1 ?
+                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
+                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                    }}
+                                </template>
+                                <div class="custom-grade-cell text-align-center">
+                                    <DxButton
+                                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                                </div>
+                            </a-tooltip>
+                        </template>
+                        <DxColumn caption="지급 연월" cell-template="payment" />
+                        <template #payment="{ data }">
+                            <a-tooltip>
+                                <template #title>
+                                    귀속기간
+                                    {{
+                                        data.data.reportType == 1 ?
+                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
+                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                    }}
+                                </template>
+                                <div class="custom-grade-cell text-align-center">
+                                    <DxButton
+                                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                                </div>
+                            </a-tooltip>
+                        </template>
+                        <DxColumn caption="신고 주기" cell-template="reportType" />
+                        <template #reportType="{ data }">
+                            <DxButton :text="getText(data.data.reportType)[0]"
+                                :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                        </template>
+                        <DxColumn data-field="yearEndTaxAdjustment" caption="연말" css-class="cell-center"
+                            cell-template="yearEndTaxAdjustment" />
+                        <template #yearEndTaxAdjustment="{ data }">{{
+                            data.data.yearEndTaxAdjustment ? 'O' : ''
+                        }}</template>
+
+                        <DxColumn data-field="refund" caption="환급" css-class="cell-center" cell-template="refund" />
+                        <template #refund="{ data }">{{ data.data.refund ? 'O' : '' }}</template>
+                    </DxDataGrid>
+
+                </a-spin>
+                <h3 class="text-align-center mt-20">선택한 원천징수이행상황신고서를 작성하시겠습니까?</h3>
+                <div class="text-align-center mt-20">
+                    <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+                        @onClick="setModalVisible()" />
+                    <button-basic class="button-form-modal" :text="'네. 작성합니다'" :width="140" :type="'default'"
+                        :mode="'contained'" @onClick="onSubmit($event)" />
+                </div>
+            </standard-form>
+        </a-modal>
+        <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
+            :dataReport="dataReport"></report-grid>
+    </div>
+</template>
+
+<script lang="ts">
+import { ref, defineComponent, watch, computed } from "vue";
+import {
+    WageReportType,
+    enum2Entries,
+} from "@bankda/jangbuda-common";
+import notification from "@/utils/notification";
+import dayjs, { Dayjs } from "dayjs";
+import ReportGrid from "./ReportGrid/ReportGrid.vue";
+import DxButton from "devextreme-vue/button";
+import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid"
+import { useStore } from "vuex";
+export default defineComponent({
+    props: {
+        modalStatus: Boolean,
+        lastMonth: {
+            type: Number,
+            default: 1,
+        }
+    },
+    components: {
+        DxDataGrid, DxColumn, DxButton, DxSelection,
+        ReportGrid
+    },
+
+    setup(props, { emit }) {
+        const store = useStore();
+        const globalYear = computed(() => store.state.settings.globalYear);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
+        const loading = ref<Boolean>(false)
+        const dataReports: any = ref([])
+        const dataReport: any = ref([])
+        const reportGridStatus = ref(false)
+        const arrayRadioCheck = ref([
+            { id: false, text: "정기신고" },
+            { id: true, text: "기한후신고" },
+        ]);
+        const afterDeadline = ref(false)
+        // ===================WATCH==================================
+        watch(() => props.lastMonth, (value) => {
+            loading.value = true;
+            dataReports.value = []
+            for (let i = value + 1; i <= 12; i++) {
+                dataReports.value.push({
+                    reportId: i,
+                    imputedYear: globalYear.value,
+                    imputedMonth: i,
+                    paymentYear: globalYear.value,
+                    paymentMonth: i,
+                    reportType: 1,
+                    index: 1,
+                    status: 10,
+                    refund: true,
+                    submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                    yearEndTaxAdjustment: true,
+                    imputedFinishYearMonth: parseInt(dayjs().format("YYYYMMDD")),
+                    imputedStartYearMonth: parseInt(dayjs().format("YYYYMMDD")),
+                })
+            }
+            loading.value = false;
+        })
+
+        // ===================FUNCTION===============================
+        const onSubmit = (e: any) => {
+            dataReport.value[0].afterDeadline = afterDeadline.value
+            reportGridStatus.value = true
+        };
+        const setModalVisible = () => {
+            emit("closePopup", false)
+        };
+        const getText = (data?: any) => {
+            let row: any = ''
+            enum2Entries(WageReportType).map((value) => {
+                if (data == value[1]) {
+                    row = value
+                }
+            });
+            return row;
+        };
+        const onSelectionChanged = (data: any) => {
+            dataReport.value = [data.selectedRowsData[0]]
+        };
+        return {
+            globalYear, move_column, colomn_resize, dayjs,
+            onSelectionChanged,
+            getText,
+            dataReports, dataReport,
+            loading,
+            onSubmit,
+            setModalVisible,
+            reportGridStatus,
+            arrayRadioCheck, afterDeadline
+        };
+    },
+});
+</script>
+<style lang="scss" scoped src="../style/stylePopup.scss">
+::v-deep ul.ant-cascader-menu {
+    height: auto;
+    max-height: 180px;
+}
+</style>
