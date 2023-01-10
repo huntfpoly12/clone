@@ -315,7 +315,8 @@ export default defineComponent({
         if (output.modifyReport) { // 수정신고세액(A90)
             
         }
-        setValueDataTable(output.summary.code,output.summary)
+        setValueDataTable(output.summary.code, output.summary)
+        setValueDataTable("adjustmentOfRefundTaxAmount",output.adjustmentOfRefundTaxAmount)
         //r.push(output.summary); // 총합계(A99)
       }
     })
@@ -343,6 +344,27 @@ export default defineComponent({
         hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid);
       if (data.ruralSpecialTaxPaid)
         hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid);
+
+      if (data.prevMonthNonRefundableTaxAmount)
+        hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.prevMonthNonRefundableTaxAmount);
+      if (data.preRefundApplicationTaxAmount)
+        hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.preRefundApplicationTaxAmount);
+      if (data.deductibleBalance)
+        hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.deductibleBalance);
+      if (data.thisMonthRefundTaxGeneral)
+        hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.thisMonthRefundTaxGeneral);
+      if (data.thisMonthRefundTaxOtherFinancialCompany)
+        hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.thisMonthRefundTaxOtherFinancialCompany);
+      if (data.thisMonthRefundTaxOtherMerge)
+        hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthRefundTaxOtherMerge);
+      if (data.refundTaxSubjectToAdjustment)
+        hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.refundTaxSubjectToAdjustment);
+      if (data.thisMonthTotalAdjustedRefundTaxAmount)
+        hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.thisMonthTotalAdjustedRefundTaxAmount);
+      if (data.nextMonthRefundTaxAmount)
+        hot.setDataAtCell(rowPosition?.value[8][0], rowPosition?.value[8][1], data.nextMonthRefundTaxAmount);
+      if (data.refundApplicationAmount)
+        hot.setDataAtCell(rowPosition?.value[9][0], rowPosition?.value[9][1], data.refundApplicationAmount);
     }
     return {
       setModalVisible,
