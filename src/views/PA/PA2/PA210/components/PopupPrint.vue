@@ -1,30 +1,30 @@
 <template>
-    <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="" okText="저장하고 나가기"
-        cancelText="그냥 나가기" @cancel="setModalVisible" width="576px">
-        <a-row :gutter="24"  class="pt-20 mt-20">
+    <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="" okText="저장하고 나가기" cancelText="그냥 나가기"
+        @cancel="setModalVisible" width="576px">
+        <a-row :gutter="24" class="pt-20 mt-20">
             <a-col :span="12">
                 <checkbox-basic size="14" label="원천징수이행상황신고서" v-model:valueCheckbox="dataForm.row1.checkbox" />
             </a-col>
             <a-col :span="12">
-                <date-time-box class="mb-5" v-model:valueDate="dataForm.row1.date" :placeholder="'작성일(YYYY-MM-DD)'"/>
+                <date-time-box class="mb-5" v-model:valueDate="dataForm.row1.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
                 <checkbox-basic size="14" label="소득세납부서" v-model:valueCheckbox="dataForm.row2.checkbox" />
             </a-col>
             <a-col :span="12">
-                <date-time-box class="mb-5" v-model:valueDate="dataForm.row2.date" :placeholder="'작성일(YYYY-MM-DD)'"/>
+                <date-time-box class="mb-5" v-model:valueDate="dataForm.row2.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
                 <checkbox-basic size="14" label="지방소득세납부서" v-model:valueCheckbox="dataForm.row3.checkbox" />
             </a-col>
             <a-col :span="12">
-                <date-time-box class="mb-5" v-model:valueDate="dataForm.row3.date" :placeholder="'작성일(YYYY-MM-DD)'"/>
+                <date-time-box class="mb-5" v-model:valueDate="dataForm.row3.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
                 <checkbox-basic size="14" label="지방소득세환급청구서/납부내역서" v-model:valueCheckbox="dataForm.row4.checkbox" />
             </a-col>
             <a-col :span="12">
-                <date-time-box class="mb-5" v-model:valueDate="dataForm.row4.date" :placeholder="'작성일(YYYY-MM-DD)'"/>
+                <date-time-box class="mb-5" v-model:valueDate="dataForm.row4.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="24" class="text-center mt-10">
                 서식 출력하시겠습니까?
@@ -110,19 +110,19 @@ export default defineComponent({
 
         watch(() => dataForm, (newVal: any) => {
             if (newVal.row1.checkbox == true)
-                newVal.row1.date =filters.formatDateToInterger(dayjs())
+                newVal.row1.date = filters.formatDateToInterger(dayjs())
             else
                 newVal.row1.date = ""
             if (newVal.row2.checkbox == true)
-                newVal.row2.date =filters.formatDateToInterger(dayjs())
+                newVal.row2.date = filters.formatDateToInterger(dayjs())
             else
                 newVal.row2.date = ""
             if (newVal.row3.checkbox == true)
-                newVal.row3.date =filters.formatDateToInterger(dayjs())
+                newVal.row3.date = filters.formatDateToInterger(dayjs())
             else
                 newVal.row3.date = ""
             if (newVal.row4.checkbox == true)
-                newVal.row4.date =filters.formatDateToInterger(dayjs())
+                newVal.row4.date = filters.formatDateToInterger(dayjs())
             else
                 newVal.row4.date = ""
         }, { deep: true })
