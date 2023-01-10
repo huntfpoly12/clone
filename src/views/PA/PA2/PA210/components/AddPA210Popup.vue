@@ -130,7 +130,6 @@ export default defineComponent({
             let imputedMonth = 1
             let paymentMonth = 1
             let year = globalYear.value
-            console.log(value.reportType);
             if (value.reportType == 1) {
                 month = 12
                 if (value.lastMonth == 12) {
