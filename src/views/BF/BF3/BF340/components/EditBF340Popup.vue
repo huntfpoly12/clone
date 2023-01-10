@@ -174,7 +174,7 @@ export default defineComponent({
         const visible = ref<boolean>(false);
         const receiptOrNot = ref<boolean>(false);
         const labelCol = { span: 6 };
-
+        let dataDefault = reactive({})
         // watch event modal popup
         watch(
             () => props.modalStatus,
@@ -265,6 +265,8 @@ export default defineComponent({
                 dataQueryCheckPer.value = { id: value.getSalesRepresentative.id, name: value.getSalesRepresentative.name };
                 // trigger query check if can be change business registration number 
                 refetchCheckPer()
+
+                dataDefault = JSON.stringify(formState)
             }
         });
 
@@ -317,7 +319,11 @@ export default defineComponent({
         };
 
         const setModalVisible = () => {
-            comfirmClosePopup(() => emit("closePopup", false))
+            if (dataDefault == JSON.stringify(formState)) {
+                emit("closePopup", false)
+            } else {
+                comfirmClosePopup(() => emit("closePopup", false))
+            }
         }
 
         // watch result resCheckPerEdit
