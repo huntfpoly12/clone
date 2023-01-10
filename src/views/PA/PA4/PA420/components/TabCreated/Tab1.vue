@@ -30,7 +30,7 @@
 
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" :disabled="true" :valueDate="$filters.formatDate(joinedAt)" />
+                        <date-time-box width="150px" :disabled="true" :valueDate="joinedAt" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">

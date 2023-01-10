@@ -368,8 +368,8 @@ export default defineComponent({
                 delete variables.value.input.prevRetirementBenefitStatus
             }
             delete variables.value.input.checkBoxCallApi
-            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.toString()
-            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.toString()
+            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = parseInt(variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate)
+            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = parseInt(variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate)
             trigger.value = true;
         }
 

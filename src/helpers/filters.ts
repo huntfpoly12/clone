@@ -18,10 +18,12 @@ const filters = {
         } return 0;
     },
     formatDate(date: any) {
+        if (typeof date == 'number')
+            date = date.toString()
         return dayjs(date).format('YYYY-MM-DD')
     },
-    formatDateToInterger(date: any) { 
-        let valueConver = 0 
+    formatDateToInterger(date: any) {
+        let valueConver = 0
         if (date.length <= 7) {
             valueConver = parseInt(dayjs(date).format('YYYYMM'))
         } else {

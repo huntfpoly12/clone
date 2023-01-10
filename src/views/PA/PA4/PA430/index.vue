@@ -87,12 +87,12 @@
                     <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate"
                         cell-template="settlementStartDate" css-class="cell-center" :width="100" />
                     <template #settlementStartDate="{ data }">
-                        {{ $filters.formatDate(data.value.toString()) }}
+                        {{ $filters.formatDate(data.value) }}
                     </template>
                     <DxColumn caption="퇴사일 (정산종료일) " data-field="settlementFinishDate"
                         cell-template="settlementFinishDate" css-class="cell-center" :width="100" />
                     <template #settlementFinishDate="{ data }">
-                        {{ $filters.formatDate(data.value.toString()) }}
+                        {{ $filters.formatDate(data.value) }}
                     </template>
                     <DxColumn caption="귀속연월" css-class="cell-center" cell-template="inputedYearMonth" />
                     <template #inputedYearMonth="{ data }">

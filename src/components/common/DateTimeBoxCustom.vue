@@ -38,10 +38,8 @@ export default defineComponent({
     components: {
         Datepicker,
     },
-    setup(props, { emit }) {
-        console.log(props.startDate);
-
-        const date: any = ref(props.valueDate ? filters.formatDate(props.valueDate.toString()) : filters.formatDate(props.valueDate))
+    setup(props, { emit }) { 
+        const date: any = ref(filters.formatDate(props.valueDate))
         watch(
             () => props.valueDate,
             (newValue) => {
@@ -50,14 +48,7 @@ export default defineComponent({
                 else
                     date.value = newValue;
             }
-        );
-        watch(
-            () => props.startDate,
-            (newValue) => {
-                console.log(newValue);
-
-            }
-        );
+        ); 
         const updateValue = () => {
             if (date.value)
                 emit("update:valueDate", filters.formatDateToInterger(date.value));
