@@ -53,9 +53,9 @@
                             귀속기간
                             {{
                                 data.data.reportType == 1 ?
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
+                                    dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -134,7 +134,7 @@
                             <div style="width: 100%;text-align: center;">[+]</div>
                         </div>
                     </a-tooltip>
-                    
+
                 </template>
                 <DxColumn :width="80" cell-template="pupop" caption="출력 메일" />
                 <template #pupop="{ data }" class="custom-action">
@@ -148,14 +148,18 @@
             </DxDataGrid>
         </a-spin>
     </div>
-    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :dataPopupAdd="dataPopupAdd" />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-        title="변경이력" typeHistory="pa-210" />
+    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false"
+        :dataPopupAdd="dataPopupAdd" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+        typeHistory="pa-210" />
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
-    <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false" :dataCall="dataPopup" />
+    <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false"
+        :dataCall="dataPopup" />
+    <ReportGrid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
+        :dataReport="dataReport"></ReportGrid>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, reactive, watch } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import {
     WageReportType,
     enum2Entries,
@@ -163,8 +167,10 @@ import {
 import dayjs from 'dayjs';
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from "vuex";
-import { useQuery } from "@vue/apollo-composable";
+import notification from "@/utils/notification"
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
+import ReportGrid from "./components/ReportGrid/ReportGrid.vue";
 import AddPA210Popup from "./components/AddPA210Popup.vue";
 import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
@@ -172,11 +178,12 @@ import HistoryPopup from "@/components/HistoryPopup.vue";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid"
 import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
+import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxItem, DxButton, HistoryOutlined,
-        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail
+        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGrid
     },
     setup() {
         const store = useStore();
@@ -188,19 +195,20 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false);
         const modalPrintStatus = ref<boolean>(false);
         const modalSendEmailStatus = ref<boolean>(false);
+        const reportGridStatus = ref<boolean>(false)
+        const dataReport: any = ref([])
         const dataSource: any = ref([])
         const dataPopup = ref()
         const dataPopupAdd = ref({
-            lastMonth: 1,
-            reportType: 1,
-            paymentType: 1,
+            lastMonth: 0,
+            reportType: 0,
+            paymentType: 0,
         })
-        const lastMonth = ref<number>(1);
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
         });
-        
+
         // ================GRAPQL====================================
         const {
             refetch: refetchData,
@@ -216,6 +224,18 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
+        const {
+            mutate: actionChangeStatus,
+            onDone: doneChangeStatus,
+            onError: errChangeStatus
+        } = useMutation(mutations.changeTaxWithholdingStatusReportStatus);
+        doneChangeStatus(() => {
+            notification('success', `업부상태 변경되었습니다!`)
+            refetchData()
+        })
+        errChangeStatus((error) => {
+            notification('error', error.message)
+        })
 
         // ===================WATCH==================================
         watch(result, (value) => {
@@ -227,12 +247,15 @@ export default defineComponent({
             if (value) {
                 dataPopupAdd.value.reportType = value.getWithholdingConfig.reportType;
                 dataPopupAdd.value.paymentType = value.getWithholdingConfig.paymentType;
+                // dataPopupAdd.value.reportType = 1;
+                // dataPopupAdd.value.paymentType = 2;
             }
         });
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
             dataPopupAdd.value.lastMonth = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
+            // dataPopupAdd.value.lastMonth = 9;
             modalAddNewStatus.value = true;
         }
         const openModalHistory = (data: any) => {
@@ -255,22 +278,31 @@ export default defineComponent({
             modalPrintStatus.value = true;
         }
         const changeStatus = (data: any) => {
-            let dataChangeStatus = {
+            actionChangeStatus({
                 "companyId": data.companyId,
                 "imputedYear": data.imputedYear,
                 "reportId": data.reportId,
                 "status": data.status
-            }
-            // actionChangeStatus(dataChangeStatus)
+            })
         }
         const editRow = (value: any) => {
-            // if (props.dataRows.length == 1) {
-            //     modalEdit.value = true;
-            //     popupDataEdit.value = props.dataRows[0]
-
-            // } else {
-            //     notification('error', `항목을 하나 이상 선택해야합니다`)
-            // }
+            dataReport.value = [{
+                reportId: value.reportId,
+                imputedYear: value.imputedYear,
+                imputedMonth: value.imputedMonth,
+                paymentYear: value.paymentYear,
+                paymentMonth: value.paymentMonth,
+                reportType: value.reportType,
+                index: value.index,
+                status: value.status,
+                refund: value.refund,
+                submissionDate: value.submissionDate,
+                yearEndTaxAdjustment: value.yearEndTaxAdjustment,
+                imputedFinishYearMonth: value.imputedFinishYearMonth,
+                paymentFinishYearMonth: value.paymentFinishYearMonth,
+                detailId: value.detailId,
+            }];
+            reportGridStatus.value = true;
         };
         const getText = (data?: any) => {
             let row: any = ''
@@ -291,9 +323,10 @@ export default defineComponent({
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,
             openPopupPrint, modalPrintStatus,
+            editRow, reportGridStatus, dataReport,
             dataPopup,
             changeStatus,
-            editRow,
+
         };
     },
 });

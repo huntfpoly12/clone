@@ -6,32 +6,33 @@
                 <checkbox-basic size="14" label="원천징수이행상황신고서" v-model:valueCheckbox="dataForm.row1.checkbox" />
             </a-col>
             <a-col :span="12">
-                <date-time-box class="mb-5" v-model:valueDate="dataForm.row1.date" :placeholder="'작성일(YYYY-MM-DD)'" />
+                <date-time-box :disabled="!dataForm.row1.checkbox" class="mb-5" v-model:valueDate="dataForm.row1.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
                 <checkbox-basic size="14" label="소득세납부서" v-model:valueCheckbox="dataForm.row2.checkbox" />
             </a-col>
             <a-col :span="12">
-                <date-time-box class="mb-5" v-model:valueDate="dataForm.row2.date" :placeholder="'작성일(YYYY-MM-DD)'" />
+                <date-time-box :disabled="!dataForm.row2.checkbox" class="mb-5" v-model:valueDate="dataForm.row2.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
                 <checkbox-basic size="14" label="지방소득세납부서" v-model:valueCheckbox="dataForm.row3.checkbox" />
             </a-col>
             <a-col :span="12">
-                <date-time-box class="mb-5" v-model:valueDate="dataForm.row3.date" :placeholder="'작성일(YYYY-MM-DD)'" />
+                <date-time-box :disabled="!dataForm.row3.checkbox" class="mb-5" v-model:valueDate="dataForm.row3.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
                 <checkbox-basic size="14" label="지방소득세환급청구서/납부내역서" v-model:valueCheckbox="dataForm.row4.checkbox" />
             </a-col>
             <a-col :span="12">
-                <date-time-box class="mb-5" v-model:valueDate="dataForm.row4.date" :placeholder="'작성일(YYYY-MM-DD)'" />
+                <date-time-box :disabled="!dataForm.row4.checkbox" class="mb-5" v-model:valueDate="dataForm.row4.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="24" class="text-center mt-10">
                 서식 출력하시겠습니까?
             </a-col>
             <a-col :span="24" class="text-center mt-10">
                 <button-basic text="아니요" type="default" mode="outlined" width="100" @onClick="setModalVisible" />
-                <button-basic text="네" type="default" class="ml-5" width="100" @onClick="actionPrint" />
+                <button-basic :disabled="disabledButton" text="네" type="default" class="ml-5" width="100"
+                    @onClick="actionPrint" />
             </a-col>
         </a-row>
     </a-modal>
@@ -42,6 +43,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
+import { dataFormAction } from "./../utils/index" 
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
 export default defineComponent({
@@ -55,26 +57,10 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
-        let dataForm = reactive({
-            row1: {
-                date: '',
-                checkbox: false
-            },
-            row2: {
-                date: '',
-                checkbox: false
-            },
-            row3: {
-                date: '',
-                checkbox: false
-            },
-            row4: {
-                date: '',
-                checkbox: false
-            },
-        })
+        let dataForm: any = ref(JSON.parse(JSON.stringify({...dataFormAction})))
         let trigger = ref(false)
         let dataPrint: any = ref()
+        let disabledButton = ref(false)
         /*
         * ============== API ============== 
         */
@@ -96,36 +82,49 @@ export default defineComponent({
         errorPrint(res => {
             notification('error', res.message)
         })
+
         /*
          * ============== WATCHING ============== 
          */
         watch(() => props.modalStatus, (newVal: any) => {
-            if (newVal == true) {
-                dataPrint.value = {
-                    ...props.dataCall,
-                    formInputs: []
-                }
-            }
+            dataForm.value = JSON.parse(JSON.stringify({...dataFormAction}))
         }, { deep: true })
 
-        watch(() => dataForm, (newVal: any) => {
-            if (newVal.row1.checkbox == true)
-                newVal.row1.date = filters.formatDateToInterger(dayjs())
-            else
-                newVal.row1.date = ""
-            if (newVal.row2.checkbox == true)
-                newVal.row2.date = filters.formatDateToInterger(dayjs())
-            else
-                newVal.row2.date = ""
-            if (newVal.row3.checkbox == true)
-                newVal.row3.date = filters.formatDateToInterger(dayjs())
-            else
-                newVal.row3.date = ""
-            if (newVal.row4.checkbox == true)
-                newVal.row4.date = filters.formatDateToInterger(dayjs())
-            else
-                newVal.row4.date = ""
+        watch(() => dataForm.value, (newVal: any) => {
+            if (newVal.row1.checkbox == true || newVal.row2.checkbox == true || newVal.row3.checkbox == true || newVal.row4.checkbox == true) {
+                disabledButton.value = false
+            } else {
+                disabledButton.value = true
+            }
         }, { deep: true })
+        watch(() => dataForm.value.row1.checkbox, (newVal: any) => {
+            if (newVal) {
+                dataForm.value.row1.date = filters.formatDateToInterger(dayjs())
+            } else {
+                dataForm.value.row1.date = ""
+            }
+        })
+        watch(() => dataForm.value.row2.checkbox, (newVal: any) => {
+            if (newVal) {
+                dataForm.value.row2.date = filters.formatDateToInterger(dayjs())
+            } else {
+                dataForm.value.row2.date = ""
+            }
+        })
+        watch(() => dataForm.value.row3.checkbox, (newVal: any) => {
+            if (newVal) {
+                dataForm.value.row3.date = filters.formatDateToInterger(dayjs())
+            } else {
+                dataForm.value.row3.date = ""
+            }
+        })
+        watch(() => dataForm.value.row4.checkbox, (newVal: any) => {
+            if (newVal) {
+                dataForm.value.row4.date = filters.formatDateToInterger(dayjs())
+            } else {
+                dataForm.value.row4.date = ""
+            }
+        })
 
         /*
          * ============== FUNCTION ============== 
@@ -135,36 +134,38 @@ export default defineComponent({
             emit("closePopup", true)
         }
         const actionPrint = () => {
-            dataPrint.value.formInputs = []
-            if (dataForm.row1.checkbox == true)
+            dataPrint.value = {
+                ...props.dataCall,
+                formInputs: []
+            }
+            if (dataForm.value.row1.checkbox == true)
                 dataPrint.value.formInputs.push({
-                    "createDate": filters.formatDateToInterger(dataForm.row1.date),
+                    "createDate": dataForm.value.row1.date,
                     "type": 1
                 })
-            if (dataForm.row2.checkbox == true)
+            if (dataForm.value.row2.checkbox == true)
                 dataPrint.value.formInputs.push({
-                    "createDate": filters.formatDateToInterger(dataForm.row2.date),
+                    "createDate": dataForm.value.row2.date,
                     "type": 2
                 })
-            if (dataForm.row3.checkbox == true)
+            if (dataForm.value.row3.checkbox == true)
                 dataPrint.value.formInputs.push({
-                    "createDate": filters.formatDateToInterger(dataForm.row3.date),
+                    "createDate": dataForm.value.row3.date,
                     "type": 3
                 })
-            if (dataForm.row4.checkbox == true)
+            if (dataForm.value.row4.checkbox == true)
                 dataPrint.value.formInputs.push({
-                    "createDate": filters.formatDateToInterger(dataForm.row4.date),
+                    "createDate": dataForm.value.row4.date,
                     "type": 4
                 })
             trigger.value = true
-            if (dataPrint.value.formInputs.length > 0)
-                refetchPrint()
-            else
-                notification('error', "Vui lòng chọn !")
+            refetchPrint()
         }
         return {
             dataForm,
-            setModalVisible, actionPrint
+            setModalVisible, actionPrint,
+            disabledButton,
+            dataFormAction
         }
     }
 })

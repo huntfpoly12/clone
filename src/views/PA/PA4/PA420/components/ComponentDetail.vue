@@ -3,10 +3,10 @@
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
                 <div class="text-box-1">귀 {{ dataTableDetail.processKey.imputedYear }}-{{
-                        dataTableDetail.processKey.imputedMonth
+                    dataTableDetail.processKey.imputedMonth
                 }}</div>
                 <div class="text-box-2">지 {{ dataTableDetail.processKey.paymentYear }}-{{
-                        dataTableDetail.processKey.paymentMonth
+                    dataTableDetail.processKey.paymentMonth
                 }}</div>
                 <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
             </div>
@@ -41,75 +41,84 @@
             </div>
         </div>
     </a-col>
-    <a-spin :spinning="(loadingTableDetail)" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
-            :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
-            :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
-            @selection-changed="selectionChanged" class="mt-5">
-            <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-            <DxScrolling column-rendering-mode="virtual" />
-            <DxColumn caption="사원" cell-template="tag" width="300px" />
-            <DxColumn caption="구분" cell-template="retirementType" data-type="string" />
-            <DxColumn caption="입사일 (정산시작일)" cell-template="joinedAt" data-type="date" />
-            <DxColumn caption="퇴사일 (정산종료일)" cell-template="leavedAt" data-type="date" />
-            <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" />
-            <DxColumn caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string" />
-            <DxColumn caption="과세대상 퇴직급여" data-field="taxableRetirementBenefits" data-type="string" />
-            <DxColumn caption="공제" data-field="totalDeduction" data-type="string" />
-            <DxColumn caption="차인지급액" data-field="employee.totalPay" data-type="string" :format="amountFormat" />
-            <DxColumn caption="비고" cell-template="note" data-type="string" width="150px" />
-            <DxColumn caption="지급일" data-field="paymentDay" data-type="string" />
-            <DxColumn caption="" cell-template="action" width="50px" />
-            <template #joinedAt="{ data }">
-                <div>{{ $filters.formatDate(data.data.employee.joinedAt) }}</div>
-            </template>
-            <template #leavedAt="{ data }">
-                <div>{{ $filters.formatDate(data.data.employee.leavedAt) }}</div>
-            </template>
-            <template #retirementType="{ data }">
-                <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
-                <div v-if="data.data.retirementType == 2" class="retirementType-2">중간</div>
-            </template>
-            <template #tag="{ data }" class="custom-action">
-                <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-                    :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-                    :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                    :forDailyUse="data.data.employeeType == 10 ? true : false" />
-            </template>
-            <template #note="{ data }" class="custom-action">
-                <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
-                <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2" :typeValue="1" />
-                <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
-                    :typeValue="1" />
-                <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
-                    :ratio="data.data.employee.nationalPensionSupportPercent" />
-                <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
-                    :ratio="data.data.employee.employeementInsuranceSupportPercent" />
-                <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
-                    :ratio="data.data.employee.employeementReductionRatePercent" />
-                <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
-                    :ratio="data.data.employee.incomeTaxMagnification" />
-            </template>
-            <template #action="{ data }" class="custom-action">
-                <div class="wf-100 text-center">
-                    <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)" />
-                </div>
-            </template>
-            <DxSummary v-if="dataSourceDetail.length > 0">
-                <DxTotalItem column="사원" :customize-text="customTextSummaryInfo" />
-                <DxTotalItem class="custom-sumary" column="retirementBenefits" summary-type="sum"
-                    display-format="퇴직급여합계: {0}" value-format="#,###" />
-                <DxTotalItem class="custom-sumary" column="nonTaxableRetirementBenefits" summary-type="sum"
-                    display-format="비과세퇴직급여합계: {0}" value-format="#,###" />
-                <DxTotalItem class="custom-sumary" column="taxableRetirementBenefits" summary-type="sum"
-                    display-format="과세대상퇴직급여합계: {0}" value-format="#,###" />
-                <DxTotalItem class="custom-sumary" column="totalDeduction" summary-type="sum" display-format="공제합계: {0}"
-                    value-format="#,###" />
-                <DxTotalItem class="custom-sumary" column="차인지급액" summary-type="sum" display-format="차인지급액합계: {0}"
-                    value-format="#,###" />
-            </DxSummary>
-        </DxDataGrid>
-    </a-spin>
+    <a-col :span="24">
+        <a-spin :spinning="(loadingTableDetail)" size="large">
+            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
+                :show-borders="true" key-expr="incomeId" class="mt-10" :allow-column-reordering="move_column"
+                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                <DxScrolling mode="virtual" />
+                <DxSelection mode="multiple" :fixed="true" />
+                <DxColumn caption="사원" cell-template="tag" width="300px" />
+                <DxColumn caption="구분" cell-template="retirementType" data-type="string" />
+                <DxColumn caption="입사일 (정산시작일)" cell-template="joinedAt" />
+                <DxColumn caption="퇴사일 (정산종료일)" cell-template="leavedAt" />
+                <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" format="#,###"
+                    width="120px" />
+                <DxColumn width="150px" caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string"
+                    format="#,###" />
+                <DxColumn caption="과세대상 퇴직급여" width="160px" data-field="taxableRetirementBenefits" data-type="string"
+                    format="#,###" />
+                <DxColumn caption="공제" width="100px" data-field="totalDeduction" data-type="string" format="#,###" />
+                <DxColumn caption="차인지급액" width="130px" data-field="employee.totalPay" data-type="string"
+                    format="#,###" />
+                <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
+                <DxColumn caption="지급일" data-field="paymentDay" data-type="string" />
+                <DxColumn caption="" cell-template="action" width="50px" />
+                <template #joinedAt="{ data }">
+                    <div>{{ $filters.formatDate(data.data.employee.joinedAt) }}</div>
+                </template>
+                <template #leavedAt="{ data }">
+                    <div>{{ $filters.formatDate(data.data.employee.leavedAt) }}</div>
+                </template>
+                <template #retirementType="{ data }">
+                    <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
+                    <div v-if="data.data.retirementType == 2" class="retirementType-2">중간</div>
+                </template>
+                <template #tag="{ data }" class="custom-action">
+                    <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                        :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                        :foreigner="data.data.employee.foreigner" :checkStatus="false"
+                        :forDailyUse="data.data.employeeType == 10 ? true : false" />
+                </template>
+                <template #note="{ data }" class="custom-action">
+                    <div>
+                        <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
+                            :ratio="data.data.employee.nationalPensionSupportPercent" />
+                        <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
+                            :ratio="data.data.employee.employeementInsuranceSupportPercent" />
+                        <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
+                            :ratio="data.data.employee.employeementReductionRatePercent" />
+                        <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
+                            :ratio="data.data.employee.incomeTaxMagnification" />
+                    </div>
+                </template>
+                <template #action="{ data }" class="custom-action">
+                    <div class="wf-100 text-center">
+                        <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)" />
+                    </div>
+                </template>
+                <DxSummary v-if="dataSourceDetail.length > 0">
+                    <DxTotalItem column="사원" :customize-text="customTextSummaryInfo" />
+                    <DxTotalItem class="custom-sumary" column="retirementBenefits" summary-type="sum"
+                        display-format="퇴직급여합계: {0}" value-format="#,###" />
+                    <DxTotalItem class="custom-sumary" column="nonTaxableRetirementBenefits" summary-type="sum"
+                        display-format="비과세퇴직급여합계: {0}" value-format="#,###" />
+                    <DxTotalItem class="custom-sumary" column="taxableRetirementBenefits" summary-type="sum"
+                        display-format="과세대상퇴직급여합계: {0}" value-format="#,###" />
+                    <DxTotalItem class="custom-sumary" column="totalDeduction" summary-type="sum"
+                        display-format="공제합계: {0}" value-format="#,###" />
+                    <DxTotalItem class="custom-sumary" column="차인지급액" summary-type="sum" display-format="차인지급액합계: {0}"
+                        value-format="#,###" />
+                </DxSummary>
+            </DxDataGrid>
+        </a-spin>
+    </a-col>
     <!--============================================= Components ============================================-->
     <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
@@ -170,7 +179,6 @@ export default defineComponent({
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
         const modalDelete = ref<boolean>(false)
-        const amountFormat = ref({ currency: 'VND', useGrouping: true })
         const triggerDetail = ref<boolean>(true);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
@@ -306,7 +314,6 @@ export default defineComponent({
             modalHistory,
             modalHistoryStatus,
             modalEdit,
-            amountFormat,
             statusComfirm,
             addRow,
             deleteItem,
