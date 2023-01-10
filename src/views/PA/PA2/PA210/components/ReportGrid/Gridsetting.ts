@@ -471,7 +471,18 @@ export const cellsSetting = [
     { row: 32, col: 9  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
     { row: 32, col: 10  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
     { row: 32, col: 11  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true  },
-    { row: 32, col: 12  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },},
+    { row: 32, col: 12, className: 'htMiddle htRight', type: 'numeric', numericFormat: { pattern: '0,0', culture: 'ko-KR' }, },
+  
+    { row: 37, col: 0  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
+    { row: 37, col: 3  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
+    { row: 37, col: 4  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
+    { row: 37, col: 6  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
+    { row: 37, col: 7  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
+    { row: 37, col: 8  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
+    { row: 37, col: 9  , className: 'htMiddle htRight' ,type: 'numeric',  numericFormat: {pattern: '0,0',culture: 'ko-KR' },readOnly: true },
+    { row: 37, col: 10, className: 'htMiddle htRight', type: 'numeric', numericFormat: { pattern: '0,0', culture: 'ko-KR' },readOnly: true },
+    { row: 37, col: 11, className: 'htMiddle htRight', type: 'numeric', numericFormat: { pattern: '0,0', culture: 'ko-KR' }, readOnly: true },
+    { row: 37, col: 12, className: 'htMiddle htRight', type: 'numeric', numericFormat: { pattern: '0,0', culture: 'ko-KR' },readOnly: true },
 ]
 
 export  const dataInit = [
@@ -544,5 +555,6 @@ export const inputPosition = [
   { "className":"A70","value": [[29, 5], [29, 6], [29, 7], [29, 8], [29, 9], [29, 10], [29, 11], [29, 12]] },
   { "className":"A80","value": [[30, 5], [30, 6], [30, 7], [30, 8], [30, 9], [30, 10], [30, 11], [30, 12]] },
   { "className":"A90","value": [[31, 5], [31, 6], [31, 7], [31, 8], [31, 9], [31, 10], [31, 11], [31, 12]] },
-  { "className":"A99","value": [[32, 5], [32, 6], [32, 7], [32, 8], [32, 9], [32, 10], [32, 11], [32, 12]] },
+  { "className": "A99", "value": [[32, 5], [32, 6], [32, 7], [32, 8], [32, 9], [32, 10], [32, 11], [32, 12]] },
+  { "className":"adjustmentOfRefundTaxAmount","value": [[37, 0], [37, 3], [37, 4], [37, 6], [37, 7], [37, 8], [37, 9], [37, 10], [37, 11], [37, 12]] },
 ]
