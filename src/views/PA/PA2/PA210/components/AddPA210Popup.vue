@@ -13,7 +13,7 @@
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         @selection-changed="onSelectionChanged">
                         <DxSelection mode="single" />
-                        <DxColumn caption="귀속 연월" cell-template="imputed" />
+                        <DxColumn caption="귀속 연월" cell-template="imputed"/>
                         <template #imputed="{ data }">
                             <a-tooltip>
                                 <template #title>
@@ -25,7 +25,7 @@
                                             dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
                                     }}
                                 </template>
-                                <div class="custom-grade-cell">
+                                <div class="custom-grade-cell text-align-center">
                                     <DxButton
                                         :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
@@ -44,7 +44,7 @@
                                             dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
                                     }}
                                 </template>
-                                <div class="custom-grade-cell">
+                                <div class="custom-grade-cell text-align-center">
                                     <DxButton
                                         :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                                         :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
@@ -114,7 +114,7 @@ export default defineComponent({
 
         const loading = ref<Boolean>(false)
         const dataReports: any = ref([])
-        const dataReport: any = ref({})
+        const dataReport: any = ref([])
         const reportGridStatus = ref(false)
         const arrayRadioCheck = ref([
             { id: false, text: "정기신고" },
@@ -147,7 +147,7 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const onSubmit = (e: any) => {
-            dataReport.value.afterDeadline = afterDeadline.value
+            dataReport.value[0].afterDeadline = afterDeadline.value
             reportGridStatus.value = true
         };
         const setModalVisible = () => {

@@ -2,6 +2,7 @@
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
         style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
     <div class="report-grid">
+      {{  dataReport }}
       <div class="header-1">원천세신고서</div>
       <div class="action-right">
         <button-basic  :width="150" text="새로불러오기" class="btn-get-income" ></button-basic>

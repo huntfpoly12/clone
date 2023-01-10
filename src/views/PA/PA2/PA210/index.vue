@@ -169,13 +169,13 @@ import AddPA210Popup from "./components/AddPA210Popup.vue";
 import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
-import { DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxTotalItem } from "devextreme-vue/data-grid"
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
+import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid"
+import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
+        DxDataGrid, DxColumn, DxToolbar, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail
     },
     setup() {
