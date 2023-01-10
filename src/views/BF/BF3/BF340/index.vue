@@ -75,11 +75,11 @@
                     <DxColumn caption="휴대폰" data-field="mobilePhone" />
                     <DxColumn caption="가입일자" cell-template="registerDate" />
                     <template #registerDate="{ data }">
-                        {{ $filters.formatDate(data.data.registerDate.toString()) }}
+                        {{ $filters.formatDate(data.data.registerDate) }}
                     </template>
                     <DxColumn caption="해지일자" cell-template="cancelDate" />
                     <template #cancelDate="{ data }">
-                        {{ $filters.formatDate(data.data.cancelDate.toString()) }}
+                        {{ $filters.formatDate(data.data.cancelDate) }}
                     </template>
                     <DxColumn caption="사업자수" data-field="companyCount" data-type="number" cell-template="grid-number" />
                     <template #grid-number="{ data }">

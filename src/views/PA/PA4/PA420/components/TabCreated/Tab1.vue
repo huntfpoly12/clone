@@ -4,7 +4,7 @@
             <a-col :span="12">
                 <a-form-item label="구분">
                     <a-tag :color="dataForm.input.retirementType == 2 ? 'green' : 'red'">{{
-                            dataForm.input.retirementType == 2 ? '중간정산' : '퇴직소득'
+                        dataForm.input.retirementType == 2 ? '중간정산' : '퇴직소득'
                     }}</a-tag>
                 </a-form-item>
                 <a-form-item label="귀속/지급연월">
@@ -30,8 +30,7 @@
 
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" :disabled="true"
-                            :valueDate="$filters.formatDate(joinedAt)" />
+                        <date-time-box width="150px" :disabled="true" :valueDate="joinedAt" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
@@ -56,9 +55,9 @@
             </a-col>
             <a-col :span="12">
                 <div class="header-text-2 mb-10">중간지급 근속연수</div>
-                <a-form-item label="정산시작(입사)일" class="label-required">
+                <a-form-item label="정산시작(입사)일" :class="dataForm.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataForm.checkBoxCallApi"
+                        <date-time-box width="150px"  :disabled="!dataForm.checkBoxCallApi"
                             v-model:valueDate="dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
@@ -71,9 +70,11 @@
                         </div>
                     </div>
                 </a-form-item>
-                <a-form-item label="정산종료(퇴사)일" class="label-required">
-                    <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :disabled="!dataForm.checkBoxCallApi"
+                <a-form-item label="정산종료(퇴사)일" :class="dataForm.checkBoxCallApi ? 'label-required' : ''">
+                    <div class="d-flex-center"> 
+                        <date-time-box-custom width="150px" 
+                            :disabled="!dataForm.checkBoxCallApi"
+                            :startDate="dayjs(dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementStartDate?.toString())"
                             v-model:valueDate="dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementFinishDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
@@ -121,17 +122,17 @@
                     </div>
                 </a-form-item>
                 <div>
-                    근속연수 / 근속월수 / 근속일수: {{ dataPrevRetiredYearsOfService.yearsOfService }}년/{{
-                            dataPrevRetiredYearsOfService.monthsOfService
-                    }}개월/{{ dataPrevRetiredYearsOfService.daysOfService
-}}일
+                    근속연수 / 근속월수 / 근속일수:
+                    {{ dataPrevRetiredYearsOfService.yearsOfService }}년/
+                    {{ dataPrevRetiredYearsOfService.monthsOfService }}개월/
+                    {{ dataPrevRetiredYearsOfService.daysOfService }}일
                 </div>
             </a-col>
             <a-col :span="12">
                 <div class="header-text-2 mb-10">최종 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                        <date-time-box width="150px" 
                             v-model:valueDate="dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
@@ -146,8 +147,9 @@
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
-                            v-model:valueDate="dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementFinishDate" />
+                        <date-time-box-custom width="150px" 
+                            v-model:valueDate="dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementFinishDate"
+                            :startDate="dayjs(dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementStartDate?.toString())" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
                                 <template #title>퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</template>
@@ -194,10 +196,10 @@
                     </div>
                 </a-form-item>
                 <div>
-                    근속연수 / 근속월수 / 근속일수: {{ dataLastRetiredYearsOfService.yearsOfService }}년/{{
-                            dataLastRetiredYearsOfService.monthsOfService
-                    }}개월/{{ dataLastRetiredYearsOfService.daysOfService
-}}일
+                    근속연수 / 근속월수 / 근속일수:
+                    {{ dataLastRetiredYearsOfService.yearsOfService }}년/
+                    {{ dataLastRetiredYearsOfService.monthsOfService }}개월/
+                    {{ dataLastRetiredYearsOfService.daysOfService }}일
                 </div>
             </a-col>
             <a-col :span="12" class="mt-10 custom-label">
@@ -228,7 +230,7 @@
                 <div class="header-text-2 mb-10">정산 근속연수</div>
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" :required="true" dateFormat="YYYY-MM-DD"
+                        <date-time-box width="150px" :required="true" 
                             v-model:valueDate="dataForm.incomeCalculationInput.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
@@ -243,7 +245,7 @@
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD"
+                        <date-time-box width="150px" 
                             v-model:valueDate="dataForm.incomeCalculationInput.settlementFinishDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top">
@@ -257,7 +259,7 @@
                     </div>
                 </a-form-item>
                 <div>근속연수 / 근속월수 / 근속일수: {{ dataSettlement.yearsOfService }}년/{{ dataSettlement.monthsOfService }}개월/{{
-                        dataSettlement.daysOfService
+                    dataSettlement.daysOfService
                 }}일</div>
             </a-col>
         </a-row>
@@ -267,7 +269,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, computed, reactive } from 'vue'
+import { defineComponent, ref, watch, reactive } from 'vue'
 import dayjs from "dayjs";
 import { arrayReasonResignationUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
@@ -350,7 +352,7 @@ export default defineComponent({
             props.dataForm.incomeCalculationInput.settlementFinishDate,
             props.dataForm.incomeCalculationInput.additionalDays,
             props.dataForm.incomeCalculationInput.exclusionDays,
-        ], (value: any) => {
+        ], () => {
             if (props.dataForm.incomeCalculationInput.settlementStartDate && props.dataForm.incomeCalculationInput.settlementFinishDate
                 && props.dataForm.incomeCalculationInput.exclusionDays && props.dataForm.incomeCalculationInput.additionalDays) {
                 dataSettlement.value = Formula.getDateOfService(
@@ -365,25 +367,30 @@ export default defineComponent({
         watch(() => [
             props.dataForm.taxCalculationInput.prevRetiredYearsOfService.additionalDays,
             props.dataForm.taxCalculationInput.lastRetiredYearsOfService.additionalDays
-        ], (value: any) => {
+        ], () => {
             props.dataForm.incomeCalculationInput.additionalDays = props.dataForm.taxCalculationInput.prevRetiredYearsOfService.additionalDays + props.dataForm.taxCalculationInput.lastRetiredYearsOfService.additionalDays
         })
         watch(() => [
             props.dataForm.taxCalculationInput.prevRetiredYearsOfService.exclusionDays,
             props.dataForm.taxCalculationInput.lastRetiredYearsOfService.exclusionDays
-        ], (value: any) => {
+        ], () => {
             props.dataForm.incomeCalculationInput.exclusionDays = props.dataForm.taxCalculationInput.prevRetiredYearsOfService.exclusionDays + props.dataForm.taxCalculationInput.lastRetiredYearsOfService.exclusionDays
         })
 
-        watch(() => props.actionNextStep, (newVal) => {
+        watch(() => props.actionNextStep, () => {
             (document.getElementById("checkBox") as HTMLInputElement).click();
+        });
+
+
+        watch(() => props.dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
+            props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementStartDate = newVal
         });
 
         // =============== FUNCTION ================================
         const openNewTab = () => {
             window.open('pa-120')
         };
-        const submitForm = (e: any) => { 
+        const submitForm = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -392,21 +399,12 @@ export default defineComponent({
             }
         }
         return {
-            month1, month2,
-            arrayReasonResignation,
-            openNewTab,
-            joinedAt,
-            dataPrevRetiredYearsOfService,
-            dataLastRetiredYearsOfService,
-            dataSettlement,
-            dayjs,
-            submitForm,
+            month1, month2, arrayReasonResignation, joinedAt, dataPrevRetiredYearsOfService, dataLastRetiredYearsOfService, dataSettlement, dayjs,
+            openNewTab, submitForm,
         }
     }
 })
 </script>
-
-
 <style lang="scss" scoped src="../../style/modalAdd.scss">
 
 </style>

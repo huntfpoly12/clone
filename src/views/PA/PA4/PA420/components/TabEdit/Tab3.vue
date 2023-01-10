@@ -69,11 +69,11 @@
             <a-col :span="12">
                 <div class="header-text-2 mb-10">연금계좌입금명세
                     {{
-                            $filters.formatCurrency(
-                                dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount
-                                +
-                                dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount
-                            )
+                        $filters.formatCurrency(
+                            dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount
+                            +
+                            dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount
+                        )
                     }} 원
                 </div>
                 <template
@@ -200,11 +200,11 @@
                 </a-form-item>
                 <div>연금계좌입금명세 ($
                     {{
-                            $filters.formatCurrency(
-                                dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount
-                                +
-                                dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount
-                            )
+                        $filters.formatCurrency(
+                            dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount
+                            +
+                            dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount
+                        )
                     }}
                     원)</div>
                 <template
@@ -216,6 +216,7 @@
                             v-model:valueInput="value.bizNumber" disabled="true" />
                         <default-text-box width="19%" class="mr-5" placeholder="계좌번호"
                             v-model:valueInput="value.bankAccountNumber" disabled="true" />
+
                         <date-time-box width="24%" class="mr-5" disabled="true" v-model:valueDate="value.depositDate"
                             placeholder="입금일" />
                         <number-box-money width="19%" placeholder="계좌입금금액"
@@ -293,7 +294,7 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
@@ -309,6 +310,7 @@ export default defineComponent({
         const dataGet: any = ref({
             ...props.dataDetail
         })
+
         const dataRequestCaculate: any = ref({
             companyId: companyId,
             input: {}
@@ -371,27 +373,16 @@ export default defineComponent({
                 "prevRetirementBenefitStatus": cleanData.specification.specificationDetail.prevRetirementBenefitStatus,
                 "prevRetiredYearsOfService": {
                     ...cleanData.specification.specificationDetail.prevRetiredYearsOfService,
-                    settlementStartDate: cleanData.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate,
-                    settlementFinishDate: cleanData.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate
                 },
                 "prePaidDelayedTaxPaymentTaxAmount": cleanData.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
                 "lastRetirementBenefitStatus": cleanData.specification.specificationDetail.lastRetirementBenefitStatus,
                 "lastRetiredYearsOfService": {
                     ...cleanData.specification.specificationDetail.lastRetiredYearsOfService,
-                    settlementStartDate: cleanData.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate,
-                    settlementFinishDate: cleanData.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
                 },
                 "calculationOfDeferredRetirementIncomeTax": {
                     ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax,
                     "statements": [
-                        {
-                            ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0],
-                            "depositDate": dayjs(cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.toString()).format("YYYY-MM-DD")
-                        },
-                        {
-                            ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1],
-                            "depositDate": dayjs(cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.toString()).format("YYYY-MM-DD")
-                        }
+                        ...cleanData.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements
                     ]
                 }
             }
@@ -415,4 +406,5 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped src="../../style/modalAdd.scss">
+
 </style>

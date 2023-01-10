@@ -6,9 +6,14 @@
                 key-expr="reportId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                 :column-auto-width="true">
                 <DxToolbar>
-                    <DxItem location="after" template="button-history" css-class="cell-button-add" />
                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                    <DxItem location="after" template="button-history" css-class="cell-button-add" />
                 </DxToolbar>
+                <template #button-history>
+                    <DxButton>
+                        <HistoryOutlined @click="openModalHistory" class="fz-18" />
+                    </DxButton>
+                </template>
                 <template #button-template>
                     <a-tooltip>
                         <template #title>정기(기한후)신고서 새로 작성</template>
@@ -16,11 +21,6 @@
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </div>
                     </a-tooltip>
-                </template>
-                <template #button-history>
-                    <DxButton>
-                        <HistoryOutlined @click="openModalHistory" class="fz-18" />
-                    </DxButton>
                 </template>
                 <DxColumn caption="마감 현황" cell-template="process-status" width="100" />
                 <template #process-status="{ data }">
@@ -53,9 +53,9 @@
                             귀속기간
                             {{
                                 data.data.reportType == 1 ?
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
+                                    dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -148,14 +148,14 @@
             </DxDataGrid>
         </a-spin>
     </div>
-    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :lastMonth="lastMonth" />
+    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :dataPopupAdd="dataPopupAdd" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
         title="변경이력" typeHistory="pa-210" />
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false" :dataCall="dataPopup" />
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, reactive, watch } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import {
     WageReportType,
     enum2Entries,
@@ -190,11 +190,16 @@ export default defineComponent({
         const modalSendEmailStatus = ref<boolean>(false);
         const dataSource: any = ref([])
         const dataPopup = ref()
-        const lastMonth = ref<number>(1);
+        const dataPopupAdd = ref({
+            lastMonth: 0,
+            reportType: 0,
+            paymentType: 0,
+        })
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
         });
+        
         // ================GRAPQL====================================
         const {
             refetch: refetchData,
@@ -203,6 +208,13 @@ export default defineComponent({
         } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({
             fetchPolicy: "no-cache",
         }));
+        const { result: resultConfig } = useQuery(
+            queries.getWithholdingConfig,
+            originData,
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
 
         // ===================WATCH==================================
         watch(result, (value) => {
@@ -210,10 +222,19 @@ export default defineComponent({
                 dataSource.value = value.getTaxWithholdingStatusReports;
             }
         });
+        watch(resultConfig, (value) => {
+            if (value) {
+                dataPopupAdd.value.reportType = value.getWithholdingConfig.reportType;
+                dataPopupAdd.value.paymentType = value.getWithholdingConfig.paymentType;
+                // dataPopupAdd.value.reportType = 1;
+                // dataPopupAdd.value.paymentType = 2;
+            }
+        });
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
-            lastMonth.value = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
+            dataPopupAdd.value.lastMonth = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
+            // dataPopupAdd.value.lastMonth = 9;
             modalAddNewStatus.value = true;
         }
         const openModalHistory = (data: any) => {
@@ -267,7 +288,7 @@ export default defineComponent({
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
             getText,
-            lastMonth,
+            dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,

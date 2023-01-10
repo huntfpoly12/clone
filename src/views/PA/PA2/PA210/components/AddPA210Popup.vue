@@ -8,12 +8,12 @@
                         <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="afterDeadline"
                             :layoutCustom="'horizontal'" />
                     </a-form-item>
-                    <DxDataGrid class="pt-20" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataReports"
-                        :show-borders="true" key-expr="reportId" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        @selection-changed="onSelectionChanged">
-                        <DxSelection mode="single" />
-                        <DxColumn caption="귀속 연월" cell-template="imputed"/>
+                    <DxDataGrid class="pt-20" :show-row-lines="true" :hoverStateEnabled="true"
+                        :data-source="dataReports" :show-borders="true" key-expr="reportId"
+                        :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                        :column-auto-width="true" focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
+                        :onRowClick="onSelectionChanged">
+                        <DxColumn caption="귀속 연월" cell-template="imputed" />
                         <template #imputed="{ data }">
                             <a-tooltip>
                                 <template #title>
@@ -39,9 +39,9 @@
                                     귀속기간
                                     {{
                                         data.data.reportType == 1 ?
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
+                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -59,11 +59,11 @@
                         <DxColumn data-field="yearEndTaxAdjustment" caption="연말" css-class="cell-center"
                             cell-template="yearEndTaxAdjustment" />
                         <template #yearEndTaxAdjustment="{ data }">{{
-                            data.data.yearEndTaxAdjustment ? 'O' : ''
+                            data.data.yearEndTaxAdjustment ? 'O' : 'X'
                         }}</template>
 
                         <DxColumn data-field="refund" caption="환급" css-class="cell-center" cell-template="refund" />
-                        <template #refund="{ data }">{{ data.data.refund ? 'O' : '' }}</template>
+                        <template #refund="{ data }">{{ data.data.refund ? 'O' : 'X' }}</template>
                     </DxDataGrid>
 
                 </a-spin>
@@ -96,9 +96,8 @@ import { useStore } from "vuex";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
-        lastMonth: {
-            type: Number,
-            default: 1,
+        dataPopupAdd: {
+            type: Object,
         }
     },
     components: {
@@ -121,29 +120,73 @@ export default defineComponent({
             { id: true, text: "기한후신고" },
         ]);
         const afterDeadline = ref(false)
+        const focusedRowKey = ref<Number>(1);
         // ===================WATCH==================================
-        watch(() => props.lastMonth, (value) => {
+        watch(() => props.dataPopupAdd, (value: any) => {
             loading.value = true;
             dataReports.value = []
-            for (let i = value + 1; i <= 12; i++) {
-                dataReports.value.push({
-                    reportId: i,
-                    imputedYear: globalYear.value,
-                    imputedMonth: i,
-                    paymentYear: globalYear.value,
-                    paymentMonth: i,
-                    reportType: 1,
-                    index: 1,
-                    status: 10,
-                    refund: true,
-                    submissionDate: parseInt(dayjs().format("YYYYMMDD")),
-                    yearEndTaxAdjustment: true,
-                    imputedFinishYearMonth: parseInt(dayjs().format("YYYYMMDD")),
-                    imputedStartYearMonth: parseInt(dayjs().format("YYYYMMDD")),
-                })
+            let i = 0
+            let month = 1
+            let imputedMonth = 1
+            let paymentMonth = 1
+            let year = globalYear.value
+            console.log(value.reportType);
+            if (value.reportType == 1) {
+                month = 12
+                if (value.lastMonth == 12) {
+                    year = globalYear.value + 1
+                }
+                if (value.paymentType == 1) {
+                    value.lastMonth != 12 ? i = value.lastMonth + 1 : i = 1
+                    for (i; i <= month; i++) {
+                        dataReports.value.push({
+                            reportId: i,
+                            imputedYear: year,
+                            imputedMonth: i,
+                            paymentYear: year,
+                            paymentMonth: i,
+                            reportType: value.reportType,
+                            index: 0,
+                            status: 10,
+                            refund: true,
+                            submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                            yearEndTaxAdjustment: false,
+                            imputedFinishYearMonth: parseInt(year + `${i}`),
+                            imputedStartYearMonth: parseInt(year + `${i}`),
+                            paymentFinishYearMonth: parseInt(year + `${i}`),
+                            paymentStartYearMonth: parseInt(year + `${i}`),
+                        })
+                    }
+                } else {
+                    value.lastMonth != 12 ? i = value.lastMonth + 1 : ''
+                    for (i; i <= month; i++) {
+                        imputedMonth = i == 0 ? 2 : i
+                        paymentMonth = i == 0 ? 2 : i+1
+                        dataReports.value.push({
+                            reportId: i,
+                            imputedYear: year,
+                            imputedMonth: imputedMonth,
+                            paymentYear: paymentMonth == 13 ? year+1 : year,
+                            paymentMonth: paymentMonth == 13 ? 1 : paymentMonth,
+                            reportType: value.reportType,
+                            index: 0,
+                            status: 10,
+                            refund: true,
+                            submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                            yearEndTaxAdjustment: false,
+                            imputedFinishYearMonth: i ? parseInt(year + `${i}`) : null,
+                            paymentFinishYearMonth: i ? parseInt((paymentMonth == 13 ? year+1 : year) + `${paymentMonth == 13 ? 1 : paymentMonth}`) : null,
+                        })
+                    }
+                }
+            } else {
+                value.lastMonth == 1 ? i = value.lastMonth : i = 1
+                month = 3
             }
+            dataReport.value = dataReports.value.length ? [dataReports.value[0]] : []
+            focusedRowKey.value = dataReports.value.length ? dataReports.value[0].reportId : null
             loading.value = false;
-        })
+        }, { deep: true })
 
         // ===================FUNCTION===============================
         const onSubmit = (e: any) => {
@@ -163,7 +206,7 @@ export default defineComponent({
             return row;
         };
         const onSelectionChanged = (data: any) => {
-            dataReport.value = [data.selectedRowsData[0]]
+            dataReport.value = [data.data]
         };
         return {
             globalYear, move_column, colomn_resize, dayjs,
@@ -174,7 +217,8 @@ export default defineComponent({
             onSubmit,
             setModalVisible,
             reportGridStatus,
-            arrayRadioCheck, afterDeadline
+            arrayRadioCheck, afterDeadline,
+            focusedRowKey,
         };
     },
 });
