@@ -103,9 +103,6 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resultGetDetail(newValue => {
-            newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = parseInt(dayjs(newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate).format('YYYYMMDD'))
-            newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = parseInt(dayjs(newValue.data.getIncomeRetirement.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate).format('YYYYMMDD'))
-
             dataDetailValue.value =
             {
                 ...newValue.data.getIncomeRetirement,
@@ -122,8 +119,7 @@ export default defineComponent({
             trigger.value = true
             refetchGetDetail()
         }, { deep: true })
-        // =========================  FUNCTION ===============================================
-        // all Computed 
+        // =========================  FUNCTION =============================================== 
         const checkStepTwo = computed(() => {
             if (step.value === 0) {
                 return "wait";
@@ -154,7 +150,7 @@ export default defineComponent({
         const changeStep = (stepChange: any) => {
             step.value = stepChange
         }
-        const nextStep = (event: any) => {
+        const nextStep = () => {
             if (step.value == 0)
                 valueNextStep.value++
             else if (step.value == 1)
@@ -164,7 +160,7 @@ export default defineComponent({
             step.value--
         }
         const updated = () => {
-            let dataDefault = dataDetailValue.value.specification  
+            let dataDefault = dataDetailValue.value.specification
             let dataCallApiUpdate =
             {
                 "companyId": companyId,
@@ -187,16 +183,7 @@ export default defineComponent({
                 "taxCalculationInput": {
                     "calculationOfDeferredRetirementIncomeTax": {
                         "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
-                        "statements": [
-                            {
-                                ...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0],
-                                "depositDate": dayjs(dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate.toString()).format("YYYY-MM-DD")
-                            },
-                            {
-                                ...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1],
-                                "depositDate": dayjs(dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate.toString()).format("YYYY-MM-DD")
-                            },
-                        ]
+                        "statements": [...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements]
                     },
                     "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
                     "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,

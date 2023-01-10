@@ -27,8 +27,7 @@
                 </a-form-item>
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
-                        <date-time-box width="130px" disabled="true"
-                            :valueDate="dayjs(dataGet.employee.joinedAt).format('YYYY-MM-DD')" />
+                        <date-time-box width="130px" disabled="true" :valueDate="dataGet.employee.joinedAt" />
                         <div class="ml-5 d-flex-center">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             <span class="custom-waring">
@@ -71,9 +70,10 @@
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
-                        <date-time-box width="150px" :disabled="!dataGet.checkBoxCallApi"
+                        <date-time-box-custom width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate"
-                            :required="true" />
+                            :required="true"
+                            :startDate="dayjs(dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate?.toString())" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -118,8 +118,10 @@
                     </div>
                 </a-form-item>
                 <div>
-                    근속연수 / 근속월수 / 근속일수: {{ yearsOfService1.year }}년/{{ yearsOfService1.month }}개월/{{ yearsOfService1.day
-                    }}일
+                    근속연수 / 근속월수 / 근속일수:
+                    {{ yearsOfService1.year }}년/
+                    {{ yearsOfService1.month }}개월/
+                    {{ yearsOfService1.day }}일
                 </div>
             </a-col>
             <a-col :span="12">
@@ -140,7 +142,8 @@
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
-                        <date-time-box width="150px"
+                        <date-time-box-custom width="150px"
+                            :startDate="dayjs(dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate?.toString())"
                             v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -186,7 +189,8 @@
                     </div>
                 </a-form-item>
                 <div>
-                    근속연수 / 근속월수 / 근속일수: {{ yearsOfService2.year }}년/{{ yearsOfService2.month }}개월/{{ yearsOfService2.day
+                    근속연수 / 근속월수 / 근속일수: {{ yearsOfService2.year }}년/{{ yearsOfService2.month }}개월/{{
+                        yearsOfService2.day
                     }}일
                 </div>
             </a-col>
@@ -245,7 +249,7 @@
                     </div>
                 </a-form-item>
                 <div>근속연수 / 근속월수 / 근속일수: {{ yearsOfService3.year }}년/{{ yearsOfService3.month }}개월/{{
-                        yearsOfService3.day
+                    yearsOfService3.day
                 }}일</div>
             </a-col>
         </a-row>
@@ -327,9 +331,13 @@ export default defineComponent({
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
 
+        watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
+        });
+
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
-            let val1: any = dayjs(newVal.settlementStartDate.toString())
-            let val2: any = dayjs(newVal.settlementFinishDate.toString())
+            let val1: any = newVal.settlementStartDate?.toString()
+            let val2: any = newVal.settlementFinishDate?.toString()
             let objectData = Formula.getDateOfService(
                 val1,
                 val2,
@@ -342,8 +350,8 @@ export default defineComponent({
         }, { deep: true });
 
         watch(() => dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, (newVal) => {
-            let val1: any = dayjs(newVal.settlementStartDate.toString())
-            let val2: any = dayjs(newVal.settlementFinishDate.toString())
+            let val1: any = newVal.settlementStartDate?.toString()
+            let val2: any = newVal.settlementFinishDate?.toString()
             let objectData = Formula.getDateOfService(
                 val1,
                 val2,
@@ -355,9 +363,9 @@ export default defineComponent({
             yearsOfService2.year = objectData.yearsOfService
         }, { deep: true });
 
-        watch(() => dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService, (newVal) => { 
-            let val1: any = dayjs(newVal.settlementStartDate.toString())
-            let val2: any = dayjs(newVal.settlementFinishDate.toString())
+        watch(() => dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService, (newVal) => {
+            let val1: any = newVal.settlementStartDate?.toString()
+            let val2: any = newVal.settlementFinishDate?.toString()
 
             let objectData = Formula.getDateOfService(
                 val1,
