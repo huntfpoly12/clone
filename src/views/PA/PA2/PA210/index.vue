@@ -6,9 +6,14 @@
                 key-expr="reportId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                 :column-auto-width="true">
                 <DxToolbar>
-                    <DxItem location="after" template="button-history" css-class="cell-button-add" />
                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                    <DxItem location="after" template="button-history" css-class="cell-button-add" />
                 </DxToolbar>
+                <template #button-history>
+                    <DxButton>
+                        <HistoryOutlined @click="openModalHistory" class="fz-18" />
+                    </DxButton>
+                </template>
                 <template #button-template>
                     <a-tooltip>
                         <template #title>정기(기한후)신고서 새로 작성</template>
@@ -16,11 +21,6 @@
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </div>
                     </a-tooltip>
-                </template>
-                <template #button-history>
-                    <DxButton>
-                        <HistoryOutlined @click="openModalHistory" class="fz-18" />
-                    </DxButton>
                 </template>
                 <DxColumn caption="마감 현황" cell-template="process-status" width="100" />
                 <template #process-status="{ data }">
@@ -148,7 +148,7 @@
             </DxDataGrid>
         </a-spin>
     </div>
-    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :lastMonth="lastMonth" />
+    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :dataPopupAdd="dataPopupAdd" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
         title="변경이력" typeHistory="pa-210" />
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
@@ -169,13 +169,13 @@ import AddPA210Popup from "./components/AddPA210Popup.vue";
 import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
-import { DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxTotalItem } from "devextreme-vue/data-grid"
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
+import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid"
+import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
+        DxDataGrid, DxColumn, DxToolbar, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail
     },
     setup() {
@@ -190,11 +190,17 @@ export default defineComponent({
         const modalSendEmailStatus = ref<boolean>(false);
         const dataSource: any = ref([])
         const dataPopup = ref()
+        const dataPopupAdd = ref({
+            lastMonth: 1,
+            reportType: 1,
+            paymentType: 1,
+        })
         const lastMonth = ref<number>(1);
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
         });
+        
         // ================GRAPQL====================================
         const {
             refetch: refetchData,
@@ -203,6 +209,13 @@ export default defineComponent({
         } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({
             fetchPolicy: "no-cache",
         }));
+        const { result: resultConfig } = useQuery(
+            queries.getWithholdingConfig,
+            originData,
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
 
         // ===================WATCH==================================
         watch(result, (value) => {
@@ -210,10 +223,16 @@ export default defineComponent({
                 dataSource.value = value.getTaxWithholdingStatusReports;
             }
         });
+        watch(resultConfig, (value) => {
+            if (value) {
+                dataPopupAdd.value.reportType = value.getWithholdingConfig.reportType;
+                dataPopupAdd.value.paymentType = value.getWithholdingConfig.paymentType;
+            }
+        });
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
-            lastMonth.value = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
+            dataPopupAdd.value.lastMonth = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
             modalAddNewStatus.value = true;
         }
         const openModalHistory = (data: any) => {
@@ -267,7 +286,7 @@ export default defineComponent({
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
             getText,
-            lastMonth,
+            dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,
