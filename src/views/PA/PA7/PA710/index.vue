@@ -121,6 +121,8 @@
                                 </span>
                             </div>
                         </a-form-item>
+                        <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
+                            id="active-save" />
                     </a-spin>
                 </a-col>
             </a-row>
@@ -289,22 +291,38 @@ export default defineComponent({
         const textTypeCode = (e: any) => {
             formState.incomeTypeName = e
         }
+
+        // When changing the value in the input form then moving to another row, check the valid form and display the popup
+        const actionToAddFromEdit = (e: any) => {
+            var res = e.validationGroup.validate();
+            //remove active row edit
+            const element = document.querySelector('.dx-row-focused');
+            (element as HTMLInputElement).classList.remove("dx-row-focused");
+            
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else
+                console.log('123');
+        }
         const editData = (data: any) => {
-            if (checkForm.value == false && JSON.stringify(initialState) !== JSON.stringify(formState)) { 
-                // 입력한 내용을 저장하시겠습니까?
+            if (checkForm.value == false && JSON.stringify(initialState) !== JSON.stringify(formState)) {
+                // 입력한 내용을 저장하시겠습니까? 
+                document.getElementById('active-save')?.click()
             }
 
-            dataRow = data.data
-            if (JSON.stringify(dataRowOld) !== JSON.stringify(formState) && checkForm.value == true) {
-                modalStatus.value = true;
-            } else {
-                loadingForm.value = true;
-                changeFormData(dataRow)
-                setTimeout(() => {
-                    loadingForm.value = false;
-                }, 500);
+            else {
+                dataRow = data.data
+                if (JSON.stringify(dataRowOld) !== JSON.stringify(formState) && checkForm.value == true) {
+                    modalStatus.value = true;
+                } else {
+                    loadingForm.value = true;
+                    changeFormData(dataRow)
+                    setTimeout(() => {
+                        loadingForm.value = false;
+                    }, 500);
+                }
+                checkForm.value = true;
             }
-            checkForm.value = true;
         }
         const changeFormData = (data: any) => {
             formState.name = data.name
@@ -383,7 +401,7 @@ export default defineComponent({
 
         return {
             move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,
-            textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, deleteData, statusComfirm, statusComfirmAdd,
+            actionToAddFromEdit, textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, deleteData, statusComfirm, statusComfirmAdd,
         };
     },
 });
