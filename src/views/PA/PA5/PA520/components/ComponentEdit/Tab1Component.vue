@@ -39,12 +39,12 @@
                     </span>
                 </div>
             </a-form-item>
-            <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
+            <a-form-item label="내/외국인" label-align="right" class="label-custom-width"> 
                 <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataEdited.foreigner"
                     layoutCustom="horizontal" />
             </a-form-item>
             <a-form-item label="외국인 국적" label-align="right"
-                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true }"> 
                 <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
                     :hiddenOptionKR="dataEdited.foreigner" />
             </a-form-item>
@@ -101,8 +101,8 @@
             </div>
         </standard-form>
     </a-spin>
-    <!-- <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        content="처음부터 다시 변경 내용을 저장하시겠습니까? " okText="네" cancelText="아니오" @checkConfirm="statusComfirm" /> -->
+    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
+        content="처음부터 다시 변경 내용을 저장하시겠습니까? " okText="네" cancelText="아니오" @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -120,7 +120,7 @@ export default defineComponent({
         actionSave: Number
     },
     setup(props, { emit }) {
-        // const modalStatusChange = ref(false)
+        const modalStatusChange = ref(false)
         const labelResident = ref('외국인번호 유효성')
         const activeLabel = ref(true)
         const disabledSelectBox = ref(true)
@@ -141,7 +141,6 @@ export default defineComponent({
         })
         let indexChange = ref(0)
         let dataDefault = reactive({})
-        let trigger = ref(false)
         // ============ GRAPQL ===============================
         const {
             onResult: resGetDepartments,
@@ -178,12 +177,10 @@ export default defineComponent({
             onResult: getValueDefault,
             loading
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
-            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
         getValueDefault(res => {
             if (res.data) {
-                trigger.value = false
                 dataEdited.name = res.data.getEmployeeWageDaily.name
                 dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
                 dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
@@ -201,7 +198,9 @@ export default defineComponent({
                 dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
                 dataEdited.department = res.data.getEmployeeWageDaily.department
                 dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
+
                 dataDefault = JSON.stringify(dataEdited)
+
             }
         })
         const {
@@ -217,29 +216,18 @@ export default defineComponent({
             notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================ 
-
-        if (store.state.common.idRowChangePa520) {
-            trigger.value = true
-            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
-            refetchValueDetail()
-        }
-
-
-        watch(() => store.state.common.idRowChangePa520, (newVal) => {
+        watch(() => props.idRowEdit, (newVal) => {
             console.log(dataDefault);
             console.log(JSON.stringify(dataEdited));
 
-            originDataDetail.value.employeeId = newVal
             if (dataDefault === JSON.stringify(dataEdited)) {
+                originDataDetail.value.employeeId = newVal
                 refetchValueDetail()
-                store.state.common.checkStatusChangeValue = false
             }
             else {
-                console.log('1');
-                store.state.common.checkStatusChangeValue = true
+                modalStatusChange.value = true
             }
-        }, { deep: true })
-
+        })
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
@@ -294,9 +282,8 @@ export default defineComponent({
             refetchValueDetail()
             indexChange.value = 1
         }
-
         return {
-            activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
+            modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
             actionUpdated, funcAddress, statusComfirm
         };
     },
