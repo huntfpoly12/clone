@@ -30,15 +30,15 @@
                 </span>
             </div>
         </a-form-item>
-        <a-form-item label="내/외국인" label-align="right" class="label-custom-width"> 
+        <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
             <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataCreated.foreigner"
                 layoutCustom="horizontal" />
         </a-form-item>
         <a-form-item label="외국인 국적" label-align="right"
             :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-            <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode" :hiddenOptionKR="dataCreated.foreigner"
-                @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
-                width="200px" />
+            <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
+                :hiddenOptionKR="dataCreated.foreigner" @textCountry="(res: any) => { dataCreated.nationality = res }"
+                :disabled="disabledSelectBox" width="200px" />
         </a-form-item>
         <a-form-item label="외국인 체류자격" label-align="right"
             :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
@@ -87,7 +87,7 @@
             <custom-item-select-box v-model:valueInput="dataCreated.responsibility" :arrSelect="selectBoxData2"
                 width="200px" />
         </a-form-item>
-        <div style="width: 100%;text-align: center;margin-top: 30px;">
+        <div class="wf-100 text-center mt-10">
             <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated($event)" />
         </div>
     </standard-form>
@@ -219,5 +219,4 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
-
 </style>

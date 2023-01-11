@@ -45,8 +45,8 @@
             </a-form-item>
             <a-form-item label="외국인 국적" label-align="right"
                 :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-                <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode" :hiddenOptionKR="dataEdited.foreigner"
-                    @textCountry="(res: any) => { dataEdited.nationality = res }" :disabled="disabledSelectBox" />
+                <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
+                    :hiddenOptionKR="dataEdited.foreigner" />
             </a-form-item>
             <a-form-item label="외국인 체류자격" label-align="right"
                 :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
@@ -95,14 +95,14 @@
                 <custom-item-select-box v-model:valueInput="dataEdited.responsibility" :arrSelect="selectBoxData2"
                     width="200px" />
             </a-form-item>
-            <div class="wf-100 text-center mt-30">
+            <div class="wf-100 text-center mt-10">
                 <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)"
                     id="action-update" />
             </div>
         </standard-form>
     </a-spin>
-    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        content="처음부터 다시 입력하겠습니까" okText="네" cancelText="아니오" @checkConfirm="statusComfirm" />
+    <!-- <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
+        content="처음부터 다시 변경 내용을 저장하시겠습니까? " okText="네" cancelText="아니오" @checkConfirm="statusComfirm" /> -->
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -120,7 +120,7 @@ export default defineComponent({
         actionSave: Number
     },
     setup(props, { emit }) {
-        const modalStatusChange = ref(false)
+        // const modalStatusChange = ref(false)
         const labelResident = ref('외국인번호 유효성')
         const activeLabel = ref(true)
         const disabledSelectBox = ref(true)
@@ -140,6 +140,7 @@ export default defineComponent({
             employeeId: props.idRowEdit
         })
         let indexChange = ref(0)
+        let dataDefault = reactive({})
         // ============ GRAPQL ===============================
         const {
             onResult: resGetDepartments,
@@ -197,6 +198,7 @@ export default defineComponent({
                 dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
                 dataEdited.department = res.data.getEmployeeWageDaily.department
                 dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
+                dataDefault = JSON.stringify(dataEdited)
             }
         })
         const {
@@ -211,22 +213,32 @@ export default defineComponent({
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
-        // ============ WATCH ================================
-        // watch(() => store.state.common.idRowChangePa520, (res, resOld) => {
+        // ============ WATCH ================================ 
+        watch(() => store.state.common.idRowChangePa520, (newVal) => {
+            originDataDetail.value.employeeId = newVal
+            console.log(dataDefault);
+            console.log(JSON.stringify(dataEdited));
 
-        // }, { deep: true })
-
-
-        watch(() => props.idRowEdit, (newVal) => {
-            if (indexChange.value > 2) {
-                modalStatusChange.value = true
-            } else {
-                originDataDetail.value.employeeId = newVal
+            if (dataDefault === JSON.stringify(dataEdited)) {
                 refetchValueDetail()
-                indexChange.value = 1
+                store.state.common.checkStatusChangeValue = false
             }
-        })
+            else {
+                store.state.common.checkStatusChangeValue = true
+            }
+        }, { deep: true })
 
+        // watch(() => props.idRowEdit, (newVal) => {
+        //     store.state.common.idRowChangePa520 = newVal
+        //     if (dataDefault === JSON.stringify(dataEdited)) {
+        //         originDataDetail.value.employeeId = newVal
+        //         refetchValueDetail()
+        //         store.state.common.checkStatusChangeValue = false
+        //     }
+        //     else {
+        //         store.state.common.checkStatusChangeValue = true
+        //     }
+        // })
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
@@ -241,11 +253,9 @@ export default defineComponent({
                 dataEdited.stayQualification = 'C-4'
             }
         })
-
         watch(() => props.actionSave, () => {
             document.getElementById('action-update')?.click()
         })
-
         watch(dataEdited, () => {
             indexChange.value++
         }, { deep: true })
@@ -282,10 +292,10 @@ export default defineComponent({
             originDataDetail.value.employeeId = props.idRowEdit
             refetchValueDetail()
             indexChange.value = 1
-
         }
+
         return {
-            modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
+            activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
             actionUpdated, funcAddress, statusComfirm
         };
     },

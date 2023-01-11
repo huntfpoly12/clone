@@ -597,6 +597,7 @@ export default {
                 delete val.__KEY__
                 delete val.rowIndex
                 delete val.dataImg
+                val.capacity = parseInt(val.capacity)
                 val.startYearMonth = parseInt(dayjs(val.startYearMonth).format('YYYYMMDD'))
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })

@@ -93,7 +93,6 @@
             <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" :key="resetAddComponent" />
-
                 <PA520PopupEdit :idRowEdit="idRowEdit" @closePopup="closeAction" v-if="actionChangeComponent == 2"
                     :actionSave="actionSave" />
             </a-col>
@@ -103,12 +102,11 @@
         :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
-
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
         content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed, reactive } from "vue"
+import { ref, defineComponent, watch, computed } from "vue"
 import DxButton from "devextreme-vue/button"
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -150,11 +148,12 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
+        let dataChange = ref(0)
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
             result,
-            loading, 
+            loading,
         } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
@@ -195,9 +194,14 @@ export default defineComponent({
             }
         })
         watch(globalYear, (value) => {
+            openAddNewModal()
             trigger.value = true
             originData.value.imputedYear = value
             refetchData()
+        });
+        watch(store.state.common.checkStatusChangeValue, (value) => {
+            console.log(value);
+
         });
         // ======================= FUNCTION ================================
         const resetAddComponent = ref<number>(1);
@@ -205,22 +209,19 @@ export default defineComponent({
             resetAddComponent.value++;
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
-
             //remove active row edit
             const element = document.querySelector('.dx-row-focused');
             (element as HTMLInputElement).classList.remove("dx-row-focused");
         }
-
-        let dataChange = ref(0)
         const openEditModal = (val: any) => {
             actionChangeComponent.value = 2
-            if (store.state.common.checkStatusChangeValue == true) {
-                modalStatusChange.value = true
-                dataChange.value = val.data.employeeId
-            } else {
-                store.state.common.idRowChangePa520 = val.data.employeeId
-                idRowEdit.value = val.data.employeeId
-            }
+            store.state.common.idRowChangePa520 = val.data.employeeId
+            // if (store.state.common.checkStatusChangeValue == true) {
+            //     modalStatusChange.value = true
+            //     dataChange.value = val.data.employeeId
+            // } else {
+            //     idRowEdit.value = val.data.employeeId
+            // }
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
@@ -245,14 +246,12 @@ export default defineComponent({
             actionSave.value++
             store.state.common.actionSavePA520++
         }
-
         const statusComfirmSave = (res: any) => {
             if (res == true)
-                actionSaveFunc() 
+                actionSaveFunc()
             store.state.common.idRowChangePa520 = dataChange.value
             idRowEdit.value = dataChange.value
         }
-
         return {
             modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
             statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,

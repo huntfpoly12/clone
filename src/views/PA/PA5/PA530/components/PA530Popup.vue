@@ -44,8 +44,7 @@
 import { defineComponent, ref, watch } from "vue";
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA5/PA530/index";
-import dayjs from 'dayjs';
+import mutations from "@/graphql/mutations/PA/PA5/PA530/index"; 
 export default defineComponent({
     props: {
         modalStatus: {
@@ -64,7 +63,7 @@ export default defineComponent({
             type: Boolean
         },
         receiptDate: {
-            type: String
+            type: Number
         },
         companyId: {
             type: String
@@ -122,13 +121,14 @@ export default defineComponent({
                             val.receiverAddress = email.value
                     })
                 }
+                console.log(props.receiptDate);
                 let dataSendEmail = {
                     companyId: props.companyId,
                     input: {
                         imputedYear: props.imputedYear,
                         paymentYearMonths: props.paymentYearMonths,
                         type: props.type == true ? 1 : 2,
-                        receiptDate: dayjs(props.receiptDate).format('YYYYMMDD')
+                        receiptDate: props.receiptDate
                     },
                     employeeInputs: employeeInputsCall
                 }
@@ -151,11 +151,9 @@ export default defineComponent({
     width: 100%;
     justify-content: center;
     margin-top: 20px;
-
     img {
         margin-right: 5px;
     }
-
     span {
         padding-left: 5px;
     }

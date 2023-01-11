@@ -13,7 +13,9 @@
                         <a-row :gutter="[24, 8]">
                             <!-- ================== Row 1 =========================== -->
                             <a-col :span="6">
-                                <checkbox-basic size="14" label="전체" v-model:valueCheckbox="checkAllValue" />
+                                <div @click="checkAll">
+                                    <checkbox-basic size="14" label="전체" v-model:valueCheckbox="checkAllValue" />
+                                </div>
                             </a-col>
                             <a-col :span="6">
                                 <checkbox-basic size="14" v-model:valueCheckbox="year1.value" :label="year1.label" />
@@ -126,7 +128,7 @@
                     </a-col>
                     <a-col :span="12">
                         <div class="title-body-right">
-                            <date-time-box width="160px" v-model:valueDate="dateSendEmail" dateFormat="YYYY-MM-DD" />
+                            <date-time-box width="160px" v-model:valueDate="dateSendEmail" />
                         </div>
                     </a-col>
                 </a-row>
@@ -204,7 +206,7 @@
             </a-spin>
             <PA530Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
                 :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
-                :receiptDate="dateSendEmail.toString()" @closePopup="modalStatus == false" :companyId="companyId"
+                :receiptDate="dateSendEmail" @closePopup="modalStatus == false" :companyId="companyId"
                 :emailUserLogin="emailUserLogin" />
         </div>
     </div>
@@ -235,7 +237,7 @@ export default defineComponent({
         let selectedItemKeys = ref([])
         const emailUserLogin = ref()
         const actionSendEmailGroup = ref(false)
-        const dateSendEmail = ref(new Date)
+        const dateSendEmail = ref(filters.formatDateToInterger(dayjs().format('YYYYMMDD')))
         const valueSwitchChange = ref(true)
         const dataSource: any = ref([]);
         const store = useStore();
@@ -357,12 +359,12 @@ export default defineComponent({
         const year1 = reactive({
             label: globalYear.value + 1 + '년 01월',
             value: true,
-            subValue:  parseInt(globalYear.value + 1 + '01')
+            subValue: parseInt(globalYear.value + 1 + '01')
         })
         const year2 = reactive({
             label: globalYear.value + 1 + '년 02월',
             value: true,
-            subValue:  parseInt(globalYear.value + 1 + '02')
+            subValue: parseInt(globalYear.value + 1 + '02')
         })
         const modalStatus = ref(false)
         const dataApiSearch = reactive({
@@ -395,7 +397,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resPrint(res => {
-            window.open(res.data.getIncomeWageDailyWithholdingReceiptReportViewUrl);
+            window.open(res.data?.getIncomeWageDailyWithholdingReceiptReportViewUrl);
         })
         errorPrint(res => {
             notification('error', res.message)
@@ -410,13 +412,10 @@ export default defineComponent({
             emailUserLogin.value = e.data.getUser.email
         })
         // ================WATCHING============================================
-        watch(checkAllValue, (value) => {
-            arrCheckBoxSearch.quarter1.value = value
-            arrCheckBoxSearch.quarter2.value = value
-            arrCheckBoxSearch.quarter3.value = value
-            arrCheckBoxSearch.quarter4.value = value
-            year1.value = value
-            year2.value = value
+        watch(globalYear, (value) => {
+            dataApiSearch.filter.imputedYear = value
+            trigger.value = true
+            refetchData()
         }, { deep: true });
         watch(() => year2.value, (val) => {
             if (arrCheckBoxSearch.quarter1.value == true && arrCheckBoxSearch.quarter2.value == true && arrCheckBoxSearch.quarter3.value == true && arrCheckBoxSearch.quarter4.value == true && val == true && year1.value == true)
@@ -430,11 +429,12 @@ export default defineComponent({
             else
                 checkAllValue.value = false
         })
+        let switchSearchCheckbox = ref(true)
         watch(() => [
             arrCheckBoxSearch.quarter1.value,
             arrCheckBoxSearch.quarter2.value,
             arrCheckBoxSearch.quarter3.value,
-            arrCheckBoxSearch.quarter4.value
+            arrCheckBoxSearch.quarter4.value,
         ], ([val1, val2, val3, val4]) => {
             arrCheckBoxSearch.month1.value = val1
             arrCheckBoxSearch.month2.value = val1
@@ -448,29 +448,15 @@ export default defineComponent({
             arrCheckBoxSearch.month10.value = val4
             arrCheckBoxSearch.month11.value = val4
             arrCheckBoxSearch.month12.value = val4
-        }, { deep: true });
-        watch(() => arrCheckBoxSearch, (val) => {
-            if (val.month1.value == true && val.month2.value == true && val.month3.value == true)
-                val.quarter1.value = true
-            else
-                val.quarter1.value = false
-            if (val.month4.value == true && val.month5.value == true && val.month6.value == true)
-                val.quarter2.value = true
-            else
-                val.quarter2.value = false
-            if (val.month7.value == true && val.month8.value == true && val.month9.value == true)
-                val.quarter3.value = true
-            else
-                val.quarter3.value = false
-            if (val.month10.value == true && val.month11.value == true && val.month12.value == true)
-                val.quarter4.value = true
-            else
-                val.quarter4.value = false
-            if (val.quarter1.value == true && val.quarter2.value == true && val.quarter3.value == true && val.quarter4.value == true && year1.value == true && year2.value == true)
+
+            switchSearchCheckbox.value = true
+            if (val1 == true && val2 == true && val3 == true && val4 == true && year2.value == true && year1.value == true)
                 checkAllValue.value = true
             else
                 checkAllValue.value = false
-        }, { deep: true });
+
+        }, { deep: true }); 
+
         // ================FUNCTION============================================ 
         const searching = () => {
             if (getArrPaymentYearMonth().length > 0) {
@@ -530,7 +516,7 @@ export default defineComponent({
                     imputedYear: globalYear,
                     paymentYearMonths: getArrPaymentYearMonth(),
                     type: valueSwitchChange.value == true ? 1 : 2,
-                    receiptDate: dayjs(dateSendEmail.value).format("YYYY-MM-DD")
+                    receiptDate: dateSendEmail.value
                 }
             }
             triggerPrint.value = true
@@ -555,20 +541,59 @@ export default defineComponent({
                 dataCallModal.value = dataCall
                 paymentYearMonthsModal.value = getArrPaymentYearMonth()
                 modalStatus.value = true
-            } else {
+            } else
                 notification('error', "일용직근로자들을 선택하세요!")
-            }
         }
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
         }
+
+        const checkAll = () => {
+            arrCheckBoxSearch.quarter1.value = checkAllValue.value
+            arrCheckBoxSearch.quarter2.value = checkAllValue.value
+            arrCheckBoxSearch.quarter3.value = checkAllValue.value
+            arrCheckBoxSearch.quarter4.value = checkAllValue.value
+            year1.value = checkAllValue.value
+            year2.value = checkAllValue.value
+
+        }
         return {
             emailUserLogin, actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
-            selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
+            checkAll, selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
         };
     },
 });
 </script>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <style scoped lang="scss" src="./style/style.scss"/>
