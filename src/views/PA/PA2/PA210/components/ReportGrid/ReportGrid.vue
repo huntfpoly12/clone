@@ -143,34 +143,6 @@ import { getAfterDeadline} from "../../utils/index"
 
 // register Handsontable's modules
 registerAllModules();
-// GraphQL로 원천징수이행상황신고서 작성을 위한 소득정보 데이터 유형
-interface IncomeForTaxWithholdingStatusReport {
-    code: string;
-    numberOfPeople: number;
-    totalPayment: number;
-    collectedIncomeTax: number;
-}
-// 원천징수이행상황신고서 명세 및 납부세액 입력 
-interface TaxWithholdingStatusReportStatementAndAmountOfTaxPaidInput {
-    code: string;
-    numberOfPeople: number;
-    numberOfPeopleModified?: number;
-    totalPayment: number;
-    totalPaymentModified?: number;
-    collectedIncomeTax: number;
-    collectedIncomeTaxModified?: number;
-    collectedRuralSpecialTax?: number;
-    collectedRuralSpecialTaxModified?: number;
-    collectedExtraTax?: number;
-    collectedExtraTaxModified?: number;
-    thisMonthAdjustedRefundTaxAmount?: number;
-    thisMonthAdjustedRefundTaxAmountModified?: number;
-    incomeTaxPaid?: number;
-    incomeTaxPaidModified?: number;
-    ruralSpecialTaxPaid?: number;
-    ruralSpecialTaxPaidModified?: number;
-}
-
 
 export default defineComponent({
   props: {
