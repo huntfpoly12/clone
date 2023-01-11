@@ -560,6 +560,14 @@ export const inputPosition = [
   { "className":"adjustmentOfRefundTaxAmount","value": [[37, 0], [37, 3], [37, 4], [37, 6], [37, 7], [37, 8], [37, 9], [37, 10], [37, 11], [37, 12]] },
 ]
 
+export const clearAllCellValue = (wrapper: any) => {
+  let hot = wrapper.value?.hotInstance;
+  inputPosition.forEach((item: any) => {
+    item.value.forEach((val: any) => {
+      hot?.setDataAtCell(val[0],val[1],null);
+    });
+  })
+} 
 
 export const setValueDataTable = (wrapper: any,code: string, data: any) => {
   let hot = wrapper.value.hotInstance;
