@@ -129,8 +129,8 @@
                                     <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType"
                                         width="250px" />
                                 </a-form-item>
-                                <a-form-item label="출금계좌번호" class="clr">
-                                    <text-number-box text-number-box
+                                <a-form-item label="출금계좌번호" class="clr">  
+                                    <text-number-box 
                                         v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
                                         placeholder="‘-’없이 숫자만 입력" width="250px" :required="true"
                                         nameInput="formState-extendInfoCmsBankAccountNumber">
@@ -529,7 +529,7 @@ export default defineComponent({
                 };
                 let extendInfoCmsBank = {
                     bankType: formState.extendInfoCmsBankBankType,
-                    accountNumber: formState.extendInfoCmsBankAccountNumber,
+                    accountNumber: formState.extendInfoCmsBankAccountNumber.toString(),
                     ownerBizNumber: formState.extendInfoCmsBankOwnerBizNumber,
                     ownerName: formState.extendInfoCmsBankOwnerName,
                     withdrawDay: formState.extendInfoCmsBankWithdrawDay
@@ -541,7 +541,7 @@ export default defineComponent({
                     cmsBank: extendInfoCmsBank,
                 };
                 actionUpdate(variables);
-            }
+            } 
         }
         updateDone((res) => {
             notification('success', "업데이트 완료!")

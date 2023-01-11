@@ -1,6 +1,6 @@
-import getEmployeeWageDailies from "./getEmployeeWageDailies";
+import searchIncomeWageWithholdingTaxByEmployees from "./searchIncomeWageWithholdingTaxByEmployees";
 
 const queries = {
-    getEmployeeWageDailies: getEmployeeWageDailies
+    searchIncomeWageWithholdingTaxByEmployees: searchIncomeWageWithholdingTaxByEmployees
 };
 export default queries;

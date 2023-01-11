@@ -145,7 +145,6 @@ export default defineComponent({
       if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
-        // store.commit('changeKeyActive', res.data.getIncomeExtras[0]?.employeeId ?? 1);
         store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
       }
       triggerDetail.value = false;

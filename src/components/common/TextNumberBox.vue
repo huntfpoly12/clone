@@ -54,12 +54,12 @@ export default defineComponent({
       var inputElement = e.event.target;
       inputElement.value = inputElement.value.replaceAll(/\D/g, '');
       if (inputElement.value)
-        emit("update:valueInput", parseInt(inputElement.value));
+        emit("update:valueInput", inputElement.value);
     };
 
     watch(
       () => props.valueInput,
-      (newValue) => { 
+      (newValue) => {
         value.value = newValue?.toString();
       }
     );
