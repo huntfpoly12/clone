@@ -5,8 +5,9 @@
         <a-row>
             <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData"
-                    :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                    :show-borders="true" :allow-column-reordering="move_column" key-expr="globalYear" :key="globalYear"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    :focused-row-enabled="true">
                     <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
                     <template #imputed-year>
                         <span>지급연월 </span>
@@ -247,8 +248,7 @@
         <a-row class="content-btm">
             <a-col :span="13" class="custom-layout">
                 <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax"
-                    :changeFommDone="changeFommDone" :isRunOnce="isRunOnce"
-                    :dataAddIncomeProcess="dataAddIncomeProcess" />
+                    :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" />
             </a-col>
             <a-col :span="11" class="custom-layout" style="padding-right: 0px">
                 <FormTaxPayInfo ref="formTaxRef" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
@@ -310,7 +310,6 @@ export default defineComponent({
     },
     setup() {
         const statusParam = ref<any>({ status: 10 });
-        const dataSource = ref<[]>([]);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         const per_page = computed(() => store.state.settings.per_page);
@@ -321,9 +320,9 @@ export default defineComponent({
         const modalEdit = ref<boolean>(false);
         const modalHistory = ref<boolean>(false);
         const modalHistoryStatus = ref<boolean>(false);
-        const originData = ref({
+        const originData = reactive({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
         });
         const editTaxParam = ref<any>({});
         const changeFommDone = ref(1);
@@ -339,9 +338,9 @@ export default defineComponent({
         const incomeExtrasParams = reactive({
             companyId: companyId,
             processKey: {
-                imputedYear: +dayjs().format('YYYY'),
+                imputedYear: globalYear.value,
                 imputedMonth: +dayjs().format('MM'),
-                paymentYear: +dayjs().format('YYYY'),
+                paymentYear: globalYear.value,
                 paymentMonth: +dayjs().format('MM'),
             },
         });
@@ -352,7 +351,6 @@ export default defineComponent({
         // ======================= GRAPQL ================================
         const {
             refetch: refetchIncomeProcessExtras,
-            result: resultIncomeProcessExtras,
             loading: loadingIncomeProcessExtras,
             onResult: onResultIncomeProcessExtras,
         } = useQuery(queries.getIncomeProcessExtras, originData, () => ({
@@ -361,10 +359,6 @@ export default defineComponent({
         }));
         const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone } = useMutation(mutations.changeIncomeProcessExtraStatus);
         // ======================= WATCH ==================================
-        watch(resultIncomeProcessExtras, (value) => {
-            dataSource.value = value.getIncomeProcessExtras;
-            trigger.value = false;
-        });
         watch(changeFommDone, () => {
             trigger.value = true;
             refetchIncomeProcessExtras();
@@ -432,6 +426,8 @@ export default defineComponent({
             resetForm();
             dataAddIncomeProcess.value = emit;
             incomeExtrasParams.processKey = { ...emit };
+            columnData.value[0]['month_' + emit.imputedMonth] = emit
+            columnData.value[0]['month_' + emit.imputedMonth].status = 10
         };
         const addItem = () => {
             if (!formTaxRef.value.isEdit) {
@@ -497,7 +493,7 @@ export default defineComponent({
         // fnc click month
         const showDetailSelected = (obj: any) => {
             taxPayRef.value.firsTimeRow = true;
-            incomeExtrasParams.processKey.imputedMonth = obj?.imputedMonth && obj?.imputedMonth;
+            incomeExtrasParams.processKey.imputedMonth = obj?.imputedMonth;
             incomeExtrasParams.processKey.imputedYear = obj.imputedYear;
             incomeExtrasParams.processKey.paymentYear = obj.paymentYear;
             incomeExtrasParams.processKey.paymentMonth = obj.paymentMonth;
@@ -506,12 +502,20 @@ export default defineComponent({
             resetForm();
             month.value = obj.imputedMonth;
         };
+        //custom data in top table
         const IncomeProcessExtrasCustom = ref<any>([]);
-        let columnData = ref<any>([{}]);
+        let columnData = ref<any>([{
+            globalYear: globalYear.value,
+            hasData: false,
+        }]);
         const isRunOnce = ref<boolean>(true);
         const toNumber = (num: any) => (!num ? '' : num);
         onResultIncomeProcessExtras((res: any) => {
-            let responeData = res.data.getIncomeProcessExtras;
+            let responeData = res.data?.getIncomeProcessExtras ?? [];
+            columnData.value = [{
+                globalYear: globalYear.value,
+                hasData: false,
+            }]
             IncomeProcessExtrasCustom.value = [
                 { id: 1, name: '인원' },
                 { id: 2, name: '지급액' },
@@ -519,70 +523,75 @@ export default defineComponent({
                 { id: 4, name: '지방소득세' },
                 { id: 5, name: '공제총액' },
                 { id: 6, name: '차인지급액' },
-            ];
-            const addObj = (monthNum: number, val: any) => {
-                if (val.imputedMonth == monthNum) {
-                    columnData.value[0]['month_' + val.imputedMonth] = {
-                        paymentYear: val.paymentYear,
-                        status: val.status,
-                        paymentMonth: val.paymentMonth,
+            ]
+            if(responeData.length > 0) {
+                columnData.value[0].hasData= true;
+                responeData.forEach((val: any) => {
+                    let dataAdd = {
                         imputedMonth: val.imputedMonth,
                         imputedYear: val.imputedYear,
+                        paymentYear: val.paymentYear,
+                        paymentMonth: val.paymentMonth,
                     };
-                }
-            };
-            responeData.forEach((val: any) => {
-                let dataAdd = {
-                    imputedMonth: val.imputedMonth,
-                    imputedYear: val.imputedYear,
-                    paymentYear: val.paymentYear,
-                    paymentMonth: val.paymentMonth,
-                };
-                IncomeProcessExtrasCustom.value[0]['month' + val.imputedMonth] = {
-                    value: toNumber(val?.employeeStat?.employeeCount + val?.employeeStat?.retireEmployeeCount)?.toLocaleString('en-US', { currency: 'VND' }),
-                    ...dataAdd,
-                };
-                IncomeProcessExtrasCustom.value[1]['month' + val?.imputedMonth] = {
-                    value: val?.incomeStat?.incomePayment?.toLocaleString('en-US', {
-                        currency: 'VND',
-                    }),
-                    ...dataAdd,
-                };
-                IncomeProcessExtrasCustom.value[2]['month' + val?.imputedMonth] = {
-                    value: val?.incomeStat?.withholdingIncomeTax?.toLocaleString('en-US', {
-                        currency: 'VND',
-                    }),
-                    ...dataAdd,
-                };
-                IncomeProcessExtrasCustom.value[3]['month' + val?.imputedMonth] = {
-                    value: val?.incomeStat?.withholdingLocalIncomeTax?.toLocaleString('en-US', { currency: 'VND' }),
-                    ...dataAdd,
-                };
-                IncomeProcessExtrasCustom.value[4]['month' + val?.imputedMonth] = {
-                    value: toNumber(val?.incomeStat?.withholdingIncomeTax + val?.incomeStat?.withholdingLocalIncomeTax).toLocaleString('en-US', {
-                        currency: 'VND',
-                    }),
-                    ...dataAdd,
-                };
-                IncomeProcessExtrasCustom.value[5]['month' + val?.imputedMonth] = {
-                    value: val?.incomeStat?.actualPayment?.toLocaleString('en-US', {
-                        currency: 'VND',
-                    }),
-                    ...dataAdd,
-                };
-                for (var i = 1; i < 13; i++) {
-                    addObj(i, val);
-                }
-            });
+                    IncomeProcessExtrasCustom.value[0]['month' + val.imputedMonth] = {
+                        value: toNumber(val?.employeeStat?.employeeCount + val?.employeeStat?.retireEmployeeCount)?.toLocaleString('en-US', { currency: 'VND' }),
+                        ...dataAdd,
+                    };
+                    IncomeProcessExtrasCustom.value[1]['month' + val?.imputedMonth] = {
+                        value: val?.incomeStat?.incomePayment?.toLocaleString('en-US', {
+                            currency: 'VND',
+                        }),
+                        ...dataAdd,
+                    };
+                    IncomeProcessExtrasCustom.value[2]['month' + val?.imputedMonth] = {
+                        value: val?.incomeStat?.withholdingIncomeTax?.toLocaleString('en-US', {
+                            currency: 'VND',
+                        }),
+                        ...dataAdd,
+                    };
+                    IncomeProcessExtrasCustom.value[3]['month' + val?.imputedMonth] = {
+                        value: val?.incomeStat?.withholdingLocalIncomeTax?.toLocaleString('en-US', { currency: 'VND' }),
+                        ...dataAdd,
+                    };
+                    IncomeProcessExtrasCustom.value[4]['month' + val?.imputedMonth] = {
+                        value: toNumber(val?.incomeStat?.withholdingIncomeTax + val?.incomeStat?.withholdingLocalIncomeTax).toLocaleString('en-US', {
+                            currency: 'VND',
+                        }),
+                        ...dataAdd,
+                    };
+                    IncomeProcessExtrasCustom.value[5]['month' + val?.imputedMonth] = {
+                        value: val?.incomeStat?.actualPayment?.toLocaleString('en-US', {
+                            currency: 'VND',
+                        }),
+                        ...dataAdd,
+                    };
+                    columnData.value[0]['month_' + val.imputedMonth] = val
+                });
+            }
             if (isRunOnce.value) {
                 isRunOnce.value = false;
                 if (columnData.value[0]['month_' + `${dayjs().month() + 1}`]) {
                     showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
                 }
             }
+            console.log(`output->columnData.value`,columnData.value[0].hasData)
+            if(!columnData.value[0].hasData) {
+                showDetailSelected({
+                    imputedMonth: dayjs().month() ,
+                    imputedYear: globalYear.value,
+                    paymentMonth: dayjs().month() ,
+                    paymentYear: globalYear.value,
+                })
+            }
+            trigger.value = false;
         });
+        watch(globalYear,(newVal)=> {
+            originData.imputedYear = newVal;
+            trigger.value = true;
+            
+        })
         return {
-            statusParam,loadingIncomeProcessExtras,dataSource,per_page,move_column,colomn_resize,modalDelete,popupDataDelete,modalEdit,globalYear,IncomeProcessExtrasCustom,columnData,incomeExtrasParams,editTaxParam,changeFommDone,formTaxRef,resetFormNum,taxPayRef,deleteIncomeExtrasParam,changeIncomeExtraPaymentDayParam,modalHistory,modalHistoryStatus,modalCopy,dataModalCopy,dataAddIncomeProcess,popupAddStatus,isRunOnce,month,isLoadNewForm,titleModalConfirm,
+            statusParam,loadingIncomeProcessExtras,per_page,move_column,colomn_resize,modalDelete,popupDataDelete,modalEdit,globalYear,IncomeProcessExtrasCustom,columnData,incomeExtrasParams,editTaxParam,changeFommDone,formTaxRef,resetFormNum,taxPayRef,deleteIncomeExtrasParam,changeIncomeExtraPaymentDayParam,modalHistory,modalHistoryStatus,modalCopy,dataModalCopy,dataAddIncomeProcess,popupAddStatus,isRunOnce,month,isLoadNewForm,titleModalConfirm,
             onSubmit,deleteItem,editItem,checkLen,showDetailSelected,editTax,onFormDone,actionDeleteSuccess,onAddMonth,mutateChangeIncomeProcessExtraStatus,actionEditDaySuccess,onLoadingTable,onAddIncomeProcess,formatMonth,resetForm,openTab,onPopupComfirm,addItem,onSave,
         };
     },

@@ -364,7 +364,6 @@ export default defineComponent({
           });
         }
         dependentCount.value = value.getEmployeeWage.dependents.length > 0 ? value.getEmployeeWage.dependents.length : 0;
-        console.log(`output->value.getEmployeeWage`,value.getEmployeeWage)
         calculateTax();
       }
     });
