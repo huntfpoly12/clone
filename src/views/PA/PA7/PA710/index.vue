@@ -16,7 +16,7 @@
                 <a-col span="21">
                 </a-col>
                 <a-col span="16" class="custom-layout">
-                    <a-spin :spinning="loading" size="large">
+                    <a-spin :spinning="loading || loadingCreated" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="employeeId"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -133,6 +133,8 @@
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
             title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
+        <PopupMessage :modalStatus="confirmSave" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+            title="입력한 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="confimSaveWhenChangeRow" />
     </div>
 </template>
 <script lang="ts">
@@ -152,19 +154,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        EditOutlined,
-        HistoryOutlined,
-        DxToolbar,
-        DxItem,
-        DxExport,
-        DxSearchPanel,
-        DeleteOutlined,
-        DxButton,
-        HistoryPopup,
-        SaveOutlined,
-        DxScrolling, DxSorting,
+        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxSorting,
     },
     setup() {
         // config grid
@@ -191,8 +181,11 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear,
         }
+        let confirmSave = ref(false)
         const optionsRadio = ref([...initialOptionsRadio]);
-        const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd } = useMutation(
+
+
+        const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd, loading: loadingCreated } = useMutation(
             mutations.createEmployeeExtra
         );
         const { mutate: updateEmployeeExtra, onDone: onDoneUpdate, onError: onErrorUpdate } = useMutation(
@@ -248,6 +241,7 @@ export default defineComponent({
                         }
                     };
                     updateEmployeeExtra(dataUpdate);
+                    changeFormData(dataRow)
                 } else {
                     let dataCreate = {
                         companyId: companyId,
@@ -297,21 +291,20 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             //remove active row edit
             const element = document.querySelector('.dx-row-focused');
-            (element as HTMLInputElement).classList.remove("dx-row-focused");
-            
+            if (element)
+                (element as HTMLInputElement).classList.remove("dx-row-focused");
+
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else
-                console.log('123');
+                confirmSave.value = true
         }
         const editData = (data: any) => {
+            dataRow = data.data
             if (checkForm.value == false && JSON.stringify(initialState) !== JSON.stringify(formState)) {
                 // 입력한 내용을 저장하시겠습니까? 
                 document.getElementById('active-save')?.click()
-            }
-
-            else {
-                dataRow = data.data
+            } else {
                 if (JSON.stringify(dataRowOld) !== JSON.stringify(formState) && checkForm.value == true) {
                     modalStatus.value = true;
                 } else {
@@ -380,6 +373,30 @@ export default defineComponent({
                 changeFormData({ ...initialState })
             }
         }
+
+        const confimSaveWhenChangeRow = (status: any) => {
+            if (status == true) {
+                let residentId = formState.residentId.replace('-', '')
+                let dataCreate = {
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    input: {
+                        employeeId: parseInt(formState.employeeId),
+                        incomeTypeCode: formState.incomeTypeCode,
+                        name: formState.name,
+                        foreigner: formState.foreigner,
+                        nationality: formState.nationality,
+                        nationalityCode: formState.nationalityCode,
+                        stayQualification: formState.stayQualification,
+                        residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
+                        email: formState.email,
+                        incomeTypeName: formState.incomeTypeName,
+                    },
+                };
+                createEmployeeExtra(dataCreate);
+            }
+            changeFormData(dataRow)
+        }
         watch(result, (value) => {
             if (value) {
                 listEmployeeExtra.value = value.getEmployeeExtras
@@ -400,8 +417,8 @@ export default defineComponent({
         });
 
         return {
-            move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,
-            actionToAddFromEdit, textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, deleteData, statusComfirm, statusComfirmAdd,
+            confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,loadingCreated,
+            confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, deleteData, statusComfirm, statusComfirmAdd,
         };
     },
 });
