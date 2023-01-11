@@ -5,15 +5,11 @@
       <div class="report-grid">
         <div class="header-1">원천세신고서</div>
         <div class="action-right">
-          <!-- <DxButton class="ml-3">
-              <img style="width: 30px;" src="@/assets/images/icon_delete.png" alt="">
-          </DxButton>
-          <DxButton class="ml-3">
-              <img style="width: 34px;" src="@/assets/images/save_icon.svg" alt="">
-          </DxButton> -->
+          <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3">
+          <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="createTaxWithholding">
           <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
         </div>
-        <div class="table-detail">{{dataSource}}
+        <div class="table-detail">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
             :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" 
@@ -21,7 +17,7 @@
             <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
             <template #status="{ data }">
               <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
-                          :dataRow="data.data" @dataRow="changeStatus" />
+                          :dataRow="data.data"/>
             </template>
             <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
             <template #imputedYear-imputedMonth="{ data }">
@@ -51,7 +47,7 @@
         <div class="table-grid">
           <hot-table ref="wrapper" :settings="hotSettings"></hot-table>
         </div> 
-        <div class="header-2">원천징수세액환급신청서 / 기납부세액명세서 검증 결과</div>
+        <!-- <div class="header-2">원천징수세액환급신청서 / 기납부세액명세서 검증 결과</div>
         <div class="verification-result">
           <div class="form-item">
             <label for="">저장가능여부</label>
@@ -123,21 +119,21 @@
               <button-basic text="저장" :type="'default'" mode="'contained'"
                   :width="120" @onClick="createTaxWithholding" />
           </a-col>
-        </a-row>
+        </a-row> -->
       </div>
     </a-spin>
   </a-modal>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "devextreme-vue/data-grid";
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 import { useQuery ,useMutation} from "@vue/apollo-composable";
-import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport} from "./Gridsetting"
+import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,clearAllCellValue} from "./Gridsetting"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
@@ -147,34 +143,6 @@ import { getAfterDeadline} from "../../utils/index"
 
 // register Handsontable's modules
 registerAllModules();
-// GraphQL로 원천징수이행상황신고서 작성을 위한 소득정보 데이터 유형
-interface IncomeForTaxWithholdingStatusReport {
-    code: string;
-    numberOfPeople: number;
-    totalPayment: number;
-    collectedIncomeTax: number;
-}
-// 원천징수이행상황신고서 명세 및 납부세액 입력 
-interface TaxWithholdingStatusReportStatementAndAmountOfTaxPaidInput {
-    code: string;
-    numberOfPeople: number;
-    numberOfPeopleModified?: number;
-    totalPayment: number;
-    totalPaymentModified?: number;
-    collectedIncomeTax: number;
-    collectedIncomeTaxModified?: number;
-    collectedRuralSpecialTax?: number;
-    collectedRuralSpecialTaxModified?: number;
-    collectedExtraTax?: number;
-    collectedExtraTaxModified?: number;
-    thisMonthAdjustedRefundTaxAmount?: number;
-    thisMonthAdjustedRefundTaxAmountModified?: number;
-    incomeTaxPaid?: number;
-    incomeTaxPaidModified?: number;
-    ruralSpecialTaxPaid?: number;
-    ruralSpecialTaxPaidModified?: number;
-}
-
 
 export default defineComponent({
   props: {
@@ -195,7 +163,7 @@ export default defineComponent({
     DxItem, DxScrolling,DxButton
   },
   setup(props, { emit }) {
-    const wrapper = ref()
+    const wrapper =  ref<any>(null);
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -214,7 +182,7 @@ export default defineComponent({
         }
       },
       hotRef: null,
-      data: dataInit,
+      data: [...dataInit],
       mergeCells: mergeCells,
       cell: [
         ...cellsSetting,
@@ -234,20 +202,13 @@ export default defineComponent({
     const setModalVisible = () => {
       emit('closePopup', false)
     }
-
-    const changeStatus = (data: any) => {
-      //console.log(data);
-      
-    }
-    watch(() => props.modalStatus, (newValue) => {
-      if (newValue) {
-       
-      }
+    onMounted(() => {
+      clearAllCellValue(wrapper)
     })
+
     watch(() => props.dataReport,(newValue) => {
       dataSource.value = newValue
     })
-
     const {
             refetch: refetchData,
             result,
@@ -308,7 +269,6 @@ export default defineComponent({
         notification('error', error.message)
     })
 
-
     const createTaxWithholding = () => {
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData()
@@ -342,18 +302,20 @@ export default defineComponent({
         input:{
           paymentType: dataSource.value[0].paymentType,
           yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
-          additionalIncome: dataSource.value[0].additionalIncome,
+          additionalIncome: false,
           refund: dataSource.value[0].refund,
           afterDeadline: dataSource.value[0].afterDeadline,
           submissionDate: dataSource.value[0].submissionDate,
           reportClassCode: dataSource.value[0].reportClassCode,
           header:{
-            // withholdingDutyName: String!
-            // withholdingDutyPresidentName: String!
-            // withholdingDutyBizNumber: String!
-            // withholdingDutyAddress: String!
-            // withholdingDutyCollectivePayment: Boolean!
-            // withholdingDutyTaxForEachBusiness: Boolean!
+            withholdingDutyName: dataSource.value[0].withholdingDutyName,
+            withholdingDutyPresidentName: dataSource.value[0].withholdingDutyPresidentName,
+            withholdingDutyBizNumber: dataSource.value[0].withholdingDutyBizNumber,
+            withholdingDutyAddress: dataSource.value[0].withholdingDutyAddress,
+            withholdingDutyCollectivePayment: dataSource.value[0].withholdingDutyCollectivePayment,
+            withholdingDutyTaxForEachBusiness: dataSource.value[0].withholdingDutyTaxForEachBusiness,
+            withholdingDutyTelephone:  dataSource.value[0].withholdingDutyTelephone,
+            withholdingDutyEmail: dataSource.value[0].withholdingDutyEmail,
           },
           statementAndAmountOfTaxPaids: statement,
           adjustmentOfRefundTaxAmount:{
@@ -371,8 +333,7 @@ export default defineComponent({
           }
         }
       }
-      console.log(variables,'vl')
-      //actionCreateTaxWithholding(variables)
+      actionCreateTaxWithholding(variables)
     }
     return {
       setModalVisible,
@@ -383,7 +344,6 @@ export default defineComponent({
       wrapper,
       move_column,
       colomn_resize,
-      changeStatus,
       loadNew,
       getAfterDeadline,
       createTaxWithholding

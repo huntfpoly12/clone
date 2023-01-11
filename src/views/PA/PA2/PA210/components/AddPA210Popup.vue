@@ -21,8 +21,9 @@
                                     {{
                                         data.data.reportType == 1 ?
                                             dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + (data.data.imputedFinishYearMonth ? '~' +
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') : '')
+                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') +
+                                            (data.data.imputedFinishYearMonth ? '~' +
+                                                dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') : '')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -40,8 +41,9 @@
                                     {{
                                         data.data.reportType == 1 ?
                                             dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + (data.data.paymentFinishYearMonth ? '~' +
-                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') : '')
+                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') +
+                                            (data.data.paymentFinishYearMonth ? '~' +
+                                                dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') : '')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -77,8 +79,7 @@
             </standard-form>
         </a-modal>
         <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
-            :dataReport="dataReport"></report-grid>
-            {{  dataPopupAdd }}
+            :dataReport="dataReport" :key="resetComponent"></report-grid>
     </div>
 </template>
 
@@ -116,6 +117,7 @@ export default defineComponent({
         const dataReports: any = ref([])
         const dataReport: any = ref([])
         const reportGridStatus = ref(false)
+        const resetComponent = ref(0)
         const arrayRadioCheck = ref([
             { id: false, text: "정기신고" },
             { id: true, text: "기한후신고" },
@@ -198,7 +200,7 @@ export default defineComponent({
                 paymentMonth: 12,
                 imputedFinishYearMonth: parseInt(globalYear.value + '12'),
                 imputedStartYearMonth: parseInt(globalYear.value + '6'),
-                paymentFinishYearMonth: parseInt(globalYear.value+1 + '1'),
+                paymentFinishYearMonth: parseInt(globalYear.value + 1 + '1'),
                 paymentStartYearMonth: parseInt(globalYear.value + '7'),
                 yearEndTaxAdjustment: false,
                 refund: false,
@@ -210,16 +212,10 @@ export default defineComponent({
         watch(() => props.dataPopupAdd, (value: any) => {
             loading.value = true;
             dataReports.value = []
-            let i = 0
-            let month = 1
-            let imputedMonth = 1
-            let paymentMonth = 1
-            let year = globalYear.value
             if (value.reportType == 1) {
-                month = 12
-                if (value.lastMonth == 12) {
-                    year = globalYear.value + 1
-                }
+                let i = 0
+                let year = value.lastMonth == 12 ? globalYear.value+1 : globalYear.value
+                let month = 12
                 if (value.paymentType == 1) {
                     value.lastMonth != 12 ? i = value.lastMonth + 1 : i = 1
                     for (i; i <= month; i++) {
@@ -230,8 +226,6 @@ export default defineComponent({
                             paymentYear: year,
                             paymentMonth: i,
                             reportClassCode: "매당" + i,
-                            // reportType: value.reportType,
-                            // paymentType: value.paymentType,
                             ...value,
                             index: 0,
                             status: 10,
@@ -247,8 +241,8 @@ export default defineComponent({
                 } else {
                     value.lastMonth != 12 ? i = value.lastMonth + 1 : ''
                     for (i; i <= month; i++) {
-                        imputedMonth = i == 0 ? 2 : i
-                        paymentMonth = i == 0 ? 2 : i + 1
+                        let imputedMonth = i == 0 ? 2 : i
+                        let paymentMonth = i == 0 ? 2 : i + 1
                         dataReports.value.push({
                             reportId: i,
                             imputedYear: year,
@@ -256,8 +250,6 @@ export default defineComponent({
                             paymentYear: paymentMonth == 13 ? year + 1 : year,
                             paymentMonth: paymentMonth == 13 ? 1 : paymentMonth,
                             reportClassCode: "매익" + i,
-                            // reportType: value.reportType,
-                            // paymentType: value.paymentType,
                             ...value,
                             index: 0,
                             status: 10,
@@ -270,20 +262,16 @@ export default defineComponent({
                     }
                 }
             } else {
-                if (value.paymentType == 1) {
-                    arrayPaymentType1.map((data: any, index) => {
-                        // value.reportClassCodes.map((data: any, index2) => {
-
-                        // })
+                let array = value.paymentType == 1 ? arrayPaymentType1 : arrayPaymentType2
+                array.map((data: any, index) => {
+                    if (!value.reportClassCodes.find((item: any) => item == (value.paymentType == 1 ? "반당" : "반익") + index)) {
                         dataReports.value.push({
                             reportId: index,
                             imputedYear: globalYear.value,
                             imputedMonth: data.imputedMonth,
                             paymentYear: globalYear.value,
                             paymentMonth: data.paymentMonth,
-                            reportClassCode: "반당" + index,
-                            // reportType: value.reportType,
-                            // paymentType: value.paymentType,
+                            reportClassCode: (value.paymentType == 1 ? "반당" : "반익") + index,
                             ...value,
                             index: 0,
                             status: 10,
@@ -295,31 +283,8 @@ export default defineComponent({
                             paymentFinishYearMonth: data.paymentFinishYearMonth,
                             paymentStartYearMonth: data.paymentStartYearMonth,
                         })
-                    })
-                } else {
-                    arrayPaymentType2.map((data: any, index) => {
-                        dataReports.value.push({
-                            reportId: index,
-                            imputedYear: globalYear.value,
-                            imputedMonth: data.imputedMonth,
-                            paymentYear: globalYear.value,
-                            paymentMonth: data.paymentMonth,
-                            reportClassCode: "반익" + index,
-                            // reportType: value.reportType,
-                            // paymentType: value.paymentType,
-                            ...value,
-                            index: 0,
-                            status: 10,
-                            refund: data.refund,
-                            submissionDate: parseInt(dayjs().format("YYYYMMDD")),
-                            yearEndTaxAdjustment: data.yearEndTaxAdjustment,
-                            imputedFinishYearMonth: data.imputedFinishYearMonth,
-                            imputedStartYearMonth: data.imputedStartYearMonth,
-                            paymentFinishYearMonth: data.paymentFinishYearMonth,
-                            paymentStartYearMonth: data.paymentStartYearMonth,
-                        })
-                    })
-                }
+                    }
+                })
             }
             dataReport.value = dataReports.value.length ? [dataReports.value[0]] : []
             focusedRowKey.value = dataReports.value.length ? dataReports.value[0].reportId : null
@@ -328,6 +293,7 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const onSubmit = (e: any) => {
+            resetComponent.value++;
             dataReport.value[0].afterDeadline = afterDeadline.value
             reportGridStatus.value = true
         };
@@ -356,7 +322,7 @@ export default defineComponent({
             setModalVisible,
             reportGridStatus,
             arrayRadioCheck, afterDeadline,
-            focusedRowKey,
+            focusedRowKey,resetComponent
         };
     },
 });
@@ -365,5 +331,8 @@ export default defineComponent({
 ::v-deep ul.ant-cascader-menu {
     height: auto;
     max-height: 180px;
+}
+::v-deep .ant-form-item-control-input {
+    align-items: flex-end !important;
 }
 </style>

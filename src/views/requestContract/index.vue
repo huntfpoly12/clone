@@ -178,8 +178,11 @@
                                 <DxColumn :width="225" data-field="facilityBizType" caption="사업분류">
                                     <DxLookup :data-source="facilityBizTypeCommon" value-expr="v" display-expr="n" />
                                 </DxColumn>
-                                <DxColumn data-field="startYearMonth" data-type="date" caption="서비스시작년월"
-                                    format="yyyy-MM" />
+                                <DxColumn cell-template="startYearMonth" caption="서비스시작년월" />
+                                <template #startYearMonth="{ data }">
+                                    {{ data.data.startYearMonth ? dayjs(data.data.startYearMonth?.toString()).format("YYYY-MM") : '' }}
+                                </template>
+
                                 <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
                             </DxDataGrid>
                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
@@ -193,7 +196,7 @@
                                     <a-form-item label="사업명 (중복불가)">
                                         <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="서비스 시작년월">
+                                    <a-form-item label="서비스 시작년월">   
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
                                             width="200px" />
                                     </a-form-item>
@@ -416,7 +419,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            // step.value = val - 1 // Debug
+            step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
@@ -597,11 +600,10 @@ export default {
                 delete val.__KEY__
                 delete val.rowIndex
                 delete val.dataImg
-                val.capacity = parseInt(val.capacity)
-                val.startYearMonth = parseInt(dayjs(val.startYearMonth).format('YYYYMMDD'))
+                val.capacity = parseInt(val.capacity) 
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
-
+  
             let dataCallCreated = {
                 content: {
                     agreements: {
@@ -646,7 +648,7 @@ export default {
                         accountingServiceTypes: contractCreacted.accountingServiceTypes,
                     },
                     withholding: {
-                        startYearMonth: parseInt(dayjs(contractCreacted.startYearMonthHolding).format('YYYYMM')),
+                        startYearMonth: contractCreacted.startYearMonthHolding,
                         capacity: contractCreacted.capacityHolding,
                         withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
                     },
@@ -731,7 +733,7 @@ export default {
             optionSale.value = dataOption;
         });
         return {
-            arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
+            dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
             contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
