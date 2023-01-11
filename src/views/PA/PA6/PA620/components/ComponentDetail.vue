@@ -3,22 +3,22 @@
         <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
             <a-col style="display: flex">
               <DxButton
-                    :text="'귀' + processKey?.imputedYear + '-' + formatMonth(processKey?.imputedMonth)"
+                    :text="'귀' + (!isDisabledForm ? (processKey?.imputedYear + '-' + formatMonth(processKey?.imputedMonth)):'')"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
               <DxButton
-              :text="'지' + processKey?.paymentYear + '-' + formatMonth(processKey?.paymentMonth)"
-              :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
-              <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm"/>
+                    :text="'지' + (!isDisabledForm ? (processKey?.paymentYear + '-' + formatMonth(processKey?.paymentMonth)):'')"
+                    :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+              <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm"/>
             </a-col>
             <a-col style="display: inline-flex; align-items: center">
-              <DxButton class="ml-3" icon="plus" @click="addRow" />
-              <DxButton class="ml-4" @click="deleteItem">
+              <DxButton class="ml-3" icon="plus" @click="addRow" :disabled="isDisabledForm"/>
+              <DxButton class="ml-4" @click="deleteItem" :disabled="isDisabledForm">
                 <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
               </DxButton>
-              <DxButton @click="onSave" size="large" class="ml-4">
+              <DxButton @click="onSave" size="large" class="ml-4" :disabled="isDisabledForm">
                   <SaveOutlined style="font-size: 17px" />
               </DxButton>
-              <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true">
+              <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true" :disabled="isDisabledForm">
                 <a-tooltip placement="top">
                   <template #title>사업소득자료 변경이력</template>
                   <div style="text-align: center;" @click="onItemClick('history')">
@@ -26,7 +26,7 @@
                   </div>
               </a-tooltip>
               </DxButton>
-              <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true">
+              <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true" :disabled="isDisabledForm">
                 <a-tooltip placement="top">
                   <template #title>사업소득 마감상태 변경이력</template>
                   <div style="text-align: center;" @click="onItemClick('historyEdit')">
@@ -34,7 +34,7 @@
                   </div>
                 </a-tooltip>
               </DxButton>
-              <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox">
+              <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm">
                   <div class="d-flex-center">
                       <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
                       <span class="fz-12 pl-5">지급일변경</span>
@@ -87,7 +87,7 @@
   <a-col :span="10" class="custom-layout form-action">
       <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
           <a-form-item label="사업소득자" label-align="right">
-              <employ-type-select :disabled="disabledInput" :arrayValue="arrayEmploySelect"
+              <employ-type-select :disabled="disabledInput || isDisabledForm" :arrayValue="arrayEmploySelect"
                   v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
                   @incomeTypeCode="changeIncomeTypeCode" />
           </a-form-item>
@@ -97,20 +97,26 @@
                   <a-col :span="13">
                       <a-form-item label="귀속/지급연월" label-align="right">
                           <div class="d-flex-center">
-                              <div class="month-custom-1 d-flex-center">
+                              <div class="month-custom-1 d-flex-center" v-if="!isDisabledForm">
                                   귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="true" />
                               </div>
-                              <div class="month-custom-2 d-flex-center">
+                              <DxButton
+                                        :text="'귀' + (!isDisabledForm ? (processKey?.imputedYear + '-' + formatMonth(processKey?.imputedMonth)):'')"
+                                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" v-else/>
+                              <div class="month-custom-2 d-flex-center" v-if="!isDisabledForm">
                                   지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="true"/>
                               </div>
+                                <DxButton
+                                        :text="'지' + (!isDisabledForm ? (processKey?.paymentYear + '-' + formatMonth(processKey?.paymentMonth)):'')"
+                                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" v-else />
                           </div>
                       </a-form-item>
                       <a-form-item label="지급일" label-align="right">
                           <number-box :max="31" :min="1" width="150px" class="mr-5"
-                              v-model:valueInput="dataAction.input.paymentDay" :disabled="disabledInput" />
+                              v-model:valueInput="dataAction.input.paymentDay" :disabled="disabledInput || isDisabledForm" />
                       </a-form-item>
                       <a-form-item label="지급액" label-align="right">
-                          <number-box-money min="0" width="150px" class="mr-5"
+                          <number-box-money min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
                               v-model:valueInput="dataAction.input.paymentAmount" />
                       </a-form-item>
                       <a-form-item label="세율" label-align="right">
@@ -125,13 +131,13 @@
                       <div>
                           <a-form-item label="소득세(공제)" label-align="right">
                               <div class="d-flex-center">
-                                  <number-box-money min="0" width="150px" class="mr-5"
+                                  <number-box-money min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
                                       v-model:valueInput="dataAction.input.withholdingIncomeTax" /> 원
                               </div>
                           </a-form-item>
                           <a-form-item label="지방소득세(공제)" label-align="right">
                               <div class="d-flex-center">
-                                  <number-box-money min="0" width="150px" class="mr-5"
+                                  <number-box-money min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
                                       v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" /> 원
                               </div>
                           </a-form-item>
@@ -197,7 +203,10 @@ export default defineComponent({
       actionSave: {
           type: Number
       },
-      isFirstChangeTopTable: Boolean,
+      isDisabledForm: {
+        type: Boolean,
+        default: false,
+      },
   },
   setup(props, { emit }) {
       let disabledInput = ref(false)
@@ -265,7 +274,6 @@ export default defineComponent({
         const val = res.data.getIncomeBusinesses;
           dataSourceDetail.value = val;
           focusedRowKey.value =  val[0]?.employeeId;
-          console.log(`output->focusedRowKey.value`,focusedRowKey.value)
           if(isFirstChange.value) {
             dataAction.input.paymentDay = val[0]?.paymentDay ?? '';
             dataAction.input.employeeId = val[0]?.employeeId ?? '';

@@ -574,7 +574,6 @@ export default defineComponent({
                     showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
                 }
             }
-            console.log(`output->columnData.value`,columnData.value[0].hasData)
             if(!columnData.value[0].hasData) {
                 showDetailSelected({
                     imputedMonth: dayjs().month() ,
