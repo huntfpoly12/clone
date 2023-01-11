@@ -72,10 +72,7 @@
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
-                    <DxButton v-if="data.data.index" :text="'수정' + (data.data.afterDeadline ? '' : data.data.index)"
-                        :style="{ color: 'white', backgroundColor: 'orange' }" :height="'33px'" />
-                    <DxButton v-else :text="data.data.afterDeadline ? '기한후' : '정기'"
-                        :style="data.data.afterDeadline ? { color: 'white', backgroundColor: 'black' } : { color: 'black', backgroundColor: 'white', border: 'black' }"
+                    <DxButton :text="getColorButton(data.data)?.text" :style="getColorButton(data.data)?.style"
                         :height="'33px'" />
                 </template>
 
@@ -122,11 +119,11 @@
                 <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center" />
                 <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center" />
 
-                <DxColumn caption="신고서" cell-template="editIcon" />
+                <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
                     <DxButton class="ml-3" icon="edit" @click="editRow(data.data)" />
                 </template>
-                <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" />
+                <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right"/>
                 <template #add="{ data }">
                     <a-tooltip>
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
@@ -136,7 +133,7 @@
                     </a-tooltip>
 
                 </template>
-                <DxColumn :width="80" cell-template="pupop" caption="출력 메일" />
+                <DxColumn :width="80" cell-template="pupop" caption="출력 메일" :fixed="true" fixedPosition="right" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action" style="text-align: center; ">
                         <img @click="openPopupPrint(data.data)" src="@/assets/images/print.svg" alt=""
@@ -155,8 +152,8 @@
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false"
         :dataCall="dataPopup" />
-    <ReportGrid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
-        :dataReport="dataReport"></ReportGrid>
+    <ReportGrid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false" :dataReport="dataReport">
+    </ReportGrid>
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
@@ -214,16 +211,8 @@ export default defineComponent({
             refetch: refetchData,
             result,
             loading,
-        } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        const { result: resultConfig } = useQuery(
-            queries.getWithholdingConfig,
-            originData,
-            () => ({
-                fetchPolicy: "no-cache",
-            })
-        );
+        } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({ fetchPolicy: "no-cache" }));
+        const { result: resultConfig } = useQuery(queries.getWithholdingConfig, originData,() => ({ fetchPolicy: "no-cache" }));
         const {
             mutate: actionChangeStatus,
             onDone: doneChangeStatus,
@@ -247,15 +236,15 @@ export default defineComponent({
             if (value) {
                 dataPopupAdd.value.reportType = value.getWithholdingConfig.reportType;
                 dataPopupAdd.value.paymentType = value.getWithholdingConfig.paymentType;
-                // dataPopupAdd.value.reportType = 1;
-                // dataPopupAdd.value.paymentType = 2;
+                // dataPopupAdd.value.reportType = 6;
+                // dataPopupAdd.value.paymentType = 1;
             }
         });
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
             dataPopupAdd.value.lastMonth = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
-            // dataPopupAdd.value.lastMonth = 9;
+            // dataPopupAdd.value.lastMonth = 12;
             modalAddNewStatus.value = true;
         }
         const openModalHistory = (data: any) => {
@@ -293,6 +282,8 @@ export default defineComponent({
                 paymentYear: value.paymentYear,
                 paymentMonth: value.paymentMonth,
                 reportType: value.reportType,
+                paymentType: value.paymentType,
+                reportClassCode: value.reportClassCode,
                 index: value.index,
                 status: value.status,
                 refund: value.refund,
@@ -313,11 +304,26 @@ export default defineComponent({
             });
             return row;
         };
+        const getColorButton = (data: any) => {
+            if (data.index) {
+                return {
+                    "text": '수정' + (data.afterDeadline ? '' : data.index),
+                    "style": { color: 'white', backgroundColor: 'orange' }
+                };
+            } else {
+                return {
+                    "text": data.afterDeadline ? '기한후' : '정기',
+                    "style": data.afterDeadline ?
+                        { color: 'white', backgroundColor: 'black' } :
+                        { color: 'black', backgroundColor: 'white', border: 'black' }
+                };
+            }
+        }
 
         return {
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
-            getText,
+            getText, getColorButton,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
