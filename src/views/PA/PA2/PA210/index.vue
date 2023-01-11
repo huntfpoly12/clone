@@ -50,7 +50,7 @@
                 <template #payment="{ data }">
                     <a-tooltip>
                         <template #title>
-                            귀속기간
+                            지급기간
                             {{
                                 data.data.reportType == 1 ?
                                     dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
@@ -196,10 +196,19 @@ export default defineComponent({
         const dataReport: any = ref([])
         const dataSource: any = ref([])
         const dataPopup = ref()
-        const dataPopupAdd = ref({
+        const dataPopupAdd: any = ref({
             lastMonth: 0,
             reportType: 0,
             paymentType: 0,
+            withholdingDutyName: '',
+            withholdingDutyPresidentName: '',
+            withholdingDutyBizNumber: '',
+            withholdingDutyAddress: '',
+            withholdingDutyTelephone: '',
+            withholdingDutyEmail: '',
+            withholdingDutyCollectivePayment: false,
+            withholdingDutyTaxForEachBusiness: false,
+            reportClassCodes: [],
         })
         const originData = ref({
             companyId: companyId,
@@ -213,6 +222,7 @@ export default defineComponent({
             loading,
         } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({ fetchPolicy: "no-cache" }));
         const { result: resultConfig } = useQuery(queries.getWithholdingConfig, originData,() => ({ fetchPolicy: "no-cache" }));
+        const { result: resultCompany } = useQuery(queries.getCompany, {id: companyId},() => ({ fetchPolicy: "no-cache" }));
         const {
             mutate: actionChangeStatus,
             onDone: doneChangeStatus,
@@ -230,14 +240,30 @@ export default defineComponent({
         watch(result, (value) => {
             if (value) {
                 dataSource.value = value.getTaxWithholdingStatusReports;
+                value.getTaxWithholdingStatusReports.map((data: any) => {
+                    dataPopupAdd.value.reportClassCodes.push(data.reportClassCode)
+                })
             }
         });
         watch(resultConfig, (value) => {
             if (value) {
                 dataPopupAdd.value.reportType = value.getWithholdingConfig.reportType;
                 dataPopupAdd.value.paymentType = value.getWithholdingConfig.paymentType;
+                dataPopupAdd.value.withholdingDutyCollectivePayment = value.getWithholdingConfig.collectivePayment;
+                dataPopupAdd.value.withholdingDutyTaxForEachBusiness = value.getWithholdingConfig.taxForEachBusiness;
                 // dataPopupAdd.value.reportType = 6;
-                // dataPopupAdd.value.paymentType = 1;
+                // dataPopupAdd.value.paymentType = 2;
+            }
+        });
+        watch(resultCompany, (value) => {
+            let data = value.getCompany;
+            if (data) {
+                dataPopupAdd.value.withholdingDutyName = data.name;
+                dataPopupAdd.value.withholdingDutyPresidentName = data.presidentName;
+                dataPopupAdd.value.withholdingDutyBizNumber = data.bizNumber;
+                dataPopupAdd.value.withholdingDutyAddress = data.address;
+                dataPopupAdd.value.withholdingDutyTelephone = data.phone;
+                dataPopupAdd.value.withholdingDutyEmail = data.extendInfo.president.email;
             }
         });
 
