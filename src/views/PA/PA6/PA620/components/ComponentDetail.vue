@@ -1,58 +1,59 @@
 <template>
   <a-col :span="24">
-      <div class="header-detail-main">
-          <div class="table-detail-left d-flex-center">
-              <div class="text-box-1">귀 {{ processKey.imputedYear }}-{{
-                      processKey.imputedMonth
-              }}</div>
-              <div class="text-box-2">지 {{ processKey.paymentYear }}-{{
-                      processKey.paymentMonth
-              }}</div>
+        <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
+            <a-col style="display: flex">
+              <DxButton
+                    :text="'귀' + processKey?.imputedYear + '-' + formatMonth(processKey?.imputedMonth)"
+                    :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+              <DxButton
+              :text="'지' + processKey?.paymentYear + '-' + formatMonth(processKey?.paymentMonth)"
+              :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
               <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm"/>
-          </div>
-          <div class="table-detail-right">
-              <DxButton @click="deleteItem">
-                  <DeleteOutlined style="font-size: 18px;" />
-              </DxButton>
+            </a-col>
+            <a-col style="display: inline-flex; align-items: center">
               <DxButton class="ml-3" icon="plus" @click="addRow" />
-              <DxButton class="ml-3" icon="edit" @click="editPaymentDate" />
-              <button-basic  :width="150" text="기타소득자등록" class="open-tab"  @onClick="onItemClick('openTab')"></button-basic>
-              <template v-for="(placement) in placements" :key="placement">
-                  <a-dropdown :placement="placement" class="ml-5">
-                      <a-button class="button-open-tab">선택</a-button>
-                      <template #overlay>
-                          <a-menu>
-                              <a-menu-item>
-                                  <a-tooltip placement="left">
-                                      <template #title>사업소득자료 변경이력</template>
-                                      <div style="text-align: center;" @click="onItemClick('history')">
-                                          <HistoryOutlined style="font-size: 20px" />
-                                      </div>
-                                  </a-tooltip>
-                              </a-menu-item>
-                              <a-menu-item>
-                                  <a-tooltip placement="left">
-                                      <template #title>사업소득 마감상태 변경이력</template>
-                                      <div style="text-align: center;" @click="onItemClick('historyEdit')">
-                                          <img src="@/assets/images/icon_status_history.png" alt=""
-                                              style="width: 20px; height: 20px;" />
-                                      </div>
-                                  </a-tooltip>
-                              </a-menu-item>
-                          </a-menu>
-                      </template>
-                  </a-dropdown>
-              </template>
-          </div>
-      </div>
+              <DxButton class="ml-4" @click="deleteItem">
+                <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
+              </DxButton>
+              <DxButton @click="onSave" size="large" class="ml-4">
+                  <SaveOutlined style="font-size: 17px" />
+              </DxButton>
+              <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true">
+                <a-tooltip placement="top">
+                  <template #title>사업소득자료 변경이력</template>
+                  <div style="text-align: center;" @click="onItemClick('history')">
+                    <HistoryOutlined style="font-size: 16px" />
+                  </div>
+              </a-tooltip>
+              </DxButton>
+              <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true">
+                <a-tooltip placement="top">
+                  <template #title>사업소득 마감상태 변경이력</template>
+                  <div style="text-align: center;" @click="onItemClick('historyEdit')">
+                    <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
+                  </div>
+                </a-tooltip>
+              </DxButton>
+              <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox">
+                  <div class="d-flex-center">
+                      <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
+                      <span class="fz-12 pl-5">지급일변경</span>
+                  </div>
+              </DxButton>
+              <div class="custom-select-tab ml-4">
+                <button class="button-open-tab" @click="onItemClick('openTab')">기타소득자등록</button>
+              </div>
+            </a-col>
+        </a-row>
+      <!-- </div> -->
   </a-col>
 
   <a-col :span="14" class="custom-layout ">
       <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit)" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
-              :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
+              :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
               :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEditFuc"
-              :focused-row-enabled="true" @selection-changed="selectionChanged">
+              :focused-row-enabled="true" @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey">
               <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
               <DxScrolling column-rendering-mode="virtual" />
               <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
@@ -84,7 +85,7 @@
       </a-spin>
   </a-col>
   <a-col :span="10" class="custom-layout form-action">
-      <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit)" size="large">
+      <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
           <a-form-item label="사업소득자" label-align="right">
               <employ-type-select :disabled="disabledInput" :arrayValue="arrayEmploySelect"
                   v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
@@ -97,10 +98,10 @@
                       <a-form-item label="귀속/지급연월" label-align="right">
                           <div class="d-flex-center">
                               <div class="month-custom-1 d-flex-center">
-                                  귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" />
+                                  귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="true" />
                               </div>
                               <div class="month-custom-2 d-flex-center">
-                                  지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" />
+                                  지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="true"/>
                               </div>
                           </div>
                       </a-form-item>
@@ -141,9 +142,7 @@
                                   dataAction.input.withholdingIncomeTax -
                                   dataAction.input.withholdingLocalIncomeTax))
                           }}</b>원
-                        </div>
-                        <div>
-                          <span class="d-flex-center fz-11 ml-10" style="color: gray;">
+                          <span class="fz-11 ml-10" style="color: gray;">
                               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                               지급액 - 공제합계
                           </span>
@@ -197,7 +196,8 @@ export default defineComponent({
       },
       actionSave: {
           type: Number
-      }
+      },
+      isFirstChangeTopTable: Boolean,
   },
   setup(props, { emit }) {
       let disabledInput = ref(false)
@@ -220,12 +220,13 @@ export default defineComponent({
       const rowTable = ref(0);
       const globalYear = computed(() => store.state.settings.globalYear)
 
-      store.state.common.processKeyPA620 = {
+      let dateCustom = {
           imputedYear: globalYear.value,
           imputedMonth: dayjs().month() + 1,
           paymentYear: globalYear.value,
           paymentMonth: dayjs().month() + 1,
       }
+      store.commit('common/processKeyPA620', dateCustom)
       const processKey = computed(() => store.state.common.processKeyPA620)
       
       const modalHistory = ref<boolean>(false)
@@ -240,7 +241,7 @@ export default defineComponent({
           companyId: companyId,
           imputedYear: globalYear.value,
       })
-    let dataTableDetail: any = reactive({
+      let dataTableDetail: any = reactive({
           companyId: companyId,
           processKey: processKey.value
       })
@@ -259,9 +260,22 @@ export default defineComponent({
           enabled: triggerDetail.value,
           fetchPolicy: "no-cache",
       }));
+    const isFirstChange = ref(true);
     resIncomeProcessBusinessesDetail(res => {
-          dataSourceDetail.value = res.data.getIncomeBusinesses
-           triggerDetail.value = false
+        const val = res.data.getIncomeBusinesses;
+          dataSourceDetail.value = val;
+          focusedRowKey.value =  val[0]?.employeeId;
+          console.log(`output->focusedRowKey.value`,focusedRowKey.value)
+          if(isFirstChange.value) {
+            dataAction.input.paymentDay = val[0]?.paymentDay ?? '';
+            dataAction.input.employeeId = val[0]?.employeeId ?? '';
+            dataAction.input.incomeTypeCode = val[0]?.incomeTypeCode;
+            dataAction.input.paymentAmount = val[0]?.paymentAmount;
+            dataAction.input.withholdingIncomeTax = val[0]?.withholdingIncomeTax;
+            dataAction.input.withholdingLocalIncomeTax = val[0]?.withholdingLocalIncomeTax;
+            isFirstChange.value = false;
+          }
+          triggerDetail.value = false
       })
       errorGetIncomeProcessBusinessesDetail(res => {
           notification('error', res.message)
@@ -340,18 +354,18 @@ export default defineComponent({
       })
 
       // ================WATCHING============================================
-      watch(() => processKey.value, (newValue) => {
-          dataTableDetail.value = newValue
-          triggerDetail.value = true
-          refetchTableDetail()
-      }, { deep: true })
+    //   watch(() => processKey.value, (newValue) => {
+    //       dataTableDetail = newValue
+    //       triggerDetail.value = true
+    //       refetchTableDetail()
+    //   }, { deep: true })
 
-      watch(() => dataTableDetail, (newValue) => {
-          let date1 = dataAction.processKey.imputedYear + '-' + dataAction.processKey.imputedMonth
-          let date2 = dataAction.processKey.paymentYear + '-' + dataAction.processKey.paymentMonth
-          month1.value = dayjs(date1).format("YYYY-MM")
-          month2.value = dayjs(date2).format("YYYY-MM")
-      }, { deep: true })
+    //   watch(() => processKeyPA620, (newValue) => {
+    //       let date1 = processKeyPA620.value.processKey.imputedYear + '-' + processKeyPA620.value.processKey.imputedMonth
+    //       let date2 = processKeyPA620.value.processKey.paymentYear + '-' + processKeyPA620.value.processKey.paymentMonth
+    //       month1.value = dayjs(date1).format("YYYY-MM")
+    //       month2.value = dayjs(date2).format("YYYY-MM")
+    //   }, { deep: true })
 
       watch(() => props.statusBt, (newValue) => {
           statusButton.value = newValue
@@ -359,26 +373,7 @@ export default defineComponent({
 
       // Action save value
       watch(() => props.actionSave, () => {
-          dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1])
-          dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0])
-          dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1])
-          dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0])
-          if (switchAction.value == true) {
-              actionCreated(dataAction)
-          }
-          else {
-              let inputEdit = {
-                  ...dataAction,
-                  incomeId: dataCallApiDetailEdit.incomeId,
-                  input: {
-                      paymentAmount: dataAction.input.paymentAmount,
-                      taxRate: 3,
-                      withholdingIncomeTax: dataAction.input.withholdingIncomeTax,
-                      withholdingLocalIncomeTax: dataAction.input.withholdingLocalIncomeTax,
-                  }
-              }
-              actionEdit(inputEdit)
-          }
+          
       })
 
       const {
@@ -477,6 +472,49 @@ export default defineComponent({
               status: statusButton.value
           })
       }
+      const onSave = () => {
+        dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1])
+          dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0])
+          dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1])
+          dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0])
+          if (switchAction.value == true) {
+              actionCreated(dataAction)
+          }
+          else {
+            let inputEdit = {
+              ...dataAction,
+              incomeId: dataCallApiDetailEdit.incomeId,
+              input: {
+                  paymentAmount: dataAction.input.paymentAmount,
+                  taxRate: 3,
+                  withholdingIncomeTax: dataAction.input.withholdingIncomeTax,
+                  withholdingLocalIncomeTax: dataAction.input.withholdingLocalIncomeTax,
+              }
+            }
+            actionEdit(inputEdit)
+        }
+        };
+      const formatMonth = (month: any) => {
+        if (+month < 10) {
+            return '0' + month;
+        }
+        return month;
+      };
+
+      const processKeyPA620 = computed(() => store.getters['common/processKeyPA620']);
+      watch(processKeyPA620,(newVal: any,oldV)=>{
+          isFirstChange.value = true;
+          dataTableDetail.processKey = processKeyPA620.value;
+          delete dataTableDetail.processKey.status;
+            triggerDetail.value = true;
+            refetchOption()
+            let date1 = processKeyPA620.value.imputedYear + '-' + processKeyPA620.value.imputedMonth
+            let date2 = processKeyPA620.value.paymentYear + '-' + processKeyPA620.value.paymentMonth
+            month1.value = dayjs(date1).format("YYYY-MM")
+            month2.value = dayjs(date2).format("YYYY-MM");
+        })
+      const focusedRowKey = ref<Number>(1);
+
       return {
           month1, month2,
           arrayEmploySelect,
@@ -507,7 +545,11 @@ export default defineComponent({
           onItemClick,
           editPaymentDate,
           customTextSummary,
-          statusComfirm
+          statusComfirm,
+          onSave,
+          formatMonth,
+          processKeyPA620,
+          focusedRowKey
       }
   }
 });
