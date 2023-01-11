@@ -1,4 +1,4 @@
-<template> 
+<template>
 	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueCountry"
 		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
 		:disabled="disabled" :required="required">
@@ -79,7 +79,6 @@ export default defineComponent({
 		DxRequiredRule,
 	},
 	setup(props, { emit }) {
-
 		const app: any = getCurrentInstance()
 		const messages = app.appContext.config.globalProperties.$messages;
 		const messageRequired = ref(messages.getCommonMessage('102').message);
@@ -87,7 +86,7 @@ export default defineComponent({
 			messageRequired.value = props.messRequired;
 		}
 		let dataSelect = ref(Array());
-
+		let arrNotKR: any = ref([])
 		if (props.hiddenOptionKR) {
 			enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
 				if (codeCountry != "KR") {
@@ -100,20 +99,23 @@ export default defineComponent({
 			});
 		}
 
-		//============ WATCH =================================
+		//============ WATCH ================================= 
+		enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
+			if (codeCountry != "KR") {
+				arrNotKR.value.push({ key: codeCountry, value: nameCountry });
+			}
+		});
+
 		watch(() => props.hiddenOptionKR, (newVal) => {
 			dataSelect.value = []
 			if (newVal) { 
-				enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
-					if (codeCountry != "KR") {
-						dataSelect.value.push({ key: codeCountry, value: nameCountry });
-					}
-				});
-				emit('update:valueCountry', 'GH')
-			} else { 
-				enum2KeysByValueMap(CountryCode).forEach((codeCountry, nameCountry) => {
-					dataSelect.value.push({ key: codeCountry, value: nameCountry });
-				});
+				dataSelect.value = [...arrNotKR.value] 
+				if (props.valueCountry != 'KR')
+					emit('update:valueCountry', props.valueCountry)
+				else
+					emit('update:valueCountry', 'GH')
+			} else {
+				dataSelect.value.push({ key: 'KR', value: '대한민국' });
 				emit('update:valueCountry', 'KR')
 			}
 		}, { deep: true })
