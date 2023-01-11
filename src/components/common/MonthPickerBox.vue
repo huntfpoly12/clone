@@ -18,7 +18,6 @@ export default defineComponent({
     },
     valueDate: {
       type: [Number, String],
-      default: parseInt(dayjs().format("YYYYMM")),
     },
     id: {
       type: String,
@@ -36,14 +35,17 @@ export default defineComponent({
     Datepicker,
   },
   setup(props, { emit }) {
-    const date: any = ref({
-      month: parseInt(dayjs(props.valueDate.toString()).format('MM')) - 1,
-      year: parseInt(dayjs(props.valueDate.toString()).format('YYYY')),
-    })
-
+    const date: any = ref()
+    if (props.valueDate) {
+      date.value = {
+        month: props.valueDate ? parseInt(dayjs(props.valueDate.toString()).format('MM')) - 1 : 0,
+        year: props.valueDate ? parseInt(dayjs(props.valueDate.toString()).format('YYYY')) : 0,
+      }
+    }
     watch(
       () => props.valueDate,
       (newValue) => {
+
         if (newValue) {
           date.value = {
             month: parseInt(dayjs(newValue.toString()).format('MM')) - 1,

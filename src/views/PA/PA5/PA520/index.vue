@@ -93,6 +93,7 @@
             <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" :key="resetAddComponent" />
+
                 <PA520PopupEdit :idRowEdit="idRowEdit" @closePopup="closeAction" v-if="actionChangeComponent == 2"
                     :actionSave="actionSave" />
             </a-col>
@@ -199,29 +200,28 @@ export default defineComponent({
             originData.value.imputedYear = value
             refetchData()
         });
-        watch(store.state.common.checkStatusChangeValue, (value) => {
-            console.log(value);
-
-        });
         // ======================= FUNCTION ================================
         const resetAddComponent = ref<number>(1);
         const openAddNewModal = () => {
             resetAddComponent.value++;
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
+
             //remove active row edit
             const element = document.querySelector('.dx-row-focused');
             (element as HTMLInputElement).classList.remove("dx-row-focused");
         }
+
+       
         const openEditModal = (val: any) => {
             actionChangeComponent.value = 2
-            store.state.common.idRowChangePa520 = val.data.employeeId
-            // if (store.state.common.checkStatusChangeValue == true) {
-            //     modalStatusChange.value = true
-            //     dataChange.value = val.data.employeeId
-            // } else {
-            //     idRowEdit.value = val.data.employeeId
-            // }
+            if (store.state.common.checkStatusChangeValue == true) {
+                modalStatusChange.value = true
+                dataChange.value = val.data.employeeId
+            } else {
+                store.state.common.idRowChangePa520 = val.data.employeeId
+                idRowEdit.value = val.data.employeeId
+            }
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
@@ -246,12 +246,14 @@ export default defineComponent({
             actionSave.value++
             store.state.common.actionSavePA520++
         }
+
         const statusComfirmSave = (res: any) => {
             if (res == true)
                 actionSaveFunc()
             store.state.common.idRowChangePa520 = dataChange.value
             idRowEdit.value = dataChange.value
         }
+
         return {
             modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
             statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
