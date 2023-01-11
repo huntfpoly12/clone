@@ -1,3 +1,5 @@
+import dayjs from "dayjs"
+
 export const dataDefaultsUtil = {
     terms: false,
     personalInfo: false,
@@ -32,7 +34,7 @@ export const dataDefaultsUtil = {
     facilityBizType: 1,
     accountingServiceTypes: 1,
     facilityBusinesses: [],
-    startYearMonthHolding: "",
+    startYearMonthHolding: parseInt(dayjs().format('YYYYMM')),
     capacityHolding: null,
     withholdingServiceTypes: 1,
     bankType: "",

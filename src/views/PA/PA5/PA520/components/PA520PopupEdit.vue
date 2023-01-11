@@ -3,10 +3,10 @@
         <div id="pa-520" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1">
-                    <Tab1Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" :actionSave="actionSave" />
+                    <Tab1Component @closePopup="setModalVisible" :actionSave="actionSave" />
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여/공제">
-                    <Tab2Component :idRowEdit="idRowEdit" @closePopup="setModalVisible" :actionSave="actionSave" />
+                    <Tab2Component @closePopup="setModalVisible" :actionSave="actionSave" />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -24,8 +24,7 @@ export default defineComponent({
         Tab2Component,
         Tab1Component,
     },
-    props: {
-        idRowEdit: Number,
+    props: { 
         actionSave: Number
     },
     setup(props, { emit }) {
@@ -35,12 +34,7 @@ export default defineComponent({
             emit('closePopup', false)
         }
         const activeKey = ref('1')
-        watch(() => props.idRowEdit, (value) => {
-            if (value) {
-                activeKey.value = '1'
-            }
-        })
-
+         
         return {
             setModalVisible,
             store, activeKey

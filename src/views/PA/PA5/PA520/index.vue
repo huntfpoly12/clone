@@ -199,29 +199,26 @@ export default defineComponent({
             originData.value.imputedYear = value
             refetchData()
         });
-        watch(store.state.common.checkStatusChangeValue, (value) => {
+        watch(() => store.state.common.checkStatusChangeValue, (value) => {
             console.log(value);
+            if (value == true) {
+                modalStatusChange.value = true
+            }
 
-        });
+        }, { deep: true });
         // ======================= FUNCTION ================================
         const resetAddComponent = ref<number>(1);
         const openAddNewModal = () => {
-            resetAddComponent.value++;
+            resetAddComponent.value++
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
             //remove active row edit
             const element = document.querySelector('.dx-row-focused');
-            (element as HTMLInputElement).classList.remove("dx-row-focused");
+            (element as HTMLInputElement).classList.remove("dx-row-focused")
         }
         const openEditModal = (val: any) => {
             actionChangeComponent.value = 2
             store.state.common.idRowChangePa520 = val.data.employeeId
-            // if (store.state.common.checkStatusChangeValue == true) {
-            //     modalStatusChange.value = true
-            //     dataChange.value = val.data.employeeId
-            // } else {
-            //     idRowEdit.value = val.data.employeeId
-            // }
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId

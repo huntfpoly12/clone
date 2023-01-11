@@ -141,6 +141,7 @@ export default defineComponent({
         })
         let indexChange = ref(0)
         let dataDefault = reactive({})
+        let trigger = ref(false)
         // ============ GRAPQL ===============================
         const {
             onResult: resGetDepartments,
@@ -177,10 +178,12 @@ export default defineComponent({
             onResult: getValueDefault,
             loading
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
         getValueDefault(res => {
             if (res.data) {
+                trigger.value = false
                 dataEdited.name = res.data.getEmployeeWageDaily.name
                 dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
                 dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
@@ -214,31 +217,29 @@ export default defineComponent({
             notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================ 
+
+        if (store.state.common.idRowChangePa520) {
+            trigger.value = true
+            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
+            refetchValueDetail()
+        }
+
+
         watch(() => store.state.common.idRowChangePa520, (newVal) => {
-            originDataDetail.value.employeeId = newVal
             console.log(dataDefault);
             console.log(JSON.stringify(dataEdited));
 
+            originDataDetail.value.employeeId = newVal
             if (dataDefault === JSON.stringify(dataEdited)) {
                 refetchValueDetail()
                 store.state.common.checkStatusChangeValue = false
             }
             else {
+                console.log('1');
                 store.state.common.checkStatusChangeValue = true
             }
         }, { deep: true })
 
-        // watch(() => props.idRowEdit, (newVal) => {
-        //     store.state.common.idRowChangePa520 = newVal
-        //     if (dataDefault === JSON.stringify(dataEdited)) {
-        //         originDataDetail.value.employeeId = newVal
-        //         refetchValueDetail()
-        //         store.state.common.checkStatusChangeValue = false
-        //     }
-        //     else {
-        //         store.state.common.checkStatusChangeValue = true
-        //     }
-        // })
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
