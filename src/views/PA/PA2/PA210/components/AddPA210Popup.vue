@@ -21,8 +21,8 @@
                                     {{
                                         data.data.reportType == 1 ?
                                             dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + (data.data.imputedFinishYearMonth ? '~' +
+                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') : '')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -36,12 +36,12 @@
                         <template #payment="{ data }">
                             <a-tooltip>
                                 <template #title>
-                                    귀속기간
+                                    지급기간
                                     {{
                                         data.data.reportType == 1 ?
                                             dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
+                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + (data.data.paymentFinishYearMonth ? '~' +
+                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') : '')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -78,6 +78,7 @@
         </a-modal>
         <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
             :dataReport="dataReport"></report-grid>
+            {{  dataPopupAdd }}
     </div>
 </template>
 
@@ -168,25 +169,25 @@ export default defineComponent({
                 imputedFinishYearMonth: null,
                 imputedStartYearMonth: parseInt(globalYear.value + '1'),
                 paymentFinishYearMonth: null,
-                paymentStartYearMonth: parseInt(globalYear.value + '1'),
+                paymentStartYearMonth: parseInt(globalYear.value + '2'),
                 yearEndTaxAdjustment: true,
                 refund: true,
             },
             {
                 imputedMonth: 1,
                 paymentMonth: 6,
-                imputedFinishYearMonth: parseInt(globalYear.value + '6'),
+                imputedFinishYearMonth: parseInt(globalYear.value + '5'),
                 imputedStartYearMonth: parseInt(globalYear.value + '1'),
                 paymentFinishYearMonth: parseInt(globalYear.value + '6'),
-                paymentStartYearMonth: parseInt(globalYear.value + '1'),
+                paymentStartYearMonth: parseInt(globalYear.value + '2'),
                 yearEndTaxAdjustment: true,
                 refund: false,
             },
             {
                 imputedMonth: 1,
                 paymentMonth: 6,
-                imputedFinishYearMonth: parseInt(globalYear.value + '6'),
-                imputedStartYearMonth: parseInt(globalYear.value + '3'),
+                imputedFinishYearMonth: parseInt(globalYear.value + '5'),
+                imputedStartYearMonth: parseInt(globalYear.value + '2'),
                 paymentFinishYearMonth: parseInt(globalYear.value + '6'),
                 paymentStartYearMonth: parseInt(globalYear.value + '3'),
                 yearEndTaxAdjustment: false,
@@ -196,8 +197,8 @@ export default defineComponent({
                 imputedMonth: 7,
                 paymentMonth: 12,
                 imputedFinishYearMonth: parseInt(globalYear.value + '12'),
-                imputedStartYearMonth: parseInt(globalYear.value + '7'),
-                paymentFinishYearMonth: parseInt(globalYear.value + '12'),
+                imputedStartYearMonth: parseInt(globalYear.value + '6'),
+                paymentFinishYearMonth: parseInt(globalYear.value+1 + '1'),
                 paymentStartYearMonth: parseInt(globalYear.value + '7'),
                 yearEndTaxAdjustment: false,
                 refund: false,
@@ -229,8 +230,9 @@ export default defineComponent({
                             paymentYear: year,
                             paymentMonth: i,
                             reportClassCode: "매당" + i,
-                            reportType: value.reportType,
-                            paymentType: value.paymentType,
+                            // reportType: value.reportType,
+                            // paymentType: value.paymentType,
+                            ...value,
                             index: 0,
                             status: 10,
                             refund: i == 2 ? true : false,
@@ -254,8 +256,9 @@ export default defineComponent({
                             paymentYear: paymentMonth == 13 ? year + 1 : year,
                             paymentMonth: paymentMonth == 13 ? 1 : paymentMonth,
                             reportClassCode: "매익" + i,
-                            reportType: value.reportType,
-                            paymentType: value.paymentType,
+                            // reportType: value.reportType,
+                            // paymentType: value.paymentType,
+                            ...value,
                             index: 0,
                             status: 10,
                             refund: i == 1 ? true : false,
@@ -269,6 +272,9 @@ export default defineComponent({
             } else {
                 if (value.paymentType == 1) {
                     arrayPaymentType1.map((data: any, index) => {
+                        // value.reportClassCodes.map((data: any, index2) => {
+
+                        // })
                         dataReports.value.push({
                             reportId: index,
                             imputedYear: globalYear.value,
@@ -276,8 +282,9 @@ export default defineComponent({
                             paymentYear: globalYear.value,
                             paymentMonth: data.paymentMonth,
                             reportClassCode: "반당" + index,
-                            reportType: value.reportType,
-                            paymentType: value.paymentType,
+                            // reportType: value.reportType,
+                            // paymentType: value.paymentType,
+                            ...value,
                             index: 0,
                             status: 10,
                             refund: data.refund,
@@ -290,16 +297,17 @@ export default defineComponent({
                         })
                     })
                 } else {
-                    arrayPaymentType1.map((data: any, index) => {
+                    arrayPaymentType2.map((data: any, index) => {
                         dataReports.value.push({
                             reportId: index,
                             imputedYear: globalYear.value,
                             imputedMonth: data.imputedMonth,
                             paymentYear: globalYear.value,
                             paymentMonth: data.paymentMonth,
-                            reportClassCode: "반당" + index,
-                            reportType: value.reportType,
-                            paymentType: value.paymentType,
+                            reportClassCode: "반익" + index,
+                            // reportType: value.reportType,
+                            // paymentType: value.paymentType,
+                            ...value,
                             index: 0,
                             status: 10,
                             refund: data.refund,
