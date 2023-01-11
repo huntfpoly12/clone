@@ -57,28 +57,51 @@
                     :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
-                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                    <DxExport :enabled="true" :allow-export-selected-data="true" />
-                    <DxToolbar>
-                        <DxItem name="searchPanel" />
-                        <DxItem name="exportButton" />
-                        <DxItem name="groupPanel" />
-                        <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" />
-                    </DxToolbar>
-                    <DxColumn caption="성명" />
-                    <DxColumn caption="주민등록번호" />
-                    <DxColumn caption="비고" />
-                    <DxColumn caption="구분" />
-                    <DxColumn caption="총급여계" />
-                    <DxColumn caption="징수세액계 (소득세/지방소득세)" />
-                    <DxColumn caption="비과세소득계 (작성O)" />
-                    <DxColumn caption="비과세소득계 (작성X)" />
-                    <DxColumn caption="감면세액계" />
-                    <DxColumn caption="납세조합공제세액계" />
-                    <DxColumn caption="차감원천징수액계" />
-                    <DxColumn caption="소득공제계" />
-                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+                    <DxSelection mode="multiple" :fixed="true" />
+                    <DxColumn caption="성명" cell-template="employee-info" width="300" />
+                    <template #employee-info="{ data }">
+                        <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
+                            :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                            :foreigner="data.data.employee.foreigner" :checkStatus="false"
+                            :employeeId="data.data.employeeId" />
+                    </template>
+                    <DxColumn caption="주민등록번호" data-field="employee.residentId" />
+                    <DxColumn caption="비고" cell-template="four-major-insurance" width="300" />
+                    <template #four-major-insurance="{ data }">
+                        <div>
+                            <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
+                                :typeValue="1" />
+                            <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
+                                :typeValue="1" />
+                            <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
+                                :typeValue="1" />
+                            <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
+                                :ratio="data.data.nationalPensionSupportPercent" />
+                            <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent"
+                                :typeTag="7" :ratio="data.data.employeementInsuranceSupportPercent" />
+                            <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent"
+                                :typeTag="8" :ratio="data.data.employee.employeementReductionRatePercent" />
+                            <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
+                                :ratio="data.data.employee.incomeTaxMagnification" />
+                        </div>
+                    </template>
+
+                    <DxColumn caption="구분" cell-template="status" />
+                    <template #status="{ data }">
+                        <span class="status-red" v-if="data.data.status != 0">중도</span>
+                        <span class="status-blue" v-else>중도</span>
+                    </template>
+
+                    <DxColumn caption="총급여계" data-field="totalPay" format="#,###" data-type="string" />
+
+                    <DxColumn caption="" cell-template="pupop" width="100" />
+                    <template #pupop="{ data }">
+                        <div class="custom-action" style="text-align: center;">
+                            <img src="@/assets/images/email.svg" alt=""
+                                style="width: 25px; margin-right: 3px; cursor: pointer;" />
+                            <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer" />
+                        </div>
+                    </template>
                 </DxDataGrid>
             </div>
         </div>
@@ -95,14 +118,7 @@ import queries from "@/graphql/queries/PA/PA2/PA230/index";
 
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        DxToolbar,
-        DxItem,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,
     },
     setup() {
         const testValue1 = ref(1);
@@ -115,22 +131,27 @@ export default defineComponent({
         const dataSource = ref([]);
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            filter: {
+                "imputedYear": globalYear,
+                "leaved": true
+            },
         });
         const {
             refetch: refetchData,
             result,
             loading,
-        } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
+        } = useQuery(queries.searchIncomeWageWithholdingTaxByEmployees, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         const onExporting = (e: { component: any; cancel: boolean }) => {
-            onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
+            onExportingCommon(e.component, e.cancel, "계약정보관리&심사")
         };
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.getEmployeeWageDailies;
+                console.log(value.searchIncomeWageWithholdingTaxByEmployees)
+
+                dataSource.value = value.searchIncomeWageWithholdingTaxByEmployees
                 trigger.value = false;
             }
         });

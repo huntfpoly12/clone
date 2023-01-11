@@ -16,7 +16,7 @@
                 <a-col span="21">
                 </a-col>
                 <a-col span="16" class="custom-layout">
-                    <a-spin :spinning="loading" size="large">
+                    <a-spin :spinning="loading || loadingCreated" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="employeeId"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -121,6 +121,8 @@
                                 </span>
                             </div>
                         </a-form-item>
+                        <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
+                            id="active-save" />
                     </a-spin>
                 </a-col>
             </a-row>
@@ -131,6 +133,8 @@
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
             title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
+        <PopupMessage :modalStatus="confirmSave" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+            title="입력한 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="confimSaveWhenChangeRow" />
     </div>
 </template>
 <script lang="ts">
@@ -150,19 +154,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        EditOutlined,
-        HistoryOutlined,
-        DxToolbar,
-        DxItem,
-        DxExport,
-        DxSearchPanel,
-        DeleteOutlined,
-        DxButton,
-        HistoryPopup,
-        SaveOutlined,
-        DxScrolling, DxSorting,
+        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxSorting,
     },
     setup() {
         // config grid
@@ -189,8 +181,11 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear,
         }
+        let confirmSave = ref(false)
         const optionsRadio = ref([...initialOptionsRadio]);
-        const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd } = useMutation(
+
+
+        const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd, loading: loadingCreated } = useMutation(
             mutations.createEmployeeExtra
         );
         const { mutate: updateEmployeeExtra, onDone: onDoneUpdate, onError: onErrorUpdate } = useMutation(
@@ -246,6 +241,7 @@ export default defineComponent({
                         }
                     };
                     updateEmployeeExtra(dataUpdate);
+                    changeFormData(dataRow)
                 } else {
                     let dataCreate = {
                         companyId: companyId,
@@ -289,22 +285,37 @@ export default defineComponent({
         const textTypeCode = (e: any) => {
             formState.incomeTypeName = e
         }
-        const editData = (data: any) => {
-            if (checkForm.value == false && JSON.stringify(initialState) !== JSON.stringify(formState)) { 
-                // 입력한 내용을 저장하시겠습니까?
-            }
 
+        // When changing the value in the input form then moving to another row, check the valid form and display the popup
+        const actionToAddFromEdit = (e: any) => {
+            var res = e.validationGroup.validate();
+            //remove active row edit
+            const element = document.querySelector('.dx-row-focused');
+            if (element)
+                (element as HTMLInputElement).classList.remove("dx-row-focused");
+
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else
+                confirmSave.value = true
+        }
+        const editData = (data: any) => {
             dataRow = data.data
-            if (JSON.stringify(dataRowOld) !== JSON.stringify(formState) && checkForm.value == true) {
-                modalStatus.value = true;
+            if (checkForm.value == false && JSON.stringify(initialState) !== JSON.stringify(formState)) {
+                // 입력한 내용을 저장하시겠습니까? 
+                document.getElementById('active-save')?.click()
             } else {
-                loadingForm.value = true;
-                changeFormData(dataRow)
-                setTimeout(() => {
-                    loadingForm.value = false;
-                }, 500);
+                if (JSON.stringify(dataRowOld) !== JSON.stringify(formState) && checkForm.value == true) {
+                    modalStatus.value = true;
+                } else {
+                    loadingForm.value = true;
+                    changeFormData(dataRow)
+                    setTimeout(() => {
+                        loadingForm.value = false;
+                    }, 500);
+                }
+                checkForm.value = true;
             }
-            checkForm.value = true;
         }
         const changeFormData = (data: any) => {
             formState.name = data.name
@@ -362,6 +373,30 @@ export default defineComponent({
                 changeFormData({ ...initialState })
             }
         }
+
+        const confimSaveWhenChangeRow = (status: any) => {
+            if (status == true) {
+                let residentId = formState.residentId.replace('-', '')
+                let dataCreate = {
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    input: {
+                        employeeId: parseInt(formState.employeeId),
+                        incomeTypeCode: formState.incomeTypeCode,
+                        name: formState.name,
+                        foreigner: formState.foreigner,
+                        nationality: formState.nationality,
+                        nationalityCode: formState.nationalityCode,
+                        stayQualification: formState.stayQualification,
+                        residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
+                        email: formState.email,
+                        incomeTypeName: formState.incomeTypeName,
+                    },
+                };
+                createEmployeeExtra(dataCreate);
+            }
+            changeFormData(dataRow)
+        }
         watch(result, (value) => {
             if (value) {
                 listEmployeeExtra.value = value.getEmployeeExtras
@@ -382,8 +417,8 @@ export default defineComponent({
         });
 
         return {
-            move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,
-            textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, deleteData, statusComfirm, statusComfirmAdd,
+            confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,loadingCreated,
+            confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, deleteData, statusComfirm, statusComfirmAdd,
         };
     },
 });
