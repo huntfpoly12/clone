@@ -2,21 +2,18 @@
     <div id="add-pa-210">
         <a-modal :visible="modalStatus" centered okText="네. 작성합니다" cancelText="아니요" @cancel="setModalVisible()"
             :mask-closable="false" width="1000px" footer="">
-            {{  focusedRowKey  }}
             <standard-form formName="add-pa-210" class="pt-20">
                 <a-spin tip="Loading..." :spinning="loading">
                     <a-form-item label="지방소득세환급청구서/납부내역서">
-                        {{  afterDeadline }}
                         <radio-group :arrayValue="arrayRadioCheck" v-model:valueRadioCheck="afterDeadline"
                             :layoutCustom="'horizontal'" />
                     </a-form-item>
-                    <DxDataGrid class="pt-20" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataReports"
-                        :show-borders="true" key-expr="reportId" :allow-column-reordering="move_column"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        focused-row-enabled="true"
-                        v-model:focused-row-key="focusedRowKey" :onRowClick="onSelectionChanged"
-                        >
-                        <DxColumn caption="귀속 연월" cell-template="imputed"/>
+                    <DxDataGrid class="pt-20" :show-row-lines="true" :hoverStateEnabled="true"
+                        :data-source="dataReports" :show-borders="true" key-expr="reportId"
+                        :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                        :column-auto-width="true" focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
+                        :onRowClick="onSelectionChanged">
+                        <DxColumn caption="귀속 연월" cell-template="imputed" />
                         <template #imputed="{ data }">
                             <a-tooltip>
                                 <template #title>
@@ -42,9 +39,9 @@
                                     귀속기간
                                     {{
                                         data.data.reportType == 1 ?
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
+                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
+                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -127,27 +124,66 @@ export default defineComponent({
         // ===================WATCH==================================
         watch(() => props.dataPopupAdd, (value: any) => {
             loading.value = true;
-            // let i = value.reportType == 1 ? 
-            focusedRowKey.value = value.lastMonth + 1
-            // dataReports.value = []
-            for (let i = value.lastMonth + 1; i <= 12; i++) {
-                dataReports.value.push({
-                    reportId: i,
-                    imputedYear: globalYear.value,
-                    imputedMonth: i,
-                    paymentYear: globalYear.value,
-                    paymentMonth: i,
-                    reportType: 1,
-                    index: 0,
-                    status: 10,
-                    refund: true,
-                    submissionDate: parseInt(dayjs().format("YYYYMMDD")),
-                    yearEndTaxAdjustment: false,
-                    imputedFinishYearMonth: parseInt(`${globalYear.value}`+`${i}`),
-                    imputedStartYearMonth: parseInt(`${globalYear.value}`+`${i}`),
-                })
+            dataReports.value = []
+            let i = 0
+            let month = 1
+            let imputedMonth = 1
+            let paymentMonth = 1
+            let year = globalYear.value
+            if (value.reportType == 1) {
+                month = 12
+                if (value.lastMonth == 12) {
+                    year = globalYear.value + 1
+                }
+                if (value.paymentType == 1) {
+                    value.lastMonth != 12 ? i = value.lastMonth + 1 : i = 1
+                    for (i; i <= month; i++) {
+                        dataReports.value.push({
+                            reportId: i,
+                            imputedYear: year,
+                            imputedMonth: i,
+                            paymentYear: year,
+                            paymentMonth: i,
+                            reportType: value.reportType,
+                            index: 0,
+                            status: 10,
+                            refund: true,
+                            submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                            yearEndTaxAdjustment: false,
+                            imputedFinishYearMonth: parseInt(year + `${i}`),
+                            imputedStartYearMonth: parseInt(year + `${i}`),
+                            paymentFinishYearMonth: parseInt(year + `${i}`),
+                            paymentStartYearMonth: parseInt(year + `${i}`),
+                        })
+                    }
+                } else {
+                    value.lastMonth != 12 ? i = value.lastMonth + 1 : ''
+                    for (i; i <= month; i++) {
+                        imputedMonth = i == 0 ? 2 : i
+                        paymentMonth = i == 0 ? 2 : i+1
+                        dataReports.value.push({
+                            reportId: i,
+                            imputedYear: year,
+                            imputedMonth: imputedMonth,
+                            paymentYear: paymentMonth == 13 ? year+1 : year,
+                            paymentMonth: paymentMonth == 13 ? 1 : paymentMonth,
+                            reportType: value.reportType,
+                            index: 0,
+                            status: 10,
+                            refund: true,
+                            submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                            yearEndTaxAdjustment: false,
+                            imputedFinishYearMonth: i ? parseInt(year + `${i}`) : null,
+                            paymentFinishYearMonth: i ? parseInt((paymentMonth == 13 ? year+1 : year) + `${paymentMonth == 13 ? 1 : paymentMonth}`) : null,
+                        })
+                    }
+                }
+            } else {
+                value.lastMonth == 1 ? i = value.lastMonth : i = 1
+                month = 3
             }
             dataReport.value = dataReports.value.length ? [dataReports.value[0]] : []
+            focusedRowKey.value = dataReports.value.length ? dataReports.value[0].reportId : null
             loading.value = false;
         }, { deep: true })
 
