@@ -258,9 +258,7 @@ export default defineComponent({
             }
         }, { deep: true })
 
-        watch(() => originDataUpdate.value, (newVal) => {
-            console.log('12312');
-            
+        watch(() => originDataUpdate.value, (newVal) => { 
             if (JSON.stringify(newVal) === dataDefaultGet.value) {
                 store.state.common.checkStatusChangeValue = false
             } else {
