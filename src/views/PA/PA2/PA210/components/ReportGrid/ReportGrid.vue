@@ -5,15 +5,15 @@
       <div class="report-grid">
         <div class="header-1">원천세신고서</div>
         <div class="action-right">
-          <DxButton class="ml-3">
+          <!-- <DxButton class="ml-3">
               <img style="width: 30px;" src="@/assets/images/icon_delete.png" alt="">
           </DxButton>
           <DxButton class="ml-3">
               <img style="width: 34px;" src="@/assets/images/save_icon.svg" alt="">
-          </DxButton>
+          </DxButton> -->
           <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
         </div>
-        <div class="table-detail">
+        <div class="table-detail">{{dataSource}}
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
             :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" 
@@ -33,7 +33,7 @@
             </template>
             <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
             <template #afterDeadline-index="{ data }">
-              {{data.data.afterDeadline}} {{data.data.index}}
+               <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="'33px'" />
             </template>
             <DxColumn caption="연말" data-field="yearEndTaxAdjustment"/>
       
@@ -121,7 +121,7 @@
               <button-basic text="저장 취소" :type="'default'" mode="outlined" 
                   :width="120" style="margin-right: 10px;" />
               <button-basic text="저장" :type="'default'" mode="'contained'"
-                  :width="120" />
+                  :width="120" @onClick="createTaxWithholding" />
           </a-col>
         </a-row>
       </div>
@@ -131,16 +131,21 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from "vue";
+import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "devextreme-vue/data-grid";
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useQuery } from "@vue/apollo-composable";
-import { mergeCells, cellsSetting, dataInit ,inputPosition} from "./Gridsetting"
+import { useQuery ,useMutation} from "@vue/apollo-composable";
+import { mergeCells, cellsSetting, dataInit ,setValueDataTable} from "./Gridsetting"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
+import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
+import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
-import { ProcessStatus, WagePaymentType, WageReportType, WithholdingStatusReport } from "@bankda/jangbuda-common";
+import { WithholdingStatusReport } from "@bankda/jangbuda-common";
+import { getAfterDeadline} from "../../utils/index"
+
 // register Handsontable's modules
 registerAllModules();
 // GraphQL로 원천징수이행상황신고서 작성을 위한 소득정보 데이터 유형
@@ -188,12 +193,10 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxToolbar, DxPaging,
-    DxItem, DxScrolling
+    DxItem, DxScrolling,DxButton
   },
   setup(props, { emit }) {
     const wrapper = ref()
-    
-    
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -226,20 +229,8 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(false)
-    const dataSource = ref(props.dataReport);
-    const originData = ref({
-      companyId: companyId,
-      input:{
-        imputedYear: 2023,
-        imputedMonth: 1,
-        paymentYear: 2023,
-        paymentMonth: 1,
-        reportType: 1,
-        index: 0,
-        paymentType: 1,
-        yearEndTaxAdjustment: true,
-      }
-    })
+    const dataSource = ref<any>(props.dataReport);
+    const originData = ref()
     const setModalVisible = () => {
       emit('closePopup', false)
     }
@@ -265,6 +256,7 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
     }));
+
     watch(result, (data) => {
       if (data) {
         const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
@@ -280,27 +272,27 @@ export default defineComponent({
         
         if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
           output.incomeWages.forEach((item) => {
-            setValueDataTable(item.code,item)
+            setValueDataTable(wrapper,item.code,item)
           })
         }
         if (output.incomeRetirements.length > 0) { // 퇴직소득 [연금계좌(A12), 그외(A22), 가감계(A20)]
           output.incomeRetirements.forEach((item) => {
-            setValueDataTable(item.code,item)
+            setValueDataTable(wrapper,item.code,item)
           })
         }
         if (output.incomeBusinesses.length > 0) { // 사업소득 [매월징수(A25), 연말정산(A26), 가감계(A30)]
           output.incomeBusinesses.forEach((item) => {
-            setValueDataTable(item.code,item)
+            setValueDataTable(wrapper,item.code,item)
           })
         }
         if (output.incomeExtras.length > 0) { // 기타소득 [연금계좌(A41), 종교인소득-매월징수(A43), 종교인소득-연말정산(A44), 그외(A42), 가감계(A40)]
           output.incomeExtras.forEach((item) => {
-            setValueDataTable(item.code,item)
+            setValueDataTable(wrapper,item.code,item)
           })
         }
         if (output.incomePensions.length > 0) { // 연금소득 [연금계좌(A48), 공적연금(A45), 연말정산(A46), 가감계(A47)]
           output.incomePensions.forEach((item) => {
-            setValueDataTable(item.code,item)
+            setValueDataTable(wrapper,item.code,item)
           })
         }
         if (output.incomeInterest) { // 이자소득(A50)
@@ -315,56 +307,100 @@ export default defineComponent({
         if (output.modifyReport) { // 수정신고세액(A90)
             
         }
-        setValueDataTable(output.summary.code, output.summary)
-        setValueDataTable("adjustmentOfRefundTaxAmount",output.adjustmentOfRefundTaxAmount)
+        setValueDataTable(wrapper,output.summary.code, output.summary)
+        setValueDataTable(wrapper,"adjustmentOfRefundTaxAmount",output.adjustmentOfRefundTaxAmount)
         //r.push(output.summary); // 총합계(A99)
       }
     })
 
     const loadNew = () => {
-        trigger.value = true;
-        refetchData()
+      originData.value = {
+        companyId: companyId,
+        input:{
+          imputedYear: dataSource.value[0].imputedYear,
+          imputedMonth: dataSource.value[0].imputedMonth,
+          paymentYear: dataSource.value[0].paymentYear,
+          paymentMonth: dataSource.value[0].paymentMonth,
+          reportType: dataSource.value[0].reportType,
+          index: dataSource.value[0].index,
+          paymentType: 1,
+          yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+        },
+      }
+      trigger.value = true;
+      refetchData()
     }
-    const setValueDataTable = (code: string, data: any) => {
-      let hot = wrapper.value.hotInstance;
-      const rowPosition = inputPosition.find(item => item.className == code);
-      if (data.numberOfPeople)
-        hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople);
-      if (data.totalPayment)
-        hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment);
-      if (data.collectedIncomeTax)
-        hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax);
-      if (data.collectedRuralSpecialTax)
-        hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax);
-      if (data.collectedExtraTax)
-        hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax);
-      if (data.thisMonthAdjustedRefundTaxAmount)
-        hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount);
-      if (data.incomeTaxPaid)
-        hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid);
-      if (data.ruralSpecialTaxPaid)
-        hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid);
 
-      if (data.prevMonthNonRefundableTaxAmount)
-        hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.prevMonthNonRefundableTaxAmount);
-      if (data.preRefundApplicationTaxAmount)
-        hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.preRefundApplicationTaxAmount);
-      if (data.deductibleBalance)
-        hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.deductibleBalance);
-      if (data.thisMonthRefundTaxGeneral)
-        hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.thisMonthRefundTaxGeneral);
-      if (data.thisMonthRefundTaxOtherFinancialCompany)
-        hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.thisMonthRefundTaxOtherFinancialCompany);
-      if (data.thisMonthRefundTaxOtherMerge)
-        hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthRefundTaxOtherMerge);
-      if (data.refundTaxSubjectToAdjustment)
-        hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.refundTaxSubjectToAdjustment);
-      if (data.thisMonthTotalAdjustedRefundTaxAmount)
-        hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.thisMonthTotalAdjustedRefundTaxAmount);
-      if (data.nextMonthRefundTaxAmount)
-        hot.setDataAtCell(rowPosition?.value[8][0], rowPosition?.value[8][1], data.nextMonthRefundTaxAmount);
-      if (data.refundApplicationAmount)
-        hot.setDataAtCell(rowPosition?.value[9][0], rowPosition?.value[9][1], data.refundApplicationAmount);
+    const {
+            mutate: actionCreateTaxWithholding,
+            onDone: doneChangeStatus,
+            onError: errChangeStatus
+        } = useMutation(mutations.createTaxWithholdingStatusReport);
+    doneChangeStatus(() => {
+            notification('success', `업부상태 변경되었습니다!`)
+            refetchData()
+        })
+        errChangeStatus((error) => {
+            notification('error', error.message)
+    })
+
+    const createTaxWithholding  = ()=>{
+
+      const variables = {
+        companyId:companyId,
+        key:{
+          imputedYear: dataSource.value[0].imputedYear,
+          imputedMonth: dataSource.value[0].imputedMonth,
+          paymentYear: dataSource.value[0].paymentYear,
+          paymentMonth: dataSource.value[0].paymentMonth,
+          reportType: dataSource.value[0].reportType,
+          index: dataSource.value[0].index,
+        },
+        input:{
+          paymentType: 1,
+          yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+          additionalIncome: dataSource.value[0].imputedYear,
+          refund: dataSource.value[0].imputedYear,
+          afterDeadline: dataSource.value[0].afterDeadline,
+          submissionDate: dataSource.value[0].submissionDate,
+          //reportClassCode: dataSource.value[0].imputedYear,
+          // header:{
+          //   withholdingDutyName: String!
+          //   withholdingDutyPresidentName: String!
+          //   withholdingDutyBizNumber: String!
+          //   withholdingDutyAddress: String!
+          //   withholdingDutyCollectivePayment: Boolean!
+          //   withholdingDutyTaxForEachBusiness: Boolean!
+          // }
+          // statementAndAmountOfTaxPaids: [
+          //   {
+          //     code: String!
+          //     numberOfPeople: Int!
+          //     totalPayment: Float!
+          //     collectedIncomeTax: Int!
+          //     collectedRuralSpecialTax: Int
+          //     collectedExtraTax: Int
+          //     thisMonthAdjustedRefundTaxAmount: Int
+          //     incomeTaxPaid: Int
+          //     ruralSpecialTaxPaid: Int
+          //   }
+          // ],
+          // adjustmentOfRefundTaxAmount:{
+          //   prevMonthNonRefundableTaxAmount: Int!
+          //   preRefundApplicationTaxAmount: Int!
+          //   deductibleBalance: Int!
+          //   thisMonthRefundTaxGeneral: Int!
+          //   thisMonthRefundTaxFiduciaryEstates: Int!
+          //   thisMonthRefundTaxOtherFinancialCompany: Int!
+          //   thisMonthRefundTaxOtherMerge: Int!
+          //   refundTaxSubjectToAdjustment: Int!
+          //   thisMonthTotalAdjustedRefundTaxAmount: Int!
+          //   nextMonthRefundTaxAmount: Int!
+          //   refundApplicationAmount: Int!
+          // }
+        }
+      }
+      actionCreateTaxWithholding(variables)
     }
     return {
       setModalVisible,
@@ -376,7 +412,9 @@ export default defineComponent({
       move_column,
       colomn_resize,
       changeStatus,
-      loadNew
+      loadNew,
+      getAfterDeadline,
+      createTaxWithholding
     }
   }
 });

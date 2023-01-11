@@ -80,7 +80,7 @@ export default [
   { name: "근로소득원천징수영수증", url: "/dashboard/pa-220", id: "pa-220" },
   {
     name: "소득자별근로소득원천징수부",
-    url: "#",
+    url: "/dashboard/pa-230",
     id: "pa-230",
   },
 
