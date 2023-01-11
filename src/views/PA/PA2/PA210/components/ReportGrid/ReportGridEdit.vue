@@ -1,12 +1,12 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
         style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
-    <a-spin tip="Loading..." :spinning="loading">
+    <a-spin tip="Loading..." :spinning="false">
       <div class="report-grid">
         <div class="header-1">원천세신고서</div>
         <div class="action-right">
           <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3">
-          <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3">
+          <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding">
           <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
         </div>
         <div class="table-detail">
@@ -47,79 +47,6 @@
         <div class="table-grid">
           <hot-table ref="wrapper" :settings="hotSettings"></hot-table>
         </div> 
-        <!-- <div class="header-2">원천징수세액환급신청서 / 기납부세액명세서 검증 결과</div>
-        <div class="verification-result">
-          <div class="form-item">
-            <label for="">저장가능여부</label>
-          </div>
-        </div>
-        <div class="header-text-3">
-          환급신청액 일치 여부
-          <span>
-            <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-            <p>아래 내역들의 값이 일치해야 정상입니다.</p>
-          </span>
-        </div>
-        <a-row :gutter="[0, 10]">
-              <a-col span="10"> 원천세신고서 > (21)환급신청액</a-col>
-              <a-col span="12">
-                <text-number-box :disabled="true" width="150px"></text-number-box>
-              </a-col>
-              <a-col span="10">원천징수세액환급신청서 > 기납부원천징수세액 (2)계 (합계)</a-col>
-              <a-col span="12">
-                <text-number-box :disabled="true" width="150px"></text-number-box>
-              </a-col>
-        </a-row>
-        <div class="header-text-3">
-          징수세액과 기납부세액 일치 여부 (A04(연말정산) 포함된 경우 해당)
-          <span>
-            <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-            <p>A04(연말정산) 포함된 경우 아래 내역들의 값이 일치해야 정상입니다.</p>
-          </span>
-        </div>
-        <a-row :gutter="[0, 10]">
-              <a-col span="10">원천징수세액환급신청서 > 기납부원천징수세액 (2)계 (A04)</a-col>
-              <a-col span="12">
-                <text-number-box :disabled="true" width="150px"></text-number-box>
-              </a-col>
-              <a-col span="10">기납부세액명세서 > 지급명세서기납부세액현황 (3)소득세등 (합계)</a-col>
-              <a-col span="12">
-                <text-number-box :disabled="true" width="150px"></text-number-box>
-              </a-col>
-        </a-row>
-        <div class="header-text-3">
-          기납부세액 차이조정현황
-          <span>
-            <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-            <p>차이금액 > 0 이면, 사유가 있어야 합니다.</p>
-          </span>
-        </div>
-        <a-row :gutter="[0, 10]">
-              <a-col span="10">(1)소득세 등 합계 (징수세액)</a-col>
-              <a-col span="12">
-                <text-number-box :disabled="true" width="150px"></text-number-box>
-              </a-col>
-              <a-col span="10">(3)소득세 등 합계 (기납부세액)</a-col>
-              <a-col span="12">
-                <text-number-box :disabled="true" width="150px"></text-number-box>
-              </a-col>
-              <a-col span="10">(차이금액 ((3)-(1))</a-col>
-              <a-col span="12">
-                <text-number-box :disabled="true" width="150px"></text-number-box>
-              </a-col>
-              <a-col span="10">사유</a-col>
-              <a-col span="12">
-                <text-number-box :disabled="true" width="150px"></text-number-box>
-              </a-col>
-        </a-row>
-        <a-row style="margin-top: 20px;">
-          <a-col :span="16" :offset="9">
-              <button-basic text="저장 취소" :type="'default'" mode="outlined" 
-                  :width="120" style="margin-right: 10px;" />
-              <button-basic text="저장" :type="'default'" mode="'contained'"
-                  :width="120" @onClick="createTaxWithholding" />
-          </a-col>
-        </a-row> -->
       </div>
     </a-spin>
   </a-modal>
@@ -133,44 +60,16 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 import { useQuery ,useMutation} from "@vue/apollo-composable";
-import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,clearAllCellValue} from "./Gridsetting"
-import queries from "@/graphql/queries/PA/PA2/PA210/index";
+import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,setValueDataTable,inputPosition} from "./Gridsetting"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline} from "../../utils/index"
 
+
 // register Handsontable's modules
 registerAllModules();
-// GraphQL로 원천징수이행상황신고서 작성을 위한 소득정보 데이터 유형
-interface IncomeForTaxWithholdingStatusReport {
-    code: string;
-    numberOfPeople: number;
-    totalPayment: number;
-    collectedIncomeTax: number;
-}
-// 원천징수이행상황신고서 명세 및 납부세액 입력 
-interface TaxWithholdingStatusReportStatementAndAmountOfTaxPaidInput {
-    code: string;
-    numberOfPeople: number;
-    numberOfPeopleModified?: number;
-    totalPayment: number;
-    totalPaymentModified?: number;
-    collectedIncomeTax: number;
-    collectedIncomeTaxModified?: number;
-    collectedRuralSpecialTax?: number;
-    collectedRuralSpecialTaxModified?: number;
-    collectedExtraTax?: number;
-    collectedExtraTaxModified?: number;
-    thisMonthAdjustedRefundTaxAmount?: number;
-    thisMonthAdjustedRefundTaxAmountModified?: number;
-    incomeTaxPaid?: number;
-    incomeTaxPaidModified?: number;
-    ruralSpecialTaxPaid?: number;
-    ruralSpecialTaxPaidModified?: number;
-}
-
 
 export default defineComponent({
   props: {
@@ -230,74 +129,73 @@ export default defineComponent({
     const setModalVisible = () => {
       emit('closePopup', false)
     }
-    onMounted(()=>{
-      clearAllCellValue(wrapper)
-    })
 
-    watch(() => props.dataReport,(newValue) => {
+    watch(() => props.dataReport,(newValue : any) => {
       dataSource.value = newValue
     })
-    const {
-            refetch: refetchData,
-            result,
-            loading,
-        } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-    }));
+    onMounted(() => {
+      let hot  = wrapper.value?.hotInstance; 
+      dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data : any)=>{
+          const rowPosition = inputPosition.find(item => item.className == data.code);
+          if (data.numberOfPeople)
+            hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople);
+          if (data.totalPayment)
+            hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment);
+          if (data.collectedIncomeTax)
+            hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax);
+          if (data.collectedRuralSpecialTax)
+            hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax);
+          if (data.collectedExtraTax)
+            hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax);
+          if (data.thisMonthAdjustedRefundTaxAmount)
+            hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount);
+          if (data.incomeTaxPaid)
+            hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid);
+          if (data.ruralSpecialTaxPaid)
+            hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid);
+      })
 
-    watch(result, (data) => {
-      if (data) {
-        const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
-          return {
-            code: item.code,
-            numberOfPeople: item.numberOfPeople,
-            totalPayment: item.totalPayment,
-            collectedIncomeTax: item.collectedIncomeTax,
-          }
-        });
-        calculateWithholdingStatusReport(wrapper,newData)
-        firstClickLoadNew.value = true
-      }
+      const adjustment = dataSource.value[0]?.adjustmentOfRefundTaxAmount
+      const adjustmentPosition = inputPosition.find(item => item.className == 'adjustmentOfRefundTaxAmount');
+      if (adjustment?.prevMonthNonRefundableTaxAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[0][0], adjustmentPosition?.value[0][1], adjustment?.prevMonthNonRefundableTaxAmount);
+      if (adjustment?.preRefundApplicationTaxAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[1][0], adjustmentPosition?.value[1][1], adjustment?.preRefundApplicationTaxAmount);
+      if (adjustment?.deductibleBalance)
+        hot.setDataAtCell(adjustmentPosition?.value[2][0], adjustmentPosition?.value[2][1], adjustment?.deductibleBalance);
+      if (adjustment?.thisMonthRefundTaxGeneral)
+        hot.setDataAtCell(adjustmentPosition?.value[3][0], adjustmentPosition?.value[3][1], adjustment?.thisMonthRefundTaxGeneral);
+      if (adjustment?.thisMonthRefundTaxOtherFinancialCompany)
+        hot.setDataAtCell(adjustmentPosition?.value[4][0], adjustmentPosition?.value[4][1], adjustment?.thisMonthRefundTaxOtherFinancialCompany);
+      if (adjustment?.thisMonthRefundTaxOtherMerge)
+        hot.setDataAtCell(adjustmentPosition?.value[5][0], adjustmentPosition?.value[5][1], adjustment?.thisMonthRefundTaxOtherMerge);
+      if (adjustment?.refundTaxSubjectToAdjustment)
+        hot.setDataAtCell(adjustmentPosition?.value[6][0], adjustmentPosition?.value[6][1], adjustment?.refundTaxSubjectToAdjustment);
+      if (adjustment?.thisMonthTotalAdjustedRefundTaxAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[7][0], adjustmentPosition?.value[7][1], adjustment?.thisMonthTotalAdjustedRefundTaxAmount);
+      if (adjustment?.nextMonthRefundTaxAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[8][0], adjustmentPosition?.value[8][1], adjustment?.nextMonthRefundTaxAmount);
+      if (adjustment?.refundApplicationAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[9][0], adjustmentPosition?.value[9][1], adjustment?.refundApplicationAmount);
     })
 
     const loadNew = () => {
-      if (!firstClickLoadNew.value) {
-        originData.value = {
-          companyId: companyId,
-          input:{
-            imputedYear: dataSource.value[0].imputedYear,
-            imputedMonth: dataSource.value[0].imputedMonth,
-            paymentYear: dataSource.value[0].paymentYear,
-            paymentMonth: dataSource.value[0].paymentMonth,
-            reportType: dataSource.value[0].reportType,
-            index: dataSource.value[0].index,
-            paymentType: 1,
-            yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
-          },
-        }
-        trigger.value = true;
-        refetchData()
-      } else {
         calculateWithholdingStatusReport(wrapper)
-      }
-
     }
 
     const {
-            mutate: actionCreateTaxWithholding,
-            onDone: doneChangeStatus,
-            onError: errChangeStatus
-        } = useMutation(mutations.createTaxWithholdingStatusReport);
-    doneChangeStatus(() => {
+            mutate: actionUpdateTaxWithholding,
+            onDone: doneUpdate,
+            onError: errUpdate
+        } = useMutation(mutations.updateTaxWithholdingStatusReport);
+    doneUpdate(() => {
         notification('success', `업부상태 변경되었습니다!`)
-        refetchData()
     })
-    errChangeStatus((error) => {
+    errUpdate((error) => {
         notification('error', error.message)
     })
 
-    const createTaxWithholding = () => {
+    const updateTaxWithholding = () => {
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData()
       let statement = Array()
@@ -319,6 +217,7 @@ export default defineComponent({
 
       const variables = {
         companyId:companyId,
+        reportId:dataSource.value[0].reportId,
         key:{
           imputedYear: dataSource.value[0].imputedYear,
           imputedMonth: dataSource.value[0].imputedMonth,
@@ -336,14 +235,14 @@ export default defineComponent({
           submissionDate: dataSource.value[0].submissionDate,
           reportClassCode: dataSource.value[0].reportClassCode,
           header:{
-            withholdingDutyName: dataSource.value[0].withholdingDutyName,
-            withholdingDutyPresidentName: dataSource.value[0].withholdingDutyPresidentName,
-            withholdingDutyBizNumber: dataSource.value[0].withholdingDutyBizNumber,
-            withholdingDutyAddress: dataSource.value[0].withholdingDutyAddress,
-            withholdingDutyCollectivePayment: dataSource.value[0].withholdingDutyCollectivePayment,
-            withholdingDutyTaxForEachBusiness: dataSource.value[0].withholdingDutyTaxForEachBusiness,
-            withholdingDutyTelephone:  dataSource.value[0].withholdingDutyTelephone,
-            withholdingDutyEmail: dataSource.value[0].withholdingDutyEmail,
+            withholdingDutyName: dataSource.value[0].header.withholdingDutyName,
+            withholdingDutyPresidentName: dataSource.value[0].header.withholdingDutyPresidentName,
+            withholdingDutyBizNumber: dataSource.value[0].header.withholdingDutyBizNumber,
+            withholdingDutyAddress: dataSource.value[0].header.withholdingDutyAddress,
+            withholdingDutyCollectivePayment: dataSource.value[0].header.withholdingDutyCollectivePayment,
+            withholdingDutyTaxForEachBusiness: dataSource.value[0].header.withholdingDutyTaxForEachBusiness,
+            withholdingDutyTelephone:  dataSource.value[0].header.withholdingDutyTelephone,
+            withholdingDutyEmail: dataSource.value[0].header.withholdingDutyEmail,
           },
           statementAndAmountOfTaxPaids: statement,
           adjustmentOfRefundTaxAmount:{
@@ -361,11 +260,10 @@ export default defineComponent({
           }
         }
       }
-      actionCreateTaxWithholding(variables)
+      actionUpdateTaxWithholding(variables)
     }
     return {
       setModalVisible,
-      loading,
       hotSettings,
       dataSource,
       per_page,
@@ -374,7 +272,7 @@ export default defineComponent({
       colomn_resize,
       loadNew,
       getAfterDeadline,
-      createTaxWithholding
+      updateTaxWithholding
     }
   }
 });

@@ -152,8 +152,8 @@
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false"
         :dataCall="dataPopup" />
-    <ReportGrid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false" :dataReport="dataReport">
-    </ReportGrid>
+    <report-grid-edit :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false" :dataReport="dataReport" :key="resetComponent">
+    </report-grid-edit>
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
@@ -167,7 +167,7 @@ import { useStore } from "vuex";
 import notification from "@/utils/notification"
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
-import ReportGrid from "./components/ReportGrid/ReportGrid.vue";
+import ReportGridEdit from "./components/ReportGrid/ReportGridEdit.vue";
 import AddPA210Popup from "./components/AddPA210Popup.vue";
 import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
@@ -180,7 +180,7 @@ import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxItem, DxButton, HistoryOutlined,
-        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGrid
+        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit
     },
     setup() {
         const store = useStore();
@@ -193,6 +193,7 @@ export default defineComponent({
         const modalPrintStatus = ref<boolean>(false);
         const modalSendEmailStatus = ref<boolean>(false);
         const reportGridStatus = ref<boolean>(false)
+        const resetComponent = ref(0)
         const dataReport: any = ref([])
         const dataSource: any = ref([])
         const dataPopup = ref()
@@ -305,6 +306,7 @@ export default defineComponent({
             })
         }
         const editRow = (value: any) => {
+            resetComponent.value++
             dataReport.value = [{
                 reportId: value.reportId,
                 imputedYear: value.imputedYear,
@@ -317,12 +319,13 @@ export default defineComponent({
                 index: value.index,
                 status: value.status,
                 refund: value.refund,
+                afterDeadline:value.afterDeadline,
                 submissionDate: value.submissionDate,
                 yearEndTaxAdjustment: value.yearEndTaxAdjustment,
                 imputedFinishYearMonth: value.imputedFinishYearMonth,
                 paymentFinishYearMonth: value.paymentFinishYearMonth,
                 detailId: value.detailId,
-                ...value.detail.header,
+                ...value.detail,
             }];
             reportGridStatus.value = true;
         };
@@ -362,7 +365,7 @@ export default defineComponent({
             openPopupPrint, modalPrintStatus,
             editRow, reportGridStatus, dataReport,
             dataPopup,
-            changeStatus,
+            changeStatus,resetComponent
 
         };
     },
