@@ -71,7 +71,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const processKey = computed(() => store.state.common.processKeyPA510);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = computed(() => store.state.settings.globalYear)
     const dataApiCopy: any = ref({});
     const updateValue = (value: any) => {
       dataApiCopy.value = value.value;
@@ -84,7 +84,7 @@ export default defineComponent({
     const paymentDayCopy = ref();
     const findIncomeProcessExtraStatViewsParam = computed(() => ({
       companyId: companyId,
-      filter: { startImputedYearMonth: 202200, finishImputedYearMonth: +(month2.value.substring(0, 4) + `12`) },
+      filter: { startImputedYearMonth: 202200, finishImputedYearMonth: +(month2.value.toString().substring(0, 4) + `12`) },
     }));
     const findIncomeProcessExtraStatViewsTrigger = ref(true);
     const arrDataPoint = ref<[]>([]);
@@ -120,13 +120,20 @@ export default defineComponent({
     };
 
     const onSubmit = () => {
+        const dateCustom = {
+                imputedYear: globalYear.value,
+                imputedMonth: month2.value,
+                paymentYear: parseInt(month2.value.toString().slice(0,4)),
+                paymentMonth: parseInt(month2.value.toString().slice(4,6)),
+            }
       emit('dataAddIncomeProcess', {
         imputedYear: processKey.value.imputedYear,
         imputedMonth: props.month,
-        paymentYear: parseInt(month2.value.split('-')[0]),
-        paymentMonth: parseInt(month2.value.split('-')[1]),
+        paymentYear:  parseInt(month2.value.toString().slice(0,4)),
+        paymentMonth:  parseInt(month2.value.toString().slice(4,6)),
       });
       emit('closePopup', false);
+      store.commit('common/processKeyPA620', dateCustom)
     };
 
     const openModalCopy = () => {
@@ -140,8 +147,8 @@ export default defineComponent({
           target: {
             imputedYear: processKey.value.imputedYear,
             imputedMonth: props.month,
-            paymentYear: parseInt(month2.value.split('-')[0]),
-            paymentMonth: parseInt(month2.value.split('-')[1]),
+            paymentYear: parseInt(month2.value.toString().slice(0,4)),
+            paymentMonth: parseInt(month2.value.toString().slice(4,6)),
           },
         });
       } else {
