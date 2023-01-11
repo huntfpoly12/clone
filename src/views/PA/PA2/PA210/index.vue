@@ -239,10 +239,14 @@ export default defineComponent({
         // ===================WATCH==================================
         watch(result, (value) => {
             if (value) {
+                dataPopupAdd.value.reportClassCodes = []
                 dataSource.value = value.getTaxWithholdingStatusReports;
                 value.getTaxWithholdingStatusReports.map((data: any) => {
                     dataPopupAdd.value.reportClassCodes.push(data.reportClassCode)
                 })
+                // dataPopupAdd.value.reportClassCodes[0] = "반당2"
+                // dataPopupAdd.value.reportClassCodes[1] = "반당1"
+                // dataPopupAdd.value.reportClassCodes[3] = "반익1"
             }
         });
         watch(resultConfig, (value) => {
@@ -251,7 +255,7 @@ export default defineComponent({
                 dataPopupAdd.value.paymentType = value.getWithholdingConfig.paymentType;
                 dataPopupAdd.value.withholdingDutyCollectivePayment = value.getWithholdingConfig.collectivePayment;
                 dataPopupAdd.value.withholdingDutyTaxForEachBusiness = value.getWithholdingConfig.taxForEachBusiness;
-                // dataPopupAdd.value.reportType = 6;
+                // dataPopupAdd.value.reportType = 1;
                 // dataPopupAdd.value.paymentType = 2;
             }
         });
@@ -269,7 +273,7 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
-            dataPopupAdd.value.lastMonth = Math.max(...dataSource.value.map((data: any) => data.imputedMonth));
+            dataPopupAdd.value.lastMonth = dataSource.value.length ? Math.max(...dataSource.value.map((data: any) => data.imputedMonth)) : 12;
             // dataPopupAdd.value.lastMonth = 12;
             modalAddNewStatus.value = true;
         }
@@ -318,6 +322,7 @@ export default defineComponent({
                 imputedFinishYearMonth: value.imputedFinishYearMonth,
                 paymentFinishYearMonth: value.paymentFinishYearMonth,
                 detailId: value.detailId,
+                ...value.detail.header,
             }];
             reportGridStatus.value = true;
         };
