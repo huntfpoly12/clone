@@ -272,6 +272,7 @@
       :employeeId="employeeId"
       :dataSourceLen="dataSource.length"
       @upDateData="updateData"
+      :key="newForm"
     ></popup-add-new-dependent>
     <PopupEditUpdateDependent
       :modalStatus="modalEditStatus"
@@ -324,7 +325,7 @@ export default defineComponent({
   },
   props: {
     employeeId: {
-      type: String,
+      type: Number,
       default: 0,
     },
     idRowEdit: {
@@ -364,6 +365,7 @@ export default defineComponent({
     const maternityAdoptionSummary = ref();
     const editForm = ref();
     const idRowEdit = ref(props.employeeId);
+    const newForm = ref(0)
     watch(result, (value) => {
       if (value) {
         dataSource.value = value.getEmployeeWage.dependents;
@@ -416,6 +418,7 @@ export default defineComponent({
     // } )
     const openAddDependent = () => {
       modalAddNewDependent.value = true;
+      newForm.value++;
       //   editForm.value.onResetForm();
     };
     const actionEdit = (val: any) => {
@@ -474,6 +477,7 @@ export default defineComponent({
       idRowEdit,
       loading,
       convertAge,
+      newForm
     };
   },
 });

@@ -9,7 +9,7 @@
             <checkbox-basic size="18px" label="건강보험" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
           </a-form-item>
           <div class="input-text empl-ins">
-            <checkbox-basic size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.longTermCareInsuranceDeduction"></checkbox-basic>
+            <checkbox-basic size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction"></checkbox-basic>
             <span>
               <img src="@/assets/images/iconInfo.png" style="width: 14px" />
               <p>본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.</p>
@@ -26,7 +26,7 @@
                 textCheck="Y"
                 textUnCheck="N"
                 class="switch-insurance"
-                v-model:valueSwitch="formStateTab2.employeementInsuranceDeduction"
+                v-model:valueSwitch="formStateTab2.longTermCareInsuranceDeduction"
                 @onChange="onChangeSwitch1"
               ></switch-basic>
             </a-col>
@@ -36,7 +36,7 @@
                 :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent"
                 layoutCustom="horizontal"
-                :disabled="!formStateTab2.employeementInsuranceDeduction"
+                :disabled="!formStateTab2.longTermCareInsuranceDeduction"
               ></radio-group>
             </a-col>
             <a-col span="10"> 고용보험 적용율: </a-col>
@@ -45,7 +45,7 @@
                 :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent"
                 layoutCustom="horizontal"
-                :disabled="!formStateTab2.employeementInsuranceDeduction"
+                :disabled="!formStateTab2.longTermCareInsuranceDeduction"
               ></radio-group>
             </a-col>
           </a-row>
@@ -101,11 +101,11 @@
         <a-col :span="8">
           <div class="header-text-2">요약</div>
           <div class="summary">
-            <div class="text0">소득수당 합계 {{ $filters.formatCurrency(totalPayItem) }}원</div>
-            <div class="text1">수당 과세 합계 {{ $filters.formatCurrency(totalPayItemTax) }} 원</div>
-            <div class="text2">수당 비과세 합계 {{ $filters.formatCurrency(totalPayItemTaxFree) }}원</div>
-            <div class="text3">공제 합계 {{ $filters.formatCurrency(totalDeduction) }}원</div>
-            <div class="text4">차인지급액 {{ $filters.formatCurrency(subPayment) }}원</div>
+            <div class="text0">소득수당 합계 <span>{{ $filters.formatCurrency(totalPayItem) }}</span>원</div>
+            <div class="text1">수당 과세 합계 <span>{{ $filters.formatCurrency(totalPayItemTax) }} </span>원</div>
+            <div class="text2">수당 비과세 합계 <span>{{ $filters.formatCurrency(totalPayItemTaxFree) }}</span>원</div>
+            <div class="text3">공제 합계 <span>{{ $filters.formatCurrency(totalDeduction) }}</span>원</div>
+            <div class="text4">차인지급액 <span>{{ $filters.formatCurrency(subPayment) }}</span>원</div>
             <div class="text5">
               <span>
                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" />
@@ -118,6 +118,7 @@
           <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 + 비과세</div>
           <a-spin :spinning="loading1" size="large">
             <div class="deduction-main">
+                {{ datagConfigPayItems }}
               <div v-for="item in datagConfigPayItems" :key="item.name" class="custom-deduction">
                 <span>
                   <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1" subName="과세" />
@@ -126,12 +127,12 @@
                     v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                     :name="item.name"
                     :type="3"
-                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission"
+                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + (item.taxFreeIncludeSubmission?'O':'X')"
                   />
                   <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
                 </span>
                 <div>
-                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :min="0"> </number-box-money>
+                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false" v-model:valueInput="item.value" :min="0"> </number-box-money>
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -155,7 +156,7 @@
                   <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
                 </span>
                 <div>
-                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :readOnly="true" :min="0"> </number-box-money>
+                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false" v-model:valueInput="item.value" :readOnly="true" :min="0"> </number-box-money>
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -163,7 +164,7 @@
           </a-spin>
         </a-col>
       </a-row>
-      <a-row style="margin-top: 40px">
+      <a-row style="margin-top: 20px">
         <a-col :span="8" :offset="8" style="text-align: center">
           <button-basic style="margin-right: 20px" text="공제계산" type="default" mode="contained" :width="120" @onClick="calculateTax" />
           <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="updateDeduction" />
@@ -322,10 +323,10 @@ export default defineComponent({
         formStateTab2.longTermCareInsuranceDeduction = value.getEmployeeWage.longTermCareInsuranceDeduction;
         formStateTab2.employeementInsuranceDeduction = value.getEmployeeWage.employeementInsuranceDeduction;
         formStateTab2.insuranceSupport = value.getEmployeeWage.insuranceSupport;
-        if (value.getEmployeeWage?.nationalPensionSupportPercent >= 0 && formStateTab2.employeementInsuranceDeduction) {
+        if (value.getEmployeeWage?.nationalPensionSupportPercent >= 0 && formStateTab2.longTermCareInsuranceDeduction) {
           formStateTab2.nationalPensionSupportPercent = value.getEmployeeWage.nationalPensionSupportPercent ?? 0;
         }
-        if (value.getEmployeeWage?.employeementInsuranceSupportPercent >= 0 && formStateTab2.employeementInsuranceDeduction) {
+        if (value.getEmployeeWage?.employeementInsuranceSupportPercent >= 0 && formStateTab2.longTermCareInsuranceDeduction) {
           formStateTab2.employeementInsuranceSupportPercent = value.getEmployeeWage.employeementInsuranceSupportPercent ?? 0;
         }
         if (value.getEmployeeWage?.employeementReductionStartDate) {
@@ -364,7 +365,7 @@ export default defineComponent({
           });
         }
         dependentCount.value = value.getEmployeeWage.dependents.length > 0 ? value.getEmployeeWage.dependents.length : 0;
-        calculateTax();
+        // calculateTax();
       }
     });
 
@@ -398,7 +399,7 @@ export default defineComponent({
           };
         }
         if (item.itemCode == 1004) {
-          let total4 = formStateTab2.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPayItem.value, formStateTab2.employeementInsuranceSupportPercent) : 0;
+          let total4 = formStateTab2.longTermCareInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPayItem.value, formStateTab2.employeementInsuranceSupportPercent) : 0;
           item.value = total4;
           formStateTab2.deductionItems[3] = {
             itemCode: 1004,
@@ -700,9 +701,11 @@ export default defineComponent({
   }
 
   .summary {
-    font-weight: bold;
     div {
       margin-bottom: 5px;
+      span{
+        font-weight: bold;
+      }
     }
     .text5 {
       span {

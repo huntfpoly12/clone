@@ -162,7 +162,6 @@ export default defineComponent({
       },
     });
     const isEdit = ref(false);
-    console.log(`output->xem chay may lan`)
     const getEmployeeExtrasTrigger = ref<boolean>(false);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
