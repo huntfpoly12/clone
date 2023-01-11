@@ -1,5 +1,10 @@
 #pa-710 {
+    .confirm {
+        color: red;
+    }
+
     margin-top: 10px;
+    // padding: 10px 10px 10px 0;
 
     .total-user {
         background-color: #17375E;
@@ -26,8 +31,9 @@
     ::v-deep .ant-form-item-label>label {
         width: 180px;
         padding-left: 10px;
-        
+
     }
+
     ::v-deep .red .ant-form-item-label>label {
         color: red;
     }
@@ -37,12 +43,13 @@
     }
 
     ::v-deep .custom-layout {
+        margin-top: 10px;
         padding: 10px 10px 10px 0;
 
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            height: 700px;
+            height: 100%;
         }
     }
 
@@ -58,8 +65,9 @@
         background-color: #337AB7;
         color: white;
     }
-    ::v-deep #gridContainer {
-        height: 670px;
-      }
+
+    // #gridContainer {
+    //     height: 600px;
+    // }
 
 }

@@ -145,7 +145,7 @@
             :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
           >
             <div class="main-content">
-              <template v-if="activeTab">      
+              <template v-if="activeTab">
                 <keep-alive :exclude="cachedTab">   
                   <component :is="currentComponent" />
                 </keep-alive>
@@ -505,6 +505,7 @@ export default defineComponent({
 
       menuTab.value.splice(item, 1);
       activeTab.value = menuTab.value.slice(-1)[0];
+      store.state.common.activeTab = activeTab.value
       selectedItems.value = [];
       if (menuTab.value.length === 0) {
         gotoDashboard()
@@ -600,7 +601,7 @@ export default defineComponent({
       scrollX,
       scroll_container,
       isArrowScroll,
-      tabLeft,tabRight,cachedTab
+      tabLeft,tabRight,cachedTab,store
     }
   },
 });

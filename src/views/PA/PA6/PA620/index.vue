@@ -1,5 +1,6 @@
 <template>
-    <action-header title="사업소득자료입력" @actionSave="saving" />
+    <action-header title="사업소득자료입력" @actionSave="saving" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false"
+        :buttonSave="false"  />
     <div id="pa-620">
         <div class="page-content">
             <a-row>
@@ -24,7 +25,7 @@
                             <template #col-first="{}">
                                 <b>지급연월</b>
                             </template>
-                            <DxColumn caption="1" width="100px" cell-template="month-1" />
+                            <DxColumn caption="01" width="100px" cell-template="month-1" />
                             <template #month-1="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month1" 
                                     :class="setUnderline(data.data.month1.imputedMonth) ?'current-underlined':''"
@@ -35,7 +36,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="2" width="100px" cell-template="month-2" />
+                            <DxColumn caption="02" width="100px" cell-template="month-2" />
                             <template #month-2="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month2"
                                :class="setUnderline(data.data.month2.imputedMonth) ?'current-underlined':''"
@@ -46,7 +47,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="3" width="100px" cell-template="month-3" />
+                            <DxColumn caption="03" width="100px" cell-template="month-3" />
                             <template #month-3="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month3"
                                 :class="setUnderline(data.data.month3.imputedMonth) ?'current-underlined':''"
@@ -57,7 +58,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="4" width="100px" cell-template="month-4" />
+                            <DxColumn caption="04" width="100px" cell-template="month-4" />
                             <template #month-4="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month4"
                                 :class="setUnderline(data.data.month4.imputedMonth) ?'current-underlined':''"
@@ -68,7 +69,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="5" width="100px" cell-template="month-5" />
+                            <DxColumn caption="05" width="100px" cell-template="month-5" />
                             <template #month-5="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month5"
                                :class="setUnderline(data.data.month5.imputedMonth) ?'current-underlined':''"
@@ -79,7 +80,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="6" width="100px" cell-template="month-6" />
+                            <DxColumn caption="06" width="100px" cell-template="month-6" />
                             <template #month-6="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month6"
                                :class="setUnderline(data.data.month6.imputedMonth) ?'current-underlined':''"
@@ -90,7 +91,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="7" width="100px" cell-template="month-7" />
+                            <DxColumn caption="07" width="100px" cell-template="month-7" />
                             <template #month-7="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month7"
                                :class="setUnderline(data.data.month7.imputedMonth) ?'current-underlined':''"
@@ -101,7 +102,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="8" width="100px" cell-template="month-8" />
+                            <DxColumn caption="08" width="100px" cell-template="month-8" />
                             <template #month-8="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month8"
                                :class="setUnderline(data.data.month8.imputedMonth) ?'current-underlined':''"
@@ -112,7 +113,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="9" width="100px" cell-template="month-9" />
+                            <DxColumn caption="09" width="100px" cell-template="month-9" />
                             <template #month-9="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month9"
                                 :class="setUnderline(data.data.month9.imputedMonth) ?'current-underlined':''"
@@ -252,18 +253,18 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <ComponentDetail  v-model:statusBt="statusButton"
-                    :actionSave="actionSave" @createdDone="createdDone" />
+                <ComponentDetail  v-model:statusBt="statusButton" :isFirstChangeTopTable="true"
+                    :actionSave="actionSave" @createdDone="createdDone"/>
 
-                <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess" 
-                :processKey="processKey" :data="dataModalCopy"
+                <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy=false" 
+                :data="dataModalCopy" :dateType = "dateType"
                 @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess"/>
             </a-row>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, computed } from "vue";
+import { defineComponent, ref, reactive, computed, watch } from "vue";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
@@ -278,7 +279,7 @@ import dayjs from 'dayjs';
 import filters from "@/helpers/filters";
 import ComponentDetail from "./components/ComponentDetail.vue";
 import CopyMonth from "./components/CopyMonth.vue";
-
+import queriesHolding from "@/graphql/queries/CM/CM130/index";
 
 export default defineComponent({
     components: {
@@ -307,8 +308,7 @@ export default defineComponent({
             imputedYear: globalYear.value,
             // imputedMonth: dayjs().month(),
         })
-        const processKey = computed(() => store.state.common.processKeyPA620)
-      
+        
         let dataCustomRes: any = ref([])
         // ================GRAPQL==============================================
 
@@ -318,7 +318,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resIncomeProcessBusinesses(res => {
-            let respon = res.data.getIncomeProcessBusinesses
+            let respon = res.data?.getIncomeProcessBusinesses
             dataSource.value = [{
                 companyId: companyId,
             }]
@@ -352,7 +352,6 @@ export default defineComponent({
                     name: "차인지급액",
                 },
             ]
-
             respon.map((val: any) => {
                 // data table minify
                 let dataAdd = {
@@ -410,11 +409,14 @@ export default defineComponent({
 
         // ================FUNCTION============================================   
       const showDetailSelected = (data: any) => {
+        console.log(`output->data.imputedYear`,data.imputedYear)
+            store.commit("common/processKeyPA620",{imputedMonth: data.imputedMonth});
             statusButton.value = data.status
             store.state.common.processKeyPA620.imputedYear = data.imputedYear
             store.state.common.processKeyPA620.imputedMonth = data.imputedMonth
             store.state.common.processKeyPA620.paymentYear = data.paymentYear
-            store.state.common.processKeyPA620.paymentMonth = data.paymentMonth
+            store.state.common.processKeyPA620.paymentMonth = data.paymentMonth;
+        
         }
 
         const saving = () => {
@@ -437,22 +439,37 @@ export default defineComponent({
         }
 
 
-        const actionCopySuccess = () => {
-            modalCopy.value = false
-        }
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
+            console.log(`output->dateCustom`,store.state.common.processKeyPA620)
         }
 
         const setUnderline = (monthInputed : any)=>{
             return monthClicked.value == monthInputed
         }
+        watch(globalYear,(newVal)=> {
+            valueCallApiGetIncomeProcessBusinesses.imputedYear=newVal;
+            store.commit("common/processKeyPA620",{imputedYear:globalYear.value, paymentYear: globalYear.value})
+            refetchData()
+        })
+        // get config to check default date type
+        const dateType = ref<number>(1)
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const { result: resultConfig} = useQuery(
+            queriesHolding.getWithholdingConfig,
+            dataQuery,
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultConfig,(newVal)=> {
+            dateType.value = newVal.paymentType;
+        });
         return {
             modalCopy,
             actionSave,
             statusButton,
-            processKey,
             dataCustomRes,
             globalYear,
             setUnderline,
@@ -465,10 +482,10 @@ export default defineComponent({
             addMonth,
             saving,
             showDetailSelected,
-            actionCopySuccess,
             dataModalCopy,
             loadingTable,
             dataAddIncomeProcess,
+            dateType
         };
     },
 });

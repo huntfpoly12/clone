@@ -15,20 +15,19 @@ const actions = {
         const {
             refetch,
             loading: loading2,
-            result : resultEmployeeWageDailies,
-        } = useQuery(queries2.getEmployeeWageDailies, originData, () => ({
+            result : searchIncomeWageWithholdingTaxByEmployees,
+        } = useQuery(queries2.searchIncomeWageWithholdingTaxByEmployees, originData, () => ({
           
             fetchPolicy: "no-cache",
         }));
-        if (loading1 && loading2) {
-            //dataEmployee = resultEmployeeWages
+        if (loading1 && loading2) { 
             watch(resultEmployeeWages, value => {
                 value.getEmployeeWages.map((item: any) => { 
                     dataEmployee.value.push(item)
                 })
             })
-            watch(resultEmployeeWageDailies, value => {
-                value.getEmployeeWageDailies.map((item: any) => {
+            watch(searchIncomeWageWithholdingTaxByEmployees, value => {
+                value.searchIncomeWageWithholdingTaxByEmployees.map((item: any) => {
                     if(item.retirementIncome) {
                         dataEmployee.value.push(item) 
                     }

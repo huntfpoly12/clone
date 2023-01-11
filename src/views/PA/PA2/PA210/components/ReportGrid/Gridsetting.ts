@@ -1,4 +1,5 @@
 import filters from "@/helpers/filters";
+import { WithholdingStatusReport } from "@bankda/jangbuda-common";
 const cellValueGreaterThan0 = (query: any, callback: any) => {
   if (typeof query == 'number' && query >= 0) {
     callback(true)
@@ -558,3 +559,108 @@ export const inputPosition = [
   { "className": "A99", "value": [[32, 5], [32, 6], [32, 7], [32, 8], [32, 9], [32, 10], [32, 11], [32, 12]] },
   { "className":"adjustmentOfRefundTaxAmount","value": [[37, 0], [37, 3], [37, 4], [37, 6], [37, 7], [37, 8], [37, 9], [37, 10], [37, 11], [37, 12]] },
 ]
+
+
+export const setValueDataTable = (wrapper: any,code: string, data: any) => {
+  let hot = wrapper.value.hotInstance;
+  const rowPosition = inputPosition.find(item => item.className == code);
+  if (data.numberOfPeople)
+    hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople);
+  if (data.totalPayment)
+    hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment);
+  if (data.collectedIncomeTax)
+    hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax);
+  if (data.collectedRuralSpecialTax)
+    hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax);
+  if (data.collectedExtraTax)
+    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax);
+  if (data.thisMonthAdjustedRefundTaxAmount)
+    hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount);
+  if (data.incomeTaxPaid)
+    hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid);
+  if (data.ruralSpecialTaxPaid)
+    hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid);
+
+  if (data.prevMonthNonRefundableTaxAmount)
+    hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.prevMonthNonRefundableTaxAmount);
+  if (data.preRefundApplicationTaxAmount)
+    hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.preRefundApplicationTaxAmount);
+  if (data.deductibleBalance)
+    hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.deductibleBalance);
+  if (data.thisMonthRefundTaxGeneral)
+    hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.thisMonthRefundTaxGeneral);
+  if (data.thisMonthRefundTaxOtherFinancialCompany)
+    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.thisMonthRefundTaxOtherFinancialCompany);
+  if (data.thisMonthRefundTaxOtherMerge)
+    hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthRefundTaxOtherMerge);
+  if (data.refundTaxSubjectToAdjustment)
+    hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.refundTaxSubjectToAdjustment);
+  if (data.thisMonthTotalAdjustedRefundTaxAmount)
+    hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.thisMonthTotalAdjustedRefundTaxAmount);
+  if (data.nextMonthRefundTaxAmount)
+    hot.setDataAtCell(rowPosition?.value[8][0], rowPosition?.value[8][1], data.nextMonthRefundTaxAmount);
+  if (data.refundApplicationAmount)
+    hot.setDataAtCell(rowPosition?.value[9][0], rowPosition?.value[9][1], data.refundApplicationAmount);
+}
+
+export const calculateWithholdingStatusReport = (wrapper: any,data: any = []) => {
+  let cellData = Array()
+  if (data.length > 0) {
+    cellData = data
+  } else {
+    let hot = wrapper.value.hotInstance;
+    const arrData = hot.getData()
+    for (let index = 0; index < arrData.length; index++) {
+      if (index >= 4 && index <= 32) {
+        cellData.push({
+          code: arrData[index][4],
+          numberOfPeople: arrData[index][5],
+          totalPayment: arrData[index][6],
+          collectedIncomeTax: arrData[index][7],
+        });
+      }
+    }
+  }
+  const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
+    
+    if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
+      output.incomeWages.forEach((item) => {
+        setValueDataTable(wrapper,item.code,item)
+      })
+    }
+    if (output.incomeRetirements.length > 0) { // 퇴직소득 [연금계좌(A12), 그외(A22), 가감계(A20)]
+      output.incomeRetirements.forEach((item) => {
+        setValueDataTable(wrapper,item.code,item)
+      })
+    }
+    if (output.incomeBusinesses.length > 0) { // 사업소득 [매월징수(A25), 연말정산(A26), 가감계(A30)]
+      output.incomeBusinesses.forEach((item) => {
+        setValueDataTable(wrapper,item.code,item)
+      })
+    }
+    if (output.incomeExtras.length > 0) { // 기타소득 [연금계좌(A41), 종교인소득-매월징수(A43), 종교인소득-연말정산(A44), 그외(A42), 가감계(A40)]
+      output.incomeExtras.forEach((item) => {
+        setValueDataTable(wrapper,item.code,item)
+      })
+    }
+    if (output.incomePensions.length > 0) { // 연금소득 [연금계좌(A48), 공적연금(A45), 연말정산(A46), 가감계(A47)]
+      output.incomePensions.forEach((item) => {
+        setValueDataTable(wrapper,item.code,item)
+      })
+    }
+    if (output.incomeInterest) { // 이자소득(A50)
+        
+    }
+    if (output.incomeDividend) { // 배당소득(A60)
+        
+    }
+    if (output.incomeSaving) { // 저축등해지추징세액등(A69)
+        
+    }
+    if (output.modifyReport) { // 수정신고세액(A90)
+        
+    }
+    setValueDataTable(wrapper,output.summary.code, output.summary)
+    setValueDataTable(wrapper,"adjustmentOfRefundTaxAmount",output.adjustmentOfRefundTaxAmount)
+    //r.push(output.summary); // 총합계(A99)
+}

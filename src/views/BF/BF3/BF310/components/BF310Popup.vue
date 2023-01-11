@@ -100,11 +100,11 @@
                                                 :label-col="labelCol">
                                                 <radio-group :arrayValue="bizTypeItems"
                                                     v-model:valueRadioCheck="formState.content.company.bizType"
-                                                    layoutCustom="horizontal"></radio-group>
+                                                    layoutCustom="horizontal"/>
                                             </a-form-item>
                                         </a-col>
                                         <a-col :span="12">
-                                            {{  formState.content.company.residentId  }}
+                                            <!-- {{  formState.content.company.residentId  }} -->
                                             <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                                 label-align="left" :label-col="labelCol">
                                                 <id-number-text-box :required="true"

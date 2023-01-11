@@ -5,13 +5,12 @@
         <a-col :span="24">
           <a-form-item label="사업소득자" label-align="right">
             <employ-type-select
-              :disabled="disabledInput"
+              :disabled="isEdit"
               :arrayValue="isEdit ? incomeArr : arrayEmploySelect"
               v-model:valueEmploy="dataAction.input.employeeId"
               width="350px"
               :required="true"
               @incomeTypeCode="changeIncomeTypeCode"
-              :readOnly="isEdit"
             />
             <div v-if="validations.employeeId" class="validate">this must be filled</div>
           </a-form-item>
@@ -24,16 +23,16 @@
             <div class="d-flex-center">
               <div class="month-custom-1 d-flex-center">
                 귀
-                <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="true" />
+                <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="isEdit" />
               </div>
               <div class="month-custom-2 d-flex-center">
                 지
-                <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="true" />
+                <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="isEdit" />
               </div>
             </div>
           </a-form-item>
           <a-form-item label="지급일">
-            <number-box :max="31" :min="1" :readOnly="isEdit" width="150px" class="mr-5" v-model:valueInput="dataAction.input.paymentDay" :disabled="disabledInput" />
+            <number-box :max="31" :min="1" :disabled="isEdit" width="150px" class="mr-5" v-model:valueInput="dataAction.input.paymentDay"/>
             <div v-if="validations.paymentDay" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="지급액">
@@ -78,13 +77,13 @@
           </div>
           <div class="input-text">
             <a-form-item label="소득세(공제)">
-              <number-box-money :readOnly="true" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingIncomeTax" />
+              <number-box-money :disabled="true" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingIncomeTax" />
               <span>원</span>
             </a-form-item>
           </div>
           <div class="input-text">
             <a-form-item label="지방소득세(공제)">
-              <number-box-money :readOnly="true" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" />
+              <number-box-money :disabled="true" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" />
               <span>원</span>
             </a-form-item>
           </div>
@@ -163,7 +162,8 @@ export default defineComponent({
       },
     });
     const isEdit = ref(false);
-    const getEmployeeExtrasTrigger = ref<boolean>(true);
+    console.log(`output->xem chay may lan`)
+    const getEmployeeExtrasTrigger = ref<boolean>(false);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
       imputedYear: parseInt(dayjs().format('YYYY')),

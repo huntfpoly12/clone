@@ -63,10 +63,10 @@
                                 v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
                             <number-box-money :min="0" width="200px" class="mr-5"
                                 v-if="!originDataUpdate.input.monthlyPaycheck"
-                                v-model:valueInput="originDataUpdate.input.monthlyWage" placeholder="일급여/ 월급여"
+                                v-model:valueInput="originDataUpdate.input.monthlyWage" placeholder="월급여"
                                 @changeInput="onChangeMonthlyWage" />
                             <number-box-money :min="0" width="200px" class="mr-5" v-else
-                                v-model:valueInput="originDataUpdate.input.dailyWage" placeholder="월급여"
+                                v-model:valueInput="originDataUpdate.input.dailyWage" placeholder="일급여"
                                 @changeInput="onChangeDailyWage" />
                         </div>
                     </a-form-item>
@@ -259,6 +259,8 @@ export default defineComponent({
         }, { deep: true })
 
         watch(() => originDataUpdate.value, (newVal) => {
+            console.log('12312');
+            
             if (JSON.stringify(newVal) === dataDefaultGet.value) {
                 store.state.common.checkStatusChangeValue = false
             } else {
