@@ -57,7 +57,7 @@
                             <BtnCheck :value="cellData.value" />
                         </template>
                         <template #ageChange="{data}">
-                            {{convertAge(data.data.residentId)}}
+                            {{convertAge(data.data.residentId.toString())}}
                         </template>
                         <template #basicDeductionChange="{ data: cellData }">
                             <div v-if="cellData.value == 0">
@@ -205,7 +205,7 @@ export default defineComponent({
             type: Number
         },
         employeeId: {
-            type: String,
+            type: Number,
             default: 0,
         },
     },

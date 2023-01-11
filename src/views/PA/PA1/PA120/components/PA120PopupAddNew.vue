@@ -38,12 +38,12 @@ export default defineComponent({
     setup(props, { emit }) {
         const tabStatus = ref(true);
         const activeKey = ref("1");
-        const employeeId = ref('');
+        const employeeId = ref();
         const setModalVisible = () => {
             emit('closePopup', false);
         }
         const setEmployeeId = (val: any) => {
-            employeeId.value = val;
+            employeeId.value = +val;
         }
         const setTabsStatus = (data : any) => {
             tabStatus.value = data;

@@ -221,7 +221,6 @@ export default defineComponent({
     onDoneAdd(() => {
        emit('setTabsStatus', false);
        notification("success", `업그레이드가 완료되었습니다! `);
-       console.log(`outpu`)
        store.commit('common/actionFormDonePA120')
        store.commit('common/keyActivePA120', employeeId.value);
     });

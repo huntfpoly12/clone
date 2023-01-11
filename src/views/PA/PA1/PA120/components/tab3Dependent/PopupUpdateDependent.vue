@@ -14,7 +14,7 @@
                                 <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
                                     v-model:valueInput="formState.name"></default-text-box>
                             </a-form-item>
-                            <a-form-item label="연말관계" label-align="right">
+                            <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
                                 <switch-basic textCheck="내국인" textUnCheck="외국인"
                                     v-model:valueSwitch="formState.foreigner" />
                             </a-form-item>
@@ -32,15 +32,15 @@
                                     :required="true" />
                             </a-form-item>
                             <a-form-item label="부녀자" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="women" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="women" />
                             </a-form-item>
                             <a-form-item label="한부모" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="singleParent" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="singleParent" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="12">
                             <a-form-item label="경로우대" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="senior" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" />
                             </a-form-item>
                             <a-form-item label="장애인" label-align="right">
                                 <disabled-type-radio-group v-model:valueRadioCheck="formState.disabled">
@@ -51,26 +51,22 @@
                                 </maternity-adoption-radio-box>
                             </a-form-item>
                             <a-form-item label="자녀세액공제" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="descendant" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="descendant" />
                             </a-form-item>
                             <a-form-item label="위탁관계" label-align="right">
                                 <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
                                     v-model:valueInput="formState.consignmentRelationship"></default-text-box>
                             </a-form-item>
                             <a-form-item label="세대주여부" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="householder" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="householder" />
                             </a-form-item>
                         </a-col>
                     </a-row>
 
                 </div>
-                <a-row style="margin-top: 40px">
-                    <a-col :span="8" :offset="8" style="text-align: center;">
-                        <button-basic style="margin-right: 20px" text="삭제" mode="contained" :width="90"
-                            :disabled="disabledButton" @onClick="actionDeleteFuc($event)" />
-                        <button-basic text="저장" type="default" mode="contained" :width="90"
-                            @onClick="actionUpdated($event)" />
-                    </a-col>
+                <a-row style="margin-top: 40px" justify="center">
+                    <button-basic text="저장" type="default" mode="contained" :width="90"
+                        @onClick="actionUpdated($event)" />
                 </a-row>
                 <PopupMessage :modalStatus="modalStatusDelete" @closePopup="modalStatusDelete = false"
                     typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요"
@@ -90,7 +86,6 @@ import notification from "@/utils/notification";
 import { companyId, convertAge } from "@/helpers/commonFunction";
 const contentDelete = Message.getMessage('PA120', '002').message
 import { Message } from "@/configs/enum"
-
 
 export default defineComponent({
     components: {},
@@ -127,6 +122,7 @@ export default defineComponent({
             descendant: true,
             consignmentRelationship: '',
         };
+        const residentId = ref<String | Number>(1)
         let formState = reactive<any>({ ...initialFormState });
         let formState2 = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
@@ -182,14 +178,6 @@ export default defineComponent({
                 labelResidebId.value = "주민등록번호";
             }
         });
-        const residentId = ref("");
-        watch(residentId, (newValue: any) => {
-            formState.residentId =
-                newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
-            if (newValue.length >= 7) {
-                ageCount.value = convertAge(formState.residentId);
-            }
-        });
         watch(() => props.modalStatus, (newValue: any) => {
             if (newValue) {
                 Object.assign(formState, initialFormState);
@@ -231,6 +219,16 @@ export default defineComponent({
 
             }
         });
+        watch(()=>formState.residentId,(newVal)=> {
+            let count;
+            if(newVal.length==13){
+                count = newVal.slice(0, 6) + "-" + newVal.slice(6, 13);
+                ageCount.value = convertAge(count);
+            }else if(newVal.length<13){
+                count  = newVal.toString();
+                ageCount.value = convertAge(count);
+            }
+        },{deep: true})
         const {
             mutate,
             onError,
@@ -250,6 +248,7 @@ export default defineComponent({
                 res.brokenRules[0].validator.focus();
             } else {
                 delete formState.householder;
+                formState.residentId = formState.residentId.slice(0, 6) + "-" + formState.residentId.slice(6, 13);
                 let newValDataEdit = {
                     ...formState
                 };
@@ -317,8 +316,7 @@ export default defineComponent({
             descendant,
             formState,
             ageCount,
-            foreigner,
-            residentId, disabledButton,
+            foreigner, disabledButton,
             setModalVisible, actionUpdated, statusComfirm, contentDelete,
             labelResidebId, actionDeleteFuc, modalStatusDelete,
         };
@@ -355,6 +353,11 @@ export default defineComponent({
 
     .roadAddress {
         margin-bottom: 5px;
+    }
+    .switchForeigner {
+        :deep .ant-switch {
+            background-color: #1890ff;
+        }
     }
 }
 </style>
