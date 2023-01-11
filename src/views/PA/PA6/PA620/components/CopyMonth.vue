@@ -194,9 +194,6 @@ export default defineComponent({
         const openModalCopy = () => {
             modalCopy.value = true
         }
-        onActivated(()=>{
-            console.log(`output->onActivated`)
-        })
         return {
             modalCopy,
             paymentDayCopy,

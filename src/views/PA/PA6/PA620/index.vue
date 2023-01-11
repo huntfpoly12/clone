@@ -253,7 +253,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <ComponentDetail  v-model:statusBt="statusButton" :isFirstChangeTopTable="true"
+                <ComponentDetail  v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
                     :actionSave="actionSave" @createdDone="createdDone"/>
 
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy=false" 
@@ -310,6 +310,7 @@ export default defineComponent({
         })
         
         let dataCustomRes: any = ref([])
+        const isDisabledForm = ref<boolean>(false);
         // ================GRAPQL==============================================
 
         // API QUERY TABLE BIG
@@ -322,7 +323,11 @@ export default defineComponent({
             dataSource.value = [{
                 companyId: companyId,
             }]
-
+            if(respon.length == 0){
+                isDisabledForm.value = true;
+            }else {
+                isDisabledForm.value = false;
+            }
             dataCustomRes.value = [
                 {
                     id: 1,
@@ -409,7 +414,6 @@ export default defineComponent({
 
         // ================FUNCTION============================================   
       const showDetailSelected = (data: any) => {
-        console.log(`output->data.imputedYear`,data.imputedYear)
             store.commit("common/processKeyPA620",{imputedMonth: data.imputedMonth});
             statusButton.value = data.status
             store.state.common.processKeyPA620.imputedYear = data.imputedYear
@@ -442,7 +446,6 @@ export default defineComponent({
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
-            console.log(`output->dateCustom`,store.state.common.processKeyPA620)
         }
 
         const setUnderline = (monthInputed : any)=>{
@@ -485,7 +488,8 @@ export default defineComponent({
             dataModalCopy,
             loadingTable,
             dataAddIncomeProcess,
-            dateType
+            dateType,
+            isDisabledForm,
         };
     },
 });

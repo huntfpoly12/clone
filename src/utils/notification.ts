@@ -21,7 +21,6 @@ export default (typeMessage: string, text: string) => {
                     color: 'red',
                     borderColor: 'red'
                 },
-
             }, 4);
             break;
         case 'warning':
