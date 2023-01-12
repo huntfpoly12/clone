@@ -60,7 +60,7 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 import { useQuery ,useMutation} from "@vue/apollo-composable";
-import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,setValueDataTable,inputPosition} from "./Gridsetting"
+import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,inputPosition} from "./Gridsetting"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
