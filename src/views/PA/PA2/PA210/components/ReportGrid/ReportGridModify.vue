@@ -4,8 +4,8 @@
       <div class="report-grid">
         <div class="header-1">원천세신고서</div>
         <div class="action-right">
-          <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3">
-          <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" >
+          <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
+          <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy">
           <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
         </div>
         <div class="table-detail">
@@ -48,6 +48,7 @@
         </div> 
       </div>
   </a-modal>
+  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm"></confirm-delete>
 </template>
 
 <script lang="ts">
@@ -64,6 +65,7 @@ import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline} from "../../utils/index"
+import ConfirmDelete from "./ConfirmDelete.vue"
 
 // register Handsontable's modules
 registerAllModules();
@@ -84,10 +86,12 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxToolbar, DxPaging,
-    DxItem, DxScrolling,DxButton
+    DxItem, DxScrolling,DxButton,
+    ConfirmDelete
   },
   setup(props, { emit }) {
     const wrapper =  ref<any>(null);
+    const confirmStatus = ref<boolean>(false)
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -229,22 +233,37 @@ export default defineComponent({
         notification('error', error.message)
     })
 
-    const updateTaxWithholding = () => {
+    const updateTaxWithholdingModifiy = () => {
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData()
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if (index >= 4 && index <= 32) {
+        if (index >= 4 && index <= 61 && arrData[index][4] != null) {
           statement.push({
             code: arrData[index][4],
-            numberOfPeople: arrData[index][5] != '' ? arrData[index][5] : 0,
-            totalPayment: arrData[index][6] != '' ? arrData[index][6] : 0,
+            numberOfPeople: arrData[index+1][5] != '' ? arrData[index+1][5] : 0,
+            numberOfPeopleModified: arrData[index][5] != '' ? arrData[index][5] : 0,
+
+            totalPayment: arrData[index+1][6] != '' ? arrData[index+1][6] : 0,
+            totalPaymentModified: arrData[index][6] != '' ? arrData[index][6] : 0,
+
+            collectedIncomeTaxModified: arrData[index+1][7] != '' ? arrData[index+1][7] : 0,
             collectedIncomeTax: arrData[index][7] != '' ? arrData[index][7] : 0,
-            collectedRuralSpecialTax: arrData[index][8] != '' ? arrData[index][8] : 0,
-            collectedExtraTax: arrData[index][9] != '' ? arrData[index][9] : 0,
-            thisMonthAdjustedRefundTaxAmount: arrData[index][10] != '' ? arrData[index][10] : 0,
-            incomeTaxPaid: arrData[index][11] != '' ? arrData[index][11] : 0,
-            ruralSpecialTaxPaid: arrData[index][12] != '' ? arrData[index][12] : 0,
+
+            collectedRuralSpecialTax: arrData[index+1][8] != '' ? arrData[index+1][8] : 0,
+            collectedRuralSpecialTaxModified: arrData[index][8] != '' ? arrData[index][8] : 0,
+
+            collectedExtraTax: arrData[index+1][9] != '' ? arrData[index+1][9] : 0,
+            collectedExtraTaxModified: arrData[index][9] != '' ? arrData[index][9] : 0,
+
+            thisMonthAdjustedRefundTaxAmount: arrData[index+1][10] != '' ? arrData[index+1][10] : 0,
+            thisMonthAdjustedRefundTaxAmountModified: arrData[index][10] != '' ? arrData[index][10] : 0,
+
+            incomeTaxPaid: arrData[index+1][11] != '' ? arrData[index+1][11] : 0,
+            incomeTaxPaidModified: arrData[index][11] != '' ? arrData[index][11] : 0,
+
+            ruralSpecialTaxPaid: arrData[index+1][12] != '' ? arrData[index+1][12] : 0,
+            ruralSpecialTaxPaidModified: arrData[index][12] != '' ? arrData[index][12] : 0,
           });
         }
       }
@@ -280,21 +299,50 @@ export default defineComponent({
           },
           statementAndAmountOfTaxPaids: statement,
           adjustmentOfRefundTaxAmount:{
-            prevMonthNonRefundableTaxAmount: arrData[37][0] != '' ? arrData[37][0] : 0,
-            preRefundApplicationTaxAmount:  arrData[37][2] != '' ? arrData[37][2] : 0,
-            deductibleBalance:  arrData[37][3] != '' ? arrData[37][3] : 0,
-            thisMonthRefundTaxGeneral:  arrData[37][5] != '' ? arrData[37][5] : 0,
-            thisMonthRefundTaxFiduciaryEstates:  arrData[37][6] != '' ? arrData[37][6] : 0,
-            thisMonthRefundTaxOtherFinancialCompany:  arrData[37][7] != '' ? arrData[37][7] : 0,
-            thisMonthRefundTaxOtherMerge:  arrData[37][8] != '' ? arrData[37][8] : 0,
-            refundTaxSubjectToAdjustment:  arrData[37][9] != '' ? arrData[37][9] : 0,
-            thisMonthTotalAdjustedRefundTaxAmount:  arrData[37][10] != '' ? arrData[37][10] : 0,
-            nextMonthRefundTaxAmount:  arrData[37][11] != '' ? arrData[37][11] : 0,
-            refundApplicationAmount:  arrData[37][12] != '' ? arrData[37][12] : 0,
+            prevMonthNonRefundableTaxAmount: arrData[67][0] != '' ? arrData[67][0] : 0,
+            prevMonthNonRefundableTaxAmountModified: arrData[66][0] != '' ? arrData[66][0] : 0,
+
+            preRefundApplicationTaxAmount:  arrData[67][2] != '' ? arrData[67][2] : 0,
+            preRefundApplicationTaxAmountModified:  arrData[66][2] != '' ? arrData[66][2] : 0,
+
+            deductibleBalance:  arrData[67][4] != '' ? arrData[67][4] : 0,
+            deductibleBalanceModified:  arrData[66][4] != '' ? arrData[66][4] : 0,
+
+            thisMonthRefundTaxGeneral:  arrData[67][5] != '' ? arrData[67][5] : 0,
+            thisMonthRefundTaxGeneralModified:  arrData[66][5] != '' ? arrData[66][5] : 0,
+
+            thisMonthRefundTaxFiduciaryEstates:  arrData[67][6] != '' ? arrData[67][6] : 0,
+            thisMonthRefundTaxFiduciaryEstatesModified:  arrData[66][6] != '' ? arrData[66][6] : 0,
+
+            thisMonthRefundTaxOtherFinancialCompany:  arrData[67][7] != '' ? arrData[67][7] : 0,
+            thisMonthRefundTaxOtherFinancialCompanyModified:  arrData[66][7] != '' ? arrData[66][7] : 0,
+
+            thisMonthRefundTaxOtherMerge:  arrData[67][8] != '' ? arrData[67][8] : 0,
+            thisMonthRefundTaxOtherMergeModified:  arrData[66][8] != '' ? arrData[66][8] : 0,
+
+            refundTaxSubjectToAdjustment:  arrData[67][9] != '' ? arrData[67][9] : 0,
+            refundTaxSubjectToAdjustmentModified:  arrData[66][9] != '' ? arrData[66][9] : 0,
+
+            thisMonthTotalAdjustedRefundTaxAmount:  arrData[67][10] != '' ? arrData[67][10] : 0,
+            thisMonthTotalAdjustedRefundTaxAmountModified:  arrData[66][10] != '' ? arrData[66][10] : 0,
+
+            nextMonthRefundTaxAmount:  arrData[67][11] != '' ? arrData[67][11] : 0,
+            nextMonthRefundTaxAmountModified:  arrData[66][11] != '' ? arrData[66][11] : 0,
+
+            refundApplicationAmount:  arrData[67][12] != '' ? arrData[37][67] : 0,
+            refundApplicationAmountModified:  arrData[66][12] != '' ? arrData[66][12] : 0,
           }
         }
       }
       actionUpdateTaxWithholding(variables)
+    }
+
+    const actionConfirmDelete = ()=>{
+      confirmStatus.value = true
+    }
+
+    const actionCloseConfirm = (data : any)=>{
+      console.log(data)
     }
     return {
       setModalVisible,
@@ -306,7 +354,10 @@ export default defineComponent({
       colomn_resize,
       loadNew,
       getAfterDeadline,
-      updateTaxWithholding
+      updateTaxWithholdingModifiy,
+      actionConfirmDelete,
+      confirmStatus,
+      actionCloseConfirm
     }
   }
 });
