@@ -17,9 +17,9 @@
                     <div class="top-content">
                         <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
                     </div>
-                    <a-form-item label="근무일수">
-                        <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
-                            width="200px" :required="true" />
+                    <a-form-item label="근무일수"> 
+                        <number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays" width="200px"
+                            :required="true" />
                     </a-form-item>
                     <a-form-item label="월급여">
                         <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.monthlyWage"
@@ -47,7 +47,7 @@
                     <div class="top-content">
                         <a-typography-title :level="5" style="margin-bottom: 0;">
                             월급여 {{
-                                dataIncomeWageDaily.monthlyPaycheck ?
+                                dataIncomeWageDaily.employee.monthlyPaycheck ?
                                     $filters.formatCurrency(dataIncomeWageDaily.monthlyWage) :
                                     $filters.formatCurrency(dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays)
                             }}
@@ -55,9 +55,9 @@
                     </div>
                     <div class="input-text">
                         <span>일급/월급:</span>
-                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.monthlyPaycheck" :textCheck="'월급'"
+                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'월급'"
                             :textUnCheck="'일급'" />
-                        <number-box-money v-if="dataIncomeWageDaily.monthlyPaycheck" width="110px" :required="true"
+                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
                             placeholder='월급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                         <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
@@ -65,28 +65,31 @@
                     </div>
                     <div style="margin-bottom: 10px;">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                        <span class="style-note" v-if="dataIncomeWageDaily.monthlyPaycheck">월급 선택시, 일급 = 월급 /
+                        <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 /
                             근무일수</span>
                         <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                     </div>
                     <a-form-item label="근무일수">
-                        <text-number-box width="150px" :required="true"
-                            v-model:valueInput="dataIncomeWageDaily.workingDays" :min="1" :max="30"
-                            :spinButtons="true"></text-number-box>
+                        <number-box width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
+                            :spinButtons="true" />
                     </a-form-item>
-                    <span v-if="dataIncomeWageDaily.monthlyPaycheck">일급여 {{
+                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
                         $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage /
                             dataIncomeWageDaily.workingDays))
                     }}원</span>
+                    
                     <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
                     <br>
-                    <span v-if="dataIncomeWageDaily.monthlyPaycheck">월급여 {{
+
+                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
                         $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
                     }}원</span>
-                    <span v-else>일급여 {{
+
+                    <span v-else>월급여 {{
                         $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
                             dataIncomeWageDaily.workingDays)
                     }}원</span>
+
                 </a-col>
                 <a-col :span="14" style="padding-leftt: 5px;">
                     <div class="top-content">
@@ -348,8 +351,8 @@ export default defineComponent({
                 })
             })
             let input = {
-                dailyWage: dataIncomeWageDaily.value.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
-                monthlyWage: dataIncomeWageDaily.value.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
+                dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
+                monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
                 workingDays: dataIncomeWageDaily.value.workingDays,
                 deductionItems: arrDeductionItems,
             }
@@ -387,9 +390,9 @@ export default defineComponent({
             dataIncomeWageDaily.value.dailyWage = data.dailyWage;
             dataIncomeWageDaily.value.workingDays = data.workingDays;
             dataIncomeWageDaily.value.totalDeduction = data.totalDeduction;
-            dataIncomeWageDaily.value.monthlyPaycheck = data.monthlyPaycheck;
+            dataIncomeWageDaily.value.employee.monthlyPaycheck = data.employee.monthlyPaycheck;
             dataIncomeWageDaily.value.employee.employeeId = data.employeeId;
-            dataIncomeWageDaily.value.employee.name = data.name;
+            dataIncomeWageDaily.value.employee.name = data.employee.name;
             dataIncomeWageDaily.value.paymentDay = data.paymentDay;
             arrDeduction.value.map((dataRow: any) => {
                 dataRow.price = 0
@@ -400,7 +403,7 @@ export default defineComponent({
                 })
             })
             // 
-            
+
         }, { deep: true })
 
         // ===================FUNCTION==================================
@@ -414,7 +417,7 @@ export default defineComponent({
         }
         const actionDedution = () => {
             let dataDefault = dataIncomeWageDaily.value.employee
-            let totalPrices = parseInt(dataIncomeWageDaily.value.monthlyPaycheck ?
+            let totalPrices = parseInt(dataIncomeWageDaily.value.employee.monthlyPaycheck ?
                 dataIncomeWageDaily.value.monthlyWage :
                 dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays)
             let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0

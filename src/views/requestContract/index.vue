@@ -159,9 +159,9 @@
                                 @selection-changed="onSelectionChanged" :onRowClick="onSelectionClick"
                                 :focused-row-enabled="true" key-expr="rowIndex" :focused-row-key="focusedRowKey"
                                 :auto-navigate-to-focused-row="true">
-                                <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="true"
+                                <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="false"
                                     template="button-template" mode="cell" new-row-position="pageBottom">
-                                    <DxTexts confirmDeleteMessage="삭제하겠습니까?" cancelRowChanges="123124" />
+                                    <!-- <DxTexts confirmDeleteMessage="삭제하겠습니까?" cancelRowChanges="123124" /> -->
                                 </DxEditing>
                                 <DxToolbar>
                                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -180,11 +180,17 @@
                                 </DxColumn>
                                 <DxColumn cell-template="startYearMonth" caption="서비스시작년월" />
                                 <template #startYearMonth="{ data }">
-                                    {{ data.data.startYearMonth ? dayjs(data.data.startYearMonth?.toString()).format("YYYY-MM") : '' }}
+                                    {{
+                                        data.data.startYearMonth ?
+                                            dayjs(data.data.startYearMonth?.toString()).format("YYYY-MM") : ''
+                                    }}
                                 </template>
-
                                 <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
-                            </DxDataGrid>
+                                <DxColumn cell-template="delete" />
+                                <template #delete="{ data }"> 
+                                    <DeleteOutlined class="fz-14" @click="deleteRow(data.data.rowIndex)" />
+                                </template>
+                            </DxDataGrid> 
                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
                                 :key="dataActiveRow.rowIndex">
                                 <a-col :span="12">
@@ -196,7 +202,7 @@
                                     <a-form-item label="사업명 (중복불가)">
                                         <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="서비스 시작년월">   
+                                    <a-form-item label="서비스 시작년월">
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
                                             width="200px" />
                                     </a-form-item>
@@ -322,6 +328,8 @@
             </div>
         </div>
     </a-spin>
+    <popup-message :modalStatus="modalStatus" @closePopup="modalStatus = false" title="삭제하겠습니까?"
+        content="" okText="네" cancelText="아니오" @checkConfirm="statusComfirm" typeModal="confirm" />
 </template>
 <script lang="ts">
 import { reactive, ref, watch, computed } from "vue";
@@ -341,6 +349,7 @@ import dayjs from 'dayjs';
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
+        let modalStatus = ref(false)
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -419,7 +428,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            step.value = val - 1 // Debug
+            //step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
@@ -592,7 +601,6 @@ export default {
                 e.component.selectRowsByIndexes(0);
             }
         };
-
         const gridRefName: any = ref("grid");
         const Creat = () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
@@ -600,10 +608,9 @@ export default {
                 delete val.__KEY__
                 delete val.rowIndex
                 delete val.dataImg
-                val.capacity = parseInt(val.capacity) 
+                val.capacity = parseInt(val.capacity)
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
-  
             let dataCallCreated = {
                 content: {
                     agreements: {
@@ -685,6 +692,26 @@ export default {
                 focusedRowKey.value = keyNew;
             }, 100);
         };
+        let rowDelete = ref()
+        const deleteRow = (val: any) => {
+            rowDelete.value = val
+            modalStatus.value = true
+        }
+        const statusComfirm = (res: any) => {
+            if (res == true) {
+                valueFacilityBusinesses.value = valueFacilityBusinesses.value.filter((val: any) => val.rowIndex != rowDelete.value)
+                setTimeout(() => {
+                    if (valueFacilityBusinesses.value.length > 0) {
+                        let a = document.body.querySelectorAll('[aria-rowindex]');
+                        (a[0] as HTMLInputElement).click();
+                        let keyNew = gridRefName.value.instance.getKeyByRowIndex(valueFacilityBusinesses.value.length - 1);
+                        focusedRowKey.value = keyNew;
+                    } else {
+                        dataActiveRow.value = null
+                    }
+                }, 100);
+            }
+        }
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
             (newVal) => {
@@ -733,12 +760,11 @@ export default {
             optionSale.value = dataOption;
         });
         return {
-            dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
-            contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
+            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
+            statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
 };
 </script>  
 <style lang="scss" scoped src="./style.scss">
-
 </style>

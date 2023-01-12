@@ -1,31 +1,41 @@
 #pa-510 {
     margin-top: 10px;
-    
-    
+
+    .custom-title-table {
+        border: 1px solid #d7d7d7;
+        padding: 10px;
+        margin-top: 10px;
+        justify-content: space-between;
+    }
+
     ::v-deep .ant-form-item-label {
         >label {
             width: 85px;
         }
     }
+
     .top-content {
         margin-bottom: 10px;
         padding: 2px 4px;
-        
+
     }
+
     .input-text {
         display: flex;
         align-items: center;
         margin-bottom: 10px;
+
         >button {
             margin: 0px 10px;
         }
     }
+
     .header-text-3 {
-		background-color: #558ED5;
-		padding: 5px;
-		font-weight: bold;
-		font-size: 12px;
-		margin-bottom: 10px;
+        background-color: #558ED5;
+        padding: 5px;
+        font-weight: bold;
+        font-size: 12px;
+        margin-bottom: 10px;
     }
 
 
@@ -35,15 +45,18 @@
 
     ::v-deep .custom-layout {
         padding: 10px 10px 10px 0;
- 
+
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
+            height: 100%; 
         }
     }
+
     ::v-deep .ant-switch {
         background-color: #1890ff;
     }
+
     .ml-3 {
         margin-left: 3px;
     }
@@ -70,6 +83,7 @@
         }
     }
 }
+
 .button-open-tab {
     color: white;
     background-color: blue;
@@ -80,6 +94,7 @@
     margin-left: 3px;
     cursor: pointer;
 }
+
 .deduction-main {
     max-height: 200px;
     overflow: scroll;
@@ -87,13 +102,14 @@
     padding-left: 5px;
     padding-top: 5px;
 }
+
 ::v-deep .custom-deduction {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     >span {
-        margin-right: 10px; 
+        margin-right: 10px;
     }
 
     >div {
@@ -103,9 +119,11 @@
         // width: 50%;
     }
 }
+
 ::v-deep .dx-master-detail-cell {
     padding: 0 !important;
 }
+
 .text-align-center {
     text-align: center;
 }
@@ -113,13 +131,16 @@
 .button-form-modal {
     margin: 0px 5px;
 }
+
 .hover-underlined:hover {
     text-decoration: underline;
 }
+
 ::v-deep .dx-datagrid-text-content {
-   white-space: pre-wrap;
-   text-align: left!important;
+    white-space: pre-wrap;
+    text-align: left !important;
 }
+
 ::v-deep .dx-button-mode-contained {
     height: 34px;
 }
