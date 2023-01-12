@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <action-header title="기타소득자등록" :buttonDelete="false" :buttonSave="false" :buttonSearch="false" :buttonPrint="false" />
+    <action-header title="기타소득자등록" :buttonDelete="false" :buttonSave="false" :buttonSearch="false"
+        :buttonPrint="false" />
     <div id="pa-120" class="page-content">
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
@@ -40,7 +41,6 @@
                 </div>
             </a-col>
         </a-row>
-        <!-- {{dataSource}} -->
         <a-row>
             <a-col :span="10" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
@@ -56,7 +56,7 @@
                         <template #button-template>
                             <DxButton icon="plus" @click="openAddNewModal" />
                         </template>
-                        <template #button-history="{ }" style="border-color: #ddd;">
+                        <template #button-history="{}" style="border-color: #ddd;">
                             <DxButton icon="plus">
                                 <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
                             </DxButton>
@@ -65,51 +65,55 @@
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
-                                :foreigner="data.data.foreigner" :checkStatus="false" @toolTopErorr="toolTopErorr" :employeeId="data.data.employeeId"/>
+                                :foreigner="data.data.foreigner" :checkStatus="false" @toolTopErorr="toolTopErorr"
+                                :employeeId="data.data.employeeId" @mouseenter="defaultVisible = true"
+                                @mouseleave="defaultVisible = false" />
                         </template>
-                        <DxColumn caption="주민등록번호" cell-template="residentId" width="120"/>
+                        <DxColumn caption="주민등록번호" cell-template="residentId" width="120" />
                         <template #residentId="{ data }">
-                            <div class="toolTipError_wrap">
-                                <div class="toolTipError" v-if="isResidentIdError[`${data.data.employeeId}`]">Error</div>
-                                <div>{{data.data.residentId}}</div>
-                            </div>
+                            <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
+                            <DxTooltip v-if="isResidentIdError[`${data.data.employeeId}`]"
+                                position="top"
+                                v-model:visible="defaultVisible" :hide-on-outside-click="false"
+                                :target="`#residentId${data.data.residentId}`">Error
+                            </DxTooltip>
                         </template>
                         <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{data}">
+                        <template #grade-cell="{ data }">
                             <div>
                                 <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1"
                                     :typeValue="1" />
                                 <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2"
                                     :typeValue="1" />
-                                <four-major-insurance v-if="data.data.employeementInsuranceDeduction"
-                                    :typeTag="4" :typeValue="1" />
-                                <four-major-insurance v-if="data.data.nationalPensionSupportPercent"
-                                    :typeTag="6" :ratio="data.data.nationalPensionSupportPercent" />
-                                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent"
-                                    :typeTag="7" :ratio="data.data.employeementInsuranceSupportPercent" />
-                                <four-major-insurance v-if="data.data.employeementReductionRatePercent"
-                                    :typeTag="8" :ratio="data.data.employeementReductionRatePercent" />
+                                <four-major-insurance v-if="data.data.employeementInsuranceDeduction" :typeTag="4"
+                                    :typeValue="1" />
+                                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6"
+                                    :ratio="data.data.nationalPensionSupportPercent" />
+                                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7"
+                                    :ratio="data.data.employeementInsuranceSupportPercent" />
+                                <four-major-insurance v-if="data.data.employeementReductionRatePercent" :typeTag="8"
+                                    :ratio="data.data.employeementReductionRatePercent" />
                                 <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10"
                                     :ratio="data.data.incomeTaxMagnification" />
                             </div>
                         </template>
-                        <DxColumn cell-template="pupop" width="30"/>
+                        <DxColumn cell-template="pupop" width="30" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action" style="text-align: center;" v-if="data.data.deletable">
-                                <a-space :size="10" >
+                                <a-space :size="10">
                                     <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                                 </a-space>
                             </div>
                         </template>
-                        <DxScrolling column-rendering-mode="virtual"/>
+                        <DxScrolling column-rendering-mode="virtual" />
                     </DxDataGrid>
                 </a-spin>
             </a-col>
             <a-col :span="14" class="custom-layout" style="padding-right: 0px;">
                 <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
-                     v-if="actionChangeComponent == 1" :key="addComponentKey" />
-                <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus"
-                    v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey"/>
+                    v-if="actionChangeComponent == 1" :key="addComponentKey" />
+                <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" v-if="actionChangeComponent == 2"
+                    :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
@@ -134,6 +138,7 @@ import mutations from "@/graphql/mutations/PA/PA1/PA120/index"
 import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
 import { Message } from "@/configs/enum"
+import { DxTooltip } from 'devextreme-vue/tooltip';
 
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
@@ -144,7 +149,7 @@ export default defineComponent({
         DxToolbar, DxPaging,
         DxItem,
         DxButton, EditOutlined, HistoryOutlined, DeleteOutlined,
-        PA120PopupAddNewVue, PA120PopupEdit,DxScrolling
+        PA120PopupAddNewVue, PA120PopupEdit, DxScrolling, DxTooltip
     },
     setup() {
         const actionChangeComponent = ref(1)
@@ -169,6 +174,7 @@ export default defineComponent({
         const modalAddNewStatus = ref<boolean>(false);
         const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false);
+        const defaultVisible = ref<boolean>(false);
         const idRowEdit = ref()
         const {
             refetch: refetchData,
@@ -213,8 +219,8 @@ export default defineComponent({
             // }
             addComponentKey.value++;
         };
-        
-        watch(()=> store.state.common.reloadEmployeeList,() => {
+
+        watch(() => store.state.common.reloadEmployeeList, () => {
             trigger.value = true
             refetchData()
         })
@@ -268,7 +274,7 @@ export default defineComponent({
         }
         // when submit form done
         const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
-        watch(actionFormDonePA120,()=> {
+        watch(actionFormDonePA120, () => {
             trigger.value = true;
             refetchData();
         })
@@ -281,7 +287,7 @@ export default defineComponent({
         const focusedRowKey = ref<Number>(0);
         const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
         const resetTabPA120 = computed(() => store.getters['common/resetTabPA120']);
-        watch(keyActivePA120,(newval: number)=> {
+        watch(keyActivePA120, (newval: number) => {
             focusedRowKey.value = newval;
         })
         return {
@@ -312,10 +318,12 @@ export default defineComponent({
             focusedRowKey,
             resetActiveKey,
             resetTabPA120,
-            keyActivePA120
+            keyActivePA120,
+            defaultVisible,
         }
     },
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss" >
+
 </style>
