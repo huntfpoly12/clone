@@ -132,7 +132,6 @@
                             <div style="width: 100%;text-align: center;">[+]</div>
                         </div>
                     </a-tooltip>
-
                 </template>
                 <DxColumn :width="80" cell-template="pupop" caption="출력 메일" :fixed="true" fixedPosition="right" />
                 <template #pupop="{ data }" class="custom-action">
@@ -203,7 +202,6 @@ export default defineComponent({
         const dataSource: any = ref([])
         const dataPopup = ref()
         const dataPopupAdd: any = ref({
-            lastMonth: 0,
             reportType: 0,
             paymentType: 0,
             withholdingDutyName: '',
@@ -252,7 +250,7 @@ export default defineComponent({
                 })
                 // dataPopupAdd.value.reportClassCodes[0] = "반당2"
                 // dataPopupAdd.value.reportClassCodes[1] = "반당1"
-                // dataPopupAdd.value.reportClassCodes[3] = "반익1"
+                // dataPopupAdd.value.reportClassCodes[3] = "매당1"
             }
         });
         watch(resultConfig, (value) => {
@@ -279,8 +277,6 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
-            dataPopupAdd.value.lastMonth = dataSource.value.length ? Math.max(...dataSource.value.map((data: any) => data.imputedMonth)) : 12;
-            // dataPopupAdd.value.lastMonth = 12;
             modalAddNewStatus.value = true;
         }
         const openModalHistory = (data: any) => {
