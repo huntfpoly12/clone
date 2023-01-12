@@ -55,8 +55,8 @@
                         </template>
                         <DxColumn caption="신고 주기" cell-template="reportType" />
                         <template #reportType="{ data }">
-                            <DxButton :text="getText(data.data.reportType)[0]"
-                                :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                            <DxButton :text="getReportType(data.data.reportType)?.text"
+                                :style="getReportType(data.data.reportType)?.style" :height="'33px'" />
                         </template>
                         <DxColumn data-field="yearEndTaxAdjustment" caption="연말" css-class="cell-center"
                             cell-template="yearEndTaxAdjustment" />
@@ -213,7 +213,7 @@ export default defineComponent({
             dataReports.value = []
             if (value.reportType == 1) {
                 let i = 0
-                let year = value.lastMonth == 12 ? globalYear.value+1 : globalYear.value
+                let year = value.lastMonth == 12 ? globalYear.value + 1 : globalYear.value
                 let month = 12
                 if (value.paymentType == 1) {
                     value.lastMonth != 12 ? i = value.lastMonth + 1 : i = 1
@@ -298,14 +298,17 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false)
         };
-        const getText = (data?: any) => {
-            let row: any = ''
+        const getReportType = (data: any) => {
+            let text = '';
+            let style = null;
             enum2Entries(WageReportType).map((value) => {
+                console.log(data, value[1]);
                 if (data == value[1]) {
-                    row = value
+                    text = value[0];
+                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
                 }
             });
-            return row;
+            return { 'text': text, 'style': style }
         };
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
@@ -313,7 +316,7 @@ export default defineComponent({
         return {
             globalYear, move_column, colomn_resize, dayjs,
             onSelectionChanged,
-            getText,
+            getReportType,
             dataReports, dataReport,
             loading,
             onSubmit,
@@ -330,6 +333,7 @@ export default defineComponent({
     height: auto;
     max-height: 180px;
 }
+
 ::v-deep .ant-form-item-control-input {
     align-items: flex-end !important;
 }

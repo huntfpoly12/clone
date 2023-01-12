@@ -67,8 +67,8 @@
                 </template>
                 <DxColumn caption="신고 주기" cell-template="reportType" />
                 <template #reportType="{ data }">
-                    <DxButton :text="getText(data.data.reportType)[0]"
-                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                    <DxButton :text="getReportType(data.data.reportType)?.text"
+                        :style="getReportType(data.data.reportType)?.style" :height="'33px'" />
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
@@ -123,7 +123,8 @@
                 <template #editIcon="{ data }">
                     <DxButton class="ml-3" icon="edit" @click="editRow(data.data)" />
                 </template>
-                <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right"/>
+                <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true"
+                    fixedPosition="right" />
                 <template #add="{ data }">
                     <a-tooltip>
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
@@ -221,8 +222,8 @@ export default defineComponent({
             result,
             loading,
         } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({ fetchPolicy: "no-cache" }));
-        const { result: resultConfig } = useQuery(queries.getWithholdingConfig, originData,() => ({ fetchPolicy: "no-cache" }));
-        const { result: resultCompany } = useQuery(queries.getCompany, {id: companyId},() => ({ fetchPolicy: "no-cache" }));
+        const { result: resultConfig } = useQuery(queries.getWithholdingConfig, originData, () => ({ fetchPolicy: "no-cache" }));
+        const { result: resultCompany } = useQuery(queries.getCompany, { id: companyId }, () => ({ fetchPolicy: "no-cache" }));
         const {
             mutate: actionChangeStatus,
             onDone: doneChangeStatus,
@@ -307,6 +308,8 @@ export default defineComponent({
         const editRow = (value: any) => {
             dataReport.value = [{
                 reportId: value.reportId,
+                additionalIncome: value.additionalIncome,
+                afterDeadline: value.afterDeadline,
                 imputedYear: value.imputedYear,
                 imputedMonth: value.imputedMonth,
                 paymentYear: value.paymentYear,
@@ -322,18 +325,21 @@ export default defineComponent({
                 imputedFinishYearMonth: value.imputedFinishYearMonth,
                 paymentFinishYearMonth: value.paymentFinishYearMonth,
                 detailId: value.detailId,
-                ...value.detail.header,
+                ...value.detail,
             }];
             reportGridStatus.value = true;
         };
-        const getText = (data?: any) => {
-            let row: any = ''
+        const getReportType = (data: any) => {
+            let text = '';
+            let style = null;
             enum2Entries(WageReportType).map((value) => {
+                console.log(data, value[1]);
                 if (data == value[1]) {
-                    row = value
+                    text = value[0];
+                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
                 }
             });
-            return row;
+            return { 'text': text, 'style': style }
         };
         const getColorButton = (data: any) => {
             if (data.index) {
@@ -354,7 +360,7 @@ export default defineComponent({
         return {
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
-            getText, getColorButton,
+            getReportType, getColorButton,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
