@@ -16,6 +16,7 @@ export class Message extends BaseType {
         '103': { "message" : "최소 글자수를 확인하세요."}, // {object} : Check minimum number of characters.
         '104': { "message" : "최대 글자수를 초과하였습니다."}, // {object} : exceeds the maximum number of characters.
         '105': { "message" : "올바른 형식이 아닙니다."}, // {object} : Incorrect format. example : email, BusinessID, PersonalID, Birthday, etc
+        '106': { "message" : "업그레이드가 완료되었습니다."}, // [Pop-message] Update successful!
         '109': { "message" : "저장이 실패하였습니다. Err : {errorCode}", "icon": "iconError"}, // [Pop-message] Save failure!
       // SEARCH Button Click
         '201': { "message" : "조회가 완료되었습니다. 결과를 확인하세요.", "icon": "iconInfo"}, // [Pop-message] Search successful! Please check results.

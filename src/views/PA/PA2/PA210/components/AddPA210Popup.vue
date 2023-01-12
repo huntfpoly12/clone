@@ -55,8 +55,8 @@
                         </template>
                         <DxColumn caption="신고 주기" cell-template="reportType" />
                         <template #reportType="{ data }">
-                            <DxButton :text="getText(data.data.reportType)[0]"
-                                :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                            <DxButton :text="getReportType(data.data.reportType)?.text"
+                                :style="getReportType(data.data.reportType)?.style" :height="'33px'" />
                         </template>
                         <DxColumn data-field="yearEndTaxAdjustment" caption="연말" css-class="cell-center"
                             cell-template="yearEndTaxAdjustment" />
@@ -79,7 +79,7 @@
             </standard-form>
         </a-modal>
         <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
-            :dataReport="dataReport"></report-grid>
+            :dataReport="dataReport" :key="resetComponent"></report-grid>
     </div>
 </template>
 
@@ -117,6 +117,7 @@ export default defineComponent({
         const dataReports: any = ref([])
         const dataReport: any = ref([])
         const reportGridStatus = ref(false)
+        const resetComponent = ref(0)
         const arrayRadioCheck = ref([
             { id: false, text: "정기신고" },
             { id: true, text: "기한후신고" },
@@ -213,7 +214,7 @@ export default defineComponent({
             dataReports.value = []
             if (value.reportType == 1) {
                 let i = 0
-                let year = value.lastMonth == 12 ? globalYear.value+1 : globalYear.value
+                let year = value.lastMonth == 12 ? globalYear.value + 1 : globalYear.value
                 let month = 12
                 if (value.paymentType == 1) {
                     value.lastMonth != 12 ? i = value.lastMonth + 1 : i = 1
@@ -292,20 +293,23 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const onSubmit = (e: any) => {
+            resetComponent.value++;
             dataReport.value[0].afterDeadline = afterDeadline.value
             reportGridStatus.value = true
         };
         const setModalVisible = () => {
             emit("closePopup", false)
         };
-        const getText = (data?: any) => {
-            let row: any = ''
+        const getReportType = (data: any) => {
+            let text = '';
+            let style = null;
             enum2Entries(WageReportType).map((value) => {
                 if (data == value[1]) {
-                    row = value
+                    text = value[0];
+                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
                 }
             });
-            return row;
+            return { 'text': text, 'style': style }
         };
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
@@ -313,14 +317,14 @@ export default defineComponent({
         return {
             globalYear, move_column, colomn_resize, dayjs,
             onSelectionChanged,
-            getText,
+            getReportType,
             dataReports, dataReport,
             loading,
             onSubmit,
             setModalVisible,
             reportGridStatus,
             arrayRadioCheck, afterDeadline,
-            focusedRowKey,
+            focusedRowKey,resetComponent
         };
     },
 });
@@ -330,6 +334,7 @@ export default defineComponent({
     height: auto;
     max-height: 180px;
 }
+
 ::v-deep .ant-form-item-control-input {
     align-items: flex-end !important;
 }

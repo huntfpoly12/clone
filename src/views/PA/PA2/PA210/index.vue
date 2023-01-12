@@ -67,8 +67,8 @@
                 </template>
                 <DxColumn caption="신고 주기" cell-template="reportType" />
                 <template #reportType="{ data }">
-                    <DxButton :text="getText(data.data.reportType)[0]"
-                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                    <DxButton :text="getReportType(data.data.reportType)?.text"
+                        :style="getReportType(data.data.reportType)?.style" :height="'33px'" />
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
@@ -121,13 +121,14 @@
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
-                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data)" />
+                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')" />
                 </template>
-                <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right"/>
+                <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true"
+                    fixedPosition="right" />
                 <template #add="{ data }">
                     <a-tooltip>
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
-                        <div class="custom-grade-cell">
+                        <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')">
                             <div style="width: 100%;text-align: center;">[+]</div>
                         </div>
                     </a-tooltip>
@@ -152,8 +153,8 @@
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false"
         :dataCall="dataPopup" />
-    <ReportGrid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false" :dataReport="dataReport">
-    </ReportGrid>
+    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false" :dataReport="dataReport" :key="resetComponentEdit" />
+    <ReportGridModify :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false" :dataReport="dataReport" :key="resetComponentModify" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
@@ -167,7 +168,7 @@ import { useStore } from "vuex";
 import notification from "@/utils/notification"
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
-import ReportGrid from "./components/ReportGrid/ReportGrid.vue";
+import ReportGridEdit from "./components/ReportGrid/ReportGridEdit.vue";
 import AddPA210Popup from "./components/AddPA210Popup.vue";
 import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
@@ -176,11 +177,13 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-gri
 import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
+import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
 
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxItem, DxButton, HistoryOutlined,
-        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGrid
+        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
+        ReportGridModify
     },
     setup() {
         const store = useStore();
@@ -192,7 +195,10 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false);
         const modalPrintStatus = ref<boolean>(false);
         const modalSendEmailStatus = ref<boolean>(false);
-        const reportGridStatus = ref<boolean>(false)
+        const statusReportGridEdit = ref<boolean>(false);
+        const statusReportGridModify = ref<boolean>(false);
+        const resetComponentEdit = ref(0)
+        const resetComponentModify = ref(0)
         const dataReport: any = ref([])
         const dataSource: any = ref([])
         const dataPopup = ref()
@@ -221,8 +227,8 @@ export default defineComponent({
             result,
             loading,
         } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({ fetchPolicy: "no-cache" }));
-        const { result: resultConfig } = useQuery(queries.getWithholdingConfig, originData,() => ({ fetchPolicy: "no-cache" }));
-        const { result: resultCompany } = useQuery(queries.getCompany, {id: companyId},() => ({ fetchPolicy: "no-cache" }));
+        const { result: resultConfig } = useQuery(queries.getWithholdingConfig, originData, () => ({ fetchPolicy: "no-cache" }));
+        const { result: resultCompany } = useQuery(queries.getCompany, { id: companyId }, () => ({ fetchPolicy: "no-cache" }));
         const {
             mutate: actionChangeStatus,
             onDone: doneChangeStatus,
@@ -304,9 +310,11 @@ export default defineComponent({
                 "status": data.status
             })
         }
-        const editRow = (value: any) => {
+        const editRow = (value: any, icon: string) => {
             dataReport.value = [{
                 reportId: value.reportId,
+                additionalIncome: value.additionalIncome,
+                afterDeadline: value.afterDeadline,
                 imputedYear: value.imputedYear,
                 imputedMonth: value.imputedMonth,
                 paymentYear: value.paymentYear,
@@ -322,18 +330,27 @@ export default defineComponent({
                 imputedFinishYearMonth: value.imputedFinishYearMonth,
                 paymentFinishYearMonth: value.paymentFinishYearMonth,
                 detailId: value.detailId,
-                ...value.detail.header,
+                ...value.detail,
             }];
-            reportGridStatus.value = true;
+            if (icon == 'iconEdit') {
+                statusReportGridEdit.value = true;
+                resetComponentEdit.value++
+            } else {
+                statusReportGridModify.value = true;
+                resetComponentModify.value++
+            }
+            
         };
-        const getText = (data?: any) => {
-            let row: any = ''
+        const getReportType = (data: any) => {
+            let text = '';
+            let style = null;
             enum2Entries(WageReportType).map((value) => {
                 if (data == value[1]) {
-                    row = value
+                    text = value[0];
+                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
                 }
             });
-            return row;
+            return { 'text': text, 'style': style }
         };
         const getColorButton = (data: any) => {
             if (data.index) {
@@ -354,15 +371,15 @@ export default defineComponent({
         return {
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
-            getText, getColorButton,
+            getReportType, getColorButton,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,
             openPopupPrint, modalPrintStatus,
-            editRow, reportGridStatus, dataReport,
+            editRow, statusReportGridEdit, dataReport, statusReportGridModify,
             dataPopup,
-            changeStatus,
+            changeStatus, resetComponentEdit, resetComponentModify
 
         };
     },
