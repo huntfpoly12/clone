@@ -79,7 +79,7 @@
             </standard-form>
         </a-modal>
         <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
-            :dataReport="dataReport"></report-grid>
+            :dataReport="dataReport" :key="resetComponent"></report-grid>
     </div>
 </template>
 
@@ -117,6 +117,7 @@ export default defineComponent({
         const dataReports: any = ref([])
         const dataReport: any = ref([])
         const reportGridStatus = ref(false)
+        const resetComponent = ref(0)
         const arrayRadioCheck = ref([
             { id: false, text: "정기신고" },
             { id: true, text: "기한후신고" },
@@ -292,6 +293,7 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const onSubmit = (e: any) => {
+            resetComponent.value++;
             dataReport.value[0].afterDeadline = afterDeadline.value
             reportGridStatus.value = true
         };
@@ -323,7 +325,7 @@ export default defineComponent({
             setModalVisible,
             reportGridStatus,
             arrayRadioCheck, afterDeadline,
-            focusedRowKey,
+            focusedRowKey,resetComponent
         };
     },
 });
