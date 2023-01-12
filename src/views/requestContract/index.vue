@@ -187,8 +187,7 @@
                                 </template>
                                 <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
                                 <DxColumn cell-template="delete" />
-                                <template #delete="{ data }">
-                                    <!-- {{ data.data.rowIndex }} -->
+                                <template #delete="{ data }"> 
                                     <DeleteOutlined class="fz-14" @click="deleteRow(data.data.rowIndex)" />
                                 </template>
                             </DxDataGrid> 
@@ -429,7 +428,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            step.value = val - 1 // Debug
+            //step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
@@ -602,7 +601,6 @@ export default {
                 e.component.selectRowsByIndexes(0);
             }
         };
-
         const gridRefName: any = ref("grid");
         const Creat = () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
@@ -613,7 +611,6 @@ export default {
                 val.capacity = parseInt(val.capacity)
                 val.longTermCareInstitutionNumber = val.longTermCareInstitutionNumber.toString()
             })
-
             let dataCallCreated = {
                 content: {
                     agreements: {
@@ -696,12 +693,10 @@ export default {
             }, 100);
         };
         let rowDelete = ref()
-
         const deleteRow = (val: any) => {
             rowDelete.value = val
             modalStatus.value = true
         }
-
         const statusComfirm = (res: any) => {
             if (res == true) {
                 valueFacilityBusinesses.value = valueFacilityBusinesses.value.filter((val: any) => val.rowIndex != rowDelete.value)
@@ -717,7 +712,6 @@ export default {
                 }, 100);
             }
         }
-
         // ======================================= WATCH ==============================================================
         watch(() => valueRadioBox.value,
             (newVal) => {
@@ -773,5 +767,4 @@ export default {
 };
 </script>  
 <style lang="scss" scoped src="./style.scss">
-
 </style>
