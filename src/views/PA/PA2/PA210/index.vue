@@ -121,14 +121,14 @@
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
-                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data)" />
+                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')" />
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true"
                     fixedPosition="right" />
                 <template #add="{ data }">
                     <a-tooltip>
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
-                        <div class="custom-grade-cell">
+                        <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')">
                             <div style="width: 100%;text-align: center;">[+]</div>
                         </div>
                     </a-tooltip>
@@ -153,8 +153,8 @@
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false"
         :dataCall="dataPopup" />
-    <report-grid-edit :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false" :dataReport="dataReport" :key="resetComponent">
-    </report-grid-edit>
+    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false" :dataReport="dataReport" :key="resetComponentEdit" />
+    <ReportGridModify :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false" :dataReport="dataReport" :key="resetComponentModify" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
@@ -177,11 +177,13 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-gri
 import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
+import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
 
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxItem, DxButton, HistoryOutlined,
-        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit
+        AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
+        ReportGridModify
     },
     setup() {
         const store = useStore();
@@ -193,8 +195,10 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false);
         const modalPrintStatus = ref<boolean>(false);
         const modalSendEmailStatus = ref<boolean>(false);
-        const reportGridStatus = ref<boolean>(false)
-        const resetComponent = ref(0)
+        const statusReportGridEdit = ref<boolean>(false);
+        const statusReportGridModify = ref<boolean>(false);
+        const resetComponentEdit = ref(0)
+        const resetComponentModify = ref(0)
         const dataReport: any = ref([])
         const dataSource: any = ref([])
         const dataPopup = ref()
@@ -306,8 +310,7 @@ export default defineComponent({
                 "status": data.status
             })
         }
-        const editRow = (value: any) => {
-            resetComponent.value++
+        const editRow = (value: any, icon: string) => {
             dataReport.value = [{
                 reportId: value.reportId,
                 additionalIncome: value.additionalIncome,
@@ -329,13 +332,19 @@ export default defineComponent({
                 detailId: value.detailId,
                 ...value.detail,
             }];
-            reportGridStatus.value = true;
+            if (icon == 'iconEdit') {
+                statusReportGridEdit.value = true;
+                resetComponentEdit.value++
+            } else {
+                statusReportGridModify.value = true;
+                resetComponentModify.value++
+            }
+            
         };
         const getReportType = (data: any) => {
             let text = '';
             let style = null;
             enum2Entries(WageReportType).map((value) => {
-                console.log(data, value[1]);
                 if (data == value[1]) {
                     text = value[0];
                     style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
@@ -368,9 +377,9 @@ export default defineComponent({
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,
             openPopupPrint, modalPrintStatus,
-            editRow, reportGridStatus, dataReport,
+            editRow, statusReportGridEdit, dataReport, statusReportGridModify,
             dataPopup,
-            changeStatus,resetComponent
+            changeStatus, resetComponentEdit, resetComponentModify
 
         };
     },

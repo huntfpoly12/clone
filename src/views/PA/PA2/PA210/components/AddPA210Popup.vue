@@ -304,7 +304,6 @@ export default defineComponent({
             let text = '';
             let style = null;
             enum2Entries(WageReportType).map((value) => {
-                console.log(data, value[1]);
                 if (data == value[1]) {
                     text = value[0];
                     style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
