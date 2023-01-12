@@ -85,10 +85,11 @@
                     <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" />
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)">
-                            {{ data.value == "m" ? "매니저" : (data.value == "c"
-        ? "고객사" :
-        (data.value == "p" ? "파트너" : "영업자"))
-}}</a-tag>
+                            {{
+                                data.value == "m" ? "매니저" : (data.value == "c" ? "고객사" : (data.value == "p" ? "파트너" :
+                                    "영업자"))
+                            }}
+                        </a-tag>
                     </template>
                     <DxColumn data-field="mobilePhone" caption="휴대폰" />
                     <DxColumn data-field="groupCode" caption="소속코드" />
@@ -97,15 +98,15 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
-                                <a-tooltip  color="black" placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>편집</template>
                                     <EditOutlined @click="setModalEditVisible(data)" />
                                 </a-tooltip>
-                                <a-tooltip  color="black" placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
-                                <a-tooltip  color="black" placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>로그인이력</template>
                                     <login-outlined @click="modalLogin(data)" />
                                 </a-tooltip>
@@ -123,7 +124,7 @@
     <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="count"
         @createDone="createSuccess" />
     <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
-        :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" @updateDone="createSuccess"/>
+        :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" @updateDone="createSuccess" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
         title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
     <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData" title="로그인이력"
@@ -311,10 +312,10 @@ export default defineComponent({
             dataSearch.value.type = e.value
         }
 
-        const createSuccess = () => { 
+        const createSuccess = () => {
             triggerSearching.value = true
             refetchData()
-        } 
+        }
         // Watch
         watch(() => modalEditStatus.value,
             () => {
@@ -356,6 +357,8 @@ export default defineComponent({
     },
 });
 </script>  
+
+
 
 
 <style scoped lang="scss" src="./style/style.scss"/>
