@@ -240,11 +240,8 @@ export default defineComponent({
         );
         const arrData = ref()
         watch(resRoleGroup, (value: any) => {
-            if (value && value.searchScreenRoleGroups) {
+            if (value && value.searchScreenRoleGroups) 
                 arrData.value = value.searchScreenRoleGroups.datas
-
-
-            }
         });
         let dataCallGroup = ref({
             type: "r"
