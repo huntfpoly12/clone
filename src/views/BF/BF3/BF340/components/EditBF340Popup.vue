@@ -160,6 +160,7 @@ import { initialFormState } from '../utils';
 import queries from "@/graphql/queries/BF/BF3/BF340/index";
 import mutations from "@/graphql/mutations/BF/BF3/BF340/index";
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import filters from '@/helpers/filters';
 export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
@@ -191,7 +192,7 @@ export default defineComponent({
             }
         );
 
-        let formState = reactive({ ...initialFormState });
+        let formState:any = reactive({ ...initialFormState });
 
         // query check if can be change name company 
         const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
@@ -329,7 +330,7 @@ export default defineComponent({
         // watch result resCheckPerEdit
         watch(() => formState.status, (value) => {
             if (value == 2) {
-                formState.cancelDate = dayjs().format('YYYY-MM-DD');
+                formState.cancelDate = filters.formatDateToInterger(dayjs().format('YYYYMMDD'));
             }
         });
 
