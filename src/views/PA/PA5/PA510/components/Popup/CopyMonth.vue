@@ -5,9 +5,11 @@
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ month > 9 ? month : '0' + month }}
+                    <!-- <month-picker-box v-model:valueDate="processKey.imputedYear" width="65px" class="ml-5" /> -->
                 </div>
                 <div class="month-custom-2 d-flex-center">
-                    지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
+                    <span>지</span>
+                    <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
                 </div>
             </div>
         </a-form-item>
@@ -31,8 +33,11 @@
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{ data.imputedYear }}-{{ data.imputedMonth > 9 ? data.imputedMonth : '0' + data.imputedMonth }}
-                        지 {{ data.paymentYear }}-{{ data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
+                        귀 {{ data.imputedYear }}-{{
+                            data.imputedMonth > 9 ? data.imputedMonth : '0' + data.imputedMonth
+                        }}
+                        지 {{ data.paymentYear }}-{{
+                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
                         }}
                         <DxTextBox style="display: none;" />
                     </span>
@@ -42,10 +47,12 @@
                     </span>
                 </template>
                 <template #item-data="{ data }">
-                    <span>귀 {{ data.imputedYear }}-{{ data.imputedMonth > 9 ? data.imputedMonth :
+                    <span>귀 {{ data.imputedYear }}-{{
+                        data.imputedMonth > 9 ? data.imputedMonth :
                             '0' + data.imputedMonth
                     }} 지
-                        {{ data.paymentYear }}-{{ data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
+                        {{ data.paymentYear }}-{{
+                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
                         }}</span>
                 </template>
             </DxSelectBox>
@@ -162,8 +169,8 @@ export default defineComponent({
             emit("dataAddIncomeProcess", {
                 imputedYear: processKey.value.imputedYear,
                 imputedMonth: month.value,
-                paymentYear: parseInt(month2.value.split('-')[0]),
-                paymentMonth: parseInt(month2.value.split('-')[1]),
+                paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+                paymentMonth: parseInt(month2.value.toString().slice(4, 7)),
             })
             emit("closePopup", false)
         };
@@ -178,7 +185,7 @@ export default defineComponent({
                     source: dataApiCopy.value,
                     target: {
                         imputedYear: processKey.value.imputedYear,
-                        imputedMonth: month.value,
+                        imputedMonth: month?.value,
                         paymentYear: dataApiCopy.value.paymentYear,
                         paymentMonth: dataApiCopy.value.paymentMonth,
                     },
@@ -207,15 +214,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.d-flex-center {
-    display: flex;
-    align-items: center;
-}
-
-.mt-30 {
-    margin-top: 30px;
-}
-
 .text-align-center {
     text-align: center;
 }
@@ -229,8 +227,9 @@ export default defineComponent({
 }
 
 ::v-deep .month-custom-1 {
+    font-size: 13px;
     background-color: #A6A6A6;
-    padding: 5px 10px;
+    padding: 6px 20px 6px 10px;
     border-radius: 5px;
     margin-right: 10px;
     color: white;
@@ -249,6 +248,7 @@ export default defineComponent({
 }
 
 ::v-deep .month-custom-2 {
+    font-size: 12px;
     background-color: black;
     padding-left: 10px;
     border-radius: 5px;
@@ -261,6 +261,7 @@ export default defineComponent({
         border: none;
         height: 30px;
         background-color: black;
+        font-size: 12px;
     }
 
     .dp__icon {
