@@ -17,9 +17,9 @@
                     <div class="top-content">
                         <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
                     </div>
-                    <a-form-item label="근무일수">
-                        <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays"
-                            width="200px" :required="true" />
+                    <a-form-item label="근무일수"> 
+                        <number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays" width="200px"
+                            :required="true" />
                     </a-form-item>
                     <a-form-item label="월급여">
                         <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.monthlyWage"
@@ -70,23 +70,26 @@
                         <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                     </div>
                     <a-form-item label="근무일수">
-                        <text-number-box width="150px" :required="true"
-                            v-model:valueInput="dataIncomeWageDaily.workingDays" :min="1" :max="30"
-                            :spinButtons="true"></text-number-box>
+                        <number-box width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
+                            :spinButtons="true" />
                     </a-form-item>
                     <span v-if="dataIncomeWageDaily.monthlyPaycheck">일급여 {{
                         $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage /
                             dataIncomeWageDaily.workingDays))
                     }}원</span>
+                    
                     <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
                     <br>
+
                     <span v-if="dataIncomeWageDaily.monthlyPaycheck">월급여 {{
                         $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
                     }}원</span>
-                    <span v-else>일급여 {{
+
+                    <span v-else>월급여 {{
                         $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
                             dataIncomeWageDaily.workingDays)
                     }}원</span>
+
                 </a-col>
                 <a-col :span="14" style="padding-leftt: 5px;">
                     <div class="top-content">
@@ -400,7 +403,7 @@ export default defineComponent({
                 })
             })
             // 
-            
+
         }, { deep: true })
 
         // ===================FUNCTION==================================

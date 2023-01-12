@@ -517,6 +517,8 @@ export default defineComponent({
             modalCopy.value = true
         }
         const dataAddIncomeProcess = (data: any) => {
+            console.log(data);
+            
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
         }
